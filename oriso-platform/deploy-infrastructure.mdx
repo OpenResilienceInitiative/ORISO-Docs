@@ -1,0 +1,144 @@
+---
+title: "Deploy Infrastructure"
+description: "Deploy MariaDB, MongoDB, Redis, RabbitMQ, and Keycloak using automated or manual deployment methods"
+---
+
+# Deploy Infrastructure
+
+Deploy the core infrastructure components required for ORISO Platform: databases, cache, message queue, and authentication service.
+
+<Steps>
+<Step title="Navigate to ORISO-Kubernetes">
+
+Prepare the deployment environment and scripts.
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes
+
+# Make scripts executable
+chmod +x scripts/*.sh
+
+# Check deployment files
+ls -la deployments/
+ls -la services/
+```
+
+</Step>
+
+<Step title="Choose Deployment Method">
+
+Select either automated (recommended) or manual deployment approach.
+
+<Tabs>
+<Tab title="Automated Deployment (Recommended)">
+
+Use the master deployment script for a streamlined setup process.
+
+```bash
+# Run master deployment script
+./scripts/deploy-all.sh
+```
+
+<Info>
+The script will:
+1. Check prerequisites
+2. Create namespace
+3. Deploy infrastructure (MariaDB, MongoDB, Redis, RabbitMQ)
+4. Deploy Keycloak
+5. Pause for Keycloak HTTP configuration
+6. Deploy backend services
+7. Deploy frontend
+8. Deploy Matrix
+9. Deploy Nginx proxy
+10. Optionally deploy monitoring
+
+Estimated time: 20-35 minutes
+</Info>
+
+<Check>
+Follow the prompts and wait for completion. The script will guide you through each step.
+</Check>
+
+</Tab>
+
+<Tab title="Manual Deployment (Step-by-Step)">
+
+Deploy infrastructure components manually for more control.
+
+**Step 1: Deploy Infrastructure Services**
+
+```bash
+# Deploy MariaDB, MongoDB, RabbitMQ
+kubectl apply -f deployments/01-infrastructure.yaml
+
+# Wait for pods to be ready
+kubectl wait --for=condition=ready pod -l app=mariadb -n caritas --timeout=300s
+kubectl wait --for=condition=ready pod -l app=mongodb -n caritas --timeout=300s
+kubectl wait --for=condition=ready pod -l app=rabbitmq -n caritas --timeout=300s
+
+# Verify
+kubectl get pods -n caritas
+
+# Check logs if needed
+kubectl logs deployment/mariadb -n caritas
+kubectl logs deployment/mongodb -n caritas
+kubectl logs deployment/rabbitmq -n caritas
+```
+
+**Step 2: Deploy Redis Stack**
+
+```bash
+# Deploy Redis, Redis Commander, Redis Exporter
+kubectl apply -f deployments/02-redis-stack.yaml
+
+# Wait for Redis
+kubectl wait --for=condition=ready pod -l app=redis -n caritas --timeout=180s
+
+# Verify
+kubectl get pods -n caritas | grep redis
+```
+
+**Step 3: Deploy Keycloak**
+
+```bash
+# Deploy Keycloak
+kubectl apply -f deployments/03-keycloak.yaml
+
+# Wait for Keycloak (may take 5-10 minutes)
+kubectl wait --for=condition=ready pod -l app=keycloak -n caritas --timeout=600s
+
+# Check logs
+kubectl logs deployment/keycloak -n caritas -f
+```
+
+</Tab>
+</Tabs>
+
+</Step>
+</Steps>
+
+## Verification
+
+After deployment, verify all infrastructure pods are running:
+
+```bash
+# Check all infrastructure pods
+kubectl get pods -n caritas
+
+# Should see:
+# mariadb-xxx      1/1     Running
+# mongodb-xxx      1/1     Running
+# redis-xxx         1/1     Running
+# rabbitmq-xxx      1/1     Running
+# keycloak-xxx      1/1     Running
+```
+
+## Next Steps
+
+<Warning>
+**CRITICAL**: Before proceeding, you must configure Keycloak HTTP access. See [Configure Keycloak](/oriso-platform/configure-keycloak).
+</Warning>
+
+- [Configure Keycloak](/oriso-platform/configure-keycloak) - Configure HTTP access (mandatory)
+- [Setup Databases](/oriso-platform/setup-databases) - Configure databases and import schemas
+

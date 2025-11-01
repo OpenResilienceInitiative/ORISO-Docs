@@ -1,0 +1,178 @@
+---
+title: "Initial Server Setup"
+description: "Connect to server, update system packages, create non-root user, configure hostname and timezone, and disable swap for Kubernetes"
+---
+
+# Initial Server Setup
+
+Complete the initial server configuration steps to prepare your Ubuntu server for ORISO Platform deployment.
+
+<Steps>
+<Step title="Connect to Server">
+
+Establish SSH connection to your Ubuntu server.
+
+```bash
+# Connect via SSH
+ssh root@YOUR_SERVER_IP
+
+# Or with specific user
+ssh username@YOUR_SERVER_IP
+```
+
+<Check>
+Verify you can successfully SSH into the server before proceeding.
+</Check>
+
+</Step>
+
+<Step title="Update System">
+
+Update package lists and install essential tools required for the deployment.
+
+```bash
+# Update package lists
+sudo apt update
+
+# Upgrade all packages
+sudo apt upgrade -y
+
+# Install essential tools
+sudo apt install -y \
+    curl \
+    wget \
+    git \
+    vim \
+    nano \
+    htop \
+    net-tools \
+    ca-certificates \
+    gnupg \
+    lsb-release \
+    software-properties-common \
+    apt-transport-https \
+    jq
+
+# Check system info
+uname -a
+lsb_release -a
+```
+
+<Check>
+Verify installation by checking versions: `curl --version`, `git --version`, `jq --version`
+</Check>
+
+</Step>
+
+<Step title="Create Non-Root User">
+
+Create a non-root user with sudo privileges for better security practices.
+
+<Note>
+Only perform this step if you're currently logged in as root.
+</Note>
+
+```bash
+# Create user (if you're root)
+adduser caritas
+
+# Add to sudo group
+usermod -aG sudo caritas
+
+# Switch to user
+su - caritas
+
+# Or logout and login as new user
+```
+
+<Warning>
+Ensure you can still access the server after switching users, especially if SSH root login is disabled.
+</Warning>
+
+</Step>
+
+<Step title="Configure Hostname">
+
+Set a descriptive hostname for your server to make identification easier.
+
+```bash
+# Set hostname
+sudo hostnamectl set-hostname oriso-platform
+
+# Verify
+hostnamectl
+```
+
+<Check>
+The hostname should display as `oriso-platform` in the output.
+</Check>
+
+</Step>
+
+<Step title="Configure Timezone">
+
+Set the correct timezone for your server location.
+
+```bash
+# Set timezone (example: Europe/Berlin)
+sudo timedatectl set-timezone Europe/Berlin
+
+# Or use interactive selector
+sudo dpkg-reconfigure tzdata
+
+# Verify
+timedatectl
+```
+
+<Note>
+Replace `Europe/Berlin` with your appropriate timezone. Use `timedatectl list-timezones` to see all available timezones.
+</Note>
+
+</Step>
+
+<Step title="Disable Swap">
+
+Disable swap memory as Kubernetes (k3s) requires swap to be disabled.
+
+```bash
+# Disable swap
+sudo swapoff -a
+
+# Remove swap from fstab (permanent)
+sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+
+# Verify
+free -h
+```
+
+<Check>
+Swap should show `0` in the `free -h` output.
+</Check>
+
+<Warning>
+This permanently disables swap. Ensure your server has sufficient RAM for all services.
+</Warning>
+
+</Step>
+</Steps>
+
+## Verification
+
+After completing all steps, verify your server is ready:
+
+```bash
+# Check system information
+hostnamectl
+timedatectl
+free -h
+
+# Verify swap is disabled
+free -h | grep Swap
+# Should show: Swap:             0           0           0
+```
+
+## Next Steps
+
+- [Network & Firewall Configuration](/oriso-platform/network-firewall) - Configure network and firewall settings
+- [Install Required Software](/oriso-platform/install-software) - Install Docker and Kubernetes
+

@@ -1,0 +1,170 @@
+---
+title: "Overview and Requirements"
+description: "Complete overview of ORISO Platform server requirements, hardware specifications, software requirements, and network configuration"
+---
+
+# ORISO Platform - Setup Guide Overview
+
+**The Ultimate Step-by-Step Guide for AI Agents & Developers**
+
+<Info>
+**Version**: 1.0.0  
+**Last Updated**: October 31, 2025  
+**Platform**: ORISO (Online Beratung)  
+**Target**: Fresh Ubuntu Server (20.04/22.04)
+</Info>
+
+This guide provides comprehensive instructions for deploying the ORISO Platform on a fresh Ubuntu Server. Follow the documentation in order, starting with [Initial Server Setup](/oriso-platform/initial-setup).
+
+<CardGroup cols={2}>
+<Card title="Initial Setup" icon="rocket" href="/oriso-platform/initial-setup">
+Connect to server, update system, configure hostname and timezone
+</Card>
+
+<Card title="Network & Firewall" icon="network-wired" href="/oriso-platform/network-firewall">
+Configure network, UFW firewall, and system limits
+</Card>
+
+<Card title="Install Software" icon="download" href="/oriso-platform/install-software">
+Install Docker, k3s Kubernetes, kubectl, and additional tools
+</Card>
+
+<Card title="Clone Repositories" icon="code-branch" href="/oriso-platform/clone-repositories">
+Transfer and clone ORISO repositories to the server
+</Card>
+
+<Card title="Setup Kubernetes" icon="cube" href="/oriso-platform/setup-kubernetes">
+Verify k3s installation and create namespace
+</Card>
+
+<Card title="Deploy Infrastructure" icon="server" href="/oriso-platform/deploy-infrastructure">
+Deploy databases, Redis, RabbitMQ, and Keycloak
+</Card>
+</CardGroup>
+
+## Server Requirements
+
+### Hardware Requirements
+
+#### Minimum (Testing/Development)
+
+- **CPU**: 4 cores (Intel/AMD x64)
+- **RAM**: 8GB
+- **Disk**: 50GB SSD
+- **Network**: 1 Gbps
+
+#### Recommended (Production)
+
+- **CPU**: 8+ cores (Intel/AMD x64)
+- **RAM**: 16GB+
+- **Disk**: 100GB+ SSD (NVMe preferred)
+- **Network**: 1 Gbps+
+- **Backup Storage**: External backup solution
+
+<Note>
+For production deployments, we strongly recommend the recommended specifications to ensure optimal performance and reliability.
+</Note>
+
+### Software Requirements
+
+#### Operating System
+
+- **Primary**: Ubuntu Server 22.04 LTS (recommended)
+- **Alternative**: Ubuntu Server 20.04 LTS
+- **Architecture**: x86_64 (amd64)
+- **Clean Install**: Fresh installation (no existing services)
+
+#### Access Requirements
+
+- **SSH Access**: Root or sudo user
+- **Internet Access**: Required for package installation
+- **Public IP**: Required for external access
+- **Domain Name**: Optional (for SSL/DNS)
+
+### Network Requirements
+
+#### Required Ports (External Access)
+
+| Port | Service | Description |
+|------|---------|-------------|
+| `22` | SSH | Secure shell access |
+| `80` | HTTP | Optional, for Let's Encrypt |
+| `443` | HTTPS | Optional |
+| `8089` | Nginx Proxy | Main entry point |
+
+#### Required Ports (Internal/Services)
+
+| Port | Service | Description |
+|------|---------|-------------|
+| `3306` | MariaDB | Database |
+| `27017` | MongoDB | NoSQL database |
+| `6379` | Redis | Cache and message broker |
+| `5672` | RabbitMQ | Message queue |
+| `15672` | RabbitMQ Management | Management UI |
+| `8080` | Keycloak | Authentication service |
+| `8081` | TenantService | Tenant management service |
+| `8082` | UserService | User management service |
+| `8083` | ConsultingTypeService | Consulting type service |
+| `8084` | AgencyService | Agency management service |
+| `8085` | UploadService | File upload service |
+| `8086` | VideoService | Video service |
+| `9001` | Frontend | Main frontend application |
+| `9002` | Admin | Admin panel |
+| `8008` | Matrix Synapse | Matrix chat server |
+| `8087` | Element.io | Matrix web client |
+| `9021` | Redis Commander | Redis management UI |
+| `9020` | Redis Exporter | Redis metrics exporter |
+| `9100` | Health Dashboard | System health monitoring |
+| `3001` | SignOZ | Optional observability platform |
+| `4317` | OTEL Collector | Optional OpenTelemetry collector |
+
+<Warning>
+Ensure all required ports are open in your firewall configuration. See [Network & Firewall Configuration](/oriso-platform/network-firewall) for details.
+</Warning>
+
+## Quick Start Guide
+
+If you're ready to begin, start with these essential steps:
+
+1. **Verify Requirements** - Ensure your server meets the minimum hardware and software requirements
+2. **Connect to Server** - SSH into your Ubuntu server with root or sudo access
+3. **Follow Setup Guide** - Proceed to [Initial Server Setup](/oriso-platform/initial-setup)
+
+<Check>
+Once you've completed all setup steps, you'll have a fully functional ORISO platform with:
+- All services running on Kubernetes
+- Databases configured and populated
+- Authentication working (Keycloak)
+- Frontend and Admin accessible
+- Matrix chat operational
+- Monitoring configured
+</Check>
+
+## Support & Resources
+
+### ORISO Documentation
+- **ORISO-Kubernetes**: See `~/caritas-workspace/ORISO-Kubernetes/README.md`
+- **ORISO-Database**: See `~/caritas-workspace/ORISO-Database/README.md`
+- **ORISO-Keycloak**: See `~/caritas-workspace/ORISO-Keycloak/README.md`
+- **Individual Services**: See respective ORISO-*/README.md files
+
+### Useful Links
+- [Kubernetes Documentation](https://kubernetes.io/docs/)
+- [k3s Documentation](https://docs.k3s.io/)
+- [Keycloak Documentation](https://www.keycloak.org/documentation)
+- [Spring Boot Documentation](https://spring.io/projects/spring-boot)
+- [Matrix Documentation](https://matrix.org/docs/)
+
+### Getting Help
+If you encounter issues:
+1. Check [Troubleshooting Guide](/oriso-platform/troubleshooting)
+2. Review [Quick Reference](/oriso-platform/quick-reference)
+3. Check service logs: `kubectl logs <pod> -n caritas`
+4. Check events: `kubectl get events -n caritas`
+5. Review individual service README files
+
+## Next Steps
+
+- [Initial Server Setup](/oriso-platform/initial-setup) - Begin with server configuration
+- [Install Required Software](/oriso-platform/install-software) - Set up Docker and Kubernetes
+- [Quick Reference](/oriso-platform/quick-reference) - Essential commands cheat sheet

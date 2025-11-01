@@ -1,0 +1,66 @@
+---
+title: "Deploy Nginx Proxy"
+description: "Deploy Nginx ConfigMap and reverse proxy as the main entry point"
+---
+
+# Deploy Nginx Proxy
+
+Deploy Nginx reverse proxy as the main entry point for ORISO Platform.
+
+<Steps>
+<Step title="Deploy Nginx ConfigMap and Proxy">
+
+Deploy Nginx configuration and proxy service.
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes
+
+# Deploy Nginx ConfigMap
+kubectl apply -f configmaps/nginx-config.yaml
+
+# Deploy Nginx proxy
+kubectl apply -f deployments/08-nginx-proxy.yaml
+
+# Wait for Nginx
+kubectl wait --for=condition=ready pod -l app=cob-proxy -n caritas --timeout=180s
+
+# Check status
+kubectl get pods -n caritas | grep cob-proxy
+```
+
+<Check>
+The cob-proxy pod should be running:
+- cob-proxy-xxx    1/1     Running
+</Check>
+
+</Step>
+
+<Step title="Verify Nginx Proxy">
+
+Verify Nginx proxy is accessible and routing correctly.
+
+```bash
+# Check Nginx
+curl -I http://127.0.0.1:8089
+# Expected: HTTP/1.1 200 or redirects
+
+# Check logs
+kubectl logs deployment/cob-proxy -n caritas --tail=50
+
+# Access in browser
+SERVER_IP=$(hostname -I | awk '{print $1}')
+echo "Main Entry Point: http://$SERVER_IP:8089"
+```
+
+<Check>
+Nginx should respond with HTTP 200 or appropriate redirects.
+</Check>
+
+</Step>
+</Steps>
+
+## Next Steps
+
+- [Deploy Monitoring](/oriso-platform/deploy-monitoring) - Deploy health dashboard and monitoring
+- [Post-Deployment Configuration](/oriso-platform/post-deployment) - Verify complete deployment
+

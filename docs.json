@@ -1,0 +1,78 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "name": "ORISO Platform",
+  "theme": "mint",
+  "colors": {
+    "primary": "#3B82F6",
+    "light": "#60A5FA",
+    "dark": "#2563EB"
+  },
+  "favicon": "/favicon.svg",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "ORISO Platform Setup",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "index",
+              "oriso-platform/overview",
+              "oriso-platform/initial-setup",
+              "oriso-platform/network-firewall",
+              "oriso-platform/install-software",
+              "oriso-platform/clone-repositories",
+              "oriso-platform/setup-kubernetes"
+            ]
+          },
+          {
+            "group": "Deployment",
+            "pages": [
+              "oriso-platform/deploy-infrastructure",
+              "oriso-platform/configure-keycloak",
+              "oriso-platform/setup-databases",
+              "oriso-platform/deploy-backend-services",
+              "oriso-platform/deploy-frontend",
+              "oriso-platform/deploy-matrix",
+              "oriso-platform/deploy-nginx",
+              "oriso-platform/deploy-monitoring"
+            ]
+          },
+          {
+            "group": "Configuration & Testing",
+            "pages": [
+              "oriso-platform/post-deployment",
+              "oriso-platform/dns-ssl",
+              "oriso-platform/verification-testing"
+            ]
+          },
+          {
+            "group": "Operations",
+            "pages": [
+              "oriso-platform/backup-configuration",
+              "oriso-platform/security-hardening",
+              "oriso-platform/troubleshooting",
+              "oriso-platform/quick-reference"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "contextual": {
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
+  }
+}

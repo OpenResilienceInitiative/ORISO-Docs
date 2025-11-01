@@ -1,0 +1,65 @@
+---
+title: "Deploy Matrix Communication"
+description: "Deploy Matrix Synapse server and Element.io web client for chat functionality"
+---
+
+# Deploy Matrix Communication
+
+Deploy Matrix Synapse server and Element.io web client for chat functionality.
+
+<Steps>
+<Step title="Deploy Matrix Synapse and Element">
+
+Deploy Matrix chat infrastructure.
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes
+
+# Deploy Matrix
+kubectl apply -f deployments/06-matrix.yaml
+
+# Wait for Matrix
+kubectl wait --for=condition=ready pod -l app=matrix-synapse -n caritas --timeout=300s
+
+# Check status
+kubectl get pods -n caritas | grep -E "matrix|element"
+```
+
+<Check>
+You should see both pods running:
+- matrix-synapse-xxx    1/1     Running
+- element-xxx          1/1     Running
+</Check>
+
+</Step>
+
+<Step title="Verify Matrix">
+
+Verify Matrix services are operational.
+
+```bash
+# Check Matrix Synapse
+curl http://127.0.0.1:8008/_matrix/client/versions
+# Expected: JSON with version info
+
+# Check Element.io
+curl -I http://127.0.0.1:8087
+# Expected: HTTP/1.1 200 OK
+
+# Access in browser
+SERVER_IP=$(hostname -I | awk '{print $1}')
+echo "Element.io: http://$SERVER_IP:8087"
+```
+
+<Check>
+Matrix Synapse should return JSON version information, and Element.io should return HTTP 200 OK.
+</Check>
+
+</Step>
+</Steps>
+
+## Next Steps
+
+- [Deploy Nginx Proxy](/oriso-platform/deploy-nginx) - Deploy reverse proxy
+- [Deploy Monitoring](/oriso-platform/deploy-monitoring) - Deploy monitoring services
+

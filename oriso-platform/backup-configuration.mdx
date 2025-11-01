@@ -1,0 +1,116 @@
+---
+title: "Backup Configuration"
+description: "Setup database backups, automated backups with cron, and Kubernetes configuration backups"
+---
+
+# Backup Configuration
+
+Configure automated backups for databases and Kubernetes configurations.
+
+<Steps>
+<Step title="Setup Database Backups">
+
+Create backup directory and script for database backups.
+
+```bash
+# Create backup directory
+sudo mkdir -p /backup/oriso
+sudo chown $USER:$USER /backup/oriso
+
+# Create backup script
+cat > /backup/oriso/backup-databases.sh <<'EOF'
+#!/bin/bash
+TIMESTAMP=$(date +"%Y%m%d-%H%M%S")
+BACKUP_DIR="/backup/oriso/$TIMESTAMP"
+mkdir -p "$BACKUP_DIR"
+
+# Backup MariaDB
+MARIADB_POD=$(kubectl get pods -n caritas -l app=mariadb -o jsonpath="{.items[0].metadata.name}")
+kubectl exec -n caritas $MARIADB_POD -- \
+  mysqldump -u root -pPassword1234! --all-databases > "$BACKUP_DIR/mariadb-all.sql"
+
+# Backup MongoDB
+MONGODB_POD=$(kubectl get pods -n caritas -l app=mongodb -o jsonpath="{.items[0].metadata.name}")
+kubectl exec -n caritas $MONGODB_POD -- \
+  mongosh --eval "db.adminCommand('listDatabases')" > "$BACKUP_DIR/mongodb-list.txt"
+
+# Backup Keycloak realm
+cd ~/online-beratung/caritas-workspace/ORISO-Keycloak
+./backup/realm-backup.sh
+
+# Backup Redis
+cd ~/online-beratung/caritas-workspace/ORISO-Redis
+./backup/redis-backup.sh
+
+echo "Backup completed: $BACKUP_DIR"
+EOF
+
+chmod +x /backup/oriso/backup-databases.sh
+
+# Test backup
+/backup/oriso/backup-databases.sh
+```
+
+<Check>
+Verify backup directory contains SQL dump and backup files.
+</Check>
+
+</Step>
+
+<Step title="Setup Automated Backups (Cron)">
+
+Configure automated daily and weekly backups.
+
+```bash
+# Add to crontab
+crontab -e
+
+# Add daily backup at 2 AM
+0 2 * * * /backup/oriso/backup-databases.sh >> /backup/oriso/backup.log 2>&1
+
+# Add weekly full backup (Sundays at 3 AM)
+0 3 * * 0 tar -czf /backup/oriso/full-backup-$(date +\%Y\%m\%d).tar.gz ~/online-beratung/caritas-workspace >> /backup/oriso/backup.log 2>&1
+
+# Verify crontab
+crontab -l
+```
+
+<Check>
+Crontab should list the backup jobs.
+</Check>
+
+</Step>
+
+<Step title="Backup Kubernetes Configurations">
+
+Export and backup all Kubernetes resources.
+
+```bash
+# Backup all Kubernetes resources
+mkdir -p /backup/oriso/k8s-configs
+
+# Export all resources
+kubectl get all -n caritas -o yaml > /backup/oriso/k8s-configs/all-resources.yaml
+kubectl get configmaps -n caritas -o yaml > /backup/oriso/k8s-configs/configmaps.yaml
+kubectl get secrets -n caritas -o yaml > /backup/oriso/k8s-configs/secrets.yaml
+kubectl get pvc -n caritas -o yaml > /backup/oriso/k8s-configs/pvcs.yaml
+
+# Create archive
+cd /backup/oriso
+tar -czf k8s-configs-$(date +%Y%m%d).tar.gz k8s-configs/
+
+echo "Kubernetes configs backed up"
+```
+
+<Check>
+Archive should be created in /backup/oriso/ directory.
+</Check>
+
+</Step>
+</Steps>
+
+## Next Steps
+
+- [Security Hardening](/oriso-platform/security-hardening) - Apply security measures
+- [Troubleshooting](/oriso-platform/troubleshooting) - Common issues and solutions
+

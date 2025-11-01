@@ -1,0 +1,76 @@
+---
+title: "Deploy Backend Services"
+description: "Deploy all backend microservices: TenantService, UserService, ConsultingTypeService, AgencyService, UploadService, and VideoService"
+---
+
+# Deploy Backend Services
+
+Deploy all ORISO Platform backend microservices.
+
+<Steps>
+<Step title="Deploy All Backend Services">
+
+Deploy all backend services using the deployment configuration.
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes
+
+# Deploy backend services
+kubectl apply -f deployments/04-backend-services.yaml
+
+# Wait for services (may take 10-15 minutes for all to start)
+kubectl wait --for=condition=ready pod -l tier=backend -n caritas --timeout=900s
+
+# Check status
+kubectl get pods -n caritas | grep -E "tenant|user|consulting|agency|upload|video"
+```
+
+<Check>
+All services should show status `Running` and `1/1` ready:
+- tenantservice-xxx
+- userservice-xxx
+- consultingtypeservice-xxx
+- agencyservice-xxx
+- uploadservice-xxx
+- videoservice-xxx
+</Check>
+
+</Step>
+
+<Step title="Verify Backend Services Health">
+
+Check health endpoints for all backend services.
+
+```bash
+# Check TenantService
+curl http://127.0.0.1:8081/actuator/health
+# Expected: {"status":"UP"}
+
+# Check UserService
+curl http://127.0.0.1:8082/actuator/health
+# Expected: {"status":"UP"}
+
+# Check ConsultingTypeService
+curl http://127.0.0.1:8083/actuator/health
+# Expected: {"status":"UP"}
+
+# Check AgencyService
+curl http://127.0.0.1:8084/actuator/health
+# Expected: {"status":"UP"}
+```
+
+<Warning>
+If any service shows DOWN, check logs:
+```bash
+kubectl logs deployment/tenantservice -n caritas --tail=100
+kubectl logs deployment/userservice -n caritas --tail=100
+```
+</Warning>
+
+</Step>
+</Steps>
+
+## Next Steps
+
+- [Deploy Frontend](/oriso-platform/deploy-frontend) - Deploy frontend and admin applications
+- [Post-Deployment Configuration](/oriso-platform/post-deployment) - Verify complete deployment

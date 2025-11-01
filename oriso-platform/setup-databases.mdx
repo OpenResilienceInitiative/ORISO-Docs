@@ -1,0 +1,113 @@
+---
+title: "Setup Databases"
+description: "Verify database pods, create MariaDB databases and schemas, and configure MongoDB"
+---
+
+# Setup Databases
+
+Configure MariaDB and MongoDB databases for ORISO Platform services.
+
+<Steps>
+<Step title="Verify Database Pods are Running">
+
+Ensure database pods are operational before proceeding.
+
+```bash
+# Check database pods
+kubectl get pods -n caritas | grep -E "mariadb|mongodb"
+
+# Should see:
+# mariadb-xxx    1/1     Running
+# mongodb-xxx    1/1     Running
+```
+
+<Check>
+Both MariaDB and MongoDB pods should show status `Running` and `1/1` ready.
+</Check>
+
+</Step>
+
+<Step title="Setup MariaDB Databases">
+
+Create databases and import schemas for all services.
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Database
+
+# Option A: Run master setup script (recommended)
+./scripts/setup/00-master-setup.sh
+```
+
+**Option B: Manual Setup**
+
+```bash
+# Get MariaDB pod
+MARIADB_POD=$(kubectl get pods -n caritas -l app=mariadb -o jsonpath="{.items[0].metadata.name}")
+
+# Create databases
+kubectl exec -it -n caritas $MARIADB_POD -- mysql -u root -pPassword1234! <<EOF
+CREATE DATABASE IF NOT EXISTS agencyservice CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS userservice CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS uploadservice CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS tenantservice CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS statisticsservice CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS keycloak CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS caritas_master CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+SHOW DATABASES;
+EOF
+
+# Import schemas
+for db in agencyservice userservice uploadservice tenantservice; do
+  echo "Importing schema for $db..."
+  kubectl exec -i -n caritas $MARIADB_POD -- \
+    mysql -u root -pPassword1234! $db < mariadb/${db}/${db}-schema.sql
+done
+
+# Verify
+kubectl exec -it -n caritas $MARIADB_POD -- \
+  mysql -u root -pPassword1234! -e "SHOW DATABASES;"
+```
+
+<Check>
+All required databases should be listed: agencyservice, userservice, uploadservice, tenantservice, statisticsservice, keycloak, caritas_master
+</Check>
+
+</Step>
+
+<Step title="Setup MongoDB">
+
+Create MongoDB database and collections for consulting types.
+
+```bash
+# Get MongoDB pod
+MONGODB_POD=$(kubectl get pods -n caritas -l app=mongodb -o jsonpath="{.items[0].metadata.name}")
+
+# Create database and import data
+kubectl exec -it -n caritas $MONGODB_POD -- mongosh <<EOF
+use consulting_types
+db.createCollection("consultingTypes")
+exit
+EOF
+
+# Verify
+kubectl exec -it -n caritas $MONGODB_POD -- \
+  mongosh --eval "show dbs"
+```
+
+<Note>
+If you have existing consulting types data, import it using:
+```bash
+kubectl cp mongodb/consulting_types/consulting-types-export.json caritas/$MONGODB_POD:/tmp/
+kubectl exec -it -n caritas $MONGODB_POD -- \
+  mongosh consulting_types --eval 'db.consultingTypes.insertMany([...data...])'
+```
+</Note>
+
+</Step>
+</Steps>
+
+## Next Steps
+
+- [Deploy Backend Services](/oriso-platform/deploy-backend-services) - Deploy microservices that use these databases
+- [Configure Keycloak](/oriso-platform/configure-keycloak) - If not already completed
+

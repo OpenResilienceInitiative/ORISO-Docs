@@ -1,0 +1,149 @@
+---
+title: "Clone ORISO Repositories"
+description: "Create project directory and transfer ORISO repositories using SCP, Git, or manual transfer methods"
+---
+
+# Clone ORISO Repositories
+
+Set up the project directory and transfer ORISO repositories to your server.
+
+<Steps>
+<Step title="Create Project Directory">
+
+Create the main project directory for ORISO Platform files.
+
+```bash
+# Create project directory
+mkdir -p ~/online-beratung
+cd ~/online-beratung
+
+# Initialize git (optional)
+git init
+```
+
+</Step>
+
+<Step title="Transfer ORISO-Kubernetes Repository">
+
+Choose one of the following methods to transfer your ORISO repositories to the new server.
+
+<Tabs>
+<Tab title="Method 1: SCP (From Existing Server)">
+
+Transfer directly from an existing server using SCP.
+
+```bash
+# On NEW server, from OLD server
+scp -r old-server:/path/to/caritas-workspace ~/online-beratung/
+
+# Verify
+ls -la ~/online-beratung/caritas-workspace/
+```
+
+</Tab>
+
+<Tab title="Method 2: Git Repository">
+
+Clone from a Git repository if your code is version controlled.
+
+```bash
+# Clone from Git
+cd ~/online-beratung
+git clone <your-oriso-repo-url> caritas-workspace
+
+# Verify
+ls -la ~/online-beratung/caritas-workspace/
+```
+
+</Tab>
+
+<Tab title="Method 3: Manual Transfer (tar.gz)">
+
+Create an archive on the old server and transfer it.
+
+**On OLD server:**
+
+```bash
+cd /path/to/online-beratung
+tar -czf oriso-complete.tar.gz caritas-workspace/
+```
+
+**Transfer to NEW server:**
+
+```bash
+scp oriso-complete.tar.gz new-server:~/
+```
+
+**On NEW server:**
+
+```bash
+cd ~/online-beratung
+tar -xzf ~/oriso-complete.tar.gz
+
+# Verify
+ls -la ~/online-beratung/caritas-workspace/
+```
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Verify Repository Structure">
+
+Verify all required repositories and directories are present.
+
+```bash
+cd ~/online-beratung/caritas-workspace
+
+# Check structure
+ls -la
+```
+
+<Check>
+You should see the following directories:
+- `ORISO-Kubernetes/`
+- `ORISO-Database/`
+- `ORISO-Keycloak/`
+- `ORISO-Redis/`
+- `ORISO-Nginx/`
+- `ORISO-Matrix/`
+- `ORISO-SignOZ/` (optional)
+- `ORISO-Element/`
+- `ORISO-HealthDashboard/`
+- `ORISO-Frontend/`
+- `ORISO-Admin/`
+- `ORISO-TenantService/`
+- `ORISO-UserService/`
+- `ORISO-AgencyService/`
+- `ORISO-ConsultingTypeService/`
+</Check>
+
+**Check ORISO-Kubernetes structure:**
+
+```bash
+tree -L 2 ORISO-Kubernetes/
+```
+
+<Check>
+Expected structure:
+```
+ORISO-Kubernetes/
+├── README.md
+├── DEPLOYMENT.md
+├── STATUS.md
+├── deployments/
+├── services/
+├── configmaps/
+└── scripts/
+```
+</Check>
+
+</Step>
+</Steps>
+
+## Next Steps
+
+- [Setup Kubernetes](/oriso-platform/setup-kubernetes) - Verify k3s and create namespace
+- [Deploy Infrastructure](/oriso-platform/deploy-infrastructure) - Deploy databases and Keycloak
+

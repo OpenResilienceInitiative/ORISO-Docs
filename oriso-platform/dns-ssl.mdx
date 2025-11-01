@@ -1,0 +1,110 @@
+---
+title: "DNS & SSL Setup"
+description: "Configure DNS, install Certbot, and setup SSL certificates for secure access"
+---
+
+# DNS & SSL Setup
+
+Configure DNS and SSL certificates for production deployments.
+
+<Info>
+All steps in this guide are optional. They are only required if you want to use a domain name and HTTPS.
+</Info>
+
+<Steps>
+<Step title="Configure DNS (Optional)">
+
+Configure DNS records pointing to your server.
+
+<Note>
+You need a domain name and access to your DNS provider's control panel.
+</Note>
+
+In your DNS provider, add the following records:
+
+- **A Record**: `oriso.yourdomain.com → YOUR_SERVER_IP`
+- **Wildcard A Record** (optional): `*.oriso.yourdomain.com → YOUR_SERVER_IP`
+
+<Check>
+Verify DNS resolution:
+```bash
+nslookup oriso.yourdomain.com
+# Should return your server IP
+```
+</Check>
+
+</Step>
+
+<Step title="Install Certbot for Let's Encrypt (Optional)">
+
+Install Certbot to obtain free SSL certificates from Let's Encrypt.
+
+<Warning>
+This requires port 80 to be open and DNS to be configured correctly.
+</Warning>
+
+```bash
+# Install Certbot
+sudo apt install -y certbot python3-certbot-nginx
+
+# Get SSL certificate (requires port 80 open and DNS configured)
+sudo certbot certonly --standalone -d yourdomain.com -d www.yourdomain.com
+
+# Certificate will be saved to:
+# /etc/letsencrypt/live/yourdomain.com/fullchain.pem
+# /etc/letsencrypt/live/yourdomain.com/privkey.pem
+
+# Setup auto-renewal
+sudo systemctl enable certbot.timer
+sudo systemctl start certbot.timer
+```
+
+<Check>
+Verify certificate files exist:
+```bash
+ls -la /etc/letsencrypt/live/yourdomain.com/
+```
+</Check>
+
+</Step>
+
+<Step title="Configure Nginx with SSL (Optional)">
+
+Update Nginx configuration to use SSL certificates.
+
+```bash
+# Update Nginx ConfigMap with SSL configuration
+kubectl edit configmap oriso-nginx-config -n caritas
+```
+
+Add SSL server block configuration:
+
+```nginx
+server {
+    listen 443 ssl http2;
+    server_name yourdomain.com;
+    ssl_certificate /etc/ssl/certs/fullchain.pem;
+    ssl_certificate_key /etc/ssl/certs/privkey.pem;
+    # ... rest of configuration
+}
+```
+
+Mount SSL certificates as volume in Nginx deployment, then reload:
+
+```bash
+# Reload Nginx
+kubectl rollout restart deployment/cob-proxy -n caritas
+```
+
+<Note>
+See ORISO-Nginx/DEPLOYMENT.md for detailed SSL configuration instructions.
+</Note>
+
+</Step>
+</Steps>
+
+## Next Steps
+
+- [Verification & Testing](/oriso-platform/verification-testing) - Test platform functionality
+- [Security Hardening](/oriso-platform/security-hardening) - Additional security measures
+

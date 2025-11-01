@@ -1,0 +1,95 @@
+---
+title: "Deploy Monitoring"
+description: "Deploy health dashboard, SignOZ observability platform, and apply all service configurations"
+---
+
+# Deploy Monitoring
+
+Deploy monitoring and observability services for ORISO Platform.
+
+<Steps>
+<Step title="Deploy Health Dashboard">
+
+Deploy the health dashboard for system monitoring.
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes
+
+# Deploy health dashboard
+kubectl apply -f deployments/10-monitoring.yaml
+
+# Wait for health dashboard
+kubectl wait --for=condition=ready pod -l app=health-dashboard -n caritas --timeout=180s
+
+# Check status
+kubectl get pods -n caritas | grep health-dashboard
+```
+
+<Check>
+Health dashboard pod should be running.
+</Check>
+
+</Step>
+
+<Step title="Deploy SignOZ (Optional)">
+
+Deploy SignOZ observability platform using Helm.
+
+<Info>
+This step is optional. SignOZ provides distributed tracing and observability features.
+</Info>
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-SignOZ
+
+# See ORISO-SignOZ/DEPLOYMENT.md for detailed instructions
+
+# Quick deploy with Helm
+helm repo add signoz https://charts.signoz.io
+helm repo update
+
+kubectl create namespace signoz
+
+helm install signoz signoz/signoz \
+  --namespace signoz \
+  --set frontend.service.type=LoadBalancer
+
+# Wait for SignOZ (may take 5-10 minutes)
+kubectl wait --for=condition=ready pod -l app.kubernetes.io/instance=signoz -n signoz --timeout=600s
+
+# Get SignOZ URL
+kubectl get svc -n signoz signoz-frontend
+```
+
+<Note>
+SignOZ deployment may take 5-10 minutes. Monitor pod status during deployment.
+</Note>
+
+</Step>
+
+<Step title="Apply All Services">
+
+Apply all Kubernetes service configurations.
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes
+
+# Apply all services
+kubectl apply -f services/all-services.yaml
+
+# Verify all services
+kubectl get svc -n caritas
+```
+
+<Check>
+All services should be listed with ClusterIP or LoadBalancer addresses.
+</Check>
+
+</Step>
+</Steps>
+
+## Next Steps
+
+- [Post-Deployment Configuration](/oriso-platform/post-deployment) - Verify complete deployment
+- [Verification & Testing](/oriso-platform/verification-testing) - Test platform functionality
+

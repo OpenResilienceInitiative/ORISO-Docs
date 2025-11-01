@@ -1,0 +1,341 @@
+---
+title: "Troubleshooting"
+description: "Comprehensive troubleshooting guide for pods, network, databases, Keycloak, backend services, and frontend issues"
+---
+
+# Troubleshooting
+
+Common issues and solutions for ORISO Platform deployment and operation.
+
+<AccordionGroup>
+<Accordion title="Pod Issues">
+
+### Pods Stuck in Pending
+
+Check pod events and resource availability:
+
+```bash
+# Check pod events
+kubectl describe pod <pod-name> -n caritas
+
+# Common causes:
+# - Insufficient resources
+# - Persistent volume issues
+# - Image pull errors
+
+# Check node resources
+kubectl describe nodes
+
+# Check available resources
+kubectl top nodes
+```
+
+### Pods CrashLoopBackOff
+
+Investigate application errors and configuration:
+
+```bash
+# Check logs
+kubectl logs <pod-name> -n caritas
+kubectl logs <pod-name> -n caritas --previous
+
+# Common causes:
+# - Application errors
+# - Database connection issues
+# - Missing configuration
+# - Resource limits too low
+
+# Check events
+kubectl get events -n caritas --sort-by='.lastTimestamp'
+```
+
+### Image Pull Errors
+
+Resolve image pull and registry issues:
+
+```bash
+# Check image pull secrets
+kubectl get secrets -n caritas
+
+# Check pod image
+kubectl get pod <pod-name> -n caritas -o jsonpath='{.spec.containers[0].image}'
+
+# Pull image manually
+docker pull <image>
+
+# Import to k3s
+docker save <image> | sudo k3s ctr images import -
+```
+
+</Accordion>
+
+<Accordion title="Network Issues">
+
+### Service Not Accessible
+
+Verify service configuration and pod selection:
+
+```bash
+# Check service
+kubectl get svc -n caritas <service-name>
+
+# Check endpoints
+kubectl get endpoints -n caritas <service-name>
+
+# Check if pods are selected
+kubectl get pods -n caritas -l <label-selector>
+
+# Test from within cluster
+kubectl run test-pod --rm -it --image=busybox -n caritas -- /bin/sh
+wget -O- http://<service-name>:<port>
+```
+
+### Port Not Responding
+
+Check firewall and network configuration:
+
+```bash
+# Check if port is listening
+sudo netstat -tulpn | grep <port>
+
+# Check UFW
+sudo ufw status verbose
+
+# Allow port if needed
+sudo ufw allow <port>/tcp
+
+# Check iptables
+sudo iptables -L -n
+```
+
+</Accordion>
+
+<Accordion title="Database Issues">
+
+### Cannot Connect to MariaDB
+
+Verify MariaDB pod and service:
+
+```bash
+# Check MariaDB pod
+kubectl get pod -n caritas | grep mariadb
+
+# Check logs
+kubectl logs deployment/mariadb -n caritas
+
+# Test connection
+MARIADB_POD=$(kubectl get pods -n caritas -l app=mariadb -o jsonpath="{.items[0].metadata.name}")
+kubectl exec -it -n caritas $MARIADB_POD -- mysql -u root -pPassword1234! -e "SHOW DATABASES;"
+
+# Check service
+kubectl get svc -n caritas mariadb
+```
+
+### Cannot Connect to MongoDB
+
+Verify MongoDB pod and service:
+
+```bash
+# Check MongoDB pod
+kubectl get pod -n caritas | grep mongodb
+
+# Check logs
+kubectl logs deployment/mongodb -n caritas
+
+# Test connection
+MONGODB_POD=$(kubectl get pods -n caritas -l app=mongodb -o jsonpath="{.items[0].metadata.name}")
+kubectl exec -it -n caritas $MONGODB_POD -- mongosh --eval "show dbs"
+
+# Check service
+kubectl get svc -n caritas mongodb
+```
+
+</Accordion>
+
+<Accordion title="Keycloak Issues">
+
+### HTTPS Required Error
+
+<Warning>
+This means HTTP access was not configured. This is a critical configuration step.
+</Warning>
+
+```bash
+# Run the configuration script
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes
+./scripts/configure-keycloak-http.sh
+```
+
+See [Configure Keycloak](/oriso-platform/configure-keycloak) for detailed instructions.
+
+### Cannot Login to Keycloak
+
+Check Keycloak logs and accessibility:
+
+```bash
+# Check Keycloak logs
+kubectl logs deployment/keycloak -n caritas
+
+# Verify Keycloak is accessible
+curl -I http://127.0.0.1:8080
+
+# Reset admin password if needed (see Security Hardening)
+```
+
+### Realm Not Found
+
+Verify realm exists and re-import if necessary:
+
+```bash
+# Check if realm exists
+KEYCLOAK_POD=$(kubectl get pods -n caritas -l app=keycloak -o jsonpath="{.items[0].metadata.name}")
+
+kubectl exec -n caritas $KEYCLOAK_POD -- \
+  /opt/keycloak/bin/kcadm.sh config credentials \
+  --server http://localhost:8080 \
+  --realm master \
+  --user admin \
+  --password admin
+
+kubectl exec -n caritas $KEYCLOAK_POD -- \
+  /opt/keycloak/bin/kcadm.sh get realms --fields realm
+
+# If realm missing, re-import (see Configure Keycloak)
+```
+
+</Accordion>
+
+<Accordion title="Backend Service Issues">
+
+### Service Returns 500 Error
+
+Check service logs and configuration:
+
+```bash
+# Check service logs
+kubectl logs deployment/<service-name> -n caritas --tail=100
+
+# Common issues:
+# - Database connection failed
+# - Keycloak not accessible
+# - Missing environment variables
+# - Application errors
+
+# Check environment variables
+kubectl get deployment <service-name> -n caritas -o yaml | grep -A 20 env:
+```
+
+### Service Health Check Fails
+
+Verify health endpoints and dependencies:
+
+```bash
+# Check actuator health endpoint
+curl http://127.0.0.1:<port>/actuator/health | jq .
+
+# Check detailed health
+curl http://127.0.0.1:<port>/actuator/health/db | jq .
+curl http://127.0.0.1:<port>/actuator/health/redis | jq .
+
+# Restart service
+kubectl rollout restart deployment/<service-name> -n caritas
+```
+
+</Accordion>
+
+<Accordion title="Frontend Issues">
+
+### Frontend Shows White Screen
+
+Check frontend logs and environment:
+
+```bash
+# Check frontend logs
+kubectl logs deployment/frontend -n caritas
+
+# Common causes:
+# - Build errors
+# - Missing environment variables
+# - API URL incorrect
+
+# Check frontend environment
+kubectl exec -it deployment/frontend -n caritas -- env | grep VITE
+```
+
+### Frontend 403 Errors
+
+Check Nginx configuration and CORS:
+
+```bash
+# Check Nginx logs
+kubectl logs deployment/cob-proxy -n caritas
+
+# Check CORS configuration
+kubectl get configmap oriso-nginx-config -n caritas -o yaml | grep -A 10 "add_header"
+
+# Verify backend is accessible
+curl -I http://127.0.0.1:8081/actuator/health
+```
+
+</Accordion>
+
+<Accordion title="Useful Debug Commands">
+
+### General Debugging
+
+```bash
+# Check all pods status
+kubectl get pods -n caritas
+
+# Check all services
+kubectl get svc -n caritas
+
+# Check all deployments
+kubectl get deployments -n caritas
+
+# Check events (last 1 hour)
+kubectl get events -n caritas --sort-by='.lastTimestamp' | tail -50
+
+# Check node resources
+kubectl top nodes
+kubectl top pods -n caritas
+
+# Get all logs for a pod
+kubectl logs deployment/<name> -n caritas --tail=200
+
+# Follow logs in real-time
+kubectl logs deployment/<name> -n caritas -f
+
+# Execute command in pod
+kubectl exec -it deployment/<name> -n caritas -- /bin/sh
+
+# Port-forward for local access
+kubectl port-forward -n caritas svc/<service> 8080:8080
+
+# Describe resource (shows events and details)
+kubectl describe pod <pod-name> -n caritas
+kubectl describe deployment <deployment-name> -n caritas
+kubectl describe svc <service-name> -n caritas
+
+# Check resource usage
+kubectl top pod <pod-name> -n caritas
+
+# Restart deployment
+kubectl rollout restart deployment/<name> -n caritas
+
+# Check rollout status
+kubectl rollout status deployment/<name> -n caritas
+
+# Scale deployment
+kubectl scale deployment/<name> --replicas=2 -n caritas
+```
+
+</Accordion>
+</AccordionGroup>
+
+## Related Documentation
+
+- [Quick Reference](/oriso-platform/quick-reference) - Essential commands
+- [Post-Deployment Configuration](/oriso-platform/post-deployment) - Verification steps
+- [Configure Keycloak](/oriso-platform/configure-keycloak) - Keycloak configuration
+

@@ -1,0 +1,120 @@
+---
+title: "Verification & Testing"
+description: "Complete verification, user registration testing, authentication flow, API testing, and Matrix chat verification"
+---
+
+# Verification & Testing
+
+Comprehensive testing guide to verify ORISO Platform is functioning correctly.
+
+<Steps>
+<Step title="Run Complete Verification">
+
+Execute the verification script to check all components.
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes
+
+# Run verification script
+./scripts/verify-deployment.sh
+
+# Check output for:
+# ✓ All pods Running
+# ✓ All health endpoints responding
+# ✓ All web interfaces accessible
+# ✓ All services have ClusterIP
+```
+
+<Check>
+All verification checks should pass successfully.
+</Check>
+
+</Step>
+
+<Step title="Test User Registration">
+
+Test the complete user registration flow.
+
+1. **Access Frontend**: `http://YOUR_SERVER_IP:9001`
+2. **Click "Register"**
+3. **Fill in registration form**:
+   - Username
+   - Email
+   - Password
+4. **Submit**
+5. **Verify**:
+   - User is created in Keycloak
+   - User can login
+   - Matrix account is created
+
+<Check>
+User should be able to register, login, and access the platform.
+</Check>
+
+</Step>
+
+<Step title="Test Authentication Flow">
+
+Verify OAuth/OIDC authentication is working.
+
+```bash
+# Get access token
+curl -X POST "http://$SERVER_IP:8089/auth/realms/online-beratung/protocol/openid-connect/token" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "client_id=app" \
+  -d "username=testuser" \
+  -d "password=testpass" \
+  -d "grant_type=password" | jq .
+```
+
+<Check>
+Should return access_token, refresh_token, and token metadata.
+</Check>
+
+</Step>
+
+<Step title="Test Backend API">
+
+Test backend API endpoints with authentication.
+
+```bash
+# Get access token first
+ACCESS_TOKEN="your-access-token"
+
+# Test TenantService
+curl -H "Authorization: Bearer $ACCESS_TOKEN" \
+  http://$SERVER_IP:8081/tenants | jq .
+
+# Test UserService
+curl -H "Authorization: Bearer $ACCESS_TOKEN" \
+  http://$SERVER_IP:8082/users/data | jq .
+```
+
+<Check>
+APIs should return JSON data with 200 OK status.
+</Check>
+
+</Step>
+
+<Step title="Test Matrix Chat">
+
+Verify Matrix chat functionality.
+
+1. **Access Element.io**: `http://YOUR_SERVER_IP:8087`
+2. **Login** with registered user
+3. **Create a room**
+4. **Send a message**
+5. **Verify** message appears
+
+<Check>
+User should be able to create rooms, send messages, and receive messages.
+</Check>
+
+</Step>
+</Steps>
+
+## Next Steps
+
+- [Backup Configuration](/oriso-platform/backup-configuration) - Setup automated backups
+- [Security Hardening](/oriso-platform/security-hardening) - Apply security measures
+

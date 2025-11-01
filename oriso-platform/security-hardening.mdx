@@ -1,0 +1,174 @@
+---
+title: "Security Hardening"
+description: "Change default passwords, setup Fail2Ban, disable root SSH, and enable security features"
+---
+
+# Security Hardening
+
+Apply security best practices to harden your ORISO Platform deployment.
+
+<Warning>
+These security measures should be applied before exposing the platform to production traffic.
+</Warning>
+
+<Steps>
+<Step title="Change Default Passwords">
+
+Change all default passwords to strong, unique passwords.
+
+**Change Keycloak Admin Password:**
+
+```bash
+KEYCLOAK_POD=$(kubectl get pods -n caritas -l app=keycloak -o jsonpath="{.items[0].metadata.name}")
+
+kubectl exec -n caritas $KEYCLOAK_POD -- \
+  /opt/keycloak/bin/kcadm.sh config credentials \
+  --server http://localhost:8080 \
+  --realm master \
+  --user admin \
+  --password admin
+
+kubectl exec -n caritas $KEYCLOAK_POD -- \
+  /opt/keycloak/bin/kcadm.sh update users/$(kubectl exec -n caritas $KEYCLOAK_POD -- \
+  /opt/keycloak/bin/kcadm.sh get users -r master -q username=admin --fields id --format csv | tail -n 1) \
+  -r master -s 'credentials=[{"type":"password","value":"NEW_STRONG_PASSWORD","temporary":false}]'
+```
+
+**Change MariaDB Root Password:**
+
+```bash
+MARIADB_POD=$(kubectl get pods -n caritas -l app=mariadb -o jsonpath="{.items[0].metadata.name}")
+
+kubectl exec -it -n caritas $MARIADB_POD -- \
+  mysql -u root -pPassword1234! -e "ALTER USER 'root'@'%' IDENTIFIED BY 'NEW_STRONG_PASSWORD'; FLUSH PRIVILEGES;"
+
+# Update application configurations with new password
+# Edit deployments and update SPRING_DATASOURCE_PASSWORD
+```
+
+<Warning>
+Update all application configuration files with the new password before restarting services.
+</Warning>
+
+</Step>
+
+<Step title="Setup Fail2Ban (SSH Protection)">
+
+Install and configure Fail2Ban to protect against brute force attacks.
+
+```bash
+# Install Fail2Ban
+sudo apt install -y fail2ban
+
+# Configure Fail2Ban
+sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+
+# Edit jail.local
+sudo nano /etc/fail2ban/jail.local
+
+# Add/modify:
+# [sshd]
+# enabled = true
+# port = ssh
+# filter = sshd
+# logpath = /var/log/auth.log
+# maxretry = 3
+# bantime = 3600
+
+# Start Fail2Ban
+sudo systemctl enable fail2ban
+sudo systemctl start fail2ban
+
+# Check status
+sudo fail2ban-client status
+sudo fail2ban-client status sshd
+```
+
+<Check>
+Fail2Ban should be active and monitoring SSH.
+</Check>
+
+</Step>
+
+<Step title="Disable Root SSH Login">
+
+Disable root SSH login for better security.
+
+```bash
+# Edit SSH config
+sudo nano /etc/ssh/sshd_config
+
+# Change:
+PermitRootLogin no
+PasswordAuthentication no  # Use SSH keys only
+PubkeyAuthentication yes
+
+# Restart SSH
+sudo systemctl restart sshd
+```
+
+<Warning>
+Ensure you have SSH key access before disabling password authentication, or you may lock yourself out!
+</Warning>
+
+</Step>
+
+<Step title="Setup Automatic Security Updates">
+
+Enable automatic security updates.
+
+```bash
+# Install unattended-upgrades
+sudo apt install -y unattended-upgrades
+
+# Configure
+sudo dpkg-reconfigure -plow unattended-upgrades
+
+# Edit config
+sudo nano /etc/apt/apt.conf.d/50unattended-upgrades
+
+# Enable automatic updates
+echo 'APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "1";
+APT::Periodic::AutocleanInterval "7";' | sudo tee /etc/apt/apt.conf.d/20auto-upgrades
+```
+
+</Step>
+
+<Step title="Enable Audit Logging">
+
+Enable audit logging for security monitoring.
+
+```bash
+# Install auditd
+sudo apt install -y auditd
+
+# Enable auditd
+sudo systemctl enable auditd
+sudo systemctl start auditd
+
+# Check status
+sudo systemctl status auditd
+```
+
+<Check>
+Audit daemon should be active and running.
+</Check>
+
+</Step>
+</Steps>
+
+## Additional Recommendations
+
+- Regularly review security logs
+- Keep all packages up to date
+- Monitor failed login attempts
+- Use firewall rules to restrict access
+- Implement network segmentation
+- Regular security audits
+
+## Next Steps
+
+- [Troubleshooting](/oriso-platform/troubleshooting) - Common issues and solutions
+- [Quick Reference](/oriso-platform/quick-reference) - Essential commands
+

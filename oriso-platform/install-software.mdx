@@ -1,0 +1,239 @@
+---
+title: "Install Required Software"
+description: "Install Docker, k3s Kubernetes, kubectl, Helm, and additional database management tools"
+---
+
+# Install Required Software
+
+Install all required software tools needed for ORISO Platform deployment, including Docker, Kubernetes, and database clients.
+
+<Steps>
+<Step title="Install Docker">
+
+Install Docker for building container images if needed.
+
+```bash
+# Remove old versions
+sudo apt remove -y docker docker-engine docker.io containerd runc
+
+# Add Docker GPG key
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+# Add Docker repository
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Install Docker
+sudo apt update
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# Add user to docker group
+sudo usermod -aG docker $USER
+
+# Apply group change (or logout/login)
+newgrp docker
+
+# Verify Docker installation
+docker --version
+docker compose version
+
+# Test Docker
+docker run hello-world
+```
+
+<Check>
+Verify Docker is working: `docker --version` and `docker compose version` should show installed versions. The hello-world test should complete successfully.
+</Check>
+
+<Note>
+You may need to log out and log back in for docker group membership to take effect, or use `newgrp docker`.
+</Note>
+
+</Step>
+
+<Step title="Install k3s (Lightweight Kubernetes)">
+
+Install k3s, a lightweight Kubernetes distribution perfect for single-node deployments.
+
+```bash
+# Install k3s
+curl -sfL https://get.k3s.io | sh -
+
+# Wait for k3s to be ready
+sudo systemctl status k3s
+
+# Make k3s accessible to non-root user
+sudo chmod 644 /etc/rancher/k3s/k3s.yaml
+
+# Setup kubeconfig for current user
+mkdir -p ~/.kube
+sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
+sudo chown $USER:$USER ~/.kube/config
+
+# Verify k3s installation
+sudo k3s kubectl get nodes
+```
+
+<Check>
+Expected output should show your node with status `Ready` and roles `control-plane,master`:
+```
+NAME             STATUS   ROLES                  AGE   VERSION
+oriso-platform   Ready    control-plane,master   1m    v1.x.x
+```
+</Check>
+
+</Step>
+
+<Step title="Install kubectl">
+
+Install kubectl, the Kubernetes command-line tool.
+
+```bash
+# Install kubectl
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+rm kubectl
+
+# Verify kubectl
+kubectl version --client
+
+# Test kubectl with k3s
+kubectl get nodes
+kubectl get pods --all-namespaces
+```
+
+<Check>
+Verify kubectl can connect to k3s: `kubectl get nodes` should show your node.
+</Check>
+
+</Step>
+
+<Step title="Install Helm">
+
+Install Helm for managing Kubernetes applications (optional, needed for SignOZ).
+
+<Info>
+This step is optional and only required if you plan to deploy SignOZ for observability.
+</Info>
+
+```bash
+# Install Helm
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+# Verify Helm
+helm version
+
+# Add Helm repos
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update
+```
+
+<Check>
+Verify Helm installation: `helm version` should show the installed version.
+</Check>
+
+</Step>
+
+<Step title="Install Additional Tools">
+
+Install database clients and utility tools for managing ORISO Platform services.
+
+```bash
+# Install MySQL client (for MariaDB)
+sudo apt install -y mysql-client
+
+# Install MongoDB client
+wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | sudo apt-key add -
+echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+sudo apt update
+sudo apt install -y mongodb-mongosh
+
+# Install Redis client
+sudo apt install -y redis-tools
+
+# Install tree (useful for directory viewing)
+sudo apt install -y tree
+```
+
+<Check>
+Verify tools are installed:
+- `mysql --version`
+- `mongosh --version`
+- `redis-cli --version`
+</Check>
+
+</Step>
+</Steps>
+
+## Verification
+
+After completing all installation steps, verify all tools are working:
+
+```bash
+# Check Docker
+docker --version && docker compose version
+
+# Check Kubernetes
+kubectl version --client
+kubectl get nodes
+
+# Check k3s service
+sudo systemctl status k3s
+
+# Check database clients
+mysql --version
+mongosh --version
+redis-cli --version
+```
+
+## Troubleshooting
+
+### k3s Not Starting
+
+Check k3s logs:
+
+```bash
+sudo journalctl -u k3s -f
+```
+
+Verify swap is disabled (required for k3s):
+
+```bash
+free -h
+```
+
+### kubectl Can't Connect
+
+Verify kubeconfig:
+
+```bash
+cat ~/.kube/config
+```
+
+Check k3s API server:
+
+```bash
+sudo systemctl status k3s
+```
+
+### Docker Permission Denied
+
+Ensure you're in the docker group:
+
+```bash
+groups | grep docker
+```
+
+If not, log out and log back in, or use:
+
+```bash
+newgrp docker
+```
+
+## Next Steps
+
+- [Clone ORISO Repositories](/oriso-platform/clone-repositories) - Transfer repositories to server
+- [Setup Kubernetes](/oriso-platform/setup-kubernetes) - Verify k3s and create namespace
+

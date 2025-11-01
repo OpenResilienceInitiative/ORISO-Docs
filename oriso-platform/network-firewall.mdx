@@ -1,0 +1,174 @@
+---
+title: "Network & Firewall Configuration"
+description: "Configure network settings, install and configure UFW firewall, and set system limits for Kubernetes"
+---
+
+# Network & Firewall Configuration
+
+Configure network settings, firewall rules, and system limits to prepare your server for ORISO Platform deployment.
+
+<Steps>
+<Step title="Check Network Configuration">
+
+Verify network connectivity and configuration before proceeding.
+
+```bash
+# Check IP address
+ip addr show
+
+# Check default gateway
+ip route show
+
+# Check DNS
+cat /etc/resolv.conf
+
+# Test internet connectivity
+ping -c 4 8.8.8.8
+ping -c 4 google.com
+```
+
+<Check>
+Ensure you can ping external addresses and DNS resolution is working correctly.
+</Check>
+
+</Step>
+
+<Step title="Install and Configure UFW Firewall">
+
+Install UFW (Uncomplicated Firewall) and configure rules for all required services.
+
+<Warning>
+**IMPORTANT**: Always allow SSH (port 22) first before enabling the firewall, or you may lock yourself out!
+</Warning>
+
+```bash
+# Install UFW
+sudo apt install -y ufw
+
+# Set default policies
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+
+# Allow SSH (IMPORTANT - do this first!)
+sudo ufw allow 22/tcp
+sudo ufw allow ssh
+
+# Allow HTTP/HTTPS (optional, for external access)
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+
+# Allow main entry point (Nginx proxy)
+sudo ufw allow 8089/tcp
+
+# Allow Frontend and Admin
+sudo ufw allow 9001/tcp
+sudo ufw allow 9002/tcp
+
+# Allow Keycloak Admin Console
+sudo ufw allow 8080/tcp
+
+# Allow Element.io
+sudo ufw allow 8087/tcp
+
+# Allow Redis Commander (optional)
+sudo ufw allow 9021/tcp
+
+# Allow Redis Exporter (optional)
+sudo ufw allow 9020/tcp
+
+# Allow Health Dashboard (optional)
+sudo ufw allow 9100/tcp
+
+# Allow SignOZ (optional)
+sudo ufw allow 3001/tcp
+
+# Allow Matrix Synapse (if direct access needed)
+sudo ufw allow 8008/tcp
+
+# Enable UFW
+sudo ufw enable
+
+# Check status
+sudo ufw status verbose
+```
+
+<Check>
+Expected output should show all ports as `ALLOW IN` with status `active`. Verify SSH is listed first.
+</Check>
+
+</Step>
+
+<Step title="Configure System Limits">
+
+Increase system file and process limits required for Kubernetes operation.
+
+```bash
+# Increase file limits for Kubernetes
+sudo tee -a /etc/security/limits.conf <<EOF
+* soft nofile 65536
+* hard nofile 65536
+* soft nproc 32768
+* hard nproc 32768
+EOF
+
+# Increase kernel limits
+sudo tee -a /etc/sysctl.conf <<EOF
+fs.file-max = 2097152
+fs.inotify.max_user_watches = 524288
+fs.inotify.max_user_instances = 512
+vm.max_map_count = 262144
+net.ipv4.ip_forward = 1
+EOF
+
+# Apply sysctl settings
+sudo sysctl -p
+
+# Verify
+ulimit -n
+```
+
+<Check>
+The `ulimit -n` command should output `65536`.
+</Check>
+
+<Note>
+You may need to log out and log back in for the limits.conf changes to take full effect.
+</Note>
+
+</Step>
+</Steps>
+
+## Firewall Port Summary
+
+The following ports are configured to allow incoming connections:
+
+| Port | Service | Required |
+|------|---------|----------|
+| `22` | SSH | ✅ Required |
+| `80` | HTTP | Optional (for Let's Encrypt) |
+| `443` | HTTPS | Optional |
+| `8089` | Nginx Proxy | ✅ Required |
+| `9001` | Frontend | ✅ Required |
+| `9002` | Admin | ✅ Required |
+| `8080` | Keycloak | ✅ Required |
+| `8087` | Element.io | ✅ Required |
+| `8008` | Matrix Synapse | Optional |
+| `9021` | Redis Commander | Optional |
+| `9020` | Redis Exporter | Optional |
+| `9100` | Health Dashboard | Optional |
+| `3001` | SignOZ | Optional |
+
+## Troubleshooting
+
+If you're locked out of SSH after enabling the firewall:
+
+1. Access your server via console (not SSH)
+2. Disable UFW: `sudo ufw disable`
+3. Re-add SSH rule: `sudo ufw allow 22/tcp`
+4. Re-enable UFW: `sudo ufw enable`
+
+## Next Steps
+
+- [Install Required Software](/oriso-platform/install-software) - Install Docker and Kubernetes
+- [Clone ORISO Repositories](/oriso-platform/clone-repositories) - Transfer repositories to server
+

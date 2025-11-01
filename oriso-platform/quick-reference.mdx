@@ -1,0 +1,221 @@
+---
+title: "Quick Reference"
+description: "Essential commands, critical ports, and important files for managing ORISO Platform"
+---
+
+# Quick Reference Cheat Sheet
+
+Quick reference guide for essential ORISO Platform management commands, ports, and file locations.
+
+## Essential Commands
+
+### Pod Management
+
+```bash
+# Check all pods
+kubectl get pods -n caritas
+
+# Check pod logs
+kubectl logs deployment/<name> -n caritas
+
+# Follow logs in real-time
+kubectl logs deployment/<name> -n caritas -f
+
+# Restart deployment
+kubectl rollout restart deployment/<name> -n caritas
+
+# Check rollout status
+kubectl rollout status deployment/<name> -n caritas
+
+# Scale deployment
+kubectl scale deployment/<name> --replicas=2 -n caritas
+```
+
+### Service Management
+
+```bash
+# Check all services
+kubectl get svc -n caritas
+
+# Check service endpoints
+kubectl get endpoints -n caritas <service-name>
+
+# Port forward for local access
+kubectl port-forward -n caritas svc/<service> <local-port>:<service-port>
+```
+
+### Debugging
+
+```bash
+# Execute command in pod
+kubectl exec -it deployment/<name> -n caritas -- /bin/bash
+
+# Check pod events
+kubectl describe pod <pod-name> -n caritas
+
+# Check all events (sorted by time)
+kubectl get events -n caritas --sort-by='.lastTimestamp'
+
+# Check resource usage
+kubectl top pod <pod-name> -n caritas
+kubectl top nodes
+```
+
+### Health Checks
+
+```bash
+# Check service health
+curl http://127.0.0.1:<port>/actuator/health
+
+# Check detailed health
+curl http://127.0.0.1:<port>/actuator/health/db | jq .
+curl http://127.0.0.1:<port>/actuator/health/redis | jq .
+```
+
+## Critical Ports
+
+| Service | Port | Health Check Endpoint |
+|---------|------|-----------------------|
+| TenantService | 8081 | `/actuator/health` |
+| UserService | 8082 | `/actuator/health` |
+| ConsultingTypeService | 8083 | `/actuator/health` |
+| AgencyService | 8084 | `/actuator/health` |
+| UploadService | 8085 | `/actuator/health` |
+| VideoService | 8086 | `/actuator/health` |
+| Frontend | 9001 | `/` |
+| Admin | 9002 | `/` |
+| Keycloak | 8080 | `/auth` |
+| Matrix Synapse | 8008 | `/_matrix/client/versions` |
+| Element.io | 8087 | `/` |
+| Nginx Proxy | 8089 | `/` |
+| Health Dashboard | 9100 | `/` |
+| Redis Commander | 9021 | `/` |
+
+## Service Names Reference
+
+Common service names for use with kubectl commands:
+
+| Service Name | Deployment Name |
+|--------------|----------------|
+| Tenant Service | `tenantservice` |
+| User Service | `userservice` |
+| Consulting Type Service | `consultingtypeservice` |
+| Agency Service | `agencyservice` |
+| Upload Service | `uploadservice` |
+| Video Service | `videoservice` |
+| Frontend | `frontend` |
+| Admin | `admin` |
+| Keycloak | `keycloak` |
+| Matrix Synapse | `matrix-synapse` |
+| Element | `element` |
+| Nginx Proxy | `cob-proxy` |
+| MariaDB | `mariadb` |
+| MongoDB | `mongodb` |
+| Redis | `redis` |
+| RabbitMQ | `rabbitmq` |
+
+## Important Files
+
+### Configuration Files
+
+```bash
+# Kubernetes configs
+~/online-beratung/caritas-workspace/ORISO-Kubernetes/
+
+# Database schemas
+~/online-beratung/caritas-workspace/ORISO-Database/
+
+# Keycloak realm
+~/online-beratung/caritas-workspace/ORISO-Keycloak/realm.json
+
+# Kubeconfig
+~/.kube/config
+
+# k3s config
+/etc/rancher/k3s/k3s.yaml
+```
+
+### Configuration Access
+
+```bash
+# View Nginx config
+kubectl get configmap oriso-nginx-config -n caritas -o yaml
+
+# View deployment configuration
+kubectl get deployment <name> -n caritas -o yaml
+
+# View service configuration
+kubectl get svc <name> -n caritas -o yaml
+```
+
+## Quick Health Check Script
+
+Run this script to quickly check all services:
+
+```bash
+#!/bin/bash
+echo "Checking ORISO Platform Services..."
+
+# Backend Services
+for port in 8081 8082 8083 8084; do
+  echo -n "Port $port: "
+  curl -s http://127.0.0.1:$port/actuator/health | jq -r '.status' || echo "FAILED"
+done
+
+# Frontend
+echo -n "Frontend (9001): "
+curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:9001
+
+# Admin
+echo -n "Admin (9002): "
+curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:9002
+
+# Keycloak
+echo -n "Keycloak (8089): "
+curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8089/auth
+
+echo "Health check complete!"
+```
+
+## Common Troubleshooting Commands
+
+```bash
+# Check all pods status
+kubectl get pods -n caritas
+
+# Check failing pods
+kubectl get pods -n caritas | grep -v Running | grep -v Completed
+
+# Check pod logs with errors
+kubectl logs deployment/<name> -n caritas --tail=100 | grep -i error
+
+# Check resource limits
+kubectl describe nodes
+
+# Check persistent volumes
+kubectl get pvc -n caritas
+
+# Check events for errors
+kubectl get events -n caritas --field-selector type=Warning
+```
+
+## Quick Access URLs
+
+Get your server IP and access URLs:
+
+```bash
+SERVER_IP=$(hostname -I | awk '{print $1}')
+
+echo "Main Entry Point: http://$SERVER_IP:8089"
+echo "Frontend: http://$SERVER_IP:9001"
+echo "Admin: http://$SERVER_IP:9002"
+echo "Keycloak: http://$SERVER_IP:8089/auth/admin/"
+echo "Element.io: http://$SERVER_IP:8087"
+```
+
+## Related Documentation
+
+- [Troubleshooting Guide](/oriso-platform/troubleshooting) - Comprehensive troubleshooting
+- [Post-Deployment Configuration](/oriso-platform/post-deployment) - Verify deployment
+- [Verification & Testing](/oriso-platform/verification-testing) - Test platform functionality
+

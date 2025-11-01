@@ -1,0 +1,66 @@
+---
+title: "Deploy Frontend"
+description: "Deploy frontend and admin applications for ORISO Platform"
+---
+
+# Deploy Frontend
+
+Deploy the frontend and admin web applications.
+
+<Steps>
+<Step title="Deploy Frontend and Admin">
+
+Deploy both frontend and admin applications.
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes
+
+# Deploy frontend
+kubectl apply -f deployments/05-frontend.yaml
+
+# Wait for frontend
+kubectl wait --for=condition=ready pod -l tier=frontend -n caritas --timeout=300s
+
+# Check status
+kubectl get pods -n caritas | grep -E "frontend|admin"
+```
+
+<Check>
+You should see both pods running:
+- frontend-xxx    1/1     Running
+- admin-xxx       1/1     Running
+</Check>
+
+</Step>
+
+<Step title="Verify Frontend Access">
+
+Verify frontend and admin are accessible.
+
+```bash
+# Check Frontend (should return HTML)
+curl -I http://127.0.0.1:9001
+# Expected: HTTP/1.1 200 OK
+
+# Check Admin (should return HTML)
+curl -I http://127.0.0.1:9002
+# Expected: HTTP/1.1 200 OK
+
+# Access in browser
+SERVER_IP=$(hostname -I | awk '{print $1}')
+echo "Frontend: http://$SERVER_IP:9001"
+echo "Admin: http://$SERVER_IP:9002"
+```
+
+<Check>
+Both endpoints should return HTTP 200 OK status.
+</Check>
+
+</Step>
+</Steps>
+
+## Next Steps
+
+- [Deploy Matrix Communication](/oriso-platform/deploy-matrix) - Deploy Matrix chat services
+- [Deploy Nginx Proxy](/oriso-platform/deploy-nginx) - Deploy reverse proxy
+

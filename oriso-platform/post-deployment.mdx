@@ -1,0 +1,120 @@
+---
+title: "Post-Deployment Configuration"
+description: "Verify all pods are running, check service health, and get all access URLs"
+---
+
+# Post-Deployment Configuration
+
+Verify your ORISO Platform deployment is complete and all services are operational.
+
+<Steps>
+<Step title="Verify All Pods are Running">
+
+Check that all pods are running successfully.
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes
+
+# Run verification script
+./scripts/verify-deployment.sh
+
+# Or manual check
+kubectl get pods -n caritas
+
+# Count running pods
+kubectl get pods -n caritas --no-headers | grep Running | wc -l
+# Should be 20+ pods
+
+# Check for failing pods
+kubectl get pods -n caritas | grep -v Running | grep -v Completed
+# Should be empty or only pending pods
+```
+
+<Check>
+Expected: 20+ pods in Running state, no failing pods (except possibly some pending during startup).
+</Check>
+
+</Step>
+
+<Step title="Check Service Health">
+
+Verify all services are responding to health checks.
+
+```bash
+# Backend Services
+for port in 8081 8082 8083 8084; do
+  echo "Checking port $port..."
+  curl -s http://127.0.0.1:$port/actuator/health | jq .
+done
+
+# Frontend
+curl -I http://127.0.0.1:9001
+curl -I http://127.0.0.1:9002
+
+# Keycloak
+curl -s http://127.0.0.1:8089/auth/realms/online-beratung/.well-known/openid-configuration | jq .realm
+
+# Matrix
+curl -s http://127.0.0.1:8008/_matrix/client/versions | jq .
+
+# Redis Commander
+curl -I http://127.0.0.1:9021
+```
+
+<Check>
+All services should return healthy status or HTTP 200 OK.
+</Check>
+
+</Step>
+
+<Step title="Get All Access URLs">
+
+Display all access URLs for the deployed platform.
+
+```bash
+SERVER_IP=$(hostname -I | awk '{print $1}')
+
+cat <<EOF
+
+════════════════════════════════════════════════════════════
+  ORISO Platform - Access URLs
+════════════════════════════════════════════════════════════
+
+Main Entry Point:
+  Nginx Proxy: http://$SERVER_IP:8089
+
+Frontend:
+  Frontend:    http://$SERVER_IP:9001
+  Admin:       http://$SERVER_IP:9002
+
+Authentication:
+  Keycloak:    http://$SERVER_IP:8089/auth/admin/
+  (Login: admin / admin)
+
+Communication:
+  Element.io:  http://$SERVER_IP:8087
+
+Monitoring:
+  Redis Cmdr:  http://$SERVER_IP:9021
+  Health Dash: http://$SERVER_IP:9100
+  SignOZ:      http://$SERVER_IP:3001 (if deployed)
+
+Backend Services (Health Checks):
+  TenantService:         http://$SERVER_IP:8081/actuator/health
+  UserService:           http://$SERVER_IP:8082/actuator/health
+  ConsultingTypeService: http://$SERVER_IP:8083/actuator/health
+  AgencyService:         http://$SERVER_IP:8084/actuator/health
+
+════════════════════════════════════════════════════════════
+
+EOF
+```
+
+</Step>
+</Steps>
+
+## Next Steps
+
+- [Verification & Testing](/oriso-platform/verification-testing) - Comprehensive testing
+- [DNS & SSL Setup](/oriso-platform/dns-ssl) - Optional domain and SSL configuration
+

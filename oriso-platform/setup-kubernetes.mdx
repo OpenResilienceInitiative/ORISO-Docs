@@ -1,0 +1,161 @@
+---
+title: "Setup Kubernetes (k3s)"
+description: "Verify k3s installation, create namespace, and configure Kubernetes for ORISO Platform deployment"
+---
+
+# Setup Kubernetes (k3s)
+
+Verify k3s is running correctly and prepare Kubernetes namespace for ORISO Platform.
+
+<Steps>
+<Step title="Verify k3s is Running">
+
+Check that k3s service is active and Kubernetes cluster is operational.
+
+```bash
+# Check k3s status
+sudo systemctl status k3s
+
+# Check nodes
+kubectl get nodes
+
+# Check all pods
+kubectl get pods --all-namespaces
+
+# Check storage class
+kubectl get storageclass
+```
+
+<Check>
+Expected output should show:
+- k3s service: `active (running)`
+- Node status: `Ready`
+- Storage class: `local-path (default)` with provisioner `rancher.io/local-path`
+</Check>
+
+</Step>
+
+<Step title="Create Namespace">
+
+Create the `caritas` namespace for ORISO Platform resources.
+
+```bash
+# Create caritas namespace
+kubectl create namespace caritas
+
+# Verify
+kubectl get namespaces
+
+# Set default namespace (optional)
+kubectl config set-context --current --namespace=caritas
+```
+
+<Check>
+The `caritas` namespace should appear in the namespaces list.
+</Check>
+
+<Note>
+Setting the default namespace is optional but convenient, as it allows you to omit `-n caritas` from subsequent kubectl commands.
+</Note>
+
+</Step>
+
+<Step title="Configure k3s for Production">
+
+Configure k3s for production use with custom settings.
+
+<Info>
+This step is optional but recommended for production deployments.
+</Info>
+
+```bash
+# Edit k3s service
+sudo systemctl edit k3s
+```
+
+Add resource limits and configuration:
+
+```ini
+[Service]
+Environment="K3S_KUBECONFIG_MODE=644"
+Environment="K3S_NODE_NAME=oriso-platform"
+```
+
+Apply changes:
+
+```bash
+# Restart k3s
+sudo systemctl daemon-reload
+sudo systemctl restart k3s
+
+# Verify
+sudo systemctl status k3s
+```
+
+<Check>
+k3s should restart successfully and show `active (running)` status.
+</Check>
+
+</Step>
+</Steps>
+
+## Verification
+
+After completing all steps, verify Kubernetes is ready:
+
+```bash
+# Check node is ready
+kubectl get nodes
+
+# Check namespace exists
+kubectl get namespaces | grep caritas
+
+# Check storage class
+kubectl get storageclass
+```
+
+## Troubleshooting
+
+### k3s Not Running
+
+Check k3s logs:
+
+```bash
+sudo journalctl -u k3s -f
+```
+
+Verify swap is disabled (required for k3s):
+
+```bash
+free -h
+```
+
+### Cannot Access Cluster
+
+Check kubeconfig:
+
+```bash
+cat ~/.kube/config
+```
+
+Verify file permissions:
+
+```bash
+ls -la ~/.kube/config
+# Should be readable by your user
+```
+
+### Storage Class Missing
+
+If `local-path` storage class is missing:
+
+```bash
+# Check if local-path-provisioner is running
+kubectl get pods -n local-path-storage
+```
+
+## Next Steps
+
+- [Deploy Infrastructure](/oriso-platform/deploy-infrastructure) - Deploy databases, Redis, and Keycloak
+- [Clone ORISO Repositories](/oriso-platform/clone-repositories) - If you haven't already
+
