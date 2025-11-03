@@ -1,0 +1,292 @@
+---
+title: "MCP Getting Started"
+description: "Basic setup guide for MCP servers with GitHub and Slack integration"
+---
+
+## Overview
+
+The Model Context Protocol (MCP) enables seamless integration between AI assistants (Claude, Cursor) and various development tools like GitHub, Slack, and more. This guide covers setting up MCP servers to connect all your tools in one unified workflow.
+
+<Tip>
+**Goal**: Transform daily standup meetings into decision-making meetings by automatically syncing GitHub issues, pull requests, and project status to Slack channels.
+</Tip>
+
+## Prerequisites
+
+- **Claude Desktop** installed (or Cursor IDE)
+- **GitHub account** with Personal Access Token
+- **Slack workspace** with app creation permissions
+- **Node.js** 18+ installed (for Node-based MCP servers)
+
+## Architecture Overview
+
+```mermaid
+flowchart LR
+    A[Claude Desktop<br/>or Cursor] -->|MCP Protocol| B[MCP Servers]
+    B --> C[GitHub MCP]
+    B --> D[Slack MCP]
+    B --> E[Future: Jira MCP]
+    C --> F[GitHub API]
+    D --> G[Slack API]
+    F --> H[Issues/PRs/Reviews]
+    G --> I[Slack Channels]
+    H --> I
+```
+
+## Step 1: Install Claude Desktop
+
+### 1.1 Download and Install
+
+1. Visit [Anthropic Claude Desktop](https://claude.ai/download)
+2. Download the installer for your operating system (macOS/Windows/Linux)
+3. Install following the on-screen instructions
+
+<Note>
+**For Cursor users**: Cursor has built-in MCP support. See [Advanced Configuration](/oriso-platform/ai/mcp-advanced-config) for Cursor setup.
+</Note>
+
+### 1.2 Locate Configuration File
+
+The Claude Desktop configuration file location:
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+- **Linux**: `~/.config/Claude/claude_desktop_config.json`
+
+<Tip>
+Create the file if it doesn't exist. It should be a valid JSON file.
+</Tip>
+
+---
+
+## Step 2: Configure GitHub MCP Server
+
+### 2.1 Create GitHub Personal Access Token
+
+1. Go to [GitHub Settings → Developer settings → Personal access tokens](https://github.com/settings/tokens)
+2. Click **"Generate new token" → "Generate new token (classic)"**
+3. Configure token:
+   - **Note**: `MCP Server Integration`
+   - **Expiration**: Choose based on your security policy
+   - **Scopes**: Select:
+     - `repo` (Full control of private repositories)
+     - `read:org` (if accessing organization repos)
+     - `read:user`
+     - `read:discussion`
+4. Click **"Generate token"**
+5. **Copy the token immediately** (you won't see it again)
+
+<Warning>
+Store tokens securely. Never commit them to version control.
+</Warning>
+
+### 2.2 Configure GitHub MCP in Claude Desktop
+
+Edit your `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_your_token_here"
+      }
+    }
+  }
+}
+```
+
+**Replace `ghp_your_token_here`** with your actual token.
+
+### 2.3 Verify GitHub Integration
+
+1. Restart Claude Desktop
+2. Ask Claude: *"List open issues in the ORISO-Docs repository"*
+3. You should see GitHub data in the response
+
+**Where to Find GitHub MCP Server:**
+- Archived: [servers-archived/src/github](https://github.com/modelcontextprotocol/servers-archived/tree/main/src/github)
+- Official: [GitHub's official MCP server](https://github.com/github/mcp-server-github) (newer implementation)
+- Install via: `npx -y @modelcontextprotocol/server-github` or `npx -y @github/mcp-server-github`
+
+---
+
+## Step 3: Configure Slack MCP Server
+
+### 3.1 Create Slack App
+
+1. Visit [Slack API Apps](https://api.slack.com/apps)
+2. Click **"Create New App"**
+3. Select **"From scratch"**
+4. Configure app:
+   - **App Name**: `ORISO Integration Bot` (or your preferred name)
+   - **Pick a workspace**: Select your Slack workspace
+5. Click **"Create App"**
+
+### 3.2 Configure OAuth Scopes
+
+1. In your app dashboard, go to **"OAuth & Permissions"** (left sidebar)
+2. Scroll to **"Scopes" → "Bot Token Scopes"**
+3. Add the following scopes (click "Add an OAuth Scope" for each):
+
+   **Essential Scopes:**
+   - `channels:history` - Read message history
+   - `channels:join` - Join public channels
+   - `channels:read` - View basic channel information
+   - `chat:write` - Send messages
+   - `chat:write.public` - Send messages to channels without joining
+   - `reactions:write` - Add reactions
+   - `users:read` - View people in workspace
+   - `groups:history` - Read private channel history (if needed)
+   - `im:history` - Read direct message history
+   - `mpim:history` - Read group DM history
+
+4. Scroll to top and click **"Install to Workspace"**
+5. Review permissions and click **"Allow"**
+6. **Copy the "Bot User OAuth Token"** (starts with `xoxb-`)
+
+<Info>
+Keep this token secure. It's your Slack bot authentication credential.
+</Info>
+
+### 3.3 Get Team ID and Channel IDs
+
+#### Get Team ID:
+1. Open Slack web app in browser
+2. Look at the URL: `https://your-workspace.slack.com/...`
+3. Or check workspace URL in settings
+4. Team ID format: Starts with `T` (e.g., `T01234567`)
+
+#### Get Channel IDs:
+1. Open Slack web app
+2. Navigate to desired channel
+3. Click channel name in header
+4. Scroll to bottom → **"Channel Details"** → **"About"**
+5. Channel ID is shown (format: `C01234567`)
+
+<Note>
+You can also get Channel ID from the browser URL when viewing a channel.
+</Note>
+
+### 3.4 Configure Slack MCP in Claude Desktop
+
+Edit your `claude_desktop_config.json` to add Slack configuration:
+
+```json
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_your_token_here"
+      }
+    },
+    "slack": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-slack"
+      ],
+      "env": {
+        "SLACK_BOT_TOKEN": "xoxb-your-slack-bot-token-here",
+        "SLACK_TEAM_ID": "T01234567",
+        "SLACK_CHANNEL_IDS": "C01234567,C09876543"
+      }
+    }
+  }
+}
+```
+
+**Configuration Fields:**
+- `SLACK_BOT_TOKEN`: Your bot token from Step 3.2 (get from [Slack API Apps](https://api.slack.com/apps) → Your App → OAuth & Permissions)
+- `SLACK_TEAM_ID`: Your workspace team ID from Step 3.3 (found in Slack web URL or workspace settings)
+- `SLACK_CHANNEL_IDS`: Comma-separated list of channel IDs where you want to post (found in channel details → About section)
+
+<Note>
+**Where to find Slack MCP server**: The Slack MCP server can be found in:
+- Archived: [servers-archived/src/slack](https://github.com/modelcontextprotocol/servers-archived/tree/main/src/slack)
+- Community: Search [MCP Servers Registry](https://github.com/modelcontextprotocol/servers) for "slack" for alternative implementations
+- Install via: `npx -y @modelcontextprotocol/server-slack` (if available) or check community alternatives
+</Note>
+
+<Example>
+**Example channel IDs:**
+- `C055MSA1234` (dev-channel)
+- `C055MSA5678` (project-status)
+- `C055MSA9012` (github-updates)
+</Example>
+
+### 3.5 Verify Slack Integration
+
+1. Restart Claude Desktop
+2. Ask Claude: *"List channels in Slack workspace"*
+3. Test posting: *"Post 'Hello from MCP!' to the #dev-channel Slack channel"*
+
+---
+
+## Step 4: Integration Use Cases
+
+### 4.1 GitHub Issues → Slack
+
+**Scenario**: Automatically post GitHub issues to Slack when created or updated.
+
+**Example Prompt:**
+```
+Create a GitHub issue in the ORISO-Docs repository with title "Update MCP documentation" 
+and body "Add screenshots to MCP setup guide" and post a summary to the #github-updates 
+Slack channel.
+```
+
+### 4.2 Pull Request Status → Slack
+
+**Scenario**: Get daily summary of pull requests and post to Slack.
+
+**Example Prompt:**
+```
+List all open pull requests in the ORISO-Docs organization, summarize the status, 
+reviewers, and create a formatted message. Post this summary to the #project-status 
+Slack channel.
+```
+
+### 4.3 Daily Standup Automation
+
+**Scenario**: Generate daily work summary from GitHub activity.
+
+**Example Prompt:**
+```
+Generate today's work status summary:
+- List all issues created/closed today in ORISO repositories
+- List all pull requests opened/merged today
+- Summarize code review activity
+- Format as a standup update
+- Post to #daily-standup Slack channel
+```
+
+### 4.4 Code Review Notifications
+
+**Scenario**: Notify team when reviews are needed.
+
+**Example Prompt:**
+```
+Find all pull requests in ORISO-Docs that are ready for review (approved by CI, no 
+blocking reviews). Create a Slack message listing these PRs with links and post to 
+#code-review Slack channel.
+```
+
+---
+
+## Next Steps
+
+- **Advanced Configuration**: See [MCP Advanced Configuration](/oriso-platform/ai/mcp-advanced-config) for multiple accounts, Docker, and IDE setup
+- **Alternative Clients**: See [MCP Alternative Clients](/oriso-platform/ai/mcp-alternative-clients) for other ways to use MCP
+- **ORISO Integration**: See [MCP ORISO Integration](/oriso-platform/ai/mcp-oriso-integration) for ORISO-specific servers and workflows
+- **Reference Guide**: See [MCP Reference Guide](/oriso-platform/ai/mcp-reference) for troubleshooting and quick reference
+

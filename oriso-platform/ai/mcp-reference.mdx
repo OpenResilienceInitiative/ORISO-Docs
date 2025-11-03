@@ -1,0 +1,227 @@
+---
+title: "MCP Reference Guide"
+description: "Troubleshooting, security best practices, quick reference, and resources for MCP servers"
+---
+
+## Overview
+
+Quick reference guide for troubleshooting MCP server issues, security best practices, configuration locations, and additional resources.
+
+---
+
+## Testing and Verification
+
+### Test GitHub Integration
+
+**Test Commands:**
+```
+1. "List all repositories in the ORISO organization"
+2. "Create an issue in ORISO-Docs with title 'Test Issue'"
+3. "Get details of pull request #123 in ORISO-Frontend"
+4. "List open issues assigned to me"
+```
+
+### Test Slack Integration
+
+**Test Commands:**
+```
+1. "List all channels in my Slack workspace"
+2. "Post 'Test message from MCP' to #dev-channel"
+3. "Get message history from #github-updates channel"
+4. "Add a :thumbsup: reaction to the latest message in #dev-channel"
+```
+
+### Test Combined Workflow
+
+**Integration Test:**
+```
+Create a GitHub issue in ORISO-Docs repository with title "MCP Integration Test" 
+and body "Testing automated Slack posting" and then post a formatted summary 
+with issue number and link to the #github-updates Slack channel.
+```
+
+---
+
+## Troubleshooting
+
+### Common Issues
+
+**Issue**: MCP servers not loading
+- **Solution**: Restart Claude Desktop/Cursor after configuration changes
+- **Check**: JSON syntax is valid (use a JSON validator)
+- **Verify**: Node.js is installed (`node --version`)
+
+**Issue**: GitHub token not working
+- **Solution**: Regenerate token with correct scopes
+- **Check**: Token hasn't expired
+- **Verify**: Token has access to the repositories you're querying
+
+**Issue**: Slack bot not posting messages
+- **Solution**: Ensure bot is added to target channels (`/invite @your-bot`)
+- **Check**: Bot token has `chat:write.public` scope
+- **Verify**: Channel IDs are correct
+
+**Issue**: Channel not found
+- **Solution**: Use Channel ID, not channel name (e.g., `C01234567` not `#general`)
+- **Check**: Bot has `channels:join` permission and is in the channel
+
+### Debug Mode
+
+Enable debug logging for MCP servers:
+
+```json
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_your_token",
+        "DEBUG": "true"
+      }
+    }
+  }
+}
+```
+
+### Check Logs
+
+**Claude Desktop:**
+- macOS: `~/Library/Logs/Claude/`
+- Windows: `%APPDATA%\Claude\Logs\`
+
+**Cursor:**
+- Check Developer Tools (Help → Toggle Developer Tools)
+- Look for MCP-related errors in console
+
+---
+
+## Security Best Practices
+
+### Token Management
+
+- ✅ Use environment variables or secure vaults
+- ✅ Rotate tokens regularly (every 90 days)
+- ✅ Use fine-grained tokens with minimal scopes
+- ❌ Never commit tokens to git
+- ❌ Never share tokens in screenshots/docs
+
+### Slack App Security
+
+- ✅ Restrict bot to necessary channels only
+- ✅ Review OAuth scopes periodically
+- ✅ Use workspace-specific tokens
+- ✅ Monitor bot activity logs
+
+### GitHub Token Scopes
+
+- ✅ Principle of least privilege
+- ✅ Use fine-grained tokens when possible
+- ✅ Enable token expiration
+- ✅ Revoke unused tokens
+
+---
+
+## Quick Reference
+
+### Configuration File Locations
+
+| Tool | Config Location |
+|------|----------------|
+| Claude Desktop (macOS) | `~/Library/Application Support/Claude/claude_desktop_config.json` |
+| Claude Desktop (Windows) | `%APPDATA%\Claude\claude_desktop_config.json` |
+| Cursor (macOS) | `~/.cursor/mcp.json` |
+| Cursor (Windows) | `%APPDATA%\Cursor\mcp.json` |
+| VSCode | `.vscode/settings.json` (workspace) |
+
+### Required Tokens
+
+| Service | Token Format | Where to Get |
+|---------|-------------|--------------|
+| GitHub | `ghp_...` | GitHub Settings → Developer settings → Personal access tokens |
+| Slack Bot | `xoxb-...` | Slack API Apps → Your App → OAuth & Permissions |
+| Slack Team ID | `T...` | Slack web URL or workspace settings |
+
+### Common MCP Commands
+
+```bash
+# Test GitHub connection
+"List repositories in ORISO organization"
+
+# Test Slack connection  
+"Post test message to #dev-channel"
+
+# Combined workflow
+"Create GitHub issue and post summary to Slack"
+
+# Status check
+"Show status of all open pull requests and post summary to Slack"
+```
+
+---
+
+## Screenshot Checklist
+
+When documenting, include screenshots for:
+
+1. ✅ Claude Desktop configuration file location
+2. ✅ GitHub Personal Access Token creation page
+3. ✅ GitHub token scopes selection
+4. ✅ Slack App creation page
+5. ✅ Slack OAuth scopes configuration
+6. ✅ Slack Bot Token display
+7. ✅ Slack Team ID location (workspace URL)
+8. ✅ Slack Channel ID location (channel details)
+9. ✅ Complete `claude_desktop_config.json` configuration
+10. ✅ Test prompts and responses
+11. ✅ Slack channel showing automated posts
+12. ✅ GitHub issues/PRs created via MCP
+
+---
+
+## Additional Resources
+
+### Official Documentation
+- [Model Context Protocol Documentation](https://modelcontextprotocol.io/)
+- [MCP Specification](https://spec.modelcontextprotocol.io/)
+- [Claude Desktop Setup Guide](https://docs.anthropic.com/claude/desktop)
+- [Cursor MCP Documentation](https://cursor.sh/docs)
+
+### MCP Servers
+- [GitHub MCP Server (Archived)](https://github.com/modelcontextprotocol/servers-archived/tree/main/src/github)
+- [GitHub MCP Server (Official)](https://github.com/github/mcp-server-github)
+- [Slack MCP Server (Archived)](https://github.com/modelcontextprotocol/servers-archived/tree/main/src/slack)
+- [MCP Servers Registry](https://github.com/modelcontextprotocol/servers)
+
+### SDKs & Development
+- [TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk)
+- [Python SDK](https://github.com/modelcontextprotocol/python-sdk)
+- [Go SDK](https://github.com/modelcontextprotocol/go-sdk)
+- [Rust SDK](https://github.com/modelcontextprotocol/rust-sdk)
+- [Java SDK](https://github.com/modelcontextprotocol/java-sdk)
+- [Swift SDK](https://github.com/modelcontextprotocol/swift-sdk)
+
+### Alternative Clients & Tools
+- [Windsurf IDE](https://www.codeium.com/windsurf)
+- [MCP CLI Client](https://github.com/modelcontextprotocol/cli)
+- [MCP.run Platform](https://mcp.run) - Hosted MCP servers
+- [MCPHub](https://mcphub.io) - Web-based MCP management
+- [MCP Marketplace](https://mcpmarketplace.com) - Discover MCP servers
+
+### Community Resources
+- [MCP Discord Server](https://discord.gg/modelcontextprotocol)
+- [MCP Subreddit](https://reddit.com/r/modelcontextprotocol)
+- [Awesome MCP Servers](https://github.com/modelcontextprotocol/awesome-mcp) - Curated list
+
+---
+
+## Support
+
+For issues specific to ORISO platform integration:
+- Check ORISO-Docs repository issues
+- Contact platform team via Slack #oriso-support
+
+<Info>
+Last updated: 2024. Configuration verified with Claude Desktop 1.x, Cursor 0.40+, and MCP protocol v1.0.
+</Info>
+

@@ -57,6 +57,16 @@
             ]
           },
           {
+            "group": "AI Integration",
+            "pages": [
+              "oriso-platform/ai/mcp-getting-started",
+              "oriso-platform/ai/mcp-advanced-config",
+              "oriso-platform/ai/mcp-alternative-clients",
+              "oriso-platform/ai/mcp-oriso-integration",
+              "oriso-platform/ai/mcp-reference"
+            ]
+          },
+          {
             "group": "Operations",
             "pages": [
               "oriso-platform/coding-standards",

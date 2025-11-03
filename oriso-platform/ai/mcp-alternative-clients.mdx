@@ -1,0 +1,421 @@
+---
+title: "MCP Alternative Clients"
+description: "Alternative ways to use MCP servers beyond Claude Desktop and Cursor IDE"
+---
+
+## Overview
+
+MCP servers can be used with various clients and methods beyond traditional IDEs. This guide covers alternative ways to leverage MCP servers including CLI tools, SDKs, remote servers, and custom integrations.
+
+<Note>
+**Prerequisites**: Familiarity with basic MCP concepts from the [Getting Started Guide](/oriso-platform/ai/mcp-getting-started) is recommended.
+</Note>
+
+---
+
+## Windsurf IDE
+
+**Windsurf** is a modern AI-powered IDE with built-in MCP support.
+
+**Configuration:**
+1. Open Windsurf Settings
+2. Navigate to MCP configuration
+3. Add MCP servers similar to Cursor configuration
+
+**Config File Location:**
+- `~/.windsurf/mcp.json` (macOS/Linux)
+- `%APPDATA%\Windsurf\mcp.json` (Windows)
+
+---
+
+## Neovim
+
+Use MCP servers with Neovim through community plugins.
+
+**Installation:**
+```bash
+# Using packer.nvim or lazy.nvim
+# Install MCP client plugin
+```
+
+**Configuration:**
+```lua
+-- Example Neovim configuration
+require("mcp").setup({
+  servers = {
+    github = {
+      command = "npx",
+      args = {"-y", "@modelcontextprotocol/server-github"},
+      env = {
+        GITHUB_PERSONAL_ACCESS_TOKEN = "ghp_your_token"
+      }
+    }
+  }
+})
+```
+
+**Resources:**
+- Search for "mcp" plugins in Neovim plugin repositories
+- Check Neovim community configurations
+
+---
+
+## MCP CLI Client
+
+Use MCP servers directly from the command line.
+
+**Installation:**
+```bash
+# Install MCP CLI client
+npm install -g @modelcontextprotocol/cli
+# or
+npx @modelcontextprotocol/cli
+```
+
+**Usage:**
+```bash
+# List available tools
+mcp list-tools
+
+# Execute a tool
+mcp call-tool github list_repositories --owner=ORISO
+
+# Interactive mode
+mcp interactive
+```
+
+---
+
+## Programmatic Usage (SDKs)
+
+Integrate MCP servers into your own applications using SDKs.
+
+### TypeScript/JavaScript
+
+```typescript
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+
+// Create client
+const transport = new StdioClientTransport({
+  command: "npx",
+  args: ["-y", "@modelcontextprotocol/server-github"],
+  env: {
+    GITHUB_PERSONAL_ACCESS_TOKEN: "ghp_your_token"
+  }
+});
+
+const client = new Client({
+  name: "my-app",
+  version: "1.0.0"
+}, {
+  capabilities: {}
+});
+
+await client.connect(transport);
+
+// Call tools
+const result = await client.callTool({
+  name: "list_repositories",
+  arguments: { owner: "ORISO" }
+});
+```
+
+### Python
+
+```python
+from mcp import ClientSession, StdioServerParameters
+from mcp.client.stdio import stdio_client
+
+async def main():
+    server_params = StdioServerParameters(
+        command="npx",
+        args=["-y", "@modelcontextprotocol/server-github"],
+        env={"GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_your_token"}
+    )
+    
+    async with stdio_client(server_params) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+            
+            # Call tools
+            result = await session.call_tool(
+                "list_repositories",
+                {"owner": "ORISO"}
+            )
+            print(result)
+```
+
+**Resources:**
+- [TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk)
+- [Python SDK](https://github.com/modelcontextprotocol/python-sdk)
+- [Go SDK](https://github.com/modelcontextprotocol/go-sdk)
+- [Rust SDK](https://github.com/modelcontextprotocol/rust-sdk)
+
+---
+
+## Remote MCP Servers (HTTP/SSE)
+
+Use MCP servers over HTTP or Server-Sent Events (SSE) for remote access.
+
+### HTTP Transport
+
+```json
+{
+  "mcpServers": {
+    "remote-github": {
+      "url": "https://mcp-server.example.com/github",
+      "headers": {
+        "Authorization": "Bearer your-token"
+      }
+    }
+  }
+}
+```
+
+### SSE Transport
+
+```json
+{
+  "mcpServers": {
+    "remote-github": {
+      "url": "https://mcp-server.example.com/github/sse",
+      "transport": "sse"
+    }
+  }
+}
+```
+
+**Benefits:**
+- Access MCP servers from anywhere
+- Share servers across team members
+- Centralized authentication
+- No local installation required
+
+---
+
+## Web-based Clients
+
+Use MCP servers in web applications.
+
+**Browser Client:**
+```javascript
+// Using MCP SDK in browser
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { SSETransport } from "@modelcontextprotocol/sdk/client/sse.js";
+
+const transport = new SSETransport(
+  new URL("https://mcp-server.example.com/sse")
+);
+
+const client = new Client({
+  name: "web-app",
+  version: "1.0.0"
+}, {
+  capabilities: {}
+});
+
+await client.connect(transport);
+```
+
+**Hosted MCP Platforms:**
+- **MCP.run**: Hosted MCP server platform
+- **MCPHub**: Web-based MCP management
+- **Custom deployments**: Deploy your own MCP gateway
+
+---
+
+## Integration with Other AI Tools
+
+### LangChain Integration
+
+```python
+from langchain.agents import AgentExecutor
+from langchain_mcp import MCPTool
+
+# Create MCP tool
+mcp_tool = MCPTool(
+    server_url="http://localhost:8080",
+    tool_name="list_repositories"
+)
+
+# Use in agent
+agent = AgentExecutor.from_tools([mcp_tool])
+```
+
+### OpenAI Function Calling
+
+```python
+# MCP servers can expose tools as OpenAI functions
+# Compatible with OpenAI's function calling API
+```
+
+---
+
+## Custom Scripts & Automation
+
+### Node.js Script
+
+```javascript
+#!/usr/bin/env node
+const { Client } = require("@modelcontextprotocol/sdk/client");
+const { StdioClientTransport } = require("@modelcontextprotocol/sdk/client/stdio");
+
+async function automateGitHubTasks() {
+  const transport = new StdioClientTransport({
+    command: "npx",
+    args: ["-y", "@modelcontextprotocol/server-github"],
+    env: {
+      GITHUB_PERSONAL_ACCESS_TOKEN: process.env.GITHUB_TOKEN
+    }
+  });
+
+  const client = new Client({
+    name: "automation-script",
+    version: "1.0.0"
+  }, {
+    capabilities: {}
+  });
+
+  await client.connect(transport);
+
+  // Your automation logic here
+  const repos = await client.callTool({
+    name: "list_repositories",
+    arguments: { owner: "ORISO" }
+  });
+
+  console.log(repos);
+}
+
+automateGitHubTasks();
+```
+
+### Python Script
+
+```python
+#!/usr/bin/env python3
+import asyncio
+from mcp import ClientSession, StdioServerParameters
+from mcp.client.stdio import stdio_client
+
+async def main():
+    server_params = StdioServerParameters(
+        command="npx",
+        args=["-y", "@modelcontextprotocol/server-github"],
+        env={"GITHUB_PERSONAL_ACCESS_TOKEN": os.getenv("GITHUB_TOKEN")}
+    )
+    
+    async with stdio_client(server_params) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+            
+            # Your automation logic
+            repos = await session.call_tool(
+                "list_repositories",
+                {"owner": "ORISO"}
+            )
+            print(repos)
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+---
+
+## CI/CD Integration
+
+Integrate MCP servers into your CI/CD pipelines.
+
+**GitHub Actions Example:**
+```yaml
+name: MCP Automation
+
+on:
+  schedule:
+    - cron: '0 9 * * *'  # Daily at 9 AM
+
+jobs:
+  automate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Run MCP Automation
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        run: |
+          npm install -g @modelcontextprotocol/cli
+          mcp run-automation
+```
+
+---
+
+## Mobile Apps & Desktop Apps
+
+### Electron App
+
+```javascript
+// Use MCP in Electron desktop apps
+const { Client } = require("@modelcontextprotocol/sdk/client");
+// ... integrate MCP into your Electron app
+```
+
+### React Native
+
+```javascript
+// Use MCP servers in React Native via HTTP/SSE transport
+// Connect to remote MCP servers
+```
+
+---
+
+## Comparison Table
+
+| Method | Use Case | Pros | Cons |
+|--------|----------|------|------|
+| **Claude Desktop** | Personal AI assistant | Easy setup, official support | Desktop only |
+| **Cursor/Windsurf** | IDE integration | Seamless code assistance | IDE-specific |
+| **Neovim** | Terminal-based editing | Lightweight, customizable | Requires plugin setup |
+| **CLI Client** | Scripting & automation | Direct control, scripting | No GUI |
+| **Programmatic SDK** | Custom applications | Full control, integration | Requires development |
+| **Remote HTTP/SSE** | Team access, cloud | Centralized, scalable | Requires server setup |
+| **Docker** | Isolation, deployment | Portable, isolated | Container overhead |
+| **Web Client** | Browser-based apps | Accessible, no install | Network dependency |
+
+---
+
+## Choosing the Right Method
+
+**For Personal Use:**
+- ✅ Claude Desktop (easiest)
+- ✅ Cursor IDE (for coding)
+
+**For Team Collaboration:**
+- ✅ Remote MCP servers (HTTP/SSE)
+- ✅ Docker containers
+- ✅ CI/CD integration
+
+**For Custom Applications:**
+- ✅ SDKs (TypeScript, Python, Go, Rust)
+- ✅ Programmatic usage
+- ✅ Custom integrations
+
+**For Automation:**
+- ✅ CLI client
+- ✅ Custom scripts
+- ✅ CI/CD pipelines
+
+---
+
+## Next Steps
+
+- **ORISO Integration**: See [MCP ORISO Integration](/oriso-platform/ai/mcp-oriso-integration) for ORISO-specific servers
+- **Reference Guide**: See [MCP Reference Guide](/oriso-platform/ai/mcp-reference) for troubleshooting
+

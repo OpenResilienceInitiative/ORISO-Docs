@@ -1,0 +1,213 @@
+---
+title: "MCP Advanced Configuration"
+description: "Advanced MCP setup including multiple accounts, Docker, IDE configurations, and alternative clients"
+---
+
+## Overview
+
+This guide covers advanced MCP server configuration options including multiple accounts, Docker-based deployment, IDE-specific setups, and alternative client integrations.
+
+<Note>
+**Prerequisites**: Complete the [Getting Started Guide](/oriso-platform/ai/mcp-getting-started) before proceeding with advanced configurations.
+</Note>
+
+---
+
+## Multiple GitHub Accounts
+
+If you need multiple GitHub accounts:
+
+```json
+{
+  "mcpServers": {
+    "github-account1": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_token_account1"
+      }
+    },
+    "github-account2": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_token_account2"
+      }
+    }
+  }
+}
+```
+
+---
+
+## Docker-based MCP Servers
+
+Alternative configuration using Docker (if you prefer containerized setup):
+
+```json
+{
+  "mcpServers": {
+    "slack": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "modelcontextprotocol/server-slack"
+      ],
+      "env": {
+        "SLACK_BOT_TOKEN": "xoxb-your-token",
+        "SLACK_TEAM_ID": "T01234567",
+        "SLACK_CHANNEL_IDS": "C01234567"
+      }
+    }
+  }
+}
+```
+
+**Docker Compose Example:**
+```yaml
+version: '3.8'
+services:
+  mcp-github:
+    image: modelcontextprotocol/server-github:latest
+    environment:
+      - GITHUB_PERSONAL_ACCESS_TOKEN=${GITHUB_TOKEN}
+    volumes:
+      - ./mcp-config:/app/config
+
+  mcp-slack:
+    image: modelcontextprotocol/server-slack:latest
+    environment:
+      - SLACK_BOT_TOKEN=${SLACK_BOT_TOKEN}
+      - SLACK_TEAM_ID=${SLACK_TEAM_ID}
+    ports:
+      - "8080:8080"
+```
+
+---
+
+## Environment Variables File
+
+For better security, use environment variables instead of hardcoding tokens:
+
+**Create `.env` file:**
+```bash
+GITHUB_PERSONAL_ACCESS_TOKEN=ghp_your_token
+SLACK_BOT_TOKEN=xoxb_your_token
+SLACK_TEAM_ID=T01234567
+SLACK_CHANNEL_IDS=C01234567,C09876543
+```
+
+**Update config to reference:**
+```json
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
+      }
+    }
+  }
+}
+```
+
+<Warning>
+Ensure `.env` files are in `.gitignore` and never committed to repositories.
+</Warning>
+
+---
+
+## Cursor IDE Setup
+
+### Configure MCP in Cursor
+
+1. Open Cursor Settings (Cmd/Ctrl + ,)
+2. Search for "MCP" or "Model Context Protocol"
+3. Or edit configuration file:
+   - **macOS**: `~/.cursor/mcp.json`
+   - **Windows**: `%APPDATA%\Cursor\mcp.json`
+
+### Cursor MCP Configuration
+
+```json
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_your_token"
+      }
+    },
+    "slack": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-slack"],
+      "env": {
+        "SLACK_BOT_TOKEN": "xoxb_your_token",
+        "SLACK_TEAM_ID": "T01234567",
+        "SLACK_CHANNEL_IDS": "C01234567"
+      }
+    }
+  }
+}
+```
+
+### Restart Cursor
+
+After configuration, restart Cursor to load MCP servers.
+
+---
+
+## VSCode Setup
+
+### Install MCP Extension
+
+1. Open VSCode Extensions (Cmd/Ctrl + Shift + X)
+2. Search for "Model Context Protocol" or "MCP"
+3. Install the official MCP extension (if available)
+
+### Configure VSCode MCP
+
+Edit `.vscode/settings.json` in your workspace:
+
+```json
+{
+  "mcp.servers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_your_token"
+      }
+    },
+    "slack": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-slack"],
+      "env": {
+        "SLACK_BOT_TOKEN": "xoxb_your_token",
+        "SLACK_TEAM_ID": "T01234567",
+        "SLACK_CHANNEL_IDS": "C01234567"
+      }
+    }
+  }
+}
+```
+
+---
+
+## Alternative Clients & Automation
+
+For alternative clients (Windsurf, Neovim), CLI usage, SDK examples, remote HTTP/SSE, web clients, and automation/CI, see:
+
+- [MCP Alternative Clients](/oriso-platform/ai/mcp-alternative-clients)
+
+---
+
+## Next Steps
+
+- **ORISO Integration**: See [MCP ORISO Integration](/oriso-platform/ai/mcp-oriso-integration) for ORISO-specific servers
+- **Reference Guide**: See [MCP Reference Guide](/oriso-platform/ai/mcp-reference) for troubleshooting
+

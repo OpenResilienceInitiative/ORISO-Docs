@@ -1,0 +1,301 @@
+---
+title: "MCP ORISO Integration"
+description: "ORISO platform-specific MCP servers, integration workflows, and priority recommendations"
+---
+
+## Overview
+
+This guide covers ORISO platform-specific MCP server integrations, recommended configurations, and integration priorities based on the ORISO tech stack.
+
+<Note>
+**Prerequisites**: Complete the [Getting Started Guide](/oriso-platform/ai/mcp-getting-started) before configuring ORISO-specific servers.
+</Note>
+
+---
+
+## ORISO Platform Relevant MCP Servers
+
+Based on the ORISO platform architecture and tech stack, here are relevant MCP servers that can enhance your development workflow:
+
+### Core Infrastructure
+
+**GitHub** (Official)
+- **Purpose**: Repository management, issue tracking, PR management
+- **Package**: `@modelcontextprotocol/server-github`
+- **Status**: ✅ Already configured (see [Getting Started](/oriso-platform/ai/mcp-getting-started))
+- **Where to Find**: 
+  - Archived: [servers-archived/src/github](https://github.com/modelcontextprotocol/servers-archived/tree/main/src/github)
+  - Install via: `npx -y @modelcontextprotocol/server-github`
+
+**Slack** (Community)
+- **Purpose**: Team communication, status updates, notifications
+- **Package**: `@modelcontextprotocol/server-slack`
+- **Status**: ✅ Already configured (see [Getting Started](/oriso-platform/ai/mcp-getting-started))
+- **Where to Find**: 
+  - Archived: [servers-archived/src/slack](https://github.com/modelcontextprotocol/servers-archived/tree/main/src/slack)
+  - Install via: `npx -y @modelcontextprotocol/server-slack`
+
+**Matrix** (Community)
+- **Purpose**: E2EE messaging integration (synergy with ORISO-Matrix)
+- **Package**: Community server available
+- **Use Case**: Integrate Matrix homeserver operations with AI assistants
+- **Where to Find**: 
+  - Community implementations: Check [MCP Servers Registry](https://github.com/modelcontextprotocol/servers) for "matrix"
+  - Alternative: Use OpenAPI MCP server with Matrix API: [servers-archived/src/openapi](https://github.com/modelcontextprotocol/servers-archived/tree/main/src/openapi)
+
+**Keycloak** (Community)
+- **Purpose**: Identity and access management operations
+- **Package**: Community MCP servers available
+- **Use Case**: Manage users, realms, clients, roles through AI assistants
+- **Where to Find**: 
+  - Keycloak Admin REST API docs: [keycloak.org/docs-api](https://www.keycloak.org/docs-api)
+  - Use an OpenAPI MCP server with Keycloak's OpenAPI spec: [servers-archived/src/openapi](https://github.com/modelcontextprotocol/servers-archived/tree/main/src/openapi)
+
+### Database Servers
+
+**PostgreSQL** (Archived/Community)
+- **Purpose**: Query and manage PostgreSQL databases (ORISO tenant databases)
+- **Package**: `@modelcontextprotocol/server-postgres` or community implementations
+- **Use Case**: Query tenant data, inspect schemas, run analytics queries
+- **Where to Find**: 
+  - Archived: [servers-archived/src/postgres](https://github.com/modelcontextprotocol/servers-archived/tree/main/src/postgres)
+  - Install via: `npx -y @modelcontextprotocol/server-postgres postgresql://user:pass@host/db`
+
+**MariaDB/MySQL** (Community)
+- **Purpose**: Manage MariaDB databases (ORISO service databases)
+- **Package**: Community MySQL/MariaDB MCP servers
+- **Use Case**: Database schema inspection, query execution, migration management
+- **Where to Find**: 
+  - Check [MCP Servers Registry](https://github.com/modelcontextprotocol/servers) README for MySQL/MariaDB implementations
+  - Alternative: Use PostgreSQL MCP server pattern with MySQL connection string
+
+**MongoDB** (Community)
+- **Purpose**: Interact with MongoDB (ORISO document storage)
+- **Package**: `mongodb-mcp-server`
+- **Use Case**: Document queries, collection management, data analysis
+- **Where to Find**: 
+  - Official community server: [mongodb-js/mongodb-mcp-server](https://github.com/mongodb-js/mongodb-mcp-server)
+  - Install via: `npx -y mongodb-mcp-server`
+
+**Redis** (Community)
+- **Purpose**: Cache operations and session management
+- **Package**: Community Redis MCP servers
+- **Use Case**: Monitor cache performance, manage keys, debug session issues
+- **Where to Find**: 
+  - Archived: [servers-archived/src/redis](https://github.com/modelcontextprotocol/servers-archived/tree/main/src/redis)
+  - Install via: `npx -y @modelcontextprotocol/server-redis` (if available)
+
+### Infrastructure & Orchestration
+
+**Kubernetes** (Community)
+- **Purpose**: Manage K8s deployments, pods, services (ORISO-Kubernetes)
+- **Package**: Community k8s MCP servers
+- **Use Case**: Monitor pod health, check deployments, view logs, manage services
+- **Where to Find**: 
+  - Check [MCP Servers Registry](https://github.com/modelcontextprotocol/servers) README for Kubernetes implementations
+  - Alternative: Use kubectl commands via filesystem MCP server or custom scripts
+
+**Docker** (Community)
+- **Purpose**: Container management and operations
+- **Package**: Community Docker MCP servers
+- **Use Case**: Build images, manage containers, debug container issues
+- **Where to Find**: 
+  - Check [MCP Servers Registry](https://github.com/modelcontextprotocol/servers) README for Docker implementations
+  - Alternative: Use filesystem MCP server with docker-compose files or custom scripts
+
+**Nginx** (Community)
+- **Purpose**: Gateway configuration and management (ORISO-Nginx)
+- **Package**: Community Nginx MCP servers
+- **Use Case**: Configuration validation, log analysis, SSL certificate management
+- **Where to Find**: 
+  - Check [MCP Servers Registry](https://github.com/modelcontextprotocol/servers) README for Nginx implementations
+  - Alternative: Use filesystem MCP server to read/write Nginx configuration files
+
+### Observability & Monitoring
+
+**Prometheus** (Community)
+- **Purpose**: Metrics querying and analysis (SignOZ integration)
+- **Package**: Community Prometheus MCP servers
+- **Use Case**: Query metrics, analyze performance, create alerts
+- **Where to Find**: 
+  - Check [MCP Servers Registry](https://github.com/modelcontextprotocol/servers) README for Prometheus implementations
+  - Alternative: Use OpenAPI MCP server with Prometheus REST API: [servers-archived/src/openapi](https://github.com/modelcontextprotocol/servers-archived/tree/main/src/openapi)
+
+**Loki** (Community)
+- **Purpose**: Log aggregation and querying (SignOZ integration)
+- **Package**: Community Loki MCP servers
+- **Use Case**: Search logs, analyze errors, trace request flows
+- **Where to Find**: 
+  - Check [MCP Servers Registry](https://github.com/modelcontextprotocol/servers) README for Loki implementations
+  - Alternative: Use OpenAPI MCP server with Loki Query API: [servers-archived/src/openapi](https://github.com/modelcontextprotocol/servers-archived/tree/main/src/openapi)
+
+**Jaeger/OpenTelemetry** (Community)
+- **Purpose**: Distributed tracing (SignOZ integration)
+- **Package**: Community OpenTelemetry MCP servers
+- **Use Case**: Trace requests across services, analyze latency, debug issues
+- **Where to Find**: 
+  - Check [MCP Servers Registry](https://github.com/modelcontextprotocol/servers) README for OpenTelemetry/Jaeger implementations
+  - Alternative: Use OpenAPI MCP server with Jaeger Query API: [servers-archived/src/openapi](https://github.com/modelcontextprotocol/servers-archived/tree/main/src/openapi)
+
+**Grafana** (Official Integration)
+- **Purpose**: Dashboard management and querying
+- **Package**: Official Grafana MCP server
+- **Use Case**: Manage dashboards, query datasources, investigate incidents
+- **Where to Find**: 
+  - Check [MCP Servers Registry](https://github.com/modelcontextprotocol/servers) README for Grafana implementations
+  - Alternative: Use OpenAPI MCP server with Grafana API: [servers-archived/src/openapi](https://github.com/modelcontextprotocol/servers-archived/tree/main/src/openapi)
+
+### Development Tools
+
+**Git** (Reference)
+- **Purpose**: Local Git repository operations
+- **Package**: `@modelcontextprotocol/server-git`
+- **Use Case**: Analyze commits, check diffs, manage branches
+- **Where to Find**: 
+  - Official: [servers/src/git](https://github.com/modelcontextprotocol/servers/tree/main/src/git)
+  - Install via: `npx -y @modelcontextprotocol/server-git`
+
+**OpenAPI** (Community)
+- **Purpose**: API documentation and schema management
+- **Package**: Community OpenAPI MCP servers
+- **Use Case**: Generate API clients, validate schemas, document endpoints
+- **Where to Find**: 
+  - Archived: [servers-archived/src/openapi](https://github.com/modelcontextprotocol/servers-archived/tree/main/src/openapi)
+  - Install via: `npx -y @modelcontextprotocol/server-openapi` (if available)
+
+**Filesystem** (Reference)
+- **Purpose**: Secure file operations with access controls
+- **Package**: `@modelcontextprotocol/server-filesystem`
+- **Use Case**: Code navigation, file reading, configuration management
+- **Where to Find**: 
+  - Official: [servers/src/filesystem](https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem)
+  - Install via: `npx -y @modelcontextprotocol/server-filesystem`
+
+---
+
+## Recommended Configuration for ORISO
+
+Add these to your `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_your_token"
+      }
+    },
+    "slack": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-slack"],
+      "env": {
+        "SLACK_BOT_TOKEN": "xoxb-your-token",
+        "SLACK_TEAM_ID": "T01234567",
+        "SLACK_CHANNEL_IDS": "C01234567"
+      }
+    },
+    "postgres": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres", "postgresql://user:pass@localhost/oriso_tenant_db"]
+    },
+    "kubernetes": {
+      "command": "npx",
+      "args": ["-y", "@your-org/server-kubernetes"],
+      "env": {
+        "KUBECONFIG": "~/.kube/config"
+      }
+    },
+    "prometheus": {
+      "command": "npx",
+      "args": ["-y", "@community/server-prometheus"],
+      "env": {
+        "PROMETHEUS_URL": "http://localhost:9090"
+      }
+    }
+  }
+}
+```
+
+<Note>
+**Finding MCP Servers:**
+- **Official servers**: Check [MCP Servers Registry](https://github.com/modelcontextprotocol/servers) main repository
+- **Archived servers**: Check [servers-archived](https://github.com/modelcontextprotocol/servers-archived) repository (PostgreSQL, Redis, GitHub, Slack, etc.)
+- **Community servers**: Search the [MCP Servers Registry](https://github.com/modelcontextprotocol/servers) README for community implementations
+- **Installation**: Most servers can be installed via `npx -y @package-name` or `npm install`, but installation methods may vary
+
+**Note on Archived Servers**: Some servers like PostgreSQL and Redis have been moved to the archived repository. You can still use them, but consider checking for newer community implementations in the main registry.
+</Note>
+
+---
+
+## Integration Priority for ORISO
+
+### High Priority
+
+1. ✅ **GitHub** - Already configured
+2. ✅ **Slack** - Already configured
+3. **PostgreSQL** - For tenant database queries
+4. **Kubernetes** - For deployment management
+5. **Prometheus/Loki** - For monitoring and observability
+
+### Medium Priority
+
+6. **MariaDB/MySQL** - For service database management
+7. **MongoDB** - For document storage operations
+8. **Redis** - For cache monitoring
+9. **Matrix** - For E2EE messaging integration
+10. **Keycloak** - For IAM operations
+
+### Future Considerations
+
+11. **Docker** - Container debugging
+12. **Nginx** - Gateway management
+13. **Grafana** - Dashboard automation
+14. **OpenTelemetry** - Advanced tracing
+
+---
+
+## Example Workflows
+
+### Morning Standup Automation
+
+**Daily Automation Script:**
+```
+Every morning at 9 AM:
+1. Fetch all GitHub issues updated in last 24 hours
+2. Fetch all pull requests opened/merged in last 24 hours
+3. Summarize code review activity
+4. Format as standup update
+5. Post to #daily-standup Slack channel
+```
+
+### Release Checklist
+
+**Release Workflow:**
+```
+1. List all pull requests merged to main branch
+2. Generate release notes summary
+3. Check for breaking changes
+4. Post release summary to #releases Slack channel
+5. Create GitHub release with summary
+```
+
+### Review Queue Management
+
+**Code Review Workflow:**
+```
+1. Find PRs ready for review (CI passed, no blocking reviews)
+2. Check reviewer assignments
+3. Notify team in #code-review Slack channel
+4. Update daily review queue dashboard
+```
+
+---
+
+## Next Steps
+
+- **Reference Guide**: See [MCP Reference Guide](/oriso-platform/ai/mcp-reference) for troubleshooting and quick reference
+- **Advanced Config**: See [MCP Advanced Configuration](/oriso-platform/ai/mcp-advanced-config) for more setup options
+
