@@ -59,6 +59,7 @@
           {
             "group": "Operations",
             "pages": [
+              "oriso-platform/coding-standards",
               "oriso-platform/backup-configuration",
               "oriso-platform/security-hardening",
               "oriso-platform/troubleshooting",

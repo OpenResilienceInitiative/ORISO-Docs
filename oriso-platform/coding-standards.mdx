@@ -1,0 +1,69 @@
+---
+title: "Coding Standards"
+description: "Frontend and backend coding standards, project structure, i18n rules, testing, deployment, and key practices"
+---
+
+# Coding Standards
+
+## Frontend (React/TypeScript)
+
+- **ESLint**: Airbnb config + TypeScript
+- **Prettier**: 4 spaces, semicolons, single quotes, 120 char width
+- **Components**: Arrow functions only
+- **Node**: >= 18.16.1
+- **React**: No `import React` needed
+- **TypeScript**: `any` allowed, explicit return types not required
+
+## Backend (Java/Spring Boot)
+
+- **Java**: 17
+- **Spring Boot**: 3.0.6
+- **Build**: Maven project structure
+- **Encoding**: UTF-8 everywhere
+- **DB Migrations**: Liquibase
+- **Auth**: Keycloak OAuth2/JWT
+
+## Project Structure
+
+- **Frontend**: `src/api`, `src/components`, `src/pages`, `src/resources`
+- **Backend**: `api/`, `config/`, `admin/`
+
+## i18n Rules
+
+- **Nested JSON keys**: e.g., `"registration.agency.result.headline"`
+- **UI text** → i18n files; **User content** → database
+- **Files**: `de/common.json`, `en/common.json`
+
+## Key Principles
+
+- **Feature flags** over deleting code (comment out for future)
+- **Always** `.catch()` on API calls
+- Use **optional chaining** for safe access (`obj?.prop`)
+- **Explicit** type conversions (`String()`, `Number()`)
+- **Do not** send empty arrays/objects to backend
+- **Hard refresh** after deploys (`Ctrl+Shift+R`)
+- **Check DB sequences** after errors
+
+## Git
+
+- **No force push** to `main`
+- **Keep hooks** (no `--no-verify`)
+- **Commit only** when explicitly asked
+
+## Testing
+
+- **Frontend**: Cypress
+- **Backend**: JUnit + MockMvc
+- **Always test in a real browser**
+
+## Deployment
+
+- **Flow**: Docker → K3s → Delete pod → Auto-recreate
+
+<Info>
+These standards are authoritative for all ORISO Platform repositories. Align your local tooling (ESLint/Prettier/Java toolchain) accordingly.
+</Info>
+
+
+
+
