@@ -26,6 +26,16 @@
             ]
           },
           {
+        "group": "Architecture",
+        "pages": [
+          "oriso-platform/architecture/overview",
+          "oriso-platform/architecture/frontend",
+          "oriso-platform/architecture/backend",
+          "oriso-platform/architecture/data",
+          "oriso-platform/architecture/infra"
+        ]
+      },
+          {
             "group": "Deployment",
             "pages": [
               "oriso-platform/deploy-infrastructure",
