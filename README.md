@@ -4,7 +4,7 @@
 
 > Comprehensive deployment and configuration guide for ORISO (Online Beratung) Platform
 
-🔗 **[View Live Documentation](https://openresilienceinitiative.mintlify.app)**
+🔗 **[View Live Documentation](https://docs.oriso.site)**
 
 ---
 
@@ -92,7 +92,7 @@ ORISO-Docs/
 
 ## 🔗 Links
 
-- **Live Site:** https://openresilienceinitiative.mintlify.app
+- **Live Site:** https://docs.oriso.site
 - **Mintlify Docs:** https://mintlify.com/docs
 
 ---
