@@ -1,0 +1,294 @@
+---
+title: "BrowserStack for ORISO — Setup, Use, and CI/CD"
+description: "Developer-first guide for Live sessions, MCP in IDEs, and CI/CD automation on BrowserStack"
+---
+
+## Overview
+
+This guide shows how ORISO Developers and Project Managers use BrowserStack for fast, reliable testing across the Frontend (port 9001) and Admin (port 3000). It covers local Live testing, IDE (MCP) integration, CI/CD automation, add‑ons, and troubleshooting.
+
+### TL;DR
+
+- Use Live for quick repro; report via “Report on GitHub” with `bug, source:browserstack, area:*`.
+- Launch devices from Cursor/Claude via BrowserStack MCP; keep keys in env vars.
+- In CI, run a tiny smoke on a golden matrix with Playwright (recommended) or Selenium; enable Local Testing for `localhost:9001` and `:3000`.
+- Always attach session links, videos, and logs; close via PR with `Fixes #<id>`.
+
+<Tip>
+Keep a small “golden matrix” and expand only before releases.
+</Tip>
+
+---
+
+## Quick Start
+
+1) Enable Live and Local Testing
+- Open your target device/browser in Live.
+- If testing local apps, enable Local and visit:
+  - Frontend: `http://localhost:9001`
+  - Admin: `http://localhost:3000`
+
+2) Reproduce and File an Issue
+- Click “Report on GitHub”.
+- Include repro steps, expected vs actual, and the session link.
+- Labels: `bug, source:browserstack, area:frontend|area:admin`.
+
+3) Validate and Close
+- Link the issue to PRs; close with `Fixes #<id>`.
+- Re‑verify on the same device/browser after merge.
+
+Golden matrix (minimum)
+- Desktop: macOS Sonoma + Chrome latest; Windows 11 + Edge latest; Firefox latest
+- Mobile: iPhone 15/15 Pro (Safari), Galaxy S24 (Chrome)
+
+<ProTip>
+Keep repro steps deterministic and short; prefer stable test data and fixed time.
+</ProTip>
+
+---
+
+## How Developers and Project Managers Use BrowserStack
+
+### Developers
+- Use BrowserStack Live for local and cross‑browser testing.
+- Reproduce issues reported by the Project Manager.
+- Test new features on golden matrix devices.
+- Attach BrowserStack session links in GitHub PRs.
+- Verify bug fixes before merging or closing issues.
+- Run automated Playwright/Selenium tests on BrowserStack Automate via CI.
+
+### Project Managers (QA + Review + PM duties)
+- Use BrowserStack Live for QA testing across browsers/devices.
+- Reproduce and report issues directly to GitHub using “Report on GitHub”.
+- Validate fixes using linked BrowserStack sessions.
+- Check BrowserStack Automate dashboard for test run results.
+- Monitor CI/CD builds to confirm golden matrix tests passed before approving deployment.
+- Maintain a minimal, fast test coverage matrix and tag critical issues.
+
+<Info>
+Collaboration flow: Developer pushes → CI runs BrowserStack tests → PM validates on Live → CI confirms for production.
+</Info>
+
+---
+
+## IDE Integration (MCP) — test without leaving Cursor/Claude
+
+Add BrowserStack MCP to your client config (Cursor `~/.cursor/mcp.json`; Claude per docs):
+
+```json
+{
+  "mcpServers": {
+    "browserstack": {
+      "command": "npx",
+      "args": ["-y", "@browserstack/mcp-server"],
+      "env": {
+        "BROWSERSTACK_USERNAME": "<your-username>",
+        "BROWSERSTACK_ACCESS_KEY": "<your-access-key>"
+      }
+    }
+  }
+}
+```
+
+Example prompts in the IDE
+- "Open http://localhost:9001 on Chrome on macOS Sonoma and share session URL"
+- "Test Admin on iPhone 15 Pro using Safari"
+- "Start a Live session for openresilience.cc on Firefox and copy the video link"
+
+Security
+- Store credentials in environment variables or a secret manager; never commit.
+
+Session debugging
+- Download video, console logs, and screenshots from the session for triage.
+- Add the session URL to issues/PRs.
+
+---
+
+## CI/CD Automation (Automate)
+
+### Playwright (recommended)
+
+Install once:
+
+```bash
+npm i -D @playwright/test @browserstack/playwright
+```
+
+Reusable org‑level workflow (clean and minimal):
+
+```yaml
+# .github/.github/workflows/ui-e2e-browserstack.yml (reusable)
+name: Reusable — UI E2E on BrowserStack
+on:
+  workflow_call:
+    inputs:
+      target:
+        required: true
+        type: string
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+      BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+      ORISO_FRONTEND_URL: http://localhost:9001
+      ORISO_ADMIN_URL: http://localhost:3000
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: 'npm' }
+      - run: npm ci
+      - run: npm run build --if-present
+      - name: Start app
+        run: |
+          if [ "${{ inputs.target }}" = "frontend" ]; then npm run preview & fi
+          if [ "${{ inputs.target }}" = "admin" ]; then npm run start & fi
+      - name: Wait for app
+        run: npx wait-on ${{ inputs.target == 'frontend' && env.ORISO_FRONTEND_URL || env.ORISO_ADMIN_URL }}
+      - name: Start BrowserStack Local (if hitting localhost)
+        run: npx browserstack-node-sdk local start &
+      - name: Run Playwright on BrowserStack (small smoke)
+        run: npx browserstack-node-sdk playwright test --project=bs-chrome-latest
+      - name: Stop BrowserStack Local
+        if: always()
+        run: npx browserstack-node-sdk local stop
+```
+
+Per‑repo caller (example for `ORISO-Frontend`):
+
+```yaml
+# .github/workflows/e2e.yml
+name: UI E2E
+on: [push, pull_request]
+jobs:
+  run:
+    uses: OpenResilienceInitiative/.github/.github/workflows/ui-e2e-browserstack.yml@main
+    with:
+      target: frontend
+```
+
+Speed and reliability
+- Keep smoke tiny (login + 1 high‑value path);
+- Use npm caching and short timeouts; avoid sleeps; shard larger suites by tag/file.
+- Surface session URLs in CI logs; use SDK to auto‑mark pass/fail.
+
+### Selenium (Java)
+
+Add dependency:
+
+```xml
+<dependency>
+  <groupId>org.seleniumhq.selenium</groupId>
+  <artifactId>selenium-java</artifactId>
+  <version>4.25.0</version>
+</dependency>
+```
+
+Simple CI job:
+
+```yaml
+name: UI E2E — Selenium on BrowserStack
+on: { push: { branches: [ main ] }, pull_request: {}, workflow_dispatch: {} }
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    env:
+      BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+      BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 17 }
+      - run: mvn -B test -Pbrowserstack
+```
+
+SDK best practices
+- Prefer BrowserStack SDK wrappers to auto‑report session status and links.
+- Set `browserstack.local=true` when testing `localhost`.
+
+---
+
+## Add‑ons (optional but useful)
+
+### Percy visual testing
+
+```bash
+npm i -D @percy/cli @percy/playwright
+```
+
+```yaml
+- name: Percy snapshot
+  run: npx percy exec -- npx playwright test -g "visual"
+  env: { PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }} }
+```
+
+Tips: mock time/data; keep snapshots stable; run after functional smoke.
+
+### Accessibility Testing
+
+Run BrowserStack Accessibility as a separate job; block on critical WCAG issues. Track waivers in repo.
+
+### Test Management
+
+Standardize projects/folders (e.g., `ORISO Frontend / Login, Checkout`). Tag runs to link CI to cases.
+
+### Private Devices
+
+Use for restricted apps; define who can upload images and rotation cadence.
+
+---
+
+## Pro Tips
+
+- Name tests with repo/area/feature (e.g., `ORISO-Frontend/Login/Safari`).
+- Always surface the BrowserStack session URL in CI logs.
+- Keep the golden matrix small; expand only for release hardening.
+- Close issues via PR using `Fixes #<id>`; re‑verify on the same device/browser.
+
+---
+
+## Common Pitfalls
+
+- Not starting BrowserStack Local when using `localhost`.
+- Flaky visual checks due to dynamic content/time; stabilize inputs.
+- Secrets echoed in logs; ensure `set -x` is off and redact env output.
+
+---
+
+## Troubleshooting
+
+### Local testing errors
+- Verify tunnel: `ps aux | grep browserstack` or rely on SDK `local start` logs.
+- Try host alias: use `http://bs-local.com:<port>`.
+- Firewalls/VPN: allow the Local binary; retry with reduced corporate VPN restrictions.
+
+### CI credentials
+- Ensure secrets are set: `BROWSERSTACK_USERNAME`, `BROWSERSTACK_ACCESS_KEY`.
+- Regenerate keys if authorization fails; re‑run with a minimal job to isolate.
+
+### Timeouts
+- Confirm app start: use explicit non‑interactive scripts and `npx wait-on`.
+- Increase `timeout-minutes` modestly; avoid long sleeps.
+
+Quick diagnostics
+```bash
+curl -Is http://localhost:9001 | head -n 1
+curl -Is http://localhost:3000 | head -n 1
+```
+
+<Warning>
+If tests hit `localhost` without BrowserStack Local, sessions will fail. Always start the Local tunnel in CI and Live.
+</Warning>
+
+---
+
+## References
+
+- ORISO Docs: `https://docs.oriso.site`
+- GitHub Issues: close via `Fixes #<id>`; label `source:browserstack`
+
+<Info>
+Last updated: November 2025.
+</Info>
+
