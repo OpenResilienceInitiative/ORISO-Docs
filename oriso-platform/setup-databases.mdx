@@ -104,6 +104,52 @@ kubectl exec -it -n caritas $MONGODB_POD -- \
 </Note>
 
 </Step>
+
+<Step title="Database readiness checklist">
+
+Quick checks to ensure databases are ready before starting backend services.
+
+1) Service and volume status
+
+```bash
+kubectl get svc,pvc -n caritas | grep -E "mariadb|mongodb"
+```
+
+2) MariaDB connectivity and schemas
+
+```bash
+# Connect as root and list databases
+MARIADB_POD=$(kubectl get pods -n caritas -l app=mariadb -o jsonpath="{.items[0].metadata.name}")
+kubectl exec -it -n caritas $MARIADB_POD -- mysql -u root -pPassword1234! -e "SHOW DATABASES;"
+
+# Sample table checks (adjust as needed)
+kubectl exec -it -n caritas $MARIADB_POD -- \
+  mysql -u root -pPassword1234! -e "USE userservice; SHOW TABLES;"
+kubectl exec -it -n caritas $MARIADB_POD -- \
+  mysql -u root -pPassword1234! -e "USE tenantservice; SHOW TABLES;"
+
+# Keycloak schema presence (if Keycloak uses MariaDB)
+kubectl exec -it -n caritas $MARIADB_POD -- \
+  mysql -u root -pPassword1234! -e "USE keycloak; SHOW TABLES;"
+```
+
+3) MongoDB connectivity and collections
+
+```bash
+MONGODB_POD=$(kubectl get pods -n caritas -l app=mongodb -o jsonpath="{.items[0].metadata.name}")
+kubectl exec -it -n caritas $MONGODB_POD -- mongosh --eval "show dbs"
+kubectl exec -it -n caritas $MONGODB_POD -- mongosh consulting_types --eval "db.getCollectionNames()"
+```
+
+<Info>
+If your deployment uses non-root DB users/secrets, verify those credentials are created and mounted in the backend deployments before proceeding.
+</Info>
+
+<Check>
+MariaDB lists all required databases and tables; MongoDB lists `consulting_types` with collections. Proceed to deploy backend services.
+</Check>
+
+</Step>
 </Steps>
 
 ## Next Steps

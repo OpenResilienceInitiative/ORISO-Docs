@@ -12,20 +12,41 @@ Configure network settings, firewall rules, and system limits to prepare your se
 
 Verify network connectivity and configuration before proceeding.
 
+<Tabs>
+  <Tab title="Ubuntu/Debian">
+
 ```bash
-# Check IP address
 ip addr show
-
-# Check default gateway
 ip route show
-
-# Check DNS
 cat /etc/resolv.conf
-
-# Test internet connectivity
 ping -c 4 8.8.8.8
 ping -c 4 google.com
 ```
+
+  </Tab>
+  <Tab title="macOS">
+
+```bash
+ifconfig | grep -E 'inet '
+netstat -nr | grep default
+scutil --dns | grep nameserver
+ping -c 4 8.8.8.8
+ping -c 4 google.com
+```
+
+  </Tab>
+  <Tab title="Windows">
+
+```powershell
+Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.IPAddress -ne '127.0.0.1'}
+Get-NetRoute -DestinationPrefix 0.0.0.0/0
+Get-DnsClientServerAddress
+Test-Connection -ComputerName 8.8.8.8 -Count 4
+Test-Connection -ComputerName google.com -Count 4
+```
+
+  </Tab>
+</Tabs>
 
 <Check>
 Ensure you can ping external addresses and DNS resolution is working correctly.
@@ -33,13 +54,16 @@ Ensure you can ping external addresses and DNS resolution is working correctly.
 
 </Step>
 
-<Step title="Install and Configure UFW Firewall">
+<Step title="Configure Firewall">
 
-Install UFW (Uncomplicated Firewall) and configure rules for all required services.
+Configure firewall rules for all required services.
 
 <Warning>
 **IMPORTANT**: Always allow SSH (port 22) first before enabling the firewall, or you may lock yourself out!
 </Warning>
+
+<Tabs>
+  <Tab title="Ubuntu/Debian — UFW">
 
 ```bash
 # Install UFW
@@ -51,46 +75,61 @@ sudo ufw default allow outgoing
 
 # Allow SSH (IMPORTANT - do this first!)
 sudo ufw allow 22/tcp
-sudo ufw allow ssh
 
-# Allow HTTP/HTTPS (optional, for external access)
-sudo ufw allow 80/tcp
-sudo ufw allow 443/tcp
-
-# Allow main entry point (Nginx proxy)
-sudo ufw allow 8089/tcp
-
-# Allow Frontend and Admin
-sudo ufw allow 9001/tcp
-sudo ufw allow 9002/tcp
-
-# Allow Keycloak Admin Console
-sudo ufw allow 8080/tcp
-
-# Allow Element.io
-sudo ufw allow 8087/tcp
-
-# Allow Redis Commander (optional)
-sudo ufw allow 9021/tcp
-
-# Allow Redis Exporter (optional)
-sudo ufw allow 9020/tcp
-
-# Allow Health Dashboard (optional)
-sudo ufw allow 9100/tcp
-
-# Allow SignOZ (optional)
-sudo ufw allow 3001/tcp
-
-# Allow Matrix Synapse (if direct access needed)
-sudo ufw allow 8008/tcp
+# Allow required ports
+sudo ufw allow 80/tcp    # HTTP (optional)
+sudo ufw allow 443/tcp   # HTTPS (optional)
+sudo ufw allow 8089/tcp  # Nginx Proxy
+sudo ufw allow 9001/tcp  # Frontend
+sudo ufw allow 9002/tcp  # Admin
+sudo ufw allow 8080/tcp  # Keycloak
+sudo ufw allow 8087/tcp  # Element.io
+sudo ufw allow 8008/tcp  # Matrix Synapse (optional)
+sudo ufw allow 9021/tcp  # Redis Commander (optional)
+sudo ufw allow 9100/tcp  # Health Dashboard (optional)
+sudo ufw allow 3001/tcp  # SignOZ (optional)
 
 # Enable UFW
 sudo ufw enable
-
-# Check status
 sudo ufw status verbose
 ```
+
+  </Tab>
+  <Tab title="macOS — pfctl">
+
+```bash
+# macOS firewall is typically managed via System Settings
+# System Settings → Network → Firewall → Options
+
+# Or via command line (advanced):
+sudo pfctl -f /etc/pf.conf
+# Edit /etc/pf.conf to add rules, then reload
+```
+
+<Info>
+macOS firewall is usually sufficient for local development. For production, use a cloud provider's firewall or router.
+</Info>
+
+  </Tab>
+  <Tab title="Windows — Windows Firewall">
+
+```powershell
+# Allow SSH (if OpenSSH Server is installed)
+New-NetFirewallRule -DisplayName "SSH" -Direction Inbound -LocalPort 22 -Protocol TCP -Action Allow
+
+# Allow required ports
+New-NetFirewallRule -DisplayName "Nginx Proxy" -Direction Inbound -LocalPort 8089 -Protocol TCP -Action Allow
+New-NetFirewallRule -DisplayName "Frontend" -Direction Inbound -LocalPort 9001 -Protocol TCP -Action Allow
+New-NetFirewallRule -DisplayName "Admin" -Direction Inbound -LocalPort 9002 -Protocol TCP -Action Allow
+New-NetFirewallRule -DisplayName "Keycloak" -Direction Inbound -LocalPort 8080 -Protocol TCP -Action Allow
+New-NetFirewallRule -DisplayName "Element" -Direction Inbound -LocalPort 8087 -Protocol TCP -Action Allow
+
+# Verify
+Get-NetFirewallRule | Where-Object {$_.DisplayName -like "*ORISO*" -or $_.DisplayName -like "*SSH*"}
+```
+
+  </Tab>
+</Tabs>
 
 <Check>
 Expected output should show all ports as `ALLOW IN` with status `active`. Verify SSH is listed first.
@@ -101,6 +140,9 @@ Expected output should show all ports as `ALLOW IN` with status `active`. Verify
 <Step title="Configure System Limits">
 
 Increase system file and process limits required for Kubernetes operation.
+
+<Tabs>
+  <Tab title="Ubuntu/Debian">
 
 ```bash
 # Increase file limits for Kubernetes
@@ -126,6 +168,27 @@ sudo sysctl -p
 # Verify
 ulimit -n
 ```
+
+  </Tab>
+  <Tab title="macOS">
+
+```bash
+# macOS limits are typically sufficient for local development
+# Check current limits
+ulimit -n
+launchctl limit maxfiles
+
+# If needed, increase (requires restart):
+# sudo launchctl limit maxfiles 65536 200000
+```
+
+  </Tab>
+  <Tab title="Windows">
+
+Windows handles file and process limits differently. For local development with Docker Desktop or Rancher Desktop, default limits are usually sufficient. For production, deploy on Ubuntu server where limits can be configured.
+
+  </Tab>
+</Tabs>
 
 <Check>
 The `ulimit -n` command should output `65536`.

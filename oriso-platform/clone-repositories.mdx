@@ -12,14 +12,35 @@ Set up the project directory and transfer ORISO repositories to your server.
 
 Create the main project directory for ORISO Platform files.
 
-```bash
-# Create project directory
-mkdir -p ~/online-beratung
-cd ~/online-beratung
+<Tabs>
+  <Tab title="Ubuntu/Debian">
 
-# Initialize git (optional)
+```bash
+mkdir -p ~/online-beratung/caritas-workspace
+cd ~/online-beratung/caritas-workspace
 git init
 ```
+
+  </Tab>
+  <Tab title="macOS">
+
+```bash
+mkdir -p ~/online-beratung/caritas-workspace
+cd ~/online-beratung/caritas-workspace
+git init
+```
+
+  </Tab>
+  <Tab title="Windows">
+
+```powershell
+New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\online-beratung\caritas-workspace"
+Set-Location "$env:USERPROFILE\online-beratung\caritas-workspace"
+git init
+```
+
+  </Tab>
+</Tabs>
 
 </Step>
 
@@ -93,12 +114,26 @@ ls -la ~/online-beratung/caritas-workspace/
 
 Verify all required repositories and directories are present.
 
+<Tabs>
+  <Tab title="Ubuntu/Debian/macOS">
+
 ```bash
 cd ~/online-beratung/caritas-workspace
-
-# Check structure
 ls -la
+tree -L 2 ORISO-Kubernetes/ || find ORISO-Kubernetes -maxdepth 2 -type d
 ```
+
+  </Tab>
+  <Tab title="Windows">
+
+```powershell
+Set-Location "$env:USERPROFILE\online-beratung\caritas-workspace"
+Get-ChildItem
+Get-ChildItem -Path ORISO-Kubernetes -Recurse -Depth 2 | Select-Object FullName
+```
+
+  </Tab>
+</Tabs>
 
 <Check>
 You should see the following directories:
@@ -118,12 +153,6 @@ You should see the following directories:
 - `ORISO-AgencyService/`
 - `ORISO-ConsultingTypeService/`
 </Check>
-
-**Check ORISO-Kubernetes structure:**
-
-```bash
-tree -L 2 ORISO-Kubernetes/
-```
 
 <Check>
 Expected structure:

@@ -94,6 +94,10 @@ Authentication:
 Communication:
   Element.io:  http://$SERVER_IP:8087
 
+  Element Homeserver (login):
+  - Local:      http://$SERVER_IP:8008
+  - Via domain: https://chat.example.org (requires Nginx well-known)
+
 Monitoring:
   Redis Cmdr:  http://$SERVER_IP:9021
   Health Dash: http://$SERVER_IP:9100
@@ -109,6 +113,20 @@ Backend Services (Health Checks):
 
 EOF
 ```
+
+</Step>
+
+<Step title="Validate Element homeserver discovery">
+
+If you configured Nginx well-known endpoints, verify client discovery:
+
+```bash
+curl -s https://chat.example.org/.well-known/matrix/client | jq .
+```
+
+<Check>
+The response should include `m.homeserver.base_url` pointing to your homeserver. Element should pre-fill the homeserver when you type your domain on the login screen.
+</Check>
 
 </Step>
 </Steps>

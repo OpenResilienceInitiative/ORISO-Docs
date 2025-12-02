@@ -56,6 +56,55 @@ Matrix Synapse should return JSON version information, and Element.io should ret
 </Check>
 
 </Step>
+
+<Step title="Configure Element homeserver address">
+
+Point Element to your Synapse homeserver so login works against your deployment (not matrix.org).
+
+1) Update Element config
+
+```bash
+# Edit Element web config
+nano ~/online-beratung/caritas-workspace/ORISO-Element/config.json
+```
+
+Set a default homeserver. If you use IP/port locally:
+
+```json
+{
+  "default_server_config": {
+    "m.homeserver": {
+      "base_url": "http://127.0.0.1:8008",
+      "server_name": "oriso.local"
+    }
+  },
+  "disable_custom_homeserver": false
+}
+```
+
+If you have a domain with Nginx in front, prefer discovery via well-known and set only the server name:
+
+```json
+{
+  "default_server_name": "chat.example.org",
+  "disable_custom_homeserver": false
+}
+```
+
+2) Apply/reload Element
+
+```bash
+# If Element is served from a Kubernetes deployment named 'element'
+kubectl rollout restart deployment/element -n caritas
+
+# Or if served as static files, redeploy the container/image or reload the pod
+```
+
+<Check>
+On Element login screen, the homeserver should be pre-filled (or selectable). Login should succeed against your Synapse, not matrix.org.
+</Check>
+
+</Step>
 </Steps>
 
 ## Next Steps

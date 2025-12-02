@@ -1,6 +1,6 @@
 ---
 title: "Initial Server Setup"
-description: "Connect to server, update system packages, create non-root user, configure hostname and timezone, and disable swap for Kubernetes"
+description: "Find server IP, connect via SSH, update system packages, create non-root user, configure hostname and timezone, and disable swap for Kubernetes"
 ---
 
 # Initial Server Setup
@@ -8,58 +8,226 @@ description: "Connect to server, update system packages, create non-root user, c
 Complete the initial server configuration steps to prepare your Ubuntu server for ORISO Platform deployment.
 
 <Steps>
+<Step title="Find Your Server IP Address">
+
+Get your server's IP address before connecting via SSH.
+
+Cloud/VPS: check your provider dashboard → instance details → Public IPv4 (e.g., `203.0.113.45`).
+
+<Tabs>
+  <Tab title="Ubuntu/Linux">
+
+```bash
+# Public IP (if reachable)
+curl -4 ifconfig.me
+# Local IPs on all interfaces
+hostname -I
+# Alt: list IPv4 addresses
+ip addr show | grep -E "inet\s" | awk '{print $2}'
+```
+
+  </Tab>
+  <Tab title="macOS">
+
+```bash
+# Wi‑Fi IP
+ipconfig getifaddr en0
+# Ethernet IP (if Wi‑Fi empty)
+ipconfig getifaddr en1
+# All IPv4 (exclude loopback)
+ifconfig | grep -E 'inet ' | awk '{print $2}' | grep -v 127.0.0.1
+# Public IP
+curl -4 ifconfig.me
+```
+
+  </Tab>
+  <Tab title="Windows">
+
+```powershell
+# Command Prompt
+ipconfig
+
+# PowerShell — IPv4 addresses
+Get-NetIPAddress -AddressFamily IPv4 |
+  Where-Object {$_.IPAddress -ne '127.0.0.1'} |
+  Select-Object InterfaceAlias, IPAddress
+# Public IP
+Invoke-RestMethod -Uri 'https://ifconfig.me/ip'
+```
+
+  </Tab>
+</Tabs>
+
+<Info>
+Local-only testing on the same machine: use `127.0.0.1` (localhost). For production, use a public IP or a domain pointing to it.
+</Info>
+
+</Step>
+
 <Step title="Connect to Server">
 
 Establish SSH connection to your Ubuntu server.
 
+**Important:** For ORISO Platform deployment, you need a **remote Ubuntu server** (cloud/VPS or separate physical machine), not your local machine.
+
 ```bash
-# Connect via SSH
-ssh root@YOUR_SERVER_IP
+# Connect via SSH (replace with your actual server IP)
+ssh root@203.0.113.45
 
 # Or with specific user
-ssh username@YOUR_SERVER_IP
+ssh username@203.0.113.45
+
+# If using SSH key authentication
+ssh -i ~/.ssh/your-key.pem root@203.0.113.45
 ```
 
+<Warning>
+**`127.0.0.1` (localhost) is for the same machine.** If you're trying to SSH to localhost:
+- For ORISO deployment: Use a remote Ubuntu server IP, not localhost
+- Connection refused means SSH server isn't running or you're targeting the wrong IP
+</Warning>
+
+<Tabs>
+  <Tab title="Ubuntu/Debian">
+
+```bash
+# Install OpenSSH server
+sudo apt update && sudo apt install -y openssh-server
+
+# Enable and start SSH service
+sudo systemctl enable --now ssh
+
+# (Optional) Allow SSH in UFW firewall
+sudo ufw allow OpenSSH || true
+# If UFW is not enabled and you want it:
+# sudo ufw enable
+
+# Verify SSH is running and listening on port 22
+sudo systemctl status ssh --no-pager
+ss -tulpn | grep ':22' || sudo netstat -tulpn | grep ':22' || true
+```
+
+  </Tab>
+  <Tab title="macOS">
+
+1. System Settings → General → Sharing → turn ON “Remote Login”
+2. Optional: set “Allow access for” (Everyone or specific users)
+3. Note the shown address (e.g., `ssh youruser@your-mac.local` or your IP)
+
+CLI alternative (Terminal):
+
+```bash
+sudo systemsetup -setremotelogin on
+sudo systemsetup -getremotelogin
+```
+
+  </Tab>
+  <Tab title="Windows">
+
+PowerShell (Run as Administrator):
+
+```powershell
+# Install OpenSSH Server capability
+Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+
+# Start and set service to auto
+Start-Service sshd
+Set-Service -Name sshd -StartupType Automatic
+
+# Allow firewall
+New-NetFirewallRule -Name sshd -DisplayName 'OpenSSH Server (sshd)' -Enabled True -Direction Inbound -Protocol TCP -Action Allow -LocalPort 22
+
+# Verify
+Get-Service sshd
+Test-NetConnection -ComputerName localhost -Port 22
+```
+
+Connect from another machine using your Windows username/IP:
+
+```bash
+ssh youruser@WINDOWS_HOST_IP
+```
+
+  </Tab>
+</Tabs>
+
+<Info>
+If you changed the SSH port, open that port in your firewall and connect using `ssh -p <port> user@host`.
+</Info>
+
 <Check>
-Verify you can successfully SSH into the server before proceeding.
+Verify you can successfully SSH into the server before proceeding. You should see a login prompt or be authenticated.
 </Check>
 
 </Step>
 
 <Step title="Update System">
 
-Update package lists and install essential tools required for the deployment.
+Update the OS and install essential tools.
+
+<Tabs>
+  <Tab title="Ubuntu/Debian">
 
 ```bash
-# Update package lists
-sudo apt update
+# Update & upgrade
+sudo apt update && sudo apt upgrade -y
 
-# Upgrade all packages
-sudo apt upgrade -y
-
-# Install essential tools
+# Install essentials
 sudo apt install -y \
-    curl \
-    wget \
-    git \
-    vim \
-    nano \
-    htop \
-    net-tools \
-    ca-certificates \
-    gnupg \
-    lsb-release \
-    software-properties-common \
-    apt-transport-https \
-    jq
+  curl wget git jq vim nano htop net-tools \
+  ca-certificates gnupg lsb-release \
+  software-properties-common apt-transport-https
 
-# Check system info
+# System info
 uname -a
 lsb_release -a
 ```
 
+  </Tab>
+  <Tab title="macOS">
+
+```bash
+# Install Homebrew if missing
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || true
+
+# Update & upgrade
+brew update && brew upgrade
+
+# Install essentials
+brew install git jq kubectl helm
+
+# System info
+sw_vers
+uname -a
+```
+
+  </Tab>
+  <Tab title="Windows">
+
+PowerShell (Run as Administrator):
+
+```powershell
+# Update winget sources
+winget source update
+
+# Upgrade installed packages (optional)
+winget upgrade --all --silent
+
+# Install essentials
+winget install --silent Git.Git
+winget install --silent jqlang.jq
+winget install --silent Kubernetes.kubectl
+winget install --silent Helm.Helm
+
+# System info
+Get-ComputerInfo | Select-Object OsName, OsVersion, OsBuildNumber
+```
+
+  </Tab>
+</Tabs>
+
 <Check>
-Verify installation by checking versions: `curl --version`, `git --version`, `jq --version`
+Verify installation by checking versions: `git --version`, `jq --version`, and for k8s tools `kubectl version --client`, `helm version`.
 </Check>
 
 </Step>
@@ -93,64 +261,113 @@ Ensure you can still access the server after switching users, especially if SSH 
 
 <Step title="Configure Hostname">
 
-Set a descriptive hostname for your server to make identification easier.
+Set a descriptive hostname for your machine.
+
+<Tabs>
+  <Tab title="Ubuntu/Debian">
 
 ```bash
-# Set hostname
 sudo hostnamectl set-hostname oriso-platform
-
-# Verify
 hostnamectl
 ```
 
+  </Tab>
+  <Tab title="macOS">
+
+```bash
+sudo scutil --set HostName oriso-platform
+scutil --get HostName
+```
+
+  </Tab>
+  <Tab title="Windows">
+
+PowerShell (Run as Administrator):
+
+```powershell
+Rename-Computer -NewName "oriso-platform" -Restart
+```
+
+  </Tab>
+</Tabs>
+
 <Check>
-The hostname should display as `oriso-platform` in the output.
+Hostname should now show as `oriso-platform`.
 </Check>
 
 </Step>
 
 <Step title="Configure Timezone">
 
-Set the correct timezone for your server location.
+Set the correct timezone for your location.
+
+<Tabs>
+  <Tab title="Ubuntu/Debian">
 
 ```bash
-# Set timezone (example: Europe/Berlin)
 sudo timedatectl set-timezone Europe/Berlin
-
-# Or use interactive selector
-sudo dpkg-reconfigure tzdata
-
-# Verify
 timedatectl
 ```
 
 <Note>
-Replace `Europe/Berlin` with your appropriate timezone. Use `timedatectl list-timezones` to see all available timezones.
+List timezones: `timedatectl list-timezones`
 </Note>
+
+  </Tab>
+  <Tab title="macOS">
+
+```bash
+sudo systemsetup -settimezone Europe/Berlin
+systemsetup -gettimezone
+```
+
+  </Tab>
+  <Tab title="Windows">
+
+PowerShell:
+
+```powershell
+tzutil /s "W. Europe Standard Time"
+tzutil /g
+```
+
+  </Tab>
+</Tabs>
 
 </Step>
 
 <Step title="Disable Swap">
 
-Disable swap memory as Kubernetes (k3s) requires swap to be disabled.
+Kubernetes (k3s) requires swap disabled on Linux.
+
+<Tabs>
+  <Tab title="Ubuntu/Debian">
 
 ```bash
-# Disable swap
 sudo swapoff -a
-
-# Remove swap from fstab (permanent)
 sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
-
-# Verify
 free -h
 ```
 
 <Check>
-Swap should show `0` in the `free -h` output.
+`free -h` should show Swap: 0.
 </Check>
 
+  </Tab>
+  <Tab title="macOS">
+
+Not applicable (macOS does not expose swap management for this use case).
+
+  </Tab>
+  <Tab title="Windows">
+
+Not applicable for ORISO Linux server deployment. Swap/pagefile settings are Windows-specific and unrelated.
+
+  </Tab>
+</Tabs>
+
 <Warning>
-This permanently disables swap. Ensure your server has sufficient RAM for all services.
+This permanently disables swap on Ubuntu. Ensure the server has sufficient RAM.
 </Warning>
 
 </Step>

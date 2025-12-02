@@ -68,6 +68,74 @@ kubectl logs deployment/userservice -n caritas --tail=100
 </Warning>
 
 </Step>
+
+<Step title="Verify secrets and environment variables">
+
+Confirm database and Keycloak connection settings are present in deployments and secrets.
+
+1) Inspect deployment env vars (example: TenantService)
+
+```bash
+kubectl get deployment tenantservice -n caritas -o yaml | grep -A3 -E "env:|name: (SPRING_DATASOURCE_URL|SPRING_DATASOURCE_USERNAME|SPRING_DATASOURCE_PASSWORD|KEYCLOAK_.*)"
+```
+
+2) List referenced secrets and check keys
+
+```bash
+# Find secrets referenced by envFrom/secretKeyRef
+kubectl get deployment tenantservice -n caritas -o yaml | grep -E "secretName:|name:.*SECRET" -A1
+
+# Example: inspect a secret
+kubectl get secret tenantservice-db -n caritas -o yaml | grep -E "data:|stringData:|name:"
+```
+
+3) Validate values inside pod (sanity check)
+
+```bash
+POD=$(kubectl get pods -n caritas -l app=tenantservice -o jsonpath="{.items[0].metadata.name}")
+kubectl exec -it -n caritas $POD -- env | grep -E "SPRING_DATASOURCE_|KEYCLOAK_"
+```
+
+<Warning>
+If env vars are missing or secrets not found, update the deployment manifests to reference the correct secret names and keys. Ensure MariaDB/MongoDB hosts match your service names in `-n caritas`.
+</Warning>
+
+<Check>
+All DB and Keycloak env vars should be present in the pod environment; referenced secrets should exist and contain expected keys.
+</Check>
+
+</Step>
+
+<Step title="Verify database connectivity and migrations">
+
+Confirm each service can reach its database and that migrations (Flyway/Liquibase) have applied.
+
+1) Actuator DB health
+
+```bash
+for port in 8081 8082 8083 8084; do
+  echo "Port $port DB health:";
+  curl -s http://127.0.0.1:$port/actuator/health/db | jq . || true;
+done
+```
+
+2) Check service logs for migration success
+
+```bash
+kubectl logs deployment/tenantservice -n caritas --tail=200 | grep -Ei "Flyway|Liquibase|schema|migration" || true
+kubectl logs deployment/userservice -n caritas --tail=200 | grep -Ei "Flyway|Liquibase|schema|migration" || true
+```
+
+3) Troubleshooting
+
+- If `health/db` is DOWN: verify DB host/user/password env vars in the deployment and that the DB services are reachable.
+- If migrations failed: re‑run pod and review SQL scripts under `ORISO-Database/mariadb/*`.
+
+<Check>
+All DB health checks should report `UP`, and logs should show migrations completed successfully.
+</Check>
+
+</Step>
 </Steps>
 
 ## Next Steps

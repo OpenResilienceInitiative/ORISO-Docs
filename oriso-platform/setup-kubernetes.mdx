@@ -8,23 +8,44 @@ description: "Verify k3s installation, create namespace, and configure Kubernete
 Verify k3s is running correctly and prepare Kubernetes namespace for ORISO Platform.
 
 <Steps>
-<Step title="Verify k3s is Running">
+<Step title="Verify Kubernetes is Running">
 
-Check that k3s service is active and Kubernetes cluster is operational.
+Check that Kubernetes cluster is operational.
+
+<Tabs>
+  <Tab title="Ubuntu/Debian — k3s">
 
 ```bash
-# Check k3s status
 sudo systemctl status k3s
-
-# Check nodes
 kubectl get nodes
+kubectl get pods --all-namespaces
+kubectl get storageclass
+```
 
-# Check all pods
+  </Tab>
+  <Tab title="macOS — Rancher Desktop">
+
+```bash
+# Check Rancher Desktop is running (GUI or check process)
+kubectl get nodes
+kubectl get pods --all-namespaces
+kubectl get storageclass
+```
+
+  </Tab>
+  <Tab title="Windows — Rancher Desktop">
+
+```powershell
+# Check Rancher Desktop is running
+kubectl get nodes
 kubectl get pods --all-namespaces
 
 # Check storage class
 kubectl get storageclass
 ```
+
+  </Tab>
+</Tabs>
 
 <Check>
 Expected output should show:
@@ -60,13 +81,16 @@ Setting the default namespace is optional but convenient, as it allows you to om
 
 </Step>
 
-<Step title="Configure k3s for Production">
+<Step title="Configure Kubernetes for Production">
 
-Configure k3s for production use with custom settings.
+Configure Kubernetes for production use with custom settings.
 
 <Info>
-This step is optional but recommended for production deployments.
+This step is optional but recommended for production deployments. Only applies to k3s on Ubuntu.
 </Info>
+
+<Tabs>
+  <Tab title="Ubuntu/Debian — k3s">
 
 ```bash
 # Edit k3s service
@@ -91,6 +115,15 @@ sudo systemctl restart k3s
 # Verify
 sudo systemctl status k3s
 ```
+
+  </Tab>
+  <Tab title="macOS/Windows — Rancher Desktop">
+
+Configure via Rancher Desktop GUI: Settings → Kubernetes → Resource limits; Settings → Container Runtime → Resource limits.
+Or edit `~/.rancher-desktop/lima/config/override.yaml` (macOS) or `%APPDATA%\rancher-desktop\lima\config\override.yaml` (Windows).
+
+  </Tab>
+</Tabs>
 
 <Check>
 k3s should restart successfully and show `active (running)` status.

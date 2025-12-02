@@ -8,6 +8,14 @@
     "dark": "#2563EB"
   },
   "favicon": "/favicon.svg",
+  "topNav": [
+    { "name": "GitHub", "href": "https://github.com/OpenResilienceInitiative/ORISO-Docs" }
+  ],
+  "github": {
+    "repository": "OpenResilienceInitiative/ORISO-Docs",
+    "branch": "main",
+    "directory": "/"
+  },
   "navigation": {
     "tabs": [
       {
@@ -75,6 +83,7 @@
     "dark": "/logo/dark.svg"
   },
   "contextual": {
+    "enabled": true,
     "options": [
       "copy",
       "view",
