@@ -86,6 +86,7 @@ sudo ufw allow 8080/tcp  # Keycloak
 sudo ufw allow 8087/tcp  # Element.io
 sudo ufw allow 8008/tcp  # Matrix Synapse (optional)
 sudo ufw allow 9021/tcp  # Redis Commander (optional)
+sudo ufw allow 9020/tcp  # Redis Exporter (optional)
 sudo ufw allow 9100/tcp  # Health Dashboard (optional)
 sudo ufw allow 3001/tcp  # SignOZ (optional)
 
@@ -114,19 +115,30 @@ macOS firewall is usually sufficient for local development. For production, use 
   <Tab title="Windows — Windows Firewall">
 
 ```powershell
-# Allow SSH (if OpenSSH Server is installed)
+# Allow SSH (if OpenSSH Server is installed) - IMPORTANT: do this first!
 New-NetFirewallRule -DisplayName "SSH" -Direction Inbound -LocalPort 22 -Protocol TCP -Action Allow
 
 # Allow required ports
+New-NetFirewallRule -DisplayName "HTTP" -Direction Inbound -LocalPort 80 -Protocol TCP -Action Allow
+New-NetFirewallRule -DisplayName "HTTPS" -Direction Inbound -LocalPort 443 -Protocol TCP -Action Allow
 New-NetFirewallRule -DisplayName "Nginx Proxy" -Direction Inbound -LocalPort 8089 -Protocol TCP -Action Allow
 New-NetFirewallRule -DisplayName "Frontend" -Direction Inbound -LocalPort 9001 -Protocol TCP -Action Allow
 New-NetFirewallRule -DisplayName "Admin" -Direction Inbound -LocalPort 9002 -Protocol TCP -Action Allow
 New-NetFirewallRule -DisplayName "Keycloak" -Direction Inbound -LocalPort 8080 -Protocol TCP -Action Allow
 New-NetFirewallRule -DisplayName "Element" -Direction Inbound -LocalPort 8087 -Protocol TCP -Action Allow
+New-NetFirewallRule -DisplayName "Matrix Synapse" -Direction Inbound -LocalPort 8008 -Protocol TCP -Action Allow
+New-NetFirewallRule -DisplayName "Redis Commander" -Direction Inbound -LocalPort 9021 -Protocol TCP -Action Allow
+New-NetFirewallRule -DisplayName "Redis Exporter" -Direction Inbound -LocalPort 9020 -Protocol TCP -Action Allow
+New-NetFirewallRule -DisplayName "Health Dashboard" -Direction Inbound -LocalPort 9100 -Protocol TCP -Action Allow
+New-NetFirewallRule -DisplayName "SignOZ" -Direction Inbound -LocalPort 3001 -Protocol TCP -Action Allow
 
 # Verify
-Get-NetFirewallRule | Where-Object {$_.DisplayName -like "*ORISO*" -or $_.DisplayName -like "*SSH*"}
+Get-NetFirewallRule | Where-Object {$_.DisplayName -like "*SSH*" -or $_.DisplayName -like "*HTTP*" -or $_.DisplayName -like "*Nginx*" -or $_.DisplayName -like "*Frontend*" -or $_.DisplayName -like "*Admin*" -or $_.DisplayName -like "*Keycloak*" -or $_.DisplayName -like "*Element*" -or $_.DisplayName -like "*Matrix*" -or $_.DisplayName -like "*Redis*" -or $_.DisplayName -like "*Health*" -or $_.DisplayName -like "*SignOZ*"}
 ```
+
+<Info>
+**Note**: HTTP (80) and HTTPS (443) are optional but recommended for Let's Encrypt certificate validation and HTTPS access. Matrix Synapse (8008), Redis Commander (9021), Redis Exporter (9020), Health Dashboard (9100), and SignOZ (3001) are optional services that can be deployed as needed.
+</Info>
 
   </Tab>
 </Tabs>

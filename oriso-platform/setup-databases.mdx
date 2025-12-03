@@ -105,10 +105,12 @@ CREATE DATABASE IF NOT EXISTS tenantservice CHARACTER SET utf8mb4 COLLATE utf8mb
 CREATE DATABASE IF NOT EXISTS consultingtypeservice CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 CREATE DATABASE IF NOT EXISTS videoservice CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 CREATE DATABASE IF NOT EXISTS caritas CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS keycloak CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 SHOW DATABASES;
 EOF
 
 # Import schemas from ORISO-Database (latest production schemas)
+# Note: keycloak schema is managed by Keycloak itself, not imported from ORISO-Database
 for db in agencyservice userservice uploadservice tenantservice consultingtypeservice videoservice caritas; do
   echo "Importing schema for $db..."
   kubectl exec -i -n caritas $MARIADB_POD -- \
@@ -124,11 +126,13 @@ kubectl exec -it -n caritas $MARIADB_POD -- \
 </Tabs>
 
 <Check>
-All required databases should be listed: agencyservice, userservice, uploadservice, tenantservice, consultingtypeservice, videoservice, caritas
+All required databases should be listed: agencyservice, userservice, uploadservice, tenantservice, consultingtypeservice, videoservice, caritas, keycloak
 </Check>
 
 <Note>
 All schemas in `ORISO-Database/mariadb/{database}/schema.sql` are exported from the current production system and are production-ready.
+
+**Keycloak Database**: Keycloak uses MariaDB (not a separate database). The `keycloak` database is created automatically when using Helm chart deployment (Option A), or manually when using Option B. If Keycloak is configured to use PostgreSQL instead, this database will not be present in MariaDB.
 </Note>
 
 </Step>
@@ -177,19 +181,31 @@ kubectl get svc,pvc -n caritas | grep -E "mariadb|mongodb"
 2) MariaDB connectivity and schemas
 
 ```bash
-# Connect as root and list databases
+# Get MariaDB pod and root password from secret
 MARIADB_POD=$(kubectl get pods -n caritas -l app=mariadb -o jsonpath="{.items[0].metadata.name}")
-kubectl exec -it -n caritas $MARIADB_POD -- mysql -u root -pPassword1234! -e "SHOW DATABASES;"
+MARIADB_ROOT_PASSWORD=$(kubectl get secret mariadb-secret -n caritas -o jsonpath="{.data.MYSQL_ROOT_PASSWORD}" | base64 -d)
+
+# If secret doesn't exist, check deployment for hardcoded password (development only)
+if [ -z "$MARIADB_ROOT_PASSWORD" ]; then
+  echo "⚠️  mariadb-secret not found. Using default development password."
+  MARIADB_ROOT_PASSWORD="Password1234!"
+fi
+
+# Connect as root and list databases
+kubectl exec -it -n caritas $MARIADB_POD -- \
+  mysql -u root -p"$MARIADB_ROOT_PASSWORD" -e "SHOW DATABASES;"
 
 # Sample table checks (adjust as needed)
 kubectl exec -it -n caritas $MARIADB_POD -- \
-  mysql -u root -pPassword1234! -e "USE userservice; SHOW TABLES;"
+  mysql -u root -p"$MARIADB_ROOT_PASSWORD" -e "USE userservice; SHOW TABLES;"
 kubectl exec -it -n caritas $MARIADB_POD -- \
-  mysql -u root -pPassword1234! -e "USE tenantservice; SHOW TABLES;"
+  mysql -u root -p"$MARIADB_ROOT_PASSWORD" -e "USE tenantservice; SHOW TABLES;"
 
 # Keycloak schema presence (if Keycloak uses MariaDB)
+# Note: Keycloak may use PostgreSQL instead; this check will fail in that case
 kubectl exec -it -n caritas $MARIADB_POD -- \
-  mysql -u root -pPassword1234! -e "USE keycloak; SHOW TABLES;"
+  mysql -u root -p"$MARIADB_ROOT_PASSWORD" -e "USE keycloak; SHOW TABLES;" 2>/dev/null || \
+  echo "⚠️  Keycloak database not found in MariaDB. Keycloak may be using PostgreSQL or not yet configured."
 ```
 
 3) MongoDB connectivity and collections
