@@ -29,48 +29,107 @@ Both MariaDB and MongoDB pods should show status `Running` and `1/1` ready.
 
 <Step title="Setup MariaDB Databases">
 
-Create databases and import schemas for all services.
+**⚠️ IMPORTANT**: ORISO-Database repository contains the latest production schemas exported from the running system.
+
+**Two deployment options available:**
+
+<Tabs>
+<Tab title="Option A: Helm Chart Deployment (Recommended) ⭐ NEW">
+
+**Benefits:**
+- ✅ SQL schemas versioned with Helm chart
+- ✅ Automatic schema initialization via Helm hooks
+- ✅ No breaking deployments when schemas are updated
+- ✅ `helm upgrade` automatically applies latest schemas
+- ✅ Production-ready Helm best practices
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes/helm
+
+# Sync latest SQL schemas from ORISO-Database to Helm chart
+./sync-schemas.sh
+
+# Install MariaDB with Helm (includes automatic schema initialization)
+helm install mariadb ./charts/mariadb --namespace caritas --create-namespace
+
+# Verify MariaDB is running
+kubectl get pods -n caritas | grep mariadb
+
+# Check init job status (applies schemas automatically)
+kubectl get jobs -n caritas | grep mariadb-init
+kubectl logs -n caritas job/mariadb-init-databases
+
+# Verify databases and schemas
+MARIADB_POD=$(kubectl get pods -n caritas -l app=mariadb -o jsonpath="{.items[0].metadata.name}")
+kubectl exec -it -n caritas $MARIADB_POD -- mysql -u root -proot -e "SHOW DATABASES;"
+```
+
+**Updating Schemas (when ORISO-Database schemas change):**
+
+```bash
+# 1. Sync updated SQL files to Helm chart
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes/helm
+./sync-schemas.sh
+
+# 2. Upgrade Helm release (automatically applies new schemas)
+helm upgrade mariadb ./charts/mariadb --namespace caritas
+
+# 3. Verify new schemas applied
+kubectl logs -n caritas job/mariadb-init-databases
+```
+
+<Info>
+**See**: `ORISO-Kubernetes/helm/README.md` and `ORISO-Kubernetes/helm/HELM_GUIDE.md` for detailed Helm documentation.
+</Info>
+
+</Tab>
+<Tab title="Option B: Manual Setup (Legacy)">
 
 ```bash
 cd ~/online-beratung/caritas-workspace/ORISO-Database
 
-# Option A: Run master setup script (recommended)
+# Run master setup script
 ./scripts/setup/00-master-setup.sh
-```
 
-**Option B: Manual Setup**
+# Or manual setup:
 
-```bash
 # Get MariaDB pod
 MARIADB_POD=$(kubectl get pods -n caritas -l app=mariadb -o jsonpath="{.items[0].metadata.name}")
 
 # Create databases
-kubectl exec -it -n caritas $MARIADB_POD -- mysql -u root -pPassword1234! <<EOF
+kubectl exec -it -n caritas $MARIADB_POD -- mysql -u root -proot <<EOF
 CREATE DATABASE IF NOT EXISTS agencyservice CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 CREATE DATABASE IF NOT EXISTS userservice CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 CREATE DATABASE IF NOT EXISTS uploadservice CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 CREATE DATABASE IF NOT EXISTS tenantservice CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE DATABASE IF NOT EXISTS statisticsservice CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE DATABASE IF NOT EXISTS keycloak CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE DATABASE IF NOT EXISTS caritas_master CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS consultingtypeservice CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS videoservice CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS caritas CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 SHOW DATABASES;
 EOF
 
-# Import schemas
-for db in agencyservice userservice uploadservice tenantservice; do
+# Import schemas from ORISO-Database (latest production schemas)
+for db in agencyservice userservice uploadservice tenantservice consultingtypeservice videoservice caritas; do
   echo "Importing schema for $db..."
   kubectl exec -i -n caritas $MARIADB_POD -- \
-    mysql -u root -pPassword1234! $db < mariadb/${db}/${db}-schema.sql
+    mysql -u root -proot $db < mariadb/${db}/schema.sql
 done
 
 # Verify
 kubectl exec -it -n caritas $MARIADB_POD -- \
-  mysql -u root -pPassword1234! -e "SHOW DATABASES;"
+  mysql -u root -proot -e "SHOW DATABASES;"
 ```
 
+</Tab>
+</Tabs>
+
 <Check>
-All required databases should be listed: agencyservice, userservice, uploadservice, tenantservice, statisticsservice, keycloak, caritas_master
+All required databases should be listed: agencyservice, userservice, uploadservice, tenantservice, consultingtypeservice, videoservice, caritas
 </Check>
+
+<Note>
+All schemas in `ORISO-Database/mariadb/{database}/schema.sql` are exported from the current production system and are production-ready.
+</Note>
 
 </Step>
 
@@ -152,8 +211,33 @@ MariaDB lists all required databases and tables; MongoDB lists `consulting_types
 </Step>
 </Steps>
 
+## Export/Update Database Schemas (Optional)
+
+If you need to export the latest schemas from a running system:
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Database
+
+# Export all schemas from running production cluster
+./scripts/export-schemas.sh
+
+# This will:
+# - Export all MariaDB schemas (7 databases)
+# - Export MongoDB collections
+# - Export PostgreSQL schema (Matrix)
+# - Update main schema files in the repository
+# - Create timestamped backups in exported/ directories
+```
+
+## Related Documentation
+
+- [Advanced Guides - Helm Charts](/oriso-platform/advanced-guides) - Detailed guide for using Helm charts with automatic schema initialization
+- [ORISO-Database README](https://github.com/your-org/ORISO-Debian/blob/main/caritas-workspace/ORISO-Database/README.md) - Complete database documentation
+- [Database Export Summary](https://github.com/your-org/ORISO-Debian/blob/main/caritas-workspace/ORISO-Database/EXPORT_SUMMARY.md) - Schema export information
+
 ## Next Steps
 
+- [Configure ConfigMaps and Secrets](/oriso-platform/configmaps-secrets) ⭐ **REQUIRED** - Configure services before deployment
 - [Deploy Backend Services](/oriso-platform/deploy-backend-services) - Deploy microservices that use these databases
 - [Configure Keycloak](/oriso-platform/configure-keycloak) - If not already completed
 

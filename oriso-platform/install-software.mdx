@@ -172,23 +172,32 @@ Verify kubectl can connect to k3s: `kubectl get nodes` should show your node.
 
 </Step>
 
-<Step title="Install Helm">
+<Step title="Install Helm (Required)">
 
-Install Helm for managing Kubernetes applications (optional, needed for SignOZ).
+Install Helm for managing Kubernetes applications. **Helm is now required** for MariaDB deployment with automatic schema initialization.
 
-<Info>
-This step is optional and only required if you plan to deploy SignOZ for observability.
-</Info>
+<Warning>
+Helm is required for MariaDB Helm chart deployment. The ORISO MariaDB Helm chart is included in `ORISO-Kubernetes/helm/charts/mariadb/` and doesn't require external Helm repositories.
+</Warning>
 
 <Tabs>
   <Tab title="Ubuntu/Debian">
 
 ```bash
+# Install Helm
 curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+# Verify Helm
 helm version
+
+# Add Helm repos (for optional components like SignOZ)
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update
 ```
+
+<Note>
+**Note**: ORISO MariaDB Helm chart is included in `ORISO-Kubernetes/helm/charts/mariadb/` and doesn't require external Helm repositories.
+</Note>
 
   </Tab>
   <Tab title="macOS">

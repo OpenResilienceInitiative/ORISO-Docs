@@ -8,14 +8,14 @@ description: "Deploy health dashboard, SignOZ observability platform, and apply 
 Deploy monitoring and observability services for ORISO Platform.
 
 <Steps>
-<Step title="Deploy Health Dashboard">
+<Step title="Deploy Health Dashboard (Legacy)">
 
-Deploy the health dashboard for system monitoring.
+Deploy the legacy health dashboard for system monitoring.
 
 ```bash
 cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes
 
-# Deploy health dashboard
+# Deploy health dashboard (legacy)
 kubectl apply -f deployments/10-monitoring.yaml
 
 # Wait for health dashboard
@@ -23,10 +23,50 @@ kubectl wait --for=condition=ready pod -l app=health-dashboard -n caritas --time
 
 # Check status
 kubectl get pods -n caritas | grep health-dashboard
+
+# Access: https://health.oriso.site (port 9100)
 ```
 
 <Check>
 Health dashboard pod should be running.
+</Check>
+
+</Step>
+
+<Step title="Deploy Status Page (Recommended)">
+
+Deploy the new status page with professional monitoring interface.
+
+<Info>
+The new status page provides a modern React-based UI with Tailwind CSS, Kubernetes service discovery integration, and real-time service health monitoring.
+</Info>
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Status
+
+# Deploy status page
+kubectl apply -f deployment.yaml
+kubectl apply -f service.yaml
+kubectl apply -f ingress.yaml
+
+# Wait for status page
+kubectl wait --for=condition=ready pod -l app=status-page -n caritas --timeout=180s
+
+# Check status
+kubectl get pods -n caritas | grep status-page
+
+# Access: https://status.oriso.site (port 9200)
+```
+
+**Features:**
+- Modern React-based UI with Tailwind CSS
+- Kubernetes service discovery integration
+- Real-time service health monitoring
+- Professional status page design
+- Runs on port 9200 (separate from legacy health dashboard on 9100)
+
+<Check>
+Status page pod should be running and accessible via HTTPS.
 </Check>
 
 </Step>

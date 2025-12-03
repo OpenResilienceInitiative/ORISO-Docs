@@ -87,8 +87,10 @@ curl http://127.0.0.1:<port>/actuator/health/redis | jq .
 | Keycloak | 8080 | `/auth` |
 | Matrix Synapse | 8008 | `/_matrix/client/versions` |
 | Element.io | 8087 | `/` |
+| LiveKit | 7880 | `/` (HTTP), 50000-50100 (UDP RTC) |
 | Nginx Proxy | 8089 | `/` |
 | Health Dashboard | 9100 | `/` |
+| Status Page | 9200 | `/` |
 | Redis Commander | 9021 | `/` |
 
 ## Service Names Reference
@@ -108,7 +110,10 @@ Common service names for use with kubectl commands:
 | Keycloak | `keycloak` |
 | Matrix Synapse | `matrix-synapse` |
 | Element | `element` |
+| LiveKit | `livekit` |
 | Nginx Proxy | `cob-proxy` |
+| Status Page | `status-page` |
+| Health Dashboard | `health-dashboard` |
 | MariaDB | `mariadb` |
 | MongoDB | `mongodb` |
 | Redis | `redis` |
@@ -119,11 +124,25 @@ Common service names for use with kubectl commands:
 ### Configuration Files
 
 ```bash
+# If using ORISO-Debian (all systems in one repo):
+# ORISO-Debian/caritas-workspace/ORISO-Kubernetes/
+# ORISO-Debian/caritas-workspace/ORISO-Database/
+# ORISO-Debian/README.md (complete setup guide)
+
+# If using individual repositories:
 # Kubernetes configs
 ~/online-beratung/caritas-workspace/ORISO-Kubernetes/
 
-# Database schemas
+# ConfigMaps and Secrets (REQUIRED for services)
+~/online-beratung/caritas-workspace/ORISO-Kubernetes/configmaps/services/
+~/online-beratung/caritas-workspace/ORISO-Kubernetes/secrets/services/
+
+# Database schemas (latest production schemas)
 ~/online-beratung/caritas-workspace/ORISO-Database/
+~/online-beratung/caritas-workspace/ORISO-Database/scripts/export-schemas.sh
+
+# Helm charts (for MariaDB)
+~/online-beratung/caritas-workspace/ORISO-Kubernetes/helm/charts/mariadb/
 
 # Keycloak realm
 ~/online-beratung/caritas-workspace/ORISO-Keycloak/realm.json
@@ -136,7 +155,25 @@ Common service names for use with kubectl commands:
 
 # k3s config
 /etc/rancher/k3s/k3s.yaml
+
+# Status Page (new)
+~/online-beratung/caritas-workspace/ORISO-Status/
+
+# LiveKit (video conferencing)
+~/online-beratung/caritas-workspace/ORISO-Livekit/
+
+# Production guides (in ORISO-Debian)
+~/online-beratung/ORISO-Debian/caritas-workspace/PRODUCTION_GUIDE.md
+~/online-beratung/ORISO-Debian/caritas-workspace/CHANGES_SUMMARY.md
+
+# Database export summary
+~/online-beratung/caritas-workspace/ORISO-Database/EXPORT_SUMMARY.md
+~/online-beratung/caritas-workspace/ORISO-Database/SETUP_GUIDE.md
 ```
+
+<Info>
+**Note**: ORISO-Debian contains all systems in one repository. If you cloned ORISO-Debian, all paths are relative to `ORISO-Debian/caritas-workspace/`. See [Clone ORISO Repositories](/oriso-platform/clone-repositories) for details.
+</Info>
 
 ### Configuration Access
 
@@ -149,6 +186,40 @@ kubectl get deployment <name> -n caritas -o yaml
 
 # View service configuration
 kubectl get svc <name> -n caritas -o yaml
+```
+
+### ConfigMaps and Secrets Management
+
+```bash
+# List all ConfigMaps
+kubectl get configmaps -n caritas | grep -E "userservice|tenantservice|agencyservice|consultingtypeservice"
+
+# List all Secrets
+kubectl get secrets -n caritas | grep -E "userservice|tenantservice|agencyservice|consultingtypeservice"
+
+# View a ConfigMap (non-sensitive)
+kubectl get configmap userservice-config -n caritas -o yaml
+
+# View a Secret (sensitive - be careful)
+kubectl get secret userservice-secrets -n caritas -o yaml
+
+# Edit ConfigMap
+kubectl edit configmap userservice-config -n caritas
+
+# Edit Secret
+kubectl edit secret userservice-secrets -n caritas
+
+# Apply all ConfigMaps and Secrets
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes
+kubectl apply -f configmaps/services/
+kubectl apply -f secrets/services/
+
+# Verify deployment references ConfigMaps/Secrets
+kubectl get deployment userservice -n caritas -o yaml | grep -A 10 envFrom
+
+# Check environment variables in pod
+POD=$(kubectl get pods -n caritas -l app=userservice -o jsonpath="{.items[0].metadata.name}")
+kubectl exec -it -n caritas $POD -- env | grep -E "SPRING_DATASOURCE_|KEYCLOAK_"
 ```
 
 ## Quick Health Check Script
@@ -217,8 +288,25 @@ echo "Element.io: http://$SERVER_IP:8087"
 echo "Element Homeserver (local): http://$SERVER_IP:8008"
 ```
 
+## DNS-Based Service Discovery
+
+All services use Kubernetes DNS names for service discovery:
+
+| Service | DNS Name |
+|---------|----------|
+| MariaDB | `mariadb.caritas.svc.cluster.local:3306` |
+| MongoDB | `mongodb.caritas.svc.cluster.local:27017` |
+| Redis | `redis.caritas.svc.cluster.local:6379` |
+| Keycloak | `keycloak.caritas.svc.cluster.local:8080` |
+| RabbitMQ | `rabbitmq.caritas.svc.cluster.local:5672` |
+
+<Info>
+Kubernetes DNS automatically resolves these names to the correct service IPs, even when pods are rescheduled. Never use hardcoded IPs.
+</Info>
+
 ## Related Documentation
 
+- [Configure ConfigMaps and Secrets](/oriso-platform/configmaps-secrets) ⭐ **REQUIRED** - Configure services before deployment
 - [Troubleshooting Guide](/oriso-platform/troubleshooting) - Comprehensive troubleshooting
 - [Post-Deployment Configuration](/oriso-platform/post-deployment) - Verify deployment
 - [Verification & Testing](/oriso-platform/verification-testing) - Test platform functionality

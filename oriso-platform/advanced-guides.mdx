@@ -1,0 +1,693 @@
+---
+title: "Advanced Guides - Build Docker Images & Helm Charts"
+description: "Build Docker images for all services, use Helm for MariaDB deployment with automatic schema initialization, and access comprehensive documentation resources"
+---
+
+# Advanced Guides
+
+Complete reference for advanced ORISO Platform topics including building Docker images, using Helm charts, and accessing all documentation resources.
+
+## Navigation
+
+- [Build Guide](#build-guide) - Build Docker images for all services
+- [Helm Charts Guide](#helm-charts-guide) - Use Helm for MariaDB deployment
+- [Additional Resources](#additional-resources) - Complete documentation reference
+
+---
+
+<Tabs>
+<Tab title="Build Guide">
+
+## Build Guide {#build-guide}
+
+Complete guide for building Docker images and deploying ORISO Platform services to Kubernetes.
+
+<Info>
+This guide covers building Docker images for all ORISO services and deploying them to your Kubernetes cluster.
+</Info>
+
+## Prerequisites
+
+### Required Software
+
+```bash
+# Docker
+docker --version  # Should be 20.10+
+
+# Kubernetes CLI
+kubectl version --client  # Should be 1.21+
+
+# Node.js (for Frontend/Admin builds)
+node --version  # Should be 18.16+
+npm --version   # Should be 9.5+
+
+# Java & Maven (for Backend services)
+java --version  # Should be 17+
+mvn --version   # Should be 3.8+
+```
+
+### Access Requirements
+
+- Access to Kubernetes cluster (k3s)
+- Docker daemon running
+- Sufficient disk space (minimum 20GB free)
+
+## Building Docker Images
+
+### Backend Services
+
+Backend services are Spring Boot applications built with Maven.
+
+**Example: Building UserService**
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-UserService
+
+# Build with Maven
+mvn clean package -DskipTests
+
+# Build Docker image
+docker build -t oriso-userservice:latest .
+
+# Tag for registry (if using)
+docker tag oriso-userservice:latest your-registry/oriso-userservice:latest
+
+# Push to registry (if using)
+docker push your-registry/oriso-userservice:latest
+```
+
+**All Backend Services:**
+- `ORISO-UserService` → `oriso-userservice`
+- `ORISO-TenantService` → `oriso-tenantservice`
+- `ORISO-AgencyService` → `oriso-agencyservice`
+- `ORISO-ConsultingTypeService` → `oriso-consultingtypeservice`
+- `ORISO-UploadService` → `oriso-uploadservice`
+- `ORISO-VideoService` → `oriso-videoservice`
+
+### Frontend Services
+
+Frontend services are React applications built with npm.
+
+**Building Frontend:**
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Frontend
+
+# Install dependencies
+npm install
+
+# Build production bundle
+npm run build
+
+# Build Docker image
+docker build -t oriso-frontend:latest .
+
+# Tag and push (if using registry)
+docker tag oriso-frontend:latest your-registry/oriso-frontend:latest
+docker push your-registry/oriso-frontend:latest
+```
+
+**Building Admin:**
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Admin
+
+# Install dependencies
+npm install
+
+# Build production bundle
+npm run build
+
+# Build Docker image
+docker build -t oriso-admin:latest .
+
+# Tag and push (if using registry)
+docker tag oriso-admin:latest your-registry/oriso-admin:latest
+docker push your-registry/oriso-admin:latest
+```
+
+## Image Naming Convention
+
+All ORISO images follow the naming pattern:
+- `oriso-{servicename}:{tag}`
+
+Examples:
+- `oriso-userservice:latest`
+- `oriso-frontend:v1.0.0`
+- `oriso-keycloak:latest`
+
+## Loading Images to k3s
+
+If you're using k3s and not a registry:
+
+```bash
+# Save image to tar
+docker save oriso-userservice:latest -o oriso-userservice.tar
+
+# Load into k3s
+sudo k3s ctr images import oriso-userservice.tar
+```
+
+## Deployment
+
+After building images, update deployment YAMLs to use your images:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: userservice
+spec:
+  template:
+    spec:
+      containers:
+      - name: userservice
+        image: oriso-userservice:latest  # Your built image
+        # ... rest of configuration
+```
+
+Then apply:
+
+```bash
+kubectl apply -f deployments/04-backend-services.yaml
+```
+
+## Automated Build Scripts
+
+Some services may have build scripts. Check individual service directories:
+
+```bash
+# Check for build scripts
+find ~/online-beratung/caritas-workspace/ORISO-* -name "build.sh" -o -name "docker-build.sh"
+```
+
+## Troubleshooting
+
+### Build Failures
+
+**Maven Build Issues:**
+```bash
+# Clean and rebuild
+mvn clean install -U
+
+# Skip tests if needed
+mvn clean package -DskipTests
+```
+
+**npm Build Issues:**
+```bash
+# Clear cache and reinstall
+rm -rf node_modules package-lock.json
+npm install
+
+# Build with verbose output
+npm run build -- --verbose
+```
+
+### Image Size Issues
+
+```bash
+# Check image size
+docker images | grep oriso
+
+# Use multi-stage builds to reduce size
+# See Dockerfile examples in service directories
+```
+
+### Registry Authentication
+
+```bash
+# Login to registry
+docker login your-registry.com
+
+# Configure Kubernetes to pull from registry
+kubectl create secret docker-registry regcred \
+  --docker-server=your-registry.com \
+  --docker-username=your-username \
+  --docker-password=your-password \
+  -n caritas
+```
+
+## Best Practices
+
+1. **Use Version Tags**: Don't always use `latest`, use version tags like `v1.0.0`
+2. **Multi-stage Builds**: Use multi-stage Dockerfiles to reduce image size
+3. **Layer Caching**: Order Dockerfile commands to maximize cache hits
+4. **Security Scanning**: Scan images for vulnerabilities before deployment
+5. **Build Automation**: Use CI/CD pipelines for automated builds
+
+## Related Documentation
+
+- [ORISO-Kubernetes BUILD_GUIDE.md](https://github.com/your-org/ORISO-Debian/blob/main/caritas-workspace/ORISO-Kubernetes/BUILD_GUIDE.md) - Detailed build guide
+- [Deploy Backend Services](/oriso-platform/deploy-backend-services) - Deploy built images
+- [Quick Reference](/oriso-platform/quick-reference) - Quick deployment reference
+
+</Tab>
+
+<Tab title="Helm Charts Guide">
+
+## Helm Charts Guide {#helm-charts-guide}
+
+Complete guide for using Helm charts to deploy ORISO Platform services, with automatic schema initialization for MariaDB.
+
+<Info>
+Helm charts provide a better way to manage Kubernetes deployments, especially for MariaDB with automatic schema initialization.
+</Info>
+
+## Overview
+
+ORISO Platform includes Helm charts for:
+- **MariaDB**: StatefulSet with automatic database and schema initialization
+- **Future services**: Additional charts may be added
+
+## Quick Start
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes/helm
+
+# Update dependencies
+helm dependency update
+
+# Install MariaDB with Helm (includes automatic schema initialization)
+helm install mariadb ./charts/mariadb --namespace caritas --create-namespace
+
+# Verify MariaDB is running
+kubectl get pods -n caritas | grep mariadb
+
+# Check init job status (applies schemas automatically)
+kubectl get jobs -n caritas | grep mariadb-init
+kubectl logs -n caritas job/mariadb-init-databases
+```
+
+## MariaDB Helm Chart
+
+### Features
+
+- ✅ SQL schemas versioned with Helm chart
+- ✅ Automatic schema initialization via Helm hooks
+- ✅ No breaking deployments when schemas are updated
+- ✅ `helm upgrade` automatically applies latest schemas
+- ✅ Production-ready Helm best practices
+
+### Installation
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes/helm
+
+# Sync latest SQL schemas from ORISO-Database to Helm chart
+./sync-schemas.sh
+
+# Install MariaDB with Helm
+helm install mariadb ./charts/mariadb --namespace caritas --create-namespace
+
+# Verify
+kubectl get pods -n caritas | grep mariadb
+kubectl get jobs -n caritas | grep mariadb-init
+```
+
+### Updating Schemas
+
+When SQL files in `ORISO-Database/mariadb/` are updated:
+
+```bash
+# 1. Sync updated SQL files to Helm chart
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes/helm
+./sync-schemas.sh
+
+# 2. Upgrade Helm release (automatically applies new schemas)
+helm upgrade mariadb ./charts/mariadb --namespace caritas
+
+# 3. Verify new schemas applied
+kubectl logs -n caritas job/mariadb-init-databases
+```
+
+### Chart Structure
+
+```
+charts/mariadb/
+├── Chart.yaml              # Chart metadata
+├── values.yaml             # Default values
+├── README.md               # Chart documentation
+├── templates/
+│   ├── statefulset.yaml    # MariaDB StatefulSet
+│   ├── service.yaml        # MariaDB Service
+│   ├── job-init-databases.yaml  # Schema initialization job
+│   └── configmap-schemas.yaml   # SQL schemas as ConfigMap
+└── sql-schemas/            # SQL schema files
+    ├── agencyservice-schema.sql
+    ├── userservice-schema.sql
+    ├── tenantservice-schema.sql
+    └── ...
+```
+
+## Migration from Shell Scripts
+
+| Old Approach | New Approach |
+|-------------|--------------|
+| `./scripts/setup/01-mariadb-setup.sh` | `helm install mariadb ./charts/mariadb` |
+| `./scripts/setup/02-apply-mariadb-schemas.sh` | Automatic via Helm hooks |
+| Manual SQL file copying | Embedded in Helm chart |
+| Manual script execution | `helm upgrade` |
+
+## Configuration
+
+### Customizing Values
+
+Edit `values.yaml` or pass values via command line:
+
+```bash
+# Install with custom values
+helm install mariadb ./charts/mariadb \
+  --namespace caritas \
+  --set mariadb.rootPassword=your-password \
+  --set mariadb.database=your-database
+```
+
+### Available Values
+
+See `charts/mariadb/values.yaml` for all configurable values:
+- Database credentials
+- Storage configuration
+- Resource limits
+- Replica count
+
+## Troubleshooting
+
+### Init Job Fails
+
+```bash
+# Check init job logs
+kubectl logs -n caritas job/mariadb-init-databases
+
+# Check job status
+kubectl describe job mariadb-init-databases -n caritas
+
+# Restart init job
+kubectl delete job mariadb-init-databases -n caritas
+helm upgrade mariadb ./charts/mariadb --namespace caritas
+```
+
+### Schema Not Applied
+
+```bash
+# Verify SQL files are in chart
+ls -la charts/mariadb/sql-schemas/
+
+# Check ConfigMap contains schemas
+kubectl get configmap mariadb-schemas -n caritas -o yaml
+
+# Manually trigger upgrade
+helm upgrade mariadb ./charts/mariadb --namespace caritas
+```
+
+### Helm Installation Issues
+
+```bash
+# Check Helm version
+helm version
+
+# Update Helm (if needed)
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+# Verify chart syntax
+helm lint ./charts/mariadb
+```
+
+## Best Practices
+
+1. **Version Control**: Keep SQL schemas in version control
+2. **Sync Script**: Always run `sync-schemas.sh` before upgrading
+3. **Test Upgrades**: Test schema upgrades in dev environment first
+4. **Backup**: Backup databases before schema upgrades
+5. **Rollback**: Use `helm rollback` if upgrade fails
+
+## Related Documentation
+
+- [ORISO-Kubernetes Helm README](https://github.com/your-org/ORISO-Debian/blob/main/caritas-workspace/ORISO-Kubernetes/helm/README.md) - Detailed Helm documentation
+- [Helm Migration Guide](https://github.com/your-org/ORISO-Debian/blob/main/caritas-workspace/ORISO-Kubernetes/helm/MIGRATION.md) - Migration from shell scripts
+- [Setup Databases](/oriso-platform/setup-databases) - Database setup guide
+- [Helm Official Docs](https://helm.sh/docs/) - Helm documentation
+
+</Tab>
+
+<Tab title="Additional Resources">
+
+## Additional Resources {#additional-resources}
+
+Comprehensive reference guide to all ORISO Platform documentation, guides, and important files.
+
+## Core Documentation
+
+### Main Guides
+
+- **ORISO-Debian README.md** - Complete server setup guide (2551 lines)
+  - Location: `ORISO-Debian/README.md`
+  - Contains: Full deployment guide from scratch to production
+
+- **Production Guide** - Production deployment best practices
+  - Location: `ORISO-Debian/caritas-workspace/PRODUCTION_GUIDE.md`
+  - Contains: ConfigMaps/Secrets setup, DNS-based discovery, production checklist
+
+- **Changes Summary** - Configuration refactoring details
+  - Location: `ORISO-Debian/caritas-workspace/CHANGES_SUMMARY.md`
+  - Contains: Migration guide from hardcoded values to ConfigMaps/Secrets
+
+## Kubernetes Documentation
+
+### ORISO-Kubernetes Guides
+
+- **README.md** - Kubernetes deployment overview
+  - Location: `ORISO-Kubernetes/README.md`
+  - Contains: Repository structure, deployment overview
+
+- **QUICK_START.md** - Fast deployment guide
+  - Location: `ORISO-Kubernetes/QUICK_START.md`
+  - Contains: Quick start for new users
+
+- **DEPLOYMENT.md** - Detailed deployment guide
+  - Location: `ORISO-Kubernetes/DEPLOYMENT.md`
+  - Contains: Step-by-step deployment instructions
+
+- **BUILD_GUIDE.md** - Docker image building guide
+  - Location: `ORISO-Kubernetes/BUILD_GUIDE.md`
+  - Contains: Building and pushing Docker images
+
+- **STATUS.md** - Current deployment status
+  - Location: `ORISO-Kubernetes/STATUS.md`
+  - Contains: Deployment status and known issues
+
+### Helm Documentation
+
+- **Helm README.md** - Helm charts overview
+  - Location: `ORISO-Kubernetes/helm/README.md`
+  - Contains: Helm chart usage and features
+
+- **HELM_GUIDE.md** - Complete Helm guide
+  - Location: `ORISO-Kubernetes/helm/HELM_GUIDE.md`
+  - Contains: Detailed Helm chart documentation
+
+- **MIGRATION.md** - Migration from shell scripts
+  - Location: `ORISO-Kubernetes/helm/MIGRATION.md`
+  - Contains: How to migrate from shell scripts to Helm
+
+- **SUMMARY.md** - Helm charts summary
+  - Location: `ORISO-Kubernetes/helm/SUMMARY.md`
+  - Contains: Quick reference for Helm charts
+
+## Database Documentation
+
+### ORISO-Database Guides
+
+- **README.md** - Database overview
+  - Location: `ORISO-Database/README.md`
+  - Contains: All database technologies and schemas
+
+- **SETUP_GUIDE.md** - Database setup instructions
+  - Location: `ORISO-Database/SETUP_GUIDE.md`
+  - Contains: Step-by-step database setup
+
+- **EXPORT_SUMMARY.md** - Schema export information
+  - Location: `ORISO-Database/EXPORT_SUMMARY.md`
+  - Contains: Last export date, exported schemas, verification
+
+### Database-Specific Documentation
+
+- **MariaDB README** - `ORISO-Database/mariadb/README.md`
+- **MongoDB README** - `ORISO-Database/mongodb/README.md`
+- **PostgreSQL README** - `ORISO-Database/postgresql/README.md`
+- **Redis README** - `ORISO-Database/redis/README.md`
+- **RabbitMQ README** - `ORISO-Database/rabbitmq/README.md`
+
+## Service Documentation
+
+### Backend Services
+
+Each service has its own README and CHANGELOG:
+
+- **UserService**
+  - `ORISO-UserService/readme.md`
+  - `ORISO-UserService/CHANGELOG.md`
+
+- **TenantService**
+  - `ORISO-TenantService/readme.md`
+  - `ORISO-TenantService/CHANGELOG.md`
+
+- **AgencyService**
+  - `ORISO-AgencyService/readme.md`
+  - `ORISO-AgencyService/CHANGELOG.md`
+
+- **ConsultingTypeService**
+  - `ORISO-ConsultingTypeService/readme.md`
+  - `ORISO-ConsultingTypeService/CHANGELOG.md`
+
+### Frontend Services
+
+- **Frontend README** - `ORISO-Frontend/README.md`
+- **Frontend CHANGELOG** - `ORISO-Frontend/CHANGELOG.md`
+- **Matrix Integration Guide** - `ORISO-Frontend/MATRIX-INTEGRATION-GUIDE.md`
+- **Storybook Setup** - `ORISO-Frontend/STORYBOOK_SETUP.md`
+
+- **Admin README** - `ORISO-Admin/README.md`
+
+### Infrastructure Services
+
+- **Keycloak**
+  - `ORISO-Keycloak/README.md`
+  - `ORISO-Keycloak/DEPLOYMENT.md`
+  - `ORISO-Keycloak/STATUS.md`
+
+- **Matrix**
+  - `ORISO-Matrix/README.md`
+  - `ORISO-Matrix/DEPLOYMENT.md`
+  - `ORISO-Matrix/STATUS.md`
+  - `ORISO-Matrix/BACKUP-RESTORE.md`
+
+- **LiveKit**
+  - `ORISO-Livekit/README.md`
+  - `ORISO-Livekit/DEPLOYMENT_STATUS.md`
+  - `ORISO-Livekit/TESTING_GUIDE.md`
+  - `ORISO-Livekit/WORKING_STATUS.md`
+
+- **Nginx**
+  - `ORISO-Nginx/README.md`
+  - `ORISO-Nginx/DEPLOYMENT.md`
+  - `ORISO-Nginx/STATUS.md`
+
+- **Redis**
+  - `ORISO-Redis/README.md`
+  - `ORISO-Redis/DEPLOYMENT.md`
+  - `ORISO-Redis/STATUS.md`
+
+### Monitoring Services
+
+- **Health Dashboard**
+  - `ORISO-HealthDashboard/README.md`
+  - `ORISO-HealthDashboard/DEPLOYMENT.md`
+
+- **Status Page**
+  - `ORISO-Status/README.md`
+  - `ORISO-Status/frontend/README.md`
+
+- **SignOZ**
+  - `ORISO-SignOZ/README.md`
+  - `ORISO-SignOZ/DEPLOYMENT.md`
+  - `ORISO-SignOZ/MONITORING-GUIDE.md`
+
+- **Element**
+  - `ORISO-Element/README.md`
+
+## Configuration Documentation
+
+### ConfigMaps and Secrets
+
+- **ConfigMaps README** - `ORISO-Kubernetes/configmaps/services/README.md`
+- **Secrets README** - `ORISO-Kubernetes/secrets/services/README.md`
+
+## Deployment Scripts
+
+All deployment scripts are in `ORISO-Kubernetes/scripts/`:
+
+- `deploy-all.sh` - Master deployment script
+- `verify-deployment.sh` - Deployment verification
+- `apply-configmaps-secrets.sh` - Apply ConfigMaps and Secrets
+- `configure-keycloak-http.sh` - Keycloak HTTP configuration
+
+## Database Scripts
+
+All database scripts are in `ORISO-Database/scripts/`:
+
+- `setup/00-master-setup.sh` - Master database setup
+- `export-schemas.sh` - Export all schemas from production
+- Individual setup scripts for each database
+
+## Quick Reference
+
+### File Locations
+
+```bash
+# Main documentation
+ORISO-Debian/README.md
+ORISO-Debian/caritas-workspace/PRODUCTION_GUIDE.md
+ORISO-Debian/caritas-workspace/CHANGES_SUMMARY.md
+
+# Kubernetes
+ORISO-Kubernetes/README.md
+ORISO-Kubernetes/QUICK_START.md
+ORISO-Kubernetes/DEPLOYMENT.md
+ORISO-Kubernetes/BUILD_GUIDE.md
+
+# Helm
+ORISO-Kubernetes/helm/README.md
+ORISO-Kubernetes/helm/HELM_GUIDE.md
+ORISO-Kubernetes/helm/MIGRATION.md
+
+# Database
+ORISO-Database/README.md
+ORISO-Database/SETUP_GUIDE.md
+ORISO-Database/EXPORT_SUMMARY.md
+
+# Service-specific
+ORISO-*/README.md
+ORISO-*/DEPLOYMENT.md
+ORISO-*/STATUS.md
+```
+
+## External Resources
+
+### Official Documentation
+
+- [Kubernetes Documentation](https://kubernetes.io/docs/)
+- [k3s Documentation](https://docs.k3s.io/)
+- [Helm Documentation](https://helm.sh/docs/)
+- [Keycloak Documentation](https://www.keycloak.org/documentation)
+- [Spring Boot Documentation](https://spring.io/projects/spring-boot)
+- [Matrix Documentation](https://matrix.org/docs/)
+- [LiveKit Documentation](https://docs.livekit.io/)
+
+### Community Resources
+
+- [Docker Documentation](https://docs.docker.com/)
+- [Maven Documentation](https://maven.apache.org/guides/)
+- [Node.js Documentation](https://nodejs.org/docs/)
+- [React Documentation](https://react.dev/)
+
+## Getting Help
+
+1. **Check Service Logs**: `kubectl logs <pod> -n caritas`
+2. **Check Events**: `kubectl get events -n caritas`
+3. **Review Troubleshooting**: See [Troubleshooting Guide](/oriso-platform/troubleshooting)
+4. **Check Service READMEs**: Each service has detailed documentation
+5. **Review Status Files**: Check `STATUS.md` files for known issues
+
+## Contributing
+
+When adding new documentation:
+
+1. Update this resources page
+2. Add to appropriate service directory
+3. Update main README if needed
+4. Follow existing documentation format
+
+</Tab>
+</Tabs>
+

@@ -49,9 +49,11 @@
               "oriso-platform/deploy-infrastructure",
               "oriso-platform/configure-keycloak",
               "oriso-platform/setup-databases",
+              "oriso-platform/configmaps-secrets",
               "oriso-platform/deploy-backend-services",
               "oriso-platform/deploy-frontend",
               "oriso-platform/deploy-matrix",
+              "oriso-platform/deploy-livekit",
               "oriso-platform/deploy-nginx",
               "oriso-platform/deploy-monitoring"
             ]
@@ -72,6 +74,12 @@
               "oriso-platform/security-hardening",
               "oriso-platform/troubleshooting",
               "oriso-platform/quick-reference"
+            ]
+          },
+          {
+            "group": "Advanced Guides",
+            "pages": [
+              "oriso-platform/advanced-guides"
             ]
           }
         ]
