@@ -18,12 +18,20 @@ Start here to understand requirements and begin deployment
 Configure your Ubuntu server for ORISO Platform
 </Card>
 
+<Card title="ConfigMaps & Secrets" icon="key" href="/oriso-platform/configmaps-secrets">
+⭐ REQUIRED - Configure services before deployment
+</Card>
+
 <Card title="Deploy Infrastructure" icon="server" href="/oriso-platform/deploy-infrastructure">
 Deploy databases, cache, and authentication services
 </Card>
 
 <Card title="Quick Reference" icon="book" href="/oriso-platform/quick-reference">
 Essential commands and troubleshooting tips
+</Card>
+
+<Card title="Advanced Guides" icon="book-open" href="/oriso-platform/advanced-guides">
+Build guide, Helm charts, and complete documentation resources
 </Card>
 </CardGroup>
 
@@ -34,18 +42,34 @@ ORISO Platform is a comprehensive online consultation platform built with:
 - **Microservices Architecture** - Spring Boot backend services
 - **Kubernetes Deployment** - k3s lightweight Kubernetes
 - **Authentication** - Keycloak identity management
-- **Communication** - Matrix protocol for chat
+- **Communication** - Matrix protocol for chat, LiveKit for group video calls
 - **Databases** - MariaDB and MongoDB
 - **Frontend** - React-based web applications
+- **Monitoring** - Status page and health dashboard
+
+<Info>
+**📦 Complete System Repository**: ORISO-Debian now contains all systems in one repository. If you want to clone the whole system at once, you can reference and use the [ORISO-Debian repository](https://github.com/OpenResilienceInitiative/ORISO-Debian) which includes all ORISO components in a single repository. See [Clone ORISO Repositories](/oriso-platform/clone-repositories) for details.
+</Info>
+
+**Major Configuration Refactoring - Production Ready:**
+
+- ✅ **ConfigMaps & Secrets**: All services now use Kubernetes ConfigMaps/Secrets - no hardcoded values
+- ✅ **DNS-Based Discovery**: Services use Kubernetes DNS names instead of IPs
+- ✅ **Configuration Validators**: Services validate required configs on startup with clear error messages
+- ✅ **Helm Charts**: MariaDB deployment now uses Helm charts with automatic schema initialization
+- ✅ **Update Without Rebuild**: Configuration can be updated via ConfigMaps/Secrets without rebuilding images
+- ✅ **LiveKit Integration**: Group video calls support via LiveKit server
+- ✅ **Status Page**: Modern React-based status page with professional UI
 
 ## Documentation Structure
 
-The documentation is organized into four main sections:
+The documentation is organized into five main sections:
 
 1. **Getting Started** - Server requirements, initial setup, and software installation
 2. **Deployment** - Step-by-step deployment of all services
 3. **Configuration & Testing** - Post-deployment configuration and verification
 4. **Operations** - Backup, security, troubleshooting, and reference guides
+5. **Advanced Guides** - Build guide, Helm charts, and additional resources
 
 ## Prerequisites
 
@@ -56,6 +80,25 @@ Before you begin, ensure you have:
 - ✅ Public IP address
 - ✅ Minimum 4 CPU cores and 8GB RAM (16GB+ recommended)
 - ✅ 50GB+ disk space (100GB+ recommended)
+- ✅ Domain name (required for HTTPS/SSL setup)
+- ✅ DNS access (ability to add A records for subdomains)
+
+## ⚠️ Important Deployment Order
+
+**For Production deployment, follow this order:**
+
+1. **Complete sections 1-8** (server setup, Kubernetes, infrastructure, Keycloak)
+2. **Section 9**: Setup databases with latest schemas from ORISO-Database
+3. **Section 9.5**: ⭐ **REQUIRED** - Apply ConfigMaps and Secrets (services will fail without this)
+4. **Section 10**: Deploy backend services (they will use ConfigMaps/Secrets)
+5. **Complete sections 11-14** (frontend, Matrix, Nginx, monitoring)
+6. **Section 15**: Post-deployment verification
+7. **Section 16**: DNS & SSL setup (if using HTTPS)
+8. **Section 17**: Final testing
+
+<Warning>
+**⚠️ CRITICAL**: Section 9.5 (ConfigMaps/Secrets) is **REQUIRED** before deploying backend services. Services will fail to start if configuration is missing.
+</Warning>
 
 ## Next Steps
 

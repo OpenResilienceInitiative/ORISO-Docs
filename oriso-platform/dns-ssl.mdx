@@ -101,6 +101,40 @@ See ORISO-Nginx/DEPLOYMENT.md for detailed SSL configuration instructions.
 </Note>
 
 </Step>
+
+<Step title="Update Keycloak frontend URL for HTTPS (Optional)">
+
+After enabling HTTPS on your domain, set Keycloak's public frontend URL so redirects use `https://`.
+
+```bash
+# Get Keycloak pod
+KEYCLOAK_POD=$(kubectl get pods -n caritas -l app=keycloak -o jsonpath="{.items[0].metadata.name}")
+
+# Set master realm frontend URL (replace domain)
+kubectl exec -n caritas $KEYCLOAK_POD -- \
+  /opt/keycloak/bin/kcadm.sh config credentials \
+  --server http://localhost:8080 --realm master --user admin --password admin
+
+kubectl exec -n caritas $KEYCLOAK_POD -- \
+  /opt/keycloak/bin/kcadm.sh update realms/master -s \ 
+  frontendUrl="https://oriso.yourdomain.com/auth"
+
+# Optionally set for your application realm as well
+kubectl exec -n caritas $KEYCLOAK_POD -- \
+  /opt/keycloak/bin/kcadm.sh update realms/online-beratung -s \ 
+  frontendUrl="https://oriso.yourdomain.com/auth"
+```
+
+Also update your realm client's Valid Redirect URIs and Web Origins to `https://` URLs for Frontend/Admin (see Configure Keycloak).
+
+<Check>
+OIDC discovery over HTTPS should work:
+```bash
+curl -s https://oriso.yourdomain.com/auth/realms/online-beratung/.well-known/openid-configuration | jq .issuer
+```
+</Check>
+
+</Step>
 </Steps>
 
 ## Next Steps

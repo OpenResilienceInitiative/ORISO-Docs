@@ -57,6 +57,36 @@ Both endpoints should return HTTP 200 OK status.
 </Check>
 
 </Step>
+
+<Step title="Configure frontend authentication settings">
+
+Point the apps to Keycloak and verify the login flow.
+
+1) Identify your Keycloak public URL and realm
+
+```bash
+SERVER_IP=$(hostname -I | awk '{print $1}')
+echo "Auth base (via Nginx): http://$SERVER_IP:8089/auth"
+echo "Realm: online-beratung"
+```
+
+2) Ensure the frontend uses the correct values (client id defaults to `app` unless changed)
+
+- Auth URL: `http://YOUR_SERVER_IP:8089/auth`
+- Realm: `online-beratung`
+- Client ID: `app`
+
+3) Smoke test login
+
+- Open Frontend `http://YOUR_SERVER_IP:9001`
+- Click Login → You should be redirected to Keycloak at `http://YOUR_SERVER_IP:8089/auth/...`
+- Login with a test user (or admin) and return to the app
+
+<Warning>
+If you see `HTTPS required` or redirect/CORS errors, re‑run Keycloak HTTP configuration and set valid redirect URIs/Web Origins in the realm client. See Configure Keycloak.
+</Warning>
+
+</Step>
 </Steps>
 
 ## Next Steps

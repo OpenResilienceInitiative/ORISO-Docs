@@ -7,7 +7,38 @@ description: "Deploy all backend microservices: TenantService, UserService, Cons
 
 Deploy all ORISO Platform backend microservices.
 
+<Warning>
+**⚠️ CRITICAL**: Before deploying backend services, ensure:
+- ✅ ConfigMaps and Secrets are applied (see [Configure ConfigMaps and Secrets](/oriso-platform/configmaps-secrets))
+- ✅ Databases are set up with schemas (see [Setup Databases](/oriso-platform/setup-databases))
+- ✅ Deployment files reference ConfigMaps/Secrets (see example in ConfigMaps/Secrets section)
+</Warning>
+
 <Steps>
+<Step title="Prerequisites Check">
+
+Verify all prerequisites are met before deploying backend services.
+
+```bash
+# Check ConfigMaps are applied
+kubectl get configmaps -n caritas | grep -E "userservice|tenantservice|agencyservice|consultingtypeservice"
+
+# Check Secrets are applied
+kubectl get secrets -n caritas | grep -E "userservice|tenantservice|agencyservice|consultingtypeservice"
+
+# Check databases are ready
+kubectl get pods -n caritas | grep -E "mariadb|mongodb"
+```
+
+<Check>
+You should see:
+- 4 ConfigMaps (userservice-config, tenantservice-config, agencyservice-config, consultingtypeservice-config)
+- 4 Secrets (userservice-secrets, tenantservice-secrets, agencyservice-secrets, consultingtypeservice-secrets)
+- MariaDB and MongoDB pods running
+</Check>
+
+</Step>
+
 <Step title="Deploy All Backend Services">
 
 Deploy all backend services using the deployment configuration.
@@ -68,7 +99,110 @@ kubectl logs deployment/userservice -n caritas --tail=100
 </Warning>
 
 </Step>
+
+<Step title="Verify ConfigMaps and Secrets are Loaded">
+
+Confirm that services are loading configuration from ConfigMaps and Secrets.
+
+```bash
+# Check deployment references ConfigMaps/Secrets
+kubectl get deployment tenantservice -n caritas -o yaml | grep -A 10 envFrom
+
+# Should show:
+# envFrom:
+# - configMapRef:
+#     name: tenantservice-config
+# - secretRef:
+#     name: tenantservice-secrets
+
+# Validate values inside pod (sanity check)
+POD=$(kubectl get pods -n caritas -l app=tenantservice -o jsonpath="{.items[0].metadata.name}")
+kubectl exec -it -n caritas $POD -- env | grep -E "SPRING_DATASOURCE_|KEYCLOAK_"
+
+# Verify DNS names are used (not IPs)
+kubectl get configmap tenantservice-config -n caritas -o yaml | grep -i "mariadb\|keycloak"
+# Should see: mariadb.caritas.svc.cluster.local:3306 (NOT 10.43.123.72:3306)
+```
+
+<Warning>
+If env vars are missing or ConfigMaps/Secrets not found, see [Configure ConfigMaps and Secrets](/oriso-platform/configmaps-secrets) section. Services use Kubernetes DNS names, not hardcoded IPs.
+</Warning>
+
+<Check>
+All DB and Keycloak env vars should be present in the pod environment; ConfigMaps/Secrets should exist and use DNS names (not IPs).
+</Check>
+
+</Step>
+
+<Step title="Verify database connectivity and migrations">
+
+Confirm each service can reach its database and that migrations (Flyway/Liquibase) have applied.
+
+1) Actuator DB health
+
+```bash
+for port in 8081 8082 8083 8084; do
+  echo "Port $port DB health:";
+  curl -s http://127.0.0.1:$port/actuator/health/db | jq . || true;
+done
+```
+
+2) Check service logs for migration success
+
+```bash
+kubectl logs deployment/tenantservice -n caritas --tail=200 | grep -Ei "Flyway|Liquibase|schema|migration" || true
+kubectl logs deployment/userservice -n caritas --tail=200 | grep -Ei "Flyway|Liquibase|schema|migration" || true
+```
+
+3) Troubleshooting
+
+- If `health/db` is DOWN: verify DB host/user/password env vars in the deployment and that the DB services are reachable.
+- If migrations failed: re‑run pod and review SQL scripts under `ORISO-Database/mariadb/*`.
+
+<Check>
+All DB health checks should report `UP`, and logs should show migrations completed successfully.
+</Check>
+
+</Step>
 </Steps>
+
+## Troubleshoot Service Startup Issues
+
+**If a service fails to start, check for configuration errors:**
+
+```bash
+# Check service logs
+kubectl logs deployment/tenantservice -n caritas --tail=100
+kubectl logs deployment/userservice -n caritas --tail=100
+
+# Look for ConfigurationValidator errors:
+# "CRITICAL: Missing required configuration values..."
+
+# Common issues:
+# 1. ConfigMaps/Secrets not applied
+kubectl get configmaps,secrets -n caritas | grep <service-name>
+
+# 2. Deployment doesn't reference ConfigMaps/Secrets
+kubectl get deployment <service-name> -n caritas -o yaml | grep -A 10 envFrom
+
+# 3. Wrong DNS names in ConfigMaps
+kubectl get configmap <service-name>-config -n caritas -o yaml | grep -i "mariadb\|keycloak"
+
+# Fix: Update ConfigMap/Secret and restart service
+kubectl apply -f configmaps/services/<service-name>-config.yaml
+kubectl rollout restart deployment/<service-name> -n caritas
+```
+
+**Configuration Validator Errors:**
+- Services validate required configs on startup
+- If config is missing, service will fail with clear error message
+- Error message tells you exactly which config is missing
+- Fix by applying/updating ConfigMaps/Secrets, then restart service
+
+## Related Documentation
+
+- [Advanced Guides - Build Guide](/oriso-platform/advanced-guides) - Build Docker images for backend services
+- [ORISO-Kubernetes BUILD_GUIDE.md](https://github.com/your-org/ORISO-Debian/blob/main/caritas-workspace/ORISO-Kubernetes/BUILD_GUIDE.md) - Detailed build instructions
 
 ## Next Steps
 

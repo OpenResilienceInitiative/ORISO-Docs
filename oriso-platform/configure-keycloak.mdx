@@ -72,6 +72,44 @@ The output should show `sslRequired` as `NONE` for the master realm.
 
 </Step>
 
+<Step title="Configure clients and redirect URIs">
+
+Ensure the frontend and admin apps can authenticate by setting valid redirect URIs and web origins.
+
+**Open Admin Console**
+
+1. Go to: `http://YOUR_SERVER_IP:8089/auth/admin/` → Login: `admin / admin`
+2. Select realm: `online-beratung`
+
+**Update `app` client (or your frontend client id)**
+
+1. Clients → search `app` (public client) → open
+2. Set:
+   - Access Type: `public`
+   - Standard Flow Enabled: `ON`
+   - Valid Redirect URIs:
+     - `http://YOUR_SERVER_IP:9001/*`
+     - `http://YOUR_SERVER_IP:9002/*`
+   - Web Origins:
+     - `http://YOUR_SERVER_IP:9001`
+     - `http://YOUR_SERVER_IP:9002`
+   - (If using domain + HTTPS later) add corresponding `https://...` entries
+3. Save
+
+<Info>
+If your client id differs from `app`, use that id consistently in frontend configuration and API tests.
+</Info>
+
+**Optional: Set realm login theme and test user**
+
+- Realm Settings → Themes: leave defaults or select desired theme
+- Users → Add user → Set temporary password → Use for end‑to‑end test
+
+<Check>
+After saving, authentication requests from Frontend/Admin should no longer fail with `invalid redirect_uri` or CORS errors.
+</Check>
+
+</Step>
 <Step title="Import Keycloak Realm">
 
 Import the ORISO realm configuration into Keycloak. You can do this via the admin console or command line.

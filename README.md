@@ -64,14 +64,15 @@ ORISO-Docs/
 ### Adding a New Page
 
 1. Create `.mdx` file with frontmatter:
+
    ```yaml
    ---
    title: "Page Title"
    description: "Page description"
    ---
    ```
-
 2. Add to `docs.json`:
+
    ```json
    "pages": ["oriso-platform/new-page"]
    ```
@@ -84,11 +85,11 @@ ORISO-Docs/
 
 ## 📋 Useful Commands
 
-| Command | Description |
-|---------|-------------|
-| `mint dev` | Start local preview |
+| Command               | Description            |
+| --------------------- | ---------------------- |
+| `mint dev`          | Start local preview    |
 | `mint broken-links` | Check for broken links |
-| `mint check` | Validate configuration |
+| `mint check`        | Validate configuration |
 
 ## 🔗 Links
 

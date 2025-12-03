@@ -12,6 +12,9 @@ Install all required software tools needed for ORISO Platform deployment, includ
 
 Install Docker for building container images if needed.
 
+<Tabs>
+  <Tab title="Ubuntu/Debian">
+
 ```bash
 # Remove old versions
 sudo apt remove -y docker docker-engine docker.io containerd runc
@@ -43,6 +46,32 @@ docker compose version
 docker run hello-world
 ```
 
+  </Tab>
+  <Tab title="macOS">
+
+```bash
+# Install Docker Desktop
+brew install --cask docker || true
+# Start Docker Desktop manually
+
+docker --version
+docker compose version
+```
+
+  </Tab>
+  <Tab title="Windows">
+
+```powershell
+winget install --silent Docker.DockerDesktop
+# Start Docker Desktop manually
+
+docker --version
+docker compose version
+```
+
+  </Tab>
+</Tabs>
+
 <Check>
 Verify Docker is working: `docker --version` and `docker compose version` should show installed versions. The hello-world test should complete successfully.
 </Check>
@@ -53,28 +82,43 @@ You may need to log out and log back in for docker group membership to take effe
 
 </Step>
 
-<Step title="Install k3s (Lightweight Kubernetes)">
+<Step title="Install Kubernetes (k3s or Desktop)">
 
-Install k3s, a lightweight Kubernetes distribution perfect for single-node deployments.
+Install k3s on Ubuntu, or use a desktop Kubernetes on macOS/Windows.
+
+<Tabs>
+  <Tab title="Ubuntu/Debian — k3s">
 
 ```bash
-# Install k3s
 curl -sfL https://get.k3s.io | sh -
-
-# Wait for k3s to be ready
 sudo systemctl status k3s
-
-# Make k3s accessible to non-root user
 sudo chmod 644 /etc/rancher/k3s/k3s.yaml
-
-# Setup kubeconfig for current user
 mkdir -p ~/.kube
 sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
 sudo chown $USER:$USER ~/.kube/config
-
-# Verify k3s installation
 sudo k3s kubectl get nodes
 ```
+
+  </Tab>
+  <Tab title="macOS — Rancher Desktop">
+
+```bash
+brew install --cask rancher
+# Launch Rancher Desktop and ensure Kubernetes is enabled
+kubectl config get-contexts
+```
+
+  </Tab>
+  <Tab title="Windows — Rancher Desktop">
+
+```powershell
+winget install --silent Rancher.RancherDesktop
+# Launch Rancher Desktop and enable Kubernetes
+kubectl config get-contexts
+```
+
+  </Tab>
+</Tabs>
 
 <Check>
 Expected output should show your node with status `Ready` and roles `control-plane,master`:
@@ -90,19 +134,37 @@ oriso-platform   Ready    control-plane,master   1m    v1.x.x
 
 Install kubectl, the Kubernetes command-line tool.
 
+<Tabs>
+  <Tab title="Ubuntu/Debian">
+
 ```bash
-# Install kubectl
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 rm kubectl
-
-# Verify kubectl
 kubectl version --client
-
-# Test kubectl with k3s
 kubectl get nodes
-kubectl get pods --all-namespaces
 ```
+
+  </Tab>
+  <Tab title="macOS">
+
+```bash
+brew install kubectl
+kubectl version --client
+kubectl get nodes
+```
+
+  </Tab>
+  <Tab title="Windows">
+
+```powershell
+winget install --silent Kubernetes.kubectl
+kubectl version --client
+kubectl get nodes
+```
+
+  </Tab>
+</Tabs>
 
 <Check>
 Verify kubectl can connect to k3s: `kubectl get nodes` should show your node.
@@ -110,13 +172,16 @@ Verify kubectl can connect to k3s: `kubectl get nodes` should show your node.
 
 </Step>
 
-<Step title="Install Helm">
+<Step title="Install Helm (Required)">
 
-Install Helm for managing Kubernetes applications (optional, needed for SignOZ).
+Install Helm for managing Kubernetes applications. **Helm is now required** for MariaDB deployment with automatic schema initialization.
 
-<Info>
-This step is optional and only required if you plan to deploy SignOZ for observability.
-</Info>
+<Warning>
+Helm is required for MariaDB Helm chart deployment. The ORISO MariaDB Helm chart is included in `ORISO-Kubernetes/helm/charts/mariadb/` and doesn't require external Helm repositories.
+</Warning>
+
+<Tabs>
+  <Tab title="Ubuntu/Debian">
 
 ```bash
 # Install Helm
@@ -125,10 +190,33 @@ curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 # Verify Helm
 helm version
 
-# Add Helm repos
+# Add Helm repos (for optional components like SignOZ)
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update
 ```
+
+<Note>
+**Note**: ORISO MariaDB Helm chart is included in `ORISO-Kubernetes/helm/charts/mariadb/` and doesn't require external Helm repositories.
+</Note>
+
+  </Tab>
+  <Tab title="macOS">
+
+```bash
+brew install helm
+helm version
+```
+
+  </Tab>
+  <Tab title="Windows">
+
+```powershell
+winget install --silent Helm.Helm
+helm version
+```
+
+  </Tab>
+</Tabs>
 
 <Check>
 Verify Helm installation: `helm version` should show the installed version.
@@ -140,22 +228,38 @@ Verify Helm installation: `helm version` should show the installed version.
 
 Install database clients and utility tools for managing ORISO Platform services.
 
+<Tabs>
+  <Tab title="Ubuntu/Debian">
+
 ```bash
-# Install MySQL client (for MariaDB)
 sudo apt install -y mysql-client
-
-# Install MongoDB client
-wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | sudo apt-key add -
-echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
-sudo apt update
-sudo apt install -y mongodb-mongosh
-
-# Install Redis client
+sudo apt update && sudo apt install -y mongodb-mongosh
 sudo apt install -y redis-tools
-
-# Install tree (useful for directory viewing)
 sudo apt install -y tree
 ```
+
+  </Tab>
+  <Tab title="macOS">
+
+```bash
+brew install mysql-client
+brew install mongosh
+brew install redis
+brew install tree
+```
+
+  </Tab>
+  <Tab title="Windows">
+
+```powershell
+winget install --silent Oracle.MySQLShell
+winget install --silent MongoDB.Shell
+winget install --silent RedisAntirez.redis
+winget install --silent sharkdp.fd
+```
+
+  </Tab>
+</Tabs>
 
 <Check>
 Verify tools are installed:

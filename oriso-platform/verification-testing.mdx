@@ -96,11 +96,27 @@ APIs should return JSON data with 200 OK status.
 
 </Step>
 
+<Step title="Element first login (homeserver selection)">
+
+Ensure Element points to your homeserver before testing chat.
+
+1. Open Element: `http://YOUR_SERVER_IP:8087`
+2. On login screen, set homeserver:
+   - If using IP/port: `http://YOUR_SERVER_IP:8008`
+   - If using domain + Nginx well-known: enter your domain (e.g., `chat.example.org`) and confirm it auto-fills
+3. Login with a newly registered user
+
+<Check>
+Login should succeed against your Synapse. If it defaults to matrix.org, revisit Element config and Nginx well-known steps.
+</Check>
+
+</Step>
+
 <Step title="Test Matrix Chat">
 
 Verify Matrix chat functionality.
 
-1. **Access Element.io**: `http://YOUR_SERVER_IP:8087`
+1. **Access Element.io**: `http://YOUR_SERVER_IP:8087` (ensure homeserver is set as above)
 2. **Login** with registered user
 3. **Create a room**
 4. **Send a message**

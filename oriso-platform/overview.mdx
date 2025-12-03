@@ -8,13 +8,30 @@ description: "Complete overview of ORISO Platform server requirements, hardware 
 **The Ultimate Step-by-Step Guide for AI Agents & Developers**
 
 <Info>
-**Version**: 1.0.0  
-**Last Updated**: October 31, 2025  
+**Version**: 3.0.0  
+**Last Updated**: December 2, 2025  
 **Platform**: ORISO (Online Beratung)  
-**Target**: Fresh Ubuntu Server (20.04/22.04)
+**Target**: Fresh Ubuntu Server (20.04/22.04)  
+**Status**: Production Ready with ConfigMaps/Secrets & DNS-Based Service Discovery
 </Info>
 
 This guide provides comprehensive instructions for deploying the ORISO Platform on a fresh Ubuntu Server. Follow the documentation in order, starting with [Initial Server Setup](/oriso-platform/initial-setup).
+
+
+**Major Configuration Refactoring - Production Ready:**
+
+- ✅ **ConfigMaps & Secrets**: All services now use Kubernetes ConfigMaps/Secrets - no hardcoded values
+- ✅ **DNS-Based Discovery**: Services use Kubernetes DNS names (e.g., `mariadb.caritas.svc.cluster.local`) instead of IPs
+- ✅ **Configuration Validators**: Services validate required configs on startup with clear error messages
+- ✅ **ORISO-Database Updated**: Latest production schemas exported and organized with automated export script
+- ✅ **Update Without Rebuild**: Configuration can be updated via ConfigMaps/Secrets without rebuilding images
+- ✅ **Fail-Fast Validation**: Services fail immediately with helpful errors if configuration is missing
+- ✅ **Helm Charts**: MariaDB deployment now uses Helm charts with automatic schema initialization
+- ✅ **Helm-Based Schema Management**: SQL schemas are versioned with Helm charts, preventing deployment breakage when schemas are updated
+
+<Warning>
+**⚠️ IMPORTANT**: Section 9.5 (ConfigMaps/Secrets) is **REQUIRED** before deploying backend services. Services will fail to start without proper configuration.
+</Warning>
 
 <CardGroup cols={2}>
 <Card title="Initial Setup" icon="rocket" href="/oriso-platform/initial-setup">
@@ -30,7 +47,7 @@ Install Docker, k3s Kubernetes, kubectl, and additional tools
 </Card>
 
 <Card title="Clone Repositories" icon="code-branch" href="/oriso-platform/clone-repositories">
-Transfer and clone ORISO repositories to the server
+Clone ORISO-Debian (all systems in one repo) or individual repositories
 </Card>
 
 <Card title="Setup Kubernetes" icon="cube" href="/oriso-platform/setup-kubernetes">
@@ -79,7 +96,8 @@ For production deployments, we strongly recommend the recommended specifications
 - **SSH Access**: Root or sudo user
 - **Internet Access**: Required for package installation
 - **Public IP**: Required for external access
-- **Domain Name**: Optional (for SSL/DNS)
+- **Domain Name**: Required for HTTPS/SSL setup (e.g., `oriso.site`)
+- **DNS Access**: Ability to add A records for subdomains
 
 ### Network Requirements
 
@@ -88,8 +106,8 @@ For production deployments, we strongly recommend the recommended specifications
 | Port | Service | Description |
 |------|---------|-------------|
 | `22` | SSH | Secure shell access |
-| `80` | HTTP | Optional, for Let's Encrypt |
-| `443` | HTTPS | Optional |
+| `80` | HTTP | Required for Let's Encrypt certificate validation |
+| `443` | HTTPS | Primary access method via Traefik Ingress |
 | `8089` | Nginx Proxy | Main entry point |
 
 #### Required Ports (Internal/Services)
@@ -143,10 +161,21 @@ Once you've completed all setup steps, you'll have a fully functional ORISO plat
 ## Support & Resources
 
 ### ORISO Documentation
-- **ORISO-Kubernetes**: See `~/caritas-workspace/ORISO-Kubernetes/README.md`
-- **ORISO-Database**: See `~/caritas-workspace/ORISO-Database/README.md`
-- **ORISO-Keycloak**: See `~/caritas-workspace/ORISO-Keycloak/README.md`
+- **ORISO-Debian**: Complete system repository containing all ORISO components in one place. See `ORISO-Debian/README.md` for the complete setup guide
+- **Production Guide**: `ORISO-Debian/caritas-workspace/PRODUCTION_GUIDE.md` - Complete production deployment guide with ConfigMaps/Secrets setup
+- **Changes Summary**: `ORISO-Debian/caritas-workspace/CHANGES_SUMMARY.md` - Configuration refactoring details and migration guide
+- **ORISO-Kubernetes**: See `~/caritas-workspace/ORISO-Kubernetes/README.md` (or `ORISO-Debian/caritas-workspace/ORISO-Kubernetes/README.md` if using ORISO-Debian)
+- **ORISO-Database**: See `~/caritas-workspace/ORISO-Database/README.md` (or `ORISO-Debian/caritas-workspace/ORISO-Database/README.md` if using ORISO-Debian)
+  - **Export Summary**: `ORISO-Database/EXPORT_SUMMARY.md` - Database schema export information
+  - **Setup Guide**: `ORISO-Database/SETUP_GUIDE.md` - Database setup instructions
+- **ORISO-Keycloak**: See `~/caritas-workspace/ORISO-Keycloak/README.md` (or `ORISO-Debian/caritas-workspace/ORISO-Keycloak/README.md` if using ORISO-Debian)
+- **ORISO-Livekit**: See `ORISO-Debian/caritas-workspace/ORISO-Livekit/README.md` - Video conferencing service for group calls
+- **ORISO-Status**: See `ORISO-Debian/caritas-workspace/ORISO-Status/` - Modern status page with professional UI
 - **Individual Services**: See respective ORISO-*/README.md files
+
+<Info>
+**📦 ORISO-Debian**: If you cloned ORISO-Debian, all components are located in `ORISO-Debian/caritas-workspace/`. The ORISO-Debian repository contains the complete system setup guide and all components in one repository. Additional guides like PRODUCTION_GUIDE.md and CHANGES_SUMMARY.md provide detailed information about production deployment and configuration refactoring.
+</Info>
 
 ### Useful Links
 - [Kubernetes Documentation](https://kubernetes.io/docs/)
@@ -162,6 +191,14 @@ If you encounter issues:
 3. Check service logs: `kubectl logs <pod> -n caritas`
 4. Check events: `kubectl get events -n caritas`
 5. Review individual service README files
+
+## Additional Guides
+
+<CardGroup cols={2}>
+<Card title="Advanced Guides" icon="book-open" href="/oriso-platform/advanced-guides">
+Build guide, Helm charts, and complete documentation resources
+</Card>
+</CardGroup>
 
 ## Next Steps
 
