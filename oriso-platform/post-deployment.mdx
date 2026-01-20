@@ -1,64 +1,170 @@
 ---
 title: "Post-Deployment Configuration"
-description: "Verify all pods are running, check service health, and get all access URLs"
+description: "Complete post-deployment steps: initialize databases, create system users, import Keycloak realm, and verify deployment"
 ---
 
 # Post-Deployment Configuration
 
-Verify your ORISO Platform deployment is complete and all services are operational.
+Complete post-deployment steps to finalize your ORISO Platform deployment. These steps are required after deploying via Helm.
 
 <Steps>
-<Step title="Verify All Pods are Running">
+<Step title="Initialize Databases">
 
-Check that all pods are running successfully.
+Initialize all database schemas using the ORISO-Database master setup script.
 
 ```bash
-cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes
+cd ~/online-beratung/caritas-workspace/ORISO-Database
 
-# Run verification script
-./scripts/verify-deployment.sh
+# Make script executable
+chmod +x scripts/setup/00-master-setup.sh
 
-# Or manual check
-kubectl get pods -n caritas
-
-# Count running pods
-kubectl get pods -n caritas --no-headers | grep Running | wc -l
-# Should be 20+ pods
-
-# Check for failing pods
-kubectl get pods -n caritas | grep -v Running | grep -v Completed
-# Should be empty or only pending pods
+# Run master setup
+./scripts/setup/00-master-setup.sh
 ```
 
+<Info>
+This script:
+- Creates all MariaDB databases (7 databases)
+- Imports all schemas from `mariadb/*/schema.sql`
+- Initializes MongoDB collections
+- Creates system users
+</Info>
+
 <Check>
-Expected: 20+ pods in Running state, no failing pods (except possibly some pending during startup).
+Script should complete without errors. Verify databases:
+```bash
+kubectl exec -n caritas deployment/oriso-platform-mariadb -- \
+  mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "SHOW DATABASES;"
+```
 </Check>
 
 </Step>
 
-<Step title="Check Service Health">
+<Step title="Create System Users">
 
-Verify all services are responding to health checks.
+Create system users required for Matrix and other services.
 
 ```bash
-# Backend Services
-for port in 8081 8082 8083 8084; do
-  echo "Checking port $port..."
-  curl -s http://127.0.0.1:$port/actuator/health | jq .
-done
+cd ~/online-beratung/caritas-workspace/ORISO-Database/scripts
+
+# Apply system users job
+kubectl apply -f system-users-job.yaml
+
+# Wait for job to complete
+kubectl wait --for=condition=complete job/system-users -n caritas --timeout=300s
+
+# Check job logs
+kubectl logs job/system-users -n caritas
+```
+
+<Info>
+System users created:
+- `caritas_admin` - Admin user for Caritas operations
+- `oriso_call_admin` - Admin for call management
+- `group-chat-system` - System user for group chats
+</Info>
+
+</Step>
+
+<Step title="Import Keycloak Realm">
+
+Import the ORISO Keycloak realm configuration.
+
+**Option A: Via Admin Console (Recommended)**
+
+1. Access Keycloak admin: `https://auth.oriso-dev.site/admin/`
+2. Login: `admin` / `admin` (default, change in production)
+3. Select "Master" realm → "Add realm"
+4. Upload: `~/online-beratung/caritas-workspace/ORISO-Keycloak/realm.json`
+5. Click "Create"
+
+**Option B: Via Command Line**
+
+```bash
+# Get Keycloak pod
+KEYCLOAK_POD=$(kubectl get pods -n caritas -l app=keycloak -o jsonpath="{.items[0].metadata.name}")
+
+# Copy realm file
+kubectl cp ~/online-beratung/caritas-workspace/ORISO-Keycloak/realm.json \
+  caritas/$KEYCLOAK_POD:/tmp/realm.json
+
+# Import realm
+kubectl exec -n caritas $KEYCLOAK_POD -- \
+  /opt/keycloak/bin/kc.sh import --file /tmp/realm.json
+```
+
+</Step>
+
+<Step title="Configure Keycloak HTTP Access">
+
+Disable SSL requirement for Keycloak realms (required for authentication).
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Keycloak
+
+# Run HTTP access configuration script
+chmod +x configure-http-access.sh
+./configure-http-access.sh
+```
+
+<Warning>
+This step is MANDATORY. Without it, authentication will fail with "HTTPS Required" errors.
+</Warning>
+
+</Step>
+
+<Step title="Verify Deployment">
+
+Verify all services are running and healthy.
+
+```bash
+# Check all pods
+kubectl get pods -n caritas
+
+# Check Helm release
+helm status oriso-platform -n caritas
+
+# Check services
+kubectl get svc -n caritas
+
+# Check Ingress
+kubectl get ingress -n caritas
+
+# Check TLS certificates
+kubectl get certificate -n caritas
+```
+
+<Check>
+- All pods should be `Running`
+- Helm release should show `deployed` status
+- Services should be created
+- Ingress resources should be created
+- Certificates should be `Ready=True`
+</Check>
+
+</Step>
+
+<Step title="Test Service Health">
+
+Test health endpoints for all services.
+
+```bash
+# Backend services (via Ingress)
+curl -s https://api.oriso-dev.site/actuator/health | jq .
+
+# Or test internally
+kubectl exec -n caritas deployment/oriso-platform-userservice -- \
+  curl -s http://localhost:8082/actuator/health
 
 # Frontend
-curl -I http://127.0.0.1:9001
-curl -I http://127.0.0.1:9002
+curl -I https://app.oriso-dev.site
+curl -I https://admin.oriso-dev.site
 
 # Keycloak
-curl -s http://127.0.0.1:8089/auth/realms/online-beratung/.well-known/openid-configuration | jq .realm
+curl -s https://auth.oriso-dev.site/realms/online-beratung/.well-known/openid-configuration | jq .realm
 
 # Matrix
-curl -s http://127.0.0.1:8008/_matrix/client/versions | jq .
-
-# Redis Commander
-curl -I http://127.0.0.1:9021
+curl -s https://matrix.oriso-dev.site/_matrix/client/versions | jq .
 ```
 
 <Check>
@@ -66,55 +172,77 @@ All services should return healthy status or HTTP 200 OK.
 </Check>
 
 </Step>
+</Steps>
 
-<Step title="Get All Access URLs">
+## Access URLs
 
-Display all access URLs for the deployed platform.
+After completing all steps, access services at:
 
+| Service | URL | Description |
+|---------|-----|-------------|
+| Frontend | https://app.oriso-dev.site | User portal |
+| Admin | https://admin.oriso-dev.site | Admin panel |
+| API | https://api.oriso-dev.site | Backend API |
+| Auth | https://auth.oriso-dev.site | Keycloak |
+| Matrix | https://matrix.oriso-dev.site | Matrix Synapse |
+| Health Dashboard | http://91.99.219.182:9001 | Health monitoring |
+| SignOZ | http://91.99.219.182:3001 | Observability |
+
+## Verification Checklist
+
+- [ ] All pods are running (`kubectl get pods -n caritas`)
+- [ ] Helm release is deployed (`helm status oriso-platform -n caritas`)
+- [ ] Databases are initialized (`kubectl exec ... mysql -e "SHOW DATABASES;"`)
+- [ ] System users are created (`kubectl logs job/system-users -n caritas`)
+- [ ] Keycloak realm is imported (check admin console)
+- [ ] Keycloak HTTP access is configured (no SSL errors)
+- [ ] Ingress resources are created (`kubectl get ingress -n caritas`)
+- [ ] TLS certificates are issued (`kubectl get certificate -n caritas`)
+- [ ] Services are accessible via HTTPS
+- [ ] Health endpoints return UP status
+
+## Troubleshooting
+
+### Pods Not Running
 ```bash
-SERVER_IP=$(hostname -I | awk '{print $1}')
+# Check pod status
+kubectl get pods -n caritas
 
-cat <<EOF
+# Check pod logs
+kubectl logs -n caritas <pod-name>
 
-════════════════════════════════════════════════════════════
-  ORISO Platform - Access URLs
-════════════════════════════════════════════════════════════
-
-Main Entry Point:
-  Nginx Proxy: http://$SERVER_IP:8089
-
-Frontend:
-  Frontend:    http://$SERVER_IP:9001
-  Admin:       http://$SERVER_IP:9002
-
-Authentication:
-  Keycloak:    http://$SERVER_IP:8089/auth/admin/
-  (Login: admin / admin)
-
-Communication:
-  Element.io:  http://$SERVER_IP:8087
-
-Monitoring:
-  Redis Cmdr:  http://$SERVER_IP:9021
-  Health Dash: http://$SERVER_IP:9100
-  SignOZ:      http://$SERVER_IP:3001 (if deployed)
-
-Backend Services (Health Checks):
-  TenantService:         http://$SERVER_IP:8081/actuator/health
-  UserService:           http://$SERVER_IP:8082/actuator/health
-  ConsultingTypeService: http://$SERVER_IP:8083/actuator/health
-  AgencyService:         http://$SERVER_IP:8084/actuator/health
-
-════════════════════════════════════════════════════════════
-
-EOF
+# Check pod events
+kubectl describe pod -n caritas <pod-name>
 ```
 
-</Step>
-</Steps>
+### Database Initialization Failed
+```bash
+# Check database pod
+kubectl get pods -n caritas | grep mariadb
+
+# Check database logs
+kubectl logs -n caritas deployment/oriso-platform-mariadb
+
+# Re-run setup script
+cd ~/online-beratung/caritas-workspace/ORISO-Database
+./scripts/setup/00-master-setup.sh
+```
+
+### Keycloak Issues
+```bash
+# Check Keycloak pod
+kubectl get pods -n caritas | grep keycloak
+
+# Check Keycloak logs
+kubectl logs -n caritas deployment/oriso-platform-keycloak
+
+# Verify HTTP access is configured
+kubectl exec -n caritas deployment/oriso-platform-keycloak -- \
+  /opt/keycloak/bin/kcadm.sh get realms/master --fields sslRequired
+```
 
 ## Next Steps
 
-- [Verification & Testing](/oriso-platform/verification-testing) - Comprehensive testing
-- [DNS & SSL Setup](/oriso-platform/dns-ssl) - Optional domain and SSL configuration
-
+- [Verification Testing](/oriso-platform/verification-testing) - Comprehensive testing
+- [Troubleshooting](/oriso-platform/troubleshooting) - Common issues and solutions
+- [Quick Reference](/oriso-platform/quick-reference) - Essential commands

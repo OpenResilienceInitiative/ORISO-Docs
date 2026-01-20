@@ -1,66 +1,287 @@
 ---
-title: "Deploy Nginx Proxy"
-description: "Deploy Nginx ConfigMap and reverse proxy as the main entry point"
+title: "Deploy Kubernetes Ingress"
+description: "Deploy Kubernetes Ingress resources for external access with TLS automation via cert-manager"
 ---
 
-# Deploy Nginx Proxy
+# Deploy Kubernetes Ingress
 
-Deploy Nginx reverse proxy as the main entry point for ORISO Platform.
+Deploy Kubernetes Ingress resources for external access to all ORISO Platform services. This replaces manual Nginx configuration with Kubernetes-native Ingress.
+
+<Warning>
+**MAJOR CHANGE:** ORISO Platform v3.0.0 uses Kubernetes Ingress instead of manual Nginx configuration. All routing is handled via Ingress resources with automatic TLS via cert-manager.
+</Warning>
+
+<Info>
+- **Total Ingress Resources:** 33 across 22 YAML files
+- **TLS:** Automatic via cert-manager
+- **Features:** Path rewriting, CORS support, service routing
+- **Service Names:** All use `oriso-platform-*` prefix
+</Info>
 
 <Steps>
-<Step title="Deploy Nginx ConfigMap and Proxy">
+<Step title="Verify Prerequisites">
 
-Deploy Nginx configuration and proxy service.
+Ensure Ingress Controller and cert-manager are installed.
 
 ```bash
-cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes
+# Check Nginx Ingress Controller
+kubectl get pods -n ingress-nginx
 
-# Deploy Nginx ConfigMap
-kubectl apply -f configmaps/nginx-config.yaml
+# Check cert-manager
+kubectl get pods -n cert-manager
 
-# Deploy Nginx proxy
-kubectl apply -f deployments/08-nginx-proxy.yaml
-
-# Wait for Nginx
-kubectl wait --for=condition=ready pod -l app=cob-proxy -n caritas --timeout=180s
-
-# Check status
-kubectl get pods -n caritas | grep cob-proxy
+# Check ClusterIssuer
+kubectl get clusterissuer letsencrypt-prod
 ```
 
 <Check>
-The cob-proxy pod should be running:
-- cob-proxy-xxx    1/1     Running
+- Ingress Controller should be running
+- cert-manager pods should be running
+- ClusterIssuer should show `Ready=True`
+</Check>
+
+<Note>
+If not installed, see [Install Required Software](/oriso-platform/install-software) and [Setup Kubernetes](/oriso-platform/setup-kubernetes).
+</Note>
+
+</Step>
+
+<Step title="Deploy Ingress Resources">
+
+Deploy all Ingress resources for external access.
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes/ingress
+
+# Deploy all Ingress resources
+kubectl apply -f .
+
+# Verify Ingress resources
+kubectl get ingress -n caritas
+
+# Check TLS certificates
+kubectl get certificate -n caritas
+```
+
+<Info>
+This deploys 33 Ingress resources across 22 YAML files, providing:
+- External access to all services
+- Automatic TLS certificate issuance
+- Path-based routing
+- CORS configuration
+</Info>
+
+<Check>
+- Ingress resources should be created
+- Certificates will be issued automatically (may take a few minutes)
+- Check certificate status: `kubectl get certificate -n caritas`
 </Check>
 
 </Step>
 
-<Step title="Verify Nginx Proxy">
+<Step title="Verify Ingress Configuration">
 
-Verify Nginx proxy is accessible and routing correctly.
+Verify Ingress is routing correctly.
 
 ```bash
-# Check Nginx
-curl -I http://127.0.0.1:8089
-# Expected: HTTP/1.1 200 or redirects
+# Check Ingress resources
+kubectl get ingress -n caritas
 
-# Check logs
-kubectl logs deployment/cob-proxy -n caritas --tail=50
+# Check Ingress details
+kubectl describe ingress -n caritas
 
-# Access in browser
-SERVER_IP=$(hostname -I | awk '{print $1}')
-echo "Main Entry Point: http://$SERVER_IP:8089"
+# Check TLS certificates
+kubectl get certificate -n caritas
+kubectl describe certificate <cert-name> -n caritas
+
+# Test endpoints (after DNS is configured)
+curl -I https://app.oriso-dev.site
+curl -I https://api.oriso-dev.site
+curl -I https://admin.oriso-dev.site
+curl -I https://auth.oriso-dev.site
+curl -I https://matrix.oriso-dev.site
 ```
 
 <Check>
-Nginx should respond with HTTP 200 or appropriate redirects.
+- Ingress resources should show correct hosts and paths
+- Certificates should show `Ready=True` after issuance
+- Endpoints should return HTTP 200 or appropriate responses
 </Check>
+
+</Step>
+
+<Step title="Configure DNS Records">
+
+Point DNS records to your server IP.
+
+```bash
+# Get server IP
+SERVER_IP=$(kubectl get nodes -o jsonpath="{.items[0].status.addresses[?(@.type=='InternalIP')].address}")
+echo "Server IP: $SERVER_IP"
+```
+
+**Required DNS Records:**
+- `api.oriso-dev.site` → `$SERVER_IP`
+- `app.oriso-dev.site` → `$SERVER_IP`
+- `admin.oriso-dev.site` → `$SERVER_IP`
+- `auth.oriso-dev.site` → `$SERVER_IP`
+- `matrix.oriso-dev.site` → `$SERVER_IP`
+- Additional subdomains as needed
+
+<Note>
+DNS records must be configured before TLS certificates can be issued. Cert-manager uses HTTP-01 challenge which requires DNS to resolve correctly.
+</Note>
 
 </Step>
 </Steps>
 
+## Ingress Architecture
+
+### Ingress Controller
+- **Type:** Nginx Ingress Controller
+- **Namespace:** `ingress-nginx`
+- **Ports:** 80 (HTTP), 443 (HTTPS)
+- **Purpose:** Routes external traffic to services
+
+### Ingress Resources
+- **Location:** `caritas-workspace/ORISO-Kubernetes/ingress/`
+- **Total:** 33 Ingress resources in 22 YAML files
+- **Namespace:** `caritas`
+- **TLS:** Automatic via cert-manager annotations
+
+### Service Routing
+All services use `oriso-platform-*` prefix:
+- Frontend: `oriso-platform-frontend:80`
+- Backend: `oriso-platform-userservice:8082`
+- Keycloak: `oriso-platform-keycloak:8080`
+- Matrix: `oriso-platform-matrix-synapse:8008`
+
+## Example Ingress Resource
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: frontend-ingress
+  namespace: caritas
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  tls:
+  - hosts:
+    - app.oriso-dev.site
+    secretName: frontend-tls
+  rules:
+  - host: app.oriso-dev.site
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: oriso-platform-frontend
+            port:
+              number: 80
+```
+
+## TLS Certificate Management
+
+### Automatic Issuance
+Cert-manager automatically issues certificates when Ingress resources are created:
+1. Ingress resource created with `cert-manager.io/cluster-issuer` annotation
+2. cert-manager creates CertificateRequest
+3. Let's Encrypt issues certificate via HTTP-01 challenge
+4. Certificate stored in Kubernetes Secret
+5. Ingress uses certificate for TLS
+
+### Certificate Status
+```bash
+# Check certificates
+kubectl get certificate -n caritas
+
+# Check certificate details
+kubectl describe certificate frontend-tls -n caritas
+
+# Check certificate requests
+kubectl get certificaterequest -n caritas
+```
+
+## Troubleshooting
+
+### Ingress Controller Not Running
+```bash
+# Check Ingress Controller pods
+kubectl get pods -n ingress-nginx
+
+# Check logs
+kubectl logs -n ingress-nginx -l app.kubernetes.io/component=controller
+
+# Restart if needed
+kubectl rollout restart deployment -n ingress-nginx ingress-nginx-controller
+```
+
+### TLS Certificates Not Issued
+```bash
+# Check cert-manager
+kubectl get pods -n cert-manager
+
+# Check ClusterIssuer
+kubectl get clusterissuer letsencrypt-prod
+
+# Check certificate requests
+kubectl get certificaterequest -n caritas
+kubectl describe certificaterequest <name> -n caritas
+
+# Check certificate events
+kubectl describe certificate <cert-name> -n caritas
+```
+
+### DNS Not Resolving
+```bash
+# Test DNS resolution
+dig app.oriso-dev.site
+nslookup app.oriso-dev.site
+
+# Verify DNS points to correct IP
+curl -I http://app.oriso-dev.site
+```
+
+### Services Not Accessible
+```bash
+# Check Ingress routing
+kubectl describe ingress -n caritas
+
+# Check service endpoints
+kubectl get endpoints -n caritas
+
+# Test service directly
+kubectl exec -n caritas deployment/oriso-platform-frontend -- curl http://localhost:80
+```
+
+## Ingress Features
+
+### Path Rewriting
+```yaml
+annotations:
+  nginx.ingress.kubernetes.io/rewrite-target: /
+```
+
+### CORS Support
+```yaml
+annotations:
+  nginx.ingress.kubernetes.io/enable-cors: "true"
+  nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+```
+
+### Rate Limiting
+```yaml
+annotations:
+  nginx.ingress.kubernetes.io/limit-rps: "100"
+```
+
 ## Next Steps
 
-- [Deploy Monitoring](/oriso-platform/deploy-monitoring) - Deploy health dashboard and monitoring
-- [Post-Deployment Configuration](/oriso-platform/post-deployment) - Verify complete deployment
-
+- [DNS & SSL Configuration](/oriso-platform/dns-ssl) - Configure DNS records
+- [Post-Deployment](/oriso-platform/post-deployment) - Complete post-deployment steps
+- [Verification Testing](/oriso-platform/verification-testing) - Test all endpoints

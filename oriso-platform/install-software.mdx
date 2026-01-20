@@ -1,11 +1,11 @@
 ---
 title: "Install Required Software"
-description: "Install Docker, k3s Kubernetes, kubectl, Helm, and additional database management tools"
+description: "Install k3s Kubernetes, kubectl, Helm 3.x, Docker (for building images), Nginx Ingress Controller, and Cert-Manager"
 ---
 
 # Install Required Software
 
-Install all required software tools needed for ORISO Platform deployment, including Docker, Kubernetes, and database clients.
+Install all required software tools needed for ORISO Platform v3.0.0 deployment. The platform uses Kubernetes (k3s) with Helm charts for deployment.
 
 <Steps>
 <Step title="Install Docker">
@@ -110,29 +110,81 @@ Verify kubectl can connect to k3s: `kubectl get nodes` should show your node.
 
 </Step>
 
-<Step title="Install Helm">
+<Step title="Install Helm 3.x">
 
-Install Helm for managing Kubernetes applications (optional, needed for SignOZ).
-
-<Info>
-This step is optional and only required if you plan to deploy SignOZ for observability.
-</Info>
+Install Helm 3.x for managing Kubernetes applications. Helm is **REQUIRED** for ORISO Platform deployment.
 
 ```bash
-# Install Helm
+# Install Helm 3.x
 curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
 # Verify Helm
 helm version
 
-# Add Helm repos
-helm repo add bitnami https://charts.bitnami.com/bitnami
+# Add required Helm repos
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo add signoz https://charts.signoz.io
 helm repo update
 ```
 
 <Check>
-Verify Helm installation: `helm version` should show the installed version.
+Verify Helm installation: `helm version` should show version 3.x.x. Helm is required for deploying the ORISO Platform umbrella chart.
 </Check>
+
+</Step>
+
+<Step title="Install Nginx Ingress Controller">
+
+Install Nginx Ingress Controller for external access to services.
+
+```bash
+# Install Nginx Ingress Controller
+helm install ingress-nginx ingress-nginx/ingress-nginx \
+  --namespace ingress-nginx \
+  --create-namespace \
+  --set controller.service.type=LoadBalancer
+
+# Wait for Ingress Controller to be ready
+kubectl wait --namespace ingress-nginx \
+  --for=condition=ready pod \
+  --selector=app.kubernetes.io/component=controller \
+  --timeout=90s
+
+# Verify
+kubectl get pods -n ingress-nginx
+```
+
+<Check>
+Verify Ingress Controller is running: `kubectl get pods -n ingress-nginx` should show the controller pod in `Running` state.
+</Check>
+
+</Step>
+
+<Step title="Install Cert-Manager">
+
+Install Cert-Manager for automatic TLS certificate management with Let's Encrypt.
+
+```bash
+# Install cert-manager
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.13.0/cert-manager.yaml
+
+# Wait for cert-manager to be ready
+kubectl wait --for=condition=ready pod \
+  -l app.kubernetes.io/instance=cert-manager \
+  -n cert-manager \
+  --timeout=300s
+
+# Verify
+kubectl get pods -n cert-manager
+```
+
+<Check>
+Verify cert-manager is running: `kubectl get pods -n cert-manager` should show cert-manager pods in `Running` state.
+</Check>
+
+<Note>
+After cert-manager is installed, you'll create a ClusterIssuer in the [Kubernetes Setup](/oriso-platform/setup-kubernetes) step.
+</Note>
 
 </Step>
 

@@ -1,12 +1,137 @@
 ---
 title: ORISO Architecture Overview
-description: Layered view of the ORISO platform with zoomable diagrams.
+description: Complete architecture overview of ORISO Platform v3.0.0 deployed on Kubernetes with Helm charts.
 ---
 
-## System Architecture (High-level)
+## System Architecture Overview
+
+ORISO Platform v3.0.0 is a comprehensive online counseling platform deployed on Kubernetes using Helm charts. The platform consists of 21 services organized into deployment phases.
 
 ![ORISO System Architecture](/oriso-platform/assets/architecture-overview.png)
 
 > If the diagram appears large, scroll horizontally on smaller screens.
+
+## Architecture Highlights
+
+### Deployment Model
+- **Platform:** Kubernetes (k3s recommended)
+- **Package Manager:** Helm 3.x
+- **Deployment Method:** Umbrella Helm chart (`oriso-platform`)
+- **Namespace:** `caritas`
+- **Service Discovery:** Kubernetes DNS (`.svc.cluster.local`)
+
+### Service Naming Convention
+All services use the `oriso-platform-*` prefix:
+- `oriso-platform-userservice.caritas.svc.cluster.local:8082`
+- `oriso-platform-agencyservice.caritas.svc.cluster.local:8084`
+- `oriso-platform-mariadb.caritas.svc.cluster.local:3306`
+
+## Deployment Phases
+
+The platform is deployed in the following order:
+
+### Phase 1: Infrastructure
+- MariaDB (7 databases)
+- MongoDB (consulting_types)
+- PostgreSQL (Matrix Synapse)
+- Redis (caching/sessions)
+- RabbitMQ (messaging)
+
+### Phase 2: Authentication
+- Keycloak (OIDC/OAuth2)
+
+### Phase 3: Communication
+- Matrix Synapse (chat server)
+- Matrix Discovery Service
+- Element.io (web client)
+
+### Phase 4: WebRTC
+- LiveKit (video calls)
+
+### Phase 5: Backend Services
+- TenantService (port 8081)
+- UserService (port 8082)
+- ConsultingTypeService (port 8083)
+- AgencyService (port 8084)
+
+### Phase 6: Frontend
+- ORISO-Frontend (user portal)
+- ORISO-Admin (admin panel)
+
+### Phase 7: Monitoring
+- SignOZ (observability)
+- Health Dashboard
+- Status Page
+
+## Service Communication
+
+### Internal Communication
+All services communicate via Kubernetes DNS:
+```
+oriso-platform-<service-name>.caritas.svc.cluster.local:<port>
+```
+
+### External Access
+External access is provided via Kubernetes Ingress:
+- **Ingress Controller:** Nginx Ingress Controller
+- **TLS:** Cert-Manager with Let's Encrypt
+- **Domain Pattern:** `*.oriso-dev.site`
+
+## Network Architecture
+
+### Kubernetes Services
+- **Type:** ClusterIP (internal only)
+- **Discovery:** Automatic DNS resolution
+- **Load Balancing:** Kubernetes Service proxy
+
+### Ingress Resources
+- **Total:** 33 Ingress resources across 22 YAML files
+- **Features:** Path rewriting, CORS support, TLS automation
+- **Certificates:** Automatic via cert-manager
+
+## Data Architecture
+
+### Database Management
+- **Schema Management:** Centralized in ORISO-Database repository
+- **Liquibase:** DISABLED in all services
+- **Migration:** Manual via ORISO-Database scripts
+- **Backup:** Automated via CronJobs
+
+### Database Types
+- **MariaDB:** 7 databases for backend services
+- **MongoDB:** consulting_types collection
+- **PostgreSQL:** Matrix Synapse only
+- **Redis:** Caching and session storage
+- **RabbitMQ:** Message queue
+
+## Key Architectural Decisions
+
+1. **Helm Umbrella Chart:** Single deployment command for entire platform
+2. **Kubernetes DNS:** No hardcoded IPs, all service discovery via DNS
+3. **Centralized Schemas:** All database schemas in ORISO-Database repo
+4. **Liquibase Disabled:** Schemas managed separately, not by services
+5. **Ingress-Based Routing:** No manual Nginx configuration
+6. **TLS Automation:** Cert-Manager handles all SSL certificates
+
+## Component Overview
+
+| Component | Count | Purpose |
+|-----------|-------|---------|
+| Backend Services | 4 | Business logic microservices |
+| Frontend Apps | 2 | User and admin interfaces |
+| Databases | 3 types | Data persistence |
+| Cache/Queue | 2 | Redis, RabbitMQ |
+| Auth | 1 | Keycloak |
+| Communication | 3 | Matrix, Element, Discovery |
+| WebRTC | 1 | LiveKit |
+| Monitoring | 3 | SignOZ, Health Dashboard, Status |
+| **Total** | **21** | **Complete platform** |
+
+## Next Steps
+
+- [Architecture: Backend Services](/oriso-platform/architecture/backend) - Detailed backend architecture
+- [Architecture: Frontend](/oriso-platform/architecture/frontend) - Frontend architecture
+- [Architecture: Data Layer](/oriso-platform/architecture/data) - Database architecture
+- [Architecture: Infrastructure](/oriso-platform/architecture/infra) - Infrastructure details
 
 

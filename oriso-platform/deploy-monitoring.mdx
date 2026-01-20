@@ -1,32 +1,37 @@
 ---
 title: "Deploy Monitoring"
-description: "Deploy health dashboard, SignOZ observability platform, and apply all service configurations"
+description: "Deploy SignOZ observability platform, Health Dashboard, and Status Page via Helm"
 ---
 
 # Deploy Monitoring
 
-Deploy monitoring and observability services for ORISO Platform.
+Deploy monitoring and observability services for ORISO Platform. Monitoring components are deployed via Helm as part of the `oriso-platform` umbrella chart.
+
+<Info>
+Monitoring components:
+- **SignOZ** - Observability platform (APM, tracing, metrics)
+- **Health Dashboard** - Service health monitoring
+- **Status Page** - Public status page
+</Info>
 
 <Steps>
-<Step title="Deploy Health Dashboard">
+<Step title="Verify Monitoring Deployment">
 
-Deploy the health dashboard for system monitoring.
+Monitoring services should already be deployed via Helm. Verify all components are running.
 
 ```bash
-cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes
+# Check monitoring pods
+kubectl get pods -n caritas | grep -E "signoz|health|status"
 
-# Deploy health dashboard
-kubectl apply -f deployments/10-monitoring.yaml
+# Check SignOZ (if deployed in platform namespace)
+kubectl get pods -n platform | grep signoz
 
-# Wait for health dashboard
-kubectl wait --for=condition=ready pod -l app=health-dashboard -n caritas --timeout=180s
-
-# Check status
+# Check Health Dashboard
 kubectl get pods -n caritas | grep health-dashboard
 ```
 
 <Check>
-Health dashboard pod should be running.
+Monitoring pods should be running. If not, they may need to be enabled in Helm values.
 </Check>
 
 </Step>
@@ -36,60 +41,170 @@ Health dashboard pod should be running.
 Deploy SignOZ observability platform using Helm.
 
 <Info>
-This step is optional. SignOZ provides distributed tracing and observability features.
+SignOZ provides distributed tracing, metrics, and logs. It's deployed in the `platform` namespace.
 </Info>
 
 ```bash
-cd ~/online-beratung/caritas-workspace/ORISO-SignOZ
-
-# See ORISO-SignOZ/DEPLOYMENT.md for detailed instructions
-
-# Quick deploy with Helm
+# Add SignOZ Helm repo
 helm repo add signoz https://charts.signoz.io
 helm repo update
 
-kubectl create namespace signoz
+# Create namespace
+kubectl create namespace platform
 
+# Install SignOZ
+cd ~/online-beratung/caritas-workspace/ORISO-SignOZ
 helm install signoz signoz/signoz \
-  --namespace signoz \
-  --set frontend.service.type=LoadBalancer
+  --namespace platform \
+  --values signoz-values-current.yaml
 
 # Wait for SignOZ (may take 5-10 minutes)
-kubectl wait --for=condition=ready pod -l app.kubernetes.io/instance=signoz -n signoz --timeout=600s
+kubectl wait --for=condition=ready pod \
+  -l app.kubernetes.io/instance=signoz \
+  -n platform \
+  --timeout=600s
 
 # Get SignOZ URL
-kubectl get svc -n signoz signoz-frontend
-```
-
-<Note>
-SignOZ deployment may take 5-10 minutes. Monitor pod status during deployment.
-</Note>
-
-</Step>
-
-<Step title="Apply All Services">
-
-Apply all Kubernetes service configurations.
-
-```bash
-cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes
-
-# Apply all services
-kubectl apply -f services/all-services.yaml
-
-# Verify all services
-kubectl get svc -n caritas
+kubectl get svc -n platform signoz-frontend
 ```
 
 <Check>
-All services should be listed with ClusterIP or LoadBalancer addresses.
+SignOZ pods should be running. Access at http://91.99.219.182:3001
 </Check>
+
+</Step>
+
+<Step title="Verify Health Dashboard">
+
+Health Dashboard monitors all service health endpoints.
+
+```bash
+# Check Health Dashboard pod
+kubectl get pods -n caritas | grep health-dashboard
+
+# Check service
+kubectl get svc -n caritas | grep health-dashboard
+
+# Access Health Dashboard
+curl -I http://91.99.219.182:9001
+```
+
+<Info>
+Health Dashboard:
+- **URL:** http://91.99.219.182:9001
+- **Checks:** All `/actuator/health` endpoints every 60 seconds
+- **Service:** `oriso-platform-health-dashboard.caritas.svc.cluster.local:9001`
+</Info>
+
+</Step>
+
+<Step title="Configure Service Monitoring">
+
+Configure services to export metrics to SignOZ (optional).
+
+**For Spring Boot Services:**
+
+Add OpenTelemetry Java agent to service deployment:
+
+```yaml
+# In Helm values or deployment
+env:
+- name: JAVA_TOOL_OPTIONS
+  value: >-
+    -javaagent:/opt/otel/opentelemetry-javaagent.jar
+    -Dotel.service.name=userservice
+    -Dotel.exporter.otlp.endpoint=http://signoz-otel-collector.platform.svc.cluster.local:4317
+    -Dotel.exporter.otlp.protocol=grpc
+```
+
+**Download OpenTelemetry Agent:**
+
+```bash
+wget https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar
+```
 
 </Step>
 </Steps>
 
+## Monitoring Components
+
+### SignOZ
+- **Namespace:** `platform`
+- **Access:** http://91.99.219.182:3001
+- **Credentials:** caritas@gmail.com / @Caritas1234
+- **Components:**
+  - SignOZ Backend
+  - ClickHouse (time-series DB)
+  - OTEL Collector
+- **Features:**
+  - Distributed tracing
+  - Metrics collection
+  - Log aggregation
+  - APM dashboards
+
+### Health Dashboard
+- **Namespace:** `caritas`
+- **Service:** `oriso-platform-health-dashboard`
+- **Access:** http://91.99.219.182:9001
+- **Features:**
+  - Real-time health checks
+  - Service status monitoring
+  - Historical health data
+  - Manual refresh capability
+
+### Status Page
+- **URL:** http://status.oriso.site
+- **Purpose:** Public status page
+- **Features:** Service uptime, incident reporting
+
+## Access URLs
+
+After deployment, access monitoring at:
+
+- **SignOZ:** http://91.99.219.182:3001
+- **Health Dashboard:** http://91.99.219.182:9001
+- **Status Page:** http://status.oriso.site
+
+## Troubleshooting
+
+### SignOZ Not Starting
+```bash
+# Check pods
+kubectl get pods -n platform
+
+# Check logs
+kubectl logs -n platform -l app.kubernetes.io/instance=signoz
+
+# Check resources
+kubectl top pods -n platform
+```
+
+### Health Dashboard Not Working
+```bash
+# Check pod
+kubectl get pods -n caritas | grep health-dashboard
+
+# Check logs
+kubectl logs -n caritas deployment/oriso-platform-health-dashboard
+
+# Verify service endpoints are accessible
+kubectl exec -n caritas deployment/oriso-platform-health-dashboard -- \
+  curl http://oriso-platform-userservice.caritas.svc.cluster.local:8082/actuator/health
+```
+
+### Metrics Not Appearing in SignOZ
+```bash
+# Check OTEL collector
+kubectl get pods -n platform | grep otel-collector
+
+# Check collector logs
+kubectl logs -n platform -l app=otel-collector
+
+# Verify service has OpenTelemetry agent
+kubectl exec -n caritas deployment/oriso-platform-userservice -- env | grep OTEL
+```
+
 ## Next Steps
 
-- [Post-Deployment Configuration](/oriso-platform/post-deployment) - Verify complete deployment
-- [Verification & Testing](/oriso-platform/verification-testing) - Test platform functionality
-
+- [Post-Deployment](/oriso-platform/post-deployment) - Verify complete deployment
+- [Verification Testing](/oriso-platform/verification-testing) - Test monitoring functionality

@@ -60,6 +60,78 @@ Setting the default namespace is optional but convenient, as it allows you to om
 
 </Step>
 
+<Step title="Create ClusterIssuer for Let's Encrypt">
+
+Create a ClusterIssuer for automatic TLS certificate management with Let's Encrypt.
+
+```bash
+# Create ClusterIssuer
+cat <<EOF | kubectl apply -f -
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: your-email@example.com  # CHANGE THIS!
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
+EOF
+
+# Verify ClusterIssuer
+kubectl get clusterissuer
+```
+
+<Check>
+The ClusterIssuer should show `Ready` status: `kubectl get clusterissuer letsencrypt-prod` should show `READY=True`.
+</Check>
+
+<Warning>
+Replace `your-email@example.com` with your actual email address. This email is used by Let's Encrypt for certificate expiration notifications.
+</Warning>
+
+</Step>
+
+<Step title="Create Required Secrets">
+
+Create Kubernetes secrets for database credentials and other sensitive information.
+
+```bash
+# MariaDB secrets
+kubectl create secret generic mariadb-secrets -n caritas \
+  --from-literal=MYSQL_ROOT_PASSWORD=your-secure-password \
+  --from-literal=MYSQL_DATABASE=caritas \
+  --from-literal=MYSQL_USER=caritas_user \
+  --from-literal=MYSQL_PASSWORD=your-secure-password
+
+# Redis secrets
+kubectl create secret generic redis-secret -n caritas \
+  --from-literal=password=your-secure-password
+
+# RabbitMQ secrets
+kubectl create secret generic rabbitmq-secrets -n caritas \
+  --from-literal=RABBITMQ_DEFAULT_USER=admin \
+  --from-literal=RABBITMQ_DEFAULT_PASS=your-secure-password
+
+# Verify secrets
+kubectl get secrets -n caritas
+```
+
+<Check>
+All secrets should be listed: `mariadb-secrets`, `redis-secret`, `rabbitmq-secrets`.
+</Check>
+
+<Warning>
+Use strong, unique passwords for production. Store these passwords securely (password manager, encrypted file, etc.).
+</Warning>
+
+</Step>
+
 <Step title="Configure k3s for Production">
 
 Configure k3s for production use with custom settings.
@@ -154,8 +226,32 @@ If `local-path` storage class is missing:
 kubectl get pods -n local-path-storage
 ```
 
+## Verification
+
+After completing all steps, verify everything is configured:
+
+```bash
+# Check node is ready
+kubectl get nodes
+
+# Check namespace exists
+kubectl get namespaces | grep caritas
+
+# Check ClusterIssuer
+kubectl get clusterissuer letsencrypt-prod
+
+# Check secrets
+kubectl get secrets -n caritas
+
+# Check Ingress Controller
+kubectl get pods -n ingress-nginx
+
+# Check cert-manager
+kubectl get pods -n cert-manager
+```
+
 ## Next Steps
 
-- [Deploy Infrastructure](/oriso-platform/deploy-infrastructure) - Deploy databases, Redis, and Keycloak
-- [Clone ORISO Repositories](/oriso-platform/clone-repositories) - If you haven't already
+- [Setup Databases](/oriso-platform/setup-databases) - Initialize database schemas
+- [Deploy Infrastructure](/oriso-platform/deploy-infrastructure) - Deploy all services via Helm
 

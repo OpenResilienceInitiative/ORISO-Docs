@@ -1,144 +1,309 @@
 ---
 title: "Deploy Infrastructure"
-description: "Deploy MariaDB, MongoDB, Redis, RabbitMQ, and Keycloak using automated or manual deployment methods"
+description: "Deploy entire ORISO Platform infrastructure using Helm umbrella chart"
 ---
 
 # Deploy Infrastructure
 
-Deploy the core infrastructure components required for ORISO Platform: databases, cache, message queue, and authentication service.
+Deploy the complete ORISO Platform infrastructure using Helm charts. All services are deployed via a single umbrella Helm chart.
+
+<Info>
+ORISO Platform v3.0.0 uses Helm charts for deployment. All 21 services are deployed via the `oriso-platform` umbrella chart in a single command.
+</Info>
 
 <Steps>
-<Step title="Navigate to ORISO-Kubernetes">
+<Step title="Navigate to Helm Directory">
 
-Prepare the deployment environment and scripts.
+Prepare the Helm deployment environment.
 
 ```bash
-cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes/helm
 
-# Make scripts executable
-chmod +x scripts/*.sh
+# Verify Helm chart structure
+ls -la oriso-platform/
 
-# Check deployment files
-ls -la deployments/
-ls -la services/
+# Check values file
+ls -la values.yaml
 ```
+
+<Check>
+You should see:
+- `oriso-platform/` directory (umbrella chart)
+- `values.yaml` file (global values)
+- `charts/` directory (sub-charts)
+</Check>
 
 </Step>
 
-<Step title="Choose Deployment Method">
+<Step title="Update Helm Dependencies">
 
-Select either automated (recommended) or manual deployment approach.
-
-<Tabs>
-<Tab title="Automated Deployment (Recommended)">
-
-Use the master deployment script for a streamlined setup process.
+Update Helm chart dependencies before deployment.
 
 ```bash
-# Run master deployment script
-./scripts/deploy-all.sh
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes/helm
+
+# Navigate to umbrella chart
+cd oriso-platform
+
+# Update dependencies
+helm dependency update
+
+# Return to helm directory
+cd ..
+```
+
+<Check>
+Dependencies should download successfully. Check for any errors in the output.
+</Check>
+
+<Info>
+This downloads all sub-chart dependencies defined in `oriso-platform/Chart.yaml`.
+</Info>
+
+</Step>
+
+<Step title="Deploy Entire Platform">
+
+Deploy all services using the Helm umbrella chart.
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes/helm
+
+# Deploy entire platform
+helm install oriso-platform ./oriso-platform \
+  --namespace caritas \
+  --create-namespace \
+  -f values.yaml
+
+# Monitor deployment
+kubectl get pods -n caritas -w
 ```
 
 <Info>
-The script will:
-1. Check prerequisites
-2. Create namespace
-3. Deploy infrastructure (MariaDB, MongoDB, Redis, RabbitMQ)
-4. Deploy Keycloak
-5. Pause for Keycloak HTTP configuration
-6. Deploy backend services
-7. Deploy frontend
-8. Deploy Matrix
-9. Deploy Nginx proxy
-10. Optionally deploy monitoring
+This single command deploys:
+- Infrastructure: MariaDB, MongoDB, PostgreSQL, Redis, RabbitMQ
+- Authentication: Keycloak
+- Communication: Matrix Synapse, Element, Discovery
+- WebRTC: LiveKit
+- Backend: 4 microservices
+- Frontend: 2 applications
+- Monitoring: SignOZ, Health Dashboard (if enabled)
 
-Estimated time: 20-35 minutes
+**Total: 21 services**
 </Info>
 
 <Check>
-Follow the prompts and wait for completion. The script will guide you through each step.
+All pods should eventually reach `Running` state. This may take 5-10 minutes for all services to start.
 </Check>
 
-</Tab>
+</Step>
 
-<Tab title="Manual Deployment (Step-by-Step)">
+<Step title="Verify Deployment">
 
-Deploy infrastructure components manually for more control.
-
-**Step 1: Deploy Infrastructure Services**
+Verify all services are deployed and running.
 
 ```bash
-# Deploy MariaDB, MongoDB, RabbitMQ
-kubectl apply -f deployments/01-infrastructure.yaml
-
-# Wait for pods to be ready
-kubectl wait --for=condition=ready pod -l app=mariadb -n caritas --timeout=300s
-kubectl wait --for=condition=ready pod -l app=mongodb -n caritas --timeout=300s
-kubectl wait --for=condition=ready pod -l app=rabbitmq -n caritas --timeout=300s
-
-# Verify
+# Check all pods
 kubectl get pods -n caritas
 
-# Check logs if needed
-kubectl logs deployment/mariadb -n caritas
-kubectl logs deployment/mongodb -n caritas
-kubectl logs deployment/rabbitmq -n caritas
+# Check Helm release
+helm list -n caritas
+
+# Check services
+kubectl get svc -n caritas
+
+# Check persistent volumes
+kubectl get pvc -n caritas
 ```
 
-**Step 2: Deploy Redis Stack**
+<Check>
+Expected output:
+- Helm release `oriso-platform` should show `deployed` status
+- All pods should be `Running` (may take time for initial startup)
+- Services should be created with `oriso-platform-*` prefix
+- PVCs should be `Bound`
+</Check>
+
+</Step>
+
+<Step title="Deploy Ingress Resources">
+
+Deploy Kubernetes Ingress resources for external access.
 
 ```bash
-# Deploy Redis, Redis Commander, Redis Exporter
-kubectl apply -f deployments/02-redis-stack.yaml
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes/ingress
 
-# Wait for Redis
-kubectl wait --for=condition=ready pod -l app=redis -n caritas --timeout=180s
+# Deploy all Ingress resources
+kubectl apply -f .
 
-# Verify
-kubectl get pods -n caritas | grep redis
+# Verify Ingress
+kubectl get ingress -n caritas
+
+# Check TLS certificates
+kubectl get certificate -n caritas
 ```
 
-**Step 3: Deploy Keycloak**
+<Info>
+This deploys 33 Ingress resources across 22 YAML files, providing:
+- External access to all services
+- TLS certificates via cert-manager
+- Path rewriting and CORS support
+</Info>
 
-```bash
-# Deploy Keycloak
-kubectl apply -f deployments/03-keycloak.yaml
-
-# Wait for Keycloak (may take 5-10 minutes)
-kubectl wait --for=condition=ready pod -l app=keycloak -n caritas --timeout=600s
-
-# Check logs
-kubectl logs deployment/keycloak -n caritas -f
-```
-
-</Tab>
-</Tabs>
+<Check>
+Ingress resources should be created. TLS certificates will be issued automatically by cert-manager (may take a few minutes).
+</Check>
 
 </Step>
 </Steps>
 
+## Deployment Phases
+
+The Helm chart deploys services in the following order:
+
+1. **Infrastructure** - Databases, cache, queue
+2. **Authentication** - Keycloak
+3. **Communication** - Matrix, Element, Discovery
+4. **WebRTC** - LiveKit
+5. **Backend** - 4 microservices
+6. **Frontend** - 2 applications
+7. **Monitoring** - SignOZ, Health Dashboard
+
 ## Verification
 
-After deployment, verify all infrastructure pods are running:
+After deployment, verify everything is working:
 
 ```bash
-# Check all infrastructure pods
+# Check all pods are running
 kubectl get pods -n caritas
 
-# Should see:
-# mariadb-xxx      1/1     Running
-# mongodb-xxx      1/1     Running
-# redis-xxx         1/1     Running
-# rabbitmq-xxx      1/1     Running
-# keycloak-xxx      1/1     Running
+# Check Helm release status
+helm status oriso-platform -n caritas
+
+# Check services
+kubectl get svc -n caritas
+
+# Check Ingress
+kubectl get ingress -n caritas
+
+# Check TLS certificates
+kubectl get certificate -n caritas
+
+# Test endpoints (after DNS is configured)
+curl -I https://app.oriso-dev.site
+curl -I https://api.oriso-dev.site
 ```
+
+## Upgrading Deployment
+
+To upgrade the deployment:
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes/helm
+
+# Update dependencies
+cd oriso-platform
+helm dependency update
+cd ..
+
+# Upgrade
+helm upgrade oriso-platform ./oriso-platform \
+  --namespace caritas \
+  -f values.yaml
+```
+
+## Rolling Back
+
+If something goes wrong:
+
+```bash
+# List release history
+helm history oriso-platform -n caritas
+
+# Rollback to previous version
+helm rollback oriso-platform -n caritas
+
+# Or rollback to specific revision
+helm rollback oriso-platform <revision-number> -n caritas
+```
+
+## Troubleshooting
+
+### Pods Not Starting
+```bash
+# Check pod status
+kubectl get pods -n caritas
+
+# Check pod logs
+kubectl logs -n caritas <pod-name>
+
+# Check pod events
+kubectl describe pod -n caritas <pod-name>
+```
+
+### Helm Installation Fails
+```bash
+# Check Helm release
+helm list -n caritas
+
+# Check release status
+helm status oriso-platform -n caritas
+
+# View release values
+helm get values oriso-platform -n caritas
+
+# Check for errors
+helm get manifest oriso-platform -n caritas | grep -i error
+```
+
+### Services Not Accessible
+```bash
+# Check Ingress Controller
+kubectl get pods -n ingress-nginx
+
+# Check Ingress resources
+kubectl get ingress -n caritas
+
+# Check Ingress Controller logs
+kubectl logs -n ingress-nginx -l app.kubernetes.io/component=controller
+```
+
+### TLS Certificates Not Issued
+```bash
+# Check cert-manager
+kubectl get pods -n cert-manager
+
+# Check certificates
+kubectl get certificate -n caritas
+kubectl describe certificate <cert-name> -n caritas
+
+# Check certificate requests
+kubectl get certificaterequest -n caritas
+```
+
+## Uninstalling
+
+To uninstall the platform (data is preserved in PVCs):
+
+```bash
+# Uninstall Helm release
+helm uninstall oriso-platform --namespace caritas
+
+# Remove Ingress resources (optional)
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes/ingress
+kubectl delete -f .
+
+# Note: PVCs are retained by default
+# To delete PVCs (WARNING: This deletes data):
+kubectl delete pvc --all -n caritas
+```
+
+<Warning>
+Uninstalling the Helm release does NOT delete PersistentVolumeClaims by default. Your data is preserved. Only delete PVCs if you want to remove all data.
+</Warning>
 
 ## Next Steps
 
-<Warning>
-**CRITICAL**: Before proceeding, you must configure Keycloak HTTP access. See [Configure Keycloak](/oriso-platform/configure-keycloak).
-</Warning>
-
-- [Configure Keycloak](/oriso-platform/configure-keycloak) - Configure HTTP access (mandatory)
-- [Setup Databases](/oriso-platform/setup-databases) - Configure databases and import schemas
-
+- [Setup Databases](/oriso-platform/setup-databases) - Initialize database schemas
+- [Configure Keycloak](/oriso-platform/configure-keycloak) - Import realm and configure HTTP access
+- [Post-Deployment](/oriso-platform/post-deployment) - Complete post-deployment steps

@@ -7,21 +7,26 @@ description: "Frontend and backend coding standards, project structure, i18n rul
 
 ## Frontend (React/TypeScript)
 
+- **Build System**: Vite 4 (not Create React App)
+- **Framework**: React 18
+- **Language**: TypeScript
 - **ESLint**: Airbnb config + TypeScript
 - **Prettier**: 4 spaces, semicolons, single quotes, 120 char width
 - **Components**: Arrow functions only
 - **Node**: >= 18.16.1
 - **React**: No `import React` needed
 - **TypeScript**: `any` allowed, explicit return types not required
+- **Key Dependencies**: Matrix JS SDK, Keycloak JS adapter, LiveKit SDK
 
 ## Backend (Java/Spring Boot)
 
 - **Java**: 17
-- **Spring Boot**: 3.0.6
+- **Spring Boot**: 2.7.14
 - **Build**: Maven project structure
 - **Encoding**: UTF-8 everywhere
-- **DB Migrations**: Liquibase
+- **DB Migrations**: Liquibase **DISABLED** (schemas managed in ORISO-Database)
 - **Auth**: Keycloak OAuth2/JWT
+- **Service Naming**: `oriso-platform-*` prefix for Kubernetes resources
 
 ## Project Structure
 
@@ -58,7 +63,12 @@ description: "Frontend and backend coding standards, project structure, i18n rul
 
 ## Deployment
 
-- **Flow**: Docker → K3s → Delete pod → Auto-recreate
+- **Method**: Kubernetes with Helm charts
+- **Umbrella Chart**: `oriso-platform` (deploys all 21 services)
+- **Namespace**: `caritas`
+- **Service Discovery**: Kubernetes DNS (`.svc.cluster.local`)
+- **Flow**: Build Docker images → Import to k3s → Deploy via Helm → Auto-scaling
+- **Helm Values**: Environment-specific files (`values.yaml`, `values-prod.yaml`)
 
 <Info>
 These standards are authoritative for all ORISO Platform repositories. Align your local tooling (ESLint/Prettier/Java toolchain) accordingly.

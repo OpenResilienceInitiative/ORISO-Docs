@@ -1,110 +1,244 @@
 ---
-title: "DNS & SSL Setup"
-description: "Configure DNS, install Certbot, and setup SSL certificates for secure access"
+title: "DNS & SSL Configuration"
+description: "Configure DNS records and automatic TLS certificates via cert-manager"
 ---
 
-# DNS & SSL Setup
+# DNS & SSL Configuration
 
-Configure DNS and SSL certificates for production deployments.
+Configure DNS records and automatic TLS certificate management for ORISO Platform. TLS certificates are automatically managed by cert-manager with Let's Encrypt.
 
 <Info>
-All steps in this guide are optional. They are only required if you want to use a domain name and HTTPS.
+ORISO Platform v3.0.0 uses cert-manager for automatic TLS certificate management. No manual certificate installation is required.
 </Info>
 
 <Steps>
-<Step title="Configure DNS (Optional)">
+<Step title="Configure DNS Records">
 
-Configure DNS records pointing to your server.
+Point DNS records to your server IP for all required subdomains.
+
+```bash
+# Get server IP
+SERVER_IP=$(kubectl get nodes -o jsonpath="{.items[0].status.addresses[?(@.type=='InternalIP')].address}")
+echo "Server IP: $SERVER_IP"
+```
+
+**Required DNS Records:**
+
+In your DNS provider, create the following A records:
+
+| Subdomain | Points To | Purpose |
+|-----------|-----------|---------|
+| `api.oriso-dev.site` | `$SERVER_IP` | Backend API |
+| `app.oriso-dev.site` | `$SERVER_IP` | Frontend application |
+| `admin.oriso-dev.site` | `$SERVER_IP` | Admin panel |
+| `auth.oriso-dev.site` | `$SERVER_IP` | Keycloak authentication |
+| `matrix.oriso-dev.site` | `$SERVER_IP` | Matrix Synapse |
+| `element.oriso-dev.site` | `$SERVER_IP` | Element.io client (optional) |
+| `status.oriso.site` | `$SERVER_IP` | Status page (optional) |
 
 <Note>
-You need a domain name and access to your DNS provider's control panel.
+Replace `oriso-dev.site` with your actual domain. DNS propagation may take a few minutes to hours.
 </Note>
-
-In your DNS provider, add the following records:
-
-- **A Record**: `oriso.yourdomain.com → YOUR_SERVER_IP`
-- **Wildcard A Record** (optional): `*.oriso.yourdomain.com → YOUR_SERVER_IP`
 
 <Check>
 Verify DNS resolution:
 ```bash
-nslookup oriso.yourdomain.com
-# Should return your server IP
+dig api.oriso-dev.site
+nslookup app.oriso-dev.site
 ```
+Both should return your server IP.
 </Check>
 
 </Step>
 
-<Step title="Install Certbot for Let's Encrypt (Optional)">
+<Step title="Verify Cert-Manager Setup">
 
-Install Certbot to obtain free SSL certificates from Let's Encrypt.
-
-<Warning>
-This requires port 80 to be open and DNS to be configured correctly.
-</Warning>
+Ensure cert-manager and ClusterIssuer are configured.
 
 ```bash
-# Install Certbot
-sudo apt install -y certbot python3-certbot-nginx
+# Check cert-manager pods
+kubectl get pods -n cert-manager
 
-# Get SSL certificate (requires port 80 open and DNS configured)
-sudo certbot certonly --standalone -d yourdomain.com -d www.yourdomain.com
+# Check ClusterIssuer
+kubectl get clusterissuer letsencrypt-prod
 
-# Certificate will be saved to:
-# /etc/letsencrypt/live/yourdomain.com/fullchain.pem
-# /etc/letsencrypt/live/yourdomain.com/privkey.pem
-
-# Setup auto-renewal
-sudo systemctl enable certbot.timer
-sudo systemctl start certbot.timer
+# Verify ClusterIssuer is ready
+kubectl describe clusterissuer letsencrypt-prod
 ```
 
 <Check>
-Verify certificate files exist:
+- cert-manager pods should be `Running`
+- ClusterIssuer should show `Ready=True`
+</Check>
+
+<Note>
+If ClusterIssuer is not configured, see [Setup Kubernetes](/oriso-platform/setup-kubernetes).
+</Note>
+
+</Step>
+
+<Step title="Deploy Ingress Resources">
+
+Deploy Ingress resources with TLS annotations. Certificates will be issued automatically.
+
 ```bash
-ls -la /etc/letsencrypt/live/yourdomain.com/
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes/ingress
+
+# Deploy all Ingress resources
+kubectl apply -f .
+
+# Check Ingress resources
+kubectl get ingress -n caritas
+
+# Check certificate requests
+kubectl get certificaterequest -n caritas
 ```
+
+<Info>
+When Ingress resources are created with `cert-manager.io/cluster-issuer: letsencrypt-prod` annotation, cert-manager automatically:
+1. Creates CertificateRequest
+2. Issues certificate via Let's Encrypt HTTP-01 challenge
+3. Stores certificate in Kubernetes Secret
+4. Ingress uses certificate for TLS
+</Info>
+
+<Check>
+After a few minutes, certificates should be issued:
+```bash
+kubectl get certificate -n caritas
+```
+All certificates should show `Ready=True`.
 </Check>
 
 </Step>
 
-<Step title="Configure Nginx with SSL (Optional)">
+<Step title="Verify TLS Certificates">
 
-Update Nginx configuration to use SSL certificates.
-
-```bash
-# Update Nginx ConfigMap with SSL configuration
-kubectl edit configmap oriso-nginx-config -n caritas
-```
-
-Add SSL server block configuration:
-
-```nginx
-server {
-    listen 443 ssl http2;
-    server_name yourdomain.com;
-    ssl_certificate /etc/ssl/certs/fullchain.pem;
-    ssl_certificate_key /etc/ssl/certs/privkey.pem;
-    # ... rest of configuration
-}
-```
-
-Mount SSL certificates as volume in Nginx deployment, then reload:
+Verify certificates are issued and working.
 
 ```bash
-# Reload Nginx
-kubectl rollout restart deployment/cob-proxy -n caritas
+# Check certificates
+kubectl get certificate -n caritas
+
+# Check certificate details
+kubectl describe certificate <cert-name> -n caritas
+
+# Test HTTPS endpoints
+curl -I https://app.oriso-dev.site
+curl -I https://api.oriso-dev.site
+curl -I https://auth.oriso-dev.site
+
+# Check certificate validity
+echo | openssl s_client -servername app.oriso-dev.site -connect app.oriso-dev.site:443 2>/dev/null | openssl x509 -noout -dates
 ```
 
-<Note>
-See ORISO-Nginx/DEPLOYMENT.md for detailed SSL configuration instructions.
-</Note>
+<Check>
+- Certificates should be `Ready=True`
+- HTTPS endpoints should return HTTP 200
+- Certificate should be valid (not expired)
+</Check>
 
 </Step>
 </Steps>
 
+## TLS Certificate Management
+
+### Automatic Issuance
+Cert-manager automatically issues certificates when:
+1. Ingress resource is created with `cert-manager.io/cluster-issuer` annotation
+2. DNS records point to server IP
+3. HTTP-01 challenge can be completed (port 80 accessible)
+
+### Certificate Renewal
+Certificates are automatically renewed by cert-manager before expiration:
+- **Renewal:** 30 days before expiration
+- **Automatic:** No manual intervention required
+- **Monitoring:** Check certificate status regularly
+
+### Certificate Status
+```bash
+# Check all certificates
+kubectl get certificate -n caritas
+
+# Check certificate age
+kubectl get certificate -n caritas -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.status.notAfter}{"\n"}{end}'
+
+# Check certificate requests
+kubectl get certificaterequest -n caritas
+```
+
+## Troubleshooting
+
+### DNS Not Resolving
+```bash
+# Test DNS resolution
+dig api.oriso-dev.site
+nslookup app.oriso-dev.site
+
+# Check DNS propagation
+# Use online tools: https://dnschecker.org
+
+# Verify DNS points to correct IP
+curl -I http://api.oriso-dev.site
+```
+
+### Certificate Not Issued
+```bash
+# Check certificate request
+kubectl get certificaterequest -n caritas
+kubectl describe certificaterequest <name> -n caritas
+
+# Check cert-manager logs
+kubectl logs -n cert-manager -l app=cert-manager
+
+# Check ClusterIssuer
+kubectl describe clusterissuer letsencrypt-prod
+
+# Verify HTTP-01 challenge
+curl http://api.oriso-dev.site/.well-known/acme-challenge/test
+```
+
+### Certificate Expired
+```bash
+# Check certificate expiration
+kubectl get certificate -n caritas -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.status.notAfter}{"\n"}{end}'
+
+# Force renewal (delete certificate, cert-manager will recreate)
+kubectl delete certificate <cert-name> -n caritas
+kubectl get certificate -n caritas  # Should recreate automatically
+```
+
+### HTTPS Not Working
+```bash
+# Check Ingress TLS configuration
+kubectl get ingress -n caritas -o yaml | grep -A 5 tls
+
+# Check certificate secret
+kubectl get secret -n caritas | grep tls
+
+# Check Ingress Controller logs
+kubectl logs -n ingress-nginx -l app.kubernetes.io/component=controller | grep tls
+```
+
+## DNS Configuration Examples
+
+### Cloudflare
+1. Add A records in Cloudflare DNS
+2. Set proxy status (orange cloud) if using Cloudflare proxy
+3. SSL/TLS mode: Full (strict) for HTTPS
+
+### Route53
+1. Create A records in Route53 hosted zone
+2. Point to server IP
+3. TTL: 300 seconds (5 minutes)
+
+### Other Providers
+1. Add A records pointing to server IP
+2. Wait for DNS propagation
+3. Verify with `dig` or `nslookup`
+
 ## Next Steps
 
-- [Verification & Testing](/oriso-platform/verification-testing) - Test platform functionality
+- [Post-Deployment](/oriso-platform/post-deployment) - Verify complete deployment
+- [Verification Testing](/oriso-platform/verification-testing) - Test HTTPS endpoints
 - [Security Hardening](/oriso-platform/security-hardening) - Additional security measures
-

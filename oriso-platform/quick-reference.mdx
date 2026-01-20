@@ -9,6 +9,26 @@ Quick reference guide for essential ORISO Platform management commands, ports, a
 
 ## Essential Commands
 
+### Helm Operations
+
+```bash
+# Check Helm release
+helm list -n caritas
+
+# Check release status
+helm status oriso-platform -n caritas
+
+# Upgrade deployment
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes/helm
+helm upgrade oriso-platform ./oriso-platform --namespace caritas -f values.yaml
+
+# View release values
+helm get values oriso-platform -n caritas
+
+# Rollback deployment
+helm rollback oriso-platform -n caritas
+```
+
 ### Pod Management
 
 ```bash
@@ -16,19 +36,19 @@ Quick reference guide for essential ORISO Platform management commands, ports, a
 kubectl get pods -n caritas
 
 # Check pod logs
-kubectl logs deployment/<name> -n caritas
+kubectl logs deployment/oriso-platform-<service> -n caritas
 
 # Follow logs in real-time
-kubectl logs deployment/<name> -n caritas -f
+kubectl logs deployment/oriso-platform-<service> -n caritas -f
 
 # Restart deployment
-kubectl rollout restart deployment/<name> -n caritas
+kubectl rollout restart deployment/oriso-platform-<service> -n caritas
 
 # Check rollout status
-kubectl rollout status deployment/<name> -n caritas
+kubectl rollout status deployment/oriso-platform-<service> -n caritas
 
 # Scale deployment
-kubectl scale deployment/<name> --replicas=2 -n caritas
+kubectl scale deployment/oriso-platform-<service> --replicas=2 -n caritas
 ```
 
 ### Service Management
@@ -72,32 +92,68 @@ curl http://127.0.0.1:<port>/actuator/health/db | jq .
 curl http://127.0.0.1:<port>/actuator/health/redis | jq .
 ```
 
-## Critical Ports
+## Service URLs
 
-| Service | Port | Health Check Endpoint |
-|---------|------|-----------------------|
-| TenantService | 8081 | `/actuator/health` |
-| UserService | 8082 | `/actuator/health` |
-| ConsultingTypeService | 8083 | `/actuator/health` |
-| AgencyService | 8084 | `/actuator/health` |
-| UploadService | 8085 | `/actuator/health` |
-| VideoService | 8086 | `/actuator/health` |
-| Frontend | 9001 | `/` |
-| Admin | 9002 | `/` |
-| Keycloak | 8080 | `/auth` |
-| Matrix Synapse | 8008 | `/_matrix/client/versions` |
-| Element.io | 8087 | `/` |
-| Nginx Proxy | 8089 | `/` |
-| Health Dashboard | 9100 | `/` |
-| Redis Commander | 9021 | `/` |
+### External Access (via Ingress)
+| Service | URL | Description |
+|---------|-----|-------------|
+| Frontend | https://app.oriso-dev.site | User portal |
+| Admin | https://admin.oriso-dev.site | Admin panel |
+| API | https://api.oriso-dev.site | Backend API |
+| Auth | https://auth.oriso-dev.site | Keycloak |
+| Matrix | https://matrix.oriso-dev.site | Matrix Synapse |
+
+### Internal Service Names (Kubernetes DNS)
+| Service | Internal URL | Port |
+|---------|-------------|------|
+| TenantService | `oriso-platform-tenantservice.caritas.svc.cluster.local` | 8081 |
+| UserService | `oriso-platform-userservice.caritas.svc.cluster.local` | 8082 |
+| ConsultingTypeService | `oriso-platform-consultingtypeservice.caritas.svc.cluster.local` | 8083 |
+| AgencyService | `oriso-platform-agencyservice.caritas.svc.cluster.local` | 8084 |
+| MariaDB | `oriso-platform-mariadb.caritas.svc.cluster.local` | 3306 |
+| MongoDB | `oriso-platform-mongodb.caritas.svc.cluster.local` | 27017 |
+| Keycloak | `oriso-platform-keycloak.caritas.svc.cluster.local` | 8080 |
+| Matrix Synapse | `oriso-platform-matrix-synapse.caritas.svc.cluster.local` | 8008 |
+
+### Health Check Endpoints
+| Service | Health Endpoint |
+|---------|----------------|
+| TenantService | `/actuator/health` |
+| UserService | `/actuator/health` |
+| ConsultingTypeService | `/actuator/health` |
+| AgencyService | `/actuator/health` |
+
+## Common Operations
+
+### Restart Service
+```bash
+kubectl rollout restart deployment/oriso-platform-<service> -n caritas
+```
+
+### View Logs
+```bash
+kubectl logs deployment/oriso-platform-<service> -n caritas --tail=100
+kubectl logs deployment/oriso-platform-<service> -n caritas -f  # Follow
+```
+
+### Upgrade Deployment
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes/helm
+helm upgrade oriso-platform ./oriso-platform --namespace caritas -f values.yaml
+```
+
+### Uninstall
+```bash
+helm uninstall oriso-platform --namespace caritas
+```
 
 ## Service Names Reference
 
 Common service names for use with kubectl commands:
 
-| Service Name | Deployment Name |
-|--------------|----------------|
-| Tenant Service | `tenantservice` |
+| Service Name | Deployment Name | Service Name |
+|--------------|----------------|--------------|
+| Tenant Service | `oriso-platform-tenantservice` | `oriso-platform-tenantservice` |
 | User Service | `userservice` |
 | Consulting Type Service | `consultingtypeservice` |
 | Agency Service | `agencyservice` |

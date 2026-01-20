@@ -1,76 +1,212 @@
 ---
 title: "Deploy Backend Services"
-description: "Deploy all backend microservices: TenantService, UserService, ConsultingTypeService, AgencyService, UploadService, and VideoService"
+description: "Backend services are deployed via Helm. This guide covers verification and configuration."
 ---
 
 # Deploy Backend Services
 
-Deploy all ORISO Platform backend microservices.
+Backend services are automatically deployed via the `oriso-platform` Helm umbrella chart. This guide covers verification and post-deployment configuration.
+
+<Info>
+All backend services are deployed via Helm in a single command:
+```bash
+helm install oriso-platform ./oriso-platform --namespace caritas -f values.yaml
+```
+
+This guide assumes services are already deployed. If not, see [Deploy Infrastructure](/oriso-platform/deploy-infrastructure).
+</Info>
 
 <Steps>
-<Step title="Deploy All Backend Services">
+<Step title="Verify Backend Services Deployment">
 
-Deploy all backend services using the deployment configuration.
+Verify all backend services are deployed and running.
 
 ```bash
-cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes
+# Check all backend service pods
+kubectl get pods -n caritas | grep -E "tenant|user|consulting|agency"
 
-# Deploy backend services
-kubectl apply -f deployments/04-backend-services.yaml
-
-# Wait for services (may take 10-15 minutes for all to start)
-kubectl wait --for=condition=ready pod -l tier=backend -n caritas --timeout=900s
-
-# Check status
-kubectl get pods -n caritas | grep -E "tenant|user|consulting|agency|upload|video"
+# Should see:
+# oriso-platform-tenantservice-xxx      1/1     Running
+# oriso-platform-userservice-xxx        1/1     Running
+# oriso-platform-consultingtypeservice-xxx  1/1     Running
+# oriso-platform-agencyservice-xxx      1/1     Running
 ```
 
 <Check>
-All services should show status `Running` and `1/1` ready:
-- tenantservice-xxx
-- userservice-xxx
-- consultingtypeservice-xxx
-- agencyservice-xxx
-- uploadservice-xxx
-- videoservice-xxx
+All services should show status `Running` and `1/1` ready. If any are not running, check logs:
+```bash
+kubectl logs -n caritas deployment/oriso-platform-userservice --tail=100
+```
 </Check>
 
 </Step>
 
-<Step title="Verify Backend Services Health">
+<Step title="Verify Service Health">
 
 Check health endpoints for all backend services.
 
 ```bash
-# Check TenantService
-curl http://127.0.0.1:8081/actuator/health
-# Expected: {"status":"UP"}
+# Check TenantService (port 8081)
+kubectl exec -n caritas deployment/oriso-platform-tenantservice -- \
+  curl -s http://localhost:8081/actuator/health
 
-# Check UserService
-curl http://127.0.0.1:8082/actuator/health
-# Expected: {"status":"UP"}
+# Check UserService (port 8082)
+kubectl exec -n caritas deployment/oriso-platform-userservice -- \
+  curl -s http://localhost:8082/actuator/health
 
-# Check ConsultingTypeService
-curl http://127.0.0.1:8083/actuator/health
-# Expected: {"status":"UP"}
+# Check ConsultingTypeService (port 8083)
+kubectl exec -n caritas deployment/oriso-platform-consultingtypeservice -- \
+  curl -s http://localhost:8083/actuator/health
 
-# Check AgencyService
-curl http://127.0.0.1:8084/actuator/health
-# Expected: {"status":"UP"}
+# Check AgencyService (port 8084)
+kubectl exec -n caritas deployment/oriso-platform-agencyservice -- \
+  curl -s http://localhost:8084/actuator/health
+
+# Or check via Ingress (after Ingress is deployed)
+curl -s https://api.oriso-dev.site/actuator/health
 ```
 
-<Warning>
-If any service shows DOWN, check logs:
+<Check>
+All services should return: `{"status":"UP"}` or detailed health information.
+</Check>
+
+</Step>
+
+<Step title="Verify Service Communication">
+
+Verify services can communicate with each other via Kubernetes DNS.
+
 ```bash
-kubectl logs deployment/tenantservice -n caritas --tail=100
-kubectl logs deployment/userservice -n caritas --tail=100
+# Test UserService can reach TenantService
+kubectl exec -n caritas deployment/oriso-platform-userservice -- \
+  curl -s http://oriso-platform-tenantservice.caritas.svc.cluster.local:8081/actuator/health
+
+# Test AgencyService can reach UserService
+kubectl exec -n caritas deployment/oriso-platform-agencyservice -- \
+  curl -s http://oriso-platform-userservice.caritas.svc.cluster.local:8082/actuator/health
 ```
-</Warning>
+
+<Check>
+Services should be able to reach each other. If not, check:
+- Service DNS names are correct
+- Services are in the same namespace
+- Network policies (if any) allow communication
+</Check>
+
+</Step>
+
+<Step title="Verify Database Connections">
+
+Verify all services can connect to their databases.
+
+```bash
+# Check service environment variables
+kubectl get deployment oriso-platform-userservice -n caritas -o yaml | \
+  grep -A 3 DATASOURCE
+
+# Test database connection from service
+kubectl exec -n caritas deployment/oriso-platform-userservice -- \
+  env | grep DATASOURCE
+```
+
+<Check>
+Services should have database connection strings pointing to:
+- `oriso-platform-mariadb.caritas.svc.cluster.local:3306`
+- `oriso-platform-mongodb.caritas.svc.cluster.local:27017` (for ConsultingTypeService)
+</Check>
 
 </Step>
 </Steps>
 
+## Backend Services Overview
+
+### TenantService
+- **Port:** 8081
+- **Service:** `oriso-platform-tenantservice.caritas.svc.cluster.local:8081`
+- **Database:** MariaDB (tenantservice)
+- **Health:** `/actuator/health`
+
+### UserService
+- **Port:** 8082
+- **Service:** `oriso-platform-userservice.caritas.svc.cluster.local:8082`
+- **Database:** MariaDB (userservice)
+- **Health:** `/actuator/health`
+- **Special:** Matrix integration
+
+### ConsultingTypeService
+- **Port:** 8083
+- **Service:** `oriso-platform-consultingtypeservice.caritas.svc.cluster.local:8083`
+- **Databases:** MariaDB (consultingtypeservice) + MongoDB (consulting_types)
+- **Health:** `/actuator/health`
+
+### AgencyService
+- **Port:** 8084
+- **Service:** `oriso-platform-agencyservice.caritas.svc.cluster.local:8084`
+- **Database:** MariaDB (agencyservice)
+- **Health:** `/actuator/health`
+
+## Service Configuration
+
+### Environment Variables
+Services are configured via Helm values. Check configuration:
+
+```bash
+# View service configuration
+helm get values oriso-platform -n caritas
+
+# View specific service deployment
+kubectl get deployment oriso-platform-userservice -n caritas -o yaml
+```
+
+### Database Connections
+All services connect via Kubernetes DNS:
+```
+jdbc:mariadb://oriso-platform-mariadb.caritas.svc.cluster.local:3306/<database-name>
+```
+
+### Liquibase Status
+**Liquibase is DISABLED** in all services. Schemas are managed in ORISO-Database repository.
+
+## Troubleshooting
+
+### Service Not Starting
+```bash
+# Check pod status
+kubectl describe pod -n caritas <pod-name>
+
+# Check logs
+kubectl logs -n caritas deployment/oriso-platform-userservice --tail=100
+
+# Check events
+kubectl get events -n caritas --sort-by='.lastTimestamp' | grep userservice
+```
+
+### Database Connection Failures
+```bash
+# Verify database is accessible
+kubectl exec -n caritas deployment/oriso-platform-mariadb -- \
+  mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "SELECT 1;"
+
+# Check service database credentials
+kubectl get secret mariadb-secrets -n caritas -o yaml
+
+# Test connection from service pod
+kubectl exec -n caritas deployment/oriso-platform-userservice -- \
+  curl http://oriso-platform-mariadb.caritas.svc.cluster.local:3306
+```
+
+### Health Check Failures
+```bash
+# Check health endpoint directly
+kubectl exec -n caritas deployment/oriso-platform-userservice -- \
+  curl -v http://localhost:8082/actuator/health
+
+# Check service logs for errors
+kubectl logs -n caritas deployment/oriso-platform-userservice | grep -i error
+```
+
 ## Next Steps
 
-- [Deploy Frontend](/oriso-platform/deploy-frontend) - Deploy frontend and admin applications
-- [Post-Deployment Configuration](/oriso-platform/post-deployment) - Verify complete deployment
+- [Deploy Frontend](/oriso-platform/deploy-frontend) - Deploy frontend applications
+- [Post-Deployment](/oriso-platform/post-deployment) - Complete post-deployment steps
+- [Verification Testing](/oriso-platform/verification-testing) - Test all services

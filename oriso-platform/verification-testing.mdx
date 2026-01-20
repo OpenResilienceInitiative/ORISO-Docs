@@ -1,65 +1,106 @@
 ---
 title: "Verification & Testing"
-description: "Complete verification, user registration testing, authentication flow, API testing, and Matrix chat verification"
+description: "Complete verification using kubectl and Helm commands, test all services via Ingress, and verify Kubernetes deployment"
 ---
 
 # Verification & Testing
 
-Comprehensive testing guide to verify ORISO Platform is functioning correctly.
+Comprehensive testing guide to verify ORISO Platform v3.0.0 is functioning correctly on Kubernetes.
 
 <Steps>
-<Step title="Run Complete Verification">
+<Step title="Verify Kubernetes Deployment">
 
-Execute the verification script to check all components.
+Check all pods, services, and Helm release status.
 
 ```bash
-cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes
+# Check all pods
+kubectl get pods -n caritas
 
-# Run verification script
-./scripts/verify-deployment.sh
+# Check Helm release
+helm list -n caritas
+helm status oriso-platform -n caritas
 
-# Check output for:
-# ✓ All pods Running
-# ✓ All health endpoints responding
-# ✓ All web interfaces accessible
-# ✓ All services have ClusterIP
+# Check services
+kubectl get svc -n caritas
+
+# Check Ingress
+kubectl get ingress -n caritas
+
+# Check TLS certificates
+kubectl get certificate -n caritas
+
+# Count running pods
+kubectl get pods -n caritas --no-headers | grep Running | wc -l
+# Should be 20+ pods
 ```
 
 <Check>
-All verification checks should pass successfully.
+- All pods should be `Running`
+- Helm release should show `deployed` status
+- Services should be created with `oriso-platform-*` prefix
+- Ingress resources should be created
+- Certificates should be `Ready=True`
 </Check>
 
 </Step>
 
-<Step title="Test User Registration">
+<Step title="Test Service Health Endpoints">
 
-Test the complete user registration flow.
+Test health endpoints for all backend services.
 
-1. **Access Frontend**: `http://YOUR_SERVER_IP:9001`
-2. **Click "Register"**
-3. **Fill in registration form**:
-   - Username
-   - Email
-   - Password
-4. **Submit**
-5. **Verify**:
-   - User is created in Keycloak
-   - User can login
-   - Matrix account is created
+```bash
+# Test via Ingress (external)
+curl -s https://api.oriso-dev.site/actuator/health | jq .
+
+# Or test internally
+kubectl exec -n caritas deployment/oriso-platform-userservice -- \
+  curl -s http://localhost:8082/actuator/health
+
+# Test all backend services
+for service in tenantservice userservice consultingtypeservice agencyservice; do
+  echo "Testing $service..."
+  kubectl exec -n caritas deployment/oriso-platform-$service -- \
+    curl -s http://localhost:808*/actuator/health | jq .status
+done
+```
 
 <Check>
-User should be able to register, login, and access the platform.
+All services should return `{"status":"UP"}` or detailed health information.
+</Check>
+
+</Step>
+
+<Step title="Test Frontend Access">
+
+Verify frontend applications are accessible via Ingress.
+
+```bash
+# Test Frontend
+curl -I https://app.oriso-dev.site
+
+# Test Admin
+curl -I https://admin.oriso-dev.site
+
+# Check Ingress routing
+kubectl describe ingress -n caritas | grep -A 5 "app.oriso-dev.site"
+```
+
+<Check>
+Both endpoints should return HTTP 200 OK.
 </Check>
 
 </Step>
 
 <Step title="Test Authentication Flow">
 
-Verify OAuth/OIDC authentication is working.
+Verify Keycloak authentication is working.
 
 ```bash
-# Get access token
-curl -X POST "http://$SERVER_IP:8089/auth/realms/online-beratung/protocol/openid-connect/token" \
+# Test Keycloak realm discovery
+curl -s https://auth.oriso-dev.site/realms/online-beratung/.well-known/openid-configuration | jq .realm
+
+# Test token endpoint
+curl -X POST "https://auth.oriso-dev.site/realms/online-beratung/protocol/openid-connect/token" \
   -H "Content-Type: application/x-www-form-urlencoded" \
   -d "client_id=app" \
   -d "username=testuser" \
@@ -68,7 +109,8 @@ curl -X POST "http://$SERVER_IP:8089/auth/realms/online-beratung/protocol/openid
 ```
 
 <Check>
-Should return access_token, refresh_token, and token metadata.
+- Realm discovery should return `"online-beratung"`
+- Token endpoint should return access_token and refresh_token
 </Check>
 
 </Step>
@@ -79,42 +121,154 @@ Test backend API endpoints with authentication.
 
 ```bash
 # Get access token first
-ACCESS_TOKEN="your-access-token"
+ACCESS_TOKEN=$(curl -s -X POST "https://auth.oriso-dev.site/realms/online-beratung/protocol/openid-connect/token" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "client_id=app" \
+  -d "username=testuser" \
+  -d "password=testpass" \
+  -d "grant_type=password" | jq -r .access_token)
 
-# Test TenantService
+# Test API endpoints via Ingress
 curl -H "Authorization: Bearer $ACCESS_TOKEN" \
-  http://$SERVER_IP:8081/tenants | jq .
+  https://api.oriso-dev.site/api/tenants | jq .
 
-# Test UserService
 curl -H "Authorization: Bearer $ACCESS_TOKEN" \
-  http://$SERVER_IP:8082/users/data | jq .
+  https://api.oriso-dev.site/api/users/data | jq .
 ```
 
 <Check>
-APIs should return JSON data with 200 OK status.
+APIs should return JSON data with HTTP 200 OK status.
 </Check>
 
 </Step>
 
 <Step title="Test Matrix Chat">
 
-Verify Matrix chat functionality.
+Verify Matrix Synapse is operational.
 
-1. **Access Element.io**: `http://YOUR_SERVER_IP:8087`
-2. **Login** with registered user
-3. **Create a room**
-4. **Send a message**
-5. **Verify** message appears
+```bash
+# Test Matrix API
+curl -s https://matrix.oriso-dev.site/_matrix/client/versions | jq .
+
+# Test Matrix discovery
+curl -s http://91.99.219.182/.well-known/matrix/server | jq .
+
+# Test Matrix federation
+curl -s http://91.99.219.182:8009/_matrix/federation/v1/version | jq .
+```
 
 <Check>
-User should be able to create rooms, send messages, and receive messages.
+- Matrix API should return version information
+- Discovery should return server configuration
+- Federation API should respond
+</Check>
+
+</Step>
+
+<Step title="Test Database Connectivity">
+
+Verify all services can connect to databases.
+
+```bash
+# Test MariaDB connection from service
+kubectl exec -n caritas deployment/oriso-platform-userservice -- \
+  env | grep DATASOURCE
+
+# Test MariaDB directly
+kubectl exec -n caritas deployment/oriso-platform-mariadb -- \
+  mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "SHOW DATABASES;"
+
+# Test MongoDB
+kubectl exec -n caritas deployment/oriso-platform-mongodb -- \
+  mongosh --eval "show dbs"
+```
+
+<Check>
+- Services should have correct database connection strings
+- Databases should be accessible
+- All databases should be listed
+</Check>
+
+</Step>
+
+<Step title="Test Service Communication">
+
+Verify services can communicate via Kubernetes DNS.
+
+```bash
+# Test UserService can reach TenantService
+kubectl exec -n caritas deployment/oriso-platform-userservice -- \
+  curl -s http://oriso-platform-tenantservice.caritas.svc.cluster.local:8081/actuator/health
+
+# Test DNS resolution
+kubectl run test-pod --rm -it --image=busybox -n caritas -- \
+  nslookup oriso-platform-userservice.caritas.svc.cluster.local
+```
+
+<Check>
+- Services should be able to reach each other
+- DNS resolution should work correctly
 </Check>
 
 </Step>
 </Steps>
 
+## Complete Verification Checklist
+
+- [ ] All pods are running (`kubectl get pods -n caritas`)
+- [ ] Helm release is deployed (`helm status oriso-platform -n caritas`)
+- [ ] All services are created (`kubectl get svc -n caritas`)
+- [ ] Ingress resources are created (`kubectl get ingress -n caritas`)
+- [ ] TLS certificates are issued (`kubectl get certificate -n caritas`)
+- [ ] Frontend is accessible (`curl -I https://app.oriso-dev.site`)
+- [ ] Admin is accessible (`curl -I https://admin.oriso-dev.site`)
+- [ ] API is accessible (`curl -I https://api.oriso-dev.site`)
+- [ ] Keycloak is accessible (`curl -I https://auth.oriso-dev.site`)
+- [ ] Matrix is accessible (`curl -I https://matrix.oriso-dev.site`)
+- [ ] Health endpoints return UP (`curl https://api.oriso-dev.site/actuator/health`)
+- [ ] Authentication works (token endpoint returns tokens)
+- [ ] Backend APIs work (with authentication)
+- [ ] Database connections work (services can connect)
+- [ ] Service communication works (DNS resolution)
+
+## Troubleshooting
+
+### Pods Not Running
+```bash
+# Check pod status
+kubectl describe pod -n caritas <pod-name>
+
+# Check logs
+kubectl logs -n caritas <pod-name>
+
+# Check events
+kubectl get events -n caritas --sort-by='.lastTimestamp'
+```
+
+### Services Not Accessible
+```bash
+# Check Ingress Controller
+kubectl get pods -n ingress-nginx
+
+# Check Ingress resources
+kubectl describe ingress -n caritas
+
+# Check DNS resolution
+dig app.oriso-dev.site
+```
+
+### Health Checks Failing
+```bash
+# Check service logs
+kubectl logs -n caritas deployment/oriso-platform-<service>
+
+# Test health endpoint directly
+kubectl exec -n caritas deployment/oriso-platform-<service> -- \
+  curl http://localhost:808*/actuator/health
+```
+
 ## Next Steps
 
-- [Backup Configuration](/oriso-platform/backup-configuration) - Setup automated backups
-- [Security Hardening](/oriso-platform/security-hardening) - Apply security measures
-
+- [Post-Deployment](/oriso-platform/post-deployment) - Complete post-deployment steps
+- [Troubleshooting](/oriso-platform/troubleshooting) - Common issues and solutions
+- [Quick Reference](/oriso-platform/quick-reference) - Essential commands

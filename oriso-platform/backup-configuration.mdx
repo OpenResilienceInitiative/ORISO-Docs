@@ -1,83 +1,73 @@
 ---
 title: "Backup Configuration"
-description: "Setup database backups, automated backups with cron, and Kubernetes configuration backups"
+description: "Setup database backups using ORISO-Database scripts and Kubernetes CronJobs"
 ---
 
 # Backup Configuration
 
-Configure automated backups for databases and Kubernetes configurations.
+Configure automated backups for databases and Kubernetes configurations. Backups are managed via ORISO-Database repository scripts and Kubernetes CronJobs.
+
+<Info>
+Backup scripts are located in `ORISO-Database/scripts/backup/`. Matrix backups are automated via Kubernetes CronJobs.
+</Info>
 
 <Steps>
-<Step title="Setup Database Backups">
+<Step title="Use ORISO-Database Backup Scripts">
 
-Create backup directory and script for database backups.
+Use the centralized backup scripts from ORISO-Database repository.
 
 ```bash
-# Create backup directory
-sudo mkdir -p /backup/oriso
-sudo chown $USER:$USER /backup/oriso
+cd ~/online-beratung/caritas-workspace/ORISO-Database/scripts/backup
 
-# Create backup script
-cat > /backup/oriso/backup-databases.sh <<'EOF'
-#!/bin/bash
-TIMESTAMP=$(date +"%Y%m%d-%H%M%S")
-BACKUP_DIR="/backup/oriso/$TIMESTAMP"
-mkdir -p "$BACKUP_DIR"
+# Make scripts executable
+chmod +x *.sh
 
-# Backup MariaDB
-MARIADB_POD=$(kubectl get pods -n caritas -l app=mariadb -o jsonpath="{.items[0].metadata.name}")
-kubectl exec -n caritas $MARIADB_POD -- \
-  mysqldump -u root -pPassword1234! --all-databases > "$BACKUP_DIR/mariadb-all.sql"
+# Backup all databases
+./backup-all.sh
 
-# Backup MongoDB
-MONGODB_POD=$(kubectl get pods -n caritas -l app=mongodb -o jsonpath="{.items[0].metadata.name}")
-kubectl exec -n caritas $MONGODB_POD -- \
-  mongosh --eval "db.adminCommand('listDatabases')" > "$BACKUP_DIR/mongodb-list.txt"
-
-# Backup Keycloak realm
-cd ~/online-beratung/caritas-workspace/ORISO-Keycloak
-./backup/realm-backup.sh
-
-# Backup Redis
-cd ~/online-beratung/caritas-workspace/ORISO-Redis
-./backup/redis-backup.sh
-
-echo "Backup completed: $BACKUP_DIR"
-EOF
-
-chmod +x /backup/oriso/backup-databases.sh
-
-# Test backup
-/backup/oriso/backup-databases.sh
+# Or backup individually
+./backup-mariadb.sh
+./backup-mongodb.sh
 ```
 
+<Info>
+Backup scripts:
+- `backup-all.sh` - Backup all databases
+- `backup-mariadb.sh` - Backup MariaDB only
+- `backup-mongodb.sh` - Backup MongoDB only
+- Backups stored in: `ORISO-Database/backups/`
+</Info>
+
 <Check>
-Verify backup directory contains SQL dump and backup files.
+Verify backups are created:
+```bash
+ls -lh ~/online-beratung/caritas-workspace/ORISO-Database/backups/
+```
 </Check>
 
 </Step>
 
-<Step title="Setup Automated Backups (Cron)">
+<Step title="Matrix Automated Backups">
 
-Configure automated daily and weekly backups.
+Matrix PostgreSQL backups are automated via Kubernetes CronJob.
 
 ```bash
-# Add to crontab
-crontab -e
+# Check CronJob
+kubectl get cronjobs -n caritas | grep matrix
 
-# Add daily backup at 2 AM
-0 2 * * * /backup/oriso/backup-databases.sh >> /backup/oriso/backup.log 2>&1
+# Check backup job history
+kubectl get jobs -n caritas | grep matrix-backup
 
-# Add weekly full backup (Sundays at 3 AM)
-0 3 * * 0 tar -czf /backup/oriso/full-backup-$(date +\%Y\%m\%d).tar.gz ~/online-beratung/caritas-workspace >> /backup/oriso/backup.log 2>&1
-
-# Verify crontab
-crontab -l
+# View CronJob configuration
+kubectl get cronjob matrix-postgres-backup -n caritas -o yaml
 ```
 
-<Check>
-Crontab should list the backup jobs.
-</Check>
+<Info>
+Matrix backup CronJob:
+- **Schedule:** Daily at 2:00 AM
+- **Location:** `ORISO-Matrix/matrix-cronjobs.yaml`
+- **Backup:** PostgreSQL database dump
+</Info>
 
 </Step>
 
@@ -86,31 +76,152 @@ Crontab should list the backup jobs.
 Export and backup all Kubernetes resources.
 
 ```bash
-# Backup all Kubernetes resources
-mkdir -p /backup/oriso/k8s-configs
+# Create backup directory
+mkdir -p ~/backups/k8s-configs
+
+# Export Helm release
+helm get manifest oriso-platform -n caritas > ~/backups/k8s-configs/helm-manifest.yaml
+helm get values oriso-platform -n caritas > ~/backups/k8s-configs/helm-values.yaml
 
 # Export all resources
-kubectl get all -n caritas -o yaml > /backup/oriso/k8s-configs/all-resources.yaml
-kubectl get configmaps -n caritas -o yaml > /backup/oriso/k8s-configs/configmaps.yaml
-kubectl get secrets -n caritas -o yaml > /backup/oriso/k8s-configs/secrets.yaml
-kubectl get pvc -n caritas -o yaml > /backup/oriso/k8s-configs/pvcs.yaml
+kubectl get all -n caritas -o yaml > ~/backups/k8s-configs/all-resources.yaml
+kubectl get configmaps -n caritas -o yaml > ~/backups/k8s-configs/configmaps.yaml
+kubectl get secrets -n caritas -o yaml > ~/backups/k8s-configs/secrets.yaml
+kubectl get pvc -n caritas -o yaml > ~/backups/k8s-configs/pvcs.yaml
+kubectl get ingress -n caritas -o yaml > ~/backups/k8s-configs/ingress.yaml
 
 # Create archive
-cd /backup/oriso
+cd ~/backups
 tar -czf k8s-configs-$(date +%Y%m%d).tar.gz k8s-configs/
 
 echo "Kubernetes configs backed up"
 ```
 
 <Check>
-Archive should be created in /backup/oriso/ directory.
+Archive should be created in `~/backups/` directory.
 </Check>
 
 </Step>
+
+<Step title="Setup Automated Backups (Optional)">
+
+Configure automated backups using cron or Kubernetes CronJobs.
+
+**Option A: System Cron**
+
+```bash
+# Add to crontab
+crontab -e
+
+# Add daily backup at 2 AM
+0 2 * * * cd ~/online-beratung/caritas-workspace/ORISO-Database/scripts/backup && ./backup-all.sh >> ~/backups/backup.log 2>&1
+```
+
+**Option B: Kubernetes CronJob**
+
+```yaml
+# Create backup-cronjob.yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: database-backup
+  namespace: caritas
+spec:
+  schedule: "0 2 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: backup
+            image: mysql:8.0
+            command:
+            - /bin/bash
+            - -c
+            - |
+              mysqldump -h oriso-platform-mariadb.caritas.svc.cluster.local \
+                -u root -p${MYSQL_ROOT_PASSWORD} \
+                --all-databases > /backup/mariadb-$(date +%Y%m%d).sql
+            volumeMounts:
+            - name: backup-storage
+              mountPath: /backup
+          volumes:
+          - name: backup-storage
+            persistentVolumeClaim:
+              claimName: backup-pvc
+          restartPolicy: OnFailure
+```
+
+</Step>
 </Steps>
+
+## Restore Procedures
+
+### Restore MariaDB
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Database/scripts/restore
+./restore-mariadb.sh <backup-file>
+```
+
+### Restore MongoDB
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Database/scripts/restore
+./restore-mongodb.sh <backup-file>
+```
+
+### Restore Matrix
+```bash
+# Get Matrix PostgreSQL pod
+MATRIX_PG_POD=$(kubectl get pods -n caritas -l app=matrix-postgres -o jsonpath="{.items[0].metadata.name}")
+
+# Restore from backup
+kubectl exec -i -n caritas $MATRIX_PG_POD -- \
+  psql -U synapse_user synapse < matrix-backup.sql
+```
+
+## Backup Locations
+
+- **Database Backups:** `ORISO-Database/backups/`
+- **Matrix Backups:** Automated via CronJob (check job logs for location)
+- **Kubernetes Configs:** `~/backups/k8s-configs/`
+- **SignOZ Data:** Retained in ClickHouse PVC (30 days metrics, 7 days traces)
+
+## Data Retention
+
+- **MariaDB Backups:** Keep last 30 days
+- **MongoDB Backups:** Keep last 30 days
+- **Matrix Backups:** Keep last 30 days
+- **Kubernetes Configs:** Keep last 7 days
+- **SignOZ:** Metrics 30 days, Traces 7 days (configured in Helm values)
+
+## Troubleshooting
+
+### Backup Script Fails
+```bash
+# Check script permissions
+ls -la ~/online-beratung/caritas-workspace/ORISO-Database/scripts/backup/*.sh
+
+# Run script with verbose output
+bash -x ~/online-beratung/caritas-workspace/ORISO-Database/scripts/backup/backup-all.sh
+
+# Check database connectivity
+kubectl exec -n caritas deployment/oriso-platform-mariadb -- \
+  mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "SELECT 1;"
+```
+
+### CronJob Not Running
+```bash
+# Check CronJob
+kubectl get cronjobs -n caritas
+
+# Check job history
+kubectl get jobs -n caritas
+
+# Check job logs
+kubectl logs -n caritas job/<job-name>
+```
 
 ## Next Steps
 
 - [Security Hardening](/oriso-platform/security-hardening) - Apply security measures
 - [Troubleshooting](/oriso-platform/troubleshooting) - Common issues and solutions
-

@@ -10,7 +10,7 @@
 
 ## 📖 About
 
-Step-by-step documentation for deploying ORISO Platform on Ubuntu Server. ORISO is an online consultation platform built with microservices, Kubernetes, Keycloak, and modern web technologies.
+Step-by-step documentation for deploying ORISO Platform v3.0.0 on Kubernetes using Helm charts. ORISO is an online consultation platform with 21 services deployed via a single Helm umbrella chart.
 
 ## 🚀 Quick Start
 
@@ -97,4 +97,4 @@ ORISO-Docs/
 
 ---
 
-**Maintained by:** ORISO Platform Team | **Last Updated:** November 2025
+**Maintained by:** ORISO Platform Team | **Version:** 3.0.0 | **Last Updated:** January 2026

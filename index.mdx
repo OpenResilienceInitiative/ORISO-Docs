@@ -29,14 +29,16 @@ Essential commands and troubleshooting tips
 
 ## What is ORISO Platform?
 
-ORISO Platform is a comprehensive online consultation platform built with:
+ORISO Platform v3.0.0 is a comprehensive online consultation platform deployed on Kubernetes using Helm charts:
 
-- **Microservices Architecture** - Spring Boot backend services
-- **Kubernetes Deployment** - k3s lightweight Kubernetes
-- **Authentication** - Keycloak identity management
-- **Communication** - Matrix protocol for chat
-- **Databases** - MariaDB and MongoDB
-- **Frontend** - React-based web applications
+- **21 Services** - Deployed via single Helm umbrella chart
+- **Kubernetes/Helm** - k3s with Helm 3.x for deployment
+- **Microservices** - Spring Boot 2.7.14 backend services (Java 17)
+- **Authentication** - Keycloak OIDC/OAuth2
+- **Communication** - Matrix Synapse + LiveKit for chat and video
+- **Databases** - MariaDB (7 DBs), MongoDB, PostgreSQL (Matrix)
+- **Frontend** - React 18 + Vite 4 applications
+- **Monitoring** - SignOZ observability + Health Dashboard
 
 ## Documentation Structure
 
@@ -51,9 +53,12 @@ The documentation is organized into four main sections:
 
 Before you begin, ensure you have:
 
-- ✅ Fresh Ubuntu Server 22.04 LTS (or 20.04)
-- ✅ Root or sudo access
-- ✅ Public IP address
+- ✅ Kubernetes cluster (k3s recommended, 1.24+)
+- ✅ Helm 3.x installed
+- ✅ kubectl configured
+- ✅ Nginx Ingress Controller installed
+- ✅ Cert-Manager installed (for TLS)
+- ✅ DNS records configured (for HTTPS)
 - ✅ Minimum 4 CPU cores and 8GB RAM (16GB+ recommended)
 - ✅ 50GB+ disk space (100GB+ recommended)
 

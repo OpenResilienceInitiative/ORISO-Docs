@@ -1,27 +1,329 @@
 ---
 title: Frontend Layer
-description: ORISO frontend portals and shared components.
+description: ORISO frontend applications architecture with React, Vite, and Matrix SDK integration.
 ---
+
+## Frontend Overview
+
+ORISO Platform includes 2 main frontend applications built with React and Vite, deployed on Kubernetes via Helm charts.
 
 ```mermaid
 %%{init: { 'theme': 'base', 'themeVariables': { 'fontSize': '18px', 'lineColor': '#3B82F6' } }}%%
 
 flowchart TB
 
-  subgraph Frontend["Frontend Layer"]
+  subgraph K8s["Kubernetes Namespace: caritas"]
     direction TB
-    F1[("ORISO-Frontend\nUser Portal")]:::frontend
-    F2[("ORISO-Admin\nAdmin Panel")]:::frontend
-    F3[("ORISO-HealthDashboard\nMonitoring UI")]:::frontend
-    F4[("ORISO-Element\nShared UI / Chat Components")]:::frontend
+    
+    subgraph Frontend["Frontend Applications"]
+      F1[("ORISO-Frontend\nUser Portal\ncaritas-frontend:latest")]:::frontend
+      F2[("ORISO-Admin\nAdmin Panel\ncaritas-admin:latest")]:::frontend
+    end
+    
+    subgraph Backend["Backend Services"]
+      B1[("UserService\n:8082")]:::backend
+      B2[("AgencyService\n:8084")]:::backend
+      B3[("TenantService\n:8081")]:::backend
+    end
+    
+    subgraph Auth["Authentication"]
+      A1[("Keycloak\n:8080")]:::auth
+    end
+    
+    subgraph Matrix["Communication"]
+      M1[("Matrix Synapse\n:8008")]:::matrix
+      M2[("LiveKit\nWebRTC")]:::webrtc
+    end
   end
 
-  %% Clickable links
-  click F1 "https://github.com/ORISO-Frontend" "Open User Portal repo"
-  click F2 "https://github.com/ORISO-Admin" "Open Admin Panel repo"
+  %% Frontend connections
+  F1 -->|REST API| B1
+  F1 -->|REST API| B2
+  F1 -->|REST API| B3
+  F1 -->|OAuth2/OIDC| A1
+  F1 -->|Matrix SDK| M1
+  F1 -->|WebRTC| M2
+  
+  F2 -->|REST API| B1
+  F2 -->|REST API| B2
+  F2 -->|OAuth2/OIDC| A1
 
   %% Styling
   classDef frontend fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#0d47a1,font-weight:bold
+  classDef backend fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#4a148c
+  classDef auth fill:#ffebee,stroke:#d32f2f,stroke-width:2px,color:#b71c1c
+  classDef matrix fill:#fff8e1,stroke:#ff8f00,stroke-width:2px,color:#e65100
+  classDef webrtc fill:#e0f2f1,stroke:#00695c,stroke-width:2px,color:#004d40
 ```
+
+## Frontend Applications
+
+### ORISO-Frontend (User Portal)
+- **Docker Image:** `caritas-frontend:latest`
+- **Purpose:** Main user-facing application for clients seeking counseling
+- **Technology:** React 18, Vite 4, TypeScript
+- **Access:** https://app.oriso-dev.site
+- **Key Features:**
+  - User authentication via Keycloak
+  - Real-time chat via Matrix SDK
+  - Video calls via LiveKit/WebRTC
+  - Appointment scheduling
+  - Profile management
+
+### ORISO-Admin (Admin Panel)
+- **Docker Image:** `caritas-admin:latest`
+- **Purpose:** Administrative interface for agencies and consultants
+- **Technology:** React 18, Vite 4, TypeScript
+- **Access:** https://admin.oriso-dev.site
+- **Key Features:**
+  - Agency management
+  - User management
+  - Consulting type configuration
+  - System administration
+
+## Technology Stack
+
+### Build Tools
+- **Build System:** Vite 4 (not Create React App)
+- **Framework:** React 18
+- **Language:** TypeScript
+- **Package Manager:** npm/yarn
+
+### Key Dependencies
+- **Matrix SDK:** `matrix-js-sdk` for real-time messaging
+- **Keycloak JS:** `keycloak-js` adapter for authentication
+- **WebRTC:** LiveKit SDK for video calls
+- **HTTP Client:** Axios or fetch API
+
+## Build Process
+
+### Development Build
+```bash
+cd caritas-workspace/ORISO-Frontend
+npm install
+npm run dev
+```
+
+### Production Build
+```bash
+# Build Docker image
+docker build -t caritas-frontend:latest .
+
+# Import to k3s
+sudo k3s ctr images import <(docker save caritas-frontend:latest)
+
+# Deploy via Helm
+cd caritas-workspace/ORISO-Kubernetes/helm
+helm upgrade oriso-platform ./oriso-platform \
+  --namespace caritas \
+  -f values.yaml
+```
+
+## Environment Variables
+
+### Build-Time Variables
+Environment variables are baked into the build at build time (not runtime):
+
+```bash
+# .env file
+VITE_API_URL=https://api.oriso-dev.site
+VITE_KEYCLOAK_URL=https://auth.oriso-dev.site
+VITE_KEYCLOAK_REALM=online-beratung
+VITE_KEYCLOAK_CLIENT_ID=app
+VITE_MATRIX_HOMESERVER_URL=https://matrix.oriso-dev.site
+VITE_MATRIX_SERVER_NAME=caritas.local
+VITE_LIVEKIT_URL=wss://livekit.oriso-dev.site
+```
+
+### Docker Build
+```dockerfile
+# Dockerfile
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+ARG VITE_API_URL
+ARG VITE_KEYCLOAK_URL
+ENV VITE_API_URL=$VITE_API_URL
+ENV VITE_KEYCLOAK_URL=$VITE_KEYCLOAK_URL
+RUN npm run build
+
+FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
+```
+
+## Matrix SDK Integration
+
+### Matrix Client Service
+**Location:** `src/services/matrixClientService.ts`
+
+**Features:**
+- Matrix SDK initialization
+- User authentication
+- Room creation and management
+- Real-time message sync
+- Event handling
+
+### Matrix Call Service
+**Location:** `src/services/matrixCallService.ts`
+
+**Features:**
+- WebRTC call initiation
+- Call state management
+- LiveKit integration for group calls
+- Call UI components
+
+### Matrix Live Event Bridge
+**Location:** `src/services/matrixLiveEventBridge.ts`
+
+**Features:**
+- Real-time event synchronization
+- Message notifications
+- Presence updates
+- Typing indicators
+
+## Keycloak Integration
+
+### Keycloak JS Adapter
+**Location:** `src/services/keycloakService.ts`
+
+**Configuration:**
+```typescript
+import Keycloak from 'keycloak-js';
+
+const keycloak = new Keycloak({
+  url: import.meta.env.VITE_KEYCLOAK_URL,
+  realm: import.meta.env.VITE_KEYCLOAK_REALM,
+  clientId: import.meta.env.VITE_KEYCLOAK_CLIENT_ID,
+});
+
+await keycloak.init({
+  onLoad: 'check-sso',
+  checkLoginIframe: false,
+});
+```
+
+### Authentication Flow
+1. User accesses frontend
+2. Keycloak JS adapter checks for existing session
+3. If no session, redirects to Keycloak login
+4. After login, receives JWT tokens
+5. Tokens included in API requests
+
+## Deployment
+
+### Kubernetes Deployment
+Frontend applications are deployed via Helm:
+
+```yaml
+# Helm values.yaml
+frontend:
+  enabled: true
+  image:
+    repository: caritas-frontend
+    tag: latest
+  ingress:
+    enabled: true
+    host: app.oriso-dev.site
+```
+
+### Ingress Configuration
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: frontend-ingress
+  namespace: caritas
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  tls:
+  - hosts:
+    - app.oriso-dev.site
+    secretName: frontend-tls
+  rules:
+  - host: app.oriso-dev.site
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: oriso-platform-frontend
+            port:
+              number: 80
+```
+
+## Service Communication
+
+### Backend API Calls
+```typescript
+// Example API call
+const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users`, {
+  headers: {
+    'Authorization': `Bearer ${keycloak.token}`,
+    'Content-Type': 'application/json',
+  },
+});
+```
+
+### Matrix Communication
+```typescript
+// Matrix SDK usage
+import { createClient } from 'matrix-js-sdk';
+
+const client = createClient({
+  baseUrl: import.meta.env.VITE_MATRIX_HOMESERVER_URL,
+  userId: '@user:caritas.local',
+  accessToken: matrixAccessToken,
+});
+
+await client.startClient();
+```
+
+## Monitoring
+
+### Health Checks
+Frontend applications serve static files via Nginx, health checks verify:
+- Nginx is running
+- Static files are accessible
+- Ingress routing works
+
+### Error Tracking
+Consider integrating:
+- Sentry for error tracking
+- Google Analytics for usage metrics
+- Custom analytics endpoints
+
+## Troubleshooting
+
+### Build Issues
+```bash
+# Clear node_modules and reinstall
+rm -rf node_modules package-lock.json
+npm install
+
+# Clear Vite cache
+rm -rf node_modules/.vite
+```
+
+### Runtime Issues
+```bash
+# Check pod logs
+kubectl logs -n caritas deployment/oriso-platform-frontend
+
+# Verify environment variables
+kubectl exec -n caritas deployment/oriso-platform-frontend -- env | grep VITE
+
+# Test ingress
+curl -I https://app.oriso-dev.site
+```
+
+### Matrix Connection Issues
+1. Verify Matrix homeserver URL is correct
+2. Check CORS settings in Matrix Synapse
+3. Verify Matrix credentials in localStorage
+4. Check browser console for errors
 
 

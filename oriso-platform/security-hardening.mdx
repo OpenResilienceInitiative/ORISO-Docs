@@ -5,11 +5,19 @@ description: "Change default passwords, setup Fail2Ban, disable root SSH, and en
 
 # Security Hardening
 
-Apply security best practices to harden your ORISO Platform deployment.
+Apply security best practices to harden your ORISO Platform v3.0.0 deployment on Kubernetes.
 
 <Warning>
 These security measures should be applied before exposing the platform to production traffic.
 </Warning>
+
+<Info>
+Kubernetes provides additional security layers:
+- RBAC for access control
+- Network Policies for network segmentation
+- Secrets management for sensitive data
+- TLS automation via cert-manager
+</Info>
 
 <Steps>
 <Step title="Change Default Passwords">
@@ -37,17 +45,18 @@ kubectl exec -n caritas $KEYCLOAK_POD -- \
 **Change MariaDB Root Password:**
 
 ```bash
-MARIADB_POD=$(kubectl get pods -n caritas -l app=mariadb -o jsonpath="{.items[0].metadata.name}")
+# Update Kubernetes secret
+kubectl create secret generic mariadb-secrets -n caritas \
+  --from-literal=MYSQL_ROOT_PASSWORD=NEW_STRONG_PASSWORD \
+  --from-literal=MYSQL_PASSWORD=NEW_STRONG_PASSWORD \
+  --dry-run=client -o yaml | kubectl apply -f -
 
-kubectl exec -it -n caritas $MARIADB_POD -- \
-  mysql -u root -pPassword1234! -e "ALTER USER 'root'@'%' IDENTIFIED BY 'NEW_STRONG_PASSWORD'; FLUSH PRIVILEGES;"
-
-# Update application configurations with new password
-# Edit deployments and update SPRING_DATASOURCE_PASSWORD
+# Restart MariaDB to pick up new password
+kubectl rollout restart deployment/oriso-platform-mariadb -n caritas
 ```
 
 <Warning>
-Update all application configuration files with the new password before restarting services.
+Update Helm values with new password and restart all services that use MariaDB.
 </Warning>
 
 </Step>
@@ -158,14 +167,58 @@ Audit daemon should be active and running.
 </Step>
 </Steps>
 
+## Kubernetes Security
+
+### RBAC Configuration
+```bash
+# Review RBAC policies
+kubectl get role -n caritas
+kubectl get rolebinding -n caritas
+
+# Limit service account permissions
+# Use least-privilege principle
+```
+
+### Network Policies
+```bash
+# Create NetworkPolicy to restrict pod-to-pod communication
+# Example: Only allow backend services to access databases
+kubectl apply -f network-policies.yaml
+```
+
+### Secrets Management
+```bash
+# Rotate secrets regularly
+kubectl create secret generic <secret-name> -n caritas \
+  --from-literal=key=new-value \
+  --dry-run=client -o yaml | kubectl apply -f -
+
+# Use external secret management (e.g., Sealed Secrets, External Secrets Operator)
+```
+
+### TLS Everywhere
+- All external access via Ingress with TLS
+- Cert-manager automatically manages certificates
+- Internal services use ClusterIP (not exposed externally)
+
+### Database Security
+- Databases use ClusterIP (internal only)
+- No direct external database access
+- Strong passwords in Kubernetes Secrets
+- Regular password rotation
+
 ## Additional Recommendations
 
 - Regularly review security logs
 - Keep all packages up to date
 - Monitor failed login attempts
-- Use firewall rules to restrict access
-- Implement network segmentation
+- Use firewall rules to restrict access (ports 80/443 only)
+- Implement network segmentation via Kubernetes Network Policies
 - Regular security audits
+- Rotate Kubernetes secrets regularly
+- Monitor pod security contexts
+- Use Pod Security Standards
+- Enable audit logging for Kubernetes API
 
 ## Next Steps
 

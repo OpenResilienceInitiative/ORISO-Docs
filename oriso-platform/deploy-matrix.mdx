@@ -1,65 +1,202 @@
 ---
 title: "Deploy Matrix Communication"
-description: "Deploy Matrix Synapse server and Element.io web client for chat functionality"
+description: "Deploy Matrix Synapse server, Element.io web client, and Discovery service for chat functionality"
 ---
 
 # Deploy Matrix Communication
 
-Deploy Matrix Synapse server and Element.io web client for chat functionality.
+Deploy Matrix Synapse server, Element.io web client, and Discovery service for real-time chat and video calls. Matrix is deployed via Helm as part of the `oriso-platform` umbrella chart.
+
+<Info>
+Matrix components are automatically deployed when you run `helm install oriso-platform`. This guide covers post-deployment configuration and verification.
+</Info>
 
 <Steps>
-<Step title="Deploy Matrix Synapse and Element">
+<Step title="Verify Matrix Deployment">
 
-Deploy Matrix chat infrastructure.
+Matrix should already be deployed via Helm. Verify all components are running.
 
 ```bash
-cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes
-
-# Deploy Matrix
-kubectl apply -f deployments/06-matrix.yaml
-
-# Wait for Matrix
-kubectl wait --for=condition=ready pod -l app=matrix-synapse -n caritas --timeout=300s
-
-# Check status
+# Check Matrix pods
 kubectl get pods -n caritas | grep -E "matrix|element"
+
+# Should see:
+# oriso-platform-matrix-synapse-xxx    1/1     Running
+# oriso-platform-matrix-discovery-xxx  1/1     Running
+# oriso-platform-element-xxx            1/1     Running (if deployed)
 ```
 
 <Check>
-You should see both pods running:
-- matrix-synapse-xxx    1/1     Running
-- element-xxx          1/1     Running
+All Matrix-related pods should show status `Running` and `1/1` ready.
+</Check>
+
+<Note>
+If Matrix pods are not running, check the Helm deployment:
+```bash
+helm status oriso-platform -n caritas
+kubectl logs -n caritas -l app=matrix-synapse --tail=50
+```
+</Note>
+
+</Step>
+
+<Step title="Initialize Matrix Database">
+
+If this is a fresh deployment, initialize the Matrix PostgreSQL database.
+
+```bash
+# Check PostgreSQL pod
+kubectl get pods -n caritas | grep postgres
+
+# Get Matrix PostgreSQL pod
+MATRIX_PG_POD=$(kubectl get pods -n caritas -l app=matrix-postgres -o jsonpath="{.items[0].metadata.name}")
+
+# Import schema (if not already done)
+cd ~/online-beratung/caritas-workspace/ORISO-Matrix
+kubectl exec -i -n caritas $MATRIX_PG_POD -- \
+  psql -U synapse_user synapse < database/matrix-schema-current.sql
+
+# Verify tables
+kubectl exec -it -n caritas $MATRIX_PG_POD -- \
+  psql -U synapse_user synapse -c "\dt" | head -20
+```
+
+<Check>
+Matrix tables should be created (users, rooms, events, devices, etc.).
 </Check>
 
 </Step>
 
-<Step title="Verify Matrix">
+<Step title="Verify Matrix Services">
 
 Verify Matrix services are operational.
 
 ```bash
-# Check Matrix Synapse
-curl http://127.0.0.1:8008/_matrix/client/versions
-# Expected: JSON with version info
+# Check Matrix Synapse API (internal)
+kubectl exec -n caritas deployment/oriso-platform-matrix-synapse -- \
+  curl -s http://localhost:8008/_matrix/client/versions
 
-# Check Element.io
-curl -I http://127.0.0.1:8087
-# Expected: HTTP/1.1 200 OK
+# Check Matrix Synapse API (via Ingress)
+curl -s https://matrix.oriso-dev.site/_matrix/client/versions
 
-# Access in browser
-SERVER_IP=$(hostname -I | awk '{print $1}')
-echo "Element.io: http://$SERVER_IP:8087"
+# Check Discovery service
+curl -s http://91.99.219.182/.well-known/matrix/server
+
+# Check Element.io (if deployed)
+curl -I https://element.oriso-dev.site
 ```
 
 <Check>
-Matrix Synapse should return JSON version information, and Element.io should return HTTP 200 OK.
+- Matrix Synapse should return JSON with version information
+- Discovery service should return server configuration
+- Element.io should return HTTP 200 OK
 </Check>
+
+</Step>
+
+<Step title="Configure Matrix Integration">
+
+Configure backend and frontend to use Matrix.
+
+**Backend Configuration (UserService):**
+
+Matrix integration is configured in UserService. Verify configuration:
+
+```bash
+# Check UserService environment variables
+kubectl get deployment oriso-platform-userservice -n caritas -o yaml | \
+  grep -A 5 MATRIX
+
+# Expected:
+# - name: MATRIX_SYNAPSE_URL
+#   value: http://oriso-platform-matrix-synapse.caritas.svc.cluster.local:8008
+# - name: MATRIX_SERVER_NAME
+#   value: caritas.local
+```
+
+**Frontend Configuration:**
+
+Frontend Matrix configuration is baked into the Docker image at build time. Verify in `.env`:
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Frontend
+cat .env | grep MATRIX
+```
 
 </Step>
 </Steps>
 
+## Matrix Components
+
+### Matrix Synapse
+- **Service:** `oriso-platform-matrix-synapse.caritas.svc.cluster.local:8008`
+- **External:** `https://matrix.oriso-dev.site`
+- **Database:** PostgreSQL (synapse database)
+- **Purpose:** Matrix homeserver for chat
+
+### Matrix Discovery Service
+- **Service:** `oriso-platform-matrix-discovery`
+- **External:** `http://91.99.219.182/.well-known/matrix/server`
+- **Purpose:** Federation discovery
+
+### Element.io (Optional)
+- **Service:** `oriso-platform-element`
+- **External:** `https://element.oriso-dev.site` or `http://91.99.219.182:8087`
+- **Purpose:** Web client for Matrix
+
+## Integration Details
+
+### Backend Integration
+UserService creates Matrix users and rooms:
+- User registration → Matrix account creation
+- Consultant assignment → Matrix room creation
+- Credentials stored in MariaDB `user` table
+
+### Frontend Integration
+Frontend uses Matrix JS SDK:
+- Real-time messaging
+- WebRTC calls via LiveKit
+- Event synchronization
+
+## Troubleshooting
+
+### Matrix Synapse Not Starting
+```bash
+# Check logs
+kubectl logs -n caritas -l app=matrix-synapse --tail=100
+
+# Check database connection
+kubectl exec -n caritas deployment/oriso-platform-matrix-synapse -- \
+  env | grep DATABASE
+
+# Verify PostgreSQL is accessible
+kubectl exec -n caritas deployment/oriso-platform-matrix-synapse -- \
+  curl http://oriso-platform-postgresql.caritas.svc.cluster.local:5432
+```
+
+### Database Connection Issues
+```bash
+# Check PostgreSQL pod
+kubectl get pods -n caritas | grep postgres
+
+# Test connection
+kubectl exec -it -n caritas deployment/oriso-platform-postgresql -- \
+  psql -U synapse_user synapse -c "SELECT 1;"
+```
+
+### Federation Not Working
+```bash
+# Check discovery service
+kubectl logs -n caritas -l app=matrix-discovery
+
+# Test well-known endpoint
+curl http://91.99.219.182/.well-known/matrix/server
+
+# Check federation API
+curl http://91.99.219.182:8009/_matrix/federation/v1/version
+```
+
 ## Next Steps
 
-- [Deploy Nginx Proxy](/oriso-platform/deploy-nginx) - Deploy reverse proxy
-- [Deploy Monitoring](/oriso-platform/deploy-monitoring) - Deploy monitoring services
-
+- [Post-Deployment](/oriso-platform/post-deployment) - Complete post-deployment steps
+- [Verification Testing](/oriso-platform/verification-testing) - Test Matrix functionality

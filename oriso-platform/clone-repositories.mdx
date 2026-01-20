@@ -101,22 +101,33 @@ ls -la
 ```
 
 <Check>
-You should see the following directories:
-- `ORISO-Kubernetes/`
-- `ORISO-Database/`
-- `ORISO-Keycloak/`
-- `ORISO-Redis/`
-- `ORISO-Nginx/`
-- `ORISO-Matrix/`
-- `ORISO-SignOZ/` (optional)
-- `ORISO-Element/`
-- `ORISO-HealthDashboard/`
-- `ORISO-Frontend/`
-- `ORISO-Admin/`
+You should see the following directories (organized by deployment priority):
+
+**Primary (Required for deployment):**
+- `ORISO-Kubernetes/` - Helm charts and Ingress resources
+- `ORISO-Database/` - Database schemas and setup scripts
+
+**Authentication:**
+- `ORISO-Keycloak/` - Keycloak realm configuration
+
+**Backend Services:**
 - `ORISO-TenantService/`
 - `ORISO-UserService/`
 - `ORISO-AgencyService/`
 - `ORISO-ConsultingTypeService/`
+
+**Frontend:**
+- `ORISO-Frontend/`
+- `ORISO-Admin/`
+
+**Communication:**
+- `ORISO-Matrix/` - Matrix Synapse deployment
+- `ORISO-Element/` - Element.io web client
+
+**Monitoring (Optional):**
+- `ORISO-SignOZ/` - Observability platform
+- `ORISO-HealthDashboard/` - Health monitoring
+- `ORISO-Status/` - Status page
 </Check>
 
 **Check ORISO-Kubernetes structure:**
@@ -130,12 +141,38 @@ Expected structure:
 ```
 ORISO-Kubernetes/
 ├── README.md
-├── DEPLOYMENT.md
-├── STATUS.md
-├── deployments/
-├── services/
-├── configmaps/
+├── helm/
+│   ├── oriso-platform/      # Umbrella Helm chart
+│   ├── charts/              # Individual service charts
+│   └── values.yaml          # Global values
+└── ingress/                 # Ingress resources
+    ├── *.yaml               # Ingress configuration files
+    └── README.md
+```
+</Check>
+
+**Check ORISO-Database structure:**
+
+```bash
+tree -L 2 ORISO-Database/
+```
+
+<Check>
+Expected structure:
+```
+ORISO-Database/
+├── README.md
+├── mariadb/                 # MariaDB schemas
+│   ├── tenantservice/
+│   ├── userservice/
+│   ├── consultingtypeservice/
+│   └── agencyservice/
+├── mongodb/                 # MongoDB schemas
+│   └── consulting_types/
 └── scripts/
+    ├── setup/
+    │   └── 00-master-setup.sh
+    └── backup/
 ```
 </Check>
 
