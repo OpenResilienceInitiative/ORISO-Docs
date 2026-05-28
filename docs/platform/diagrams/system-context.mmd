@@ -1,0 +1,22 @@
+flowchart LR
+  User[User or consultant] --> Frontend[ORISO-Frontend]
+  AdminUser[Admin user] --> Admin[ORISO-Admin]
+  Frontend --> Keycloak[Keycloak online-beratung]
+  Admin --> Keycloak
+  Frontend --> API[api.oriso-dev.site ingress]
+  Admin --> API
+  API --> Tenant[TenantService]
+  API --> UserSvc[UserService]
+  API --> Agency[AgencyService]
+  API --> Consulting[ConsultingTypeService]
+  Tenant --> DB[(MariaDB tenantservice)]
+  UserSvc --> UserDB[(MariaDB userservice)]
+  Agency --> AgencyDB[(MariaDB agencyservice)]
+  Consulting --> ConsultingDB[(MariaDB and MongoDB)]
+  UserSvc --> Matrix[Matrix Synapse]
+  Frontend --> Matrix
+  Frontend --> LiveKit[LiveKit]
+  Kubernetes[ORISO-Kubernetes Helm] --> Frontend
+  Kubernetes --> Admin
+  Kubernetes --> Keycloak
+  Kubernetes --> API

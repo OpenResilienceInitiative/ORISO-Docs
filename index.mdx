@@ -5,27 +5,39 @@ description: "Complete setup and deployment guide for ORISO Platform"
 
 # Welcome to ORISO Platform Documentation
 
-Welcome to the ORISO (Online Beratung) Platform documentation. This comprehensive guide will help you deploy and configure the complete ORISO Platform on a fresh Ubuntu Server.
+Welcome to the ORISO (Online Beratung) Platform documentation. ORISO is a multi-tenant, anonymous online counseling platform. This documentation covers both the **product** (what it does and why) and the **operations** (how to deploy and run it).
 
-## Quick Start
+## Where to Start
 
 <CardGroup cols={2}>
-<Card title="Get Started" icon="rocket" href="/oriso-platform/overview">
-Start here to understand requirements and begin deployment
+<Card title="Product Overview" icon="rocket" href="/product/overview">
+Understand what ORISO is, its roles, features and flows
 </Card>
 
-<Card title="Initial Setup" icon="gear" href="/oriso-platform/initial-setup">
-Configure your Ubuntu server for ORISO Platform
+<Card title="Summary (TL;DR)" icon="bolt" href="/product/summary">
+One-page compressed view of the entire system
 </Card>
 
-<Card title="Deploy Infrastructure" icon="server" href="/oriso-platform/deploy-infrastructure">
-Deploy databases, cache, and authentication services
+<Card title="Platform Architecture Hub" icon="sitemap" href="/docs/platform/overview">
+Enriched cross-repository graph, repo summaries, auth, data, backend and deployment docs
+</Card>
+
+<Card title="Platform Setup" icon="gear" href="/oriso-platform/overview">
+Server requirements and deployment
 </Card>
 
 <Card title="Quick Reference" icon="book" href="/oriso-platform/quick-reference">
 Essential commands and troubleshooting tips
 </Card>
 </CardGroup>
+
+## Three Documentation Tracks
+
+The docs are split into three top-level tabs:
+
+- **Product** — for product managers, developers, designers and AI systems reasoning about ORISO. Covers user roles, the live-chat flow, GDPR inheritance, the data model, edge cases and the Figma-derived UI/UX.
+- **ORISO Platform Architecture** — for developers, backend engineers, frontend engineers and DevOps. Covers the cross-repository knowledge graph, service ownership, authentication, data model, backend services, tenant lifecycle and local development.
+- **ORISO Platform Setup** — for operators and SREs. Covers server requirements, Kubernetes (k3s + Helm), database setup, monitoring, security hardening and troubleshooting.
 
 ## What is ORISO Platform?
 
@@ -42,7 +54,7 @@ ORISO Platform v3.0.0 is a comprehensive online consultation platform deployed o
 
 ## Documentation Structure
 
-The documentation is organized into four main sections:
+The setup documentation is organized into four main sections, and the architecture hub adds cross-repository system documentation generated from the existing Understand-Anything graphs:
 
 1. **Getting Started** - Server requirements, initial setup, and software installation
 2. **Deployment** - Step-by-step deployment of all services
@@ -68,6 +80,7 @@ Ready to get started? Begin with the [Overview and Requirements](/oriso-platform
 
 If you're looking for specific information:
 
+- **Architecture Hub** - See [Platform Architecture Overview](/docs/platform/overview)
 - **Troubleshooting** - See [Troubleshooting Guide](/oriso-platform/troubleshooting)
 - **Commands** - See [Quick Reference](/oriso-platform/quick-reference)
 - **Security** - See [Security Hardening](/oriso-platform/security-hardening)

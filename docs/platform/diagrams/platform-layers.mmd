@@ -1,0 +1,28 @@
+flowchart TB
+  subgraph UI[Frontend/Admin]
+    Frontend[ORISO-Frontend]
+    Admin[ORISO-Admin]
+  end
+  subgraph Auth[Authentication]
+    Keycloak[ORISO-Keycloak]
+  end
+  subgraph Backend[Backend Services]
+    UserService[ORISO-UserService]
+    AgencyService[ORISO-AgencyService]
+    ConsultingTypeService[ORISO-ConsultingTypeService]
+    TenantService[ORISO-TenantService]
+  end
+  subgraph Data[Database/Data]
+    Database[ORISO-Database]
+  end
+  subgraph Runtime[Deployment]
+    Kubernetes[ORISO-Kubernetes]
+  end
+  UI --> Auth
+  UI --> Backend
+  Backend --> Auth
+  Backend --> Data
+  Runtime --> UI
+  Runtime --> Auth
+  Runtime --> Backend
+  Runtime --> Data
