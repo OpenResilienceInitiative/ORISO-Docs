@@ -1,10 +1,10 @@
-# UAT — Multiple Admins & Places (Admin Panel · ADM-01..05)
+# UAT — Multiple Admins & Places (Multi-Tenant RBAC · MT-04-08..12)
 
 Source feature: F82 "refactor panel so multiple persons can be Platform and Tenant".
 Status: ready · grounded against the live code graph. PO decisions resolved 2026-06-03.
 
-> **Tasks:** ADM-01 (backend tenant multi-admin · ORISO-TenantService#6), ADM-02 (frontend mgmt · ORISO-Admin#29),
-> ADM-03 (Places nav · ORISO-Admin#30), ADM-04 (naming cleanup · ORISO-Admin#31), ADM-05 (platform admins · ORISO-TenantService#7).
+> **Tasks:** MT-04-08 (backend tenant multi-admin · ORISO-TenantService#6), MT-04-09 (frontend mgmt · ORISO-Admin#29),
+> MT-04-10 (Places nav · ORISO-Admin#30), MT-04-11 (naming cleanup · ORISO-Admin#31), MT-04-12 (platform admins · ORISO-TenantService#7).
 
 ## Terminology (settled)
 - **Tenant-Unit** = the *place* that is the existing **Tenant** entity (Träger). Same entity, named "Tenant-Unit"
@@ -82,8 +82,8 @@ with two list tabs. Same many-to-many "admin to unit" relationship, applied cons
 
 ### PO decisions (resolved 2026-06-03)
 - Platform admins: yes, multiple — but simple (Platform ID at creation; accounts carry it; visible in user list). No role tiers.
-- The place is the existing Tenant entity; working term "Tenant-Unit". Cleanup task ADM-04 aligns naming.
-- `/tenantadmin` does not allow N admins today -> backend collection assignment required (ADM-01).
+- The place is the existing Tenant entity; working term "Tenant-Unit". Cleanup task MT-04-11 aligns naming.
+- `/tenantadmin` does not allow N admins today -> backend collection assignment required (MT-04-08).
 - Role tiers (Owner/Contributor) per segment: later iteration.
 
 ### Source evidence
