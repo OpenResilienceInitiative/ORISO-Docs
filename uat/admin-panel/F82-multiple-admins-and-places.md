@@ -3,7 +3,7 @@
 Source feature: F82 "refactor panel so multiple persons can be Platform and Tenant".
 Status: ready · grounded against the live code graph. PO decisions resolved 2026-06-03.
 
-> **Tasks:** MT-04-08 (backend tenant multi-admin · ORISO-TenantService#6), MT-04-09 (frontend mgmt · ORISO-Admin#29),
+> **Tasks:** MT-04-08 (backend tenant multi-admin · ORISO-UserService#22), MT-04-09 (frontend mgmt · ORISO-Admin#29),
 > MT-04-10 (Places nav · ORISO-Admin#30), MT-04-11 (naming cleanup · ORISO-Admin#31), MT-04-12 (platform admins · ORISO-TenantService#7).
 
 ## Terminology (settled)
