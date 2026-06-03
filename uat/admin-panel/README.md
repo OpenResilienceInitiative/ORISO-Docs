@@ -9,11 +9,11 @@ We want **N equal-rights admins** per **Tenant-Unit** (= the existing Tenant ent
 each with their own login, all visible in the user list. Role tiers (Owner/Contributor) are a later iteration.
 
 ## User stories
-- **US1** As an org running a counselling unit, I want several individual admins on one Tenant-Unit, so we
+- **MTUS1** As an org running a counselling unit, I want several individual admins on one Tenant-Unit, so we
   administer it without sharing a password.
-- **US2** As an admin, I want users and units under a consistent **Users / Places** view (Places = **Tenant-Unit**
+- **MTUS2** As an admin, I want users and units under a consistent **Users / Places** view (Places = **Tenant-Unit**
   + **Agency** tabs), so managing who-administers-what is the same everywhere.
-- **US3** As an admin, I want to assign one admin to one or several places in a single step.
+- **MTUS3** As an admin, I want to assign one admin to one or several places in a single step.
 
 ## Terminology (settled)
 - **Tenant-Unit** = the Tenant entity shown as a place (distinct from **Tenant-Admins**, the people).
