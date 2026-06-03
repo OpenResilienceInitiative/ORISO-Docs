@@ -1,10 +1,10 @@
-# UAT — Multiple Admins & Places (Admin Panel · ADM-01..05, ADM-09)
+# UAT — Multiple Admins & Places (Admin Panel · ADM-01..05)
 
 Source feature: F82 "refactor panel so multiple persons can be Platform and Tenant".
 Status: ready · grounded against the live code graph. PO decisions resolved 2026-06-03.
 
 > **Tasks:** ADM-01 (backend tenant multi-admin · ORISO-TenantService#6), ADM-02 (frontend mgmt · ORISO-Admin#29),
-> ADM-03 (Places nav · ORISO-Admin#30), ADM-04 (naming cleanup · ORISO-Admin#31), ADM-09 (platform admins · ORISO-TenantService#7).
+> ADM-03 (Places nav · ORISO-Admin#30), ADM-04 (naming cleanup · ORISO-Admin#31), ADM-05 (platform admins · ORISO-TenantService#7).
 
 ## Terminology (settled)
 - **Tenant-Unit** = the *place* that is the existing **Tenant** entity (Träger). Same entity, named "Tenant-Unit"
