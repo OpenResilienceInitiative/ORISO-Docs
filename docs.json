@@ -11,6 +11,119 @@
   "navigation": {
     "tabs": [
       {
+        "tab": "Product",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "product/overview",
+              "product/summary"
+            ]
+          },
+          {
+            "group": "Architecture & Roles",
+            "pages": [
+              "product/architecture",
+              "product/roles-permissions"
+            ]
+          },
+          {
+            "group": "Core Features",
+            "pages": [
+              "product/features/index",
+              "product/features/live-chat",
+              "product/features/group-chats",
+              "product/features/ai-tools",
+              "product/features/handover",
+              "product/features/notifications",
+              "product/features/pincode-chat",
+              "product/features/session-management",
+              "product/features/transcription"
+            ]
+          },
+          {
+            "group": "Flows & Internals",
+            "pages": [
+              "product/user-flows",
+              "product/internal-functionality",
+              "product/data-model"
+            ]
+          },
+          {
+            "group": "Design & Quality",
+            "pages": [
+              "product/ui-ux",
+              "product/edge-cases",
+              "product/figma-analysis-2026-05",
+              "product/assumptions"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "ORISO Platform Architecture",
+        "groups": [
+          {
+            "group": "Architecture Hub",
+            "pages": [
+              "docs/platform/overview",
+              "docs/platform/repository-map",
+              "docs/platform/architecture"
+            ]
+          },
+          {
+            "group": "Core Systems",
+            "pages": [
+              "docs/platform/authentication-and-keycloak",
+              "docs/platform/database-and-data-model",
+              "docs/platform/kubernetes-deployment",
+              "docs/platform/frontend-admin-overview",
+              "docs/platform/backend-services"
+            ]
+          },
+          {
+            "group": "Platform Flows",
+            "pages": [
+              "docs/platform/tenant-lifecycle",
+              "docs/platform/user-management-flow",
+              "docs/platform/local-development"
+            ]
+          },
+          {
+            "group": "Repository Graphs",
+            "pages": [
+              "docs/platform/repo-graphs/ORISO-Frontend",
+              "docs/platform/repo-graphs/ORISO-Admin",
+              "docs/platform/repo-graphs/ORISO-UserService",
+              "docs/platform/repo-graphs/ORISO-AgencyService",
+              "docs/platform/repo-graphs/ORISO-ConsultingTypeService",
+              "docs/platform/repo-graphs/ORISO-TenantService",
+              "docs/platform/repo-graphs/ORISO-Database",
+              "docs/platform/repo-graphs/ORISO-Keycloak",
+              "docs/platform/repo-graphs/ORISO-Kubernetes"
+            ]
+          },
+          {
+            "group": "Graphs & Diagrams",
+            "pages": [
+              "docs/platform/super-graph-index",
+              "docs/platform/super-graph-explorer",
+              "docs/platform/super-graph-detailed",
+              "docs/platform/understand-anything-inventory",
+              "docs/platform/diagrams",
+              "docs/platform/graph-validation-report"
+            ]
+          },
+          {
+            "group": "Operations",
+            "pages": [
+              "docs/platform/onboarding-guide",
+              "docs/platform/troubleshooting"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "ORISO Platform Setup",
         "groups": [
           {
