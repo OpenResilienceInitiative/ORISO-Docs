@@ -14,7 +14,7 @@ Configure Keycloak for HTTP access and import the ORISO realm. This step is **cr
 <Info>
 Keycloak is deployed as `oriso-platform-keycloak` service in the `caritas` namespace. Access it via:
 - **Internal:** `http://oriso-platform-keycloak.caritas.svc.cluster.local:8080`
-- **External:** `https://auth.oriso-dev.site` (via Ingress)
+- **External:** `https://auth.oriso.org` (via Ingress)
 </Info>
 
 <Steps>
@@ -98,7 +98,7 @@ echo "Server IP: $SERVER_IP"
 
 **Option A: Using Admin Console (Recommended for Visual Verification)**
 
-1. Open browser and navigate to: `https://auth.oriso-dev.site/admin/` (or `http://YOUR_SERVER_IP:8080/admin/` if Ingress not configured)
+1. Open browser and navigate to: `https://auth.oriso.org/admin/` (or `http://YOUR_SERVER_IP:8080/admin/` if Ingress not configured)
 2. Login with credentials: `admin` / `admin` (default, change in production)
 3. Select "Master" realm dropdown → Click "Add realm"
 4. Click "Select file"
@@ -147,7 +147,7 @@ kubectl exec -n caritas deployment/oriso-platform-keycloak -- \
   curl -I http://localhost:8080
 
 # Check realm is accessible (via Ingress)
-curl -s https://auth.oriso-dev.site/realms/online-beratung/.well-known/openid-configuration | jq .realm
+curl -s https://auth.oriso.org/realms/online-beratung/.well-known/openid-configuration | jq .realm
 
 # Or check internally
 kubectl exec -n caritas deployment/oriso-platform-keycloak -- \

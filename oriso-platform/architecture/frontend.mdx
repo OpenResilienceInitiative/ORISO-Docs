@@ -62,7 +62,7 @@ flowchart TB
 - **Docker Image:** `caritas-frontend:latest`
 - **Purpose:** Main user-facing application for clients seeking counseling
 - **Technology:** React 18, Vite 4, TypeScript
-- **Access:** https://app.oriso-dev.site
+- **Access:** https://app.oriso.org
 - **Key Features:**
   - User authentication via Keycloak
   - Real-time chat via Matrix SDK
@@ -74,7 +74,7 @@ flowchart TB
 - **Docker Image:** `caritas-admin:latest`
 - **Purpose:** Administrative interface for agencies and consultants
 - **Technology:** React 18, Vite 4, TypeScript
-- **Access:** https://admin.oriso-dev.site
+- **Access:** https://admin.oriso.org
 - **Key Features:**
   - Agency management
   - User management
@@ -126,13 +126,13 @@ Environment variables are baked into the build at build time (not runtime):
 
 ```bash
 # .env file
-VITE_API_URL=https://api.oriso-dev.site
-VITE_KEYCLOAK_URL=https://auth.oriso-dev.site
+VITE_API_URL=https://api.oriso.org
+VITE_KEYCLOAK_URL=https://auth.oriso.org
 VITE_KEYCLOAK_REALM=online-beratung
 VITE_KEYCLOAK_CLIENT_ID=app
-VITE_MATRIX_HOMESERVER_URL=https://matrix.oriso-dev.site
+VITE_MATRIX_HOMESERVER_URL=https://matrix.oriso.org
 VITE_MATRIX_SERVER_NAME=caritas.local
-VITE_LIVEKIT_URL=wss://livekit.oriso-dev.site
+VITE_LIVEKIT_URL=wss://livekit.oriso.org
 ```
 
 ### Docker Build
@@ -225,7 +225,7 @@ frontend:
     tag: latest
   ingress:
     enabled: true
-    host: app.oriso-dev.site
+    host: app.oriso.org
 ```
 
 ### Ingress Configuration
@@ -240,10 +240,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - app.oriso-dev.site
+    - app.oriso.org
     secretName: frontend-tls
   rules:
-  - host: app.oriso-dev.site
+  - host: app.oriso.org
     http:
       paths:
       - path: /
@@ -317,7 +317,7 @@ kubectl logs -n caritas deployment/oriso-platform-frontend
 kubectl exec -n caritas deployment/oriso-platform-frontend -- env | grep VITE
 
 # Test ingress
-curl -I https://app.oriso-dev.site
+curl -I https://app.oriso.org
 ```
 
 ### Matrix Connection Issues

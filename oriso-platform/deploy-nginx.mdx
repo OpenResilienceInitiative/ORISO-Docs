@@ -95,11 +95,11 @@ kubectl get certificate -n caritas
 kubectl describe certificate <cert-name> -n caritas
 
 # Test endpoints (after DNS is configured)
-curl -I https://app.oriso-dev.site
-curl -I https://api.oriso-dev.site
-curl -I https://admin.oriso-dev.site
-curl -I https://auth.oriso-dev.site
-curl -I https://matrix.oriso-dev.site
+curl -I https://app.oriso.org
+curl -I https://api.oriso.org
+curl -I https://admin.oriso.org
+curl -I https://auth.oriso.org
+curl -I https://matrix.oriso.org
 ```
 
 <Check>
@@ -121,11 +121,11 @@ echo "Server IP: $SERVER_IP"
 ```
 
 **Required DNS Records:**
-- `api.oriso-dev.site` → `$SERVER_IP`
-- `app.oriso-dev.site` → `$SERVER_IP`
-- `admin.oriso-dev.site` → `$SERVER_IP`
-- `auth.oriso-dev.site` → `$SERVER_IP`
-- `matrix.oriso-dev.site` → `$SERVER_IP`
+- `api.oriso.org` → `$SERVER_IP`
+- `app.oriso.org` → `$SERVER_IP`
+- `admin.oriso.org` → `$SERVER_IP`
+- `auth.oriso.org` → `$SERVER_IP`
+- `matrix.oriso.org` → `$SERVER_IP`
 - Additional subdomains as needed
 
 <Note>
@@ -170,10 +170,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - app.oriso-dev.site
+    - app.oriso.org
     secretName: frontend-tls
   rules:
-  - host: app.oriso-dev.site
+  - host: app.oriso.org
     http:
       paths:
       - path: /
@@ -240,11 +240,11 @@ kubectl describe certificate <cert-name> -n caritas
 ### DNS Not Resolving
 ```bash
 # Test DNS resolution
-dig app.oriso-dev.site
-nslookup app.oriso-dev.site
+dig app.oriso.org
+nslookup app.oriso.org
 
 # Verify DNS points to correct IP
-curl -I http://app.oriso-dev.site
+curl -I http://app.oriso.org
 ```
 
 ### Services Not Accessible

@@ -157,10 +157,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - app.oriso-dev.site
+    - app.oriso.org
     secretName: frontend-tls
   rules:
-  - host: app.oriso-dev.site
+  - host: app.oriso.org
     http:
       paths:
       - path: /
@@ -271,7 +271,7 @@ kubectl get all -n caritas
 ### Keycloak
 - **Purpose:** OIDC/OAuth2 authentication
 - **Service:** `oriso-platform-keycloak.caritas.svc.cluster.local:8080`
-- **External URL:** https://auth.oriso-dev.site
+- **External URL:** https://auth.oriso.org
 - **Realm:** `online-beratung`
 - **Client:** `app`
 

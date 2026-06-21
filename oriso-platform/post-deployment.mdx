@@ -72,7 +72,7 @@ Import the ORISO Keycloak realm configuration.
 
 **Option A: Via Admin Console (Recommended)**
 
-1. Access Keycloak admin: `https://auth.oriso-dev.site/admin/`
+1. Access Keycloak admin: `https://auth.oriso.org/admin/`
 2. Login: `admin` / `admin` (default, change in production)
 3. Select "Master" realm → "Add realm"
 4. Upload: `~/online-beratung/caritas-workspace/ORISO-Keycloak/realm.json`
@@ -150,21 +150,21 @@ Test health endpoints for all services.
 
 ```bash
 # Backend services (via Ingress)
-curl -s https://api.oriso-dev.site/actuator/health | jq .
+curl -s https://api.oriso.org/actuator/health | jq .
 
 # Or test internally
 kubectl exec -n caritas deployment/oriso-platform-userservice -- \
   curl -s http://localhost:8082/actuator/health
 
 # Frontend
-curl -I https://app.oriso-dev.site
-curl -I https://admin.oriso-dev.site
+curl -I https://app.oriso.org
+curl -I https://admin.oriso.org
 
 # Keycloak
-curl -s https://auth.oriso-dev.site/realms/online-beratung/.well-known/openid-configuration | jq .realm
+curl -s https://auth.oriso.org/realms/online-beratung/.well-known/openid-configuration | jq .realm
 
 # Matrix
-curl -s https://matrix.oriso-dev.site/_matrix/client/versions | jq .
+curl -s https://matrix.oriso.org/_matrix/client/versions | jq .
 ```
 
 <Check>
@@ -180,11 +180,11 @@ After completing all steps, access services at:
 
 | Service | URL | Description |
 |---------|-----|-------------|
-| Frontend | https://app.oriso-dev.site | User portal |
-| Admin | https://admin.oriso-dev.site | Admin panel |
-| API | https://api.oriso-dev.site | Backend API |
-| Auth | https://auth.oriso-dev.site | Keycloak |
-| Matrix | https://matrix.oriso-dev.site | Matrix Synapse |
+| Frontend | https://app.oriso.org | User portal |
+| Admin | https://admin.oriso.org | Admin panel |
+| API | https://api.oriso.org | Backend API |
+| Auth | https://auth.oriso.org | Keycloak |
+| Matrix | https://matrix.oriso.org | Matrix Synapse |
 | Health Dashboard | http://91.99.219.182:9001 | Health monitoring |
 | SignOZ | http://91.99.219.182:3001 | Observability |
 
