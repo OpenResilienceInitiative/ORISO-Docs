@@ -1,0 +1,13 @@
+flowchart TD
+  AdminUser[Admin user] --> Admin[ORISO-Admin tenant pages]
+  Admin --> Keycloak[Keycloak role check]
+  Admin --> TenantAPI[TenantService /tenantadmin APIs]
+  TenantAPI --> Validate[Validate roles, input, tenant rules]
+  Validate --> TenantDB[(tenantservice.tenant)]
+  TenantAPI --> AppSettings[ApplicationSettings/ConsultingType integration]
+  TenantAPI --> UserAdmin[UserAdmin integration]
+  TenantDB --> Resolver[TenantResolverService]
+  Resolver --> Frontend[Frontend tenant context]
+  Resolver --> Backend[Backend tenant scoped access]
+  Keycloak --> Claims[Tenant/role claims - needs verification]
+  Claims --> Backend

@@ -1,0 +1,350 @@
+---
+title: "Edge Cases & Scenarios"
+description: "Failure modes, race conditions and abuse scenarios across the live-chat, session, link and admin flows — and how ORISO is designed to handle each."
+---
+
+<Info>
+Each edge case below has a **trigger**, an **expected behaviour**, and a **risk if mishandled**. Most are direct echoes of the issues raised in the Frank↔Nikunj huddle.
+</Info>
+
+## 9.1 Client Edge Cases
+
+### 9.1.1 Client closes the tab in the waiting room
+
+| | |
+|---|---|
+| **Trigger** | Client tab close, navigation away, network drop, OS sleep > heartbeat threshold |
+| **Expected** | Heartbeat times out (~90 s) → ticket → `Abandoned` → Keycloak anonymous user **wiped** → ticket row deleted → queue counter decremented for everyone behind |
+| **Risk if mishandled** | "Phantom client" pile-up (the bug Frank described in the huddle). Counselors see nothing-burgers and the queue lies. |
+| **Test** | Open waiting room, close tab; within ~2 min the ticket disappears from the counselor's view. |
+
+### 9.1.2 Client closes mid-active chat
+
+| | |
+|---|---|
+| **Trigger** | Tab close during active chat |
+| **Expected** | Heartbeat lost → session → `Paused`; if no resume in 5 min → `Ended`; Megolm keys lost from client side; counselor still sees the chat history (≤ 48 h); session metadata anonymized; client cannot re-enter |
+| **Risk if mishandled** | Counselor stuck with a "ghost" active session blocking their availability |
+| **Test** | Active chat → close tab → counselor sees "client disconnected" within 5 min |
+
+### 9.1.3 Client refreshes the tab
+
+| | |
+|---|---|
+| **Trigger** | F5 / pull-to-refresh in the waiting room or chat |
+| **Expected** | New cookie, new pseudonym, new ticket. Old one is orphaned and purged on heartbeat-loss timeout. Client cannot rejoin the previous session. |
+| **Risk if mishandled** | Client's identity persists across refreshes (privacy violation) |
+| **Test** | F5 in waiting room → pseudonym changes; old ticket disappears within ~90 s |
+
+### 9.1.4 Client supplies a malformed live-chat link (bad slug / topic)
+
+| | |
+|---|---|
+| **Trigger** | URL hand-edited; agency deleted; topic disabled |
+| **Expected** | Friendly "currently unavailable" page with a CTA to the platform-wide enquiry; no anonymous user created; no error noise in logs |
+| **Risk if mishandled** | Confusing 500 / 404 / blank page; potentially a backend crash |
+| **Test** | Visit `/live-chat/no-such-agency`; lands on graceful page |
+
+### 9.1.5 Client refuses GDPR consent #2
+
+| | |
+|---|---|
+| **Trigger** | Counselor accepted the ticket, client clicks "Reject" on the center-level GDPR popup |
+| **Expected** | Ticket → `Abandoned`; anonymous user wiped; Matrix room never finalised; counselor sees "client declined" |
+| **Risk if mishandled** | Chat opens without consent → legal liability |
+| **Test** | Acceptance flow → reject GDPR → counselor's queue updates within seconds |
+
+### 9.1.7 Client deletes self during active video call
+
+> *Direct Figma question: "what happens when a user deletes himself during a video call (if he is the initiator)"*
+
+| | |
+|---|---|
+| **Trigger** | A client is the initiator of an active LiveKit call and clicks "Konto löschen" / closes their tab during the call |
+| **Expected** | (1) LiveKit session continues for remaining counselors. (2) Initiator role transfers to the next counselor by `joined_at` ASC. (3) The client's pseudonym is wiped within ~90 s. (4) System message in chat: *"Ein Teilnehmer hat das Gespräch verlassen."* (5) If no counselor remains in the room, LiveKit ends the call gracefully and the chat returns to text-only state. |
+| **Risk if mishandled** | Counselors stuck on a frozen call; client identity persists past disconnect; LiveKit room becomes a billing leak. |
+| **Test** | E2E: client initiates call → client deletes self → call survives among counselors; if last person leaves, call dies; client identity wiped. |
+
+### 9.1.8 Client deletes self from group chat
+
+> *Direct Figma question: "What happens if a client deletes himself from a group chat?"*
+
+| | |
+|---|---|
+| **Trigger** | A client clicks "leave group" or deletes their account while in a group room |
+| **Expected** | (1) Pseudonym wiped immediately. (2) Their existing messages remain in the room with author label *"Ehemaliger Teilnehmer"* — bodies stay E2EE; pseudonym is no longer linked to a Keycloak user. (3) System message *"{pseudonym} hat den Chat verlassen."* (4) If the client was the **only** advice-seeker in the group, the room is auto-archived and counselors notified. (5) If other clients remain, the group continues normally. |
+| **Risk if mishandled** | Client identity lingers in a group; or messages disappear and the group context becomes confusing. |
+| **Test** | E2E: 1 client + 2 counselors group → client leaves → counselors see system message + author label change; group persists. |
+
+### 9.1.9 Client opts in to email mid-session
+
+| | |
+|---|---|
+| **Trigger** | Client adds an email after the chat has started |
+| **Expected** | Email is stored encrypted, visible only to Platform Admin; counselors do not see it; first verification email is sent; future notifications mirror to email |
+| **Risk if mishandled** | Counselor sees the client's email in any UI surface |
+
+### 9.1.10 Multi-Recipient send: one recipient is a wiped client
+
+| | |
+|---|---|
+| **Trigger** | Counselor sends a message addressed to "+ Sasha (client)" but Sasha has just disconnected |
+| **Expected** | Server-side relay rejects the recipient with "user no longer in room"; counselor sees a fallback chip "delivery skipped: 1 user". |
+| **Risk if mishandled** | Message body cached pending Sasha's return → privacy violation |
+
+### 9.1.11 Blur removed by mistake
+
+| | |
+|---|---|
+| **Trigger** | Counselor clicks the eye toggle, then sends without re-blurring |
+| **Expected** | Confirmation dialog: "PII blur is disabled — send anyway?" before send completes |
+| **Risk if mishandled** | Client sees what should have been blurred |
+
+### 9.1.6 Browser without cookies / private mode (lockdown)
+
+| | |
+|---|---|
+| **Trigger** | Browser with cookies disabled |
+| **Expected** | Show clear instruction: "ORISO requires a session cookie. Cookies are deleted with you when you leave." |
+| **Risk if mishandled** | Silent failure; client thinks the system is broken |
+
+## 9.2 Counselor Edge Cases
+
+### 9.2.1 Counselor goes offline mid-pickup
+
+| | |
+|---|---|
+| **Trigger** | Counselor accepted a ticket but disconnected before client gave consent #2 |
+| **Expected** | Heartbeat timeout → ticket reverts to `Waiting` and goes back into the queue; client either picked again or wipes if too long passes |
+| **Risk if mishandled** | Lost ticket, lost client |
+| **Test** | Accept ticket → kill counselor browser → ticket reappears in the queue |
+
+### 9.2.2 Two counselors race to accept
+
+| | |
+|---|---|
+| **Trigger** | Same ticket clicked by two counselors within milliseconds |
+| **Expected** | Database row-lock; first wins → ticket `Accepted`; second sees "already taken" toast; no double-room creation |
+| **Risk if mishandled** | Duplicate Matrix rooms, duplicate consent prompts to the client |
+| **Test** | Concurrency test: two clients call `POST /live-chat/accept` for the same id → one HTTP 200, one HTTP 409 |
+
+### 9.2.3 Counselor flips Live Chat OFF mid-session
+
+| | |
+|---|---|
+| **Trigger** | Counselor toggles availability OFF while in an active session |
+| **Expected** | Active session continues to completion; no new tickets are routed to this counselor; the toggle UI shows "OFF after current chat ends" |
+| **Risk if mishandled** | Active client orphaned mid-conversation |
+
+### 9.2.4 Counselor with no agency assignment
+
+| | |
+|---|---|
+| **Trigger** | Keycloak `consultant` role exists but the user has no `ConsultantAgency` row |
+| **Expected** | The user is **invisible** on the app layer (per huddle: "a counselor is not visible without a counseling center"); their dashboard shows an info banner asking to be assigned |
+| **Risk if mishandled** | Tickets can never reach this counselor; or worse, they appear in the queue but cannot be picked up |
+
+### 9.2.5 Supervisor joins a session
+
+| | |
+|---|---|
+| **Trigger** | A `supervisor-consultant` invites themselves to a colleague's room |
+| **Expected** | System message visible to all members: *"Supervisor X has joined for QA review"*; audit row written; supervisor can read messages but appears in the participant list |
+| **Risk if mishandled** | Silent observation → privacy violation |
+
+## 9.3 Admin / Tenant Edge Cases
+
+### 9.3.1 Tenant tries to create an agency before signing data policy
+
+| | |
+|---|---|
+| **Trigger** | Tenant Admin clicks "Create center" without `tenant.data_policy_signed_at` set |
+| **Expected** | Button disabled with tooltip "Sign the platform data policy first"; route returns HTTP 403 if force-called |
+| **Risk if mishandled** | Centers operating without legal cover |
+
+### 9.3.2 Tenant attempts to access another tenant's data
+
+| | |
+|---|---|
+| **Trigger** | URL tampering, API tampering, JWT replay |
+| **Expected** | Tenant filter at the persistence layer rejects the query (HTTP 404, **not** 403, to avoid information leakage); audit log records the attempt |
+| **Risk if mishandled** | Cross-tenant data leak — catastrophic |
+
+### 9.3.3 Platform Admin disables a tenant
+
+| | |
+|---|---|
+| **Trigger** | Platform Admin sets `tenant.disabled_at` |
+| **Expected** | All centers under that tenant become read-only; counselors cannot accept new tickets; existing active sessions are allowed to finish; live-chat links return "currently unavailable"; tenant data preserved (not deleted) |
+| **Risk if mishandled** | Mid-conversation hard cuts → bad UX |
+
+### 9.3.4 Magic invite link reused
+
+| | |
+|---|---|
+| **Trigger** | Same magic link clicked twice |
+| **Expected** | First click: registration succeeds, `consumed_at` set in Redis; second click: HTTP 410 "link already used" page |
+| **Risk if mishandled** | Two users could claim the same role |
+
+### 9.3.5 Magic link expired
+
+| | |
+|---|---|
+| **Trigger** | Click after 24 h |
+| **Expected** | Friendly expiry page; "Request a new invite" CTA pointing to the inviter |
+| **Risk if mishandled** | Confusing JWT error |
+
+## 9.4 Live-Chat Link / Pincode Edge Cases
+
+### 9.4.1 Link disabled while client is on the page
+
+| | |
+|---|---|
+| **Trigger** | Counselor Admin disables the link mid-session |
+| **Expected** | Active sessions continue; new visits to the link see "currently unavailable" |
+| **Risk if mishandled** | Hard-cut active sessions |
+
+### 9.4.2 Topic missing on link
+
+| | |
+|---|---|
+| **Trigger** | Old link without `?topic=` parameter |
+| **Expected** | Falls back to agency-wide queue (any topic); soft-warning logged; consider asking the user to pick a topic |
+| **Risk if mishandled** | 500 error or silent topic mismatch |
+
+### 9.4.3 Zip code spans multiple agencies
+
+| | |
+|---|---|
+| **Trigger** | Client types `10115`; three agencies cover it |
+| **Expected** | Show a list with descriptions; client picks; if a topic was supplied, list is filtered |
+| **Risk if mishandled** | Auto-routing to a random agency → wrong counselor / wrong language |
+
+### 9.4.4 Bot floods the live-chat link
+
+| | |
+|---|---|
+| **Trigger** | Curl loop, scraper, accidental retry |
+| **Expected** | Ingress-level rate limit kicks in; HTTP 429; counselors are not bothered with bot tickets; in-memory IP counter (never persisted) used for the limit |
+| **Risk if mishandled** | Real clients get pushed out of the queue |
+
+### 9.4.5 Cross-tenant slug collision attempt
+
+| | |
+|---|---|
+| **Trigger** | Two tenants try to claim the same agency slug |
+| **Expected** | Slugs are unique per tenant; the public URL form includes the agency slug only; the tenant is resolved server-side from the agency owning the slug |
+
+## 9.5 Chat / Real-Time Edge Cases
+
+### 9.5.1 Network split mid-message
+
+| | |
+|---|---|
+| **Trigger** | Brief network outage; message in flight |
+| **Expected** | Matrix client retries with exponential backoff; once reconnected, message arrives in order; UI shows "sending…" indicator for delayed messages |
+
+### 9.5.2 Key loss (Megolm)
+
+| | |
+|---|---|
+| **Trigger** | Counselor cleared browser cache mid-day; old messages can't decrypt |
+| **Expected** | Counselor sees "encrypted message — key not available" placeholder; **expected behaviour** consistent with the privacy model |
+| **Risk if mishandled** | Counselor thinks the system is broken; do not invent a server-side key escrow |
+
+### 9.5.3 Massive queue overload
+
+| | |
+|---|---|
+| **Trigger** | 500 simultaneous clients in the waiting room |
+| **Expected** | Queue counter scales correctly via Redis; old auto-deletes still happen on schedule; counselors are shown realistic ETA hints |
+| **Risk if mishandled** | DB row count explodes; cleanup job lags; queue numbers go stale |
+
+### 9.5.4 Failed Matrix room creation
+
+| | |
+|---|---|
+| **Trigger** | Synapse temporarily unhealthy |
+| **Expected** | UserService retries 3× with backoff; on persistent failure, ticket is returned to queue and the counselor sees a clear error |
+| **Risk if mishandled** | Ticket marked Active without a room; client stuck |
+
+## 9.6 Failed Transcription / AI Path (Planned)
+
+Even though the AI path is not yet built, the failure modes to design for:
+
+| Trigger | Expected |
+|---|---|
+| AI summarizer down | Counselor falls back to manual note; UI shows graceful degradation |
+| AI returns suspicious content (PII surfaced) | Pre-display PII detector blocks the suggestion |
+| Counselor edits the AI note | Save the **edited** version only; do not retain the unedited AI output |
+| Network drop during summarization | Retry once; on second failure, fall back to manual |
+
+## 9.7 Operational / Security Edge Cases
+
+| Scenario | Expected |
+|---|---|
+| Keycloak running in dev mode | **Hard alert.** Block deploy via CI guard. Reinstated rule after 2026 incident. |
+| External pen-test attempts session enumeration | All session ids are UUIDv4; tenant scoping makes enumeration useless |
+| Backup file leaked | Pseudonyms aren't PII; messages are E2EE; staff data is column-encrypted; impact is bounded |
+| Realm.json drift between dev and prod | Yearly external audit + CI diff alarm |
+| MFA factor lost (admin) | Recovery flow via Platform Admin out-of-band; no self-service reset for admins |
+
+## 9.10 Handover Edge Cases
+
+| Trigger | Expected |
+|---|---|
+| Counselor B refuses handover | Ticket returns to agency pool with "needs handover" flag |
+| Client refuses handover | Session ends gracefully; client wiped |
+| Reason `law_violation` selected by mistake | Action is irreversible from counselor; only Platform Admin can recall (with audit) |
+| Active group chat handover | Only Counselor A's seat is swapped; other members untouched |
+| Cross-agency handover attempted | API returns 403 with "out of scope" |
+| Active video call during handover | Call gracefully ended first, then handover proceeds |
+| GDPR-#2-pending state during handover | Handover denied; ticket returns to queue instead |
+
+## 9.11 Group-Chat Edge Cases
+
+| Trigger | Expected |
+|---|---|
+| Inviter exceeds admin-policy member cap | UI shows tooltip; API returns 403 |
+| Counselor invites a non-permitted user (e.g. cross-agency) | API returns 403 |
+| Group disabled platform-wide while a group is active | Existing groups become read-only; no new groups can be created |
+| Schedule conflict for a live round (`live Mo 9.Sep 2026 um 18:00 Uhr`) | UI prompts to reschedule; reminder notifications go out 24 h, 1 h, and 5 min before |
+| Group deleted by accident | Soft-delete (archive) by default; hard-delete only via Platform Admin with audit row |
+
+## 9.12 AI / Annotation Edge Cases
+
+| Trigger | Expected |
+|---|---|
+| AI summarizer down | Button greys out; counselor falls back to manual note |
+| AI returns content that includes residual PII | Browser-side post-filter scrubs again before display; flag for engineering |
+| Mark exists on a message that gets redacted | Annotation orphan → garbage-collected on next render |
+| Receiver's client too old to render annotations | Banner: "This message contains content the counselor wished to blur — please disregard" |
+
+## 9.13 Notification & Escalation Edge Cases
+
+| Trigger | Expected |
+|---|---|
+| Notification fired for a wiped pseudonym | Silently dropped |
+| Email mirror requested but no email captured | UI explains opt-in is unavailable until email added |
+| External escalation timed out (24 h) | Cancelled silently; nothing leaves the system; counselor informed |
+| Help Request to a counselor on holiday | Falls back to next-up Supervisor in the agency |
+
+## 9.8 Compact "What Happens If…" Cheat Sheet
+
+| If… | Then… |
+|---|---|
+| Client leaves waiting room | Wipe within ~90 s |
+| Client closes mid-chat | Pause; end after 5 min idle |
+| Counselor disconnects pre-consent | Ticket back to queue |
+| Two counselors accept same ticket | One wins, one sees "already taken" |
+| Live-chat link disabled mid-session | Active continues; new visits blocked |
+| Tenant disabled | Read-only; active sessions finish |
+| Magic link reused | HTTP 410 |
+| Browser cookies off | Friendly explainer |
+| Queue counter inconsistent | Redis Pub/Sub re-derives from DB on next event |
+| Client deletes self mid-video-call (initiator) | Call survives among counselors; initiator role transfers; client wiped |
+| Client deletes self from group | Pseudonym wiped; messages remain under "Ehemaliger Teilnehmer"; group auto-archived if last advice-seeker |
+| Counselor blurs PII then unblurs by mistake | Confirmation dialog before send |
+| Multi-recipient send to a wiped recipient | "delivery skipped" chip; no message body cached |
+| Email opt-in mid-session | Stored privileged-access only; counselors never see |
+| Handover Counselor B refuses | Ticket returns to pool with "needs handover" flag |
