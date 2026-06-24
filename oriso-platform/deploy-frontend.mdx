@@ -105,8 +105,8 @@ kubectl exec -n caritas deployment/oriso-platform-frontend -- \
   curl -I http://localhost:80
 
 # Test via Ingress (after Ingress is deployed)
-curl -I https://app.oriso-dev.site
-curl -I https://admin.oriso-dev.site
+curl -I https://app.oriso.org
+curl -I https://admin.oriso.org
 ```
 
 <Check>
@@ -123,14 +123,14 @@ curl -I https://admin.oriso-dev.site
 ### ORISO-Frontend (User Portal)
 - **Docker Image:** `caritas-frontend:latest`
 - **Service:** `oriso-platform-frontend.caritas.svc.cluster.local:80`
-- **External:** `https://app.oriso-dev.site`
+- **External:** `https://app.oriso.org`
 - **Technology:** React 18, Vite 4, TypeScript
 - **Features:** User portal, Matrix chat, video calls
 
 ### ORISO-Admin (Admin Panel)
 - **Docker Image:** `caritas-admin:latest`
 - **Service:** `oriso-platform-admin.caritas.svc.cluster.local:80`
-- **External:** `https://admin.oriso-dev.site`
+- **External:** `https://admin.oriso.org`
 - **Technology:** React 18, Vite 4, TypeScript
 - **Features:** Admin interface, agency management
 
@@ -141,11 +141,11 @@ Environment variables are baked into the build at build time:
 
 ```bash
 # .env file in ORISO-Frontend
-VITE_API_URL=https://api.oriso-dev.site
-VITE_KEYCLOAK_URL=https://auth.oriso-dev.site
+VITE_API_URL=https://api.oriso.org
+VITE_KEYCLOAK_URL=https://auth.oriso.org
 VITE_KEYCLOAK_REALM=online-beratung
 VITE_KEYCLOAK_CLIENT_ID=app
-VITE_MATRIX_HOMESERVER_URL=https://matrix.oriso-dev.site
+VITE_MATRIX_HOMESERVER_URL=https://matrix.oriso.org
 VITE_MATRIX_SERVER_NAME=caritas.local
 ```
 
@@ -212,7 +212,7 @@ kubectl get ingress -n caritas | grep frontend
 kubectl get pods -n ingress-nginx
 
 # Test Ingress
-curl -I https://app.oriso-dev.site
+curl -I https://app.oriso.org
 ```
 
 ## Next Steps

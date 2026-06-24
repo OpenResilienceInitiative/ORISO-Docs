@@ -14,13 +14,19 @@ JAVA_17_VERSION="${ORISO_JAVA_17_VERSION:-17.0.12-tem}"
 GATEWAY_PORT="${ORISO_GATEWAY_PORT:-8088}"
 ADMIN_PORT="${ORISO_ADMIN_PORT:-9000}"
 FRONTEND_PORT="${ORISO_FRONTEND_PORT:-9002}"
+FRONTEND_NODE_BIN="${ORISO_FRONTEND_NODE_BIN:-${HOME}/.nvm/versions/node/v18.20.8/bin}"
+ORISO_MODE="${ORISO_MODE:-local}"
+ORISO_DEV_KEYCLOAK_URL="${ORISO_DEV_KEYCLOAK_URL:-https://auth.oriso.org}"
+ORISO_FORCE_ENV="${ORISO_FORCE_ENV:-0}"
 KEYCLOAK_URL="${ORISO_KEYCLOAK_URL:-http://localhost:8080}"
 KEYCLOAK_URL="${KEYCLOAK_URL%/}"
 KEYCLOAK_REALM="${ORISO_KEYCLOAK_REALM:-online-beratung}"
+KEYCLOAK_CLIENT_ID="${ORISO_KEYCLOAK_CLIENT_ID:-app}"
 KEYCLOAK_CONFIG_ADMIN_USERNAME="${ORISO_KEYCLOAK_CONFIG_ADMIN_USERNAME:-admin}"
 KEYCLOAK_CONFIG_ADMIN_PASSWORD="${ORISO_KEYCLOAK_CONFIG_ADMIN_PASSWORD:-local_admin_change_me}"
 UI_MODE="${ORISO_UI:-admin}"
 SERVICE_OVERRIDE="${ORISO_SERVICES:-}"
+ORISO_HYBRID_INFRA_SERVICES=(mariadb mongodb redis rabbitmq)
 
 REPOS=(ORISO-Admin ORISO-Frontend ORISO-UserService ORISO-TenantService ORISO-AgencyService ORISO-ConsultingTypeService)
 BACKEND_SERVICES=(userservice tenantservice agencyservice consultingtypeservice)
@@ -50,6 +56,7 @@ Commands:
   stop all               Stop app services, gateway, and Docker infra. Volumes are preserved.
 
 Environment:
+  ORISO_MODE=local|hybrid                           Default: local. hybrid = local services + dev Keycloak.
   ORISO_UI=admin|frontend|both|none                 Select UI for "start". Default: admin.
   ORISO_SERVICES="userservice tenantservice admin"  Override exact app services for "start".
   ORISO_JAVA_11_VERSION=11.0.24-tem                 SDKMAN Java 11 candidate.
@@ -57,22 +64,28 @@ Environment:
   ORISO_GATEWAY_PORT=8088                           Local API gateway port.
   ORISO_ADMIN_PORT=9000                             Admin Vite port.
   ORISO_FRONTEND_PORT=9002                          ORISO-Frontend dev server port.
-  ORISO_KEYCLOAK_URL=http://localhost:8080           Keycloak base URL.
+  ORISO_FRONTEND_NODE_BIN=~/.nvm/.../bin             Optional Node bin dir for ORISO-Frontend.
+  ORISO_DEV_KEYCLOAK_URL=https://auth.oriso.org     Dev Keycloak URL used in hybrid mode.
+  ORISO_KEYCLOAK_URL=http://localhost:8080           Keycloak base URL (local mode default).
   ORISO_KEYCLOAK_REALM=online-beratung              Keycloak realm.
+  ORISO_KEYCLOAK_CLIENT_ID=app                       Keycloak client id for Admin/Frontend.
   ORISO_KEYCLOAK_CONFIG_ADMIN_USERNAME=admin         Keycloak admin username used by backend clients.
   ORISO_KEYCLOAK_CONFIG_ADMIN_PASSWORD=...           Keycloak admin password used by backend clients.
+  ORISO_FORCE_ENV=1                                 Rewrite ORISO-Admin/.env.local even if it exists.
 
 Examples:
   ./ORISO-Docs/services-local-setup/run-oriso-local.sh check
   ./ORISO-Docs/services-local-setup/run-oriso-local.sh branches
   ./ORISO-Docs/services-local-setup/run-oriso-local.sh start --ui admin
+  ./ORISO-Docs/services-local-setup/run-oriso-local.sh start --hybrid --ui admin
   ./ORISO-Docs/services-local-setup/run-oriso-local.sh start --ui frontend
   ./ORISO-Docs/services-local-setup/run-oriso-local.sh start --ui both
-  ORISO_SERVICES="userservice tenantservice admin" ./ORISO-Docs/services-local-setup/run-oriso-local.sh start
+  ORISO_SERVICES="userservice tenantservice admin" ./ORISO-Docs/services-local-setup/run-oriso-local.sh start --hybrid
   ./ORISO-Docs/services-local-setup/run-oriso-local.sh logs userservice
   ./ORISO-Docs/services-local-setup/run-oriso-local.sh stop
 
 Options:
+  --hybrid                             Local backends + DB infra; auth uses dev Keycloak (ORISO_DEV_KEYCLOAK_URL).
   --ui admin|frontend|both|none        Run all backend services plus selected UI.
   --services "<service list>"          Override exact services, bypassing --ui selection.
 EOF
@@ -91,12 +104,43 @@ die() {
   exit 1
 }
 
+is_hybrid_mode() {
+  [[ "${ORISO_MODE}" == "hybrid" ]]
+}
+
+resolve_mode_defaults() {
+  if is_hybrid_mode; then
+    if [[ -z "${ORISO_KEYCLOAK_URL:-}" || "${KEYCLOAK_URL}" == "http://localhost:8080" || "${KEYCLOAK_URL}" == "http://127.0.0.1:8080" ]]; then
+      KEYCLOAK_URL="${ORISO_DEV_KEYCLOAK_URL%/}"
+    fi
+  fi
+}
+
+keycloak_host_from_url() {
+  local url="${1%/}"
+  url="${url#http://}"
+  url="${url#https://}"
+  url="${url%%/*}"
+  url="${url%%:*}"
+  printf '%s' "$url"
+}
+
 validate_ui_mode() {
   case "${UI_MODE}" in
     admin|frontend|both|none)
       ;;
     *)
       die "Invalid UI mode: ${UI_MODE}. Use admin, frontend, both, or none."
+      ;;
+  esac
+}
+
+validate_mode() {
+  case "${ORISO_MODE}" in
+    local|hybrid)
+      ;;
+    *)
+      die "Invalid ORISO_MODE: ${ORISO_MODE}. Use local or hybrid."
       ;;
   esac
 }
@@ -127,6 +171,10 @@ selected_services() {
 parse_common_options() {
   while [[ $# -gt 0 ]]; do
     case "$1" in
+      --hybrid)
+        ORISO_MODE="hybrid"
+        shift
+        ;;
       --ui)
         [[ $# -ge 2 ]] || die "--ui requires admin, frontend, both, or none"
         UI_MODE="$2"
@@ -146,6 +194,8 @@ parse_common_options() {
         ;;
     esac
   done
+  validate_mode
+  resolve_mode_defaults
   validate_ui_mode
 }
 
@@ -157,20 +207,31 @@ parse_start_args() {
         START_TARGET="$1"
         shift
         ;;
-      --ui|--services)
-        [[ $# -ge 2 ]] || die "$1 requires a value"
-        parse_common_options "$1" "$2"
+      --hybrid)
+        ORISO_MODE="hybrid"
+        shift
+        ;;
+      --ui)
+        [[ $# -ge 2 ]] || die "--ui requires admin, frontend, both, or none"
+        UI_MODE="$2"
+        shift 2
+        ;;
+      --services)
+        [[ $# -ge 2 ]] || die "--services requires a quoted service list"
+        SERVICE_OVERRIDE="$2"
         shift 2
         ;;
       -h|--help|help)
-        parse_common_options "$1"
-        shift
+        usage
+        exit 0
         ;;
       *)
         die "Unknown start argument: $1"
         ;;
     esac
   done
+  validate_mode
+  resolve_mode_defaults
   validate_ui_mode
 }
 
@@ -203,7 +264,11 @@ port_accepts_connections() {
 }
 
 keycloak_gateway_upstream() {
-  printf 'http://host.docker.internal:8080'
+  if is_hybrid_mode; then
+    printf '%s' "${KEYCLOAK_URL}"
+  else
+    printf 'http://host.docker.internal:8080'
+  fi
 }
 
 load_sdkman() {
@@ -296,6 +361,7 @@ check_prerequisites() {
   need_command git
   need_command docker
   need_command curl
+  need_command lsof
   need_command node
   need_command npm
   need_command java
@@ -312,7 +378,14 @@ check_prerequisites() {
     die "Docker is not running. Start Docker Desktop first."
   fi
 
+  log "Mode: ${ORISO_MODE}"
   log "Using Keycloak URL: ${KEYCLOAK_URL}"
+  if is_hybrid_mode; then
+    log "Hybrid mode: local backends + gateway; dev auth at ${KEYCLOAK_URL}"
+    if [[ "${KEYCLOAK_CONFIG_ADMIN_PASSWORD}" == "local_admin_change_me" ]]; then
+      warn "Using local Keycloak admin password placeholder. Set ORISO_KEYCLOAK_CONFIG_ADMIN_USERNAME/PASSWORD if backend Keycloak admin calls fail."
+    fi
+  fi
 
   prepare_repositories
 
@@ -331,14 +404,20 @@ print_java_versions() {
 start_infra() {
   need_command docker
   docker_running || die "Docker is not running. Start Docker Desktop first."
-  log "Starting local Docker infra"
-  if ! using_local_keycloak; then
-    die "Only local Keycloak is supported by this runner. Use ORISO_KEYCLOAK_URL=http://localhost:8080 or unset ORISO_KEYCLOAK_URL."
+  if is_hybrid_mode; then
+    log "Starting hybrid Docker infra (MariaDB, MongoDB, Redis, RabbitMQ only)"
+    log "Remote Keycloak: ${KEYCLOAK_URL}"
+    docker compose -f "${COMPOSE_FILE}" up -d "${ORISO_HYBRID_INFRA_SERVICES[@]}"
+  else
+    log "Starting local Docker infra (includes Keycloak)"
+    if ! using_local_keycloak; then
+      die "Non-local Keycloak is only supported in hybrid mode. Use: ORISO_MODE=hybrid $0 start --hybrid"
+    fi
+    if ! docker ps --format '{{.Names}}' | grep -qx 'oriso-local-keycloak' && port_accepts_connections 127.0.0.1 8080; then
+      die "Port 8080 is already in use, so local Keycloak cannot start. Stop the process using 8080, then rerun this script."
+    fi
+    docker compose -f "${COMPOSE_FILE}" up -d
   fi
-  if ! docker ps --format '{{.Names}}' | grep -qx 'oriso-local-keycloak' && port_accepts_connections 127.0.0.1 8080; then
-    die "Port 8080 is already in use, so local Keycloak cannot start. Stop the process using 8080, then rerun this script."
-  fi
-  docker compose -f "${COMPOSE_FILE}" up -d
   docker compose -f "${COMPOSE_FILE}" ps
   wait_for_infra
 }
@@ -366,6 +445,14 @@ wait_for_infra() {
   done
 
   log "Waiting for Keycloak HTTP at ${KEYCLOAK_URL}"
+  if is_hybrid_mode; then
+    if curl -fsS --max-time 5 "${KEYCLOAK_URL}" >/dev/null 2>&1; then
+      log "Remote Keycloak is reachable"
+    else
+      warn "Remote Keycloak did not respond at ${KEYCLOAK_URL}. Login may fail until it is reachable."
+    fi
+    return 0
+  fi
   for i in {1..60}; do
     if curl -fsS "${KEYCLOAK_URL}" >/dev/null 2>&1; then
       log "Keycloak is responding"
@@ -404,12 +491,16 @@ CREATE DATABASE IF NOT EXISTS consultingtypeservice;
 
 CREATE USER IF NOT EXISTS 'userservice_local'@'%' IDENTIFIED BY 'userservice_local_change_me';
 GRANT ALL PRIVILEGES ON userservice.* TO 'userservice_local'@'%';
+CREATE USER IF NOT EXISTS 'userservice'@'%' IDENTIFIED BY 'userservice_local_change_me';
+GRANT ALL PRIVILEGES ON userservice.* TO 'userservice'@'%';
 
 CREATE USER IF NOT EXISTS 'tenantservice_local'@'%' IDENTIFIED BY 'tenantservice_local_change_me';
 GRANT ALL PRIVILEGES ON tenantservice.* TO 'tenantservice_local'@'%';
 
 CREATE USER IF NOT EXISTS 'agencyservice_local'@'%' IDENTIFIED BY 'agencyservice_local_change_me';
 GRANT ALL PRIVILEGES ON agencyservice.* TO 'agencyservice_local'@'%';
+CREATE USER IF NOT EXISTS 'agencyservice'@'%' IDENTIFIED BY 'agencyservice_local_change_me';
+GRANT ALL PRIVILEGES ON agencyservice.* TO 'agencyservice'@'%';
 
 CREATE USER IF NOT EXISTS 'consultingtypeservice_local'@'%' IDENTIFIED BY 'consultingtypeservice_local_change_me';
 GRANT ALL PRIVILEGES ON consultingtypeservice.* TO 'consultingtypeservice_local'@'%';
@@ -422,6 +513,7 @@ SQL
   import_schema_if_missing tenantservice tenant "${ROOT_DIR}/ORISO-Database/mariadb/tenantservice/schema.sql"
   import_schema_if_missing agencyservice agency "${ROOT_DIR}/ORISO-Database/mariadb/agencyservice/schema.sql"
   import_schema_if_missing consultingtypeservice topic "${ROOT_DIR}/ORISO-Database/mariadb/consultingtypeservice/schema.sql"
+  seed_local_dev_data
 }
 
 import_schema_if_missing() {
@@ -490,12 +582,217 @@ SQL
   db_has_index userservice agency_invite_link idx_invite_link_topic_create_date || userservice_sql -e "CREATE INDEX idx_invite_link_topic_create_date ON agency_invite_link (topic_id, create_date);"
   db_has_index userservice agency_invite_link idx_invite_link_kind_tenant || userservice_sql -e "CREATE INDEX idx_invite_link_kind_tenant ON agency_invite_link (link_kind, tenant_id, create_date);"
   db_has_index userservice agency_invite_link idx_invite_link_consultant || userservice_sql -e "CREATE INDEX idx_invite_link_consultant ON agency_invite_link (consultant_id);"
+
+  if ! db_has_table userservice consultant_topic; then
+    log "Creating userservice.consultant_topic (changeset 0053)"
+    userservice_sql <<'SQL'
+CREATE TABLE consultant_topic (
+    id bigint(21) NOT NULL,
+    consultant_id varchar(36) NOT NULL,
+    topic_id bigint(21) unsigned NOT NULL,
+    create_date datetime NOT NULL DEFAULT (UTC_TIMESTAMP),
+    update_date datetime NOT NULL DEFAULT (UTC_TIMESTAMP),
+    PRIMARY KEY (id),
+    UNIQUE KEY uk_consultant_topic (consultant_id, topic_id),
+    KEY consultant_id (consultant_id),
+    CONSTRAINT consultant_topic_ibfk_1 FOREIGN KEY (consultant_id) REFERENCES consultant (consultant_id) ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+CREATE SEQUENCE IF NOT EXISTS sequence_consultant_topic
+INCREMENT BY 1
+MINVALUE 0
+NOMAXVALUE
+START WITH 0
+CACHE 10;
+SQL
+  fi
+}
+
+seed_local_dev_data() {
+  log "Seeding minimal local dev data for registration"
+  mysql_root <<'SQL'
+INSERT INTO tenantservice.tenant (
+  id, name, subdomain, licensing_allowed_users, theming_primary_color,
+  theming_secondary_color, content_impressum, content_privacy, content_termsandconditions,
+  privacy_activation_date, termsandconditions_activation_date
+) VALUES (
+  1, 'Local ORISO', 'localhost', 100, '#00549f',
+  '#f0f4f8',
+  '{"de":"Local development impressum","en":"Local development impressum"}',
+  '{"de":"Local development privacy policy","en":"Local development privacy policy"}',
+  '{"de":"Local development terms and conditions","en":"Local development terms and conditions"}',
+  UTC_TIMESTAMP(), UTC_TIMESTAMP()
+) ON DUPLICATE KEY UPDATE
+  name = VALUES(name),
+  subdomain = VALUES(subdomain),
+  licensing_allowed_users = VALUES(licensing_allowed_users),
+  content_impressum = VALUES(content_impressum),
+  content_privacy = VALUES(content_privacy),
+  content_termsandconditions = VALUES(content_termsandconditions),
+  privacy_activation_date = COALESCE(privacy_activation_date, VALUES(privacy_activation_date)),
+  termsandconditions_activation_date = COALESCE(termsandconditions_activation_date, VALUES(termsandconditions_activation_date));
+
+INSERT INTO consultingtypeservice.topic (
+  id, tenant_id, name, description, status, slug, welcome_message,
+  titles_short, titles_long, titles_welcome, titles_dropdown
+) VALUES (
+  1, 1, '{"de":"Local Test Topic","en":"Local Test Topic"}',
+  '{"de":"Local seeded topic for ORISO development","en":"Local seeded topic for ORISO development"}',
+  'ACTIVE', 'local-test-topic',
+  '{"de":"Welcome to the local test topic.","en":"Welcome to the local test topic."}',
+  '{"de":"Local Test Topic","en":"Local Test Topic"}',
+  '{"de":"Local Test Topic","en":"Local Test Topic"}',
+  '{"de":"Local Test Topic","en":"Local Test Topic"}',
+  '{"de":"Local Test Topic","en":"Local Test Topic"}'
+) ON DUPLICATE KEY UPDATE
+  tenant_id = VALUES(tenant_id),
+  name = VALUES(name),
+  description = VALUES(description),
+  status = VALUES(status),
+  slug = VALUES(slug),
+  welcome_message = VALUES(welcome_message),
+  titles_short = VALUES(titles_short),
+  titles_long = VALUES(titles_long),
+  titles_welcome = VALUES(titles_welcome),
+  titles_dropdown = VALUES(titles_dropdown);
+
+INSERT INTO consultingtypeservice.topic_group (id, name)
+VALUES (1, 'Local Test Topics')
+ON DUPLICATE KEY UPDATE name = VALUES(name);
+
+DELETE FROM consultingtypeservice.topic_group_x_topic WHERE group_id = 1 AND topic_id = 1;
+INSERT INTO consultingtypeservice.topic_group_x_topic (group_id, topic_id)
+VALUES (1, 1);
+
+INSERT INTO agencyservice.agency (
+  id, tenant_id, name, description, postcode, city, is_team_agency,
+  consulting_type, is_offline, is_external, counselling_relations
+) VALUES (
+  1, 1, 'Local Counseling Center', 'Local seeded agency for ORISO development',
+  '00000', 'Localhost', 1, 1, 0, 0, 'SELF_COUNSELLING,RELATIVE_COUNSELLING'
+) ON DUPLICATE KEY UPDATE
+  tenant_id = VALUES(tenant_id),
+  name = VALUES(name),
+  description = VALUES(description),
+  postcode = VALUES(postcode),
+  city = VALUES(city),
+  is_team_agency = VALUES(is_team_agency),
+  consulting_type = VALUES(consulting_type),
+  is_offline = VALUES(is_offline),
+  is_external = VALUES(is_external),
+  counselling_relations = VALUES(counselling_relations),
+  delete_date = NULL;
+
+INSERT INTO agencyservice.agency_postcode_range (
+  id, tenant_id, agency_id, postcode_from, postcode_to
+) VALUES (
+  1, 1, 1, '00000', '99999'
+) ON DUPLICATE KEY UPDATE
+  tenant_id = VALUES(tenant_id),
+  agency_id = VALUES(agency_id),
+  postcode_from = VALUES(postcode_from),
+  postcode_to = VALUES(postcode_to);
+
+INSERT INTO agencyservice.agency_topic (id, agency_id, topic_id)
+VALUES (1, 1, 1)
+ON DUPLICATE KEY UPDATE
+  agency_id = VALUES(agency_id),
+  topic_id = VALUES(topic_id);
+
+SET @local_consultant_id := COALESCE(
+  (SELECT consultant_id FROM userservice.consultant WHERE username = 'local_consultant' LIMIT 1),
+  '11111111-1111-1111-1111-111111111111'
+);
+
+INSERT INTO userservice.consultant (
+  consultant_id, tenant_id, username, first_name, last_name, email,
+  is_team_consultant, is_supervisor, rc_user_id, matrix_user_id,
+  is_absent, absence_message, language_formal, language_code,
+  data_privacy_confirmation, terms_and_conditions_confirmation,
+  encourage_2fa, notify_enquiries_repeating,
+  notify_new_chat_message_from_advice_seeker, status, walk_through_enabled,
+  display_name, deletion_lifecycle_state
+) VALUES (
+  @local_consultant_id, 1, 'local_consultant',
+  'Local', 'Consultant', 'local_consultant@example.test',
+  1, 0, 'local_consultant', '@local_consultant:localhost',
+  0, NULL, 1, 'de', UTC_TIMESTAMP(), UTC_TIMESTAMP(),
+  b'0', b'1', b'1', 'CREATED', 1, 'Local Consultant', 'ACTIVE'
+) ON DUPLICATE KEY UPDATE
+  tenant_id = VALUES(tenant_id),
+  first_name = VALUES(first_name),
+  last_name = VALUES(last_name),
+  email = VALUES(email),
+  is_team_consultant = VALUES(is_team_consultant),
+  is_supervisor = VALUES(is_supervisor),
+  is_absent = VALUES(is_absent),
+  absence_message = VALUES(absence_message),
+  status = VALUES(status),
+  display_name = VALUES(display_name),
+  deletion_lifecycle_state = VALUES(deletion_lifecycle_state),
+  delete_date = NULL;
+
+INSERT INTO userservice.consultant_agency (
+  id, tenant_id, consultant_id, agency_id, status
+) VALUES (
+  1, 1, @local_consultant_id, 1, 'CREATED'
+) ON DUPLICATE KEY UPDATE
+  tenant_id = VALUES(tenant_id),
+  consultant_id = VALUES(consultant_id),
+  agency_id = VALUES(agency_id),
+  status = VALUES(status),
+  delete_date = NULL;
+
+INSERT INTO userservice.consultant_topic (
+  id, consultant_id, topic_id
+) VALUES (
+  1, @local_consultant_id, 1
+) ON DUPLICATE KEY UPDATE
+  consultant_id = VALUES(consultant_id),
+  topic_id = VALUES(topic_id);
+SQL
 }
 
 write_gateway_conf() {
   ensure_runtime_dirs
-  local keycloak_upstream
+  local keycloak_upstream keycloak_host auth_proxy_pass
   keycloak_upstream="$(keycloak_gateway_upstream)"
+  keycloak_host="$(keycloak_host_from_url "${keycloak_upstream}")"
+  auth_proxy_pass="${keycloak_upstream}/"
+
+  # nginx forbids add_header inside a server-level "if". CORS preflight handling
+  # therefore lives inside each location block (add_header/if are allowed there).
+  local cors
+  cors=$(cat <<'CORS'
+      if ($request_method = OPTIONS) {
+        add_header Access-Control-Allow-Origin $http_origin always;
+        add_header Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS" always;
+        add_header Access-Control-Allow-Headers "Authorization, Content-Type, Cache-Control, Pragma, Expires, X-CSRF-Token, X-CSRF-TOKEN, x-csrf-token, X-Requested-With, X-WHITELIST-HEADER, agencyId, agencyid, topicId, topicid, mainTopicId, maintopicid, consultantId, consultantid, tenantId, tenantid, rcToken, rctoken, RCUserId, rcuserid" always;
+        add_header Access-Control-Allow-Credentials "true" always;
+        add_header Access-Control-Max-Age 86400 always;
+        add_header Content-Length 0 always;
+        add_header Content-Type "text/plain charset=UTF-8" always;
+        return 204;
+      }
+      add_header Access-Control-Allow-Origin $http_origin always;
+      add_header Access-Control-Allow-Credentials "true" always;
+CORS
+)
+
+  local auth_cors_preflight
+  auth_cors_preflight=$(cat <<'CORS'
+      if ($request_method = OPTIONS) {
+        add_header Access-Control-Allow-Origin $http_origin always;
+        add_header Access-Control-Allow-Methods "POST, OPTIONS" always;
+        add_header Access-Control-Allow-Headers "Authorization, Content-Type, Cache-Control, Pragma, Expires, X-CSRF-Token, X-CSRF-TOKEN, x-csrf-token, X-Requested-With, X-WHITELIST-HEADER, agencyId, agencyid, topicId, topicid, mainTopicId, maintopicid, consultantId, consultantid, tenantId, tenantid, rcToken, rctoken, RCUserId, rcuserid" always;
+        add_header Access-Control-Allow-Credentials "true" always;
+        add_header Access-Control-Max-Age 86400 always;
+        add_header Content-Length 0 always;
+        add_header Content-Type "text/plain charset=UTF-8" always;
+        return 204;
+      }
+CORS
+)
+
   cat > "${NGINX_CONF}" <<EOF
 events {}
 
@@ -504,51 +801,116 @@ http {
     listen 80;
 
     location /auth/ {
-      proxy_pass ${keycloak_upstream}/;
+${auth_cors_preflight}
+      proxy_pass ${auth_proxy_pass};
       proxy_ssl_server_name on;
+      proxy_set_header Host ${keycloak_host};
+      proxy_set_header X-Real-IP \$remote_addr;
+      proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto \$scheme;
     }
 
     location /service/useradmin/ {
-      proxy_pass http://host.docker.internal:8082/service/useradmin/;
+${cors}
+      proxy_pass http://host.docker.internal:8082/useradmin/;
       proxy_set_header Host \$host;
     }
 
     location /service/users/ {
-      proxy_pass http://host.docker.internal:8082/service/users/;
+${cors}
+      proxy_pass http://host.docker.internal:8082/users/;
       proxy_set_header Host \$host;
+    }
+
+    location /service/matrix/ {
+${cors}
+      proxy_pass http://host.docker.internal:8082/matrix/;
+      proxy_set_header Host \$host;
+    }
+
+    location /service/conversations/ {
+${cors}
+      proxy_pass http://host.docker.internal:8082/conversations/;
+      proxy_set_header Host \$host;
+    }
+
+    location /service/live/ {
+${cors}
+      default_type application/json;
+      return 404 '{"error":"local live service is not configured"}';
     }
 
     location /service/tenant/ {
+${cors}
       proxy_pass http://host.docker.internal:8081/tenant/;
-      proxy_set_header Host \$host;
+      # TenantService resolves anonymous tenant context from the first subdomain.
+      # Plain localhost has no parent domain, so present the seeded local tenant
+      # as localhost.localhost while keeping the browser URL on localhost.
+      proxy_set_header Host localhost.localhost;
+    }
+
+    location = /service/tenant {
+${cors}
+      proxy_pass http://host.docker.internal:8081/tenant;
+      proxy_set_header Host localhost.localhost;
     }
 
     location /service/tenantadmin/ {
+${cors}
       proxy_pass http://host.docker.internal:8081/tenantadmin/;
       proxy_set_header Host \$host;
     }
 
     location /service/agencyadmin/ {
+${cors}
       proxy_pass http://host.docker.internal:8084/agencyadmin/;
       proxy_set_header Host \$host;
     }
 
     location /service/agencies/ {
+${cors}
       proxy_pass http://host.docker.internal:8084/agencies/;
       proxy_set_header Host \$host;
     }
 
+    location = /service/agencies {
+${cors}
+      proxy_pass http://host.docker.internal:8084/agencies;
+      proxy_set_header Host \$host;
+    }
+
+    location /service/topic/ {
+${cors}
+      proxy_pass http://host.docker.internal:8083/topic/;
+      proxy_set_header Host \$host;
+    }
+
+    location = /service/topic {
+${cors}
+      proxy_pass http://host.docker.internal:8083/topic;
+      proxy_set_header Host \$host;
+    }
+
+    location /service/topic-groups {
+${cors}
+      proxy_pass http://host.docker.internal:8083/topic-groups;
+      proxy_set_header Host \$host;
+    }
+
     location /service/consultingtypes {
+${cors}
       proxy_pass http://host.docker.internal:8083/consultingtypes;
       proxy_set_header Host \$host;
     }
 
     location /service/settingsadmin {
+${cors}
       proxy_pass http://host.docker.internal:8083/settingsadmin;
       proxy_set_header Host \$host;
     }
 
     location /service/settings {
+${cors}
       proxy_pass http://host.docker.internal:8083/settings;
       proxy_set_header Host \$host;
     }
@@ -560,9 +922,12 @@ EOF
 start_gateway() {
   need_command docker
   docker_running || die "Docker is not running. Start Docker Desktop first."
+  validate_mode
+  resolve_mode_defaults
   write_gateway_conf
   log "Starting local API gateway on http://localhost:${GATEWAY_PORT}"
   docker rm -f oriso-local-gateway >/dev/null 2>&1 || true
+  kill_port_listener gateway "${GATEWAY_PORT}"
   docker run -d \
     --name oriso-local-gateway \
     -p "127.0.0.1:${GATEWAY_PORT}:80" \
@@ -598,7 +963,7 @@ common_backend_env() {
   export TENANT_SERVICE_API_URL=http://localhost:8081
   export USER_SERVICE_API_URL=http://localhost:8082
   export USER_ADMIN_SERVICE_API_URL=http://localhost:8082
-  export AGENCY_SERVICE_API_URL=http://localhost:8084/service
+  export AGENCY_SERVICE_API_URL=http://localhost:8084
   export CONSULTING_TYPE_SERVICE_API_URL=http://localhost:8083
 
   export KEYCLOAK_CONFIG_ADMIN_USERNAME="${KEYCLOAK_CONFIG_ADMIN_USERNAME}"
@@ -610,7 +975,110 @@ is_pid_running() {
   [[ -f "${pid_file}" ]] || return 1
   local pid
   pid="$(cat "${pid_file}")"
-  [[ -n "${pid}" ]] && kill -0 "${pid}" >/dev/null 2>&1
+  if [[ -n "${pid}" ]] && kill -0 "${pid}" >/dev/null 2>&1; then
+    return 0
+  fi
+  rm -f "${pid_file}"
+  return 1
+}
+
+service_port() {
+  case "$1" in
+    userservice) printf '8082' ;;
+    tenantservice) printf '8081' ;;
+    agencyservice) printf '8084' ;;
+    consultingtypeservice) printf '8083' ;;
+    admin) printf '%s' "${ADMIN_PORT}" ;;
+    frontend) printf '%s' "${FRONTEND_PORT}" ;;
+    gateway) printf '%s' "${GATEWAY_PORT}" ;;
+    *) return 1 ;;
+  esac
+}
+
+port_is_listening() {
+  local port="$1"
+  port_accepts_connections 127.0.0.1 "${port}"
+}
+
+kill_port_listener() {
+  local name="$1"
+  local port="$2"
+
+  [[ -n "${port}" ]] || return 0
+  command -v lsof >/dev/null 2>&1 || {
+    warn "Cannot clear port ${port} for ${name}: lsof is not installed"
+    return 0
+  }
+
+  local pids=()
+  local pid
+  while IFS= read -r pid; do
+    [[ -n "${pid}" ]] && pids+=("${pid}")
+  done < <(lsof -tiTCP:"${port}" -sTCP:LISTEN 2>/dev/null || true)
+
+  [[ "${#pids[@]}" -gt 0 ]] || return 0
+
+  log "Clearing ${name} port ${port}; stopping listener PID(s): ${pids[*]}"
+  kill "${pids[@]}" >/dev/null 2>&1 || true
+
+  local i
+  for i in {1..20}; do
+    if ! port_is_listening "${port}"; then
+      return 0
+    fi
+    sleep 0.25
+  done
+
+  warn "${name} port ${port} is still busy; forcing listener PID(s): ${pids[*]}"
+  kill -9 "${pids[@]}" >/dev/null 2>&1 || true
+
+  for i in {1..20}; do
+    if ! port_is_listening "${port}"; then
+      return 0
+    fi
+    sleep 0.25
+  done
+
+  die "Port ${port} is still busy for ${name}. Stop that process manually, then rerun."
+}
+
+wait_for_service_ports() {
+  local services=("$@")
+  local timeout_seconds="${ORISO_STARTUP_TIMEOUT_SECONDS:-600}"
+  local deadline=$((SECONDS + timeout_seconds))
+  local pending=()
+  local svc port
+
+  for svc in "${services[@]}"; do
+    port="$(service_port "${svc}" 2>/dev/null || true)"
+    [[ -n "${port}" ]] || continue
+    pending+=("${svc}:${port}")
+  done
+
+  [[ "${#pending[@]}" -gt 0 ]] || return 0
+
+  log "Waiting for service ports (timeout ${timeout_seconds}s). First Maven start can take several minutes."
+  while [[ "${#pending[@]}" -gt 0 && "${SECONDS}" -lt "${deadline}" ]]; do
+    local next_pending=()
+    for entry in "${pending[@]}"; do
+      svc="${entry%%:*}"
+      port="${entry#*:}"
+      if port_is_listening "${port}"; then
+        log "${svc} is listening on port ${port}"
+      else
+        next_pending+=("${entry}")
+      fi
+    done
+    pending=("${next_pending[@]}")
+    [[ "${#pending[@]}" -eq 0 ]] && break
+    sleep 5
+  done
+
+  if [[ "${#pending[@]}" -gt 0 ]]; then
+    warn "Timed out waiting for: ${pending[*]}. Check logs with: $0 logs <service>"
+    return 1
+  fi
+  return 0
 }
 
 start_background() {
@@ -627,10 +1095,8 @@ start_background() {
   local log_file="${LOG_DIR}/${name}.log"
 
   ensure_runtime_dirs
-  if is_pid_running "${pid_file}"; then
-    log "${name} already running with PID $(cat "${pid_file}")"
-    return 0
-  fi
+  stop_pid "${name}"
+  kill_port_listener "${name}" "${port}"
 
   log "Starting ${name} on port ${port}; log: ${log_file}"
   (
@@ -641,9 +1107,9 @@ start_background() {
     export SPRING_DATASOURCE_USERNAME="${db_user}"
     export SPRING_DATASOURCE_PASSWORD="${db_password}"
     if [[ -n "${jvm_arguments}" ]]; then
-      nohup ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev -Dspring-boot.run.jvmArguments="${jvm_arguments}" > "${log_file}" 2>&1 &
+      nohup ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev -Dspring-boot.run.jvmArguments="${jvm_arguments}" -Dmaven.test.skip=true </dev/null > "${log_file}" 2>&1 &
     else
-      nohup ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev > "${log_file}" 2>&1 &
+      nohup ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev -Dmaven.test.skip=true </dev/null > "${log_file}" 2>&1 &
     fi
     echo $! > "${pid_file}"
   )
@@ -651,8 +1117,26 @@ start_background() {
 
 write_admin_env() {
   local env_file="${ROOT_DIR}/ORISO-Admin/.env.local"
-  if [[ -f "${env_file}" ]]; then
+  if [[ -f "${env_file}" && "${ORISO_FORCE_ENV}" != "1" && ! is_hybrid_mode ]]; then
     log "Keeping existing ${env_file}"
+    return 0
+  fi
+
+  if is_hybrid_mode; then
+    log "Writing hybrid ${env_file} (local API gateway + dev Keycloak)"
+    cat > "${env_file}" <<EOF
+VITE_PORT=${ADMIN_PORT}
+BROWSER=none
+VITE_CSRF_WHITELIST_HEADER_FOR_LOCAL_DEVELOPMENT=X-CSRF-Token
+VITE_API_URL=localhost:${GATEWAY_PORT}
+VITE_USE_API_URL=true
+VITE_USE_HTTPS=false
+VITE_KEYCLOAK_URL=${KEYCLOAK_URL}
+VITE_KEYCLOAK_REALM=${KEYCLOAK_REALM}
+VITE_KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
+VITE_COOKIE_DOMAIN=localhost
+VITE_COOKIE_SECURE=false
+EOF
     return 0
   fi
 
@@ -675,10 +1159,8 @@ start_admin() {
   local log_file="${LOG_DIR}/${name}.log"
   ensure_runtime_dirs
 
-  if is_pid_running "${pid_file}"; then
-    log "admin already running with PID $(cat "${pid_file}")"
-    return 0
-  fi
+  stop_pid "${name}"
+  kill_port_listener "${name}" "${ADMIN_PORT}"
 
   write_admin_env
   log "Starting Admin UI on http://localhost:${ADMIN_PORT}/admin; log: ${log_file}"
@@ -688,22 +1170,37 @@ start_admin() {
       echo "[oriso-local] ORISO-Admin/node_modules missing; running npm install"
       npm install
     fi
-    nohup npm run start > "${log_file}" 2>&1 &
+    if [[ -f .env.local ]]; then
+      set -a
+      # shellcheck disable=SC1091
+      source .env.local
+      set +a
+    fi
+    node scripts/generate-runtime-env.js public/env.js
+    nohup npm run start </dev/null > "${log_file}" 2>&1 &
     echo $! > "${pid_file}"
   )
 }
 
 write_frontend_env() {
   local env_file="${ROOT_DIR}/ORISO-Frontend/.env.local"
-  if [[ -f "${env_file}" ]]; then
+  if [[ -f "${env_file}" && "${ORISO_FORCE_ENV}" != "1" && ! is_hybrid_mode ]]; then
     log "Keeping existing ${env_file}"
     return 0
   fi
 
-  log "Creating ${env_file}"
+  if is_hybrid_mode; then
+    log "Writing hybrid ${env_file} (local API gateway + dev Keycloak)"
+  else
+    log "Creating ${env_file}"
+  fi
   cat > "${env_file}" <<EOF
 PORT=${FRONTEND_PORT}
 BROWSER=none
+CI=true
+DISABLE_ESLINT_PLUGIN=true
+TSC_COMPILE_ON_ERROR=true
+FAST_REFRESH=false
 HTTPS=false
 WDS_SOCKET_PORT=${FRONTEND_PORT}
 PUBLIC_URL=/
@@ -711,6 +1208,12 @@ REACT_APP_API_URL=http://localhost:${GATEWAY_PORT}
 VITE_API_URL=http://localhost:${GATEWAY_PORT}
 REACT_APP_AUTH_URL=${KEYCLOAK_URL}
 VITE_AUTH_URL=${KEYCLOAK_URL}
+REACT_APP_KEYCLOAK_URL=${KEYCLOAK_URL}
+VITE_KEYCLOAK_URL=${KEYCLOAK_URL}
+REACT_APP_KEYCLOAK_REALM=${KEYCLOAK_REALM}
+VITE_KEYCLOAK_REALM=${KEYCLOAK_REALM}
+REACT_APP_KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
+VITE_KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
 REACT_APP_MATRIX_HOMESERVER_URL=http://localhost:8008
 VITE_MATRIX_HOMESERVER_URL=http://localhost:8008
 REACT_APP_USE_HTTPS=false
@@ -725,20 +1228,22 @@ start_frontend() {
   local log_file="${LOG_DIR}/${name}.log"
   ensure_runtime_dirs
 
-  if is_pid_running "${pid_file}"; then
-    log "frontend already running with PID $(cat "${pid_file}")"
-    return 0
-  fi
+  stop_pid "${name}"
+  kill_port_listener "${name}" "${FRONTEND_PORT}"
 
   write_frontend_env
   log "Starting ORISO-Frontend on http://localhost:${FRONTEND_PORT}; log: ${log_file}"
   (
     cd "${ROOT_DIR}/ORISO-Frontend"
+    if [[ -x "${FRONTEND_NODE_BIN}/node" ]]; then
+      export PATH="${FRONTEND_NODE_BIN}:$PATH"
+      log "Using ORISO-Frontend Node: $(node -v)"
+    fi
     if [[ ! -d node_modules ]]; then
       echo "[oriso-local] ORISO-Frontend/node_modules missing; running npm install"
       npm install
     fi
-    nohup npm run dev > "${log_file}" 2>&1 &
+    nohup npm run dev </dev/null > "${log_file}" 2>&1 &
     echo $! > "${pid_file}"
   )
 }
@@ -774,6 +1279,16 @@ start_selected_services() {
         ;;
     esac
   done
+
+  local wait_targets=()
+  for svc in ${service_list}; do
+    case "${svc}" in
+      userservice|tenantservice|agencyservice|consultingtypeservice|admin|frontend|gateway)
+        wait_targets+=("${svc}")
+        ;;
+    esac
+  done
+  wait_for_service_ports "${wait_targets[@]}" || true
 }
 
 start_all() {
@@ -782,6 +1297,10 @@ start_all() {
   init_db
   start_selected_services
   status
+  if is_hybrid_mode; then
+    log "Hybrid mode active: APIs on http://localhost:${GATEWAY_PORT}, auth at ${KEYCLOAK_URL}"
+    log "Log in with your dev Keycloak account (no local realm import required)"
+  fi
   if [[ "${UI_MODE}" == "admin" || "${UI_MODE}" == "both" || "${SERVICE_OVERRIDE}" == *"admin"* ]]; then
     log "Open Admin UI: http://localhost:${ADMIN_PORT}/admin"
   fi
@@ -825,20 +1344,34 @@ stop_all() {
 }
 
 show_pid_status() {
-  local svc
-  for svc in "${ALL_SERVICES[@]}"; do
+  local svc port
+  for svc in "${ALL_SERVICES[@]}" gateway; do
     local pid_file="${PID_DIR}/${svc}.pid"
+    port="$(service_port "${svc}" 2>/dev/null || true)"
+    if [[ "${svc}" == "gateway" ]]; then
+      if docker ps --format '{{.Names}}' | grep -qx 'oriso-local-gateway'; then
+        printf '%-24s running container=oriso-local-gateway\n' "gateway"
+        continue
+      fi
+      printf '%-24s stopped\n' "gateway"
+      continue
+    fi
     if is_pid_running "${pid_file}"; then
-      printf '%-24s running pid=%s\n' "${svc}" "$(cat "${pid_file}")"
+      if [[ -n "${port}" ]] && port_is_listening "${port}"; then
+        printf '%-24s running pid=%s port=%s\n' "${svc}" "$(cat "${pid_file}")" "${port}"
+      elif [[ -n "${port}" ]]; then
+        printf '%-24s starting pid=%s (port %s not ready yet)\n' "${svc}" "$(cat "${pid_file}")" "${port}"
+      else
+        printf '%-24s running pid=%s\n' "${svc}" "$(cat "${pid_file}")"
+      fi
     else
-      printf '%-24s stopped\n' "${svc}"
+      if [[ -n "${port}" ]] && port_is_listening "${port}"; then
+        printf '%-24s running port=%s (stale pid file cleaned)\n' "${svc}" "${port}"
+      else
+        printf '%-24s stopped\n' "${svc}"
+      fi
     fi
   done
-  if docker ps --format '{{.Names}}' | grep -qx 'oriso-local-gateway'; then
-    printf '%-24s running container=oriso-local-gateway\n' "gateway"
-  else
-    printf '%-24s stopped\n' "gateway"
-  fi
 }
 
 status() {
@@ -856,12 +1389,14 @@ status() {
     "userservice:http://localhost:8082/actuator/health" \
     "consultingtypeservice:http://localhost:8083/actuator/health" \
     "agencyservice:http://localhost:8084/actuator/health" \
-    "admin:http://localhost:${ADMIN_PORT}/admin" \
-    "frontend:http://localhost:${FRONTEND_PORT}"; do
+    "admin:http://localhost:${ADMIN_PORT}/admin/" \
+    "frontend:http://localhost:${FRONTEND_PORT}/"; do
     local name="${endpoint%%:*}"
     local url="${endpoint#*:}"
-    if curl -fsS --max-time 2 "${url}" >/dev/null 2>&1; then
+    if curl -fsS --max-time 5 -L "${url}" >/dev/null 2>&1; then
       printf '%-24s OK %s\n' "${name}" "${url}"
+    elif port_is_listening "$(service_port "${name}" 2>/dev/null || echo 0)"; then
+      printf '%-24s port open (health URL not ready yet) %s\n' "${name}" "${url}"
     else
       printf '%-24s not ready %s\n' "${name}" "${url}"
     fi
@@ -901,6 +1436,9 @@ main() {
   local command="${1:-}"
   shift || true
 
+  validate_mode
+  resolve_mode_defaults
+
   case "${command}" in
     check)
       parse_common_options "$@"
@@ -930,12 +1468,15 @@ main() {
       esac
       ;;
     init-db)
+      parse_common_options "$@"
       init_db
       ;;
     gateway)
+      parse_common_options "$@"
       start_gateway
       ;;
     status)
+      parse_common_options "$@"
       status
       ;;
     logs)

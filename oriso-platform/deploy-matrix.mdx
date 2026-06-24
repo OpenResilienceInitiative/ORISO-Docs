@@ -77,13 +77,13 @@ kubectl exec -n caritas deployment/oriso-platform-matrix-synapse -- \
   curl -s http://localhost:8008/_matrix/client/versions
 
 # Check Matrix Synapse API (via Ingress)
-curl -s https://matrix.oriso-dev.site/_matrix/client/versions
+curl -s https://matrix.oriso.org/_matrix/client/versions
 
 # Check Discovery service
 curl -s http://91.99.219.182/.well-known/matrix/server
 
 # Check Element.io (if deployed)
-curl -I https://element.oriso-dev.site
+curl -I https://element.oriso.org
 ```
 
 <Check>
@@ -130,7 +130,7 @@ cat .env | grep MATRIX
 
 ### Matrix Synapse
 - **Service:** `oriso-platform-matrix-synapse.caritas.svc.cluster.local:8008`
-- **External:** `https://matrix.oriso-dev.site`
+- **External:** `https://matrix.oriso.org`
 - **Database:** PostgreSQL (synapse database)
 - **Purpose:** Matrix homeserver for chat
 
@@ -141,7 +141,7 @@ cat .env | grep MATRIX
 
 ### Element.io (Optional)
 - **Service:** `oriso-platform-element`
-- **External:** `https://element.oriso-dev.site` or `http://91.99.219.182:8087`
+- **External:** `https://element.oriso.org` or `http://91.99.219.182:8087`
 - **Purpose:** Web client for Matrix
 
 ## Integration Details

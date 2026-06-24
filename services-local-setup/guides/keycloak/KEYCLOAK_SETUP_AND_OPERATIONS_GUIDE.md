@@ -170,7 +170,7 @@ Fix:
 
 ## 8) Environment Notes
 
-- ORISO Kubernetes values currently reference domains under `*.oriso-dev.site`.
+- ORISO Kubernetes values currently reference domains under `*.oriso.org`.
 - Recovery and security docs flag this domain as sensitive/legacy-risk in parts of the repository.
 - Keep domain ownership/security review aligned with platform/security runbooks.
 

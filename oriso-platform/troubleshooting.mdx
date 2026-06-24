@@ -195,7 +195,7 @@ kubectl exec -n caritas deployment/oriso-platform-keycloak -- \
   curl -I http://localhost:8080
 
 # Verify Keycloak is accessible (external via Ingress)
-curl -I https://auth.oriso-dev.site
+curl -I https://auth.oriso.org
 
 # Check Keycloak service
 kubectl get svc -n caritas oriso-platform-keycloak
@@ -303,7 +303,7 @@ kubectl describe ingress -n caritas
 kubectl get ingress -n caritas -o yaml | grep -A 5 cors
 
 # Verify backend is accessible
-curl -I https://api.oriso-dev.site/actuator/health
+curl -I https://api.oriso.org/actuator/health
 ```
 
 ### Ingress Not Working
@@ -319,7 +319,7 @@ kubectl get ingress -n caritas
 kubectl logs -n ingress-nginx -l app.kubernetes.io/component=controller --tail=100
 
 # Test Ingress routing
-curl -I https://app.oriso-dev.site
+curl -I https://app.oriso.org
 ```
 
 ### TLS Certificate Issues

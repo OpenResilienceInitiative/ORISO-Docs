@@ -124,6 +124,32 @@ Optional for deeper chat/call/runtime work:
 
 - [run-oriso-local.sh](./run-oriso-local.sh)
 
+### Hybrid mode (recommended for Admin/backend work)
+
+Run **ORISO services locally** but use **dev Keycloak** — no local realm import, no local Keycloak container:
+
+```bash
+./ORISO-Docs/services-local-setup/run-oriso-local.sh start --hybrid --ui admin
+```
+
+This starts MariaDB, MongoDB, Redis, RabbitMQ, all four backend services, the local API gateway (`localhost:8088`), and Admin UI. Auth uses `https://auth.oriso.org` by default (`ORISO_DEV_KEYCLOAK_URL`).
+
+Open Admin: `http://localhost:9000/admin` — log in with your **dev Keycloak account**.
+
+Equivalent env form:
+
+```bash
+ORISO_MODE=hybrid ./ORISO-Docs/services-local-setup/run-oriso-local.sh start --ui admin
+```
+
+The script writes `ORISO-Admin/.env.local` with local API + dev Keycloak settings. Set `ORISO_FORCE_ENV=1` to rewrite an existing file.
+
+### Full local mode (includes Keycloak)
+
+```bash
+./ORISO-Docs/services-local-setup/run-oriso-local.sh start --ui admin
+```
+
 Quick commands:
 
 ```bash

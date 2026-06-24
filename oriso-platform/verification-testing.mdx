@@ -50,7 +50,7 @@ Test health endpoints for all backend services.
 
 ```bash
 # Test via Ingress (external)
-curl -s https://api.oriso-dev.site/actuator/health | jq .
+curl -s https://api.oriso.org/actuator/health | jq .
 
 # Or test internally
 kubectl exec -n caritas deployment/oriso-platform-userservice -- \
@@ -76,13 +76,13 @@ Verify frontend applications are accessible via Ingress.
 
 ```bash
 # Test Frontend
-curl -I https://app.oriso-dev.site
+curl -I https://app.oriso.org
 
 # Test Admin
-curl -I https://admin.oriso-dev.site
+curl -I https://admin.oriso.org
 
 # Check Ingress routing
-kubectl describe ingress -n caritas | grep -A 5 "app.oriso-dev.site"
+kubectl describe ingress -n caritas | grep -A 5 "app.oriso.org"
 ```
 
 <Check>
@@ -97,10 +97,10 @@ Verify Keycloak authentication is working.
 
 ```bash
 # Test Keycloak realm discovery
-curl -s https://auth.oriso-dev.site/realms/online-beratung/.well-known/openid-configuration | jq .realm
+curl -s https://auth.oriso.org/realms/online-beratung/.well-known/openid-configuration | jq .realm
 
 # Test token endpoint
-curl -X POST "https://auth.oriso-dev.site/realms/online-beratung/protocol/openid-connect/token" \
+curl -X POST "https://auth.oriso.org/realms/online-beratung/protocol/openid-connect/token" \
   -H "Content-Type: application/x-www-form-urlencoded" \
   -d "client_id=app" \
   -d "username=testuser" \
@@ -121,7 +121,7 @@ Test backend API endpoints with authentication.
 
 ```bash
 # Get access token first
-ACCESS_TOKEN=$(curl -s -X POST "https://auth.oriso-dev.site/realms/online-beratung/protocol/openid-connect/token" \
+ACCESS_TOKEN=$(curl -s -X POST "https://auth.oriso.org/realms/online-beratung/protocol/openid-connect/token" \
   -H "Content-Type: application/x-www-form-urlencoded" \
   -d "client_id=app" \
   -d "username=testuser" \
@@ -130,10 +130,10 @@ ACCESS_TOKEN=$(curl -s -X POST "https://auth.oriso-dev.site/realms/online-beratu
 
 # Test API endpoints via Ingress
 curl -H "Authorization: Bearer $ACCESS_TOKEN" \
-  https://api.oriso-dev.site/api/tenants | jq .
+  https://api.oriso.org/api/tenants | jq .
 
 curl -H "Authorization: Bearer $ACCESS_TOKEN" \
-  https://api.oriso-dev.site/api/users/data | jq .
+  https://api.oriso.org/api/users/data | jq .
 ```
 
 <Check>
@@ -148,7 +148,7 @@ Verify Matrix Synapse is operational.
 
 ```bash
 # Test Matrix API
-curl -s https://matrix.oriso-dev.site/_matrix/client/versions | jq .
+curl -s https://matrix.oriso.org/_matrix/client/versions | jq .
 
 # Test Matrix discovery
 curl -s http://91.99.219.182/.well-known/matrix/server | jq .
@@ -220,12 +220,12 @@ kubectl run test-pod --rm -it --image=busybox -n caritas -- \
 - [ ] All services are created (`kubectl get svc -n caritas`)
 - [ ] Ingress resources are created (`kubectl get ingress -n caritas`)
 - [ ] TLS certificates are issued (`kubectl get certificate -n caritas`)
-- [ ] Frontend is accessible (`curl -I https://app.oriso-dev.site`)
-- [ ] Admin is accessible (`curl -I https://admin.oriso-dev.site`)
-- [ ] API is accessible (`curl -I https://api.oriso-dev.site`)
-- [ ] Keycloak is accessible (`curl -I https://auth.oriso-dev.site`)
-- [ ] Matrix is accessible (`curl -I https://matrix.oriso-dev.site`)
-- [ ] Health endpoints return UP (`curl https://api.oriso-dev.site/actuator/health`)
+- [ ] Frontend is accessible (`curl -I https://app.oriso.org`)
+- [ ] Admin is accessible (`curl -I https://admin.oriso.org`)
+- [ ] API is accessible (`curl -I https://api.oriso.org`)
+- [ ] Keycloak is accessible (`curl -I https://auth.oriso.org`)
+- [ ] Matrix is accessible (`curl -I https://matrix.oriso.org`)
+- [ ] Health endpoints return UP (`curl https://api.oriso.org/actuator/health`)
 - [ ] Authentication works (token endpoint returns tokens)
 - [ ] Backend APIs work (with authentication)
 - [ ] Database connections work (services can connect)
@@ -254,7 +254,7 @@ kubectl get pods -n ingress-nginx
 kubectl describe ingress -n caritas
 
 # Check DNS resolution
-dig app.oriso-dev.site
+dig app.oriso.org
 ```
 
 ### Health Checks Failing
