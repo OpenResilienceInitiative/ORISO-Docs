@@ -1,0 +1,74 @@
+[
+  {
+    "repo": "ORISO-Frontend",
+    "graphFound": true,
+    "size": "1.7 MB",
+    "modifiedAt": "2026-05-27T17:49:04.040Z",
+    "completeness": "1967 nodes; 4204 edges; 884 file/module; 983 class/function; 76 config",
+    "weak": "No endpoint nodes detected; API/routes may only be represented as files/functions.; No visual graph artifacts found."
+  },
+  {
+    "repo": "ORISO-Admin",
+    "graphFound": true,
+    "size": "692.1 KB",
+    "modifiedAt": "2026-05-27T17:54:42.539Z",
+    "completeness": "776 nodes; 1547 edges; 444 file/module; 318 class/function; 10 config",
+    "weak": "No endpoint nodes detected; API/routes may only be represented as files/functions."
+  },
+  {
+    "repo": "ORISO-UserService",
+    "graphFound": true,
+    "size": "3.2 MB",
+    "modifiedAt": "2026-05-27T18:55:01.072Z",
+    "completeness": "2295 nodes; 3854 edges; 908 file/module; 983 class/function; 182 API/route; 91 config",
+    "weak": "Database tables may be represented in ORISO-Database, not this service graph."
+  },
+  {
+    "repo": "ORISO-AgencyService",
+    "graphFound": true,
+    "size": "784.3 KB",
+    "modifiedAt": "2026-05-27T19:41:15.738Z",
+    "completeness": "623 nodes; 835 edges; 221 file/module; 224 class/function; 86 API/route; 35 config",
+    "weak": "Source graph uses legacy edge direction labels; merge normalized directions and preserves originalDirection."
+  },
+  {
+    "repo": "ORISO-ConsultingTypeService",
+    "graphFound": true,
+    "size": "574.2 KB",
+    "modifiedAt": "2026-05-28T02:36:14.011Z",
+    "completeness": "470 nodes; 515 edges; 158 file/module; 160 class/function; 32 API/route; 51 config",
+    "weak": "No major graph-shape gaps detected; still verify behavior in source before changing production flows."
+  },
+  {
+    "repo": "ORISO-TenantService",
+    "graphFound": true,
+    "size": "466.2 KB",
+    "modifiedAt": "2026-05-28T03:00:43.072Z",
+    "completeness": "380 nodes; 623 edges; 107 file/module; 98 class/function; 66 API/route; 16 config",
+    "weak": "No major graph-shape gaps detected; still verify behavior in source before changing production flows."
+  },
+  {
+    "repo": "ORISO-Database",
+    "graphFound": true,
+    "size": "217.3 KB",
+    "modifiedAt": "2026-05-28T13:17:38.847Z",
+    "completeness": "192 nodes; 312 edges; 11 file/module; 13 class/function; 8 config",
+    "weak": "No major graph-shape gaps detected; still verify behavior in source before changing production flows."
+  },
+  {
+    "repo": "ORISO-Keycloak",
+    "graphFound": true,
+    "size": "133.6 KB",
+    "modifiedAt": "2026-05-28T03:28:07.952Z",
+    "completeness": "152 nodes; 247 edges; 9 file/module; 0 class/function; 7 API/route; 2 config",
+    "weak": "No major graph-shape gaps detected; still verify behavior in source before changing production flows."
+  },
+  {
+    "repo": "ORISO-Kubernetes",
+    "graphFound": true,
+    "size": "347.0 KB",
+    "modifiedAt": "2026-05-28T16:08:39.879Z",
+    "completeness": "339 nodes; 588 edges; 13 file/module; 0 class/function; 68 API/route; 53 config",
+    "weak": "No major graph-shape gaps detected; still verify behavior in source before changing production flows."
+  }
+]

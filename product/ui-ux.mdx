@@ -1,0 +1,295 @@
+---
+title: "UI / UX Interpretation (From Figma)"
+description: "Reading of the Figma diagram and the visible production screens: each screen's purpose, key components, user actions, and backend interaction."
+---
+
+<Info>
+This page interprets the **Figma role-hierarchy + live-chat flow** diagram (reproduced below) and the visible production screens captured in the same file. It is the bridge between the role/feature pages and the actual pixels a designer or frontend dev sees.
+</Info>
+
+## 8.1 The Reference Diagram
+
+![Role hierarchy, GDPR inheritance and live-chat flow](/product/assets/role-hierarchy-and-live-chat-flow.png)
+
+The diagram captures three things in one frame:
+
+1. **Top-right:** the role hierarchy (Platform Admin → Tenant Admin → Counselor Admin → Counselor) with the **MFA must** annotation on Platform Admin and Tenant Admin, and the **Imprint / Data Policy / GDPR Agreement** documents attached to each tier.
+2. **Middle:** how legal text inherits down the tree (solid arrows = create, dashed = inherit / fallback) into the **Counseling Centers** and from there to the live-chat ticket flow.
+3. **Bottom-left:** two iPhone mockups showing the **Waiting Room (Warteraum)** with a GDPR consent pop-up ("Bestätigen") and the queue position indicator ("23 Noch vor Ihnen").
+
+We document each visible screen below, in the order a real client or staff member encounters them.
+
+## 8.2 Screens
+
+### 8.2.1 Public Live-Chat Landing → Waiting Room (Client, mobile)
+
+> The bottom-left phone in the diagram. German label: *Warteraum*.
+
+| Aspect | Detail |
+|---|---|
+| **Screen name** | Waiting Room — Pre-consent state |
+| **Audience** | Anonymous Client, mobile-first |
+| **Purpose** | Capture initial GDPR consent and put the client into the queue. |
+| **Key components** | Header *Warteraum* with timer; pseudonym block (*"DEIN PSEUDONYM — geschmeidiges Kanninchen Kim"*); explanatory text ("Hallo, bevor wir fortfahren, bestätigen Sie bitte für diese Sitzung unserer auflagig diagnostizen Benutzerinnen…"); animated cat avatar; bottom modal with "Bestätigen" CTA and language / app-grid icons. |
+| **User actions** | Read consent text → tap **Bestätigen** to confirm the platform-default GDPR. (Optional) tap the language globe to switch language. |
+| **Backend interaction** | On entry: `POST /live-chat/anonymous` returns ticket id + cookie. On confirm: `POST /live-chat/consent?level=platform` records consent. Frontend then transitions to the queued state. |
+| **Notes / rules** | Pseudonym is deterministic-on-randomness; never reused. The page must default to the **browser's language** (English fallback, *not* German) on first paint. |
+
+### 8.2.2 Waiting Room — Queued state (Client, mobile)
+
+> The right-hand phone in the diagram.
+
+| Aspect | Detail |
+|---|---|
+| **Screen name** | Waiting Room — Queued |
+| **Audience** | Anonymous Client |
+| **Purpose** | Reassure the client during the wait, surface E2EE guarantee, allow self-service routing changes. |
+| **Key components** | Privacy reassurance banner (*"Vielen Dank, übrigens zum Schutz Ihrer Privatsphäre sind alle Nachrichten Ende-zu-Ende verschlüsselt und werden noch nach 48 Stunden automatisch gelöscht."*); emoji breathing-game button; the **"23 Noch vor Ihnen"** queue counter; an "Vor Ort Beratungsanfrage absenden" CTA (file an in-person enquiry instead); a *Spiel zu warten* (game while you wait) link. |
+| **User actions** | Wait. Optionally play the breathing-game animation. Optionally switch to an enquiry. Optionally cancel (closes tab → wipe). |
+| **Backend interaction** | Periodic heartbeat to `POST /sessions/{id}/heartbeat` (or WS); queue position fed by Redis; counselor-acceptance push delivered via Redis Pub/Sub. |
+| **Notes / rules** | Counter must be **live** (update on Pub/Sub events, not polling). The wording on retention (48 h) must be honoured — it's a public promise. |
+
+### 8.2.3 GDPR Consent #2 (Client, mobile, full-screen)
+
+> Implied by the central diagram node *"Client must agree to GDPR of Counseling Center"*.
+
+| Aspect | Detail |
+|---|---|
+| **Screen name** | Counseling-Center GDPR Consent |
+| **Audience** | Anonymous Client at the moment a counselor accepts their ticket |
+| **Purpose** | Take the **counseling-center-specific** GDPR agreement before opening the chat room. |
+| **Key components** | Full-screen sheet; centered "Einverstanden" / "Bestätigen" CTA; a "Reject" link; the counseling-center's name and Imprint excerpt. |
+| **User actions** | Read; **Confirm** (chat opens) or **Reject** (session aborted, pseudonym wiped). |
+| **Backend interaction** | `POST /live-chat/consent?level=center`. On accept: ticket → `Active`, Matrix room finalised. On reject: ticket → `Abandoned`, anonymous user wiped. |
+| **Notes / rules** | This consent is **non-skippable**. Even if the platform-level consent was given in the waiting room, this *additional* center-level consent is required. |
+
+### 8.2.4 Live Chat (Client, mobile)
+
+> Not pixel-rendered in the figma extract, but defined in the user-flow file referenced in the huddle.
+
+| Aspect | Detail |
+|---|---|
+| **Screen name** | Live Chat — Active session |
+| **Audience** | Client + Counselor |
+| **Purpose** | The actual conversation. |
+| **Key components** | Threaded message list; counselor display name + status (typing); composer with file/voice icons; "End chat" top-right ✕; "Switch to video" optional CTA. |
+| **User actions** | Send message; receive message; switch to video; end chat. |
+| **Backend interaction** | Direct Matrix sync (no UserService relay) for content; UserService receives only end-session signals via the close button. |
+| **Notes / rules** | The composer must indicate E2EE state (lock icon). The "End chat" action triggers wipe-on-disconnect for the client side. |
+
+### 8.2.5 Admin Dashboard — Tenant View (Tenant Admin)
+
+> Inferred from the diagram's *"Admin (Tenant)"* node and from the existing admin panel screens described in the huddle.
+
+| Aspect | Detail |
+|---|---|
+| **Screen name** | Admin Dashboard — Tenants tab (for Tenant Admin) |
+| **Audience** | Tenant Admin |
+| **Purpose** | Manage counseling centers, see queue health across the tenant, edit tenant-level legal templates. |
+| **Key components** | Left nav (Counseling centers, Counselors, Settings, Legal); top KPI cards (centers, active counselors, waiting clients); table of centers with status / live-chat enabled / counselor count; "Create center" CTA. |
+| **User actions** | Create center; edit a center; invite counselor admin; edit tenant Imprint / Data Policy / GDPR. |
+| **Backend interaction** | `AgencyService` for centers; `TenantService` for legal templates; `UserService` for invites. |
+
+### 8.2.6 Admin Dashboard — Center View (Counselor Admin)
+
+| Aspect | Detail |
+|---|---|
+| **Screen name** | Admin Dashboard — Center detail |
+| **Audience** | Counselor Admin |
+| **Purpose** | Operate one center: counselors, links, settings, queue. |
+| **Key components** | Tabs: Counselors / Live Chat / Topics / Settings / Legal. "Live Chat enabled" toggle. "Generate live-chat link" CTA. Counselor table with status. |
+| **User actions** | Toggle live chat; generate link; invite counselor; override legal text. |
+| **Backend interaction** | AgencyService; UserService for invites. |
+| **Notes / rules** | The Live Chat link generation UI is currently overengineered (huddle backlog item). Target UX: one button per topic, deterministic URL output. |
+
+### 8.2.7 Admin Dashboard — Live Chat tab (Counselor)
+
+| Aspect | Detail |
+|---|---|
+| **Screen name** | Live Chat — Ticket queue (counselor) |
+| **Audience** | Counselor |
+| **Purpose** | Pick a waiting client. |
+| **Key components** | "Live Chat: ON / OFF" toggle (top-right); ticket list ordered **oldest first**; each ticket shows pseudonym, "joined N min ago", topic; click → preview + Accept button. |
+| **User actions** | Toggle availability; pick ticket; (optional) decline ticket. |
+| **Backend interaction** | `GET /live-chat/tickets` (scoped to counselor's center); `POST /live-chat/accept`. |
+| **Notes / rules** | When the counselor toggles **OFF**, the section **must remain visible** in a deactivated state with a hint to re-enable. **Do not** hide the section. |
+
+### 8.2.8 Settings — Legal Templates (Platform Admin)
+
+| Aspect | Detail |
+|---|---|
+| **Screen name** | Settings → Legal Templates |
+| **Audience** | Platform Admin |
+| **Purpose** | Author the platform-default Imprint, Data Policy and GDPR text. |
+| **Key components** | Three side-by-side editors with version history; "Stamp" button (publishes a new version); preview pane in chosen language. |
+| **User actions** | Edit; stamp; preview; revert to previous version. |
+| **Backend interaction** | `TenantService` (platform-scope variant). Versioning on every save. |
+| **Notes / rules** | Until all three templates are stamped at least once, the rest of the admin panel is gated. |
+
+### 8.2.9 Counselor Profile — Live Chat Settings
+
+| Aspect | Detail |
+|---|---|
+| **Screen name** | My profile → Live Chat |
+| **Audience** | Counselor |
+| **Purpose** | Toggle personal availability; set language. |
+| **Key components** | "Live chat without registration" toggle (the German wording from the huddle); language picker; absence flag. |
+| **User actions** | Toggle on/off; switch language. |
+| **Backend interaction** | `PATCH /me/availability`. |
+
+## 8.3 Cross-Screen Interaction Patterns
+
+### 8.3.1 The two GDPR popups are different
+
+A frequent confusion: the popup in the Waiting Room is **platform-level**; the popup that appears at counselor-pickup is **center-level**. Visually they should be **distinguishable** (different headers, different "powered by …" footers).
+
+### 8.3.2 The deactivated state must be informative
+
+A live-chat section toggled off shows:
+- Greyed-out ticket list.
+- A banner *"Live chat is currently off. Activate it to start receiving requests."* with a CTA pointing to the activation toggle.
+- The same count of historical tickets (read-only) for context.
+
+### 8.3.3 The "old" inquiry section stays in place
+
+The legacy enquiry chat (zip-code based, registered) lives **alongside** live chat on the counselor's dashboard — they share the navigation but are separate sections.
+
+### 8.3.4 Mobile-first
+
+The Waiting Room and the Live Chat are designed mobile-first (the Figma mockups are iPhone-15-Pro). The admin panel is desktop-first (data tables, multi-column).
+
+## 8.4 Open Design Tickets (From Huddle)
+
+- **Live-chat onboarding redesign** — the breathing-game / waiting-room flow has half-built screens; needs to be finalised. *(Ticket: "fix live chat onboarding screen design".)*
+- **Live-chat link generation UI** — overengineered today, simplify to "one button per topic per agency".
+- **Bilingual UI** — all screens must support EN/DE side-by-side, default to browser language with EN fallback.
+- **Design-system alignment** — admin panel screens have visible drift from Figma; refactoring backlog item.
+- **Removed sections must be visibly deactivated, not hidden** — global rule.
+
+## 8.5 Recommended Visual Language
+
+(Inferred from the Figma colors visible in the diagram.)
+
+| Concept | Color cue |
+|---|---|
+| Platform / system / blocking-error | red (e.g. *Imprint, Data Policy, GDPR* nodes) |
+| Inheritance / passive | dashed grey lines |
+| Default / informational | light blue / mint (matches the docs primary `#3B82F6`) |
+| Anonymity-positive | pink-warm (the iPhone primary CTA tint in the Waiting Room — *Bestätigen* button) |
+| Live-chat action | red pill (the "23 Noch vor Ihnen" badge) |
+
+## 8.6 May-2026 Figma Additions (Screens)
+
+The May-2026 Figma drop adds the following screens. Each is fully described in the [Figma Analysis](/product/figma-analysis-2026-05).
+
+### 8.6.1 Group Chat Room (counselor + client variants)
+
+| Aspect | Detail |
+|---|---|
+| Audience | Counselor, optionally Client |
+| Key components | Group name + Supervision badge; participant initials; composer with multi-recipient picker; tools row (Reply directly, Reply in Thread, Mark Text, PII Blur, Forward, Delete, Add) |
+| Backend | Matrix room with E2EE; tool gating per chat-type Permissions Matrix; counselor-only tools rejected for client role |
+| Frontend route | `/admin/chats/{roomId}` |
+
+### 8.6.2 Multi-Recipient Picker
+
+| Aspect | Detail |
+|---|---|
+| Audience | Counselor in 2+-member rooms only |
+| Key components | "Wähle wer diese Nachricht sehen soll" header; participant list with checkboxes; "Select All Counsellors / Moderators / All"; result chip "visible only to: …"; Reply directly / Reply in Thread toggle |
+| Backend | `POST /messages/restricted` via Carimat-relay; per-recipient Megolm |
+| Hard rules | A) hide in 1-1; B) grey when 2+; C) chat-type icon; D) memorise last selection per chat; E) **always hidden for clients** |
+
+### 8.6.3 Mark Text + PII Blur Toolbar
+
+| Aspect | Detail |
+|---|---|
+| Audience | Counselor only |
+| Key components | Tiptap-style highlighter; color palette; eye toggle for blur; label dropdown ("Great Aspects", "Dangerous Behaviors", …); "send to thread" / "send to editor" buttons |
+| Backend | Encrypted Matrix annotation events; per-recipient Megolm if visibility != all |
+
+### 8.6.4 Chat Room Settings menu
+
+| Aspect | Detail |
+|---|---|
+| Audience | Counselor / Counselor Admin |
+| Key components | Items: Archive (⇧A), Mute (⇧Ö), Help requests (⇧Ä), Invite (⇧I), Supervision On/Off, Summarise (⇧Ü) |
+| Backend | Matrix state events + UserService routes |
+
+### 8.6.5 AI Chat Summary side panel
+
+| Aspect | Detail |
+|---|---|
+| Audience | Counselor |
+| Key components | "Spare Zeit, mit Hilfe unseres vollends Datenschutzkonformen KI Workflows."; bullet-summary; editable; save-as-case-note button |
+| Backend | Browser decrypts + scrubs → self-hosted summarizer |
+
+### 8.6.6 Notifications Inbox
+
+| Aspect | Detail |
+|---|---|
+| Audience | All authenticated users |
+| Key components | Type badge, Title, Body, Date `MM/DD/YYYY`, Reply button, View Chats CTA |
+| Backend | UserService notifications service; optional email mirror via SMTP |
+
+### 8.6.7 Handover Modal + System Message
+
+| Aspect | Detail |
+|---|---|
+| Audience | Counselor (sender), Counselor B (receiver), Client |
+| Key components | Reason picker (Holiday/Sickness/Emergency/Law Violation/Colleague fired/Custom); replacement counselor picker; consent flags |
+| Backend | UserService `/handover` flow; Matrix invite/remove; audit log row |
+
+### 8.6.8 Permissions Matrix (Admin)
+
+| Aspect | Detail |
+|---|---|
+| Audience | Platform / Tenant / Counselor Admin |
+| Key components | 4-column matrix (Anonyme / 1-zu-1 / Gruppen / Supervision) with toggles for each capability row |
+| Backend | TenantService + AgencyService FeaturePermission entity |
+
+### 8.6.9 Inquiry Acknowledgement / Optional Email + 2FA
+
+| Aspect | Detail |
+|---|---|
+| Audience | Client after first message |
+| Key components | "Wir haben Ihre Nachricht erhalten…"; optional email field; "Konto schützen" 2FA CTA; "Konto löschen" button |
+| Backend | UserService — privileged email column; Keycloak required-action for MFA |
+
+### 8.6.10 Filters & Phase Bar in Inbox
+
+| Aspect | Detail |
+|---|---|
+| Audience | Counselor |
+| Key components | Tabs (Ungelesen / 1-1 / Live / Gruppen / Aktiv / Termine / Archiv / Anfragen); filter chips (Personen / Type / Beratungsstelle / Archived); per-row phase pill (Anfragephase / Vermittlungsphase / Aktiv) |
+| Backend | UserService inbox endpoint with `phase` and `filter` params |
+
+### 8.6.11 File Upload Drop-Zone
+
+| Aspect | Detail |
+|---|---|
+| Audience | All members (gated by permissions) |
+| Key components | "Ziehen Sie die Datei in das Feld, um sie hochzuladen"; supported types (jpg/png/pdf/docx/xlsx); 10 MB cap |
+| Backend | Matrix media repo, encrypted at rest |
+
+## 8.7 Animation & Micro-interaction Rules (Adopted)
+
+From the Figma annotations, ORISO globally adopts:
+
+- Animations play **once** per click; never loop.
+- Animation playback speed **≤ 0.7×**.
+- Empty states use the same neutral micro-illustration set across the app.
+- Hover state is always present (never "hover-only" interactions, but always a visual hint).
+- Button container "remembers" its last open/closed state per user.
+
+## 8.8 Quick Reference for Engineers
+
+| Screen | Frontend route | API |
+|---|---|---|
+| Waiting Room (pre-consent) | `/live-chat/{slug}?topic=...` | `POST /live-chat/anonymous` |
+| Waiting Room (queued) | `/live-chat/{slug}/wait/{ticketId}` | heartbeat + WS |
+| GDPR Consent #2 | modal over above | `POST /live-chat/consent` |
+| Active chat | `/live-chat/{slug}/session/{sessionId}` | Matrix sync |
+| Counselor queue | `/admin/live-chat` | `GET /live-chat/tickets` |
+| Center detail | `/admin/centers/{id}` | AgencyService routes |
+| Settings → Legal | `/admin/settings/legal` | TenantService routes |

@@ -1,0 +1,15 @@
+sequenceDiagram
+  autonumber
+  actor Person
+  participant App as Frontend/Admin
+  participant KC as Keycloak
+  participant API as Backend service
+  participant DB as Service-owned DB
+  Person->>App: Open protected flow
+  App->>KC: OIDC login
+  KC-->>App: Access and refresh tokens
+  App->>API: Bearer token API request
+  API->>API: Validate issuer/JWK/roles/tenant context
+  API->>DB: Read/write owned data
+  DB-->>API: Result
+  API-->>App: Response

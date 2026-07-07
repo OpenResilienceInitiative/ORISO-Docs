@@ -1,0 +1,11 @@
+flowchart LR
+  Values[Helm values and env config] --> Umbrella[helm/oriso-platform]
+  Umbrella --> Stores[MariaDB MongoDB Redis RabbitMQ]
+  Stores --> Keycloak[Keycloak]
+  Keycloak --> Comms[Matrix Element Element-Call LiveKit]
+  Comms --> Backends[Tenant User Agency ConsultingType]
+  Backends --> Apps[Frontend Admin]
+  Apps --> Ingress[Ingress DNS TLS]
+  Backends --> Ingress
+  Keycloak --> Ingress
+  Umbrella --> Observability[SigNoZ OTEL Health Status]

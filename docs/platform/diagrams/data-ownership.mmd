@@ -1,0 +1,12 @@
+flowchart TB
+  TenantService[TenantService] --> TenantDB[(tenantservice.tenant)]
+  UserService[UserService] --> UserDB[(userservice user session chat appointment tables)]
+  AgencyService[AgencyService] --> AgencyDB[(agencyservice agency postcode topic tables)]
+  ConsultingTypeService[ConsultingTypeService] --> ConsultingDB[(consultingtypeservice topic tables)]
+  ConsultingTypeService --> Mongo[(MongoDB application_settings consulting_types)]
+  Matrix[Matrix Synapse] --> MatrixPG[(Matrix PostgreSQL)]
+  Upload[UploadService - not included] --> UploadDB[(uploadservice.uploadbyuser)]
+  Video[VideoService - not included] --> VideoDB[(videoservice.videoroom)]
+  TenantDB -. tenant_id convention .-> UserDB
+  TenantDB -. tenant_id convention .-> AgencyDB
+  TenantDB -. tenant_id convention .-> ConsultingDB

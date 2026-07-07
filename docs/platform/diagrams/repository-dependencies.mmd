@@ -1,0 +1,21 @@
+flowchart LR
+  ORISO_Frontend[ORISO-Frontend]
+  ORISO_Admin[ORISO-Admin]
+  ORISO_UserService[ORISO-UserService]
+  ORISO_AgencyService[ORISO-AgencyService]
+  ORISO_ConsultingTypeService[ORISO-ConsultingTypeService]
+  ORISO_TenantService[ORISO-TenantService]
+  ORISO_Database[ORISO-Database]
+  ORISO_Keycloak[ORISO-Keycloak]
+  ORISO_Kubernetes[ORISO-Kubernetes]
+  ORISO_Frontend -->|depends_on| ORISO_Keycloak
+  ORISO_Frontend -->|depends_on| ORISO_UserService
+  ORISO_Frontend -->|depends_on| ORISO_Kubernetes
+  ORISO_Frontend -->|depends_on| ORISO_AgencyService
+  ORISO_Frontend -->|related| ORISO_Keycloak
+  ORISO_Frontend -->|related| ORISO_UserService
+  ORISO_Frontend -->|related| ORISO_Kubernetes
+  ORISO_Admin -->|depends_on| ORISO_Kubernetes
+  ORISO_Admin -->|depends_on| ORISO_Keycloak
+  ORISO_Admin -->|related| ORISO_Kubernetes
+  ORISO_Admin -->|related| ORISO_Keycloak

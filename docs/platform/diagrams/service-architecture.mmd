@@ -1,0 +1,43 @@
+flowchart TB
+  subgraph UI
+    Frontend[ORISO-Frontend]
+    Admin[ORISO-Admin]
+  end
+  subgraph IAM
+    Keycloak[ORISO-Keycloak]
+  end
+  subgraph Backend
+    Tenant[TenantService]
+    Users[UserService]
+    Agency[AgencyService]
+    Consulting[ConsultingTypeService]
+  end
+  subgraph Data
+    MariaDB[(MariaDB schemas)]
+    Mongo[(MongoDB consulting/application docs)]
+    Redis[(Redis)]
+    Rabbit[(RabbitMQ)]
+    MatrixDB[(Matrix PostgreSQL)]
+  end
+  subgraph Runtime
+    Helm[Helm charts]
+    Ingress[Ingress host/path routing]
+  end
+  UI --> Keycloak
+  UI --> Backend
+  Backend --> Keycloak
+  Tenant --> MariaDB
+  Users --> MariaDB
+  Agency --> MariaDB
+  Consulting --> MariaDB
+  Consulting --> Mongo
+  Users --> Redis
+  Users --> Rabbit
+  Users --> MatrixDB
+  Helm --> UI
+  Helm --> IAM
+  Helm --> Backend
+  Helm --> Data
+  Ingress --> UI
+  Ingress --> Backend
+  Ingress --> Keycloak

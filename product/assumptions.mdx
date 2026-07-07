@@ -1,0 +1,159 @@
+---
+title: "Assumptions & Clarifications"
+description: "Everything that was inferred while writing this documentation: explicit assumptions, open questions, things the codebase confirmed, and things that need validation from Frank, Shazia, or product."
+---
+
+<Info>
+This page is the **honest log** of the inputs we had, what we inferred, and what should be checked against ground-truth before being treated as canonical. Read this before you cite any specific number or rule from the rest of the product docs.
+</Info>
+
+## 10.1 Inputs Used
+
+| Input | Type | What it gave us |
+|---|---|---|
+| **Frank ↔ Nikunj huddle**, 2026-05-05 (`Docs/transcriptions/5 may nikunj frnak huddle.md`, ~2 h transcript) | Voice-to-text transcript with mid-conversation Figma drawings | The 4-tier role hierarchy; the Imprint/Data-Policy/GDPR inheritance model; the live-chat consent flow; the wipe-on-disconnect rule; the "deactivated, not hidden" UX rule; the link-overengineering observation; the 48 h auto-delete promise. |
+| **Figma diagram extract** (image attached to the conversation) | Static image | Visual confirmation of the role tree, the two phone-mockup screens (Waiting Room states), and the inheritance arrows. |
+| **`ORISO-Keycloak/realm.json`** | JSON realm export | The 14 actual realm roles (vs the 4-tier business view) and which are scoped where. |
+| **`ORISO-UserService` Java code** (`UserRole.java`, `Authority.java`) | Source code | Mapping of realm roles → Spring Security granted authorities; current state of the permission matrix. |
+| **Existing `ORISO-Docs/oriso-platform/architecture/*`** | mdx | Service ports, infra topology, deployment phases, Helm/k3s setup. |
+| **`graphify-out/GRAPH_REPORT.md`** | knowledge-graph report | High-level corpus stats; community structure for navigation. |
+
+## 10.2 Things We Inferred (and labeled clearly)
+
+These are **assumptions** explicit in the docs — usually called out with `<Note>`/`<Warning>` or "(inferred)" / "(planned)" in-line.
+
+### 10.2.1 Inferred — likely correct
+
+- **Pseudonym format** (animal-adjective-name combination, ~300 M unique base names) — extrapolated from the Figma sample *"geschmeidiges Kanninchen Kim"*. The Spring code likely already implements this; needs confirmation in `UserService` source.
+- **48-hour auto-delete** — confirmed in the Figma waiting-room copy ("alle Nachrichten Ende-zu-Ende verschlüsselt und werden noch nach 48 Stunden automatisch gelöscht"). Implementation detail (Synapse retention policy) needs Shazia confirmation.
+- **Heartbeat thresholds** (30 s heartbeat, 90 s abandon, 5 min pause-to-end) — derived from Frank's stated "30 seconds, whatever, as fast as possible without hurting the server". Engineering should pin actual numbers.
+- **Magic-link 24 h expiry** — industry convention; not explicitly stated in the huddle; please verify against `UserService` config.
+- **Redis Pub/Sub for queue events** — the natural fit given the existing Redis dependency; specific implementation may differ.
+- **Tenant isolation at persistence layer** — Frank's "one hospital does not see another hospital" mapped onto a tenant-id JWT claim + `WHERE tenant_id = ?` filter. The current code does enforce this in many places; full audit recommended.
+
+### 10.2.2 Inferred — speculative / planned
+
+- **The AI note-taking pipeline** ([Section 4.1](/product/features/transcription)) is **not built today**. The flow described is a forward design proposal that respects the existing privacy guarantees. Treat as planning material, not as documentation of working code.
+- **Browser-language default with English fallback** — Frank explicitly required this UX in the huddle; whether the current frontend actually does this is not yet verified.
+- **The "Trainee" function** — Frank flagged this as a future role flag; no code exists.
+- **Counselor case-note storage** — UserService currently has no `case_note` table; the design in [Section 4.1](/product/features/transcription) and [Section 7.2.9](/product/data-model#7-2-9-casenote-planned) is a proposal.
+
+### 10.2.3 Inferred — for documentation completeness
+
+- **Tenant-level KPIs in admin dashboard** ([Section 8.2.5](/product/ui-ux#8-2-5-admin-dashboard-tenant-view-tenant-admin)) — described as a logical fit for the Tenant Admin view; the actual screens may differ.
+- **The two GDPR popups must be visually distinguishable** — design guidance, not yet enforced in the visible Figma extract.
+
+## 10.3 Things That Need Validation
+
+These are open questions to Frank / Shazia / the team.
+
+### 10.3.1 Code reality vs. documented design
+
+1. **Wipe-on-disconnect** — does it actually run today? Frank's comment in the huddle: *"the last version I saw, when that dude left, nothing changed in my queue."* Likely **not yet implemented**, or buggy. → @Nikunj (his action item from the huddle).
+2. **GDPR consent #2** — is the second, center-level consent popup actually implemented in production? Frank: *"I'm pretty sure it's already in [...] but as I said, this was the moment we stopped making progress."* → Verify in `ORISO-Frontend` consent component.
+3. **Live-chat OFF deactivated state** — currently the section disappears entirely (a known issue). Needs the section to be deactivated but visible. → New ticket per huddle.
+4. **Live-chat link generation** — the current admin UI is overengineered and the "global link" the team wants is not yet there. → Frank's explicit backlog item.
+5. **Bilingual UI / browser-language default** — currently defaults to German. → Backlog item.
+6. **Encryption coverage** — Ali implemented IP traces in dev mode; do we have a CI check that they don't make it to prod? → External audit required.
+
+### 10.3.2 Product policy
+
+7. **Audit-row retention** — we documented "1 year"; this needs legal sign-off in Germany.
+8. **48 h is a public promise** — anything in the system that retains chat content longer than 48 h is a privacy violation. Confirm Synapse retention policy is configured.
+9. **MFA for Counselor Admin** — currently "recommended"; should it be enforced like for Tenant Admin and Platform Admin?
+10. **Topic management** — is there a separate `topic-admin` role in active use today, or is topic config managed by Platform Admin only?
+
+### 10.3.3 Architecture and integration
+
+11. **LiveKit recording** — confirmed *not* used; please double-check no recording bucket is configured.
+12. **Matrix federation** — disabled in production by default? Confirm.
+13. **Element vs ORISO-Element** — which fork is actually deployed, and what is the customization scope?
+14. **CertManager / Let's Encrypt rate limits** — confirm production runs on the Let's Encrypt prod ACME, not staging.
+
+## 10.4 Calibrations Made vs. the Original Brief
+
+The user prompt described ORISO as *"an AI-based note-taking and transcription platform (similar to Huddled AI)"*. Based on every input we had, this framing is inaccurate — ORISO is an **online counseling platform** ("Online Beratung"). Specific calibrations:
+
+| Brief said | Reality (per code, transcript, Figma) | What we did |
+|---|---|---|
+| "AI note-taking platform" | Counseling chat platform with E2EE Matrix rooms; no STT; no AI note-taking in prod | Documented the actual product. Treated AI note-taking as **planned** in [Section 4.1](/product/features/transcription). Marked clearly as future work. |
+| "Audio capture" | No audio recording; LiveKit handles WebRTC video without recording | Documented "no audio capture today" and the privacy reasons that gate any future implementation. |
+| "Supervisor" as a top-level role | "Supervisor" inside ORISO is a **function** on a counselor (`supervisor-consultant`) | In [Section 5.2](/product/user-flows#5-2-tenant-admin-setup-a-k-a-supervisor-setup-in-the-brief), interpreted "Supervisor Setup" as **Tenant Admin Setup** — the closest organizational analogue. Documented the function-level supervisor in [Section 3.3.4](/product/roles-permissions#3-3-4-counselor). |
+| "Pincode-based chat" | Two related concepts: (a) German PLZ routing and (b) topic-attached live-chat link | Both documented in [Section 4.3](/product/features/pincode-chat); their distinction made explicit. |
+
+## 10.4b Confirmed by Figma (May 2026)
+
+The May-2026 Figma drop **confirms** these earlier-inferred items and **adds** new ones. See [Figma Analysis](/product/figma-analysis-2026-05) for the full reasoning.
+
+### Confirmed (no longer assumptions)
+
+- **AI note-taking is real**, not just planned. There is a dedicated **Chat Zusammenfassen** (`⇧Ü`) button with the explicit copy *"Spare Zeit, mit Hilfe unseres vollends Datenschutzkonformen KI Workflows."*
+- **PII Blur tool exists** with concrete spec: `fff 80% Overlay Blur (uniform) 4`.
+- **Group chats are first-class** (Teamberatung, Familienberatung, Supportgruppe, Kreis, etc.).
+- **Multi-recipient send** exists in the UI with explicit show/hide rules per chat-size.
+- **Reply in Thread** is a real interaction.
+- **Forward / Delete message** are present.
+- **Handover with reason taxonomy** is designed (Holiday / Sickness / Emergency / Law Violation / Colleague fired / Custom).
+- **Notifications page** exists with a typed taxonomy.
+- **Help-Requests / Internal escalation** is a designed flow.
+- **Permissions matrix per chat type** exists in the admin panel (Anonyme / 1-zu-1 / Gruppen / Supervision).
+- **Optional client email** + **2FA for clients** + **client account deletion** exist.
+- **Phase model** in inbox: `Anfragephase`, `Vermittlungsphase`, `Aktiv`.
+- **Tags** on chats / messages.
+- **File upload** with explicit limits: `.jpg, .png, .pdf, .docx, .xlsx`, ≤ 10 MB.
+- **Multi-language** confirmed at DE / EN / TR / FR.
+- **Animation rule**: each plays once per click, ≤ 0.7×, never loops.
+
+### New assumptions (May 2026)
+
+- **A18 — Multi-recipient send is implemented via a server-side relay** ("Carimat-relay" service account) or per-recipient Megolm sessions. **Decision still open** — see [Figma analysis §4.3](/product/figma-analysis-2026-05#4-3-multi-recipient-send-server-side-enforcement).
+- **A19 — Mark / Blur are encrypted Matrix annotation events** of type `de.oriso.annotation.mark` / `de.oriso.annotation.blur`, separate from message bodies.
+- **A20 — Handover preserves the same Matrix room** with member rotation (no new room id), and history visibility is `shared` by default but can be switched to `joined` for sensitive sessions.
+- **A21 — "Email not visible to counselors"** specifically means visible **only to Platform Admin** for legal / auth purposes. Treat as privileged auth field.
+- **A22 — Carimat is a rule-based scripted bot, not an LLM.** It posts pre-scripted system messages (E2EE banner, GDPR text, multi-turn onboarding) — never reads message content.
+- **A23 — Phase `Vermittlungsphase`** covers GDPR-#2-pending **and** handover-pending. Active happens only after both consents are given.
+- **A24 — File upload is rejected server-side** for any mime not in the allow-list, and any size > 10 MB.
+- **A25 — Voice messages** are Megolm-encrypted Opus blobs in the Matrix media repo with the same 48 h retention as text — duration cap TBD.
+- **A26 — Tags are agency-scoped vocabularies**; a "Cant find Matching Tag?" CTA opens an inquiry to the agency admin.
+- **A27 — `Optional Icons` admin toggle** controls visibility of voice-message, audio-call, video-call, file-upload, and tag-picker icons in the composer.
+
+### Open questions still pending
+
+- **Q1 — Video-call self-delete** (Figma question): proposed in [Edge Cases §9.1.7](/product/edge-cases#9-1-7-client-deletes-self-during-active-video-call), needs Frank's sign-off.
+- **Q2 — Group-chat self-delete** (Figma question): proposed in [Edge Cases §9.1.8](/product/edge-cases#9-1-8-client-deletes-self-from-group-chat), needs Frank's sign-off.
+- **Q3 — Notification push channel**: Matrix push gateway vs custom; decision needed.
+- **Q4 — Mark/Blur durability across re-key**: confirmed approach (separate annotation events) but needs ORISO-Element fork update.
+- **Q5 — Multi-recipient send strategy**: relay-bot vs per-recipient Megolm.
+- **Q6 — `law_violation` legal mechanics**: current design preserves E2EE; legal team must validate that this is acceptable for the regulatory regime.
+- **Q7 — Auto-archive of group when last advice-seeker leaves**: assumed in [Edge Cases §9.11](/product/edge-cases#9-11-group-chat-edge-cases); confirm.
+
+## 10.5 Things the Codebase Confirms
+
+These are *not* assumptions — they're directly verified.
+
+- **14 Keycloak realm roles** exist (`realm.json` + `UserRole.java`).
+- **4 backend services** (TenantService 8081, UserService 8082, ConsultingTypeService 8083, AgencyService 8084), Spring Boot 2.7.14 + Java 17.
+- **Matrix Synapse** is the chat backbone; **PostgreSQL** is its DB.
+- **MariaDB** holds the relational truth; **MongoDB** holds rich topic config.
+- **Helm umbrella chart** named `oriso-platform` deploys all 21 services.
+- **Liquibase is disabled** — schemas are managed centrally in `ORISO-Database`.
+- **Authority.java** maps roles to granted authorities (line-by-line authority spec in [Section 6.4.2](/product/internal-functionality#6-4-2-authz-spring-security)).
+
+## 10.6 Document Conventions Used
+
+- **`(inferred)`** marks single facts that we filled in logically but did not verify in code.
+- **`(planned)`** marks features explicitly described as roadmap, not production.
+- **`<Warning>` blocks** flag departures from the simple/expected behaviour that exist for legal or privacy reasons.
+- **Mermaid diagrams** stand in for live system diagrams — they are accurate at the conceptual level; ports / paths are confirmed against `ORISO-Docs/oriso-platform/architecture/*`.
+
+## 10.7 What Should Be the Single Source of Truth Going Forward
+
+In order of authority:
+
+1. **Production code** in the relevant repository (`ORISO-UserService`, `ORISO-AgencyService`, etc.).
+2. **`ORISO-Docs/oriso-platform/*`** for infra, deployment and operational details.
+3. **This `product/*` set** for product / UX / role / data-model reasoning.
+4. **Figma files** for screen-by-screen visual truth.
+5. The **huddle transcripts** as the historical record of design decisions.
+
+If two of the above disagree, **fix the lower-numbered source** and let this docs set follow.
