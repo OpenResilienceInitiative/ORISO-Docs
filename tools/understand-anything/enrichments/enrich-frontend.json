@@ -1,0 +1,33 @@
+{
+  "concepts": [
+    {
+      "id": "concept:counseling-spa",
+      "name": "Counseling Frontend SPA",
+      "summary": "React + TypeScript application for askers and consultants: registration, messaging, bookings, and profile flows. Custom webpack build, react-router-dom v5, SCSS/CSS modules with MUI theming; Storybook and Cypress for quality.",
+      "tags": ["frontend", "core"],
+      "related": ["initApp.tsx", "README.md"]
+    },
+    {
+      "id": "concept:matrix-realtime",
+      "name": "Matrix-backed Real-time Communication",
+      "summary": "Messaging and live updates run over Matrix (matrix-js-sdk); configureMatrixLogging.ts wires SDK logging, and session chats map to Matrix rooms.",
+      "tags": ["messaging", "matrix"],
+      "related": ["configureMatrixLogging.ts", "initApp.tsx"]
+    },
+    {
+      "id": "concept:app-structure",
+      "name": "Application Structure",
+      "summary": "src is organized into api (HTTP clients incl. generated OpenAPI clients in generated/), components/containers/pages (UI), features and extensions (feature modules), globalState (state management), hooks, and i18n.",
+      "tags": ["structure"],
+      "related": ["i18n.ts", "initApp.tsx", "initError.tsx"]
+    }
+  ],
+  "flows": [
+    {
+      "id": "flow:asker-registration-to-chat",
+      "name": "Asker Registration → First Chat",
+      "summary": "Asker registers (agency/topic selection) → account and session are created via the backend services → the session's Matrix room connects → messaging UI opens for the first enquiry.",
+      "related": ["initApp.tsx", "configureMatrixLogging.ts"]
+    }
+  ]
+}
