@@ -1,0 +1,74 @@
+{
+  "concepts": [
+    {
+      "id": "concept:session-lifecycle",
+      "name": "Consultation Session Lifecycle",
+      "summary": "UserService owns the consultation lifecycle: registration of new users/askers, handling and creation of enquiries, creation of sessions with their chat group(s), and assignment of consultants to sessions.",
+      "tags": ["domain", "core"],
+      "related": ["UserController.java", "ConversationController.java", "SessionSupervisorController.java", "README.md"]
+    },
+    {
+      "id": "concept:consultation-modes",
+      "name": "Consultation Modes",
+      "summary": "Four kinds of consultations are handled: single/direct 1:1 counseling, team counseling, group chat counseling, and anonymous counseling (no registration required).",
+      "tags": ["domain"],
+      "related": ["ConversationController.java", "README.md"]
+    },
+    {
+      "id": "concept:matrix-messaging",
+      "name": "Matrix-backed Messaging",
+      "summary": "Real-time messaging runs on Matrix: MatrixMessageController and MatrixSyncController bridge sessions to Matrix rooms (the platform's migration away from the legacy Rocket.Chat group model).",
+      "tags": ["messaging", "matrix"],
+      "related": ["MatrixMessageController.java", "MatrixSyncController.java", "DraftMessageController.java"]
+    },
+    {
+      "id": "concept:user-administration",
+      "name": "User & Consultant Administration",
+      "summary": "Admin-facing account management: UserAdminController with ConsultantAdminFacade and AskerUserAdminFacade cover consultant/asker administration, agency assignment, and account state.",
+      "tags": ["admin"],
+      "related": ["UserAdminController.java", "ConsultantAdminFacade.java", "AskerUserAdminFacade.java", "AdminUserFacade.java"]
+    },
+    {
+      "id": "concept:case-handover",
+      "name": "Case Handover",
+      "summary": "CaseHandoverController implements transferring cases between consultants/agencies, governed by reason policies.",
+      "tags": ["workflow"],
+      "related": ["CaseHandoverController.java"]
+    },
+    {
+      "id": "concept:invite-links",
+      "name": "Invite Links & Account Invitations",
+      "summary": "AgencyInviteLinkController and AccountInviteController implement invitation-based onboarding (agency invite links, account invites).",
+      "tags": ["onboarding"],
+      "related": ["AgencyInviteLinkController.java", "AccountInviteController.java"]
+    },
+    {
+      "id": "concept:availability-and-live-events",
+      "name": "Live Availability & Event Notifications",
+      "summary": "ConsultantLiveAvailabilityController and TopicConsultantAvailabilityController expose consultant availability; LiveProxyController and EventNotificationController push live events and notifications to clients.",
+      "tags": ["realtime"],
+      "related": ["ConsultantLiveAvailabilityController.java", "TopicConsultantAvailabilityController.java", "LiveProxyController.java", "EventNotificationController.java"]
+    },
+    {
+      "id": "concept:statistics-and-audit",
+      "name": "Statistics & Audit Logs",
+      "summary": "AdminStatisticsController and UserStatisticsController expose usage statistics; InactiveAccountAuditLogsController and SupervisorLogsController provide audit trails.",
+      "tags": ["reporting"],
+      "related": ["AdminStatisticsController.java", "UserStatisticsController.java", "InactiveAccountAuditLogsController.java", "SupervisorLogsController.java"]
+    }
+  ],
+  "flows": [
+    {
+      "id": "flow:enquiry-to-session",
+      "name": "Enquiry → Session → Consultant Assignment",
+      "summary": "An asker registers → creates an enquiry → a session with its chat group is created → a consultant (or team) is assigned and the conversation begins.",
+      "related": ["UserController.java", "ConversationController.java", "ConsultantAdminFacade.java"]
+    },
+    {
+      "id": "flow:matrix-message-roundtrip",
+      "name": "Matrix Message Roundtrip",
+      "summary": "Client sends via MatrixMessageController → message lands in the session's Matrix room → MatrixSyncController keeps session state and read models in sync.",
+      "related": ["MatrixMessageController.java", "MatrixSyncController.java"]
+    }
+  ]
+}
