@@ -1,0 +1,63 @@
+{
+  "concepts": [
+    {
+      "id": "concept:money-path-gate",
+      "name": "Money-Path E2E Gate",
+      "summary": "Dedicated Playwright repo industrializing the real-click E2E gate: ~10 money-path scenarios running nightly against the deployed Pre-Dev environment. Created because the Test Quality Audit 2026-07-04 found zero real automated E2E coverage.",
+      "tags": [
+        "testing",
+        "core"
+      ],
+      "related": [
+        "README.md",
+        "playwright.config.ts",
+        "package.json"
+      ]
+    },
+    {
+      "id": "concept:image-promotion-gating",
+      "name": "Image Promotion Gating (target state)",
+      "summary": "Target model: E2E green stamps the tested image digests as :predev-candidate \u2014 the gate blocks image promotion, not merges. Nightly workflow runs on cron and manual dispatch, publishing the Playwright report as an artifact.",
+      "tags": [
+        "ci",
+        "operations"
+      ],
+      "related": [
+        "README.md"
+      ]
+    },
+    {
+      "id": "concept:scenario-catalog",
+      "name": "Scenario Catalog",
+      "summary": "Current specs: money-path-counselling (core counselling journey), smoke-crash (app boots without crashing), t1-aside-confidentiality (tenant confidentiality aside). Projects: predev (via host-resolver rules against Pre-Dev) and local (compose skeleton).",
+      "tags": [
+        "testing"
+      ],
+      "related": [
+        "money-path-counselling.spec.ts",
+        "smoke-crash.spec.ts",
+        "t1-aside-confidentiality.spec.ts",
+        "docker-compose.e2e.yml"
+      ]
+    }
+  ],
+  "flows": [
+    {
+      "id": "flow:nightly-run",
+      "name": "Nightly E2E Run",
+      "summary": "Cron (or manual dispatch) triggers nightly-e2e.yml \u2192 npm ci + playwright install \u2192 npx playwright test --project=predev against the deployed Pre-Dev stack \u2192 HTML report uploaded as workflow artifact; failures flag the candidate images as not promotable.",
+      "related": [
+        "playwright.config.ts"
+      ]
+    },
+    {
+      "id": "flow:local-run",
+      "name": "Local Run",
+      "summary": "Developer runs npx playwright test --project=local against the docker-compose.e2e.yml stack skeleton for scenario development without touching Pre-Dev.",
+      "related": [
+        "docker-compose.e2e.yml",
+        "playwright.config.ts"
+      ]
+    }
+  ]
+}

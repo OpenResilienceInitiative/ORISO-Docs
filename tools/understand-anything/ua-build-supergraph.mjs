@@ -20,7 +20,7 @@ const INSTALL = process.argv.includes("--install");
 const REPOS = [
   "ORISO-Frontend", "ORISO-Admin", "ORISO-UserService", "ORISO-AgencyService",
   "ORISO-ConsultingTypeService", "ORISO-TenantService", "ORISO-Database",
-  "ORISO-Keycloak", "ORISO-Kubernetes",
+  "ORISO-Keycloak", "ORISO-Kubernetes", "ORISO-Helm", "ORISO-E2E", "ORISO-Infra",
 ];
 
 // keyword -> owning repo, for deterministic cross-repo dependency inference
@@ -31,6 +31,9 @@ const SERVICE_KEYWORDS = [
   [/user.?service|user.?admin.?service/i, "ORISO-UserService"],
   [/keycloak/i, "ORISO-Keycloak"],
   [/mariadb|mongodb/i, "ORISO-Database"],
+  [/\bhelm\b/i, "ORISO-Helm"],
+  [/playwright/i, "ORISO-E2E"],
+  [/hetzner|\bk3s\b/i, "ORISO-Infra"],
 ];
 
 const nodes = [], edges = [], layers = [];
@@ -160,12 +163,20 @@ console.log(JSON.stringify({
 if (INSTALL) {
   const live = `${BASE}/ORISO-Docs/.understand-anything`;
   const ts = new Date().toISOString().replace(/[:.]/g, "-");
-  copyFileSync(`${live}/knowledge-graph.json`, `${live}/knowledge-graph.json.bak-prerebuild-${ts}`);
+  copyFileSync(`${live}/knowledge-graph.json`, `${live}/knowledge-graph.json.bak-${ts}`);
   copyFileSync(`${OUT}/knowledge-graph.json`, `${live}/knowledge-graph.json`);
   copyFileSync(`${OUT}/knowledge-graph.json`, `${live}/oriso-super-graph.json`);
   writeFileSync(`${live}/oriso-super-graph-summary.md`,
     `# ORISO Super-Graph\n\nRebuilt ${new Date().toISOString()} by ua-build-supergraph.mjs (deterministic).\n\n` +
     mergeSources.map(s => `- ${s.repo}: ${s.nodes} nodes / ${s.edges} edges @ ${(s.gitCommitHash ?? "?").slice(0, 8)}`).join("\n") +
     `\n\nCross-repo dependency edges: ${crossEdges} (keyword inference, evidence-count >= 2).\n`);
+  writeFileSync(`${live}/meta.json`, JSON.stringify({
+    lastAnalyzedAt: new Date().toISOString(),
+    gitCommitHash: "supergraph",
+    version: "1.0.0",
+    analyzedFiles: graph.nodes.length,
+    generator: "ua-build-supergraph.mjs (deterministic cross-repo merge)",
+    repos: Object.fromEntries(mergeSources.map(s => [s.repo, (s.gitCommitHash ?? "?").slice(0, 9)])),
+  }, null, 2) + "\n");
   console.log("INSTALLED into ORISO-Docs/.understand-anything/");
 }
