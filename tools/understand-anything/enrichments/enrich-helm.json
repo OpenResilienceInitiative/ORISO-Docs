@@ -1,0 +1,104 @@
+{
+  "concepts": [
+    {
+      "id": "concept:full-stack-chart",
+      "name": "Full-Stack Platform Chart",
+      "summary": "Umbrella Helm chart deploying the entire ORISO platform on Kubernetes: Keycloak, MariaDB, MongoDB, RabbitMQ, Redis, Matrix/Synapse, LiveKit, and all backend/frontend services as subcharts under charts/.",
+      "tags": [
+        "infrastructure",
+        "core"
+      ],
+      "related": [
+        "Chart.yaml",
+        "README.md"
+      ]
+    },
+    {
+      "id": "concept:config-secret-split",
+      "name": "Config/Secret Split (values.yaml + secrets.yaml)",
+      "summary": "Configuration is split across two gitignored files created from templates before deploying: values.yaml (domain, realm, Matrix server name) and secrets.yaml (all credentials). Only the *.default templates are tracked.",
+      "tags": [
+        "security",
+        "operations"
+      ],
+      "related": [
+        "README.md"
+      ]
+    },
+    {
+      "id": "concept:keycloak-subchart-theme",
+      "name": "Keycloak Subchart & Custom Theme",
+      "summary": "charts/keycloak carries the realm definition (realm.json), deployment templates, and the ORISO custom theme (login + OTP email templates, DE/EN messages, Nunito fonts) mounted via theme configmaps. restore-keycloak-settings.sh reapplies settings after redeploys.",
+      "tags": [
+        "identity",
+        "infrastructure"
+      ],
+      "related": [
+        "realm.json",
+        "restore-keycloak-settings.sh",
+        "keycloak-deployment.yaml",
+        "keycloak-theme-configmaps.yaml"
+      ]
+    },
+    {
+      "id": "concept:mariadb-subchart-schemas",
+      "name": "MariaDB Subchart & SQL Schemas",
+      "summary": "charts/mariadb ships per-service SQL schemas (agencyservice, consultingtypeservice, tenantservice, uploadservice, userservice) applied at provisioning time \u2014 the services themselves run with Liquibase disabled (see ORISO-Database).",
+      "tags": [
+        "database",
+        "infrastructure"
+      ],
+      "related": [
+        "agencyservice-schema.sql",
+        "consultingtypeservice-schema.sql",
+        "tenantservice-schema.sql",
+        "uploadservice-schema.sql",
+        "userservice-schema.sql"
+      ]
+    },
+    {
+      "id": "concept:deployment-authority",
+      "name": "Deployment Authority: dev only (NOT pre-dev)",
+      "summary": "OPERATIONAL WARNING: the pre-dev environment still runs the legacy ORISO-Kubernetes chart; ORISO-Helm has never deployed pre-dev. Running helm upgrade against pre-dev is destructive (first-deploy semantics). Deployment-authority cleanup is tracked in ORISO-Helm issue #149.",
+      "tags": [
+        "operations",
+        "warning"
+      ],
+      "related": [
+        "README.md",
+        "Chart.yaml"
+      ]
+    },
+    {
+      "id": "concept:chart-release-workflow",
+      "name": "Chart Release Workflow",
+      "summary": "GitHub Actions workflow packaging and releasing the Helm chart (release-helm-chart.yml).",
+      "tags": [
+        "ci"
+      ],
+      "related": [
+        "Chart.yaml",
+        "README.md"
+      ]
+    }
+  ],
+  "flows": [
+    {
+      "id": "flow:deploy-platform",
+      "name": "Deploy Platform",
+      "summary": "Copy values.yaml.default \u2192 values.yaml and secrets.yaml.default \u2192 secrets.yaml, fill in domain/realm/credentials \u2192 helm install/upgrade the umbrella chart \u2192 subcharts provision Keycloak (realm + theme), databases (schemas), messaging, Matrix, LiveKit, and the ORISO services.",
+      "related": [
+        "README.md",
+        "Chart.yaml"
+      ]
+    },
+    {
+      "id": "flow:release-chart",
+      "name": "Release Chart",
+      "summary": "Chart changes merged \u2192 release-helm-chart.yml packages and publishes the chart release.",
+      "related": [
+        "Chart.yaml"
+      ]
+    }
+  ]
+}
