@@ -20,7 +20,7 @@ see ORISO-Docs#61).
 ## Indexed repos & branches
 
 Since 2026-08-05 the board tracks the **pre-dev integration branches** where they
-exist, and 15 dashboards run on ports 5173–5185:
+exist, and 13 dashboards run on ports 5173–5185:
 
 | Repo | Branch | Dashboard |
 |---|---|---|
@@ -57,8 +57,10 @@ cp ./<Repo>/{knowledge-graph.json,meta.json,fingerprints.json} /opt/oriso-unders
 node ua-build-supergraph.mjs --install                              # refresh super-graph
 ```
 
-Live graphs keep `.bak-prerebuild-*` rollback copies next to them (pruned after
-30 days). Daily `.bak-*` files are pruned after 7 days.
+The nightly pipeline writes daily `.bak-<timestamp>` copies (pruned after
+7 days). `.bak-prerebuild-*` files are manual rollback snapshots taken before
+risky rebuilds (e.g. the 2026-08-05 pre-dev switch); the 02:35 cron prunes
+them after 30 days.
 
 ## Notes
 

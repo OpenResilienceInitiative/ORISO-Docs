@@ -163,7 +163,8 @@ console.log(JSON.stringify({
 if (INSTALL) {
   const live = `${BASE}/ORISO-Docs/.understand-anything`;
   const ts = new Date().toISOString().replace(/[:.]/g, "-");
-  copyFileSync(`${live}/knowledge-graph.json`, `${live}/knowledge-graph.json.bak-${ts}`);
+  if (existsSync(`${live}/knowledge-graph.json`))
+    copyFileSync(`${live}/knowledge-graph.json`, `${live}/knowledge-graph.json.bak-${ts}`);
   copyFileSync(`${OUT}/knowledge-graph.json`, `${live}/knowledge-graph.json`);
   copyFileSync(`${OUT}/knowledge-graph.json`, `${live}/oriso-super-graph.json`);
   writeFileSync(`${live}/oriso-super-graph-summary.md`,
