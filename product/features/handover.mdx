@@ -152,15 +152,23 @@ surface where a client acts on a handover.
 ### The dead predecessor
 
 The reassignment path — `REASSIGN_CONSULTANT`, `apiPatchMessage`, `apiSendAliasMessage` — is the
-**legacy predecessor** of case handover and is dead. No Matrix code path produces the `alias`
-object those renderers key off, UserService on `pre-dev` has no `PATCH /messages/{id}` handler,
-and no `messageservice` deployment exists while `MESSAGE_SERVICE_API_URL` still points at one.
-Both frontend call sites swallow their errors silently, which is why it stayed invisible for so
-long. Do not extend it; do not cite it as a pattern.
+**legacy predecessor** of case handover and is dead. Do not extend it; do not cite it as a pattern.
+
+Three separate claims sit behind that, at three different levels of certainty. Keeping them apart
+matters, because an earlier draft collapsed them and got the first one wrong:
+
+| Claim | Status | Evidence |
+|---|---|---|
+| **The renderers cannot fire.** No Matrix code path produces the `alias` object `ReassignMessage` and `FurtherSteps` key off. | **Established** | Read from `origin/pre-dev`. This alone makes the path dead in the client. |
+| **The endpoint is not implemented.** UserService on `origin/pre-dev` has no `PATCH /messages/{id}` handler, and no `messageservice` deployment exists although `MESSAGE_SERVICE_API_URL` still points at one. | **Established from code and the Pre-Dev manifests** | Source-level, not a runtime probe. |
+| **What an authenticated `PATCH /service/messages/{id}` actually does.** | **Untested — do not assume either way** | A 401 is raised by the auth layer before controller mapping, so it is equally consistent with "a handler exists" and "no handler, rejected earlier". |
+
+Both frontend call sites swallow their errors silently, which is why this stayed invisible for so
+long.
 
 <Note>
-One earlier claim about this path was **wrong and is retracted**: that `/service/messages/*` is
-unrouted and falls through to the SPA. Measured on Pre-Dev 2026-07-30, `GET /service/messages/`
+**The retraction.** An earlier claim about the *first* row above was wrong: that
+`/service/messages/*` is unrouted and falls through to the SPA. Measured on Pre-Dev 2026-07-30, `GET /service/messages/`
 answers **401 with a Bearer challenge** exactly like the routed control `/service/users/data`,
 while an unknown path answers 404 — so the path *is* routed. The wrong claim came from reading the
 ORISO-Helm chart, which **Pre-Dev does not run** (it still runs the archived ORISO-Kubernetes

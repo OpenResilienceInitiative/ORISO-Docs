@@ -344,7 +344,7 @@ the anonymity model rather than a fault — but it was written down nowhere unti
 | **Trigger** | Anonymous registration with no e-mail address; the person later cannot sign in |
 | **Expected** | No path back into the account exists. The `userName` (Anmeldename) is the only handle, and it is immutable; the generated 16-character password is never shown again after registration |
 | **What the person actually sees** | Nothing that explains it. The deployed login page for realm `online-beratung` renders **no** "forgot password" affordance at all (`resetPasswordAllowed: false`), and a cold `GET /realms/online-beratung/login-actions/reset-credentials` returns 400 with an error page |
-| **Risk if mishandled** | Someone in distress is silently locked out of a counselling conversation they had already started, with no message telling them why |
+| **Risk if mishandled** | Someone in distress is silently locked out of a counseling conversation they had already started, with no message telling them why |
 | **Test** | Register anonymously without an e-mail, sign out, attempt to sign back in with a wrong password: there is no reset link anywhere on the page |
 
 **The three paths that silently no-op**, each for a reason that must be preserved:
