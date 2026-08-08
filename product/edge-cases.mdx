@@ -347,18 +347,20 @@ the anonymity model rather than a fault — but it was written down nowhere unti
 | **Risk if mishandled** | Someone in distress is silently locked out of a counseling conversation they had already started, with no message telling them why |
 | **Test** | Register anonymously without an e-mail, sign out, attempt to sign back in with a wrong password: there is no reset link anywhere on the page |
 
-**The three paths that silently no-op**, each for a reason that must be preserved:
+**The three paths that do not restore account access.** They fail in three different ways, and the
+difference matters — only the first is silent, and only the first is silent *on purpose*:
 
-1. **Password reset.** `PasswordResetService` returns without sending for accounts whose address
-   is blank or ends with the synthetic dummy suffix — which is exactly what an anonymous seeker
-   gets (`UserHelper`, `identity.email-dummy-suffix`). The person sees "E-Mail wurde versendet"
-   and nothing ever arrives. **This is deliberate account-enumeration protection**: constant-time
-   async dispatch, an identical response even on queue saturation, no PII in logs. Do not "fix" it
-   into an informative response.
-2. **Magic Link.** Requires a real address — `validateMagicLinkTogglePrerequisites` rejects
-   enabling it otherwise. It is a convenience login, **not** a recovery path.
-3. **The Matrix recovery key.** Restores **message history**, not account access. Calling it
-   account recovery is a category error.
+1. **Password reset — silently no-ops.** `PasswordResetService` returns without sending for
+   accounts whose address is blank or ends with the synthetic dummy suffix, which is exactly what
+   an anonymous seeker gets (`UserHelper`, `identity.email-dummy-suffix`). The person sees
+   "E-Mail wurde versendet" and nothing ever arrives. **This silence is deliberate
+   account-enumeration protection**: constant-time async dispatch, an identical response even on
+   queue saturation, no PII in logs. Do not "fix" it into an informative response.
+2. **Magic Link — rejects outright.** `validateMagicLinkTogglePrerequisites` refuses to enable it
+   without a real address. It does not fail quietly; it cannot be turned on at all. And it is a
+   convenience login, **not** a recovery path even when it works.
+3. **The Matrix recovery key — succeeds at something else.** It restores **message history**, not
+   account access. Treating it as account recovery is a category error, not a malfunction.
 
 **The compensation, and why it matters more for some Träger than others.** For a Träger that
 switches the e-mail invitation off — U25 does — credential saving is the **only** remaining safety
