@@ -36,7 +36,7 @@
     {
       "id": "concept:application-settings",
       "name": "Application Settings & Global SMTP",
-      "summary": "ApplicationSettingsController and ApplicationSettingsServiceFacade expose platform-wide application settings (Mongo-backed) consumed by other services and the frontends. Since mid-2026 they also carry the global SMTP configuration: passwords are encrypted at rest with AES-256-GCM (SmtpPasswordEncryptionService, key from settings.smtp.password.encryption.secret) and credentials are no longer leaked through the public /settings endpoint.",
+      "summary": "ApplicationSettingsController and ApplicationSettingsServiceFacade expose platform-wide application settings (Mongo-backed) consumed by other services and the frontends. Since mid-2026 they also carry the global SMTP configuration: passwords are encrypted at rest with AES-256-GCM (SmtpPasswordEncryptionService) only when settings.smtp.password.encryption.secret is configured — without that secret the service silently falls back to storing them plaintext at rest and credentials are no longer leaked through the public /settings endpoint.",
       "tags": [
         "configuration"
       ],

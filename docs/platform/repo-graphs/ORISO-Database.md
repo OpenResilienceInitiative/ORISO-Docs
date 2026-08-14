@@ -25,7 +25,7 @@ description: Direct schema/script inspection and graph-backed summary for ORISO-
 
 ## Repository Purpose
 
-**ARCHIVED / LEGACY.** This repository is archived upstream and frozen at commit `c9630a9` (2026-06-25). It served as the interim central schema store during the phase when all backend services ran with Liquibase disabled. That model is retired: canonical schema management has moved back to per-service Liquibase changelogs inside each service repository (Liquibase re-enablement plan), and deployment/infrastructure is owned by ORISO-Helm. Use this repo only as a point-in-time reference of the June 2026 database state — schemas, init scripts, incident documentation — never as a deployment source.
+**ARCHIVED / LEGACY.** This repository is archived upstream and frozen at commit `c9630a9` (2026-06-25). It served as the interim central schema store during the phase when all backend services ran with Liquibase disabled. That model is retired as the central authority: schema management is moving back to per-service Liquibase changelogs (Liquibase re-enablement plan, rolled out service by service), but environments that still run a service with `SPRING_LIQUIBASE_ENABLED=false` rely on the SQL baselines shipped with ORISO-Helm instead — verify per environment before assuming a service changelog applies. Deployment/infrastructure is owned by ORISO-Helm. Use this repo only as a point-in-time reference of the June 2026 database state — schemas, init scripts, incident documentation — never as a deployment source.
 
 Contents: service-owned MariaDB `schema.sql` exports, MongoDB BSON dumps, a Matrix PostgreSQL status note, Redis/RabbitMQ operational docs, database initialization and system-user Kubernetes jobs, and the DB-C03 incident remediation docs.
 
@@ -96,7 +96,7 @@ Tests:
 - consultingtypeservice relational tables and MongoDB consulting/application documents belong to ORISO-ConsultingTypeService.
 - Matrix PostgreSQL belongs to Matrix Synapse and self-manages its schema; it was never exported here (postgresql/matrix/STATUS.md).
 - uploadservice and videoservice schemas are snapshots of retired/legacy services.
-- Going forward, each owning service repository manages its schema via its own Liquibase changelog; ORISO-Helm owns database deployment and init.
+- Going forward, each owning service repository manages its schema via its own Liquibase changelog where Liquibase is enabled; environments running `SPRING_LIQUIBASE_ENABLED=false` still depend on the Helm-shipped SQL baselines. ORISO-Helm owns database deployment and init.
 
 ## Local Development Notes
 

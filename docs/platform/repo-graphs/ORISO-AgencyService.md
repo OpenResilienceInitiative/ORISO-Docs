@@ -189,7 +189,7 @@ Adapters and generated clients:
 Notable application config areas (application.properties plus per-env dev/prod/staging/testing overlays):
 
 - Keycloak/OAuth2 resource server (issuer, JWK set, admin client; keycloak.ssl-required is enforced for prod/staging since AS-H05)
-- spring.datasource.* (MariaDB, Hikari), spring.jpa.*
+- `spring.datasource.*` (MariaDB, Hikari), `spring.jpa.*`
 - spring.liquibase.change-log=classpath:db/changelog/agencyservice-master.xml with spring.liquibase.enabled=${SPRING_LIQUIBASE_ENABLED:true}; per-environment changeset selection now runs via spring.liquibase.contexts (env-specific master changelogs were consolidated into one master)
 - multitenancy.enabled, feature.topics/demographics/appointment/multitenancy.with.single.domain flags
 - matrix.api-url / registration-shared-secret / server-name / admin-username / admin-password (Synapse admin API)
@@ -197,7 +197,7 @@ Notable application config areas (application.properties plus per-env dev/prod/s
 - management.opentelemetry.tracing.export.otlp.endpoint / management.tracing.export.otlp.enabled (SigNoz/OTLP tracing) plus logback-spring.xml with correlation-id support
 - appointments.delete-job-* and agency.deleteworkflow.cron
 - registration.cors.allowed.origins/paths, tenant/topic/consultingtype/applicationsettings cache tuning
-- All rocket-chat.* / rocket.* keys are REMOVED (Rocket.Chat retirement, #191)
+- All `rocket-chat.*` / `rocket.*` keys are REMOVED (Rocket.Chat retirement, #191)
 
 Database changelog: single master src/main/resources/db/changelog/agencyservice-master.xml with changesets 0001–0028. Additions since July 2026:
 

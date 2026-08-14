@@ -175,7 +175,8 @@ if (INSTALL) {
     lastAnalyzedAt: new Date().toISOString(),
     gitCommitHash: "supergraph",
     version: "1.0.0",
-    analyzedFiles: graph.nodes.length,
+    analyzedNodes: graph.nodes.length,
+    analyzedFiles: new Set(graph.nodes.map(n => n.filePath).filter(Boolean)).size,
     generator: "ua-build-supergraph.mjs (deterministic cross-repo merge)",
     repos: Object.fromEntries(mergeSources.map(s => [s.repo, (s.gitCommitHash ?? "?").slice(0, 9)])),
   }, null, 2) + "\n");

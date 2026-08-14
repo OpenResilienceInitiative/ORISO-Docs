@@ -61,7 +61,7 @@ flowchart TB
 ### ORISO-Frontend (User Portal)
 - **Docker Image:** `caritas-frontend:latest`
 - **Purpose:** Main user-facing application for clients seeking counseling
-- **Technology:** React 18, Vite 4, TypeScript
+- **Technology:** React 19, custom webpack build, TypeScript
 - **Access:** https://app.oriso.org
 - **Key Features:**
   - User authentication via Keycloak
@@ -73,7 +73,7 @@ flowchart TB
 ### ORISO-Admin (Admin Panel)
 - **Docker Image:** `caritas-admin:latest`
 - **Purpose:** Administrative interface for agencies and consultants
-- **Technology:** React 18, Vite 4, TypeScript
+- **Technology:** React 19, Vite, TypeScript
 - **Access:** https://admin.oriso.org
 - **Key Features:**
   - Agency management
@@ -84,8 +84,8 @@ flowchart TB
 ## Technology Stack
 
 ### Build Tools
-- **Build System:** Vite 4 (not Create React App)
-- **Framework:** React 18
+- **Build System:** Vite (ORISO-Admin) / custom webpack build (ORISO-Frontend)
+- **Framework:** React 19
 - **Language:** TypeScript
 - **Package Manager:** npm/yarn
 

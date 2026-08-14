@@ -18,7 +18,7 @@
     {
       "id": "concept:central-schema-authority",
       "name": "Central Schema Authority (historical model)",
-      "summary": "The repository's original operating model: all backend services (TenantService, UserService, AgencyService, ConsultingTypeService) ran with Liquibase DISABLED and schemas were version-controlled and applied from here. This model is retired — the repo is archived and per-service Liquibase is being re-enabled service by service — but the schema.sql exports remain useful as a point-in-time reference of the June 2026 database state (DATABASECHANGELOG tables are still present in every dump).",
+      "summary": "The repository's original operating model: all backend services (TenantService, UserService, AgencyService, ConsultingTypeService) ran with Liquibase DISABLED and schemas were version-controlled and applied from here. This model is retired — the repo is archived and per-service Liquibase is being re-enabled service by service (environments still running SPRING_LIQUIBASE_ENABLED=false rely on Helm-shipped SQL baselines instead of service changelogs) — but the schema.sql exports remain useful as a point-in-time reference of the June 2026 database state (DATABASECHANGELOG tables are still present in every dump).",
       "tags": [
         "database",
         "legacy",

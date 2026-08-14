@@ -2,7 +2,8 @@
   "lastAnalyzedAt": "2026-08-14T01:08:36.463Z",
   "gitCommitHash": "supergraph",
   "version": "1.0.0",
-  "analyzedFiles": 24103,
+  "analyzedNodes": 24103,
+  "analyzedFiles": 5382,
   "generator": "ua-build-supergraph.mjs (deterministic cross-repo merge)",
   "repos": {
     "ORISO-Frontend": "41e53197c",

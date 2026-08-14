@@ -112,7 +112,7 @@ Note: a runtime-generated `env.js` (window config) takes precedence over build-t
 - npm install; `npm run start` (prestart generates runtime env). Local auth uses vite.authBffPlugin.ts as a dev BFF.
 - Storybook: `npm run storybook` (icon catalog is generated pre-run); stories double as component tests in CI.
 - Unit tests: `npm run test` (Vitest). Integration: `npm run test:integration(:cli)` (Cypress against a started dev server).
-- docs/local-development.md covers environment details.
+- `docs/local-development.md` (inside the ORISO-Admin repository) covers environment details.
 
 ## Deployment Notes
 
