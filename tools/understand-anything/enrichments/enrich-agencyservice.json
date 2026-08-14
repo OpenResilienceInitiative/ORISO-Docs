@@ -3,31 +3,205 @@
     {
       "id": "concept:agency-registry",
       "name": "Counseling Agency Registry",
-      "summary": "Spring Boot service managing counseling agencies for the platform: agency master data, addresses, and public agency lookup used during asker registration.",
-      "tags": ["domain", "core"],
-      "related": ["AgencyController.java", "README.md"]
+      "summary": "Spring Boot service managing counseling agencies (Beratungsstellen) for the platform: agency master data, addresses, settings, and public agency lookup used during asker registration. Agencies belong to a Träger (tenant) and carry per-agency feature settings served to the counselling app.",
+      "tags": [
+        "domain",
+        "core"
+      ],
+      "related": [
+        "AgencyController.java",
+        "AgencyService.java",
+        "Agency.java",
+        "README.md"
+      ]
     },
     {
       "id": "concept:agency-administration",
       "name": "Agency Administration",
-      "summary": "AgencyAdminController with AgencyAdminControlsFacade covers the admin-facing lifecycle: creating, updating, and configuring agencies (including topic assignment and admin controls).",
-      "tags": ["admin"],
-      "related": ["AgencyAdminController.java", "AgencyAdminControlsFacade.java"]
+      "summary": "AgencyAdminController plus AgencyAdminService cover the admin-facing lifecycle: creating, updating, and configuring agencies, topic assignment, admin controls, postcode ranges, and the ADR-014 legal-text library endpoints. The admin OpenAPI contract (agencyadminservice.yaml) grew substantially in July/August 2026 with agency-ID allocation, legal-text CRUD, and department legal endpoints.",
+      "tags": [
+        "admin"
+      ],
+      "related": [
+        "AgencyAdminController.java",
+        "AgencyAdminService.java",
+        "AgencyAdminControlsFacade.java",
+        "agencyadminservice.yaml"
+      ]
     },
     {
       "id": "concept:agency-matching",
       "name": "Agency Search & Matching",
-      "summary": "Public agency search resolves the right agency for an asker (postcode/topic-based matching) before registration completes.",
-      "tags": ["search"],
-      "related": ["AgencyController.java"]
+      "summary": "Public agency search resolves the right agency for an asker (postcode/topic-based matching) before registration completes. Since #194/#196 the topic aggregation only reports topics a help-seeker can actually reach (reachability filter in AgencyRepository), so offline/hidden agencies no longer leak topics into registration.",
+      "tags": [
+        "search",
+        "registration"
+      ],
+      "related": [
+        "AgencyController.java",
+        "AgencyRepository.java",
+        "AgencyPostcodeRangeRepository.java",
+        "agencyservice.yaml"
+      ]
+    },
+    {
+      "id": "concept:department-legal-texts",
+      "name": "Department Legal Texts (ADR-003 / ADR-014)",
+      "summary": "A department (Fachbereich = agency x topic, AgencyTopic entity) carries a data privacy policy (DPP) and imprint. ADR-014 adds a tenant-owned reusable LegalText library: several departments may share one text per kind, or fall back to their inline content. Content is a JSON language-to-HTML map, OWASP-sanitised by LegalContentSanitizer. Publishing a department-specific edit breaks the shared link (#193); agencies also got agency-level legal texts the inheritance chain assumed (#222, changeset 0027). Only PUBLISHED texts are served to end users via the unauthenticated read side.",
+      "tags": [
+        "domain",
+        "legal",
+        "dpa",
+        "adr-014",
+        "adr-003"
+      ],
+      "related": [
+        "LegalText.java",
+        "LegalTextRepository.java",
+        "LegalTextAdminService.java",
+        "LegalContentSanitizer.java",
+        "DepartmentLegalService.java",
+        "AgencyTopic.java",
+        "src/main/resources/db/changelog/changeset/0026_legal_text/createLegalText.sql"
+      ]
+    },
+    {
+      "id": "concept:agency-id-allocation",
+      "name": "Agency ID Allocation (TEN-INV-U2)",
+      "summary": "Collision-free, DB-arbitrated allocation of agency IDs for the tenant-invite flow (parent ORISO-Admin#569). IDs are FREE, RESERVED (open invite holds a row in agency_id_reservation, PK = the ID) or ASSIGNED (agency row, never re-issued, soft-deleted included). Assignment checks run as native SQL so a tenant-scoped admin's Hibernate tenant filter can never hide another Träger's agency and report a taken ID as free. Concurrency safety comes from the primary key and write-then-read transactions, not app-level checks.",
+      "tags": [
+        "domain",
+        "tenant",
+        "concurrency"
+      ],
+      "related": [
+        "AgencyIdAllocationService.java",
+        "AgencyIdReservation.java",
+        "AgencyIdReservationRepository.java",
+        "src/main/resources/db/changelog/changeset/0028_agency_id_reservation/createAgencyIdReservation.sql"
+      ]
+    },
+    {
+      "id": "concept:effective-permission-settings",
+      "name": "Effective Permission Settings (ADR-013 P4)",
+      "summary": "AgencyEffectivePermissionSettingsApplier applies upper-role permission constraints (AgencyAdminControls) to the public feature flags served to the counselling app: allowed=false forces a feature off, enforced=true forces it on, otherwise the agency's own setting stands (#297). Mirrors TenantService's applier at agency level; the server is the single source of truth and the raw controls are never attached to the public agency response. Agency settings also mirror the media flag families (upload / inline display / AI scan, per chat type) from the media epic; the old attachment flag is retired.",
+      "tags": [
+        "permissions",
+        "settings",
+        "adr-013"
+      ],
+      "related": [
+        "AgencyEffectivePermissionSettingsApplier.java",
+        "AgencyAdminControlsConverter.java",
+        "AgencySettingsService.java",
+        "agency-settings.yaml"
+      ]
+    },
+    {
+      "id": "concept:tenant-isolation",
+      "name": "Multitenancy & Cross-Träger Isolation",
+      "summary": "Tenant resolution chain (access token, custom header, subdomain, technical user) feeds TenantContext; TenantAspect enables the Hibernate tenant filter on tenant-aware repositories so one Träger's admins cannot see another's agencies. Agency admins without a domain user claim are tolerated since #143. Deliberate escape hatches (tenant-unaware repository, native-SQL checks in ID allocation) exist where global uniqueness matters.",
+      "tags": [
+        "security",
+        "tenant"
+      ],
+      "related": [
+        "TenantResolverService.java",
+        "AccessTokenTenantResolver.java",
+        "TenantAspect.java",
+        "HttpTenantFilter.java",
+        "AgencyTenantAwareRepository.java",
+        "AgencyTenantUnawareRepository.java"
+      ]
+    },
+    {
+      "id": "concept:matrix-provisioning",
+      "name": "Matrix Agency Provisioning",
+      "summary": "Each agency gets a Matrix bot/user provisioned via the Synapse admin API (MatrixProvisioningService). Since AS-C01 the per-agency Matrix passwords are encrypted at rest (AgencyMatrixPasswordCipher, AES) and the internal credentials endpoint is protected. Rocket.Chat configuration and its residual environment contract were fully removed (#191); the service is Matrix-only and CI attests Matrix-only images.",
+      "tags": [
+        "matrix",
+        "integration",
+        "security"
+      ],
+      "related": [
+        "MatrixProvisioningService.java",
+        "AgencyMatrixPasswordCipher.java",
+        "MatrixConfig.java",
+        "AgencyMatrixCredentialsDTO.java"
+      ]
+    },
+    {
+      "id": "concept:agency-deletion-workflow",
+      "name": "Agency Deletion & Purge Workflow",
+      "summary": "Cron-driven delete workflow: agencies flagged deleted are purged in batch, but since #202 each agency purges inside its own REQUIRES_NEW transaction (AgencyPurgeTransaction) so one failure no longer takes the whole batch down and gets a per-agency log line. Departments (agency_topic) are removed via JPA cascade/orphanRemoval, an explicit redundant delete was dropped (#220); postcode ranges need the explicit delete.",
+      "tags": [
+        "workflow",
+        "deletion"
+      ],
+      "related": [
+        "DeleteAgencyService.java",
+        "AgencyPurgeTransaction.java",
+        "AgencyPostcodeRangeRepository.java"
+      ]
+    },
+    {
+      "id": "concept:agency-list-sorting",
+      "name": "Admin Agency List Sorting",
+      "summary": "GET /agencyadmin/agencies supports whitelist-based sorting via the generated Sort.FieldEnum; SortParameterBindingConfig binds the admin frontend's upper-cased separator-free field names (POSTCODE, CREATEDATE) leniently onto the underscore enum constants instead of rejecting them with HTTP 400 (Admin#308 / AS#128 package). The enum acts as the sort-field whitelist.",
+      "tags": [
+        "admin",
+        "search"
+      ],
+      "related": [
+        "SortParameterBindingConfig.java",
+        "AgencyAdminSearchService.java",
+        "agencyadminservice.yaml"
+      ]
     }
   ],
   "flows": [
     {
       "id": "flow:agency-lookup",
       "name": "Agency Lookup During Registration",
-      "summary": "Asker enters registration context → public agency search (AgencyController) returns matching agencies → selected agency determines the consulting setup downstream.",
-      "related": ["AgencyController.java"]
+      "summary": "Asker enters registration context -> public agency search (AgencyController) matches by postcode/consulting type/topic, reporting only reachable topics -> effective permission settings are applied server-side to the returned feature flags -> selected agency determines the consulting setup downstream.",
+      "related": [
+        "AgencyController.java",
+        "AgencyService.java",
+        "AgencyRepository.java",
+        "AgencyEffectivePermissionSettingsApplier.java"
+      ]
+    },
+    {
+      "id": "flow:legal-text-lifecycle",
+      "name": "Legal Text Authoring to Public Read",
+      "summary": "Tenant admin authors a reusable LegalText (or inline department text) -> LegalContentSanitizer cleans multilingual HTML -> text is assigned to departments; publishing a department-specific edit breaks the shared link -> once PUBLISHED, end users read it unauthenticated via /agencies/{agencyId}/topics/{topicId}/legal (DepartmentLegalService); drafts never reach clients.",
+      "related": [
+        "LegalTextAdminService.java",
+        "LegalContentSanitizer.java",
+        "DepartmentLegalService.java",
+        "AgencyTopic.java",
+        "agencyservice.yaml"
+      ]
+    },
+    {
+      "id": "flow:agency-id-reservation",
+      "name": "Agency ID Reservation and Creation",
+      "summary": "Admin invite flow checks /agencyadmin/agencyids/{id}/availability or asks for next-free -> reservation row inserted (PK arbitration, write-then-read) -> agency creation guards against open reservations inside its insert transaction -> IDs are never re-issued, even for soft-deleted agencies.",
+      "related": [
+        "AgencyIdAllocationService.java",
+        "AgencyIdReservationRepository.java",
+        "AgencyAdminController.java"
+      ]
+    },
+    {
+      "id": "flow:agency-purge",
+      "name": "Scheduled Agency Purge",
+      "summary": "agency.deleteworkflow.cron triggers DeleteAgencyService -> each deleted-flagged agency is purged in its own REQUIRES_NEW transaction (AgencyPurgeTransaction) -> postcode ranges deleted explicitly, departments cascade via JPA -> failures are isolated and logged per agency.",
+      "related": [
+        "DeleteAgencyService.java",
+        "AgencyPurgeTransaction.java",
+        "AgencyRepository.java"
+      ]
     }
   ]
 }

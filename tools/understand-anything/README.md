@@ -30,6 +30,14 @@ exist, and 13 dashboards run on ports 5173–5185:
 | ORISO-Helm, ORISO-E2E, ORISO-Infra | `main` | per-repo (added 2026-08-05) |
 | ORISO-Docs | `main` | hosts the super-graph (`/docs/`) |
 
+Note (2026-08-14 rebuild): the committed snapshot artifacts in this repo were
+rebuilt from `pre-dev` for **ORISO-E2E** (its `main` is ~75 commits behind) and
+**ORISO-Keycloak** (instead of the stale `feature/understand-anything-graph`).
+The server clones still track the branches in the table above — switching them
+(`git checkout pre-dev` in `/opt/oriso-understand/ORISO-E2E` and `…/ORISO-Keycloak`)
+is a pending server-side follow-up. The `.mjs` scripts now honor `UA_CORE` /
+`UA_BASE` env overrides so the pipeline can also run off-server (defaults unchanged).
+
 ## Nightly operation (server)
 
 ```

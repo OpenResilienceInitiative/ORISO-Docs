@@ -9,10 +9,10 @@
 
 import { readFileSync, writeFileSync, mkdirSync, copyFileSync, existsSync } from "node:fs";
 
-const CORE = "/opt/oriso-understand/understand-anything-plugin/understand-anything-plugin/packages/core/dist/index.js";
+const CORE = process.env.UA_CORE ?? "/opt/oriso-understand/understand-anything-plugin/understand-anything-plugin/packages/core/dist/index.js";
 const c = await import(CORE);
 
-const BASE = "/opt/oriso-understand";
+const BASE = process.env.UA_BASE ?? "/opt/oriso-understand";
 const OUT = `${BASE}/_rebuild/supergraph`;
 mkdirSync(OUT, { recursive: true });
 const INSTALL = process.argv.includes("--install");

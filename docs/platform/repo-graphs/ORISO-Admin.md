@@ -25,226 +25,111 @@ description: Direct source inspection and graph-backed summary for ORISO-Admin.
 
 ## Repository Purpose
 
-Administrative React dashboard for tenant, agency, counselor, topic, invite link, settings, logs, statistics, and user administration workflows.
+Administrative React dashboard for tenant, agency, counselor, topic, links/invites, settings (theme, legal, SMTP, permissions), legal/DPA management, logs, statistics, and user administration — plus the public tenant-admin onboarding wizard and password-reset flow.
 
 ## Main Technologies
 
 - Package: adminpanel 0.1.0
-- Stack: React, Vite, React Router, Ant Design, MUI, React Query, Axios, i18next, Cypress
-- Selected dependencies: @emotion/react, @emotion/styled, @mui/icons-material, @mui/material, antd, axios, i18next, i18next-browser-languagedetector, react, react-app-polyfill, react-color, react-copy-to-clipboard, react-csv, react-device-detect, react-dom, react-i18next, react-query, react-resizable, react-router, react-router-dom, react-rte, react-switch, @cypress/react, @types/react, @types/react-color, @types/react-dom, @types/react-rte, @vitejs/plugin-react, eslint-plugin-react, eslint-plugin-react-hooks, react-error-overlay, vite, vite-plugin-eslint, vite-plugin-svgr, vite-tsconfig-paths
-- Scripts: start, build, serve, test, lint, lint:css, lint:js, lint:formatting, prettier:css, test:integration, test:integration:cli
+- Stack: React 19, TypeScript, Vite, React Router v7, Ant Design 5 (with `@ant-design/v5-patch-for-react-19`), MUI 9 (Emotion), TanStack React Query v5, i18next, TipTap 2 (rich-text), dayjs, Lottie, OpenTelemetry (web-vitals metrics), Vitest, Storybook (with component tests in CI), Cypress (integration)
+- Selected dependencies: antd, @mui/material, @mui/icons-material, @tanstack/react-query, @tiptap/react + extensions, axios, dompurify, react-colorful, react-joyride (product tour), hi-base32 (OTP), lottie-react, react-router-dom, use-debounce, web-vitals, @opentelemetry/sdk-metrics
+- Scripts: start (with `prestart` runtime-env generation), build, build:analyze, build:check (bundle budget), serve, storybook, build-storybook, typecheck:storybook, generate:icon-catalog, test (vitest), lint, lint:css, lint:js, lint:formatting, test:integration (cypress open), test:integration:cli
 
 ## Important Files and Modules
 
-- package.json
-- .env
-- .env.example
-- src/App.tsx
-- src/components/Box/index.tsx
-- src/components/Card/index.tsx
-- src/components/CardEditable/components/UnsavedChanges/index.tsx
-- src/components/CardEditable/index.tsx
-- src/components/CopyToClipboard/index.tsx
-- src/components/FeatureEnabled/index.tsx
-- src/components/FormBaseInputField/index.tsx
-- src/components/FormColorSelectorField/index.tsx
-- src/components/FormFileUploaderField/index.tsx
-- src/components/FormInputField/index.tsx
-- src/components/FormInputNumberField/index.tsx
-- src/components/FormInputPasswordField/index.tsx
-- src/components/FormPasswordField/index.tsx
-- src/components/FormRadioGroupField/index.tsx
-- src/components/FormSwitchField/index.tsx
-- src/components/FormTextAreaField/index.tsx
-- src/components/Modal/index.tsx
-- src/components/ModalSuccess/index.tsx
-- src/components/Page/index.tsx
-- src/api/agency/getAgencyByTenantData.ts
-- src/api/auth/accessSessionCookie.ts
-- src/api/auth/accessSessionLocalStorage.ts
-- src/api/auth/apiLogoutKeycloak.ts
-- src/api/auth/auth.ts
-- src/api/auth/getAccessToken.ts
-- src/api/auth/logout.ts
-- src/api/auth/refreshKeycloakAccessToken.ts
-- src/api/consultingtype/getConsultingType4Tenant.ts
-- src/api/tenant/addTenantData.ts
-- src/api/tenant/deleteTenantData.ts
-- src/api/tenant/editFAKETenantData.ts
-- src/api/tenant/editTenantData.ts
-- src/api/tenant/getFAKETenantData.ts
-- src/api/tenant/getFakeMultipleTenants.ts
-- src/api/tenant/getPublicTenantData.ts
-- src/api/tenant/getSingleTenantData.ts
-- src/api/tenant/getTenantData.ts
-- src/api/tenant/searchTenantData.ts
-- src/api/topic/getTopicByTenantData.ts
-- src/api/admins/addAgencyAdminData.ts
-- src/api/admins/deleteAgencyAdminData.ts
-- src/api/admins/ediAgencytAdminData.ts
-- src/api/agency/addAgencyData.ts
-- src/api/agency/deleteAgencyData.ts
-- src/api/agency/deleteAgencyEventType.ts
-- src/api/agency/getAgencyByCounselorData.ts
-- src/api/agency/getAgencyById.ts
-- src/api/agency/getAgencyConsultants.ts
-- src/api/agency/getAgencyData.ts
-- src/api/agency/getAgencyEventTypeById.ts
-- src/api/agency/getAgencyEventTypes.ts
-- src/api/agency/getAgencyPostCodeRange.ts
-- src/api/agency/getDiocesesData.ts
-- src/api/agency/postConsultantForAgencyEventTypes.ts
-- src/api/agency/putAgenciesForAdmin.ts
-- src/api/agency/putAgenciesForCounselor.ts
-- src/api/agency/putConsultantForAgencyEventTypes.ts
-- src/api/agency/updateAgencyData.ts
-- src/api/agency/updateAgencyPostCodeRange.ts
-- src/api/agency/updateAgencyType.ts
+- package.json, vite.config.ts, vitest.config.ts, vite.authBffPlugin.ts (local dev auth BFF)
+- scripts/generate-runtime-env.js — generates `env.js` runtime config (overrides `.env` at container start)
+- src/App.tsx, src/appConfig.ts (endpoints + `routePathNames`), src/config/runtimeConfig.ts
+- src/pages/lazyPages.ts — lazy route modules; src/router/ProtectedRoute.tsx
+- src/pages/Agency (List/Edit with FieldGrid master data, opening hours)
+- src/pages/Links — InviteComposer, AccountInvitesTab (+ bulk/CSV import), EmailTemplatesDialog, ExternalInboundsTab
+- src/pages/TenantSettings — settings tabs shell (general/master-data/appearance/legal/SMTP/permissions); src/constants/settingsTabs.ts
+- src/components/Tenants/LegalSettings — legal editors (imprint/privacy/DPA) incl. DepartmentSelect, LegalContentLanguageSelect, PublishSourceWarningModal, TranslateOnPublishModal
+- src/components/FormPluginEditor — TipTap M3 rich-text editor (heading anchors, image upload, tenant media URL resolution)
+- src/components/DpaBlocker + src/components/DpaLegalForm + src/hooks/useDpa*.hook.ts — DPA gate, reader, signatures
+- src/api/tenant — tenant CRUD plus DPA endpoints (getDpaGate, getDpaStatus, getDpaVersions, publishDpa, signDpaAdmin, createDpaSignInvite, sendDpaInviteEmail, uploadTenantMedia, translation)
+- src/pages/TenantOnboarding — public invite-token onboarding wizard (Account → Organisation DPA → 2FA → Done)
+- src/pages/Statistic + src/components/StatisticCard + src/components/DashboardEmptyState — statistics dashboard with empty-state hints; tutorial statistics section
+- src/pages/Logs — LogsTabsLayout with CaseHandoverLogs, InactiveAccountAuditLogs, SupervisorLogs
+- src/pages/users — user management tables (consultants, agency admins, tenant admins, platform admins) and TenantAdminEdit
+- src/components/AdminMobileNav + src/components/M3FabMenu — thumb-reachable mobile navigation
+- src/theme/antdM3Theme.ts, src/theme/orisoMuiTheme.ts — muted M3 token scheme for both UI libraries
+- src/components/TwoFactorSetup — app/email OTP setup (profile + onboarding variants); src/pages/PasswordReset
+- src/observability — OpenTelemetry web-vitals metric export
+- src/api/fetchData.ts — shared fetch wrapper; per-domain clients under src/api (agency, admins, counselor, user, settings, statistic, invitelinks, accountInvites, tenantOnboarding, passwordReset, idAllocation, tutorial, topic, consultingtype, auth)
+- docs/ — mobile-nav redesign plan, statistics dashboard parent task, MUI9/antd inventory, local development; MODERNIZATION-PLAN.md (React 19 migration, executed)
 
 ## Architecture Summary
 
-The app is a browser client. It owns routing, token/session storage, runtime configuration, tenant context, and UI flows. It does not own business data directly; it calls ORISO backend services through API client modules and stores Keycloak tokens in cookies/local storage helpers.
+The app is a browser client. It owns routing, token/session storage, runtime configuration, tenant context, permission-derived UI gating, and UI flows. It does not own business data; it calls ORISO backend services through API client modules built on a shared fetch wrapper, with TanStack Query v5 hooks for caching. UI is mid-migration from Ant Design to MUI under a shared muted Material 3 token scheme (antd is still the majority — roughly 179 files vs ~42 MUI files); AntD `Form.Item` remains the form scaffolding during conversion. Public (unauthenticated) surfaces are the tenant-admin onboarding wizard and password reset; everything else sits behind Keycloak login, ProtectedRoute, and — for unsigned organisation DPAs — the DpaBlockerGate.
 
 ## Key Routes, APIs, and Configs
 
-Routes and route-like constants found in source:
+Routes (`routePathNames` in src/appConfig.ts):
 
-- /admin
-- /admin/login
-- /admin/theme-settings
-- /admin/global-settings
-- /admin/users
-- /admin/users/consultants
-- /admin/agency
+- /admin, /admin/login
+- /admin/password-reset, /admin/password-reset/confirm
+- /admin/tenant-onboarding (public, raw invite token as path segment)
+- /admin/theme-settings (+ /permissions), /admin/global-settings
+- /admin/users (+ /consultants, /agency-admins, /tenants, /tenant-admins, /platform-admins)
+- /admin/agency (+ /edit, /add, /add/general)
 - /admin/topics
-- /admin/statistic
-- /admin/logs
+- /admin/statistic, /admin/statistic-preview
+- /admin/logs (+ /case-handover, /inactive-accounts)
 - /admin/tenants
-- /admin/invite-links
+- /admin/links (+ /tenants, /counsellor, /external-inbounds)
+- /admin/profil/, /admin/agb, /impressum, /datenschutz
 
-API client files:
+Notable endpoint constants (src/appConfig.ts, UserService useradmin namespace):
 
-- src/api/admins/addAgencyAdminData.ts
-- src/api/admins/deleteAgencyAdminData.ts
-- src/api/admins/ediAgencytAdminData.ts
-- src/api/agency/addAgencyData.ts
-- src/api/agency/deleteAgencyData.ts
-- src/api/agency/deleteAgencyEventType.ts
-- src/api/agency/getAgencyByCounselorData.ts
-- src/api/agency/getAgencyById.ts
-- src/api/agency/getAgencyByTenantData.ts
-- src/api/agency/getAgencyConsultants.ts
-- src/api/agency/getAgencyData.ts
-- src/api/agency/getAgencyEventTypeById.ts
-- src/api/agency/getAgencyEventTypes.ts
-- src/api/agency/getAgencyPostCodeRange.ts
-- src/api/agency/getDiocesesData.ts
-- src/api/agency/postConsultantForAgencyEventTypes.ts
-- src/api/agency/putAgenciesForAdmin.ts
-- src/api/agency/putAgenciesForCounselor.ts
-- src/api/agency/putConsultantForAgencyEventTypes.ts
-- src/api/agency/updateAgencyData.ts
-- src/api/agency/updateAgencyPostCodeRange.ts
-- src/api/agency/updateAgencyType.ts
-- src/api/auth/accessSessionCookie.ts
-- src/api/auth/accessSessionLocalStorage.ts
-- src/api/auth/apiLogoutKeycloak.ts
-- src/api/auth/auth.ts
-- src/api/auth/getAccessToken.ts
-- src/api/auth/logout.ts
-- src/api/auth/refreshKeycloakAccessToken.ts
-- src/api/consultingtype/getConsultingType4Tenant.ts
-- src/api/consultingtype/getConsultingTypes.ts
-- src/api/counselor/addCounselorData.ts
-- src/api/counselor/addFAKECounselorData.ts
-- src/api/counselor/deleteCounselorData.ts
-- src/api/counselor/deleteFAKECounselorData.ts
-- src/api/counselor/editCounselorData.ts
-- src/api/counselor/editFAKECounselorData.ts
-- src/api/counselor/getCounselorSearchData.ts
-- src/api/fetchData.ts
-- src/api/invitelinks/invitelinks.ts
-- src/api/settings/apiServerSettings.ts
-- src/api/settings/sendGlobalSmtpTestEmail.ts
-- src/api/statistic/getRegistrationData.ts
-- src/api/tenant/addTenantData.ts
-- src/api/tenant/deleteTenantData.ts
-- src/api/tenant/editFAKETenantData.ts
-- src/api/tenant/editTenantData.ts
-- src/api/tenant/getFAKETenantData.ts
-- src/api/tenant/getFakeMultipleTenants.ts
-- src/api/tenant/getPublicTenantData.ts
-- src/api/tenant/getSingleTenantData.ts
-- src/api/tenant/getTenantData.ts
-- src/api/tenant/searchTenantData.ts
-- src/api/topic/addTopicData.ts
-- src/api/topic/deleteTopicData.ts
-- src/api/topic/getTopicByTenantData.ts
-- src/api/topic/getTopicData.ts
-- src/api/topic/updateTopicData.ts
-- src/api/user/apiTwoFactorAuth.ts
-- src/api/user/getFAKEUserData.ts
+- statistics/dashboard and statistics/tutorials (statistics dashboard)
+- invitelinks, account-invites, invite-email-templates, dpa-invites/email (links/invites and DPA invites)
+- agencyadmins/search
 
-Environment keys found:
+API client domains (src/api): accountInvites, admins, agency, auth, consultingtype, counselor, idAllocation, invitelinks, passwordReset, settings, statistic, tenant (incl. DPA + media upload + translation), tenantOnboarding, topic, tutorial, user (incl. apiTwoFactorAuth).
 
-- VITE_PORT
-- BROWSER
-- VITE_CSRF_WHITELIST_HEADER_FOR_LOCAL_DEVELOPMENT
-- VITE_API_URL
-- VITE_USE_API_URL
-- VITE_USE_HTTPS
-- VITE_COOKIE_DOMAIN
-- VITE_COOKIE_SECURE
-- VITE_KEYCLOAK_REALM
-- VITE_KEYCLOAK_CLIENT_ID
-- VITE_APP_URL
-- VITE_MATRIX_URL
+Environment / runtime keys (scripts/generate-runtime-env.js, src/env.d.ts):
 
-Feature/page modules:
+- VITE_API_URL, VITE_USE_API_URL, VITE_USE_HTTPS, VITE_APP_URL, VITE_MATRIX_URL
+- VITE_USER_SERVICE_ORIGIN, VITE_TENANT_SERVICE_ORIGIN, VITE_AGENCY_SERVICE_ORIGIN, VITE_CONSULTING_TYPE_SERVICE_ORIGIN
+- VITE_KEYCLOAK_URL, VITE_KEYCLOAK_ORIGIN, VITE_KEYCLOAK_REALM, VITE_KEYCLOAK_CLIENT_ID
+- VITE_COOKIE_DOMAIN, VITE_COOKIE_SECURE, VITE_COOKIES_ALLOWEDLIST, VITE_HOSTNAMES_WITHOUT_COOKIE_DOMAIN
+- VITE_CSRF_WHITELIST_HEADER(_FOR_LOCAL_DEVELOPMENT)
+- VITE_OBSERVABILITY_ENABLED, VITE_OTEL_METRICS_URL, VITE_OTEL_EXPORT_INTERVAL_MS, VITE_PLATFORM_VERSION
 
-- src/pages/Agency
-- src/pages/Dashboard.tsx
-- src/pages/Error404.tsx
-- src/pages/ErrorPages
-- src/pages/GlobalSettings
-- src/pages/Imprint.tsx
-- src/pages/InviteLinks
-- src/pages/Login
-- src/pages/Logs
-- src/pages/Privacy.tsx
-- src/pages/Profile
-- src/pages/Statistic.tsx
-- src/pages/TenantSettings
-- src/pages/Tenants
-- src/pages/Topics
-- src/pages/users
+Note: a runtime-generated `env.js` (window config) takes precedence over build-time `.env` values.
 
 ## ORISO Dependencies
 
-- Keycloak for login, logout, token refresh, and role-backed access.
-- TenantService for tenant context/public tenant data.
-- UserService for users, sessions, conversations, appointments, chat and profile data.
-- AgencyService for agency lookup and agency administration flows where applicable.
-- ConsultingTypeService for consulting types, topics, settings and taxonomy.
-- Matrix/LiveKit/Element services for communication features.
+- Keycloak for login, logout, token refresh, role-backed access, and 2FA (OTP setup via UserService apiTwoFactorAuth).
+- TenantService for tenant data, appearance/settings, legal content, and translation.
+- UserService for users/admins, account invites, invite links and email templates, DPA invites, statistics dashboards, tutorial progress, and logs.
+- AgencyService for agency lookup, agency administration, and postcode ranges.
+- ConsultingTypeService for consulting types, topics, and taxonomy.
+- Matrix/LiveKit reachable app layer is referenced only via VITE_MATRIX_URL/VITE_APP_URL links; no RocketChat remnants remain in this repo.
 
 ## Local Development Notes
 
-- npm install --legacy-peer-deps
-- npm run start
-- Use .env or .env.example for VITE_API_URL, Keycloak realm/client, cookie, Matrix and app URLs.
+- npm install; `npm run start` (prestart generates runtime env). Local auth uses vite.authBffPlugin.ts as a dev BFF.
+- Storybook: `npm run storybook` (icon catalog is generated pre-run); stories double as component tests in CI.
+- Unit tests: `npm run test` (Vitest). Integration: `npm run test:integration(:cli)` (Cypress against a started dev server).
+- docs/local-development.md covers environment details.
 
 ## Deployment Notes
 
-- Dockerfile, nginx.conf, ingress.yaml, and ORISO-Kubernetes helm/charts/admin deploy the admin UI.
+- Dockerfile + nginx.conf build/serve the SPA; Dockerfile.storybook publishes the Storybook host.
+- GitHub Actions: ci-pull-request / ci-feature-branch / ci-main plus Storybook CI and release-image workflows (Docker build/push composite actions).
+- Kubernetes deployment lives in the ORISO-Helm charts (admin chart), not in this repo.
 
 ## Risks and Gaps
 
-- Runtime API/auth host config must match Kubernetes ingress and Keycloak issuer settings.
-- Token/cookie behavior is spread across auth helpers, session-cookie helpers and fetch wrappers.
-- Matrix migration compatibility appears in frontend code through rc_uid/rc_token compatibility comments and RocketChat provider naming.
+- Runtime API/auth host config must match ingress and Keycloak issuer settings; `env.js` runtime config silently overrides `.env` values.
+- Dual UI stacks (antd 5 + MUI 9) are live simultaneously mid-migration; theming parity depends on the shared M3 token mapping in src/theme.
+- Legal publish flow depends on source-language pinning; late-loading language lists previously opened editors on the wrong language (fixed, but the area is sensitive).
+- Narrow PATCH payloads to the tenant/agency APIs previously took entities offline (missing field = disable); form containers must send complete card payloads.
+- Token/cookie behavior is spread across auth helpers, session-cookie helpers, and the fetch wrapper.
 
 ## Needs Verification
 
-- Current production route availability and feature flags should be verified against deployed runtime settings.
-- Exact Keycloak realm/client values should be checked in environment-specific config, not copied from local .env files.
+- Current production route availability and feature flags should be verified against deployed runtime settings (env.js), not local `.env` files.
+- Exact Keycloak realm/client values should be checked in environment-specific config.
+- The statistics dashboard shows empty-state hints for metrics the backend does not collect yet; which metrics are live must be checked against the deployed UserService version.

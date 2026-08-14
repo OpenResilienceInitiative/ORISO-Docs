@@ -3,31 +3,190 @@
     {
       "id": "concept:consulting-types",
       "name": "Consulting Type Configurations",
-      "summary": "Spring Boot service managing consulting type configurations: the per-consulting-type settings that drive registration, session behavior, and feature toggles across the platform.",
-      "tags": ["domain", "core"],
-      "related": ["ConsultingTypeController.java", "ConsultingTypeAdminController.java", "README.md"]
+      "summary": "Spring Boot 4 (Java 21) service managing consulting type configurations: the per-consulting-type settings stored in MongoDB that drive registration, session behavior, and feature toggles across the platform. Public read endpoints (basic/extended/full, by slug, by tenant) plus an admin API for create/update.",
+      "tags": [
+        "domain",
+        "core"
+      ],
+      "related": [
+        "ConsultingTypeController.java",
+        "ConsultingTypeAdminController.java",
+        "ConsultingTypeEntity.java",
+        "api/consultingtypeservice.yml",
+        "README.md"
+      ]
     },
     {
       "id": "concept:topics",
       "name": "Topics & Topic Groups",
-      "summary": "TopicController, TopicAdminController, and TopicGroupsController with TopicServiceFacade manage counseling topics and their grouping — the taxonomy agencies and consultants are matched against.",
-      "tags": ["taxonomy"],
-      "related": ["TopicController.java", "TopicAdminController.java", "TopicGroupsController.java", "TopicServiceFacade.java"]
+      "summary": "TopicController, TopicAdminController, and TopicGroupsController with TopicServiceFacade manage counseling topics and their grouping — the taxonomy agencies and consultants are matched against. Topics are multilingual (i18n-aware name/description), carry fallback agency/URL and welcome-message settings, and live in MariaDB via Liquibase-managed schema. The published OpenAPI contract was corrected in July 2026 (issue #96): welcomeMessage/fallbackUrl are plain strings, ids are integer/int64.",
+      "tags": [
+        "taxonomy"
+      ],
+      "related": [
+        "TopicController.java",
+        "TopicAdminController.java",
+        "TopicGroupsController.java",
+        "TopicServiceFacade.java",
+        "TopicEntity.java",
+        "api/topicservice.yml",
+        "contracts/topic-format-correction-96.md"
+      ]
     },
     {
       "id": "concept:application-settings",
-      "name": "Application Settings",
-      "summary": "ApplicationSettingsController and ApplicationSettingsServiceFacade expose platform-wide application settings consumed by other services and the frontends.",
-      "tags": ["configuration"],
-      "related": ["ApplicationSettingsController.java", "ApplicationSettingsServiceFacade.java"]
+      "name": "Application Settings & Global SMTP",
+      "summary": "ApplicationSettingsController and ApplicationSettingsServiceFacade expose platform-wide application settings (Mongo-backed) consumed by other services and the frontends. Since mid-2026 they also carry the global SMTP configuration: passwords are encrypted at rest with AES-256-GCM (SmtpPasswordEncryptionService, key from settings.smtp.password.encryption.secret) and credentials are no longer leaked through the public /settings endpoint.",
+      "tags": [
+        "configuration"
+      ],
+      "related": [
+        "ApplicationSettingsController.java",
+        "ApplicationSettingsServiceFacade.java",
+        "ApplicationSettingsService.java",
+        "SmtpPasswordEncryptionService.java",
+        "DefaultApplicationSettingsInitializer.java",
+        "api/applicationsettingsservice.yml"
+      ]
+    },
+    {
+      "id": "concept:dpa-signing-email",
+      "name": "DPA (AVV) Signing Email Dispatch",
+      "summary": "New since July 2026 (TEN-INV-U5): POST /settingsadmin/dpa-signing-emails sends the one-time DPA/AVV signing link to a tenant contact using the global SMTP settings. DpaSigningEmailService pins the sign link to the configured app origin and the /dpa-sign/ path, builds a German HTML mail, and returns a strict success-or-error receipt; JakartaDpaMailTransport enforces STARTTLS (mail.smtp.starttls.required) and server-identity verification, classifying unparseable recipients as 400 and SMTP failures as 502 (SmtpSendException). Known drift: this endpoint is deliberately absent from every OpenAPI spec, so contract gates do not cover it.",
+      "tags": [
+        "legal",
+        "dpa",
+        "email",
+        "new-2026-07"
+      ],
+      "related": [
+        "DpaSigningEmailController.java",
+        "DpaSigningEmailService.java",
+        "JakartaDpaMailTransport.java",
+        "DpaMailTransport.java",
+        "DpaMailSettings.java",
+        "SmtpSendException.java"
+      ]
+    },
+    {
+      "id": "concept:tenant-isolation",
+      "name": "Tenant Resolution & Isolation",
+      "summary": "Multitenancy support: HttpTenantFilter and TenantResolver establish the tenant per request, TenantContext holds it thread-locally, and TenantAspect plus tenant-aware repositories scope data access. Hardened July 2026 (#43): when a subdomain is present it is authoritative — a tenantId header that contradicts the subdomain-derived tenant is rejected with AccessDenied instead of being trusted; the header fallback remains only for genuine internal service-to-service calls.",
+      "tags": [
+        "security",
+        "multitenancy"
+      ],
+      "related": [
+        "TenantResolver.java",
+        "HttpTenantFilter.java",
+        "TenantContext.java",
+        "TenantAspect.java",
+        "SubdomainExtractor.java",
+        "ConsultingTypeTenantAwareRepository.java"
+      ]
+    },
+    {
+      "id": "concept:openapi-contract-gate",
+      "name": "OpenAPI Provider/Consumer Contract Gate",
+      "summary": "New since July 2026 (#96/#51): CI publishes the provider OpenAPI bundles and runs an oasdiff breaking-change gate against the previous contracts, with a reviewed one-time allowlist for accepted corrections (contracts/topic-format-correction-96.md). Python meta-tests under tests/ci and tests/contracts assert that the gate and the required integration-test suite actually execute in CI rather than silently passing.",
+      "tags": [
+        "ci",
+        "contracts",
+        "new-2026-07"
+      ],
+      "related": [
+        "scripts/contracts/verify-provider-compatibility.sh",
+        "scripts/contracts/publish-provider-contracts.sh",
+        "scripts/contracts/verify-consumer-contract.sh",
+        "contracts/topic-format-correction-96.md",
+        "tests/contracts/test_openapi_contract_gate.py",
+        "tests/ci/test_required_ci_contract.py"
+      ]
+    },
+    {
+      "id": "concept:observability",
+      "name": "Observability: OTLP to SigNoz",
+      "summary": "OBS-P2/OBS-P5 (July 2026): traces and metrics ship via OTLP to the SigNoz gateway collector (sampling pinned to 100% on Pre-Dev), logs are JSON-structured via logback-spring.xml, and CorrelationIdFilter propagates X-Correlation-ID into the SLF4J MDC (key CID) with the same naming as UserService so requests correlate across services. The Sentry SDK was removed once SigNoz reached parity.",
+      "tags": [
+        "observability",
+        "new-2026-07"
+      ],
+      "related": [
+        "CorrelationIdFilter.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/filter/CorrelationIdFilter.java",
+        "TracingSmokeIT.java",
+        "LogService.java"
+      ]
+    },
+    {
+      "id": "concept:liquibase-migrations",
+      "name": "Liquibase Schema Management (re-enabled)",
+      "summary": "Liquibase was re-enabled in July 2026 with a single master changelog (consultingtypeservice-master.xml) for all environments, replacing the per-environment masters; contexts select environment-specific changesets and are overridable via SPRING_LIQUIBASE_CONTEXTS (Pre-Dev override, #112). Spring Boot 4 dropped Liquibase from the default classpath, so spring-boot-starter-liquibase is an explicit dependency and guard tests fail the build if the auto-configuration silently disappears again.",
+      "tags": [
+        "database",
+        "migrations"
+      ],
+      "related": [
+        "src/test/java/de/caritas/cob/consultingtypeservice/LiquibaseSchemaDriftIT.java",
+        "src/main/resources/db/changelog/changeset/0001_initsql/initTables.sql",
+        "src/test/java/de/caritas/cob/consultingtypeservice/LiquibaseAutoConfigurationPresenceTest.java",
+        "src/test/java/de/caritas/cob/consultingtypeservice/config/LiquibaseAutoConfigurationPresenceTest.java"
+      ]
+    },
+    {
+      "id": "concept:spring-boot-4-migration",
+      "name": "Spring Boot 4 / Java 21 Migration Fixes",
+      "summary": "The service runs on Spring Boot 4.0.1 with Java 21. SB4-specific fixes landed June/July 2026: the Mongo URI property was renamed to spring.mongodb.uri (the old spring.data.mongodb.uri key is no longer bound — the earlier live breakage is fixed at this commit), TrailingSlashFilter restores the trailing-slash request matching SB4 removed, and Liquibase needs its explicit starter (see the migrations concept).",
+      "tags": [
+        "platform",
+        "migration"
+      ],
+      "related": [
+        "TrailingSlashFilter.java",
+        "ConsultingTypeServiceApplication.java",
+        "SecurityConfig.java",
+        "AppConfig.java"
+      ]
     }
   ],
   "flows": [
     {
       "id": "flow:topic-administration",
       "name": "Topic Administration",
-      "summary": "Admin creates or updates topics/topic groups (TopicAdminController) → TopicServiceFacade validates and persists → topics become available for agency/consultant matching and registration.",
-      "related": ["TopicAdminController.java", "TopicServiceFacade.java", "TopicGroupsController.java"]
+      "summary": "Admin creates or updates topics/topic groups (TopicAdminController) → TopicValidationService and TopicServiceFacade validate and persist → topics become available for agency/consultant matching and registration.",
+      "related": [
+        "TopicAdminController.java",
+        "TopicServiceFacade.java",
+        "TopicGroupsController.java",
+        "TopicValidationService.java"
+      ]
+    },
+    {
+      "id": "flow:dpa-signing-email-dispatch",
+      "name": "DPA Signing Email Dispatch",
+      "summary": "Caller with AUTHORIZATION_PATCH_APPLICATION_SETTINGS (UserService DPA/AVV flow) POSTs recipient, tenant name, sign link, and expiry → DpaSigningEmailService validates the link against the configured app origin and /dpa-sign/ path → loads global SMTP settings and decrypts the password → JakartaDpaMailTransport sends with mandatory STARTTLS and server-identity check → 200 with a SENT receipt only after the SMTP server accepted the message; 502 on transport failure, 400 on invalid recipient.",
+      "related": [
+        "DpaSigningEmailController.java",
+        "DpaSigningEmailService.java",
+        "JakartaDpaMailTransport.java",
+        "SmtpPasswordEncryptionService.java",
+        "ApplicationSettingsService.java"
+      ]
+    },
+    {
+      "id": "flow:tenant-request-resolution",
+      "name": "Tenant Request Resolution",
+      "summary": "Incoming request → HttpTenantFilter triggers resolution → TenantResolver derives the tenant from the request subdomain (authoritative) and rejects a contradicting tenantId header; without a subdomain the header is used for internal calls → TenantContext carries the tenant for the request → tenant-aware repositories and the Hibernate interceptor scope all reads/writes.",
+      "related": [
+        "HttpTenantFilter.java",
+        "TenantResolver.java",
+        "TenantContext.java",
+        "TenantHibernateInterceptor.java",
+        "ConsultingTypeTenantAwareRepository.java"
+      ]
     }
-  ]
+  ],
+  "layerDescriptions": {
+    "Core": "Spring Boot application core: entry point, configuration, security/tenant infrastructure, and repository-level scripts."
+  }
 }

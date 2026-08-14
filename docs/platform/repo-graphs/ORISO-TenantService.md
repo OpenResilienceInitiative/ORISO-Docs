@@ -25,12 +25,14 @@ description: Direct source inspection and graph-backed summary for ORISO-TenantS
 
 ## Repository Purpose
 
-Tenant registry, tenant settings, legal content, tenant resolution, subdomain/cookie/token tenant discovery, and tenant-dependent peer-service setup.
+Tenant registry, tenant settings and platform permission controls, legal content, tenant resolution (subdomain/cookie/token), and tenant-dependent peer-service setup. Since mid-2026 the service additionally owns four substantial subsystems: the DPA (Auftragsverarbeitungsvertrag / data processing agreement) signature and status module, the authoritative tenant-ID allocation ledger, tenant-owned media blob storage, and LLM-backed machine translation of legal texts.
 
 ## Main Technologies
 
-- Stack: Spring Boot 3, Spring Security OAuth2 Resource Server, Keycloak, Spring Data JPA, OpenAPI Generator, FreeMarker, Ehcache, MariaDB
-- Selected Maven dependencies: org.springframework.cloud:spring-cloud-dependencies, org.springframework.security:spring-security-web, org.springframework.security:spring-security-config, org.springframework.security:spring-security-core, org.springframework.boot:spring-boot-starter-cache, org.springframework.boot:spring-boot-starter-web, org.springframework.boot:spring-boot-starter-oauth2-resource-server, org.springframework.boot:spring-boot-starter-hateoas, org.springframework.boot:spring-boot-starter-actuator, org.springframework.boot:spring-boot-actuator-autoconfigure, org.springframework.boot:spring-boot-starter-data-jpa, org.liquibase:liquibase-maven-plugin, org.liquibase:liquibase-core, org.mariadb.jdbc:mariadb-java-client, org.springframework.boot:spring-boot-starter-freemarker, org.openapitools:openapi-generator-maven-plugin, org.openapitools:jackson-databind-nullable, io.swagger.core.v3:swagger-annotations, io.springfox:springfox-boot-starter, io.swagger.parser.v3:swagger-parser, org.springdoc:springdoc-openapi-starter-webmvc-ui, org.keycloak:keycloak-spring-boot-starter, org.springframework.boot:spring-boot-starter-test, org.springframework.security:spring-security-test, com.c4-soft.springaddons:spring-security-oauth2-test-webmvc-addons, org.ehcache:ehcache, org.springframework.boot:spring-boot-properties-migrator
+- Stack: Spring Boot 4.0.1 (Java 21), Spring Security OAuth2 Resource Server, Keycloak, Spring Data JPA, Liquibase, OpenAPI Generator, FreeMarker, Ehcache, MariaDB
+- Observability: spring-boot-micrometer-tracing + OpenTelemetry OTLP tracing/metrics export, JSON structured logging (logback-spring.xml), correlation-id filter. Sentry SDK removed (OBS-P5).
+- Machine translation: pluggable OpenAI-compatible chat providers (OpenRouter, Mistral) with per-tenant API keys.
+- CI: GitHub Actions (feature/PR/main pipelines, OpenAPI contract gate, release-image workflow), CodeRabbit auto-review, Trivy scan script.
 
 ## Important Files and Modules
 
@@ -41,55 +43,67 @@ Tenant registry, tenant settings, legal content, tenant resolution, subdomain/co
 - services/consultingtypeservice.yaml
 - services/useradminservice.yaml
 - src/main/java/com/vi/tenantservice/api/controller/TenantController.java
-- src/main/java/com/vi/tenantservice/api/controller/VersionController.java
-- src/main/java/com/vi/tenantservice/api/authorisation/Authority.java
-- src/main/java/com/vi/tenantservice/api/authorisation/RoleAuthorizationAuthorityMapper.java
-- src/main/java/com/vi/tenantservice/api/config/CacheManagerConfig.java
-- src/main/java/com/vi/tenantservice/api/config/CustomSwaggerPathWebMvcConfigurer.java
-- src/main/java/com/vi/tenantservice/api/config/FreeMarkerConfig.java
-- src/main/java/com/vi/tenantservice/api/config/RestTemplateConfig.java
-- src/main/java/com/vi/tenantservice/api/config/SpringFoxConfig.java
-- src/main/java/com/vi/tenantservice/api/exception/TenantAuthorisationException.java
-- src/main/java/com/vi/tenantservice/api/facade/TenantFacadeAuthorisationService.java
-- src/main/java/com/vi/tenantservice/api/service/ConfigurationFileLoader.java
-- src/main/java/com/vi/tenantservice/api/service/httpheader/SecurityHeaderSupplier.java
-- src/main/java/com/vi/tenantservice/api/tenant/AccessTokenTenantResolver.java
-- src/main/java/com/vi/tenantservice/api/tenant/CookieTenantResolver.java
-- src/main/java/com/vi/tenantservice/api/tenant/HttpUrlUtils.java
-- src/main/java/com/vi/tenantservice/api/tenant/SubdomainExtractor.java
-- src/main/java/com/vi/tenantservice/api/tenant/SubdomainTenantResolver.java
-- src/main/java/com/vi/tenantservice/api/tenant/TenantHeaderSupplier.java
-- src/main/java/com/vi/tenantservice/api/tenant/TenantResolver.java
+- src/main/java/com/vi/tenantservice/api/controller/TenantMediaController.java
+- src/main/java/com/vi/tenantservice/api/controller/TenantDtoMapper.java
+- src/main/java/com/vi/tenantservice/api/controller/ExceptionHandlerAdvice.java
+- src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java
+- src/main/java/com/vi/tenantservice/api/facade/TenantDpaFacade.java
+- src/main/java/com/vi/tenantservice/api/facade/TranslationFacade.java
+- src/main/java/com/vi/tenantservice/api/service/GoverningDpaResolver.java
+- src/main/java/com/vi/tenantservice/api/service/TenantDpaStatusService.java
+- src/main/java/com/vi/tenantservice/api/service/TenantIdAllocationService.java
+- src/main/java/com/vi/tenantservice/api/service/TenantMediaService.java
+- src/main/java/com/vi/tenantservice/api/converter/EffectivePermissionSettingsApplier.java
+- src/main/java/com/vi/tenantservice/api/validation/InputSanitizer.java
 - src/main/java/com/vi/tenantservice/api/tenant/TenantResolverService.java
-- src/main/java/com/vi/tenantservice/config/ConfigurationValidator.java
-- src/main/java/com/vi/tenantservice/api/repository/TenantRepository.java
+- src/main/java/com/vi/tenantservice/config/security/WebSecurityConfig.java
+- src/main/resources/db/changelog/tenantservice-master.xml
+- documentation/translation-meta.md
+- tests/contracts/test_openapi_contract_gate.py
 
 ## Architecture Summary
 
-The service follows an OpenAPI-first Spring boundary with generated API contracts, controller/resource adapters, domain services, repository/data access classes, security/authority mapping, tenant-resolution support where present, and outbound service clients under services/ or apiclient configuration.
+OpenAPI-first Spring boundary: `api/tenantservice.yaml` is generated into API interfaces implemented by `TenantController` (plus `TenantMediaController`), which apply endpoint authorization. Facades orchestrate domain services: `TenantServiceFacade` for tenant CRUD/search with change detection, dependent-settings override, and downstream peer-service sync; `TenantDpaFacade` as the authorization-guarded (IDOR-safe) entry point to the DPA services; `TranslationFacade` for machine translation. Repositories persist to MariaDB. Security maps Keycloak JWTs to local authorities; tenant context is resolved from access token, cookie, or subdomain. The DPA module resolves the governing document for every read/sign/forward path through the single `GoverningDpaResolver` (own published DPA or the operator DPA, `app.dpa.operator-tenant-id`). Tenant IDs are allocated through a reservation ledger whose primary key guarantees exactly-once assignment.
 
 ## Key APIs
 
 | OpenAPI file | Paths |
 | --- | --- |
-| api/tenantservice.yaml | /tenantadmin<br>/tenantadmin/search<br>/tenantadmin/{id}<br>/tenant<br>/tenant/{id}<br>/tenant/public/{subdomain}<br>/tenant/public/id/{tenantId}<br>/tenant/public/single<br>/tenant/public/<br>/tenant/access |
+| api/tenantservice.yaml | /tenantadmin<br>/tenantadmin/search<br>/tenantadmin/controls<br>/tenantadmin/{id}<br>/tenantadmin/tenant-ids/{id}/availability<br>/tenantadmin/tenant-ids/next-free<br>/tenantadmin/tenant-ids/reservations<br>/tenantadmin/tenant-ids/reservations/{id}<br>/tenantadmin/{id}/dpa<br>/tenantadmin/{id}/dpa/status<br>/tenantadmin/{id}/dpa/versions<br>/tenantadmin/{id}/dpa/sign<br>/tenantadmin/{id}/dpa/signatures<br>/tenantadmin/{id}/dpa/invite<br>/tenantadmin/{id}/dpa/gate<br>/tenant/public/dpa/confirm/{token}<br>/tenantadmin/translation/keys<br>/tenantadmin/translation/keys/{provider}<br>/tenantadmin/translate<br>/tenant/translate/group-chat-author-content<br>/tenantadmin/media<br>/media/{mediaId}<br>/tenant<br>/tenant/{id}<br>/tenant/access<br>/tenant/public/{subdomain}<br>/tenant/public/id/{tenantId}<br>/tenant/public/ids<br>/tenant/public/single<br>/tenant/public/ |
 
 ## Controllers, Services, Repositories, and Entities
 
 Controllers:
 
 - src/main/java/com/vi/tenantservice/api/controller/TenantController.java
+- src/main/java/com/vi/tenantservice/api/controller/TenantMediaController.java
 - src/main/java/com/vi/tenantservice/api/controller/VersionController.java
+- src/main/java/com/vi/tenantservice/api/controller/ExceptionHandlerAdvice.java (controller advice)
+- src/main/java/com/vi/tenantservice/api/controller/interceptor/CorrelationIdFilter.java
 
-Services:
+Facades and services:
 
+- src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java
+- src/main/java/com/vi/tenantservice/api/facade/TenantDpaFacade.java
+- src/main/java/com/vi/tenantservice/api/facade/TranslationFacade.java
 - src/main/java/com/vi/tenantservice/api/facade/TenantFacadeAuthorisationService.java
 - src/main/java/com/vi/tenantservice/api/facade/TenantFacadeChangeDetectionService.java
 - src/main/java/com/vi/tenantservice/api/facade/TenantFacadeDependentSettingsOverrideService.java
+- src/main/java/com/vi/tenantservice/api/service/TenantService.java
+- src/main/java/com/vi/tenantservice/api/service/GoverningDpaResolver.java
+- src/main/java/com/vi/tenantservice/api/service/TenantDpaService.java
+- src/main/java/com/vi/tenantservice/api/service/TenantDpaStatusService.java
+- src/main/java/com/vi/tenantservice/api/service/TenantDpaRetentionService.java
+- src/main/java/com/vi/tenantservice/api/service/TenantIdAllocationService.java
+- src/main/java/com/vi/tenantservice/api/service/TenantMediaService.java
+- src/main/java/com/vi/tenantservice/api/service/TenantAdminControlsService.java
 - src/main/java/com/vi/tenantservice/api/service/SingleDomainTenantOverrideService.java
 - src/main/java/com/vi/tenantservice/api/service/TemplateService.java
-- src/main/java/com/vi/tenantservice/api/service/TenantService.java
 - src/main/java/com/vi/tenantservice/api/service/TranslationService.java
+- src/main/java/com/vi/tenantservice/api/service/translation/OpenRouterClient.java
+- src/main/java/com/vi/tenantservice/api/service/translation/MistralClient.java
+- src/main/java/com/vi/tenantservice/api/service/translation/OpenAiCompatibleChatClient.java
+- src/main/java/com/vi/tenantservice/api/service/translation/ApiKeyMasker.java
 - src/main/java/com/vi/tenantservice/api/service/consultingtype/ApplicationSettingsService.java
 - src/main/java/com/vi/tenantservice/api/service/consultingtype/ConsultingTypeService.java
 - src/main/java/com/vi/tenantservice/api/service/consultingtype/UserAdminService.java
@@ -99,44 +113,55 @@ Services:
 Repositories:
 
 - src/main/java/com/vi/tenantservice/api/repository/TenantRepository.java
+- src/main/java/com/vi/tenantservice/api/repository/TenantAdminControlsRepository.java
+- src/main/java/com/vi/tenantservice/api/repository/TenantDpaSignatureRepository.java
+- src/main/java/com/vi/tenantservice/api/repository/TenantDpaAdminSignatureRepository.java
+- src/main/java/com/vi/tenantservice/api/repository/TenantDpaVersionRepository.java
+- src/main/java/com/vi/tenantservice/api/repository/TenantIdReservationRepository.java
+- src/main/java/com/vi/tenantservice/api/repository/TenantMediaRepository.java
 
 Entities/models:
 
-- src/main/java/com/vi/tenantservice/api/model/DataProtectionPlaceHolderType.java
-- src/main/java/com/vi/tenantservice/api/model/TenantAdminAllowedPermissionTogglesSettings.java
-- src/main/java/com/vi/tenantservice/api/model/TenantAdminControlsSettings.java
-- src/main/java/com/vi/tenantservice/api/model/TenantContent.java
 - src/main/java/com/vi/tenantservice/api/model/TenantEntity.java
+- src/main/java/com/vi/tenantservice/api/model/TenantSettings.java (feature flags incl. media flag families, featureTeamDiscussionEnabled, emailVisible/emailRequired, featureDisplayNameEditable, featureAskerEmailEnabled)
 - src/main/java/com/vi/tenantservice/api/model/TenantSetting.java
-- src/main/java/com/vi/tenantservice/api/model/TenantSettings.java
+- src/main/java/com/vi/tenantservice/api/model/TenantContent.java
 - src/main/java/com/vi/tenantservice/api/model/TenantSmtpSettings.java
+- src/main/java/com/vi/tenantservice/api/model/TenantAdminControlsEntity.java
+- src/main/java/com/vi/tenantservice/api/model/TenantAdminControlsSettings.java (incl. per-tenant translationApiKeys)
+- src/main/java/com/vi/tenantservice/api/model/TenantAdminAllowedPermissionTogglesSettings.java
+- src/main/java/com/vi/tenantservice/api/model/TenantDpaSignatureEntity.java
+- src/main/java/com/vi/tenantservice/api/model/TenantDpaAdminSignatureEntity.java
+- src/main/java/com/vi/tenantservice/api/model/TenantDpaVersionEntity.java
+- src/main/java/com/vi/tenantservice/api/model/TenantDpaStatus.java / DpaSignatureStatus.java
+- src/main/java/com/vi/tenantservice/api/model/TenantIdReservationEntity.java / TenantIdReservationStatus.java / TenantIdAllocationStatus.java
+- src/main/java/com/vi/tenantservice/api/model/TenantMediaEntity.java
+- src/main/java/com/vi/tenantservice/api/model/DataProtectionPlaceHolderType.java
+- src/main/java/com/vi/tenantservice/api/model/AssignedOrSequenceIdGenerator.java
 
 Security, tenant, and config modules:
 
 - src/main/java/com/vi/tenantservice/api/authorisation/Authority.java
 - src/main/java/com/vi/tenantservice/api/authorisation/RoleAuthorizationAuthorityMapper.java
 - src/main/java/com/vi/tenantservice/api/config/CacheManagerConfig.java
-- src/main/java/com/vi/tenantservice/api/config/CustomSwaggerPathWebMvcConfigurer.java
+- src/main/java/com/vi/tenantservice/api/config/CorsConfig.java
 - src/main/java/com/vi/tenantservice/api/config/FreeMarkerConfig.java
 - src/main/java/com/vi/tenantservice/api/config/RestTemplateConfig.java
+- src/main/java/com/vi/tenantservice/api/config/RestrictedPublicTenantJacksonConfig.java
 - src/main/java/com/vi/tenantservice/api/config/SpringFoxConfig.java
-- src/main/java/com/vi/tenantservice/api/exception/TenantAuthorisationException.java
-- src/main/java/com/vi/tenantservice/api/facade/TenantFacadeAuthorisationService.java
-- src/main/java/com/vi/tenantservice/api/service/ConfigurationFileLoader.java
-- src/main/java/com/vi/tenantservice/api/service/httpheader/SecurityHeaderSupplier.java
+- src/main/java/com/vi/tenantservice/api/converter/EffectivePermissionSettingsApplier.java
+- src/main/java/com/vi/tenantservice/api/validation/InputSanitizer.java
+- src/main/java/com/vi/tenantservice/api/validation/TenantInputSanitizer.java
 - src/main/java/com/vi/tenantservice/api/tenant/AccessTokenTenantResolver.java
 - src/main/java/com/vi/tenantservice/api/tenant/CookieTenantResolver.java
-- src/main/java/com/vi/tenantservice/api/tenant/HttpUrlUtils.java
-- src/main/java/com/vi/tenantservice/api/tenant/SubdomainExtractor.java
 - src/main/java/com/vi/tenantservice/api/tenant/SubdomainTenantResolver.java
+- src/main/java/com/vi/tenantservice/api/tenant/SubdomainExtractor.java
 - src/main/java/com/vi/tenantservice/api/tenant/TenantHeaderSupplier.java
-- src/main/java/com/vi/tenantservice/api/tenant/TenantResolver.java
-- src/main/java/com/vi/tenantservice/api/tenant/TenantResolverService.java
 - src/main/java/com/vi/tenantservice/config/ConfigurationValidator.java
-- src/main/java/com/vi/tenantservice/config/security/AuthorisationService.java
 - src/main/java/com/vi/tenantservice/config/security/JwtAuthConverter.java
 - src/main/java/com/vi/tenantservice/config/security/JwtAuthConverterProperties.java
 - src/main/java/com/vi/tenantservice/config/security/WebSecurityConfig.java
+- src/main/java/com/vi/tenantservice/config/security/KeycloakLogoutHandler.java
 
 Adapters and generated clients:
 
@@ -144,140 +169,74 @@ Adapters and generated clients:
 - src/main/java/com/vi/tenantservice/api/config/apiclient/ApplicationSettingsApiControllerFactory.java
 - src/main/java/com/vi/tenantservice/api/config/apiclient/ConsultingTypeServiceApiControllerFactory.java
 - src/main/java/com/vi/tenantservice/api/config/apiclient/UserAdminServiceApiControllerFactory.java
-- src/main/java/com/vi/tenantservice/config/security/KeycloakLogoutHandler.java
 
 ## Config and Database
 
-Application config keys inspected:
+Application config keys inspected (application.properties plus per-profile files for local/dev/staging/prod/testing):
 
-- logging.level.root
-- logging.level.org.springframework.web
-- logging.level.org.springframework.security
-- logging.level.org.hibernate
-- logging.level.org.hibernate.SQL
-- logging.level.org.hibernate.type.descriptor.sql.BasicBinder
-- logging.level.org.keycloak.adapters
-- keycloak.auth-server-url
-- keycloak.realm
-- keycloak.bearer-only
-- spring.security.oauth2.resourceserver.jwt.issuer-uri
-- spring.security.oauth2.resourceserver.jwt.jwk-set-uri
-- spring.datasource.url
-- spring.datasource.username
-- spring.datasource.password
-- spring.liquibase.enabled
-- spring.jpa.show-sql
-- spring.jpa.properties.hibernate.format_sql
-- server.port
+- spring.application.name, server.port, server.shutdown, spring.lifecycle.timeout-per-shutdown-phase
+- keycloak.* (bearer-only, resource, principal-attribute, cors, disable-trust-manager), spring.security.oauth2.resourceserver.jwt.issuer-uri / jwk-set-uri
+- spring.datasource.* (MariaDB driver, Hikari pool), spring.jpa.properties.hibernate.dialect
+- spring.liquibase.enabled=${SPRING_LIQUIBASE_ENABLED:false}, spring.liquibase.change-log=classpath:db/changelog/tenantservice-master.xml, spring.liquibase.contexts=${SPRING_LIQUIBASE_CONTEXTS:prod} — Liquibase now has a single default master changelog with env-var gating (the per-environment master files were removed); the testing profile keeps it disabled
 - feature.multitenancy.with.single.domain.enabled
-- keycloak.ssl-required
-- spring.application.name
-- logging.level.com.vi.tenantservice
-- logging.level.org.springframework.web.servlet.DispatcherServlet
-- spring.main.allow-bean-definition-overriding
-- keycloak.disable-trust-manager
-- keycloak.resource
-- keycloak.principal-attribute
-- keycloak.cors
-- app.base.url
-- springfox.docuTitle
-- springfox.docuDescription
-- springfox.docuVersion
-- springfox.docuTermsUrl
-- springfox.docuContactName
-- springfox.docuContactUrl
-- springfox.docuContactEmail
-- springfox.docuLicense
-- springfox.docuLicenseUrl
-- springfox.docuPath
-- springfox.documentation.swagger.v2.path
-- spring.datasource.driver-class-name
-- spring.datasource.hikari.maximum-pool-size
-- spring.datasource.hikari.minimum-idle
-- spring.datasource.hikari.idle-timeout
-- spring.datasource.hikari.maxLifetime
-- spring.jpa.properties.hibernate.dialect
-- consulting.type.service.api.url
-- csrf.header.property
-- csrf.cookie.property
-- csrf.whitelist.adminUris
-- default.consulting.types.json.path
-- default.tenant.settings.json.path
-- user.service.api.url
-- management.endpoint.health.enabled
-- management.endpoint.health.show-details
-- management.endpoints.web.exposure.include
-- management.endpoint.health.probes.enabled
-- spring.cache.jcache.config
-- spring.mvc.pathmatch.matching-strategy
-- org.springframework.web.servlet.mvc.method.annotation
-- template.use.custom.resources.path
-- template.custom.resources.path
-- logging.pattern.level
-- spring.root.level
+- tenant.cors.enabled / tenant.cors.allowed.origins / tenant.cors.allowed.paths
+- consulting.type.service.api.url, user.service.api.url
+- csrf.header.property, csrf.cookie.property, csrf.whitelist.adminUris
+- default.consulting.types.json.path, default.tenant.settings.json.path
+- template.use.custom.resources.path, template.custom.resources.path
+- translation.openrouter.base-url / model, translation.mistral.base-url / model, translation.connect-timeout-ms / read-timeout-ms (provider API keys are per-tenant data, not config)
+- app.dpa.operator-tenant-id (governing operator DPA holder, default 1), dpa.denied-retention-days (default 365)
+- management.tracing.sampling.probability, management.opentelemetry.tracing.export.otlp.endpoint, management.otlp.metrics.export.url / enabled
+- management.endpoint.health.*, management.endpoints.web.exposure.include, spring.cache.jcache.config
+- springfox.docu* (Swagger UI metadata), app.base.url
 
-Migration/changelog files found:
+Migration/changelog files: single master `src/main/resources/db/changelog/tenantservice-master.xml` referencing changesets 0001-0027 under `src/main/resources/db/changelog/changeset/`. Notable recent changesets:
 
-- src/main/resources/db/changelog/changeset/0001_initsql/initSql.xml
-- src/main/resources/db/changelog/changeset/0001_initsql/initTables.sql
-- src/main/resources/db/changelog/changeset/0002_add_privacy_and_terms_and_conditions/0002-changeSet.xml
-- src/main/resources/db/changelog/changeset/0002_add_privacy_and_terms_and_conditions/addPrivacyAndTermsAndConditionsColumns.sql
-- src/main/resources/db/changelog/changeset/0003_change_tenant_attributes/0003-changeSet.xml
-- src/main/resources/db/changelog/changeset/0003_change_tenant_attributes/changeTenantAttributes.sql
-- src/main/resources/db/changelog/changeset/0004_add_tenant_settings/0004-changeSet.xml
-- src/main/resources/db/changelog/changeset/0004_add_tenant_settings/addSettingTopicsInRegistrationEnabled.sql
-- src/main/resources/db/changelog/changeset/0005_change_tenant_settings_structure/0005-changeSet.xml
-- src/main/resources/db/changelog/changeset/0005_change_tenant_settings_structure/migrateToGeneralSettings.sql
-- src/main/resources/db/changelog/changeset/0006_migrate_content_to_multilingual_structure/0006-changeSet.xml
-- src/main/resources/db/changelog/changeset/0006_migrate_content_to_multilingual_structure/migrateToMultilingualContent.sql
-- src/main/resources/db/changelog/changeset/0007_content_activation_dates/0007-changeSet.xml
-- src/main/resources/db/changelog/changeset/0007_content_activation_dates/contentActivationDates.sql
-- src/main/resources/db/changelog/changeset/0008_drop_unique_constraint_for_subdomain/0008-changeSet.xml
-- src/main/resources/db/changelog/changeset/0008_drop_unique_constraint_for_subdomain/dropUniqueConstraintForSubdomain.sql
-- src/main/resources/db/changelog/changeset/0009_fix_sequence_start_value/0009-fixSequenceStartValue.xml
-- src/main/resources/db/changelog/changeset/0009_fix_sequence_start_value/fixSequenceStartValue.sql
-- src/main/resources/db/changelog/changeset/0010_add_association_logo/0010-addAssociationLogo.xml
-- src/main/resources/db/changelog/changeset/0010_add_association_logo/addAssociationLogo.sql
-- src/main/resources/db/changelog/changeset/0010_tenant_id_default_value/tenantIdDefaultValue.sql
-- src/main/resources/db/changelog/changeset/0010_tenant_id_default_value/tenantIdDefaultValue.xml
-- src/main/resources/db/changelog/changeset/0011_tenant_add_is_video_call_allowed/tenantAddIsVideoCallAllowed-rollback.sql
-- src/main/resources/db/changelog/changeset/0011_tenant_add_is_video_call_allowed/tenantAddIsVideoCallAllowed.sql
-- src/main/resources/db/changelog/changeset/0011_tenant_add_is_video_call_allowed/tenantAddIsVideoCallAllowed.xml
-- src/main/resources/db/changelog/changeset/0012_tenant_remove_is_video_call_allowed/tenantRemoveIsVideoCallAllowed.sql
-- src/main/resources/db/changelog/changeset/0012_tenant_remove_is_video_call_allowed/tenantRemoveIsVideoCallAllowed.xml
-- src/main/resources/db/changelog/tenantservice-dev-master.xml
-- src/main/resources/db/changelog/tenantservice-local-master.xml
-- src/main/resources/db/changelog/tenantservice-prod-master.xml
-- src/main/resources/db/changelog/tenantservice-staging-master.xml
-- src/main/resources/db/changelog/tenantservice-testing-master.xml
-- src/main/resources/liquibase.properties
+- 0013 tenant admin controls, 0014 tenant address/description
+- 0015-0021 DPA: tenant DPA columns, signature table, signature token, version table, signature audit fields, lowercase sequence-name fixes for case-sensitive MariaDB, signer-is-member type fix
+- 0022 widen tenant settings column
+- 0023 tenant media table (DB-blob storage)
+- 0024 tenant_id_reservation ledger
+- 0025-0026 DPA admin signature table + sequence-name case fix
+- 0027 theming light accent and signal colour
+
+A schema-drift IT (`src/test/java/com/vi/tenantservice/api/LiquibaseSchemaDriftIT.java`) guards changelog-vs-JPA-model divergence.
 
 ## ORISO Dependencies
 
-Inbound callers are primarily ORISO-Frontend, ORISO-Admin, or peer backend services. Outbound contracts/configs found:
+Inbound callers are primarily ORISO-Frontend, ORISO-Admin, or peer backend services (the tenant-invite/onboarding flow consumes the tenant-ID reservation endpoints; Admin consumes controls, DPA, translation and media endpoints; Frontend consumes restricted public metadata incl. the batch lookup and the asker permission keys #602). Outbound contracts/configs found:
 
 - services/agencyadminservice.yaml
 - services/applicationsettingsservice.yml
 - services/consultingtypeservice.yaml
 - services/useradminservice.yaml
 
+Provider/consumer compatibility is enforced by an OpenAPI contract gate in CI (`tests/contracts/test_openapi_contract_gate.py`, `scripts/contracts/*.sh`, `.github/workflows/openapi-contracts.yml`); `tests/ci/test_required_ci_contract.py` pins the required pre-dev CI conclusions.
+
 ## Local Development Notes
 
-- ./mvnw spring-boot:run with a local profile
+- ./mvnw spring-boot:run with a local profile (Java 21 required; Spring Boot 4.0.1)
 - Requires MariaDB tenantservice schema, Keycloak, and configured ConsultingType/ApplicationSettings/UserAdmin/AgencyAdmin APIs.
+- documentation/local-development.md and run-local-remote-db.sh.example cover running against a remote DB; documentation/translation-meta.md documents the translation metadata format.
 
 ## Deployment Notes
 
-- Dockerfile and ORISO-Kubernetes helm/charts/tenantservice.
+- Dockerfile and ORISO-Helm tenantservice chart; images built by GitHub Actions (per-image build cache scope, pre-dev branch mirror pipeline, release-image workflow for release branches).
+- Liquibase only runs where SPRING_LIQUIBASE_ENABLED=true is set for the deployment; contexts default to prod.
 
 ## Risks and Gaps
 
-- Verify that runtime database schemas match ORISO-Database exports; service repos still include Liquibase/changelog references but platform docs indicate schemas are centrally managed.
-- Config files contain environment-specific Keycloak, peer-service, cache, Matrix/Rocket.Chat, and database settings. Do not hardcode those in source.
+- README.md still says "Java 17 Spring Boot 3" while pom.xml is Spring Boot 4.0.1 / Java 21 — stale doc.
+- spring.liquibase.enabled defaults to false: a fresh environment without SPRING_LIQUIBASE_ENABLED=true silently skips migrations 0013-0027 and then fails at runtime with unknown columns/tables.
+- DPA services (TenantDpaService, TenantDpaStatusService, GoverningDpaResolver) take raw tenant ids by design; the IDOR guard lives solely in TenantDpaFacade/TenantFacadeAuthorisationService. Any new endpoint wiring these services directly would expose signer PII.
+- Per-tenant machine-translation API keys are stored in TenantAdminControlsSettings (DB JSON); they are masked in responses/logs via ApiKeyMasker but rest unencrypted in the tenant database.
+- Tenant media is stored as MariaDB blobs (2 MB cap per object, no quota per tenant found) — DB growth is unbounded by count.
+- Branding assets are validated as URLs / allowlisted image data URLs (no SVG); legal-content HTML sanitization and the Admin editor allowlist must stay aligned or tenant logos/legal anchors regress again (this exact regression happened once).
 - Tenant resolution is implemented in service code and must stay aligned with frontend/admin host/cookie/header behavior.
 
 ## Needs Verification
 
-- Exact active Spring profile and whether Liquibase is disabled in the target environment.
-- Exact API gateway path prefixes used by Kubernetes ingress for each OpenAPI path.
-- Current Matrix vs Rocket.Chat operational boundary where both references exist.
+- Which environments currently set SPRING_LIQUIBASE_ENABLED=true (pre-dev vs dev vs prod) and which still apply schema exports manually.
+- Whether the operator DPA tenant (`app.dpa.operator-tenant-id`, default 1) is correctly configured per environment.
+- Exact API gateway/ingress path prefixes for the new /tenantadmin/tenant-ids, /tenantadmin/{id}/dpa, /tenantadmin/media and /media paths.
+- Whether legacy per-tenant DPA authoring (tenants with their own published DPA measured against themselves) is scheduled for retirement — GoverningDpaResolver keeps it deliberately additive pending a product decision.

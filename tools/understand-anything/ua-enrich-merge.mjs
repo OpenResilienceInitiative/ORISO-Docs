@@ -3,7 +3,7 @@
 // Usage: node ua-enrich-merge.mjs <stagingDir> <enrichment.json>
 import { readFileSync, writeFileSync } from "node:fs";
 
-const CORE = "/opt/oriso-understand/understand-anything-plugin/understand-anything-plugin/packages/core/dist/index.js";
+const CORE = process.env.UA_CORE ?? "/opt/oriso-understand/understand-anything-plugin/understand-anything-plugin/packages/core/dist/index.js";
 const c = await import(CORE);
 
 const [stagingDir, enrPath] = process.argv.slice(2);

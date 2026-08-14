@@ -5,6 +5,8 @@ description: Direct chart/ingress inspection and graph-backed summary for ORISO-
 
 # ORISO-Kubernetes Enriched Graph Summary
 
+> **LEGACY — ARCHIVED.** This repository is archived upstream (Neusta-owned, read-only) with no commits since 2026-07-09. The canonical deployment repository is **ORISO-Helm**. This page documents the frozen state for historical reference and analysis only; never deploy from these manifests.
+
 ## Platform Navigation
 
 - [Overview](../overview.md)
@@ -25,7 +27,7 @@ description: Direct chart/ingress inspection and graph-backed summary for ORISO-
 
 ## Repository Purpose
 
-Kubernetes infrastructure repository for Helm charts, ingress routing, service networking, storage, observability, and ORISO runtime topology.
+Legacy Kubernetes infrastructure repository for Helm charts, ingress routing, service networking, storage, observability, and ORISO runtime topology. Archived; superseded by ORISO-Helm as the canonical infrastructure repo.
 
 ## Main Technologies
 
@@ -35,13 +37,11 @@ Kubernetes, Helm 3, Nginx Ingress, cert-manager, MariaDB, MongoDB, Redis, Rabbit
 
 - helm/oriso-platform/Chart.yaml
 - helm/oriso-platform/values.yaml
-- helm/oriso-platform/values-local-macos.example.yaml
 - helm/values.yaml
 - ingress/ingress-values.yaml
 - ingress/apply-ingress.sh
 - README.md
 - docs/MULTITENANCY_MODULE_SPECIFICATION.md
-- docs/redis-commander-hardening-and-validation.md
 - helm/README.md
 - helm/charts/agencyservice/README.md
 - helm/oriso-platform/README.md
@@ -136,15 +136,18 @@ The deployment topology is chart-based. Infrastructure charts provide MariaDB, M
 
 ## Local Development Notes
 
-- Use helm/oriso-platform/values-local-macos.example.yaml for local overrides.
-- Deploy dependencies before backend and UI charts.
+- Do not use this repo for local or any other deployment — it is archived. Use ORISO-Helm.
+- Historically: deploy dependency charts before backend and UI charts (see helm/README.md).
 
 ## Deployment Notes
 
-- helm/oriso-platform umbrella chart plus ingress/*.yaml routing.
+- Historical model: helm/oriso-platform umbrella chart plus ingress/*.yaml routing applied via ingress/apply-ingress.sh.
+- Live deployment now lives in ORISO-Helm; nothing here reflects the current Pre-Dev/Dev clusters.
 
 ## Risks and Gaps
 
+- Primary risk: mistaking this archived repo for the live deployment source. It is not — ORISO-Helm is canonical.
+- The RocketChat ingress (ingress/11-rocketchat-ingress.yaml) is a pre-Matrix-migration remnant; the platform is Matrix-only now.
 - HPA manifests found: no.
 - NetworkPolicy manifests found: no.
 - PodDisruptionBudget manifests found: no.

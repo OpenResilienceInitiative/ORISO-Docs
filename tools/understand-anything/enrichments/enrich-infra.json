@@ -3,36 +3,50 @@
     {
       "id": "concept:cluster-provisioning",
       "name": "Cluster Provisioning (dev on Hetzner)",
-      "summary": "Declarative k3s cluster on Hetzner Cloud via hetzner-k3s: clusters/dev-hetzner/cluster.yaml is the cluster config, apply.sh is the one-command provision+bootstrap entrypoint. Staging/prod run on Gridscale GSK and are managed separately.",
+      "summary": "Declarative k3s cluster (oriso-dev, k3s v1.32.0+k3s1, Nuremberg/nbg1) on Hetzner Cloud via the hetzner-k3s CLI: clusters/dev-hetzner/cluster.yaml defines 1 CX23 control-plane node plus an autoscaling CX33 worker pool (2-5 nodes), flannel CNI, private network 10.0.0.0/16, metrics-server and Spegel embedded registry mirror enabled, Traefik and ServiceLB explicitly disabled. apply.sh is the one-command provision+bootstrap entrypoint; hetzner-k3s must run from the cluster directory so kubeconfig lands next to cluster.yaml. Staging/prod run on Gridscale GSK and are managed separately.",
       "tags": ["infrastructure", "core"],
-      "related": ["cluster.yaml", "apply.sh", "README.md"]
+      "related": ["clusters/dev-hetzner/cluster.yaml", "clusters/dev-hetzner/README.md", "apply.sh", "README.md"]
     },
     {
       "id": "concept:bootstrap-components",
       "name": "In-Cluster Bootstrap",
-      "summary": "bootstrap/ installs the in-cluster platform baseline idempotently: caritas namespace, block-storage StorageClass, cert-manager (Helm values under bootstrap/values/). Raw manifests live in bootstrap/manifests/.",
+      "summary": "bootstrap/bootstrap.sh idempotently installs the minimal cluster-level baseline the ORISO platform chart expects to pre-exist: cert-manager (pinned v1.16.2, Helm values under bootstrap/values/ with CRDs installed and kept), the caritas application namespace, and the block-storage StorageClass. Post-bootstrap manual steps (documented in bootstrap/README.md): create the GHCR registry-secret in caritas and install the ORISO platform chart with a local gitignored values-dev.yaml.",
       "tags": ["infrastructure"],
-      "related": ["bootstrap.sh", "caritas-namespace.yaml", "block-storage-sc.yaml", "cert-manager.yaml"]
+      "related": ["bootstrap/bootstrap.sh", "bootstrap/README.md", "bootstrap/manifests/caritas-namespace.yaml", "cert-manager.yaml"]
+    },
+    {
+      "id": "concept:storage-classes",
+      "name": "Block Storage StorageClass Alias",
+      "summary": "StorageClass block-storage is a pure alias for Hetzner CSI's hcloud-volumes (provisioner csi.hetzner.cloud, WaitForFirstConsumer, reclaim Delete, expansion allowed) so the ORISO chart's storageClassName: block-storage references (Matrix Synapse data/media/postgres PVCs) work without chart changes. Persistent data lives on Hetzner Volumes, not on node disks.",
+      "tags": ["infrastructure", "storage"],
+      "related": ["block-storage-sc.yaml", "bootstrap/bootstrap.sh", "bootstrap/README.md"]
     },
     {
       "id": "concept:access-management",
       "name": "Developer Access Management",
-      "summary": "add-developer.sh / remove-developer.sh grant and revoke cluster access; ACCESS-MANAGEMENT.md documents the admin and developer procedures.",
+      "summary": "Per-developer cluster access via personal ServiceAccounts: add-developer.sh creates ServiceAccount dev-<user>, a namespace-scoped RoleBinding to the built-in admin ClusterRole in caritas, and a long-lived token Secret (all labelled oriso.io/user=<name>), then emits a personal kubeconfig for secure one-time hand-off. Developers get full rights inside caritas but no cluster-level or cross-namespace access. remove-developer.sh deletes everything by label, invalidating the kubeconfig immediately. ACCESS-MANAGEMENT.md documents both the admin and developer procedures.",
       "tags": ["security", "operations"],
       "related": ["add-developer.sh", "remove-developer.sh", "ACCESS-MANAGEMENT.md"]
+    },
+    {
+      "id": "concept:network-security-posture",
+      "name": "Network Exposure & Firewall Allowlists",
+      "summary": "Hetzner Cloud Firewall allowlists are declared in cluster.yaml: both the Kubernetes API server and SSH are currently open to 0.0.0.0/0 (auth relies on mTLS admin kubeconfig and ServiceAccount tokens). The stated long-term plan is to move both behind a Tailscale mesh VPN (CGNAT range). Note ACCESS-MANAGEMENT.md still describes SSH as firewalled to the admin's IP, which no longer matches cluster.yaml.",
+      "tags": ["security", "infrastructure"],
+      "related": ["clusters/dev-hetzner/cluster.yaml", "ACCESS-MANAGEMENT.md", "clusters/dev-hetzner/README.md"]
     }
   ],
   "flows": [
     {
       "id": "flow:provision-cluster",
       "name": "Provision & Bootstrap Cluster",
-      "summary": "apply.sh → hetzner-k3s provisions the cluster from clusters/dev-hetzner/cluster.yaml → bootstrap/bootstrap.sh applies namespace + storage manifests and installs cert-manager → cluster ready for the ORISO-Helm platform chart.",
-      "related": ["apply.sh", "cluster.yaml", "bootstrap.sh"]
+      "summary": "export HCLOUD_TOKEN, then apply.sh: Phase 1 cd's into clusters/dev-hetzner and runs hetzner-k3s create against cluster.yaml (network, firewall, VMs, LB, k3s, Hetzner CCM/CSI, Spegel; kubeconfig written locally, gitignored) → Phase 2 runs bootstrap/bootstrap.sh (cert-manager, caritas namespace, block-storage StorageClass) → operator manually creates the GHCR registry-secret and installs the ORISO platform chart into caritas. Re-running is safe; hetzner-k3s applies only the diff.",
+      "related": ["apply.sh", "clusters/dev-hetzner/cluster.yaml", "bootstrap/bootstrap.sh", "bootstrap/README.md"]
     },
     {
       "id": "flow:developer-onboarding",
       "name": "Developer On/Offboarding",
-      "summary": "Admin runs add-developer.sh to issue cluster access for a developer (procedure in ACCESS-MANAGEMENT.md); remove-developer.sh revokes it again.",
+      "summary": "Admin points KUBECONFIG at the admin kubeconfig and runs add-developer.sh <username> (DNS-friendly name) → script applies SA + RoleBinding + token Secret in caritas, waits for the token controller, and writes <username>-kubeconfig.yaml (mode 600) → admin hands the file over via a secure one-time channel and deletes the local copy → developer saves it as ~/.kube/oriso-dev. Offboarding: remove-developer.sh <username> deletes all resources by the oriso.io/user label.",
       "related": ["add-developer.sh", "remove-developer.sh", "ACCESS-MANAGEMENT.md"]
     }
   ]

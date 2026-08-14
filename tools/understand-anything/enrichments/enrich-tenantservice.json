@@ -3,21 +3,21 @@
     {
       "id": "concept:tenant-registry",
       "name": "Tenant Registry",
-      "summary": "TenantService is the ORISO tenant registry: it stores tenant identity, subdomain, licensing limits, theming, feature settings, multilingual legal content, and content activation dates. It also exposes restricted public tenant metadata for callers without a full authenticated tenant context.",
+      "summary": "TenantService is the ORISO tenant registry: it stores tenant identity, subdomain, licensing limits, theming, feature settings, multilingual legal content, and content activation dates. Since mid-2026 it also owns the tenant-ID allocation ledger, the DPA (Auftragsverarbeitungsvertrag) signature/status subsystem, tenant-owned media blobs, and machine translation of legal texts. Restricted public tenant metadata is served to callers without a full authenticated tenant context.",
       "tags": ["domain", "core"],
       "related": ["TenantController.java", "TenantServiceFacade.java", "TenantService.java", "TenantRepository.java", "TenantEntity.java", "README.md"]
     },
     {
       "id": "concept:openapi-contract",
       "name": "OpenAPI Contract & Generated Interfaces",
-      "summary": "api/tenantservice.yaml defines the public REST contract. TenantController implements the generated API interfaces and applies endpoint authorization. Main endpoint groups: /tenantadmin (administration), /tenantadmin/search (paginated search), plus restricted public reads.",
+      "summary": "api/tenantservice.yaml defines the public REST contract. TenantController implements the generated API interfaces and applies endpoint authorization. Endpoint groups: /tenantadmin (administration, search, controls), /tenantadmin/tenant-ids/* (ID allocation and reservations), /tenantadmin/{id}/dpa/* (DPA status, versions, signing, invite, gate), /tenantadmin/translation/* and /tenant/translate/* (machine translation), /tenantadmin/media plus /media/{mediaId} (tenant media), and restricted public reads including the batch lookup /tenant/public/ids. A CI contract gate (tests/contracts) verifies provider-consumer compatibility against peer services.",
       "tags": ["api"],
-      "related": ["api/tenantservice.yaml", "TenantController.java", "VersionController.java"]
+      "related": ["api/tenantservice.yaml", "TenantController.java", "VersionController.java", "TenantDtoMapper.java", "tests/contracts/test_openapi_contract_gate.py", "tests/ci/test_required_ci_contract.py"]
     },
     {
       "id": "concept:jwt-authorization",
       "name": "Keycloak JWT Authorization",
-      "summary": "WebSecurityConfig, JwtAuthConverter, and AuthorisationService map Keycloak-issued JWTs to local authorities; TenantFacadeAuthorisationService enforces facade-level authorization rules.",
+      "summary": "WebSecurityConfig, JwtAuthConverter, and AuthorisationService map Keycloak-issued JWTs to local authorities; TenantFacadeAuthorisationService enforces facade-level authorization rules. The DPA facade re-uses assertUserIsAuthorizedToAccessTenant as the IDOR guard in front of the raw-tenant-id DPA services.",
       "tags": ["security"],
       "related": ["WebSecurityConfig.java", "JwtAuthConverter.java", "JwtAuthConverterProperties.java", "AuthorisationService.java", "TenantFacadeAuthorisationService.java"]
     },
@@ -37,31 +37,91 @@
     },
     {
       "id": "concept:mariadb-persistence",
-      "name": "MariaDB Persistence",
-      "summary": "TenantService, TenantRepository, and the tenant entities own MariaDB persistence for tenant records and admin controls (TenantAdminControlsRepository/-Service).",
+      "name": "MariaDB Persistence & Liquibase",
+      "summary": "TenantService, TenantRepository, and the tenant entities own MariaDB persistence for tenant records, admin controls, DPA versions/signatures, tenant media blobs, and the tenant-ID reservation ledger. Liquibase is wired to a single default changelog (tenantservice-master.xml, changesets 0001-0027) with spring.liquibase.enabled defaulting to false via SPRING_LIQUIBASE_ENABLED and disabled in the testing profile; a schema-drift IT compares the changelog against the JPA model.",
       "tags": ["persistence"],
-      "related": ["TenantRepository.java", "TenantAdminControlsRepository.java", "TenantAdminControlsService.java", "TenantService.java"]
+      "related": ["TenantRepository.java", "TenantAdminControlsRepository.java", "TenantAdminControlsService.java", "TenantService.java", "LiquibaseSchemaDriftIT.java", "src/main/resources/db/changelog/changeset/0027_tenant_theming_accent_and_signal/addThemingAccentAndSignal.sql"]
     },
     {
       "id": "concept:templates-and-translations",
-      "name": "Templates & Translations",
-      "summary": "TemplateService and TranslationService manage templated, multilingual content (e.g. legal texts) with FreeMarker configuration; ConfigurationFileLoader and ConfigurationValidator load and validate template descriptions.",
-      "tags": ["content"],
-      "related": ["TemplateService.java", "TranslationService.java", "FreeMarkerConfig.java", "ConfigurationFileLoader.java", "ConfigurationValidator.java"]
+      "name": "Templates & Legal Content Translations",
+      "summary": "TemplateService and TranslationService manage templated, multilingual content (e.g. legal texts) with FreeMarker configuration; ConfigurationFileLoader and ConfigurationValidator load and validate template descriptions. TranslationFacade adds LLM-backed machine translation of legal texts and group-chat author content via pluggable OpenAI-compatible providers (OpenRouter, Mistral); per-tenant provider API keys live in the tenant admin controls settings and are masked by ApiKeyMasker in every response and log line.",
+      "tags": ["content", "i18n"],
+      "related": ["TemplateService.java", "TranslationService.java", "TranslationFacade.java", "OpenRouterClient.java", "MistralClient.java", "ApiKeyMasker.java", "documentation/translation-meta.md", "FreeMarkerConfig.java"]
+    },
+    {
+      "id": "concept:dpa-legal-module",
+      "name": "DPA (AVV) Signature & Status Module",
+      "summary": "The data processing agreement (Auftragsverarbeitungsvertrag) module records tenant confirmations of the DPA and derives the authoritative signed/unsigned gate. GoverningDpaResolver is the single source of truth for which versioned document governs a tenant (its own published DPA if it authored one, otherwise the operator document held by app.dpa.operator-tenant-id, per #569): reading, in-app signing, and forward-for-signature all resolve through it so status and signable document never diverge. Two signing channels count: token-based public confirmation (hashed, single-use, expiring DpaSignToken consumed atomically) and audit-proof in-app signing by authenticated tenant admins (append-only tenant_dpa_admin_signature). DENIED confirmations are auto-purged after a configurable retention window (default 365 days).",
+      "tags": ["legal", "compliance", "domain"],
+      "related": ["GoverningDpaResolver.java", "TenantDpaService.java", "TenantDpaStatusService.java", "TenantDpaFacade.java", "TenantDpaRetentionService.java", "DpaSignToken.java", "TenantDpaVersionRepository.java", "src/main/resources/db/changelog/changeset/0025_tenant_dpa_admin_signature/createTenantDpaAdminSignature.sql"]
+    },
+    {
+      "id": "concept:tenant-id-allocation",
+      "name": "Tenant-ID Allocation Ledger",
+      "summary": "Authoritative allocation of tenant IDs (TEN-INV-U1): an ID is FREE, RESERVED (held by an open invite) or ASSIGNED (consumed by a real tenant). Every reservation and tenant creation writes a row into the tenant_id_reservation ledger inside the allocating transaction, so the primary key — not an application-level check — guarantees an ID is handed out exactly once. AUTO mode assigns the smallest free ID and retries lost races in a fresh transaction; ID 0 is the technical tenant and never assignable. Exposed under /tenantadmin/tenant-ids/* (availability, next-free, reservations).",
+      "tags": ["domain", "consistency"],
+      "related": ["TenantIdAllocationService.java", "TenantIdReservationRepository.java", "TenantIdReservationEntity.java", "TenantIdAllocationStatus.java", "ExceptionHandlerAdvice.java", "src/main/resources/db/changelog/changeset/0024_tenant_id_reservation/createTenantIdReservationTable.sql"]
+    },
+    {
+      "id": "concept:tenant-media",
+      "name": "Tenant Media Storage",
+      "summary": "TenantMediaService stores and serves tenant-owned editor images as MariaDB blobs (max 2 MB). Content type is derived from magic bytes only — client-supplied file name and content type are untrusted; SVG is deliberately unsupported (script content) and anything unrecognised is rejected fail-closed. Upload goes through /tenantadmin/media, public serving through /media/{mediaId}.",
+      "tags": ["media", "security"],
+      "related": ["TenantMediaService.java", "TenantMediaController.java", "TenantMediaRepository.java", "TenantMediaEntity.java", "src/main/resources/db/changelog/changeset/0023_tenant_media/createTenantMediaTable.sql"]
+    },
+    {
+      "id": "concept:permission-controls",
+      "name": "Platform Permission Controls & Effective Settings",
+      "summary": "TenantAdminControls hold platform-level allowed/enforced permission toggles per tenant. EffectivePermissionSettingsApplier applies them server-side to the public feature flags served to the counselling app (allowed=false forces a feature off, enforced=true forces it on), so the Frontend needs no awareness of the controls, which are stripped from the restricted DTO (ADR-013 P4). The tenant settings model is the platform-wide definition point for feature flags, including the media flag families (upload / inline display / AI scan per chat type), featureTeamDiscussionEnabled, registration e-mail config (emailVisible/emailRequired), and the asker permission keys featureDisplayNameEditable and featureAskerEmailEnabled (#602).",
+      "tags": ["settings", "authorization"],
+      "related": ["EffectivePermissionSettingsApplier.java", "TenantAdminControlsEntity.java", "TenantAdminAllowedPermissionTogglesSettings.java", "TenantAdminControlsSettings.java", "TenantSettings.java", "TenantConverter.java"]
+    },
+    {
+      "id": "concept:theming-and-branding-safety",
+      "name": "Theming & Branding Asset Safety",
+      "summary": "Tenant theming persists colors (including the light accent and signal colour added via changeset 0027) plus logo, favicon, and association logo. Branding assets are validated as URLs or as an allowlist of image data URLs (png/jpeg/ico; SVG deliberately absent) via InputSanitizer#sanitizeAssetUrl instead of being HTML-sanitized — the earlier HTML sanitization corrupted asset URLs and made tenant logos disappear from public surfaces. Legal-content HTML is sanitized with a restricted anchor-id slug charset for the legal anchor navigation.",
+      "tags": ["theming", "security"],
+      "related": ["InputSanitizer.java", "TenantInputSanitizer.java", "TenantEntity.java", "src/main/resources/db/changelog/changeset/0027_tenant_theming_accent_and_signal/addThemingAccentAndSignal.sql"]
+    },
+    {
+      "id": "concept:observability",
+      "name": "Observability (OTLP, JSON Logs, Correlation IDs)",
+      "summary": "The service ships OTLP tracing and metrics through Spring Boot 4 micrometer-tracing/OpenTelemetry auto-configuration, JSON structured logging, a correlation-id filter, and catch-all exception logging in ExceptionHandlerAdvice. The Sentry SDK was removed (OBS-P5); a tracing smoke IT guards the autoconfiguration wiring.",
+      "tags": ["observability"],
+      "related": ["CorrelationIdFilter.java", "ExceptionHandlerAdvice.java", "TracingSmokeIT.java"]
     }
   ],
   "flows": [
     {
       "id": "flow:tenant-crud",
       "name": "Tenant Create/Update/Delete/Search",
-      "summary": "TenantController receives the request (generated API interface + endpoint authorization) → TenantServiceFacade orchestrates (change detection, dependent settings override, downstream sync) → TenantService/TenantRepository persist to MariaDB → converters map between DTOs and entities.",
-      "related": ["TenantController.java", "TenantServiceFacade.java", "TenantFacadeChangeDetectionService.java", "TenantFacadeDependentSettingsOverrideService.java", "TenantService.java", "TenantRepository.java", "TenantConverter.java"]
+      "summary": "TenantController receives the request (generated API interface + endpoint authorization) → TenantServiceFacade orchestrates (change detection, dependent settings override, downstream sync) → TenantService/TenantRepository persist to MariaDB → converters map between DTOs and entities. Creation allocates the tenant ID through the reservation ledger (AUTO or invite-reserved), preserves DPA fields on update, and search supports sorting by NAME, SUBDOMAIN and BERATERCOUNT.",
+      "related": ["TenantController.java", "TenantServiceFacade.java", "TenantFacadeChangeDetectionService.java", "TenantFacadeDependentSettingsOverrideService.java", "TenantService.java", "TenantIdAllocationService.java", "TenantRepository.java", "TenantConverter.java"]
     },
     {
       "id": "flow:restricted-public-metadata",
       "name": "Restricted Public Tenant Metadata",
-      "summary": "Unauthenticated or partially-authenticated callers fetch restricted public tenant metadata (branding, subdomain lookup) before a full tenant context exists — resolved via TenantResolverService and served through restricted read endpoints.",
-      "related": ["TenantResolverService.java", "TenantController.java", "TenantServiceFacade.java"]
+      "summary": "Unauthenticated or partially-authenticated callers fetch restricted public tenant metadata (branding, subdomain lookup, batch lookup via /tenant/public/ids) before a full tenant context exists — resolved via TenantResolverService and served through restricted read endpoints. EffectivePermissionSettingsApplier merges platform permission controls into the served feature flags, and the controls themselves are stripped from the restricted DTO.",
+      "related": ["TenantResolverService.java", "TenantController.java", "TenantServiceFacade.java", "EffectivePermissionSettingsApplier.java", "TenantDtoMapper.java"]
+    },
+    {
+      "id": "flow:dpa-signing-and-gate",
+      "name": "DPA Signing & Gate",
+      "summary": "TenantDpaFacade guards every admin-facing DPA call with tenant authorization (IDOR guard) → GoverningDpaResolver picks the governing document/version (own published DPA or operator DPA) → TenantDpaStatusService derives the authoritative status from the version in force, the append-only admin signature audit trail, and legacy token signatures. Signing happens either in-app (authenticated tenant admin, audit fields recorded) or via a forwarded public link: a hashed single-use expiring token whose preview and confirmation (/tenant/public/dpa/confirm/{token}) are consumed atomically, with concurrent double-submits absorbed. The derived gate blocks tenants whose governing DPA is unsigned; version history recovers the gate when a tenant's own version list is empty.",
+      "related": ["TenantDpaFacade.java", "GoverningDpaResolver.java", "TenantDpaStatusService.java", "TenantDpaService.java", "DpaSignToken.java", "TenantDpaRetentionService.java", "api/tenantservice.yaml"]
+    },
+    {
+      "id": "flow:tenant-media-upload-serve",
+      "name": "Tenant Media Upload & Public Serve",
+      "summary": "An admin uploads an editor image via /tenantadmin/media → TenantMediaService enforces the 2 MB limit, detects the content type from magic bytes (rejecting SVG and anything unrecognised), and stores the blob with a UUID in MariaDB → the image is served publicly by /media/{mediaId} with the detected content type, so tenant legal/branding content can reference stable media URLs.",
+      "related": ["TenantMediaController.java", "TenantMediaService.java", "TenantMediaRepository.java", "TenantMediaEntity.java"]
+    },
+    {
+      "id": "flow:legal-text-machine-translation",
+      "name": "Legal Text Machine Translation",
+      "summary": "A tenant admin stores provider API keys via /tenantadmin/translation/keys (masked in responses by ApiKeyMasker) → /tenantadmin/translate sends legal-text HTML to the configured OpenAI-compatible provider (OpenRouter or Mistral) through TranslationFacade → translated multilingual content is stored alongside translation metadata (documented in documentation/translation-meta.md). /tenant/translate/group-chat-author-content covers on-demand translation of group-chat author content.",
+      "related": ["TranslationFacade.java", "TranslationProviderClient.java", "OpenRouterClient.java", "OpenAiCompatibleChatClient.java", "MistralClient.java", "ApiKeyMasker.java", "documentation/translation-meta.md"]
     }
   ],
   "layerDescriptions": {

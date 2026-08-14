@@ -1,0 +1,21 @@
+{
+  "lastAnalyzedAt": "2026-08-14T01:08:36.463Z",
+  "gitCommitHash": "supergraph",
+  "version": "1.0.0",
+  "analyzedFiles": 24103,
+  "generator": "ua-build-supergraph.mjs (deterministic cross-repo merge)",
+  "repos": {
+    "ORISO-Frontend": "41e53197c",
+    "ORISO-Admin": "9fdb4a7e5",
+    "ORISO-UserService": "e4cdd964a",
+    "ORISO-AgencyService": "d4397c4c2",
+    "ORISO-ConsultingTypeService": "50192e7d7",
+    "ORISO-TenantService": "9dd376214",
+    "ORISO-Database": "c9630a93f",
+    "ORISO-Keycloak": "367e488df",
+    "ORISO-Kubernetes": "102324083",
+    "ORISO-Helm": "c45eaaabc",
+    "ORISO-E2E": "2a90b0cc3",
+    "ORISO-Infra": "8d3acd2f7"
+  }
+}
