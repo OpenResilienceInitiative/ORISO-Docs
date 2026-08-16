@@ -1,0 +1,137 @@
+{
+  "concepts": [
+    {
+      "id": "concept:archived-legacy-status",
+      "name": "Archived Repository (Analysis-Only)",
+      "summary": "ORISO-Database is ARCHIVED upstream and frozen at June 2026. It was the interim central schema store while services ran with Liquibase disabled; canonical schema management has since moved back to per-service Liquibase changelogs in each service repository, with deployment/infra owned by ORISO-Helm. Treat everything here as a historical snapshot for analysis and forensics, not as a deployment source.",
+      "tags": [
+        "database",
+        "legacy",
+        "core"
+      ],
+      "related": [
+        "README.md",
+        "mariadb/README.md",
+        "scripts/database-initialize.yaml"
+      ]
+    },
+    {
+      "id": "concept:central-schema-authority",
+      "name": "Central Schema Authority (historical model)",
+      "summary": "The repository's original operating model: all backend services (TenantService, UserService, AgencyService, ConsultingTypeService) ran with Liquibase DISABLED and schemas were version-controlled and applied from here. This model is retired — the repo is archived and per-service Liquibase is being re-enabled service by service (environments still running SPRING_LIQUIBASE_ENABLED=false rely on Helm-shipped SQL baselines instead of service changelogs) — but the schema.sql exports remain useful as a point-in-time reference of the June 2026 database state (DATABASECHANGELOG tables are still present in every dump).",
+      "tags": [
+        "database",
+        "legacy",
+        "core"
+      ],
+      "related": [
+        "README.md",
+        "mariadb/README.md",
+        "mariadb/userservice/schema.sql",
+        "mariadb/tenantservice/schema.sql"
+      ]
+    },
+    {
+      "id": "concept:mariadb-schemas",
+      "name": "MariaDB Schemas (7 databases, June 2026 snapshot)",
+      "summary": "Per-service mysqldump exports for agencyservice, consultingtypeservice, tenantservice, userservice, videoservice, uploadservice, and the empty shared caritas database. The userservice snapshot (27 tables) already includes the case handover subsystem (case_handover_request, case_handover_reason_policy), event_notification, appointment, draft_message, and identity_tombstone; the tenantservice snapshot includes the address/description columns added in June 2026.",
+      "tags": [
+        "database"
+      ],
+      "related": [
+        "mariadb/userservice/schema.sql",
+        "mariadb/agencyservice/schema.sql",
+        "mariadb/tenantservice/schema.sql",
+        "mariadb/consultingtypeservice/schema.sql",
+        "mariadb/uploadservice/schema.sql",
+        "mariadb/videoservice/schema.sql",
+        "mariadb/caritas/schema.sql"
+      ]
+    },
+    {
+      "id": "concept:matrix-migration-snapshot",
+      "name": "Matrix Migration Dual-Column Snapshot",
+      "summary": "The userservice schema is frozen mid-migration: user, consultant, session, and chat tables carry BOTH legacy RocketChat columns (rc_user_id, rc_group_id) AND Matrix columns (matrix_user_id, matrix_room_id, matrix_password). The live platform has since completed the Matrix-only migration; this dump documents the transitional shape only. Matrix Synapse's own PostgreSQL schema was never captured (see postgresql/matrix/STATUS.md).",
+      "tags": [
+        "database",
+        "matrix",
+        "legacy"
+      ],
+      "related": [
+        "mariadb/userservice/schema.sql",
+        "postgresql/matrix/STATUS.md",
+        "scripts/system-users-job.yaml"
+      ]
+    },
+    {
+      "id": "concept:polyglot-stores",
+      "name": "Polyglot Stores (MongoDB, PostgreSQL, RabbitMQ, Redis)",
+      "summary": "Beyond MariaDB: MongoDB BSON dumps of consulting types and application settings (duplicated under consulting_types/ and consultingtypeservice/), a PostgreSQL status doc for Matrix Synapse (pod was never reachable, schema never exported), plus RabbitMQ and Redis operational notes — each store has its own README.",
+      "tags": [
+        "database"
+      ],
+      "related": [
+        "postgresql/matrix/STATUS.md",
+        "mongodb/README.md",
+        "mongodb/consulting_types/dump/prelude.json",
+        "redis/README.md",
+        "rabbitmq/README.md",
+        "postgresql/README.md"
+      ]
+    },
+    {
+      "id": "concept:incident-2026-02",
+      "name": "Incident DB-C03 Remediation & Secret Management",
+      "summary": "docs/incident-2026-02/db-c03-remediation.md records the remediation of the February 2026 credential exposure: plaintext system-user passwords were removed from scripts/system-users-job.yaml, matrixRegistrationSecret moved from ConfigMap into the system-users-credentials Kubernetes Secret, and SQL quote-escaping added. docs/secret-management.md defines the Secret contract (SealedSecret/SOPS/ESO) and rotation follow-ups.",
+      "tags": [
+        "security",
+        "operations"
+      ],
+      "related": [
+        "docs/incident-2026-02/db-c03-remediation.md",
+        "docs/secret-management.md",
+        "scripts/system-users-job.yaml",
+        "tests/test-sql-escaping.sh"
+      ]
+    },
+    {
+      "id": "concept:mariadb-client-tooling",
+      "name": "In-Cluster MariaDB Client",
+      "summary": "k8s/mariadb-client provides a kustomize-deployed database client (deployment, service, ingress, configmap) for admin access to MariaDB inside the cluster. Legacy operational tooling — with the repo archived, current in-cluster tooling is owned by ORISO-Helm.",
+      "tags": [
+        "operations",
+        "legacy"
+      ],
+      "related": [
+        "k8s/mariadb-client/deployment.yaml",
+        "k8s/mariadb-client/kustomization.yaml",
+        "k8s/mariadb-client/configmap.yaml",
+        "k8s/mariadb-client/ingress.yaml",
+        "k8s/mariadb-client/service.yaml"
+      ]
+    }
+  ],
+  "flows": [
+    {
+      "id": "flow:environment-init",
+      "name": "New Environment Initialization (legacy)",
+      "summary": "Historical bootstrap path: scripts/database-initialize.yaml provisions the databases → per-service schema.sql files create the tables → scripts/system-users-job.yaml creates system users (reading credentials from the system-users-credentials Secret and writing Matrix credentials into userservice); MongoDB collections restored from the tracked BSON dumps. Superseded by ORISO-Helm charts plus per-service Liquibase for current environments.",
+      "related": [
+        "scripts/database-initialize.yaml",
+        "scripts/system-users-job.yaml",
+        "mariadb/userservice/schema.sql",
+        "mongodb/consulting_types/dump/prelude.json"
+      ]
+    },
+    {
+      "id": "flow:sql-escaping-test",
+      "name": "SQL Escaping Test",
+      "summary": "tests/test-sql-escaping.sh validates the single-quote escaping used when interpolating secret values into the system-users MariaDB heredoc — added as part of the DB-C03 remediation.",
+      "related": [
+        "tests/test-sql-escaping.sh",
+        "scripts/system-users-job.yaml",
+        "docs/incident-2026-02/db-c03-remediation.md"
+      ]
+    }
+  ]
+}

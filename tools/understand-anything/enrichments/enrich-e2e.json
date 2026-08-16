@@ -1,0 +1,248 @@
+{
+  "concepts": [
+    {
+      "id": "concept:money-path-gate",
+      "name": "Money-Path E2E Gate",
+      "summary": "Dedicated Playwright repo industrializing the real-click E2E quality gate for the ORISO platform (App layer + Admin panel). Created because the Test Quality Audit 2026-07-04 found zero real automated E2E coverage; since then it has grown from a 3-spec skeleton to roughly 25 specs covering counselling, group chat, live chat, calls, notifications, tutorials, 2FA, legal/DPA and admin surfaces. Runs serially (workers=1) with a 120s per-test budget because Pre-Dev is one small shared node.",
+      "tags": [
+        "testing",
+        "core"
+      ],
+      "related": [
+        "README.md",
+        "playwright.config.ts",
+        "package.json",
+        "tests/money-path-counselling.spec.ts",
+        "tests/smoke-crash.spec.ts",
+        "tests/helpers/chat.ts"
+      ]
+    },
+    {
+      "id": "concept:image-promotion-gating",
+      "name": "Image Promotion Gating (target state)",
+      "summary": "Target model: E2E green stamps the tested image digests as :predev-candidate — the gate blocks image promotion, not merges. The nightly workflow already enforces the digest half of this contract: it captures the exact deployed images via kubectl before the run, rejects any deployment not pinned by an immutable @sha256 digest, and proves the deployment did not move during the gate. The actual retag/promotion job does not exist yet (the README's mention of a commented-out promote-tested-digests stub is stale).",
+      "tags": [
+        "ci",
+        "operations"
+      ],
+      "related": [
+        "README.md",
+        "tests/call-widget-mode.spec.ts",
+        "tests/support/runtimeEvidence.ts"
+      ]
+    },
+    {
+      "id": "concept:scenario-catalog",
+      "name": "Scenario Catalog",
+      "summary": "About 25 specs across four Playwright projects. App layer: smoke-crash (S0), money-path-counselling (M2), long-form-counselling, t1-aside-confidentiality (ADR-008 red line), group-chat series/smoke/waiting-area (ADR-012), livechat invite-connect and runtime gate, call-encryption and call-widget-mode, notifications-activity-timeline, tutorial tours/statistics (TOUR-08), registration-postcode-back-navigation, consultant-acceptance-followup. Admin layer: admin-display-gate, admin-multi-identity, platform-admin-2fa (A01), legal-dpa-versioning (L1), plus the CHAIN_LOCAL-gated tenant invite/DPA-continuity chain specs.",
+      "tags": [
+        "testing"
+      ],
+      "related": [
+        "README.md",
+        "tests/money-path-counselling.spec.ts",
+        "tests/long-form-counselling.spec.ts",
+        "tests/livechat-invite-connect.spec.ts",
+        "tests/admin-display-gate.spec.ts",
+        "tests/tutorial-tours.spec.ts",
+        "tests/t1-aside-confidentiality.spec.ts"
+      ]
+    },
+    {
+      "id": "concept:test-access-broker",
+      "name": "Test Access Broker Integration",
+      "summary": "ORISO test logins are brokered through the Dreambau Test Access Hub: `test-access session open <account-id>` performs the login itself and returns a short-lived Playwright storageState, so no password or OTP secret exists in this repo, its process environment, or CI logs. The broker authorizes the caller machine via TEST_ACCESS_IDENTITY. Broker failures raise BrokerUnavailableError and skip loudly as inventory work, never as green coverage. CI resolves the two env-var accounts from the oriso/pre-dev/e2e-default Hub profile with one revocable read-only token; local wrappers fetch secrets from the macOS-Keychain-backed CLI.",
+      "tags": [
+        "testing",
+        "security"
+      ],
+      "related": [
+        "tests/support/testAccess.ts",
+        "scripts/test-access-ci.mjs",
+        "scripts/test-access-ci.test.mjs",
+        "scripts/run-predev-with-test-access.mjs",
+        "scripts/run-predev-with-test-access.sh",
+        "docs/GUIDE-secrets-und-testmails.md"
+      ]
+    },
+    {
+      "id": "concept:runtime-evidence-contract",
+      "name": "Runtime Evidence Contract",
+      "summary": "A PASS from the live chat and call gates is only valid against a pinned deployment: ORISO_E2E_RUNTIME_EVIDENCE_JSON must name the environment, 40-char service commit SHAs and immutable image digests (@sha256:...); mutable tags like :pre-dev or :latest, a mismatched environment, or missing services are rejected before any product assertion runs. The nightly workflow generates the digest half from the live cluster and re-checks it after the run, so evidence can never describe a deployment that moved mid-gate.",
+      "tags": [
+        "testing",
+        "operations"
+      ],
+      "related": [
+        "tests/support/runtimeEvidence.ts",
+        "tests/runtime-evidence.spec.ts",
+        "tests/livechat-runtime-gate.spec.ts",
+        "tests/call-widget-mode.spec.ts",
+        "README.md"
+      ]
+    },
+    {
+      "id": "concept:false-green-doctrine",
+      "name": "Loud-Skip / False-Green Doctrine",
+      "summary": "The audit's core failure class was false-green coverage, and the whole repo is built against it: credentialed specs skip LOUDLY (capitalized skip reasons stating the run provides no coverage), readiness gates FAIL rather than skip when the environment cannot produce data (notifications G2), tolerated 4xx/console-noise allowlists are short and per-entry justified, and Matrix/API assertions target the API host because the SPA hosts answer unknown /service/* paths with 200 fallback HTML.",
+      "tags": [
+        "testing",
+        "core"
+      ],
+      "related": [
+        "tests/notifications-activity-timeline.spec.ts",
+        "tests/smoke-crash.spec.ts",
+        "tests/money-path-counselling.spec.ts",
+        "tests/admin-display-gate.spec.ts",
+        "tests/support/tutorialApi.ts"
+      ]
+    },
+    {
+      "id": "concept:call-encryption-gates",
+      "name": "Call Encryption and MatrixRTC Gates",
+      "summary": "Two blocking gates for counselling calls, both asserting Matrix room state rather than the UI (which looks identical either way): call-encryption proves the call room carries m.room.encryption and is not publicly joinable (it once shipped with preset public_chat and E2eeType.NONE), and call-widget-mode is a two-browser Matryoshka/widget-mode gate with fake media devices that also polices the MatrixRTC auth gateway (/livekit/jwt) and crypto failure patterns in console output. The seeding fixture guarantees a callable counselling session first, resolving OTP just-in-time for 2FA-protected accounts.",
+      "tags": [
+        "testing",
+        "matrix"
+      ],
+      "related": [
+        "tests/call-encryption.spec.ts",
+        "tests/call-widget-mode.spec.ts",
+        "tests/helpers/ensureCounselling.ts",
+        "playwright.config.ts"
+      ]
+    },
+    {
+      "id": "concept:long-form-counselling",
+      "name": "Long-Form Multi-User Counselling Run",
+      "summary": "Registers a FRESH advice seeker through the real registration stepper (no API shortcut), using a Springfield/Simpsons mailbox identity chosen by the operator via env, then runs a realistic multi-turn debt/housing counselling dialogue between asker and consultant in two browser contexts. Stresses ordering, pagination, composer auto-grow, unread counters and Matrix round-tripping of long German text. New accounts are synced back into the Test Access inventory; passwords never appear in output.",
+      "tags": [
+        "testing",
+        "counselling"
+      ],
+      "related": [
+        "tests/long-form-counselling.spec.ts",
+        "tests/fixtures/counsellingDialogue.ts",
+        "tests/helpers/registerAsker.ts",
+        "tests/helpers/simpsonAccount.ts",
+        "tests/helpers/chat.ts"
+      ]
+    },
+    {
+      "id": "concept:admin-gates",
+      "name": "Admin Panel Gates",
+      "summary": "The Admin layer has its own gate family: admin-display-gate walks every navigable admin surface with a brokered platform-admin session and requires data requests without 4xx/5xx, rows or an explicit empty state (never an endless spinner), plus desktop and mobile evidence screenshots — closing the P5 display-defect gap. platform-admin-2fa (A01) proves the managed platform admin completes App-TOTP and can navigate. admin-multi-identity covers the Träger-Admin/consultant dual identity, and legal-dpa-versioning proves the DPA edit → publish → version round trip persists. Admin specs resolve their origin via adminBaseUrl(), never the app baseURL.",
+      "tags": [
+        "testing",
+        "admin"
+      ],
+      "related": [
+        "tests/admin-display-gate.spec.ts",
+        "tests/platform-admin-2fa.spec.ts",
+        "tests/admin-multi-identity.spec.ts",
+        "tests/legal-dpa-versioning.spec.ts",
+        "playwright.config.ts"
+      ]
+    },
+    {
+      "id": "concept:chain-local-avv",
+      "name": "Local AVV Chain-Test Stack (#569)",
+      "summary": "Compose/seed tooling to run the FULL local chain test for the tenant-admin invite and DPA-continuity flows (ORISO-Admin#569, avv-fix lane): builds the four Java services from avv-* worktrees, swaps in the real ORISO Keycloak image for the OTP SPI, adds a mailpit STARTTLS catcher with generated certs/truststore, and seeds Keycloak users, tenants and mail templates idempotently. The two chain specs (S1-S6 invite chain; C1-C3 DPA continuity and append-only signature audit) are gated behind CHAIN_LOCAL=1 and dump per-step evidence.",
+      "tags": [
+        "testing",
+        "legal"
+      ],
+      "related": [
+        "chain-local/README.md",
+        "chain-local/docker-compose.avv.yml",
+        "chain-local/seed-chain.sh",
+        "chain-local/gen-mailpit-certs.sh",
+        "tests/tenant-invite-chain-local.spec.ts",
+        "tests/tenant-dpa-continuity-local.spec.ts"
+      ]
+    },
+    {
+      "id": "concept:matrix-only-guard",
+      "name": "Matrix-Only Identifier Guard",
+      "summary": "A node:test unit guard (run via npm run test:unit) enforcing that the active group-chat E2E code contains no Rocket.Chat identifiers (rcGroupId) and that series creation binds Matrix room creation to a current-room readback — codifying the completed Matrix-only migration at the test-suite level so RC-era selectors cannot creep back in.",
+      "tags": [
+        "testing",
+        "matrix"
+      ],
+      "related": [
+        "scripts/matrix-only-identifiers.test.mjs",
+        "tests/groupChatTestUtils.ts",
+        "tests/group-chat-series.spec.ts",
+        "tests/group-chat-smoke.spec.ts",
+        "package.json"
+      ]
+    }
+  ],
+  "flows": [
+    {
+      "id": "flow:nightly-run",
+      "name": "Nightly Blocking MatrixRTC Gate",
+      "summary": "Cron 02:30 UTC (or manual dispatch) → npm ci + Playwright Chromium → materialize read-only PreDev kubeconfig → kubectl captures the six call-path deployments (frontend, element-call, userservice, matrixrtc gateway/authorization, livekit) and fails unless every image is pinned by immutable digest → the two-browser call-widget-mode gate runs against project predev with fake media and env-injected credentials → digests are re-captured and byte-compared to prove the deployment did not move → Playwright report and digest evidence uploaded as artifacts. Note: this replaced the earlier full-suite nightly described in the README.",
+      "related": [
+        "tests/call-widget-mode.spec.ts",
+        "tests/support/runtimeEvidence.ts",
+        "playwright.config.ts",
+        "README.md"
+      ]
+    },
+    {
+      "id": "flow:predev-credentialed-run",
+      "name": "Pre-Dev Credentialed Run",
+      "summary": "Operator or CI wrapper resolves consultant/client credentials from the Test Access Hub (profile oriso/pre-dev/e2e-default; CLI locally, one bearer token in CI) → injects them as ORISO_E2E_* env vars into the Playwright child process only → seeding ladder guarantees an active counselling session (existing session → accept waiting enquiry → client writes one), resolving OTP just-in-time → money-path and call specs run against https://predev.oriso.org (single-domain, path-routed per ADR-011). When direct passwords are present, traces/screenshots/videos are disabled so artifacts can never capture tokens.",
+      "related": [
+        "scripts/run-predev-with-test-access.sh",
+        "scripts/run-predev-with-test-access.mjs",
+        "scripts/test-access-ci.mjs",
+        "tests/helpers/ensureCounselling.ts",
+        "playwright.config.ts"
+      ]
+    },
+    {
+      "id": "flow:brokered-session-flow",
+      "name": "Brokered Session Flow",
+      "summary": "Spec asks the broker for an account (test-consultant-001, test-tenantadmin-001, e2e-platform-admin-predev) → `test-access session open` logs in out-of-process and returns a short-lived storageState file → the spec creates a browser context from it (clearing IndexedDB Matrix device state to avoid the wedged-crypto trap) → on broker failure the spec skips with '!!! SKIPPED — BROKER UNAVAILABLE !!!' naming the account. Used by the tutorial, admin-display, platform-admin-2fa and live chat gates.",
+      "related": [
+        "tests/support/testAccess.ts",
+        "tests/support/tourFixtures.ts",
+        "tests/admin-display-gate.spec.ts",
+        "tests/livechat-invite-connect.spec.ts"
+      ]
+    },
+    {
+      "id": "flow:notifications-three-gate",
+      "name": "Notifications Three-Gate Verification",
+      "summary": "The Activity Timeline spec separates 'broken' from 'empty': G1 contract — the feed endpoint answers 200 with the documented shape (via Keycloak direct-grant tokens); G2 readiness — the environment can produce notifications at all, and FAILS rather than skips when it cannot (the false-green that hid the empty Pre-Dev for weeks); G3 chain — a real enquiry produces a request.new row in a real consultant's feed. First and so far only spec migrated to the predev-oriso single-domain project.",
+      "related": [
+        "tests/notifications-activity-timeline.spec.ts",
+        "tests/helpers/keycloak.ts",
+        "playwright.config.ts"
+      ]
+    },
+    {
+      "id": "flow:local-run",
+      "name": "Local Run",
+      "summary": "Two local lanes: the generic docker-compose.e2e.yml stack for --project=local is still scaffolding (no Keycloak realm import, no Synapse, no seeds — documented as not runnable), while the chain-local overlay is a REAL working local stack for the #569 tenant-admin chain specs, layered over the workspace compose files with CHAIN_LOCAL=1.",
+      "related": [
+        "docker-compose.e2e.yml",
+        "chain-local/docker-compose.avv.yml",
+        "chain-local/seed-chain.sh",
+        "playwright.config.ts"
+      ]
+    },
+    {
+      "id": "flow:password-reset-roundtrip",
+      "name": "Browser-Free Password-Reset Round Trip",
+      "summary": "Script requests a password reset for an account, polls the account's Springfield @oriso.org mailbox through the Test Access Hub, and prints the confirm URL — no browser, no password ever read or printed. Non-@oriso.org pool domains are rejected up front because their mail bodies are S/MIME encrypted at rest. On timeout it prints four checks distinguishing configuration problems from product problems.",
+      "related": [
+        "scripts/password-reset-roundtrip.sh",
+        "docs/GUIDE-secrets-und-testmails.md",
+        "README.md"
+      ]
+    }
+  ]
+}

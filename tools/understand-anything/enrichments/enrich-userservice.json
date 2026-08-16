@@ -3,72 +3,357 @@
     {
       "id": "concept:session-lifecycle",
       "name": "Consultation Session Lifecycle",
-      "summary": "UserService owns the consultation lifecycle: registration of new users/askers, handling and creation of enquiries, creation of sessions with their chat group(s), and assignment of consultants to sessions.",
-      "tags": ["domain", "core"],
-      "related": ["UserController.java", "ConversationController.java", "SessionSupervisorController.java", "README.md"]
+      "summary": "UserService owns the consultation lifecycle: registration of new users/askers, handling and creation of enquiries, creation of sessions with their encrypted Matrix rooms, and assignment of consultants with the matching room memberships. The former monolithic UserController is split into focused delegates (registration, sessions, chats, consultants, account, support, 2FA).",
+      "tags": [
+        "domain",
+        "core"
+      ],
+      "related": [
+        "UserController.java",
+        "UserSessionControllerDelegate.java",
+        "UserRegistrationControllerDelegate.java",
+        "ConversationController.java",
+        "SessionSupervisorController.java",
+        "README.md"
+      ]
     },
     {
       "id": "concept:consultation-modes",
       "name": "Consultation Modes",
-      "summary": "Four kinds of consultations are handled: single/direct 1:1 counseling, team counseling, group chat counseling, and anonymous counseling (no registration required).",
-      "tags": ["domain"],
-      "related": ["ConversationController.java", "README.md"]
+      "summary": "Four kinds of consultations are handled: single/direct 1:1 counseling, team counseling, group chat counseling, and anonymous counseling (no registration required). Anonymous enquiries enforce server-side data-privacy confirmation on the assign path.",
+      "tags": [
+        "domain"
+      ],
+      "related": [
+        "ConversationController.java",
+        "AnonymousConversationCreatorService.java",
+        "README.md"
+      ]
     },
     {
       "id": "concept:matrix-messaging",
-      "name": "Matrix-backed Messaging",
-      "summary": "Real-time messaging runs on Matrix: MatrixMessageController and MatrixSyncController bridge sessions to Matrix rooms (the platform's migration away from the legacy Rocket.Chat group model).",
-      "tags": ["messaging", "matrix"],
-      "related": ["MatrixMessageController.java", "MatrixSyncController.java", "DraftMessageController.java"]
+      "name": "Matrix-only Messaging",
+      "summary": "Messaging is Matrix-only: the Rocket.Chat adapter, its API contracts, and the rocketChat* database columns were removed (migrations 0073-0075), with contract tests asserting the adapter stays gone. MatrixMessageController sends/fetches session messages, MatrixSyncController keeps read models in sync, MatrixSynapseService plus room/user clients manage Synapse accounts and rooms, and RedisMessageMirrorService mirrors messages for fast session-list previews.",
+      "tags": [
+        "messaging",
+        "matrix",
+        "core"
+      ],
+      "related": [
+        "MatrixMessageController.java",
+        "MatrixSyncController.java",
+        "MatrixSynapseService.java",
+        "RedisMessageMirrorService.java",
+        "MatrixEventListenerService.java",
+        "DraftMessageController.java",
+        "RocketChatAdapterRemovedContractTest.java"
+      ]
+    },
+    {
+      "id": "concept:media-upload",
+      "name": "Session Media Upload & Download Proxy",
+      "summary": "File sharing in counselling sessions goes through UserService as a proxy to the Matrix media repository: POST /matrix/sessions/{sessionId}/upload uploads the file, posts the matching m.room.message file event, and GET /matrix/media/download/{serverName}/{mediaId} proxies authenticated downloads. Content scanning (ADR-014/015 fail-closed scanner) is a platform-level concern and not yet enforced inside this repo.",
+      "tags": [
+        "media",
+        "matrix"
+      ],
+      "related": [
+        "MatrixMediaClient.java",
+        "MatrixMessageController.java",
+        "MatrixConfig.java"
+      ]
     },
     {
       "id": "concept:user-administration",
       "name": "User & Consultant Administration",
-      "summary": "Admin-facing account management: UserAdminController with ConsultantAdminFacade and AskerUserAdminFacade cover consultant/asker administration, agency assignment, and account state.",
-      "tags": ["admin"],
-      "related": ["UserAdminController.java", "ConsultantAdminFacade.java", "AskerUserAdminFacade.java", "AdminUserFacade.java"]
+      "summary": "Admin-facing account management: UserAdminController with ConsultantAdminFacade and AskerUserAdminFacade cover consultant/asker administration, agency assignment, and account state; consultant lifecycle is hardened (status transitions, pre-deletion validation) and counsellors can also be provisioned from accepted account invites.",
+      "tags": [
+        "admin"
+      ],
+      "related": [
+        "UserAdminController.java",
+        "ConsultantAdminFacade.java",
+        "AskerUserAdminFacade.java",
+        "AdminUserFacade.java",
+        "SupportAdminController.java"
+      ]
+    },
+    {
+      "id": "concept:identity-ports",
+      "name": "Identity Ports & Second Factor (2FA/OTP)",
+      "summary": "Keycloak access is split behind narrow hexagonal Identity* ports (IdentityLogin, IdentitySecondFactor, IdentityProfileUpdater, IdentityEmailAddressUpdater, ...) implemented by KeycloakService, so callers depend on capabilities instead of the Keycloak client. Second-factor auth (email OTP and app TOTP via the Keycloak extension) runs through IdentitySecondFactor with per-role identity.otp-allowed-* flags; account invites can pre-provision a pending TOTP secret so 2FA is active on first login.",
+      "tags": [
+        "identity",
+        "security",
+        "2fa"
+      ],
+      "related": [
+        "IdentityClient.java",
+        "IdentityLogin.java",
+        "IdentitySecondFactor.java",
+        "KeycloakService.java",
+        "UserTwoFactorAuthControllerDelegate.java",
+        "IdentityOtpCredential.java",
+        "keycloakextension.yaml"
+      ]
     },
     {
       "id": "concept:case-handover",
       "name": "Case Handover",
-      "summary": "CaseHandoverController implements transferring cases between consultants/agencies, governed by reason policies.",
-      "tags": ["workflow"],
-      "related": ["CaseHandoverController.java"]
+      "summary": "CaseHandoverController implements transferring cases between consultants/agencies: persisted CaseHandoverRequest entities governed by per-tenant CaseHandoverReasonPolicy records, audit logging via CaseHandoverLogsService, and notification templates (migration 0069) for the parties involved.",
+      "tags": [
+        "workflow"
+      ],
+      "related": [
+        "CaseHandoverController.java",
+        "CaseHandoverService.java",
+        "CaseHandoverRequest.java",
+        "CaseHandoverReasonPolicy.java",
+        "CaseHandoverLogsService.java"
+      ]
     },
     {
       "id": "concept:invite-links",
-      "name": "Invite Links & Account Invitations",
-      "summary": "AgencyInviteLinkController and AccountInviteController implement invitation-based onboarding (agency invite links, account invites).",
-      "tags": ["onboarding"],
-      "related": ["AgencyInviteLinkController.java", "AccountInviteController.java"]
+      "name": "Invite Links, Account Invites & Provisioning",
+      "summary": "Invitation-based onboarding: agency invite links plus account invites with reservation tokens, tracked invite-email templates and delivery status, and a compensating ProvisioningWorkflow that creates the Keycloak, Matrix, and database resources for a counsellor when an invite is accepted (rolling back partial resources on failure). DpaForwardEmailController lets a candidate forward the data-processing agreement before accepting.",
+      "tags": [
+        "onboarding"
+      ],
+      "related": [
+        "AgencyInviteLinkController.java",
+        "AccountInviteController.java",
+        "AccountInviteService.java",
+        "CounsellorInviteProvisioningService.java",
+        "ProvisioningWorkflow.java",
+        "ProvisioningCompensator.java",
+        "InviteEmailTemplateService.java",
+        "DpaForwardEmailController.java"
+      ]
     },
     {
       "id": "concept:availability-and-live-events",
-      "name": "Live Availability & Event Notifications",
-      "summary": "ConsultantLiveAvailabilityController and TopicConsultantAvailabilityController expose consultant availability; LiveProxyController and EventNotificationController push live events and notifications to clients.",
-      "tags": ["realtime"],
-      "related": ["ConsultantLiveAvailabilityController.java", "TopicConsultantAvailabilityController.java", "LiveProxyController.java", "EventNotificationController.java"]
+      "name": "Live Availability & Presence",
+      "summary": "ConsultantLiveAvailabilityController and TopicConsultantAvailabilityController expose consultant availability backed by a Redis-based ConsultantActivityRegistry and Matrix presence. The LiveService proxy is retired: DeprecatedLiveProxyController remains only as a compatibility shim and the liveservice/messageservice outbound contracts were deleted.",
+      "tags": [
+        "realtime"
+      ],
+      "related": [
+        "ConsultantLiveAvailabilityController.java",
+        "TopicConsultantAvailabilityController.java",
+        "DeprecatedLiveProxyController.java",
+        "ConsultantActivityRegistry.java"
+      ]
+    },
+    {
+      "id": "concept:notification-center",
+      "name": "Event Notification Center (Timeline Backend)",
+      "summary": "Persisted EventNotification records back the frontend notification center/timeline: message events arrive on a dual path (REST message-events endpoint and the Matrix timeline listener) and are deduplicated via a bounded dedup key and correlated by Matrix event id, ordered with millisecond precision (migrations 0063/0080). Active-conversation-view heartbeats with TTL expiry suppress notifications for rooms the user is looking at; PrivacyEnvelope, per-room NotificationRoomLevel, and Do-Not-Disturb windows control content and delivery.",
+      "tags": [
+        "notifications",
+        "realtime"
+      ],
+      "related": [
+        "EventNotificationController.java",
+        "EventNotificationService.java",
+        "EventNotificationDeduplicationWriter.java",
+        "EventNotification.java",
+        "PrivacyEnvelope.java",
+        "NotificationRoomLevel.java",
+        "DoNotDisturbService.java"
+      ]
+    },
+    {
+      "id": "concept:erstantwort",
+      "name": "Erstantwort (First Response, ADR-018)",
+      "summary": "When an enquiry lands on the Matrix path, the service produces a FIRST_RESPONSE and posts exactly one persisted [SYSTEM_NOTIFICATION] event that carries the whole Erstantwort: ErstantwortPayloadBuilder resolves each Baustein against the session's configuration and freezes the resulting wording into the payload so later template edits cannot retroactively change what an advice seeker was told. It deliberately stores no completion state and creates no Matrix bot account (Carimat is a rendering identity only).",
+      "tags": [
+        "workflow",
+        "adr-018"
+      ],
+      "related": [
+        "ErstantwortPayloadBuilder.java",
+        "ErstantwortContext.java",
+        "ErstantwortModality.java",
+        "MatrixSessionSystemMessageService.java",
+        "CreateEnquiryMessageFacade.java"
+      ]
     },
     {
       "id": "concept:statistics-and-audit",
       "name": "Statistics & Audit Logs",
-      "summary": "AdminStatisticsController and UserStatisticsController expose usage statistics; InactiveAccountAuditLogsController and SupervisorLogsController provide audit trails.",
-      "tags": ["reporting"],
-      "related": ["AdminStatisticsController.java", "UserStatisticsController.java", "InactiveAccountAuditLogsController.java", "SupervisorLogsController.java"]
+      "summary": "Three statistics surfaces: AdminStatisticsController feeds the admin dashboard, ConsultantStatisticsController exposes consultant metrics including messages-sent counted from Matrix events into ConsultantMessageStat rows keyed by an HMAC-hashed consultant identity (statistics.message-count.hmac-secret) with small-cell suppression, and UserStatisticsController serves session statistics. Domain statistics events (registration, assignment, video calls, archive/delete) are emitted to the statistics exchange; InactiveAccountAuditLogsController and SupervisorLogsController provide audit trails.",
+      "tags": [
+        "reporting",
+        "privacy"
+      ],
+      "related": [
+        "AdminStatisticsController.java",
+        "ConsultantStatisticsController.java",
+        "ConsultantMessageStatService.java",
+        "ConsultantIdentityHasher.java",
+        "UserStatisticsController.java",
+        "StatisticsService.java",
+        "InactiveAccountAuditLogsController.java",
+        "SupervisorLogsController.java"
+      ]
+    },
+    {
+      "id": "concept:matrixrtc-call-policy",
+      "name": "MatrixRTC Call Policy",
+      "summary": "Authorization backend for MatrixRTC/Element Call: MatrixRtcCallPolicyController verifies a signed policy token, resolves the policy in the technical tenant context, and answers whether media may flow for a room, with typed denial reasons and HMAC-keyed correlation ids so raw Matrix identifiers never appear in denial logs.",
+      "tags": [
+        "calls",
+        "matrix",
+        "security"
+      ],
+      "related": [
+        "MatrixRtcCallPolicyController.java",
+        "MatrixRtcCallPolicyService.java",
+        "MatrixRtcPolicyTokenVerifier.java",
+        "CallPolicyDenialReason.java",
+        "CallMediaPolicy.java"
+      ]
+    },
+    {
+      "id": "concept:group-chats",
+      "name": "Group Chats & Team Discussions",
+      "summary": "Group chat counseling on Matrix rooms, extended with self-help group series (recurring chats, occurrence exceptions, per-series participant roles, author content; migrations 0060-0064), membership managed by GroupChatMembershipService, plus reminder and lifecycle notifications. Internal team chats open immediately on creation instead of parking in the waiting area, and TeamDiscussion side-rooms let a department discuss an enquiry before acceptance.",
+      "tags": [
+        "domain",
+        "matrix"
+      ],
+      "related": [
+        "ChatService.java",
+        "GroupChatMembershipService.java",
+        "GroupChatParticipant.java",
+        "ChatOccurrenceException.java",
+        "GroupChatReminderService.java",
+        "TeamDiscussionController.java",
+        "TeamDiscussionFacade.java"
+      ]
+    },
+    {
+      "id": "concept:support-and-handshake",
+      "name": "Support Rooms & Live Handshake",
+      "summary": "HandshakeController implements audited, purpose-bound handshake sessions (HandshakeSession + HandshakeAuditEvent, migration 0078) used to grant scoped access, e.g. for support; SupportRoomController manages dedicated support rooms (migration 0079, with a schema self-repair changeset 0081) where platform support can assist users without entering counselling rooms.",
+      "tags": [
+        "support",
+        "security"
+      ],
+      "related": [
+        "HandshakeController.java",
+        "HandshakeService.java",
+        "HandshakeSession.java",
+        "HandshakeAuditEvent.java",
+        "SupportRoomController.java",
+        "SupportRoomService.java",
+        "SupportRoom.java"
+      ]
+    },
+    {
+      "id": "concept:scheduled-workflows",
+      "name": "Scheduled Workflows & Task Claim Leases",
+      "summary": "Cron-driven workflows (account deletion, registered-only deletion, anonymous deactivation/deletion, enquiry notifications, inactive-account notifications) now acquire a database lease via ScheduledTaskClaim (migration 0082) before running, so only one replica executes each task and reruns are safe. Deletion supports a read-only window and pause period before data is removed.",
+      "tags": [
+        "workflow",
+        "operations"
+      ],
+      "related": [
+        "ScheduledTaskClaimService.java",
+        "ScheduledTaskClaimWriter.java",
+        "ScheduledTaskClaim.java",
+        "DeleteUserAccountScheduler.java",
+        "DeleteUsersRegisteredOnlyScheduler.java",
+        "DeactivateAnonymousUserScheduler.java"
+      ]
+    },
+    {
+      "id": "concept:appointments-remnant",
+      "name": "Appointments (Legacy Remnant)",
+      "summary": "The appointment subsystem (AppointmentController, appointmentservice.yaml, Appointment entity, delete-job cron) is a remnant of the upstream Calcom-style booking integration; feature.appointment.enabled defaults to false and the code has only been touched by cross-cutting refactors since July. ADR-020 scheduled calls are not implemented here.",
+      "tags": [
+        "legacy"
+      ],
+      "related": [
+        "AppointmentController.java",
+        "AppointmentService.java",
+        "Appointment.java",
+        "appointmentservice.yaml"
+      ]
     }
   ],
   "flows": [
     {
       "id": "flow:enquiry-to-session",
       "name": "Enquiry → Session → Consultant Assignment",
-      "summary": "An asker registers → creates an enquiry → a session with its chat group is created → a consultant (or team) is assigned and the conversation begins.",
-      "related": ["UserController.java", "ConversationController.java", "ConsultantAdminFacade.java"]
+      "summary": "An asker registers → creates an enquiry (Matrix-only; encrypted enquiries are finalized as encrypted Matrix events and plaintext bodies are rejected when encryption is expected) → a session with its Matrix room is created; for department sessions the consultants join the holding room before the asker → a consultant (or team) is assigned and room memberships are updated.",
+      "related": [
+        "UserController.java",
+        "ConversationController.java",
+        "CreateEnquiryMessageFacade.java",
+        "DirectSessionMatrixRoomService.java",
+        "AgencyPreAssignmentRoomService.java"
+      ]
     },
     {
       "id": "flow:matrix-message-roundtrip",
       "name": "Matrix Message Roundtrip",
-      "summary": "Client sends via MatrixMessageController → message lands in the session's Matrix room → MatrixSyncController keeps session state and read models in sync.",
-      "related": ["MatrixMessageController.java", "MatrixSyncController.java"]
+      "summary": "Client sends via MatrixMessageController → the message lands in the session's Matrix room via Synapse → RedisMessageMirrorService mirrors it for session-list previews and MatrixSyncController keeps read models in sync; file attachments take the upload proxy through MatrixMediaClient.",
+      "related": [
+        "MatrixMessageController.java",
+        "MatrixSynapseService.java",
+        "RedisMessageMirrorService.java",
+        "MatrixSyncController.java",
+        "MatrixMediaClient.java"
+      ]
+    },
+    {
+      "id": "flow:erstantwort-first-response",
+      "name": "Erstantwort First Response (ADR-018)",
+      "summary": "An enquiry arrives on the Matrix path → the service emits FIRST_RESPONSE and posts one persisted [SYSTEM_NOTIFICATION] event whose payload freezes the resolved Erstantwort Bausteine (greeting, actions, legal texts) for this session → the frontend renders it via the Carimat identity; completion of action items is always read live, never stored in the event.",
+      "related": [
+        "ErstantwortPayloadBuilder.java",
+        "ErstantwortContext.java",
+        "MatrixSessionSystemMessageService.java",
+        "CreateEnquiryMessageFacade.java"
+      ]
+    },
+    {
+      "id": "flow:notification-timeline",
+      "name": "Notification Center Event Flow",
+      "summary": "A message or session event arrives via REST (/users/event-notifications/message-events) or the Matrix timeline listener → EventNotificationDeduplicationWriter collapses the dual paths with a bounded dedup key and the Matrix event id → the EventNotification is persisted with millisecond ordering and content metadata → clients poll the feed; fresh active-view heartbeats suppress notifications for the room currently on screen, and stale views expire by TTL.",
+      "related": [
+        "EventNotificationController.java",
+        "EventNotificationService.java",
+        "EventNotificationDeduplicationWriter.java",
+        "EventNotification.java",
+        "MatrixEventListenerService.java"
+      ]
+    },
+    {
+      "id": "flow:counsellor-invite-provisioning",
+      "name": "Counsellor Invite → Provisioning",
+      "summary": "An admin creates an account invite (reservation token, optional pending TOTP secret) → the invite email is rendered from tracked templates and its delivery status recorded → on acceptance the ProvisioningWorkflow creates the Keycloak account, Matrix user, and consultant records step by step, compensating already-created resources if a later step fails.",
+      "related": [
+        "AccountInviteController.java",
+        "AccountInviteService.java",
+        "CounsellorInviteProvisioningService.java",
+        "ProvisioningWorkflow.java",
+        "ProvisioningCompensator.java",
+        "InviteEmailTemplateService.java"
+      ]
+    },
+    {
+      "id": "flow:case-handover",
+      "name": "Case Handover Flow",
+      "summary": "A consultant requests a case handover citing a tenant-configured reason policy → the CaseHandoverRequest is persisted and the receiving side is notified via handover notification templates → on acceptance the session, Matrix room memberships, and responsibilities transfer, with the trail recorded by CaseHandoverLogsService.",
+      "related": [
+        "CaseHandoverController.java",
+        "CaseHandoverService.java",
+        "CaseHandoverRequest.java",
+        "CaseHandoverReasonPolicy.java",
+        "CaseHandoverLogsService.java"
+      ]
     }
   ]
 }

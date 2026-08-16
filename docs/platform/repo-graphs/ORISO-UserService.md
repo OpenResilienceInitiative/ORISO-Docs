@@ -25,579 +25,129 @@ description: Direct source inspection and graph-backed summary for ORISO-UserSer
 
 ## Repository Purpose
 
-Core user/session/conversation service: users, askers, consultants, sessions, conversations, appointments, chat metadata, notifications, deletion workflows, Matrix/Rocket.Chat adapters, and admin user APIs.
+Core user/session/conversation service: users, askers, consultants, sessions, conversations, session lists, group chats and self-help group series, team discussions, case handover, event notifications (timeline/notification center backend), consultant/admin statistics, account invites with counsellor provisioning, 2FA/OTP, deletion/deactivation workflows, and the application-side lifecycle of encrypted Matrix rooms. Messaging is Matrix-only: the Rocket.Chat adapter and its database columns were removed (contract tests assert the adapter stays gone).
 
 ## Main Technologies
 
-- Stack: Spring Boot 2.7, Spring Security, Keycloak adapter, Spring Data JPA, OpenAPI Generator, Liquibase, RabbitMQ, Redis, MongoDB, Matrix Synapse, MariaDB
-- Selected Maven dependencies: org.springframework.cloud:spring-cloud-dependencies, org.springframework.boot:spring-boot-starter-web, org.springframework.boot:spring-boot-starter-security, org.springframework:spring-web, org.springframework.boot:spring-boot-starter-validation, org.springframework.boot:spring-boot-starter-data-jpa, org.springframework.boot:spring-boot-starter-cache, org.springframework.boot:spring-boot-starter-data-redis, org.springframework.boot:spring-boot-starter-aop, org.springframework.boot:spring-boot-starter-hateoas, org.springframework.boot:spring-boot-starter-amqp, org.springframework.boot:spring-boot-configuration-processor, org.springframework.security:spring-security-core, org.springframework:spring-beans, org.springframework:spring-webmvc, org.springframework:spring-core, org.springframework.cloud:spring-cloud-starter-sleuth, org.springframework.cloud:spring-cloud-starter-zipkin, org.springframework.boot:spring-boot-starter-actuator, org.openapitools:openapi-generator-maven-plugin, org.openapitools:jackson-databind-nullable, io.springfox:springfox-swagger2, org.keycloak:keycloak-spring-security-adapter, org.keycloak:keycloak-spring-boot-starter, org.keycloak:keycloak-admin-client, org.liquibase:liquibase-maven-plugin, org.liquibase:liquibase-core, org.mariadb.jdbc:mariadb-java-client, net.sf.ehcache:ehcache, org.springframework:spring-context-support, org.springframework.boot:spring-boot-starter-test, org.springframework.security:spring-security-test, org.testcontainers:junit-jupiter, org.testcontainers:mariadb, com.github.fridujo:rabbitmq-mock
+- Stack: Spring Boot 4.0.7 (spring-boot-starter-parent), Java 21, Spring Security, Spring Data JPA, OpenAPI Generator (API-first), Liquibase, MariaDB, Redis (caching, message mirror, activity registry), Matrix Synapse (rooms, media, presence), Keycloak (admin client behind hexagonal Identity* ports), AMQP/RabbitMQ (statistics exchange, disabled by default), Firebase Admin (mobile push), OpenTelemetry/OTLP via spring-boot-starter-opentelemetry
+- Selected Maven dependencies: org.springframework.boot:spring-boot-starter-web, spring-boot-starter-security, spring-boot-starter-validation, spring-boot-starter-data-jpa, spring-boot-starter-cache, spring-boot-starter-data-redis, spring-boot-starter-aop, spring-boot-starter-hateoas, spring-boot-starter-amqp, spring-boot-starter-actuator, spring-boot-starter-opentelemetry, org.openapitools:openapi-generator-maven-plugin, org.keycloak:keycloak-admin-client, org.liquibase:liquibase-core, org.mariadb.jdbc:mariadb-java-client, com.google.firebase:firebase-admin, org.testcontainers:mariadb
+- Gone since July 2026: Rocket.Chat adapter/config, MongoDB, Spring Cloud Sleuth/Zipkin, springfox, keycloak-spring-security-adapter (replaced by resource-server style config and identity ports)
 
 ## Important Files and Modules
 
 - pom.xml
-- api/appointmentservice.yaml
-- api/conversationservice.yaml
-- api/useradminservice.yaml
-- api/userservice.yaml
-- api/userstatisticsservice.yaml
-- services/agencyadminservice.yaml
-- services/agencyservice.yaml
-- services/applicationsettingsservice.yaml
-- services/appointmentService.yaml
-- services/consultingtypeservice.yaml
-- services/keycloakextension.yaml
-- services/liveservice.yaml
-- services/mailservice.yaml
-- services/messageservice.yaml
-- services/statisticsservice.yaml
-- services/tenantadminservice.yaml
-- services/tenantservice.yaml
-- services/topicservice.yaml
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/AgencyInviteLinkController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/AppointmentController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/ConversationController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/DraftMessageController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/EventNotificationController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/GlobalSmtpTestEmailController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/InactiveAccountAuditLogsController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/LiveProxyController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/MatrixMessageController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/MatrixSyncController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/SessionSupervisorController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/SupervisorLogsController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/UserAdminController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/UserController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/UserStatisticsController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/VersionController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/config/KeycloakConfig.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/config/KeycloakCustomConfig.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/matrix/config/MatrixConfig.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/config/RocketChatConfig.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/interceptor/HttpTenantFilter.java
-- src/main/java/de/caritas/cob/userservice/api/admin/service/tenant/TenantAdminService.java
-- src/main/java/de/caritas/cob/userservice/api/admin/service/tenant/TenantService.java
-- src/main/java/de/caritas/cob/userservice/api/config/AppConfig.java
-- src/main/java/de/caritas/cob/userservice/api/config/AppointmentConfig.java
-- src/main/java/de/caritas/cob/userservice/api/config/CacheManagerConfig.java
-- src/main/java/de/caritas/cob/userservice/api/config/ConfigurationValidator.java
-- src/main/java/de/caritas/cob/userservice/api/config/CsrfSecurityProperties.java
-- src/main/java/de/caritas/cob/userservice/api/config/CustomWebMvcConfigurer.java
-- src/main/java/de/caritas/cob/userservice/api/config/GlobalMethodSecurityConfig.java
-- src/main/java/de/caritas/cob/userservice/api/config/JpaAuditingConfiguration.java
-- src/main/java/de/caritas/cob/userservice/api/config/LiquibaseConfig.java
-- src/main/java/de/caritas/cob/userservice/api/config/SwaggerConfig.java
-- src/main/java/de/caritas/cob/userservice/api/config/VideoChatConfig.java
-- src/main/java/de/caritas/cob/userservice/api/config/apiclient/AgencyServiceApiClientConfig.java
-- src/main/java/de/caritas/cob/userservice/api/config/auth/Authority.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/AdminAgencyRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/AdminRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/AgencyInviteLinkRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/AppointmentRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/ChatAgencyRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/ChatRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/ConsultantAgencyRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/ConsultantMobileTokenRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/ConsultantRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/DraftMessageRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/EventNotificationRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/GroupChatParticipantRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/IdentityTombstoneRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/InactiveAccountNotificationAuditLogRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/SessionDataRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/SessionRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/SessionSupervisorRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/UserAgencyRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/UserChatRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/UserMobileTokenRepository.java
+- api/userservice.yaml, api/useradminservice.yaml, api/conversationservice.yaml, api/userstatisticsservice.yaml, api/appointmentservice.yaml (own OpenAPI contracts)
+- services/*.yaml (outbound client contracts; liveservice.yaml and messageservice.yaml were removed with the Rocket.Chat/LiveService retirement)
+- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/ — ~40 controllers/delegates, including:
+  - UserController.java plus focused delegates (UserSessionControllerDelegate, UserRegistrationControllerDelegate, UserChatControllerDelegate, UserConsultantControllerDelegate, UserAccountControllerDelegate, UserSupportControllerDelegate, UserTwoFactorAuthControllerDelegate)
+  - MatrixMessageController.java, MatrixSyncController.java, MatrixRtcCallPolicyController.java
+  - EventNotificationController.java, DoNotDisturbController.java
+  - AdminStatisticsController.java, ConsultantStatisticsController.java, UserStatisticsController.java
+  - CaseHandoverController.java, TeamDiscussionController.java
+  - AccountInviteController.java, AgencyInviteLinkController.java, DpaForwardEmailController.java
+  - HandshakeController.java, SupportRoomController.java, SupportAdminController.java
+  - TenantAdminOnboardingController.java, TutorialProgressController.java, IdAllocationController.java, ErrorReportController.java, DeprecatedLiveProxyController.java
+- src/main/java/de/caritas/cob/userservice/api/adapters/matrix/ — MatrixSynapseService, MatrixRoomClient, MatrixMediaClient, MatrixSessionRoomGateway, MatrixSessionAssignmentGateway
+- src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/ — KeycloakService implementing the Identity* ports
+- src/main/java/de/caritas/cob/userservice/api/port/out/ — repositories plus narrow identity ports (IdentityLogin, IdentitySecondFactor, IdentityProfileUpdater, IdentityEmailAddressUpdater, IdentityRoleUpdater, ...)
+- src/main/java/de/caritas/cob/userservice/api/service/ — subsystem packages: notification, statistics, erstantwort, matrix, matrixrtc, accountinvite, provisioning, handshake, support, teamdiscussion, donotdisturb, tutorial, availability, session, sessionlist, archive
+- src/main/java/de/caritas/cob/userservice/api/workflow/ — delete, deactivate, enquirynotification, groupchatreminder, inactiveaccountnotification, scheduling (ScheduledTaskClaim leases)
+- src/main/resources/db/changelog/changeset/ — Liquibase changesets 0001–0082
 
 ## Architecture Summary
 
-The service follows an OpenAPI-first Spring boundary with generated API contracts, controller/resource adapters, domain services, repository/data access classes, security/authority mapping, tenant-resolution support where present, and outbound service clients under services/ or apiclient configuration.
+OpenAPI-first Spring boundary with generated API contracts and controller/delegate adapters, domain services organized by subsystem package, hexagonal ports for identity (Keycloak) and chat/room gateways (Matrix), JPA repositories against MariaDB, Redis for caching/mirroring/presence, and tenant resolution via aspect + resolver chain. The former UserController monolith is split into delegates; Keycloak is only reachable through capability-scoped Identity* ports; all room lifecycle operations go through Matrix gateways. Startup is fail-fast: the service refuses to start when neither Liquibase migration nor schema verification is configured, and when agency-service URLs or technical-user credentials are missing.
 
 ## Key APIs
 
-| OpenAPI file | Paths |
+| OpenAPI file | Paths (selection) |
 | --- | --- |
-| api/appointmentservice.yaml | /appointments/booking/{id}<br>/appointments/{id}<br>/appointments<br>/appointments/sessions/{sessionId}/enquiry/new |
-| api/conversationservice.yaml | /conversations/consultants/enquiries/registered<br>/conversations/consultants/enquiries/anonymous<br>/conversations/consultants/mymessages/archive<br>/conversations/consultants/teamsessions/archive<br>/conversations/askers/anonymous/new<br>/conversations/askers/anonymous/{sessionId}/accept<br>/conversations/anonymous/{sessionId}/finish<br>/conversations/anonymous/{sessionId} |
-| api/useradminservice.yaml | /useradmin<br>/useradmin/sessions<br>/useradmin/consultants<br>/useradmin/consultants/{consultantId}<br>/useradmin/askers/{askerId}<br>/useradmin/report<br>/useradmin/agencies/{agencyId}/consultants<br>/useradmin/consultants/{consultantId}/agencies<br>/useradmin/consultants/{consultantId}/agencies/{agencyId}<br>/useradmin/agency/{agencyId}/changetype<br>/useradmin/agencyadmins<br>/useradmin/agencyadmins/search<br>/useradmin/agencyadmins/{adminId}<br>/useradmin/agencyadmins/{adminId}/agencies<br>/useradmin/agencyadmins/{adminId}/agencies/{agencyId}<br>/useradmin/tenantadmins<br>/useradmin/tenantadmins/search<br>/useradmin/tenantadmins/{adminId} |
-| api/userservice.yaml | /users/{username}<br>/users/askers/new<br>/users/askers/session/new<br>/users/askers/consultingType/new<br>/users/sessions/{sessionId}/enquiry/new<br>/users/sessions/{sessionId}/data<br>/users/sessions/new/{sessionId}<br>/users/sessions/askers<br>/users/sessions/room<br>/users/sessions/room/{sessionId}<br>/users/sessions/rocketChatGroupId<br>/users/sessions/{sessionId}/archive<br>/users/sessions/{sessionId}/dearchive<br>/users/consultants/absences<br>/users/consultants/languages<br>/users/data<br>/users/notifications<br>/users/email |
+| api/userservice.yaml | /users/{username}, /users/askers/new, /users/sessions/{sessionId}/enquiry/new, /users/sessions/askers, /users/sessions/consultants, /users/sessions/teams, /users/sessions/room/{sessionId}, /users/consultants/search, /users/sessions/{sessionId}/consultant/{consultantId}, /users/password/change, /users/chat/new, /users/chat/v2/new, /users/chat/{chatId}/start\|stop\|join\|verify, /users/chat/{matrixRoomId}/assign, /users/{matrixUserId}/chat/{chatId}/ban, /users/data, /users/email, /users/notifications, /users/mobiletoken |
+| api/conversationservice.yaml | /conversations/consultants/enquiries/registered, /conversations/consultants/enquiries/anonymous, /conversations/askers/anonymous/new, /conversations/askers/anonymous/{sessionId}/accept, /conversations/anonymous/{sessionId}/finish, /conversations/consultants/mymessages/archive, /conversations/consultants/teamsessions/archive |
+| api/useradminservice.yaml | /useradmin, /useradmin/sessions, /useradmin/consultants, /useradmin/consultants/{consultantId}, /useradmin/askers/{askerId}, /useradmin/agencies/{agencyId}/consultants, /useradmin/agencyadmins, /useradmin/tenantadmins, /useradmin/data, /useradmin/report |
 | api/userstatisticsservice.yaml | /userstatistics/sessions |
+| api/appointmentservice.yaml | /appointments, /appointments/{id}, /appointments/booking/{id}, /appointments/sessions/{sessionId}/enquiry/new (legacy remnant; feature.appointment.enabled defaults to false) |
+
+Controller-mounted (non-generated) endpoints include /matrix/sessions/{sessionId}/messages|sync|upload, /matrix/media/download/{serverName}/{mediaId}, /matrix/me/token, /users/event-notifications (+ /message-events), MatrixRTC call-policy, case-handover, team-discussion, account-invite, handshake, and support-room routes.
 
 ## Controllers, Services, Repositories, and Entities
 
-Controllers:
+Controllers: see Important Files above — the notable additions since July 2026 are AccountInviteController, AdminStatisticsController, ConsultantStatisticsController, CaseHandoverController, DoNotDisturbController, DpaForwardEmailController, ErrorReportController, HandshakeController, IdAllocationController, MatrixRtcCallPolicyController, SupportAdminController, SupportRoomController, TeamDiscussionController, TenantAdminOnboardingController, TutorialProgressController, and the UserController delegate split. LiveProxyController is renamed DeprecatedLiveProxyController. All Rocket.Chat controllers/services are gone.
 
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/AgencyInviteLinkController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/AppointmentController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/ConversationController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/DraftMessageController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/EventNotificationController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/GlobalSmtpTestEmailController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/InactiveAccountAuditLogsController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/LiveProxyController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/MatrixMessageController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/MatrixSyncController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/SessionSupervisorController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/SupervisorLogsController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/UserAdminController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/UserController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/UserStatisticsController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/VersionController.java
+Selected services by subsystem:
 
-Services:
+- Matrix: MatrixSynapseService, MatrixEventListenerService, RedisMessageMirrorService, GroupChatMembershipService, MatrixRoomMembershipProvider, MatrixSessionSystemMessageService
+- Notifications: EventNotificationService, EventNotificationDeduplicationWriter, GroupChatLifecycleNotificationService, GroupChatReminderService, TeamDiscussionNotificationService, DpaSigningEmailDispatchService, SystemNotificationEmailSettingsService
+- Statistics: AdminDashboardStatisticsService, ConsultantStatisticsService, ConsultantMessageStatService, ConsultantIdentityHasher, SessionStatisticsService, StatisticsService
+- Erstantwort: ErstantwortPayloadBuilder, ErstantwortContext, ErstantwortModality
+- Invites/provisioning: AccountInviteService, CounsellorInviteProvisioningService, ProvisioningWorkflow, ProvisioningCompensator, InviteEmailTemplateService, InviteEmailPreviewService, DpaForwardEmailService
+- Handover/support: CaseHandoverService, CaseHandoverLogsService, HandshakeService, SupportRoomService
+- Lifecycle: SessionService, DirectSessionMatrixRoomService, AgencyPreAssignmentRoomService, SessionArchiveService, ConsultantSessionListService, UserSessionListService
+- Scheduling: ScheduledTaskClaimService/Writer plus per-workflow schedulers
 
-- src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakService.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/matrix/MatrixSynapseService.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/RocketChatRollbackService.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/RocketChatService.java
-- src/main/java/de/caritas/cob/userservice/api/admin/service/admin/AdminAgencyRelationService.java
-- src/main/java/de/caritas/cob/userservice/api/admin/service/admin/AgencyAdminUserService.java
-- src/main/java/de/caritas/cob/userservice/api/admin/service/admin/TenantAdminUserService.java
-- src/main/java/de/caritas/cob/userservice/api/admin/service/admin/create/CreateAdminService.java
-- src/main/java/de/caritas/cob/userservice/api/admin/service/admin/create/agencyrelation/CreateAdminAgencyRelationService.java
-- src/main/java/de/caritas/cob/userservice/api/admin/service/admin/delete/DeleteAdminService.java
-- src/main/java/de/caritas/cob/userservice/api/admin/service/admin/search/AdminFilterService.java
-- src/main/java/de/caritas/cob/userservice/api/admin/service/admin/search/RetrieveAdminService.java
-- src/main/java/de/caritas/cob/userservice/api/admin/service/admin/update/UpdateAdminService.java
-- src/main/java/de/caritas/cob/userservice/api/admin/service/agency/AgencyAdminService.java
-- src/main/java/de/caritas/cob/userservice/api/admin/service/agency/ConsultantAgencyAdminService.java
-- src/main/java/de/caritas/cob/userservice/api/admin/service/agency/ConsultantAgencyDeletionValidationService.java
-- src/main/java/de/caritas/cob/userservice/api/admin/service/agency/RemoveConsultantFromRocketChatService.java
-- src/main/java/de/caritas/cob/userservice/api/admin/service/consultant/ConsultantAdminFilterService.java
-- src/main/java/de/caritas/cob/userservice/api/admin/service/consultant/ConsultantAdminFilterTenantAwareService.java
-- src/main/java/de/caritas/cob/userservice/api/admin/service/consultant/ConsultantAdminService.java
-- src/main/java/de/caritas/cob/userservice/api/admin/service/consultant/create/agencyrelation/ConsultantAgencyRelationCreatorService.java
-- src/main/java/de/caritas/cob/userservice/api/admin/service/consultant/delete/ConsultantPreDeletionService.java
-- src/main/java/de/caritas/cob/userservice/api/admin/service/consultant/update/ConsultantUpdateService.java
-- src/main/java/de/caritas/cob/userservice/api/admin/service/rocketchat/RocketChatAddToGroupOperationService.java
-- src/main/java/de/caritas/cob/userservice/api/admin/service/rocketchat/RocketChatRemoveFromGroupOperationService.java
-- src/main/java/de/caritas/cob/userservice/api/admin/service/session/SessionAdminService.java
-- src/main/java/de/caritas/cob/userservice/api/admin/service/tenant/TenantAdminService.java
-- src/main/java/de/caritas/cob/userservice/api/admin/service/tenant/TenantService.java
-- src/main/java/de/caritas/cob/userservice/api/conversation/service/AnonymousConversationCreatorService.java
-- src/main/java/de/caritas/cob/userservice/api/conversation/service/user/anonymous/AnonymousUserCreatorService.java
-- src/main/java/de/caritas/cob/userservice/api/service/AskerImportService.java
-- src/main/java/de/caritas/cob/userservice/api/service/ChatService.java
-- src/main/java/de/caritas/cob/userservice/api/service/ConsultantAgencyService.java
-- src/main/java/de/caritas/cob/userservice/api/service/ConsultantImportService.java
-- src/main/java/de/caritas/cob/userservice/api/service/ConsultantService.java
-- src/main/java/de/caritas/cob/userservice/api/service/ConsultingTypeService.java
-- src/main/java/de/caritas/cob/userservice/api/service/DecryptionService.java
-- src/main/java/de/caritas/cob/userservice/api/service/InactiveAccountAuditLogsService.java
-- src/main/java/de/caritas/cob/userservice/api/service/LogService.java
-- src/main/java/de/caritas/cob/userservice/api/service/SessionDataService.java
-- src/main/java/de/caritas/cob/userservice/api/service/SupervisorLogsService.java
-- src/main/java/de/caritas/cob/userservice/api/service/UserAgencyService.java
-- src/main/java/de/caritas/cob/userservice/api/service/agency/AgencyService.java
-- src/main/java/de/caritas/cob/userservice/api/service/agencyinvitelink/AgencyInviteLinkService.java
-- src/main/java/de/caritas/cob/userservice/api/service/appointment/AppointmentService.java
-- src/main/java/de/caritas/cob/userservice/api/service/archive/SessionArchiveService.java
-- src/main/java/de/caritas/cob/userservice/api/service/archive/SessionDeleteService.java
-- src/main/java/de/caritas/cob/userservice/api/service/auth/MagicLinkLoginService.java
-- src/main/java/de/caritas/cob/userservice/api/service/consultingtype/ApplicationSettingsService.java
-- src/main/java/de/caritas/cob/userservice/api/service/consultingtype/ReleaseToggleService.java
-- src/main/java/de/caritas/cob/userservice/api/service/consultingtype/TopicService.java
-- src/main/java/de/caritas/cob/userservice/api/service/draft/DraftMessageService.java
-- src/main/java/de/caritas/cob/userservice/api/service/helper/MailService.java
-- src/main/java/de/caritas/cob/userservice/api/service/liveevents/LiveEventNotificationService.java
-- src/main/java/de/caritas/cob/userservice/api/service/matrix/MatrixEventListenerService.java
-- src/main/java/de/caritas/cob/userservice/api/service/matrix/RedisMessageMirrorService.java
-- src/main/java/de/caritas/cob/userservice/api/service/mobilepushmessage/FirebasePushMessageService.java
-- src/main/java/de/caritas/cob/userservice/api/service/mobilepushmessage/MobilePushNotificationService.java
-- src/main/java/de/caritas/cob/userservice/api/service/notification/EventNotificationService.java
-- src/main/java/de/caritas/cob/userservice/api/service/notification/GlobalSmtpTestEmailService.java
-- src/main/java/de/caritas/cob/userservice/api/service/notification/SupervisorAddedEmailNotificationService.java
-- src/main/java/de/caritas/cob/userservice/api/service/notification/SystemNotificationEmailSettingsService.java
-- src/main/java/de/caritas/cob/userservice/api/service/session/AgencyPreAssignmentRoomService.java
-- src/main/java/de/caritas/cob/userservice/api/service/session/ConsultantSessionTopicEnrichmentService.java
-- src/main/java/de/caritas/cob/userservice/api/service/session/DirectSessionMatrixRoomService.java
-- src/main/java/de/caritas/cob/userservice/api/service/session/SessionService.java
-- src/main/java/de/caritas/cob/userservice/api/service/session/SessionTopicEnrichmentService.java
-- src/main/java/de/caritas/cob/userservice/api/service/sessionlist/ConsultantSessionListService.java
-- src/main/java/de/caritas/cob/userservice/api/service/sessionlist/UserSessionListService.java
-- src/main/java/de/caritas/cob/userservice/api/service/statistics/SessionStatisticsService.java
+Repositories (port/out): Session, SessionData, User, Consultant, Chat, ChatAgency, ChatOccurrenceException, GroupChatParticipant, EventNotification, NotificationRoomLevel, AccountInvite, InviteEmailDelivery, InviteEmailTemplate, CaseHandoverRequest, CaseHandoverReasonPolicy, ConsultantMessageStat, ConsultantStatistics, AdminStatistics, HandshakeSession, HandshakeAuditEvent, SupportRoom, TeamDiscussion(Participant), TutorialProgress, ReservedPublicSlug, ScheduledTaskClaim, IdentityTombstone, Admin, AdminAgency, Appointment, DraftMessage, mobile-token and audit-log repositories.
 
-Repositories:
+Entities/models (selection of the ~53 in api/model): Session, SessionData, User, Consultant, Chat (heavily extended for series), GroupChatParticipant, ChatOccurrenceException, EventNotification, NotificationRoomLevel, AccountInvite, InviteEmailDelivery, InviteEmailTemplate, CaseHandoverRequest, CaseHandoverReasonPolicy, ConsultantMessageStat, HandshakeSession, HandshakeAuditEvent, SupportRoom, TeamDiscussion, TeamDiscussionParticipant, TutorialProgress, ReservedPublicSlug, ScheduledTaskClaim, IdentityTombstone, Appointment.
 
-- src/main/java/de/caritas/cob/userservice/api/port/out/AdminAgencyRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/AdminRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/AgencyInviteLinkRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/AppointmentRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/ChatAgencyRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/ChatRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/ConsultantAgencyRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/ConsultantMobileTokenRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/ConsultantRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/DraftMessageRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/EventNotificationRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/GroupChatParticipantRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/IdentityTombstoneRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/InactiveAccountNotificationAuditLogRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/SessionDataRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/SessionRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/SessionSupervisorRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/UserAgencyRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/UserChatRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/UserMobileTokenRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/UserRepository.java
-
-Entities/models:
-
-- src/main/java/de/caritas/cob/userservice/api/admin/report/model/AgencyDependedViolationReportRule.java
-- src/main/java/de/caritas/cob/userservice/api/admin/report/model/ViolationReportRule.java
-- src/main/java/de/caritas/cob/userservice/api/conversation/model/AnonymousUserCredentials.java
-- src/main/java/de/caritas/cob/userservice/api/conversation/model/ConversationListType.java
-- src/main/java/de/caritas/cob/userservice/api/conversation/model/PageableListRequest.java
-- src/main/java/de/caritas/cob/userservice/api/model/Admin.java
-- src/main/java/de/caritas/cob/userservice/api/model/AdminAgency.java
-- src/main/java/de/caritas/cob/userservice/api/model/AgencyInviteLink.java
-- src/main/java/de/caritas/cob/userservice/api/model/AppintmentEnquiryData.java
-- src/main/java/de/caritas/cob/userservice/api/model/Appointment.java
-- src/main/java/de/caritas/cob/userservice/api/model/Chat.java
-- src/main/java/de/caritas/cob/userservice/api/model/ChatAgency.java
-- src/main/java/de/caritas/cob/userservice/api/model/Consultant.java
-- src/main/java/de/caritas/cob/userservice/api/model/ConsultantAgency.java
-- src/main/java/de/caritas/cob/userservice/api/model/ConsultantAgencyStatus.java
-- src/main/java/de/caritas/cob/userservice/api/model/ConsultantMobileToken.java
-- src/main/java/de/caritas/cob/userservice/api/model/ConsultantStatus.java
-- src/main/java/de/caritas/cob/userservice/api/model/DraftMessage.java
-- src/main/java/de/caritas/cob/userservice/api/model/EnquiryData.java
-- src/main/java/de/caritas/cob/userservice/api/model/EventNotification.java
-- src/main/java/de/caritas/cob/userservice/api/model/GroupChatParticipant.java
-- src/main/java/de/caritas/cob/userservice/api/model/IdentityTombstone.java
-- src/main/java/de/caritas/cob/userservice/api/model/InactiveAccountNotificationAuditLog.java
-- src/main/java/de/caritas/cob/userservice/api/model/Language.java
-- src/main/java/de/caritas/cob/userservice/api/model/LanguageId.java
-- src/main/java/de/caritas/cob/userservice/api/model/Memento.java
-- src/main/java/de/caritas/cob/userservice/api/model/NewSessionValidationConstraint.java
-- src/main/java/de/caritas/cob/userservice/api/model/NotificationSettings.java
-- src/main/java/de/caritas/cob/userservice/api/model/NotificationsAware.java
-- src/main/java/de/caritas/cob/userservice/api/model/Session.java
-- src/main/java/de/caritas/cob/userservice/api/model/SessionData.java
-- src/main/java/de/caritas/cob/userservice/api/model/SessionSupervisor.java
-- src/main/java/de/caritas/cob/userservice/api/model/SessionTopic.java
-- src/main/java/de/caritas/cob/userservice/api/model/TenantAware.java
-- src/main/java/de/caritas/cob/userservice/api/model/User.java
-- src/main/java/de/caritas/cob/userservice/api/model/UserAgency.java
-- src/main/java/de/caritas/cob/userservice/api/model/UserChat.java
-- src/main/java/de/caritas/cob/userservice/api/model/UserMobileToken.java
-- src/main/java/de/caritas/cob/userservice/api/workflow/delete/model/AskerDeletionWorkflowDTO.java
-- src/main/java/de/caritas/cob/userservice/api/workflow/delete/model/ConsultantDeletionWorkflowDTO.java
-- src/main/java/de/caritas/cob/userservice/api/workflow/delete/model/DeletionLifecycleState.java
-- src/main/java/de/caritas/cob/userservice/api/workflow/delete/model/DeletionSourceType.java
-- src/main/java/de/caritas/cob/userservice/api/workflow/delete/model/DeletionTargetType.java
-- src/main/java/de/caritas/cob/userservice/api/workflow/delete/model/DeletionWorkflowError.java
-- src/main/java/de/caritas/cob/userservice/api/workflow/delete/model/SessionDeletionWorkflowDTO.java
-- src/main/java/de/caritas/cob/userservice/api/workflow/enquirynotification/model/EnquiriesNotificationMailContent.java
-- src/main/java/de/caritas/cob/userservice/api/workflow/inactiveaccountnotification/model/InactiveAccountRole.java
-
-Security, tenant, and config modules:
-
-- src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/config/KeycloakConfig.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/config/KeycloakCustomConfig.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/matrix/config/MatrixConfig.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/config/RocketChatConfig.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/interceptor/HttpTenantFilter.java
-- src/main/java/de/caritas/cob/userservice/api/admin/service/tenant/TenantAdminService.java
-- src/main/java/de/caritas/cob/userservice/api/admin/service/tenant/TenantService.java
-- src/main/java/de/caritas/cob/userservice/api/config/AppConfig.java
-- src/main/java/de/caritas/cob/userservice/api/config/AppointmentConfig.java
-- src/main/java/de/caritas/cob/userservice/api/config/CacheManagerConfig.java
-- src/main/java/de/caritas/cob/userservice/api/config/ConfigurationValidator.java
-- src/main/java/de/caritas/cob/userservice/api/config/CsrfSecurityProperties.java
-- src/main/java/de/caritas/cob/userservice/api/config/CustomWebMvcConfigurer.java
-- src/main/java/de/caritas/cob/userservice/api/config/GlobalMethodSecurityConfig.java
-- src/main/java/de/caritas/cob/userservice/api/config/JpaAuditingConfiguration.java
-- src/main/java/de/caritas/cob/userservice/api/config/LiquibaseConfig.java
-- src/main/java/de/caritas/cob/userservice/api/config/SwaggerConfig.java
-- src/main/java/de/caritas/cob/userservice/api/config/VideoChatConfig.java
-- src/main/java/de/caritas/cob/userservice/api/config/apiclient/AgencyServiceApiClientConfig.java
-- src/main/java/de/caritas/cob/userservice/api/config/auth/Authority.java
-- src/main/java/de/caritas/cob/userservice/api/config/auth/IdentityConfig.java
-- src/main/java/de/caritas/cob/userservice/api/config/auth/RoleAuthorizationAuthorityMapper.java
-- src/main/java/de/caritas/cob/userservice/api/config/auth/SecurityConfig.java
-- src/main/java/de/caritas/cob/userservice/api/config/auth/TechnicalUserConfig.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/IdentityClientConfig.java
-- src/main/java/de/caritas/cob/userservice/api/service/httpheader/SecurityHeaderSupplier.java
-- src/main/java/de/caritas/cob/userservice/api/tenant/AccessTokenTenantResolver.java
-- src/main/java/de/caritas/cob/userservice/api/tenant/CustomHeaderTenantResolver.java
-- src/main/java/de/caritas/cob/userservice/api/tenant/MultitenancyWithSingleDomainTenantResolver.java
-- src/main/java/de/caritas/cob/userservice/api/tenant/SubdomainTenantResolver.java
-- src/main/java/de/caritas/cob/userservice/api/tenant/TechnicalOrSuperAdminUserTenantResolver.java
-- src/main/java/de/caritas/cob/userservice/api/tenant/TenantAspect.java
-- src/main/java/de/caritas/cob/userservice/api/tenant/TenantContext.java
-- src/main/java/de/caritas/cob/userservice/api/tenant/TenantContextProvider.java
-- src/main/java/de/caritas/cob/userservice/api/tenant/TenantData.java
-- src/main/java/de/caritas/cob/userservice/api/tenant/TenantResolver.java
-- src/main/java/de/caritas/cob/userservice/api/tenant/TenantResolverService.java
-
-Adapters and generated clients:
-
-- src/main/java/de/caritas/cob/userservice/api/actions/session/SetRocketChatRoomReadOnlyActionCommand.java
-- src/main/java/de/caritas/cob/userservice/api/actions/user/DeactivateKeycloakUserActionCommand.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakClient.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakMapper.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakService.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/config/KeycloakConfig.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/config/KeycloakCustomConfig.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/dto/KeycloakCreateUserResponseDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/dto/KeycloakLoginResponseDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/matrix/MatrixSynapseService.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/matrix/config/MatrixConfig.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/matrix/dto/MatrixCreateRoomRequestDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/matrix/dto/MatrixCreateRoomResponseDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/matrix/dto/MatrixCreateUserRequestDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/matrix/dto/MatrixCreateUserResponseDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/matrix/dto/MatrixInviteUserRequestDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/matrix/dto/MatrixInviteUserResponseDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/RocketChatClient.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/RocketChatCredentials.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/RocketChatCredentialsProvider.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/RocketChatMapper.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/RocketChatRollbackService.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/RocketChatService.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/config/RocketChatConfig.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/StandardResponseDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupAddUserBodyDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupCleanHistoryDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupCounterResponseDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupCreateBodyDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupDeleteBodyDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupDeleteResponseDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupLeaveBodyDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupMemberDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupMemberResponseDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupRemoveUserBodyDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupResponseDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupUpdateKeyDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupsListAllResponseDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/login/DataDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/login/EmailsDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/login/LdapLoginDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/login/LoginResponseDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/login/MeDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/login/PreferencesDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/login/PresenceDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/login/PresenceListDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/login/PresenceOtherDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/login/SettingsDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/logout/DataDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/logout/LogoutResponseDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/message/Message.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/message/MessageResponse.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/message/MethodCall.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/message/MethodMessageWithParamList.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/message/PostMessageDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/message/PostMessageResponseDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/message/attachment/AttachmentDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/message/attachment/FileDTO.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/room/Room.java
+Security, tenant, and config modules: SecurityConfig, RoleAuthorizationAuthorityMapper, Authority, IdentityConfig, TechnicalUserConfig (fails closed when technical-user credentials are absent), HttpTenantFilter, TenantAspect/TenantContext and the tenant resolver chain (AccessTokenTenantResolver, SubdomainTenantResolver, CustomHeaderTenantResolver, TechnicalOrSuperAdminUserTenantResolver, MultitenancyWithSingleDomainTenantResolver), TenantHibernateInterceptor.
 
 ## Config and Database
 
-Application config keys inspected:
+Notable application config groups (application.properties, 374 lines):
 
-- server.port
-- logging.level.root
-- logging.level.org.springframework.web
-- logging.level.org.hibernate
-- logging.level.org.springframework.web.servlet.mvc.method.annotation
-- keycloak.auth-server-url
-- keycloak.realm
-- keycloak.bearer-only
-- keycloak.resource
-- keycloak.principal-attribute
-- keycloak.cors
-- keycloak.use-resource-role-mappings
-- keycloak.config.admin-username
-- keycloak.config.admin-password
-- keycloak.config.admin-client-id
-- keycloak.config.app-client-id
-- spring.datasource.url
-- spring.datasource.username
-- spring.datasource.password
-- spring.datasource.driver-class-name
-- spring.datasource.hikari.maximum-pool-size
-- spring.datasource.hikari.minimum-idle
-- spring.datasource.hikari.connection-timeout
-- spring.datasource.hikari.idle-timeout
-- spring.datasource.hikari.maxLifetime
-- spring.datasource.hikari.leak-detection-threshold
-- spring.jpa.properties.hibernate.dialect
-- spring.jpa.show-sql
-- spring.jpa.properties.hibernate.format_sql
-- spring.jpa.hibernate.ddl-auto
-- rocket.technical.username
-- rocket.technical.password
-- rocket.systemuser.id
-- rocket.systemuser.username
-- rocket.systemuser.password
-- rocket-chat.credential-cron
-- rocket-chat.base-url
-- rocket-chat.mongo-url
-- spring.liquibase.enabled
-- app.base.url
-- multitenancy.enabled
-- agency.service.api.url
-- csrf.header.property
-- csrf.cookie.property
-- csrf.whitelist.header.property
-- csrf.whitelist.config-uris
-- tenant.service.api.url
-- spring.data.mongodb.uri
-- spring.rabbitmq.host
-- spring.rabbitmq.port
-- spring.rabbitmq.username
-- spring.rabbitmq.password
-- keycloak.ssl-required
-- privacy.notificationPreviewMode
-- privacy.ipMode
-- spring.application.name
-- spring.profiles.active
-- spring.main.allow-bean-definition-overriding
-- spring.jpa.open-in-view
-- spring.data.jpa.repositories.bootstrap-mode
-- spring.main.banner-mode
-- spring.autoconfigure.exclude
-- server.host
-- system.notification.frontend.base-url
-- server.tomcat.threads.max
-- server.tomcat.threads.min-spare
-- server.tomcat.max-connections
-- server.tomcat.accept-count
-- server.tomcat.connection-timeout
-- registration.cors.allowed.origins
-- registration.cors.allowed.paths
-- spring.web.locale
-- spring.jackson.time-zone
-- service.encryption.appkey
-- user.account.deleteworkflow.cron
-- user.anonymous.deleteworkflow.cron
-- user.anonymous.deleteworkflow.periodMinutes
-- deletion.readOnlyWindow.hours
-- deletion.readOnlyWindow.tenantOverrides
-- deletion.pause.defaultMonths
+- identity.* — openid-connect/otp URLs, per-role otp-allowed flags (users, consultants, restricted agency admins, single-tenant admins, tenant super admins), technical user, dummy-email suffix
+- matrix.* — apiUrl, serverName, registrationSharedSecret, adminUsername/adminPassword, presenceEnabled, presenceActiveThresholdMs, encryptionEnabled (default false; enabled per environment)
+- matrixrtc.call-policy.hmac-secret — MatrixRTC policy correlation/verification
+- statistics.* — enabled flag, rabbitmq exchange, message-count.hmac-secret, small-cell-suppression.enabled
+- account.invite.*, dpa.sign.*, email.branding.* — invite/onboarding and branded email layout
+- deletion.readOnlyWindow.hours (+ tenantOverrides), deletion.pause.defaultMonths, user.account/anonymous deleteworkflow crons
+- appointments.delete-job-cron/-enabled, appointments.lifespan-in-hours; feature.appointment.enabled=false
+- feature.* toggles — topics, demographics, multitenancy-with-single-domain, video group chats
+- cache.* (agencies, appsettings, consulting, tenant, topic), debug.redis, csrf.*, management.otlp/opentelemetry
+- All Rocket.Chat (rocket.*, rocket-chat.*) and MongoDB keys are gone
 
-Migration/changelog files found:
-
-- src/main/java/de/caritas/cob/userservice/api/config/BeanAwareSpringLiquibase.java
-- src/main/java/de/caritas/cob/userservice/api/config/LiquibaseConfig.java
-- src/main/java/de/caritas/cob/userservice/api/config/migration/TemporaryPublicPrivateKeysTask.java
-- src/main/resources/db/changelog/changeset/0001_initsql/initSql.xml
-- src/main/resources/db/changelog/changeset/0001_initsql/initTables.sql
-- src/main/resources/db/changelog/changeset/0001_initsql/initTrigger.sql
-- src/main/resources/db/changelog/changeset/0002_monitoringKeys_feedbackChatClumn/0002_changeSet.xml
-- src/main/resources/db/changelog/changeset/0002_monitoringKeys_feedbackChatClumn/feedbackChatColumn-rollback.sql
-- src/main/resources/db/changelog/changeset/0002_monitoringKeys_feedbackChatClumn/feedbackChatColumn.sql
-- src/main/resources/db/changelog/changeset/0002_monitoringKeys_feedbackChatClumn/monitoringKeys-rollback.sql
-- src/main/resources/db/changelog/changeset/0002_monitoringKeys_feedbackChatClumn/monitoringKeys.sql
-- src/main/resources/db/changelog/changeset/0003_user_attribute_languageFormal/0003_changeSet.xml
-- src/main/resources/db/changelog/changeset/0003_user_attribute_languageFormal/userLanguageFormalColumn-rollback.sql
-- src/main/resources/db/changelog/changeset/0003_user_attribute_languageFormal/userLanguageFormalColumn.sql
-- src/main/resources/db/changelog/changeset/0004_consultant_attribute_languageFormal/0004_changeSet.xml
-- src/main/resources/db/changelog/changeset/0004_consultant_attribute_languageFormal/consultantLanguageFormalColumn-rollback.sql
-- src/main/resources/db/changelog/changeset/0004_consultant_attribute_languageFormal/consultantLanguageFormalColumn.sql
-- src/main/resources/db/changelog/changeset/0005_session_attribute_isMonitoring/0005_changeSet.xml
-- src/main/resources/db/changelog/changeset/0005_session_attribute_isMonitoring/sessionIsMonitoringColumn-rollback.sql
-- src/main/resources/db/changelog/changeset/0005_session_attribute_isMonitoring/sessionIsMonitoringColumn.sql
-- src/main/resources/db/changelog/changeset/0006_chat/0006_changeSet.xml
-- src/main/resources/db/changelog/changeset/0006_chat/chat-rollback.sql
-- src/main/resources/db/changelog/changeset/0006_chat/chat-trigger.sql
-- src/main/resources/db/changelog/changeset/0006_chat/chat.sql
-- src/main/resources/db/changelog/changeset/0007_user_agency_relation/0007_changeSet.xml
-- src/main/resources/db/changelog/changeset/0007_user_agency_relation/user-agency-relation-rollback.sql
-- src/main/resources/db/changelog/changeset/0007_user_agency_relation/user-agency-relation-trigger.sql
-- src/main/resources/db/changelog/changeset/0007_user_agency_relation/user-agency-relation.sql
-- src/main/resources/db/changelog/changeset/0008_chat_extension/0008_changeSet.xml
-- src/main/resources/db/changelog/changeset/0008_chat_extension/chat-extension-rollback.sql
-- src/main/resources/db/changelog/changeset/0008_chat_extension/chat-extension.sql
-- src/main/resources/db/changelog/changeset/0009_delete_timestamp_for_user_consultant/0009_changeSet.xml
-- src/main/resources/db/changelog/changeset/0009_delete_timestamp_for_user_consultant/delete-timestamp-for-user-consultant-rollback.sql
-- src/main/resources/db/changelog/changeset/0009_delete_timestamp_for_user_consultant/delete-timestamp-for-user-consultant.sql
-- src/main/resources/db/changelog/changeset/0010_delete_timestamp_for_consultant_agency/0010_changeSet.xml
-- src/main/resources/db/changelog/changeset/0010_delete_timestamp_for_consultant_agency/delete-timestamp-for-consultant-agency-rollback.sql
-- src/main/resources/db/changelog/changeset/0010_delete_timestamp_for_consultant_agency/delete-timestamp-for-consultant-agency.sql
-- src/main/resources/db/changelog/changeset/0011_add_mobile_token_for_user/0011_changeSet.xml
-- src/main/resources/db/changelog/changeset/0011_add_mobile_token_for_user/add-mobile-token-for-user-rollback.sql
-- src/main/resources/db/changelog/changeset/0011_add_mobile_token_for_user/add-mobile-token-for-user.sql
-- src/main/resources/db/changelog/changeset/0012_add_type_to_session/0012_changeSet.xml
-- src/main/resources/db/changelog/changeset/0012_add_type_to_session/add-type-to-session-rollback.sql
-- src/main/resources/db/changelog/changeset/0012_add_type_to_session/add-type-to-session.sql
-- src/main/resources/db/changelog/changeset/0013_add_assign_date_to_session/0013_changeSet.xml
-- src/main/resources/db/changelog/changeset/0013_add_assign_date_to_session/add-assign-date-to-session-rollback.sql
-- src/main/resources/db/changelog/changeset/0013_add_assign_date_to_session/add-assign-date-to-session.sql
-- src/main/resources/db/changelog/changeset/0013_add_assign_date_to_session/assign-date-trigger.sql
-- src/main/resources/db/changelog/changeset/0014_add_is_peer_chat_to_session/0014_changeSet.xml
-- src/main/resources/db/changelog/changeset/0014_add_is_peer_chat_to_session/add-is-peer-chat-to-session-rollback.sql
-- src/main/resources/db/changelog/changeset/0014_add_is_peer_chat_to_session/add-is-peer-chat-to-session.sql
-- src/main/resources/db/changelog/changeset/0015_add_app_mobile_token/0015_changeSet.xml
-- src/main/resources/db/changelog/changeset/0015_add_app_mobile_token/add-app-mobile-token-rollback.sql
-- src/main/resources/db/changelog/changeset/0015_add_app_mobile_token/add-app-mobile-token-trigger.sql
-- src/main/resources/db/changelog/changeset/0015_add_app_mobile_token/add-app-mobile-token.sql
-- src/main/resources/db/changelog/changeset/0016_add_consultant_languages/0016_changeSet.xml
-- src/main/resources/db/changelog/changeset/0016_add_consultant_languages/add-consultant-languages-rollback.sql
-- src/main/resources/db/changelog/changeset/0016_add_consultant_languages/add-consultant-languages.sql
-- src/main/resources/db/changelog/changeset/0017_add_session_language/0017_changeSet.xml
-- src/main/resources/db/changelog/changeset/0017_add_session_language/add-session-language-rollback.sql
-- src/main/resources/db/changelog/changeset/0017_add_session_language/add-session-language.sql
-- src/main/resources/db/changelog/changeset/0018_add_2fa_encourage/0018_changeSet.xml
-- src/main/resources/db/changelog/changeset/0018_add_2fa_encourage/add-2fa-encourage-rollback.sql
-- src/main/resources/db/changelog/changeset/0018_add_2fa_encourage/add-2fa-encourage.sql
-- src/main/resources/db/changelog/changeset/0019_tenant_id/0019_changeSet.xml
-- src/main/resources/db/changelog/changeset/0019_tenant_id/tenant_id-rollback.sql
-- src/main/resources/db/changelog/changeset/0019_tenant_id/tenant_id.sql
-- src/main/resources/db/changelog/changeset/0020_add_appointments/0020_changeSet.xml
-- src/main/resources/db/changelog/changeset/0020_add_appointments/add-appointments-rollback.sql
-- src/main/resources/db/changelog/changeset/0020_add_appointments/add-appointments.sql
-- src/main/resources/db/changelog/changeset/0021_index_for_consultant_search/0021_changeSet.xml
-- src/main/resources/db/changelog/changeset/0021_index_for_consultant_search/index-consultant-rollback.sql
-- src/main/resources/db/changelog/changeset/0021_index_for_consultant_search/index-consultant.sql
-- src/main/resources/db/changelog/changeset/0022_delete_date_for_consultant_search/0022_changeSet.xml
-- src/main/resources/db/changelog/changeset/0022_delete_date_for_consultant_search/index-consultant-rollback.sql
-- src/main/resources/db/changelog/changeset/0022_delete_date_for_consultant_search/index-consultant.sql
-- src/main/resources/db/changelog/changeset/0023_consultant_status/0023_changeSet.xml
-- src/main/resources/db/changelog/changeset/0023_consultant_status/consultant-status-rollback.sql
-- src/main/resources/db/changelog/changeset/0023_consultant_status/consultant-status.sql
-- src/main/resources/db/changelog/changeset/0024_consultant_walk_through/0024_changeSet.xml
-- src/main/resources/db/changelog/changeset/0024_consultant_walk_through/consultant-walk-through-rollback.sql
+Database: Liquibase changesets 0001–0082. Highlights since July 2026: 0060 self_help_group_series, 0061 chat_occurrence_exception, 0062 group_chat_participant_series_roles, 0063 event_notification_deduplication, 0064 group_chat_author_content, 0065 conversation_type, 0066 consultant_message_stat, 0067 consultant_public_slug + session_supervision_opt_out, 0068 consultant_assigned_supervisor, 0069 case_handover_notification_templates, 0070 team_discussion, 0071 tutorial_progress, 0072 user_do_not_disturb, 0073–0075 remove_rocket_chat_{user_ids,room_ids,feedback_room_id}, 0076 account_invite_reservation_token, 0077 account_invite_totp_pending_secret, 0078 handshake, 0079 support_room, 0080 event_notification_millis, 0081 account_invite_provisioning and 0081 support_room_repair (the 0081 prefix is duplicated in the repository changelog — two distinct changesets share the number), 0082 scheduled_task_claim. Startup refuses to run when neither migration nor schema verification is active; a Liquibase context override is supported via environment.
 
 ## ORISO Dependencies
 
-Inbound callers are primarily ORISO-Frontend, ORISO-Admin, or peer backend services. Outbound contracts/configs found:
+Inbound callers are primarily ORISO-Frontend, ORISO-Admin, or peer backend services. Outbound contracts (services/):
 
 - services/agencyadminservice.yaml
-- services/agencyservice.yaml
+- services/agencyservice.yaml (URLs are mandatory at startup)
 - services/applicationsettingsservice.yaml
 - services/appointmentService.yaml
 - services/consultingtypeservice.yaml
-- services/keycloakextension.yaml
-- services/liveservice.yaml
+- services/keycloakextension.yaml (OTP/2FA extension)
 - services/mailservice.yaml
-- services/messageservice.yaml
 - services/statisticsservice.yaml
 - services/tenantadminservice.yaml
 - services/tenantservice.yaml
 - services/topicservice.yaml
 
+Removed: services/liveservice.yaml and services/messageservice.yaml (LiveService proxy deprecated, Rocket.Chat MessageService retired). Matrix Synapse and Keycloak are reached directly via their HTTP APIs.
+
 ## Local Development Notes
 
-- ./mvnw spring-boot:run with the intended Spring profile
-- Requires MariaDB userservice schema, Keycloak, and configured peer service URLs; Matrix/Redis/RabbitMQ depending on profile.
+- Build requires JDK 21+ (repo AGENTS.md notes builds run on newer JDKs; Spring Boot parent 4.0.7); ./mvnw spring-boot:run with the intended Spring profile (dev/testing/staging/prod property files exist; the testing profile uses H2)
+- Requires MariaDB userservice schema, Keycloak (with the OTP extension for 2FA flows), Matrix Synapse, Redis, and configured peer service URLs; agency-service URLs and technical-user credentials are mandatory or startup fails
+- tests/load/ contains Python load-smoke and outbound-dependency-metric scripts
 
 ## Deployment Notes
 
-- Dockerfile and ORISO-Kubernetes helm/charts/userservice.
+- Dockerfile plus the userservice chart in the canonical infra repo (ORISO-Helm); Matrix encryption and presence are switched per environment via MATRIX_* env vars
+- Multi-replica safe: scheduled workflows acquire ScheduledTaskClaim DB leases; replica-safety notes live in documentation/ (APPOINTMENT_CLEANUP_REPLICA_SAFETY.md, GROUP_CHAT_DEACTIVATION_REPLICA_SAFETY.md)
 
 ## Risks and Gaps
 
-- Verify that runtime database schemas match ORISO-Database exports; service repos still include Liquibase/changelog references but platform docs indicate schemas are centrally managed.
-- Config files contain environment-specific Keycloak, peer-service, cache, Matrix/Rocket.Chat, and database settings. Do not hardcode those in source.
+- matrix.encryptionEnabled defaults to false in application.properties; encrypted-room behavior depends on per-environment configuration staying consistent with the platform's "E2EE durably on" stance.
+- Media upload/download is proxied to the Matrix media repo without a content-scanning hook in this repo; the fail-closed scanner (ADR-014/015) must be enforced elsewhere until wired in.
+- The appointment subsystem is a dormant legacy remnant (feature-flagged off) that still ships an OpenAPI contract and cron cleanup; ADR-020 scheduled calls are not implemented here.
+- Several secrets are env-injected with empty defaults (STATISTICS_MESSAGE_COUNT_HMAC_SECRET, MATRIXRTC_CALL_POLICY_HMAC_SECRET, MATRIX_REGISTRATION_SHARED_SECRET, MATRIX_ADMIN_PASSWORD); missing values degrade or disable the dependent features.
 - Tenant resolution is implemented in service code and must stay aligned with frontend/admin host/cookie/header behavior.
 
 ## Needs Verification
 
-- Exact active Spring profile and whether Liquibase is disabled in the target environment.
-- Exact API gateway path prefixes used by Kubernetes ingress for each OpenAPI path.
-- Current Matrix vs Rocket.Chat operational boundary where both references exist.
+- Exact active Spring profile per environment and which environments run Liquibase vs. schema verification only (a context override env var exists).
+- Exact API gateway/ingress path prefixes for the controller-mounted (non-generated) routes (/matrix/*, /users/event-notifications, call-policy, handshake, support-room).
+- Whether the statistics AMQP exchange is consumed anywhere now that statistics.enabled defaults to false and messages-sent stats are computed internally.
+- Whether the DeprecatedLiveProxyController still has any live callers or can be deleted.

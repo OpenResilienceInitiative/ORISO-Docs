@@ -3,21 +3,56 @@
     {
       "id": "concept:realm-management",
       "name": "Realm Management (online-beratung)",
-      "summary": "The repo carries the exported Keycloak realm definition (realm.json) for the 'online-beratung' realm — clients, roles, and auth settings imported into Keycloak on deployment.",
+      "summary": "realm.json carries the 'online-beratung' realm definition — clients, roles, and auth settings. Since July it is Helm-templated ({{ .Values.global.keycloakAuthServerUrl }} / adminDomainName placeholders in redirect URIs and web origins), binds directGrantFlow to the custom 'direct-grant-2fa' flow, sets emailTheme 'oriso', and adds a confidential 'user-service' client with service accounts enabled. Realm roles include restricted-agency-admin (added June 2026); there is NO global-support role in this repo's export at the pinned commit.",
       "tags": ["identity"],
-      "related": ["realm.json", "README.md"]
+      "related": ["realm.json", "README.md", "scripts/keycloak-apply-2fa-flow.sh"]
+    },
+    {
+      "id": "concept:custom-keycloak-image",
+      "name": "Custom ORISO Keycloak Image (26.6.3-otp)",
+      "summary": "This repo owns the custom Keycloak image: stock quay.io/keycloak/keycloak:26.6.3 plus the vendored otp-config SPI jar and the 'oriso' email theme, published by CI as ghcr.io/openresilienceinitiative/oriso-keycloak:26.6.3-otp (plus dev/pre-dev branch tags and release/keycloak-* release tags). The ORISO Helm chart references the published image only; SPI source, theme, and build workflow live here.",
+      "tags": ["infrastructure", "build"],
+      "related": ["keycloak-image/Dockerfile", "keycloak-image/README.md", "README.md"]
+    },
+    {
+      "id": "concept:otp-config-spi",
+      "name": "OTP Config SPI (vendored, ADR-013)",
+      "summary": "Vendored fork of Onlineberatung/onlineberatung-keycloak-otp (AGPL, commit fbafb2b), ported to Keycloak 26.6.3. Exposes /realms/<realm>/otp-config/** REST endpoints that the UserService calls for 2FA setup (fetch-otp-setup-info, setup-otp, delete-otp, send-verification-mail, setup-otp-mail); callers must present a bearer token holding the realm role 'technical'. Also registers the direct-grant authenticators app-authenticator (TOTP challenge JSON) and email-authenticator (login-time email OTP).",
+      "tags": ["identity", "2fa"],
+      "related": ["keycloak-image/otp-config-spi/README.md", "keycloak-image/otp-config-spi/api/keycloakextension.yaml", "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/RealmOtpResourceProvider.java", "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/authenticator/BearerTokenSessionAuthenticator.java", "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/authenticator/OtpAppAuthenticatorFactory.java"]
+    },
+    {
+      "id": "concept:email-otp-credentials",
+      "name": "Email OTP Credentials (MAIL_OTP)",
+      "summary": "MAIL_OTP credential type with its own CredentialProvider/Factory. The July 2026 'code not matching' fix registered the MailOtpCredentialProviderFactory as an SPI (it previously was not, so the verify hop found no credential and returned 400), purges pending-but-unverified credentials on resend, deletes all mail OTP credentials on teardown, and sends the verification mail through a UserModelDelegate so the account email is not persisted before the OTP is verified.",
+      "tags": ["identity", "2fa"],
+      "related": ["keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/credential/MailOtpCredentialProvider.java", "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/credential/MailOtpCredentialProviderFactory.java", "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/credential/MailOtpCredentialService.java", "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/otp/MemoryOtpService.java", "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/otp/OtpMailSender.java", "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/mail/DefaultMailSender.java"]
+    },
+    {
+      "id": "concept:direct-grant-2fa-flow",
+      "name": "direct-grant-2fa Authentication Flow",
+      "summary": "Custom top-level direct-grant flow: validate-username → validate-password → conditional sub-flows app-otp-conditional (conditional-user-configured, app-authenticator, direct-grant-validate-otp) and email-otp-conditional (conditional-user-configured, email-authenticator with email-otp-config). Bound as the realm's Direct Grant Flow in realm.json for fresh imports; scripts/keycloak-apply-2fa-flow.sh applies it idempotently to existing realms via kcadm, preserving the existing email-otp-config id from the execution row.",
+      "tags": ["identity", "2fa"],
+      "related": ["realm.json", "scripts/keycloak-apply-2fa-flow.sh", "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/authenticator/OtpMailAuthenticator.java", "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/authenticator/OtpParameterAuthenticator.java"]
+    },
+    {
+      "id": "concept:oriso-email-theme",
+      "name": "ORISO Email Theme (generated from design system)",
+      "summary": "The 'oriso' Keycloak email theme (otp-email and password-reset templates, de/en message bundles, orisoPlatformName/color/URL theme properties) is GENERATED from the ORISO-Frontend email design system ('npm run emails:keycloak') and copied in via scripts/sync-email-theme.sh — do not edit by hand. Theme lookups carry their own defaults so an operator can override any property per realm. The same theme also lives in ORISO-Helm; both copies must be synced or one silently wins at deploy time.",
+      "tags": ["email", "theming"],
+      "related": ["scripts/sync-email-theme.sh", "keycloak-image/otp-config-spi/src/test/java/de/onlineberatung/mail/OtpEmailThemeTest.java", "keycloak-image/README.md", "keycloak-image/Dockerfile"]
     },
     {
       "id": "concept:k8s-deployment",
-      "name": "Kubernetes Deployment (caritas namespace)",
-      "summary": "Keycloak runs on k3s in the 'caritas' namespace: keycloak-deployment.yaml (pod spec), keycloak-service.yaml (service), ingress.yaml (routing). DEPLOYMENT.md documents the procedure and prerequisites.",
-      "tags": ["infrastructure"],
-      "related": ["keycloak-deployment.yaml", "keycloak-service.yaml", "ingress.yaml", "DEPLOYMENT.md"]
+      "name": "Legacy Kubernetes Manifests (caritas namespace)",
+      "summary": "keycloak-deployment.yaml / keycloak-service.yaml / ingress.yaml are the LEGACY raw manifests (still pin quay.io/keycloak/keycloak:20.0.5 in start-dev mode with inline admin credentials). Current deployments come from the ORISO-Helm chart referencing the custom 26.6.3-otp image; these manifests and DEPLOYMENT.md/STATUS.md describe the old single-node setup and have not been updated.",
+      "tags": ["infrastructure", "legacy"],
+      "related": ["keycloak-deployment.yaml", "keycloak-service.yaml", "ingress.yaml", "DEPLOYMENT.md", "STATUS.md"]
     },
     {
       "id": "concept:http-access-mode",
       "name": "HTTP Access Mode (SSL requirement disabled)",
-      "summary": "Keycloak requires HTTPS by default; in ORISO, nginx terminates TLS and internal services talk HTTP. configure-http-access.sh must run after every deployment to disable the SSL requirement for all realms, otherwise authentication fails with 'HTTPS required'.",
+      "summary": "Keycloak requires HTTPS by default; in ORISO, nginx terminates TLS and internal services talk HTTP. configure-http-access.sh must run after every deployment to disable the SSL requirement for all realms, otherwise authentication fails with 'HTTPS required'. realm.json itself still declares sslRequired=external; the script flips the live realm.",
       "tags": ["security", "operations"],
       "related": ["configure-http-access.sh", "DEPLOYMENT.md"]
     },
@@ -31,15 +66,45 @@
   ],
   "flows": [
     {
+      "id": "flow:2fa-setup",
+      "name": "2FA Setup via otp-config REST",
+      "summary": "UserService (technical-role bearer token) calls /realms/online-beratung/otp-config/**: fetch-otp-setup-info returns secret/QR data, setup-otp activates app TOTP, send-verification-mail generates a MAIL_OTP credential and emails the code, setup-otp-mail verifies it and activates email OTP, delete-otp tears everything down (all mail OTP credentials, not just the default).",
+      "related": ["keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/RealmOtpResourceProvider.java", "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/authenticator/BearerTokenSessionAuthenticator.java", "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/credential/MailOtpCredentialService.java", "keycloak-image/otp-config-spi/api/keycloakextension.yaml"]
+    },
+    {
+      "id": "flow:email-otp-login",
+      "name": "Email OTP Login (direct grant)",
+      "summary": "Password grant hits the direct-grant-2fa flow → email-otp-conditional → email-authenticator: without an otp param it generates a code (MemoryOtpService), sends it via the realm's SMTP settings using the oriso otp-email template, and returns the otpType challenge JSON; with an otp param it validates and completes the grant. App TOTP takes the parallel app-otp-conditional branch via app-authenticator and the stock validate-otp.",
+      "related": ["keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/authenticator/OtpMailAuthenticator.java", "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/otp/MemoryOtpService.java", "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/otp/OtpMailSender.java", "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/mail/DefaultMailSender.java", "realm.json"]
+    },
+    {
+      "id": "flow:image-build-publish",
+      "name": "Image Build & Publish",
+      "summary": "CI (feature/PR/main workflows plus a release/keycloak-* release workflow) builds the otp-config SPI with Maven, assembles the Dockerfile (SPI jar into /opt/keycloak/providers, themes into /opt/keycloak/themes, kc.sh build), and pushes ghcr.io/openresilienceinitiative/oriso-keycloak tags (26.6.3-otp, dev, pre-dev, release tags). Helm consumes the published image only.",
+      "related": ["keycloak-image/Dockerfile", "keycloak-image/README.md", "keycloak-image/otp-config-spi/README.md", "README.md"]
+    },
+    {
+      "id": "flow:email-theme-sync",
+      "name": "Email Theme Sync from Design System",
+      "summary": "Change email copy/design in ORISO-Frontend src/emails → 'npm run emails:keycloak' generates the Keycloak flavour (message-bundle copy, Keycloak model variables; see ADR-020) → scripts/sync-email-theme.sh copies dist/keycloak/email into keycloak-image/themes/oriso/email → rebuild image; the twin copy in ORISO-Helm must be synced with its own script.",
+      "related": ["scripts/sync-email-theme.sh", "keycloak-image/otp-config-spi/src/test/java/de/onlineberatung/mail/OtpEmailThemeTest.java", "keycloak-image/Dockerfile"]
+    },
+    {
+      "id": "flow:apply-2fa-existing-realm",
+      "name": "Apply 2FA Flow to Existing Realm",
+      "summary": "For realms that predate the 2FA flow: kubectl exec into the Keycloak pod (must run the oriso image) → keycloak-apply-2fa-flow.sh logs kcadm in, rebinds directGrantFlow to stock 'direct grant', captures the existing email-otp-config id from the execution row (flat JSON, parser-safe), deletes and recreates direct-grant-2fa with both conditional sub-flows, restores the config, and rebinds the realm.",
+      "related": ["scripts/keycloak-apply-2fa-flow.sh", "realm.json", "keycloak-image/README.md"]
+    },
+    {
       "id": "flow:deploy-and-configure",
-      "name": "Deploy & Configure",
-      "summary": "Apply the Kubernetes manifests (deployment, service, ingress) → wait for the Keycloak pod to become ready → run configure-http-access.sh to disable the SSL requirement → realm available for the platform.",
+      "name": "Deploy & Configure (legacy path)",
+      "summary": "Legacy raw-manifest path: apply deployment/service/ingress → wait for the pod → run configure-http-access.sh to disable the SSL requirement. Current deployments instead go through the ORISO-Helm keycloak chart with the custom image; the HTTP-access step remains relevant wherever nginx terminates TLS.",
       "related": ["keycloak-deployment.yaml", "keycloak-service.yaml", "ingress.yaml", "configure-http-access.sh"]
     },
     {
       "id": "flow:backup-restore",
       "name": "Backup & Restore Realm",
-      "summary": "realm-backup.sh exports the realm from the running pod to a timestamped file; realm.json is the canonical import used to restore or re-provision the realm.",
+      "summary": "realm-backup.sh exports the realm from the running pod to a timestamped file; realm.json is the canonical import used to restore or re-provision the realm (now containing Helm placeholders, so it must be rendered/substituted before a raw import).",
       "related": ["backup/realm-backup.sh", "realm.json"]
     }
   ]

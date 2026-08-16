@@ -3,31 +3,274 @@
     {
       "id": "concept:counseling-spa",
       "name": "Counseling Frontend SPA",
-      "summary": "React + TypeScript application for askers and consultants: registration, messaging, bookings, and profile flows. Custom webpack build, react-router-dom v5, SCSS/CSS modules with MUI theming; Storybook and Cypress for quality.",
-      "tags": ["frontend", "core"],
-      "related": ["initApp.tsx", "README.md"]
+      "summary": "React 19 + TypeScript application for askers and consultants: registration wizard, login, Matrix messaging, calls, notifications timeline, profile and legal flows. Webpack build (config/webpack) with Vite/Vitest for tests, Storybook component tests, and Playwright smoke suites; React Router v7 and MUI/M3 theming.",
+      "tags": [
+        "frontend",
+        "core"
+      ],
+      "related": [
+        "src/initApp.tsx",
+        "README.md",
+        "package.json",
+        "src/components/app/app.tsx",
+        "src/components/app/RouterConfig.tsx"
+      ]
     },
     {
       "id": "concept:matrix-realtime",
-      "name": "Matrix-backed Real-time Communication",
-      "summary": "Messaging and live updates run over Matrix (matrix-js-sdk); configureMatrixLogging.ts wires SDK logging, and session chats map to Matrix rooms.",
-      "tags": ["messaging", "matrix"],
-      "related": ["configureMatrixLogging.ts", "initApp.tsx"]
+      "name": "Matrix-only Real-time Communication",
+      "summary": "All messaging runs over Matrix (matrix-js-sdk). matrixClientService owns the client lifecycle, chatTransportService is the send/receive facade, matrixLiveEventBridge feeds live updates into the UI. RocketChat and Jitsi are fully removed; guard tests (matrixOnlyLegacyArtifacts, matrixCredentialBoundary, legacyAppointmentProviderAbsence) fail the build if legacy tokens reappear.",
+      "tags": [
+        "messaging",
+        "matrix"
+      ],
+      "related": [
+        "src/services/matrixClientService.ts",
+        "src/services/chatTransportService.ts",
+        "src/services/matrixLiveEventBridge.ts",
+        "src/matrixOnlyLegacyArtifacts.test.ts",
+        "src/legacyAppointmentProviderAbsence.test.ts",
+        "MATRIX-INTEGRATION-GUIDE.md"
+      ]
     },
     {
       "id": "concept:app-structure",
       "name": "Application Structure",
-      "summary": "src is organized into api (HTTP clients incl. generated OpenAPI clients in generated/), components/containers/pages (UI), features and extensions (feature modules), globalState (state management), hooks, and i18n.",
-      "tags": ["structure"],
-      "related": ["i18n.ts", "initApp.tsx", "initError.tsx"]
+      "summary": "src is organized into api (127 HTTP client modules incl. generated OpenAPI clients), components (per-feature folders such as message, registration, notificationsCenter, erstantwort), containers, services (Matrix/call/draft services), globalState, hooks, emails, and resources/i18n with bundled catalogues for de, de@informal, en, fr, ru, ti, tr.",
+      "tags": [
+        "structure"
+      ],
+      "related": [
+        "src/i18n.ts",
+        "src/initApp.tsx",
+        "src/resources/i18n/de/common.json",
+        "src/utils/translationFallback.ts",
+        "src/globalState/index.ts"
+      ]
+    },
+    {
+      "id": "concept:e2ee-silent-key-backup",
+      "name": "E2EE and Silent Key Backup (Tresor)",
+      "summary": "Matrix E2EE is durably on. Per ADR-019 the recovery key backup is set up silently at login instead of via a setup modal: matrixKeyBackupService creates the owner-bound backup, pendingRecoveryKeyStore holds keys until confirmed, device dehydration and room-history key transfer cover new devices, and KeyBackupRecoveryPrompt only appears when recovery is actually needed.",
+      "tags": [
+        "security",
+        "matrix",
+        "e2ee"
+      ],
+      "related": [
+        "src/services/matrixKeyBackupService.ts",
+        "src/services/pendingRecoveryKeyStore.ts",
+        "src/services/matrixCrypto.ts",
+        "src/services/matrixDeviceDehydration.ts",
+        "src/components/E2EEncryptionSupportBanner/KeyBackupRecoveryPrompt.tsx",
+        "docs/architecture/adr-019-silent-key-backup-setup.md"
+      ]
+    },
+    {
+      "id": "concept:calls-element-call",
+      "name": "Calls: Element Call Widget and LiveKit",
+      "summary": "Video/audio calls use Element Call embedded in widget mode (ADR-018 'Matryoshka') over LiveKit SFU. CallManager orchestrates call state, matrixCallService/matrixGroupCallService handle Matrix signalling, useElementCallWidget hosts the embed, and a generated theme (npm run generate:call-theme) restyles Element Call to ORISO design tokens. Legacy Jitsi appointment routes survive only as redirect stubs.",
+      "tags": [
+        "calls",
+        "matrix",
+        "livekit"
+      ],
+      "related": [
+        "src/services/CallManager.ts",
+        "src/services/matrixCallService.ts",
+        "src/services/matrixGroupCallService.ts",
+        "src/components/call/widget/useElementCallWidget.ts",
+        "src/services/liveKitService.ts",
+        "docs/architecture/adr-018-element-call-matryoshka.md",
+        "src/components/legacyVideoAppointment/LegacyVideoAppointmentRoutes.tsx"
+      ]
+    },
+    {
+      "id": "concept:activity-timeline-notifications",
+      "name": "Notifications Center / Activity Timeline (Zeitstrahl)",
+      "summary": "The notifications center renders an activity timeline of event notifications with Matrix-hydrated conversation previews. Event types come from an eventDescriptors registry; previews are gated fail-closed by case-handover consent (caseHandoverPreviewGate) so consultants without consent never see message content. Backed by apiEventNotifications, active-view PATCH, and do-not-disturb settings.",
+      "tags": [
+        "notifications",
+        "timeline"
+      ],
+      "related": [
+        "src/components/notificationsCenter/NotificationsCenter.tsx",
+        "src/components/notificationsCenter/ConversationPreview.tsx",
+        "src/components/notificationsCenter/MatrixActivityPreviewHydrator.tsx",
+        "src/components/notificationsCenter/caseHandoverPreviewGate.ts",
+        "src/components/notificationsCenter/eventDescriptors/registry.ts",
+        "src/api/apiEventNotifications.ts",
+        "src/api/apiDoNotDisturb.ts"
+      ]
+    },
+    {
+      "id": "concept:registration-onboarding-wizard",
+      "name": "Registration and Onboarding Wizard",
+      "summary": "Multi-step registration wizard (welcome screen, topic/agency selection, zipcode, demographics, account data) with a free-navigation stepper, preselection drawers, validation modules, and auto-login into the first enquiry. The redesigned login stage adds tenant-selectable effects (lamp-map) and a security explainer; a product tour (intro.js-based ProductTourAdapter with tutorial-progress API) onboards consultants.",
+      "tags": [
+        "registration",
+        "onboarding"
+      ],
+      "related": [
+        "src/components/registration/Registration.tsx",
+        "src/components/registration/registrationSteps.ts",
+        "src/components/registration/registrationStepper/RegistrationStepper.tsx",
+        "src/components/registration/autoLogin.ts",
+        "src/components/login/Login.tsx",
+        "src/components/stage/stage.tsx",
+        "src/components/productTour/ProductTourAdapter.tsx",
+        "src/api/apiTutorialProgress.ts"
+      ]
+    },
+    {
+      "id": "concept:erstantwort-anonymous-chat",
+      "name": "Erstantwort and Anonymous (Carimat) Chat",
+      "summary": "First-response (Erstantwort) sequence for new enquiries: templated message catalogue, deadline ownership rules, save-credentials card, and an email overlay. The anonymous/pseudonym surface (Carimat) adds consent gating, bot message animations, breathing tutorial cards, animal avatars from the shared anonymous-name engine, and queue-leave dialogs.",
+      "tags": [
+        "counselling",
+        "anonymous"
+      ],
+      "related": [
+        "src/components/erstantwort/ErstantwortSequence.tsx",
+        "src/components/erstantwort/erstantwortCatalogue.ts",
+        "src/components/erstantwort/erstantwortPayload.ts",
+        "src/components/pseudonym/AnonymousConsentGate.tsx",
+        "src/components/pseudonym/CarimatCards.stories.tsx",
+        "src/api/apiAcceptAnonymousEnquiry.ts"
+      ]
+    },
+    {
+      "id": "concept:legal-dpa-consent",
+      "name": "Legal, DPA (AVV) and Consent Surfaces",
+      "summary": "Legal/compliance UI: DPA (data processing agreement) signature flow with DpaSign and signature API, department-specific legal texts (DepartmentLegalSection, per ADR/issue #555 department selector), legal content pages and link components, terms-and-conditions, and the case-handover consent cards built on the shared ButtonGroup.",
+      "tags": [
+        "legal",
+        "dpa",
+        "consent"
+      ],
+      "related": [
+        "src/components/dpaSign/DpaSign.tsx",
+        "src/api/apiDpaSignature.ts",
+        "src/components/departmentLegal/DepartmentLegalSection.tsx",
+        "src/api/apiGetDepartmentLegal.ts",
+        "src/components/caseHandover/CaseHandoverClientCards.tsx"
+      ]
+    },
+    {
+      "id": "concept:media-attachments",
+      "name": "Media Upload and Attachments",
+      "summary": "Attachments upload to the Matrix media repo (apiMatrixUpload) and send as encrypted Matrix attachment messages. mediaUploadHelpers and resolveAttachmentForSend validate type/size before send, matrixEncryptedAttachment handles encrypt/decrypt, and AttachmentCard/MessageAttachment render download cards with media checks in the timeline.",
+      "tags": [
+        "media",
+        "matrix"
+      ],
+      "related": [
+        "src/api/apiMatrixUpload.ts",
+        "src/api/apiSendMatrixAttachmentMessage.ts",
+        "src/utils/mediaUploadHelpers.ts",
+        "src/utils/matrixEncryptedAttachment.ts",
+        "src/components/message/AttachmentCard.tsx",
+        "src/components/message/MessageAttachment.tsx",
+        "src/components/messageSubmitInterface/resolveAttachmentForSend.ts"
+      ]
+    },
+    {
+      "id": "concept:case-handover",
+      "name": "Case Handover",
+      "summary": "Consent-based case handover between consultants: client-facing consent cards, handover notices rendered as chat system messages, i18n aligned with ADR-002, and downstream gating of timeline previews. The consent decision also controls what the receiving consultant may see.",
+      "tags": [
+        "counselling",
+        "consent"
+      ],
+      "related": [
+        "src/components/caseHandover/CaseHandoverClientCards.tsx",
+        "src/components/notificationsCenter/caseHandoverPreviewGate.ts",
+        "src/components/message/SystemMessage.tsx",
+        "src/components/buttonGroup/ButtonGroup.tsx"
+      ]
+    },
+    {
+      "id": "concept:email-design-system",
+      "name": "Transactional E-Mail Design System",
+      "summary": "src/emails is a token-based e-mail design system (atoms/molecules/organisms/templates) with content catalogues for de-du, de-sie and en dialects. vite-node build scripts render templates for Keycloak and the MailService; Storybook 'Email/*' stories preview them and tests check e-mail client compatibility and dialect consistency.",
+      "tags": [
+        "email",
+        "design-system"
+      ],
+      "related": [
+        "src/emails/index.ts",
+        "src/emails/kit/emailTemplate.ts",
+        "src/emails/kit/emailTokens.ts",
+        "src/emails/content/emailCatalogue.ts",
+        "src/emails/README.md"
+      ]
+    },
+    {
+      "id": "concept:consultant-statistics",
+      "name": "Consultant Statistics View",
+      "summary": "Consultant statistics page in the profile area (enquiries, messages sent, appointments, CSV export via react-csv) backed by the UserService statistics endpoint; messages-sent counting is privacy-scoped server-side.",
+      "tags": [
+        "statistics",
+        "profile"
+      ],
+      "related": [
+        "src/components/profile/ConsultantStatistics.tsx",
+        "src/components/profile/ConsultantStatistics.test.tsx",
+        "src/api/apiGetConsultantStatistics.ts"
+      ]
     }
   ],
   "flows": [
     {
       "id": "flow:asker-registration-to-chat",
       "name": "Asker Registration → First Chat",
-      "summary": "Asker registers (agency/topic selection) → account and session are created via the backend services → the session's Matrix room connects → messaging UI opens for the first enquiry.",
-      "related": ["initApp.tsx", "configureMatrixLogging.ts"]
+      "summary": "Asker walks the registration wizard (topic/agency selection, zipcode, account data) → apiPostRegistration creates the account → autoLogin authenticates against Keycloak and registers/logs into Matrix → the enquiry is sent (encrypted payload) → the session's Matrix room opens in the messaging UI.",
+      "related": [
+        "src/components/registration/Registration.tsx",
+        "src/components/registration/registrationSteps.ts",
+        "src/components/registration/autoLogin.ts",
+        "src/api/apiPostRegistration.ts",
+        "src/api/apiSendEnquiry.ts",
+        "src/services/matrixClientService.ts"
+      ]
+    },
+    {
+      "id": "flow:message-send-e2ee",
+      "name": "Encrypted Message Send",
+      "summary": "TipTap-based composer builds the message → attachments resolve through resolveAttachmentForSend and upload via apiMatrixUpload → chatTransportService sends the (Megolm-encrypted) Matrix event → matrixLiveEventBridge delivers the echo → MessageItemComponent renders it in the timeline with three-state delivery status; failures surface as FailedSendTimelineEntry, drafts persist via draftStore.",
+      "related": [
+        "src/components/messageSubmitInterface/resolveAttachmentForSend.ts",
+        "src/api/apiMatrixUpload.ts",
+        "src/services/chatTransportService.ts",
+        "src/services/matrixLiveEventBridge.ts",
+        "src/components/message/MessageItemComponent.tsx",
+        "src/services/draftStore.ts"
+      ]
+    },
+    {
+      "id": "flow:silent-key-backup",
+      "name": "Silent Key Backup Setup",
+      "summary": "After login the Matrix crypto stack initialises → matrixKeyBackupService silently creates or connects the key backup (owner-bound setup lock, no user dialog per ADR-019) → the recovery key is parked in pendingRecoveryKeyStore → the user is only prompted (KeyBackupRecoveryPrompt) if history cannot be decrypted on a fresh device.",
+      "related": [
+        "src/services/matrixCrypto.ts",
+        "src/services/matrixKeyBackupService.ts",
+        "src/services/pendingRecoveryKeyStore.ts",
+        "src/components/E2EEncryptionSupportBanner/KeyBackupRecoveryPrompt.tsx",
+        "docs/architecture/adr-019-silent-key-backup-setup.md"
+      ]
+    },
+    {
+      "id": "flow:call-join",
+      "name": "Call Invite → Element Call Join",
+      "summary": "A call invite arrives over Matrix → IncomingVideoCall surfaces it → CallManager coordinates accept/decline and room state → the Element Call widget (useElementCallWidget, matrix-widget-api) is embedded with the generated ORISO theme → media flows E2EE via LiveKit; group calls go through matrixGroupCallService.",
+      "related": [
+        "src/components/incomingVideoCall/IncomingVideoCall.tsx",
+        "src/services/CallManager.ts",
+        "src/components/call/widget/useElementCallWidget.ts",
+        "src/services/matrixGroupCallService.ts",
+        "src/services/liveKitService.ts",
+        "docs/architecture/adr-018-element-call-matryoshka.md"
+      ]
     }
   ]
 }
