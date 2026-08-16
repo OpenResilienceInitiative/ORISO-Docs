@@ -1,0 +1,33 @@
+{
+  "concepts": [
+    {
+      "id": "concept:consulting-types",
+      "name": "Consulting Type Configurations",
+      "summary": "Spring Boot service managing consulting type configurations: the per-consulting-type settings that drive registration, session behavior, and feature toggles across the platform.",
+      "tags": ["domain", "core"],
+      "related": ["ConsultingTypeController.java", "ConsultingTypeAdminController.java", "README.md"]
+    },
+    {
+      "id": "concept:topics",
+      "name": "Topics & Topic Groups",
+      "summary": "TopicController, TopicAdminController, and TopicGroupsController with TopicServiceFacade manage counseling topics and their grouping — the taxonomy agencies and consultants are matched against.",
+      "tags": ["taxonomy"],
+      "related": ["TopicController.java", "TopicAdminController.java", "TopicGroupsController.java", "TopicServiceFacade.java"]
+    },
+    {
+      "id": "concept:application-settings",
+      "name": "Application Settings",
+      "summary": "ApplicationSettingsController and ApplicationSettingsServiceFacade expose platform-wide application settings consumed by other services and the frontends.",
+      "tags": ["configuration"],
+      "related": ["ApplicationSettingsController.java", "ApplicationSettingsServiceFacade.java"]
+    }
+  ],
+  "flows": [
+    {
+      "id": "flow:topic-administration",
+      "name": "Topic Administration",
+      "summary": "Admin creates or updates topics/topic groups (TopicAdminController) → TopicServiceFacade validates and persists → topics become available for agency/consultant matching and registration.",
+      "related": ["TopicAdminController.java", "TopicServiceFacade.java", "TopicGroupsController.java"]
+    }
+  ]
+}

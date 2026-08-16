@@ -1,0 +1,33 @@
+{
+  "concepts": [
+    {
+      "id": "concept:admin-spa",
+      "name": "Admin Dashboard SPA",
+      "summary": "React + TypeScript single-page admin application (Ant Design) for managing the Online Beratung platform; entry point App.tsx with appConfig-driven setup.",
+      "tags": ["frontend", "core"],
+      "related": ["App.tsx", "appConfig.ts", "README.md"]
+    },
+    {
+      "id": "concept:admin-management-domains",
+      "name": "Management Domains (Pages)",
+      "summary": "The admin UI is organized by management domains under src/pages: Agency management, InviteLinks, GlobalSettings, Logs, Statistic, Profile, and Login — each page owning one platform administration area.",
+      "tags": ["structure"],
+      "related": ["Statistic.tsx", "Imprint.tsx", "Error404.tsx"]
+    },
+    {
+      "id": "concept:admin-api-layer",
+      "name": "API Layer",
+      "summary": "src/api encapsulates the HTTP clients the admin UI uses to talk to the backend services (UserService, AgencyService, ConsultingTypeService, TenantService).",
+      "tags": ["integration"],
+      "related": ["appConfig.ts"]
+    }
+  ],
+  "flows": [
+    {
+      "id": "flow:admin-login-to-management",
+      "name": "Login → Manage Platform Entities",
+      "summary": "Admin signs in (Login page, Keycloak-backed) → navigates to a management domain (e.g. Agency or InviteLinks) → the page loads data via the API layer → edits are written back to the owning backend service.",
+      "related": ["App.tsx", "appConfig.ts"]
+    }
+  ]
+}

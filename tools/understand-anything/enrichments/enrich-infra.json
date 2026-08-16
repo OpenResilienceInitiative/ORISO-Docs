@@ -1,0 +1,39 @@
+{
+  "concepts": [
+    {
+      "id": "concept:cluster-provisioning",
+      "name": "Cluster Provisioning (dev on Hetzner)",
+      "summary": "Declarative k3s cluster on Hetzner Cloud via hetzner-k3s: clusters/dev-hetzner/cluster.yaml is the cluster config, apply.sh is the one-command provision+bootstrap entrypoint. Staging/prod run on Gridscale GSK and are managed separately.",
+      "tags": ["infrastructure", "core"],
+      "related": ["cluster.yaml", "apply.sh", "README.md"]
+    },
+    {
+      "id": "concept:bootstrap-components",
+      "name": "In-Cluster Bootstrap",
+      "summary": "bootstrap/ installs the in-cluster platform baseline idempotently: caritas namespace, block-storage StorageClass, cert-manager (Helm values under bootstrap/values/). Raw manifests live in bootstrap/manifests/.",
+      "tags": ["infrastructure"],
+      "related": ["bootstrap.sh", "caritas-namespace.yaml", "block-storage-sc.yaml", "cert-manager.yaml"]
+    },
+    {
+      "id": "concept:access-management",
+      "name": "Developer Access Management",
+      "summary": "add-developer.sh / remove-developer.sh grant and revoke cluster access; ACCESS-MANAGEMENT.md documents the admin and developer procedures.",
+      "tags": ["security", "operations"],
+      "related": ["add-developer.sh", "remove-developer.sh", "ACCESS-MANAGEMENT.md"]
+    }
+  ],
+  "flows": [
+    {
+      "id": "flow:provision-cluster",
+      "name": "Provision & Bootstrap Cluster",
+      "summary": "apply.sh → hetzner-k3s provisions the cluster from clusters/dev-hetzner/cluster.yaml → bootstrap/bootstrap.sh applies namespace + storage manifests and installs cert-manager → cluster ready for the ORISO-Helm platform chart.",
+      "related": ["apply.sh", "cluster.yaml", "bootstrap.sh"]
+    },
+    {
+      "id": "flow:developer-onboarding",
+      "name": "Developer On/Offboarding",
+      "summary": "Admin runs add-developer.sh to issue cluster access for a developer (procedure in ACCESS-MANAGEMENT.md); remove-developer.sh revokes it again.",
+      "related": ["add-developer.sh", "remove-developer.sh", "ACCESS-MANAGEMENT.md"]
+    }
+  ]
+}

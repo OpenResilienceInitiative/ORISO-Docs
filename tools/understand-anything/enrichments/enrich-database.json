@@ -1,0 +1,87 @@
+{
+  "concepts": [
+    {
+      "id": "concept:central-schema-authority",
+      "name": "Central Schema Authority (Liquibase disabled)",
+      "summary": "Single source of truth for all platform database schemas. All backend services (TenantService, UserService, AgencyService, ConsultingTypeService) run with Liquibase DISABLED \u2014 schemas are version-controlled and applied from here, never auto-migrated at service startup.",
+      "tags": [
+        "database",
+        "core"
+      ],
+      "related": [
+        "README.md"
+      ]
+    },
+    {
+      "id": "concept:mariadb-schemas",
+      "name": "MariaDB Schemas (7 databases)",
+      "summary": "Per-service schema.sql files for agencyservice, consultingtypeservice, tenantservice, userservice, videoservice, uploadservice, and the shared caritas database.",
+      "tags": [
+        "database"
+      ],
+      "related": [
+        "schema.sql"
+      ]
+    },
+    {
+      "id": "concept:polyglot-stores",
+      "name": "Polyglot Stores (MongoDB, PostgreSQL, RabbitMQ, Redis)",
+      "summary": "Beyond MariaDB: MongoDB dumps for consulting types/application settings, PostgreSQL for Matrix/Synapse (status doc), plus RabbitMQ and Redis notes \u2014 each with its own README.",
+      "tags": [
+        "database"
+      ],
+      "related": [
+        "STATUS.md",
+        "prelude.json"
+      ]
+    },
+    {
+      "id": "concept:incident-2026-02",
+      "name": "Incident 2026-02 Remediation & Secret Management",
+      "summary": "docs/incident-2026-02/db-c03-remediation.md documents the remediation of the February 2026 MariaDB exposure incident; docs/secret-management.md defines how database credentials are stored and rotated.",
+      "tags": [
+        "security",
+        "operations"
+      ],
+      "related": [
+        "db-c03-remediation.md",
+        "secret-management.md"
+      ]
+    },
+    {
+      "id": "concept:mariadb-client-tooling",
+      "name": "In-Cluster MariaDB Client",
+      "summary": "k8s/mariadb-client provides a kustomize-deployed database client (deployment, service, ingress, configmap) for admin access to MariaDB inside the cluster.",
+      "tags": [
+        "operations"
+      ],
+      "related": [
+        "deployment.yaml",
+        "kustomization.yaml",
+        "configmap.yaml",
+        "ingress.yaml",
+        "service.yaml"
+      ]
+    }
+  ],
+  "flows": [
+    {
+      "id": "flow:environment-init",
+      "name": "New Environment Initialization",
+      "summary": "scripts/database-initialize.yaml provisions the databases \u2192 per-service schema.sql files create the tables \u2192 scripts/system-users-job.yaml creates the system users; MongoDB collections restored from the tracked dumps.",
+      "related": [
+        "database-initialize.yaml",
+        "system-users-job.yaml",
+        "schema.sql"
+      ]
+    },
+    {
+      "id": "flow:sql-escaping-test",
+      "name": "SQL Escaping Test",
+      "summary": "tests/test-sql-escaping.sh validates schema files for escaping errors before they are applied to a live database.",
+      "related": [
+        "test-sql-escaping.sh"
+      ]
+    }
+  ]
+}

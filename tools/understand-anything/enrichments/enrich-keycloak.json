@@ -1,0 +1,46 @@
+{
+  "concepts": [
+    {
+      "id": "concept:realm-management",
+      "name": "Realm Management (online-beratung)",
+      "summary": "The repo carries the exported Keycloak realm definition (realm.json) for the 'online-beratung' realm — clients, roles, and auth settings imported into Keycloak on deployment.",
+      "tags": ["identity"],
+      "related": ["realm.json", "README.md"]
+    },
+    {
+      "id": "concept:k8s-deployment",
+      "name": "Kubernetes Deployment (caritas namespace)",
+      "summary": "Keycloak runs on k3s in the 'caritas' namespace: keycloak-deployment.yaml (pod spec), keycloak-service.yaml (service), ingress.yaml (routing). DEPLOYMENT.md documents the procedure and prerequisites.",
+      "tags": ["infrastructure"],
+      "related": ["keycloak-deployment.yaml", "keycloak-service.yaml", "ingress.yaml", "DEPLOYMENT.md"]
+    },
+    {
+      "id": "concept:http-access-mode",
+      "name": "HTTP Access Mode (SSL requirement disabled)",
+      "summary": "Keycloak requires HTTPS by default; in ORISO, nginx terminates TLS and internal services talk HTTP. configure-http-access.sh must run after every deployment to disable the SSL requirement for all realms, otherwise authentication fails with 'HTTPS required'.",
+      "tags": ["security", "operations"],
+      "related": ["configure-http-access.sh", "DEPLOYMENT.md"]
+    },
+    {
+      "id": "concept:realm-backup",
+      "name": "Realm Backup",
+      "summary": "backup/realm-backup.sh exports the 'online-beratung' realm from the running Keycloak pod (kubectl exec) into timestamped backups in the repo's backup directory.",
+      "tags": ["operations"],
+      "related": ["backup/realm-backup.sh"]
+    }
+  ],
+  "flows": [
+    {
+      "id": "flow:deploy-and-configure",
+      "name": "Deploy & Configure",
+      "summary": "Apply the Kubernetes manifests (deployment, service, ingress) → wait for the Keycloak pod to become ready → run configure-http-access.sh to disable the SSL requirement → realm available for the platform.",
+      "related": ["keycloak-deployment.yaml", "keycloak-service.yaml", "ingress.yaml", "configure-http-access.sh"]
+    },
+    {
+      "id": "flow:backup-restore",
+      "name": "Backup & Restore Realm",
+      "summary": "realm-backup.sh exports the realm from the running pod to a timestamped file; realm.json is the canonical import used to restore or re-provision the realm.",
+      "related": ["backup/realm-backup.sh", "realm.json"]
+    }
+  ]
+}

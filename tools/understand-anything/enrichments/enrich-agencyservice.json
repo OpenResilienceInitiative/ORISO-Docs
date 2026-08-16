@@ -1,0 +1,33 @@
+{
+  "concepts": [
+    {
+      "id": "concept:agency-registry",
+      "name": "Counseling Agency Registry",
+      "summary": "Spring Boot service managing counseling agencies for the platform: agency master data, addresses, and public agency lookup used during asker registration.",
+      "tags": ["domain", "core"],
+      "related": ["AgencyController.java", "README.md"]
+    },
+    {
+      "id": "concept:agency-administration",
+      "name": "Agency Administration",
+      "summary": "AgencyAdminController with AgencyAdminControlsFacade covers the admin-facing lifecycle: creating, updating, and configuring agencies (including topic assignment and admin controls).",
+      "tags": ["admin"],
+      "related": ["AgencyAdminController.java", "AgencyAdminControlsFacade.java"]
+    },
+    {
+      "id": "concept:agency-matching",
+      "name": "Agency Search & Matching",
+      "summary": "Public agency search resolves the right agency for an asker (postcode/topic-based matching) before registration completes.",
+      "tags": ["search"],
+      "related": ["AgencyController.java"]
+    }
+  ],
+  "flows": [
+    {
+      "id": "flow:agency-lookup",
+      "name": "Agency Lookup During Registration",
+      "summary": "Asker enters registration context → public agency search (AgencyController) returns matching agencies → selected agency determines the consulting setup downstream.",
+      "related": ["AgencyController.java"]
+    }
+  ]
+}

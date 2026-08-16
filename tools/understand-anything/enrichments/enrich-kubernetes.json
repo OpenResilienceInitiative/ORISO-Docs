@@ -1,0 +1,26 @@
+{
+  "concepts": [
+    {
+      "id": "concept:platform-deployment",
+      "name": "Platform Deployment Configuration",
+      "summary": "Kubernetes deployment configuration for the whole ORISO platform: infrastructure (MariaDB, MongoDB, RabbitMQ, Redis), Keycloak, backend services (Tenant, User, Agency, ConsultingType, Upload), frontend & admin, communication (Matrix Synapse, Element, LiveKit), and monitoring (SigNoz, Health Dashboard).",
+      "tags": ["infrastructure", "core"],
+      "related": ["README.md"]
+    },
+    {
+      "id": "concept:repo-legacy-status",
+      "name": "Legacy Status (superseded by ORISO-Helm)",
+      "summary": "This repository is archived/read-only upstream (Neusta-owned). Active deployment has moved to the ORISO-Helm repository; treat these manifests as historical reference, not as the live deployment path.",
+      "tags": ["legacy", "governance"],
+      "related": ["README.md"]
+    },
+    {
+      "id": "concept:config-and-ingress",
+      "name": "ConfigMaps, Helm & Ingress",
+      "summary": "The repo groups its manifests into configmaps/ (service configuration), helm/ (charts), and ingress/ (routing/TLS) with docs/ describing procedures.",
+      "tags": ["structure"],
+      "related": ["README.md"]
+    }
+  ],
+  "flows": []
+}

@@ -1,0 +1,70 @@
+{
+  "concepts": [
+    {
+      "id": "concept:tenant-registry",
+      "name": "Tenant Registry",
+      "summary": "TenantService is the ORISO tenant registry: it stores tenant identity, subdomain, licensing limits, theming, feature settings, multilingual legal content, and content activation dates. It also exposes restricted public tenant metadata for callers without a full authenticated tenant context.",
+      "tags": ["domain", "core"],
+      "related": ["TenantController.java", "TenantServiceFacade.java", "TenantService.java", "TenantRepository.java", "TenantEntity.java", "README.md"]
+    },
+    {
+      "id": "concept:openapi-contract",
+      "name": "OpenAPI Contract & Generated Interfaces",
+      "summary": "api/tenantservice.yaml defines the public REST contract. TenantController implements the generated API interfaces and applies endpoint authorization. Main endpoint groups: /tenantadmin (administration), /tenantadmin/search (paginated search), plus restricted public reads.",
+      "tags": ["api"],
+      "related": ["api/tenantservice.yaml", "TenantController.java", "VersionController.java"]
+    },
+    {
+      "id": "concept:jwt-authorization",
+      "name": "Keycloak JWT Authorization",
+      "summary": "WebSecurityConfig, JwtAuthConverter, and AuthorisationService map Keycloak-issued JWTs to local authorities; TenantFacadeAuthorisationService enforces facade-level authorization rules.",
+      "tags": ["security"],
+      "related": ["WebSecurityConfig.java", "JwtAuthConverter.java", "JwtAuthConverterProperties.java", "AuthorisationService.java", "TenantFacadeAuthorisationService.java"]
+    },
+    {
+      "id": "concept:tenant-context-resolution",
+      "name": "Tenant Context Resolution",
+      "summary": "TenantResolverService resolves the effective tenant context from the access token, cookies, or subdomain — the mechanism behind multi-tenant request routing. SingleDomainTenantOverrideService covers the single-domain operation mode.",
+      "tags": ["multi-tenancy"],
+      "related": ["TenantResolverService.java", "SingleDomainTenantOverrideService.java"]
+    },
+    {
+      "id": "concept:downstream-service-sync",
+      "name": "Downstream Service Synchronization",
+      "summary": "ConsultingTypeService, ApplicationSettingsService, and UserAdminService call other ORISO services through generated OpenAPI clients so tenant changes propagate (consulting types, application settings, admin users).",
+      "tags": ["integration"],
+      "related": ["ConsultingTypeService.java", "ApplicationSettingsService.java", "UserAdminService.java", "ConsultingTypeServiceApiControllerFactory.java", "ApplicationSettingsApiControllerFactory.java", "UserAdminServiceApiControllerFactory.java"]
+    },
+    {
+      "id": "concept:mariadb-persistence",
+      "name": "MariaDB Persistence",
+      "summary": "TenantService, TenantRepository, and the tenant entities own MariaDB persistence for tenant records and admin controls (TenantAdminControlsRepository/-Service).",
+      "tags": ["persistence"],
+      "related": ["TenantRepository.java", "TenantAdminControlsRepository.java", "TenantAdminControlsService.java", "TenantService.java"]
+    },
+    {
+      "id": "concept:templates-and-translations",
+      "name": "Templates & Translations",
+      "summary": "TemplateService and TranslationService manage templated, multilingual content (e.g. legal texts) with FreeMarker configuration; ConfigurationFileLoader and ConfigurationValidator load and validate template descriptions.",
+      "tags": ["content"],
+      "related": ["TemplateService.java", "TranslationService.java", "FreeMarkerConfig.java", "ConfigurationFileLoader.java", "ConfigurationValidator.java"]
+    }
+  ],
+  "flows": [
+    {
+      "id": "flow:tenant-crud",
+      "name": "Tenant Create/Update/Delete/Search",
+      "summary": "TenantController receives the request (generated API interface + endpoint authorization) → TenantServiceFacade orchestrates (change detection, dependent settings override, downstream sync) → TenantService/TenantRepository persist to MariaDB → converters map between DTOs and entities.",
+      "related": ["TenantController.java", "TenantServiceFacade.java", "TenantFacadeChangeDetectionService.java", "TenantFacadeDependentSettingsOverrideService.java", "TenantService.java", "TenantRepository.java", "TenantConverter.java"]
+    },
+    {
+      "id": "flow:restricted-public-metadata",
+      "name": "Restricted Public Tenant Metadata",
+      "summary": "Unauthenticated or partially-authenticated callers fetch restricted public tenant metadata (branding, subdomain lookup) before a full tenant context exists — resolved via TenantResolverService and served through restricted read endpoints.",
+      "related": ["TenantResolverService.java", "TenantController.java", "TenantServiceFacade.java"]
+    }
+  ],
+  "layerDescriptions": {
+    "Core": "Spring Boot application core: entry point, build tooling, and repository-level scripts."
+  }
+}
