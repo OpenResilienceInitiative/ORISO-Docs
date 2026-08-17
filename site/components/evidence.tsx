@@ -116,13 +116,23 @@ function CodeViewer({ entry, evidenceRef: ref, onClose }: { entry: Entry; eviden
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ref.repo, ref.path]);
 
-  useEffect(() => {
-    if (loaded.state !== 'ok' || !range) return;
-    const el = dialogRef.current?.querySelector<HTMLElement>(`[data-line="${range.from}"]`);
-    el?.scrollIntoView({ block: 'center' });
-  }, [loaded, range]);
-
   const lines = loaded.state === 'ok' ? loaded.content.split('\n') : [];
+  // Without a cited line range, highlight the lines that carry the expected identifiers instead.
+  const hitSet = new Set<number>();
+  if (range) {
+    for (let n = range.from; n <= range.to; n++) hitSet.add(n);
+  } else if (ref.expect.length) {
+    lines.forEach((l, i) => {
+      if (ref.expect.some((x) => l.includes(x))) hitSet.add(i + 1);
+    });
+  }
+  const firstHit = hitSet.size ? Math.min(...hitSet) : null;
+
+  useEffect(() => {
+    if (loaded.state !== 'ok' || firstHit === null) return;
+    const el = dialogRef.current?.querySelector<HTMLElement>(`[data-line="${firstHit}"]`);
+    el?.scrollIntoView({ block: 'center' });
+  }, [loaded, firstHit]);
 
   return (
     <dialog
@@ -159,7 +169,7 @@ function CodeViewer({ entry, evidenceRef: ref, onClose }: { entry: Entry; eviden
             <tbody>
               {lines.map((l, i) => {
                 const n = i + 1;
-                const hit = range ? n >= range.from && n <= range.to : false;
+                const hit = hitSet.has(n);
                 return (
                   <tr key={n} data-line={n} className={hit ? 'bg-amber-300/25 dark:bg-amber-400/15' : undefined}>
                     <td className="select-none border-r border-fd-border px-3 text-right text-fd-muted-foreground">{n}</td>
