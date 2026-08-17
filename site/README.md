@@ -36,22 +36,15 @@ line range; when the site is served elsewhere it falls back to the GitHub link o
 
 ## Deploying
 
-Two builds of the same content are served from `49.13.11.37` (the Understand-Anything host):
-
-| Build | Command | Web root | URL |
-|---|---|---|---|
-| path prefix `/dokumentation` | `pnpm build` → `out/` | `/var/www/dokumentation/` | https://understand.oriso.org/dokumentation/ |
-| root prefix (own domain) | `pnpm build:root` → `out/` | `/var/www/docs-site/` | http(s)://docs.oriso.org/ |
+Live at **https://docs.oriso.org/** (nginx on `49.13.11.37`, the Understand-Anything host;
+Let's Encrypt via certbot). `understand.oriso.org/dokumentation/*` and `understand.oriso.org/legal/dsfa/`
+redirect there; the 16.08 single-page DSFA stays at `understand.oriso.org/legal/dsfa-v2/`.
 
 ```bash
-pnpm build       && rsync -az --delete out/ root@49.13.11.37:/var/www/dokumentation/
-pnpm build:root  && rsync -az --delete out/ root@49.13.11.37:/var/www/docs-site/
+pnpm build:root && rsync -az --delete out/ root@49.13.11.37:/var/www/docs-site/
 ```
 
-nginx: `location /dokumentation/ { alias /var/www/dokumentation/; … }` in the `understand.oriso.org`
-vhost, and a separate `docs.oriso.org` vhost (`/etc/nginx/sites-available/docs.oriso.org`) whose
-`location ~ ^/(<slug>)/file-content\.json$` loop-proxies to the Understand-Anything vhost — that is
-what keeps the code viewer same-origin on the docs domain. `docs.oriso.org` needs an A record
-(→ `49.13.11.37`, GoDaddy) and then `certbot --nginx -d docs.oriso.org` for HTTPS.
-`understand.oriso.org/legal/dsfa/` redirects (302) to the DSFA chapter index; the previous
-single-page version stays reachable at `/legal/dsfa-v2/`.
+Vhost: `/etc/nginx/sites-available/docs.oriso.org`. Its `location ~ ^/(<slug>)/file-content\.json$`
+loop-proxies (HTTPS + SNI) to the Understand-Anything vhost so the code viewer stays same-origin.
+`pnpm build` (prefix `/dokumentation`) is kept for a path-prefixed deployment; set
+`NEXT_PUBLIC_BASE_PATH` for any other prefix.
