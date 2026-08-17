@@ -269,7 +269,7 @@ entries:
         lines: "154-160"
         expect: ["oriso-matrix-", "initRustCrypto", "indexeddb"]
       - repo: ORISO-Frontend
-        path: src/api/auth/logout.ts
+        path: src/components/logout/logout.ts
         expect: ["localStorage.clear", "sessionStorage.clear"]
         absent: ["indexedDB.deleteDatabase"]
 
@@ -557,7 +557,7 @@ entries:
         path: src/main/resources/db/changelog/changeset/0057_case_handover_request/case-handover-request.sql
         absent: ["tenant_id"]
       - repo: ORISO-Admin
-        path: src/components/Tenants/AppSettings/PermissionsSettings/PermissionToggleVisibility.ts
+        path: src/types/PermissionToggleVisibility.ts
         absent: ["teamDiscussion", "caseHandover"]
 
   # ---------------------------------------------------------------- Kapitel 6.14
@@ -634,7 +634,7 @@ entries:
     status: live
     evidence:
       - repo: ORISO-UserService
-        path: src/main/java/de/caritas/cob/userservice/api/service/accountinvite/JakartaInviteMailTransport.java
+        path: src/main/java/de/caritas/cob/userservice/api/service/accountinvite/mail/JakartaInviteMailTransport.java
         lines: "34-111"
         expect: ["starttls", "mail.smtp.starttls.required"]
 
@@ -856,7 +856,7 @@ entries:
         lines: "79-86"
         expect: ["deletion.readOnlyWindow.hours", "deletion.pause"]
       - repo: ORISO-UserService
-        path: src/main/java/de/caritas/cob/userservice/api/service/DeletionLifecycleService.java
+        path: src/main/java/de/caritas/cob/userservice/api/workflow/delete/service/DeletionLifecycleService.java
         lines: "170-195"
         expect: ["READ_ONLY", "PAUSED"]
 
