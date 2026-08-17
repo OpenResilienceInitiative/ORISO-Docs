@@ -36,5 +36,22 @@ line range; when the site is served elsewhere it falls back to the GitHub link o
 
 ## Deploying
 
-The `out/` directory is plain HTML/JS/CSS. Copy it to the web root and serve it under the base
-path, e.g. nginx `location /dokumentation/ { alias /var/www/dokumentation/; try_files $uri $uri/ $uri/index.html =404; }`.
+Two builds of the same content are served from `49.13.11.37` (the Understand-Anything host):
+
+| Build | Command | Web root | URL |
+|---|---|---|---|
+| path prefix `/dokumentation` | `pnpm build` → `out/` | `/var/www/dokumentation/` | https://understand.oriso.org/dokumentation/ |
+| root prefix (own domain) | `pnpm build:root` → `out/` | `/var/www/docs-site/` | http(s)://docs.oriso.org/ |
+
+```bash
+pnpm build       && rsync -az --delete out/ root@49.13.11.37:/var/www/dokumentation/
+pnpm build:root  && rsync -az --delete out/ root@49.13.11.37:/var/www/docs-site/
+```
+
+nginx: `location /dokumentation/ { alias /var/www/dokumentation/; … }` in the `understand.oriso.org`
+vhost, and a separate `docs.oriso.org` vhost (`/etc/nginx/sites-available/docs.oriso.org`) whose
+`location ~ ^/(<slug>)/file-content\.json$` loop-proxies to the Understand-Anything vhost — that is
+what keeps the code viewer same-origin on the docs domain. `docs.oriso.org` needs an A record
+(→ `49.13.11.37`, GoDaddy) and then `certbot --nginx -d docs.oriso.org` for HTTPS.
+`understand.oriso.org/legal/dsfa/` redirects (302) to the DSFA chapter index; the previous
+single-page version stays reachable at `/legal/dsfa-v2/`.

@@ -9,7 +9,8 @@
     "build": "next build",
     "dev": "next dev",
     "start": "serve out",
-    "types:check": "next typegen && tsc --noEmit"
+    "types:check": "next typegen && tsc --noEmit",
+    "build:root": "NEXT_PUBLIC_BASE_PATH= next build"
   },
   "dependencies": {
     "cnfast": "^0.1.0",
