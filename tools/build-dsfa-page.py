@@ -221,6 +221,82 @@ def template_section(md: str, key: str) -> str:
     return "\n".join(lines[start + 1: end])
 
 
+# ---------------------------------------------------------------- Stammdaten
+
+# Die Seite fuehrt die Betreiber-Stammdaten in <span class="dyn" title="…">-Feldern.
+# Fachliche Quelle ist die Karte „Dokument-Stammdaten" im Administrationsbereich
+# (ORISO-Admin#736) auf dem Bestand des TenantService (#187, Tabelle
+# platform_dpia_master_data, oeffentlich lesbar ueber GET /tenant/public/dpia).
+# Solange die Seite diesen Endpunkt nicht selbst abfragt, traegt sie den hier
+# gepflegten Vorgabesatz — dieselben Werte wie die Storybook-Story der Karte.
+# Schluessel = title-Attribut des Feldes.
+MASTER_DATA: dict[str, str] = {
+    "aus Admin-Panel Global Settings: operator.legalName": "Deutscher Caritasverband e.&nbsp;V.",
+    "aus Admin-Panel Global Settings: operator.address": "Karlstraße 40, 79104 Freiburg im Breisgau",
+    "aus Admin-Panel Global Settings: operator.contact":
+        "datenschutz@caritas.example · +49&nbsp;761&nbsp;200-0",
+    "aus Admin-Panel Global Settings: operator.dpoName": "Stabsstelle Datenschutz",
+    "aus Admin-Panel Global Settings: operator.department": "Referat Online-Beratung",
+    "aus Admin-Panel Global Settings: legal.supervisoryAuthority":
+        "Katholisches Datenschutzzentrum Frankfurt, Hausener Weg 66, 60489 Frankfurt am Main",
+    "aus Admin-Panel Global Settings: document.nextReviewDate": "01.06.2027",
+}
+
+# Auftragsverarbeiter aus dem unterzeichneten TOM-Bogen zum AVV
+# (0 - Docs/Anh3_TOM_zum_AVV_GS-Design_SJA_ORISO_ausgefuellt_2026-08-14.docx, Abschnitt 1.1).
+PROCESSOR_ROWS = (
+    '<tr><td><span class="dyn" title="aus Admin-Panel: processors[] — Wiederholgruppe">'
+    "GS Design GmbH</span><br><span class=\"muted\">Kreuzbergstr. 30 VH, 10965 Berlin</span></td>"
+    "<td>Entwicklung, Wartung, Support</td><td>Deutschland</td><td>Nein</td><td>Ja</td><td>Ja</td></tr>"
+    '<tr><td><span class="dyn" title="aus Admin-Panel: processors[] — Wiederholgruppe">'
+    "Greyt.IT UG</span><br><span class=\"muted\">Richardstr. 11, 12043 Berlin — Subunternehmen "
+    "der GS Design GmbH</span></td>"
+    "<td>Technische Entwicklung</td><td>Deutschland</td><td>Nein</td><td>Ja</td><td>Ja</td></tr>"
+)
+
+# Zusatz zur Auftragsverarbeitertabelle: Feststellung aus demselben TOM-Bogen.
+PROCESSOR_NOTE = (
+    '<p class="muted" style="margin-top:8px">Von den Entwicklungsarbeitsplätzen besteht kein '
+    "Zugriff auf personenbezogene Produktivdaten; Entwicklung und Test arbeiten ausschließlich "
+    "mit synthetischen Daten. Produktivbetrieb und Administration liegen beim Betriebsdienstleister "
+    "im Rechenzentrum (Anhang 3 zum Auftragsverarbeitungsvertrag, Stand 14.08.2026).</p>"
+)
+
+
+def fill_master_data(page: str) -> tuple[str, int]:
+    """Vorgabewerte in die dyn-Felder schreiben; gibt (Seite, Anzahl) zurueck."""
+    count = 0
+
+    def repl(m):
+        nonlocal count
+        key, current = m.group(1), m.group(2)
+        value = MASTER_DATA.get(key)
+        if value is None or value == current:
+            return m.group(0)
+        count += 1
+        return '<span class="dyn" title="%s">%s</span>' % (key, value)
+
+    page = re.sub(r'<span class="dyn" title="([^"]*)">([^<]*)</span>', repl, page)
+
+    # Platzhalterzeile der Auftragsverarbeitertabelle durch die vertraglich benannten
+    # Entwicklungsdienstleister ersetzen.
+    m = re.search(r"<tr>(?:(?!</tr>).)*Entwicklungs-/Supportdienstleister.*?</tr>", page, re.S)
+    if m:
+        page = page[: m.start()] + PROCESSOR_ROWS + page[m.end():]
+        count += 2
+        end_table = page.find("</table>", m.start())
+        close = page.find("</div>", end_table)
+        if close > 0:
+            page = page[: close + len("</div>")] + PROCESSOR_NOTE + page[close + len("</div>"):]
+
+    # Kopf- und Fusszeile des Druck-Layouts fuehren denselben Namen wie das Dokument.
+    operator = MASTER_DATA["aus Admin-Panel Global Settings: operator.legalName"].replace("&nbsp;", " ")
+    page = re.sub(r'(@top-right\s*\{ content: ")[^"]*(")', lambda x: x.group(1) + operator + x.group(2), page)
+    page = re.sub(r'(@bottom-left\s*\{ content: ")[^"]*( · Datenschutz)',
+                  lambda x: x.group(1) + operator + x.group(2), page)
+    return page, count
+
+
 # ---------------------------------------------------------------- Schwellwert-Checkliste
 
 CBX_ON = ('<span class="cbx"><svg class="ico" aria-hidden="true" focusable="false">'
@@ -536,9 +612,11 @@ def main() -> int:
             1,
         )
 
-    OUT.write_text(head + new_body + tail, encoding="utf-8")
+    page_out, filled = fill_master_data(head + new_body + tail)
+    OUT.write_text(page_out, encoding="utf-8")
 
     words = len(re.sub(r"<[^>]+>", " ", new_body).split())
+    print("Stammdatenfelder gefüllt: %d" % filled)
     print("geschrieben: %s" % OUT.name)
     print("Kapitelstrecke: %d Wörter (vorher %d)"
           % (words, len(re.sub(r"<[^>]+>", " ", old).split())))
