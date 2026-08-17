@@ -1,6 +1,12 @@
-# ADR-014 — Media scanning via matrix-content-scanner, fail-closed, pluggable AI check
+# ADR-019 — Media scanning via matrix-content-scanner, fail-closed, pluggable AI check
 
 **Status:** Accepted · **Date:** 2026-07-18
+
+> **Renumbered 2026-08-08 from ADR-014 (ORISO-Docs#73).** Two accepted ADRs both carried
+> the number 014, so every cross-reference to "ADR-014" was ambiguous. The later of the two —
+> this one, accepted 2026-07-18 — took the new number; `ADR-014-shared-legal-text-objects-…`
+> (accepted 2026-07-16) keeps 014. Inbound references in `0 - Docs` were updated with it.
+
 **Context docs:** `PLAN-media-upload-security-2026-07-18.md`
 
 ## Context
