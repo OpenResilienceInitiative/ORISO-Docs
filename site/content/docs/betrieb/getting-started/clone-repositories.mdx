@@ -1,0 +1,186 @@
+---
+title: "Clone ORISO Repositories"
+description: "Create project directory and transfer ORISO repositories using SCP, Git, or manual transfer methods"
+---
+
+# Clone ORISO Repositories
+
+Set up the project directory and transfer ORISO repositories to your server.
+
+<Steps>
+<Step title="Create Project Directory">
+
+Create the main project directory for ORISO Platform files.
+
+```bash
+# Create project directory
+mkdir -p ~/online-beratung
+cd ~/online-beratung
+
+# Initialize git (optional)
+git init
+```
+
+</Step>
+
+<Step title="Transfer ORISO-Kubernetes Repository">
+
+Choose one of the following methods to transfer your ORISO repositories to the new server.
+
+<Tabs items={["Method 1: SCP (From Existing Server)","Method 2: Git Repository","Method 3: Manual Transfer (tar.gz)"]}>
+<Tab value="Method 1: SCP (From Existing Server)">
+
+Transfer directly from an existing server using SCP.
+
+```bash
+# On NEW server, from OLD server
+scp -r old-server:/path/to/caritas-workspace ~/online-beratung/
+
+# Verify
+ls -la ~/online-beratung/caritas-workspace/
+```
+
+</Tab>
+
+<Tab value="Method 2: Git Repository">
+
+Clone from a Git repository if your code is version controlled.
+
+```bash
+# Clone from Git
+cd ~/online-beratung
+git clone <your-oriso-repo-url> caritas-workspace
+
+# Verify
+ls -la ~/online-beratung/caritas-workspace/
+```
+
+</Tab>
+
+<Tab value="Method 3: Manual Transfer (tar.gz)">
+
+Create an archive on the old server and transfer it.
+
+**On OLD server:**
+
+```bash
+cd /path/to/online-beratung
+tar -czf oriso-complete.tar.gz caritas-workspace/
+```
+
+**Transfer to NEW server:**
+
+```bash
+scp oriso-complete.tar.gz new-server:~/
+```
+
+**On NEW server:**
+
+```bash
+cd ~/online-beratung
+tar -xzf ~/oriso-complete.tar.gz
+
+# Verify
+ls -la ~/online-beratung/caritas-workspace/
+```
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Verify Repository Structure">
+
+Verify all required repositories and directories are present.
+
+```bash
+cd ~/online-beratung/caritas-workspace
+
+# Check structure
+ls -la
+```
+
+<Callout type="success">
+You should see the following directories (organized by deployment priority):
+
+**Primary (Required for deployment):**
+- `ORISO-Kubernetes/` - Helm charts and Ingress resources
+- `ORISO-Database/` - Database schemas and setup scripts
+
+**Authentication:**
+- `ORISO-Keycloak/` - Keycloak realm configuration
+
+**Backend Services:**
+- `ORISO-TenantService/`
+- `ORISO-UserService/`
+- `ORISO-AgencyService/`
+- `ORISO-ConsultingTypeService/`
+
+**Frontend:**
+- `ORISO-Frontend/`
+- `ORISO-Admin/`
+
+**Communication:**
+- `ORISO-Matrix/` - Matrix Synapse deployment
+- `ORISO-Element/` - Element.io web client
+
+**Monitoring (Optional):**
+- `ORISO-SignOZ/` - Observability platform
+- `ORISO-HealthDashboard/` - Health monitoring
+- `ORISO-Status/` - Status page
+</Callout>
+
+**Check ORISO-Kubernetes structure:**
+
+```bash
+tree -L 2 ORISO-Kubernetes/
+```
+
+<Callout type="success">
+Expected structure:
+```
+ORISO-Kubernetes/
+├── README.md
+├── helm/
+│   ├── oriso-platform/      # Umbrella Helm chart
+│   ├── charts/              # Individual service charts
+│   └── values.yaml          # Global values
+└── ingress/                 # Ingress resources
+    ├── *.yaml               # Ingress configuration files
+    └── README.md
+```
+</Callout>
+
+**Check ORISO-Database structure:**
+
+```bash
+tree -L 2 ORISO-Database/
+```
+
+<Callout type="success">
+Expected structure:
+```
+ORISO-Database/
+├── README.md
+├── mariadb/                 # MariaDB schemas
+│   ├── tenantservice/
+│   ├── userservice/
+│   ├── consultingtypeservice/
+│   └── agencyservice/
+├── mongodb/                 # MongoDB schemas
+│   └── consulting_types/
+└── scripts/
+    ├── setup/
+    │   └── 00-master-setup.sh
+    └── backup/
+```
+</Callout>
+
+</Step>
+</Steps>
+
+## Next Steps
+
+- [Setup Kubernetes](/oriso-platform/setup-kubernetes) - Verify k3s and create namespace
+- [Deploy Infrastructure](/oriso-platform/deploy-infrastructure) - Deploy databases and Keycloak
+

@@ -1,0 +1,244 @@
+---
+title: "DNS & SSL Configuration"
+description: "Configure DNS records and automatic TLS certificates via cert-manager"
+---
+
+# DNS & SSL Configuration
+
+Configure DNS records and automatic TLS certificate management for ORISO Platform. TLS certificates are automatically managed by cert-manager with Let's Encrypt.
+
+<Callout>
+ORISO Platform v3.0.0 uses cert-manager for automatic TLS certificate management. No manual certificate installation is required.
+</Callout>
+
+<Steps>
+<Step title="Configure DNS Records">
+
+Point DNS records to your server IP for all required subdomains.
+
+```bash
+# Get server IP
+SERVER_IP=$(kubectl get nodes -o jsonpath="{.items[0].status.addresses[?(@.type=='InternalIP')].address}")
+echo "Server IP: $SERVER_IP"
+```
+
+**Required DNS Records:**
+
+In your DNS provider, create the following A records:
+
+| Subdomain | Points To | Purpose |
+|-----------|-----------|---------|
+| `api.oriso.org` | `$SERVER_IP` | Backend API |
+| `app.oriso.org` | `$SERVER_IP` | Frontend application |
+| `admin.oriso.org` | `$SERVER_IP` | Admin panel |
+| `auth.oriso.org` | `$SERVER_IP` | Keycloak authentication |
+| `matrix.oriso.org` | `$SERVER_IP` | Matrix Synapse |
+| `element.oriso.org` | `$SERVER_IP` | Element.io client (optional) |
+| `status.oriso.site` | `$SERVER_IP` | Status page (optional) |
+
+<Callout>
+Replace `oriso.org` with your actual domain. DNS propagation may take a few minutes to hours.
+</Callout>
+
+<Callout type="success">
+Verify DNS resolution:
+```bash
+dig api.oriso.org
+nslookup app.oriso.org
+```
+Both should return your server IP.
+</Callout>
+
+</Step>
+
+<Step title="Verify Cert-Manager Setup">
+
+Ensure cert-manager and ClusterIssuer are configured.
+
+```bash
+# Check cert-manager pods
+kubectl get pods -n cert-manager
+
+# Check ClusterIssuer
+kubectl get clusterissuer letsencrypt-prod
+
+# Verify ClusterIssuer is ready
+kubectl describe clusterissuer letsencrypt-prod
+```
+
+<Callout type="success">
+- cert-manager pods should be `Running`
+- ClusterIssuer should show `Ready=True`
+</Callout>
+
+<Callout>
+If ClusterIssuer is not configured, see [Setup Kubernetes](/oriso-platform/setup-kubernetes).
+</Callout>
+
+</Step>
+
+<Step title="Deploy Ingress Resources">
+
+Deploy Ingress resources with TLS annotations. Certificates will be issued automatically.
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes/ingress
+
+# Deploy all Ingress resources
+kubectl apply -f .
+
+# Check Ingress resources
+kubectl get ingress -n caritas
+
+# Check certificate requests
+kubectl get certificaterequest -n caritas
+```
+
+<Callout>
+When Ingress resources are created with `cert-manager.io/cluster-issuer: letsencrypt-prod` annotation, cert-manager automatically:
+1. Creates CertificateRequest
+2. Issues certificate via Let's Encrypt HTTP-01 challenge
+3. Stores certificate in Kubernetes Secret
+4. Ingress uses certificate for TLS
+</Callout>
+
+<Callout type="success">
+After a few minutes, certificates should be issued:
+```bash
+kubectl get certificate -n caritas
+```
+All certificates should show `Ready=True`.
+</Callout>
+
+</Step>
+
+<Step title="Verify TLS Certificates">
+
+Verify certificates are issued and working.
+
+```bash
+# Check certificates
+kubectl get certificate -n caritas
+
+# Check certificate details
+kubectl describe certificate <cert-name> -n caritas
+
+# Test HTTPS endpoints
+curl -I https://app.oriso.org
+curl -I https://api.oriso.org
+curl -I https://auth.oriso.org
+
+# Check certificate validity
+echo | openssl s_client -servername app.oriso.org -connect app.oriso.org:443 2>/dev/null | openssl x509 -noout -dates
+```
+
+<Callout type="success">
+- Certificates should be `Ready=True`
+- HTTPS endpoints should return HTTP 200
+- Certificate should be valid (not expired)
+</Callout>
+
+</Step>
+</Steps>
+
+## TLS Certificate Management
+
+### Automatic Issuance
+Cert-manager automatically issues certificates when:
+1. Ingress resource is created with `cert-manager.io/cluster-issuer` annotation
+2. DNS records point to server IP
+3. HTTP-01 challenge can be completed (port 80 accessible)
+
+### Certificate Renewal
+Certificates are automatically renewed by cert-manager before expiration:
+- **Renewal:** 30 days before expiration
+- **Automatic:** No manual intervention required
+- **Monitoring:** Check certificate status regularly
+
+### Certificate Status
+```bash
+# Check all certificates
+kubectl get certificate -n caritas
+
+# Check certificate age
+kubectl get certificate -n caritas -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.status.notAfter}{"\n"}{end}'
+
+# Check certificate requests
+kubectl get certificaterequest -n caritas
+```
+
+## Troubleshooting
+
+### DNS Not Resolving
+```bash
+# Test DNS resolution
+dig api.oriso.org
+nslookup app.oriso.org
+
+# Check DNS propagation
+# Use online tools: https://dnschecker.org
+
+# Verify DNS points to correct IP
+curl -I http://api.oriso.org
+```
+
+### Certificate Not Issued
+```bash
+# Check certificate request
+kubectl get certificaterequest -n caritas
+kubectl describe certificaterequest <name> -n caritas
+
+# Check cert-manager logs
+kubectl logs -n cert-manager -l app=cert-manager
+
+# Check ClusterIssuer
+kubectl describe clusterissuer letsencrypt-prod
+
+# Verify HTTP-01 challenge
+curl http://api.oriso.org/.well-known/acme-challenge/test
+```
+
+### Certificate Expired
+```bash
+# Check certificate expiration
+kubectl get certificate -n caritas -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.status.notAfter}{"\n"}{end}'
+
+# Force renewal (delete certificate, cert-manager will recreate)
+kubectl delete certificate <cert-name> -n caritas
+kubectl get certificate -n caritas  # Should recreate automatically
+```
+
+### HTTPS Not Working
+```bash
+# Check Ingress TLS configuration
+kubectl get ingress -n caritas -o yaml | grep -A 5 tls
+
+# Check certificate secret
+kubectl get secret -n caritas | grep tls
+
+# Check Ingress Controller logs
+kubectl logs -n ingress-nginx -l app.kubernetes.io/component=controller | grep tls
+```
+
+## DNS Configuration Examples
+
+### Cloudflare
+1. Add A records in Cloudflare DNS
+2. Set proxy status (orange cloud) if using Cloudflare proxy
+3. SSL/TLS mode: Full (strict) for HTTPS
+
+### Route53
+1. Create A records in Route53 hosted zone
+2. Point to server IP
+3. TTL: 300 seconds (5 minutes)
+
+### Other Providers
+1. Add A records pointing to server IP
+2. Wait for DNS propagation
+3. Verify with `dig` or `nslookup`
+
+## Next Steps
+
+- [Post-Deployment](/oriso-platform/post-deployment) - Verify complete deployment
+- [Verification Testing](/oriso-platform/verification-testing) - Test HTTPS endpoints
+- [Security Hardening](/oriso-platform/security-hardening) - Additional security measures

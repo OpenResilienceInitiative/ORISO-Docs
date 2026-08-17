@@ -1,0 +1,4611 @@
+---
+title: ORISO Super Graph Detailed View
+description: Detailed merged graph explorer by repository, layer, node type, API, dependency, auth, database and deployment reference.
+---
+
+# ORISO Super Graph Detailed View
+
+This page is generated from existing .understand-anything artifacts only. It preserves every source graph node and edge possible by assigning global IDs such as `ORISO-UserService::<original-id>`.
+
+## Merge Summary
+
+- Repositories checked: 9
+- Graphs found: 9
+- Graphs missing: None
+- Original nodes merged: 7194
+- Original edges merged: 12725
+- Normalized nodes in dashboard graph: 7204
+- Normalized edges in dashboard graph: 22351
+- Cross-repo relationships added from clear graph-artifact evidence: 2423
+
+## ORISO-Frontend
+
+### Graph Source
+
+- graph path: ../ORISO-Frontend/.understand-anything/knowledge-graph.json
+- artifacts used: 1
+- node count: 1967
+- edge count: 4204
+
+Artifacts used:
+
+- .understand-anything/knowledge-graph.json (1.7 MB)
+
+### Repository Purpose
+
+Frontend application for the Online-Beratung platform, covering registration, messaging, bookings, profile flows, theming, and Matrix-backed real-time communication.
+
+### Main Files/Modules
+
+- file: tokens.cy.ts — cypress/e2e/tokens.cy.ts
+- file: apiLogoutKeycloak.ts — src/api/apiLogoutKeycloak.ts
+- file: apiMatrixUpload.ts — src/api/apiMatrixUpload.ts
+- file: apiPostError.ts — src/api/apiPostError.ts
+- file: apiUploadAttachment.ts — src/api/apiUploadAttachment.ts
+- file: ErrorBoundary.tsx — src/components/app/ErrorBoundary.tsx
+- file: AskerInfoTools.tsx — src/components/askerInfo/AskerInfoTools.tsx
+- file: auth.ts — src/components/auth/auth.ts
+- file: budibaseLogout.ts — src/components/budibase/budibaseLogout.ts
+- file: DragAndDropArea.tsx — src/components/dragAndDropArea/DragAndDropArea.tsx
+- file: errorHandling.ts — src/components/error/errorHandling.ts
+- file: LoadingSpinner.stories.ts — src/components/loadingSpinner/LoadingSpinner.stories.ts
+- file: LoadingSpinner.tsx — src/components/loadingSpinner/LoadingSpinner.tsx
+- file: calcomLogout.ts — src/components/logout/calcomLogout.ts
+- file: logout.ts — src/components/logout/logout.ts
+- file: MessageAttachment.stories.ts — src/components/message/MessageAttachment.stories.ts
+- file: MessageAttachment.tsx — src/components/message/MessageAttachment.tsx
+- file: messageHelpers.ts — src/components/message/messageHelpers.ts
+- file: attachmentHelpers.ts — src/components/messageSubmitInterface/attachmentHelpers.ts
+- file: useDraftMessage.tsx — src/components/messageSubmitInterface/useDraftMessage.tsx
+- file: accessSessionCookie.ts — src/components/sessionCookie/accessSessionCookie.ts
+- file: accessSessionLocalStorage.ts — src/components/sessionCookie/accessSessionLocalStorage.ts
+- file: getBudibaseAccessToken.ts — src/components/sessionCookie/getBudibaseAccessToken.ts
+- file: refreshKeycloakAccessToken.ts — src/components/sessionCookie/refreshKeycloakAccessToken.ts
+- file: SessionListItemAttachment.tsx — src/components/sessionsListItem/SessionListItemAttachment.tsx
+- file: LocaleContext.tsx — src/globalState/context/LocaleContext.tsx
+- file: TenantDataInterface.ts — src/globalState/interfaces/TenantDataInterface.ts
+- file: InformalProvider.tsx — src/globalState/provider/InformalProvider.tsx
+- file: LocaleProvider.tsx — src/globalState/provider/LocaleProvider.tsx
+- file: TenantProvider.tsx — src/globalState/provider/TenantProvider.tsx
+- file: TopicsProvider.tsx — src/globalState/provider/TopicsProvider.tsx
+- file: appConfig.ts — src/utils/appConfig.ts
+- file: eventHandler.ts — src/utils/eventHandler.ts
+- file: generateCsrfToken.ts — src/utils/generateCsrfToken.ts
+- file: requestCollector.ts — src/utils/requestCollector.ts
+- file: apiGetConsultantAppointments.ts — src/api/apiGetConsultantAppointments.ts
+- file: apiPatchUserData.ts — src/api/apiPatchUserData.ts
+- file: E2EEncryptionSupportHelp.tsx — src/components/E2EEncryptionSupportHelp/E2EEncryptionSupportHelp.tsx
+- file: index.tsx — src/components/Switch/index.tsx
+- file: AgencyRadioSelect.tsx — src/components/agencyRadioSelect/AgencyRadioSelect.tsx
+- file: AgencySelection.tsx — src/components/agencySelection/AgencySelection.tsx
+- file: agencySelectionHelpers.ts — src/components/agencySelection/agencySelectionHelpers.ts
+- file: AskerInfoAssign.tsx — src/components/askerInfo/AskerInfoAssign.tsx
+- file: Box.tsx — src/components/box/Box.tsx
+- file: downloadICSFile.tsx — src/components/downloadICSFile/downloadICSFile.tsx
+- file: EditableData.tsx — src/components/editableData/EditableData.tsx
+- file: GenerateQrCode.tsx — src/components/generateQrCode/GenerateQrCode.tsx
+- file: GroupChatCopyLinks.tsx — src/components/groupChat/GroupChatCopyLinks.tsx
+- file: Header.tsx — src/components/header/Header.tsx
+- file: Headline.stories.ts — src/components/headline/Headline.stories.ts
+- file: Headline.tsx — src/components/headline/Headline.tsx
+- file: Help.tsx — src/components/help/Help.tsx
+- file: HelpVideoCall.tsx — src/components/help/HelpVideoCall.tsx
+- file: InfoTooltip.tsx — src/components/infoTooltip/InfoTooltip.tsx
+- file: InputField.stories.ts — src/components/inputField/InputField.stories.ts
+- file: InputField.tsx — src/components/inputField/InputField.tsx
+- file: LocaleSwitch.tsx — src/components/localeSwitch/LocaleSwitch.tsx
+- file: MainTopicSelection.tsx — src/components/mainTopicSelection/MainTopicSelection.tsx
+- file: Appointment.tsx — src/components/message/Appointment.tsx
+- file: FurtherSteps.tsx — src/components/message/FurtherSteps.tsx
+
+### Classes/Functions
+
+- function: apiKeycloakLogout — src/api/apiLogoutKeycloak.ts
+- function: apiMatrixUploadFile — src/api/apiMatrixUpload.ts
+- function: apiMatrixSendFileMessage — src/api/apiMatrixUpload.ts
+- function: ERROR_LEVEL_FATAL — src/api/apiPostError.ts
+- function: ERROR_LEVEL_ERROR — src/api/apiPostError.ts
+- function: ERROR_LEVEL_WARN — src/api/apiPostError.ts
+- function: ERROR_LEVEL_INFO — src/api/apiPostError.ts
+- function: ERROR_LEVEL_DEBUG — src/api/apiPostError.ts
+- function: ERROR_LEVEL_TRACE — src/api/apiPostError.ts
+- function: apiPostError — src/api/apiPostError.ts
+- function: apiUploadAttachment — src/api/apiUploadAttachment.ts
+- class: ErrorBoundary — src/components/app/ErrorBoundary.tsx
+- function: AskerInfoTools — src/components/askerInfo/AskerInfoTools.tsx
+- function: RENEW_BEFORE_EXPIRY_IN_MS — src/components/auth/auth.ts
+- function: setTokens — src/components/auth/auth.ts
+- function: handleTokenRefresh — src/components/auth/auth.ts
+- function: budibaseLogout — src/components/budibase/budibaseLogout.ts
+- function: DragAndDropArea — src/components/dragAndDropArea/DragAndDropArea.tsx
+- function: ERROR_TYPES — src/components/error/errorHandling.ts
+- function: getErrorCaseForStatus — src/components/error/errorHandling.ts
+- function: redirectToErrorPage — src/components/error/errorHandling.ts
+- function: calcomLogout — src/components/logout/calcomLogout.ts
+- function: EVENT_PRE_LOGOUT — src/components/logout/logout.ts
+- function: logout — src/components/logout/logout.ts
+- function: MessageAttachment — src/components/message/MessageAttachment.tsx
+- function: getIconForAttachmentType — src/components/message/messageHelpers.ts
+- function: ATTACHMENT_TYPE_FOR_KEY — src/components/messageSubmitInterface/attachmentHelpers.ts
+- function: ATTACHMENT_TRANSLATE_FOR_TYPE — src/components/messageSubmitInterface/attachmentHelpers.ts
+- function: isPNGAttachment — src/components/messageSubmitInterface/attachmentHelpers.ts
+- function: isJPEGAttachment — src/components/messageSubmitInterface/attachmentHelpers.ts
+- function: isPDFAttachment — src/components/messageSubmitInterface/attachmentHelpers.ts
+- function: isDOCXAttachment — src/components/messageSubmitInterface/attachmentHelpers.ts
+- function: isXLSXAttachment — src/components/messageSubmitInterface/attachmentHelpers.ts
+- function: ATTACHMENT_MAX_SIZE_IN_MB — src/components/messageSubmitInterface/attachmentHelpers.ts
+- function: getAttachmentSizeMBForKB — src/components/messageSubmitInterface/attachmentHelpers.ts
+- function: useDraftMessage — src/components/messageSubmitInterface/useDraftMessage.tsx
+- function: setValueInCookie — src/components/sessionCookie/accessSessionCookie.ts
+- function: deleteCookieByName — src/components/sessionCookie/accessSessionCookie.ts
+- function: getValueFromCookie — src/components/sessionCookie/accessSessionCookie.ts
+- function: removeAllCookies — src/components/sessionCookie/accessSessionCookie.ts
+- function: getLocalStorageItem — src/components/sessionCookie/accessSessionLocalStorage.ts
+- function: removeLocalStorageItem — src/components/sessionCookie/accessSessionLocalStorage.ts
+- function: setTokenExpiryInLocalStorage — src/components/sessionCookie/accessSessionLocalStorage.ts
+- function: getTokenExpiryFromLocalStorage — src/components/sessionCookie/accessSessionLocalStorage.ts
+- function: removeTokenExpiryFromLocalStorage — src/components/sessionCookie/accessSessionLocalStorage.ts
+- function: removeRocketChatMasterKeyFromLocalStorage — src/components/sessionCookie/accessSessionLocalStorage.ts
+- function: getBudibaseAccessToken — src/components/sessionCookie/getBudibaseAccessToken.ts
+- function: waitForLogin — src/components/sessionCookie/getBudibaseAccessToken.ts
+- function: refreshKeycloakAccessToken — src/components/sessionCookie/refreshKeycloakAccessToken.ts
+- function: SessionListItemAttachment — src/components/sessionsListItem/SessionListItemAttachment.tsx
+- function: LocaleContext — src/globalState/context/LocaleContext.tsx
+- function: InformalProvider — src/globalState/provider/InformalProvider.tsx
+- function: COOKIE_KEY — src/globalState/provider/InformalProvider.tsx
+- function: InformalContext — src/globalState/provider/InformalProvider.tsx
+- function: LocaleProvider — src/globalState/provider/LocaleProvider.tsx
+- function: STORAGE_KEY_LOCALE — src/globalState/provider/LocaleProvider.tsx
+- function: useLocaleData — src/globalState/provider/LocaleProvider.tsx
+- function: TenantProvider — src/globalState/provider/TenantProvider.tsx
+- function: useTenant — src/globalState/provider/TenantProvider.tsx
+- function: TenantContext — src/globalState/provider/TenantProvider.tsx
+
+### APIs/Routes
+
+- file: apiLogoutKeycloak.ts — src/api/apiLogoutKeycloak.ts
+- function: apiKeycloakLogout — src/api/apiLogoutKeycloak.ts
+- file: apiMatrixUpload.ts — src/api/apiMatrixUpload.ts
+- function: apiMatrixUploadFile — src/api/apiMatrixUpload.ts
+- function: apiMatrixSendFileMessage — src/api/apiMatrixUpload.ts
+- file: apiPostError.ts — src/api/apiPostError.ts
+- function: ERROR_LEVEL_FATAL — src/api/apiPostError.ts
+- function: ERROR_LEVEL_ERROR — src/api/apiPostError.ts
+- function: ERROR_LEVEL_WARN — src/api/apiPostError.ts
+- function: ERROR_LEVEL_INFO — src/api/apiPostError.ts
+- function: ERROR_LEVEL_DEBUG — src/api/apiPostError.ts
+- function: ERROR_LEVEL_TRACE — src/api/apiPostError.ts
+- function: apiPostError — src/api/apiPostError.ts
+- file: apiUploadAttachment.ts — src/api/apiUploadAttachment.ts
+- function: apiUploadAttachment — src/api/apiUploadAttachment.ts
+- file: apiGetConsultantAppointments.ts — src/api/apiGetConsultantAppointments.ts
+- function: apiGetConsultantAppointments — src/api/apiGetConsultantAppointments.ts
+- file: apiPatchUserData.ts — src/api/apiPatchUserData.ts
+- function: apiPatchUserData — src/api/apiPatchUserData.ts
+- file: profile.routes.ts — src/components/profile/profile.routes.ts
+- file: profileHelp.routes.ts — src/components/profile/profileHelp.routes.ts
+- function: profileRoutesHelp — src/components/profile/profileHelp.routes.ts
+- file: profileSettings.routes.ts — src/components/profile/profileSettings.routes.ts
+- function: profileRoutesSettings — src/components/profile/profileSettings.routes.ts
+- file: booking.routes.ts — src/containers/bookings/booking.routes.ts
+- file: apiGetTopicId.ts — src/api/apiGetTopicId.ts
+- function: apiGetTopicById — src/api/apiGetTopicId.ts
+- file: apiGetTopicsData.ts — src/api/apiGetTopicsData.ts
+- function: apiGetTopicsData — src/api/apiGetTopicsData.ts
+- file: agencies.ts — cypress/support/commands/api/agencies.ts
+- file: appointments.ts — cypress/support/commands/api/appointments.ts
+- file: consultTypes.ts — cypress/support/commands/api/consultTypes.ts
+- file: messages.ts — cypress/support/commands/api/messages.ts
+- file: rc.ts — cypress/support/commands/api/rc.ts
+- file: topic.ts — cypress/support/commands/api/topic.ts
+- file: uploads.ts — cypress/support/commands/api/uploads.ts
+- file: chat.ts — cypress/support/commands/api/users/chat.ts
+- file: consultants.ts — cypress/support/commands/api/users/consultants.ts
+- file: data.ts — cypress/support/commands/api/users/data.ts
+- file: sessions.ts — cypress/support/commands/api/users/sessions.ts
+- file: videocalls.ts — cypress/support/commands/api/videocalls.ts
+- file: apiAddSessionSupervisor.ts — src/api/apiAddSessionSupervisor.ts
+- function: apiAddSessionSupervisor — src/api/apiAddSessionSupervisor.ts
+- file: apiAgencySelection.ts — src/api/apiAgencySelection.ts
+- function: apiAgencySelection — src/api/apiAgencySelection.ts
+- file: apiAppointmentServiceSet.ts — src/api/apiAppointmentServiceSet.ts
+- function: apiAppointmentServiceSet — src/api/apiAppointmentServiceSet.ts
+- file: apiDeleteAskerAccount.ts — src/api/apiDeleteAskerAccount.ts
+- function: apiDeleteAskerAccount — src/api/apiDeleteAskerAccount.ts
+- file: apiDeleteEmail.ts — src/api/apiDeleteEmail.ts
+- function: apiDeleteEmail — src/api/apiDeleteEmail.ts
+- file: apiDeleteMessage.ts — src/api/apiDeleteMessage.ts
+- function: apiDeleteMessage — src/api/apiDeleteMessage.ts
+- file: apiDeleteRemove.ts — src/api/apiDeleteRemove.ts
+- function: apiDeleteRemove — src/api/apiDeleteRemove.ts
+- file: apiDeleteSessionAndUser.ts — src/api/apiDeleteSessionAndUser.ts
+- function: apiDeleteSessionAndUser — src/api/apiDeleteSessionAndUser.ts
+- file: apiDeleteUserFromRoom.ts — src/api/apiDeleteUserFromRoom.ts
+- function: apiDeleteUserFromRoom — src/api/apiDeleteUserFromRoom.ts
+- file: apiDraftMessages.ts — src/api/apiDraftMessages.ts
+
+### Internal Dependencies
+
+- imports: file:cypress/e2e/tokens.cy.ts -> file:cypress/support/websocket.ts
+- imports: file:cypress/e2e/tokens.cy.ts -> file:src/components/auth/auth.ts
+- imports: file:cypress/e2e/tokens.cy.ts -> file:src/components/sessionCookie/accessSessionLocalStorage.ts
+- imports: file:src/api/apiLogoutKeycloak.ts -> file:src/components/sessionCookie/accessSessionCookie.ts
+- imports: file:src/api/apiLogoutKeycloak.ts -> file:src/resources/scripts/endpoints.ts
+- imports: file:src/api/apiMatrixUpload.ts -> file:src/components/sessionCookie/accessSessionCookie.ts
+- imports: file:src/api/apiMatrixUpload.ts -> file:src/resources/scripts/endpoints.ts
+- imports: file:src/api/apiMatrixUpload.ts -> file:src/utils/generateCsrfToken.ts
+- imports: file:src/api/apiPostError.ts -> file:src/api/fetchData.ts
+- imports: file:src/api/apiPostError.ts -> file:src/resources/scripts/endpoints.ts
+- imports: file:src/api/apiUploadAttachment.ts -> file:src/api/fetchData.ts
+- imports: file:src/api/apiUploadAttachment.ts -> file:src/components/sessionCookie/accessSessionCookie.ts
+- imports: file:src/api/apiUploadAttachment.ts -> file:src/resources/scripts/endpoints.ts
+- imports: file:src/api/apiUploadAttachment.ts -> file:src/utils/generateCsrfToken.ts
+- imports: file:src/components/app/ErrorBoundary.tsx -> file:src/api/apiPostError.ts
+- imports: file:src/components/app/ErrorBoundary.tsx -> file:src/components/app/Loading.tsx
+- imports: file:src/components/app/ErrorBoundary.tsx -> file:src/components/devToolbar/DevToolbar.tsx
+- imports: file:src/components/app/ErrorBoundary.tsx -> file:src/components/error/errorHandling.ts
+- imports: file:src/components/app/ErrorBoundary.tsx -> file:src/components/sessionCookie/accessSessionCookie.ts
+- imports: file:src/components/askerInfo/AskerInfoTools.tsx -> file:src/api/apiGetUserDataBySessionId.ts
+- imports: file:src/components/askerInfo/AskerInfoTools.tsx -> file:src/components/askerInfo/AskerInfoToolsOptions.tsx
+- imports: file:src/components/askerInfo/AskerInfoTools.tsx -> file:src/components/sessionCookie/refreshKeycloakAccessToken.ts
+- imports: file:src/components/askerInfo/AskerInfoTools.tsx -> file:src/components/text/Text.tsx
+- imports: file:src/components/askerInfo/AskerInfoTools.tsx -> file:src/globalState/index.ts
+- imports: file:src/components/askerInfo/AskerInfoTools.tsx -> file:src/resources/scripts/endpoints.ts
+- imports: file:src/components/auth/auth.ts -> file:src/components/logout/logout.ts
+- imports: file:src/components/auth/auth.ts -> file:src/components/sessionCookie/accessSessionCookie.ts
+- imports: file:src/components/auth/auth.ts -> file:src/components/sessionCookie/accessSessionLocalStorage.ts
+- imports: file:src/components/auth/auth.ts -> file:src/components/sessionCookie/refreshKeycloakAccessToken.ts
+- imports: file:src/components/auth/auth.ts -> file:src/utils/appConfig.ts
+- imports: file:src/components/budibase/budibaseLogout.ts -> file:src/utils/appConfig.ts
+- imports: file:src/components/dragAndDropArea/DragAndDropArea.tsx -> file:src/components/messageSubmitInterface/attachmentHelpers.ts
+- imports: file:src/components/error/errorHandling.ts -> file:src/api/apiPostError.ts
+- imports: file:src/components/error/errorHandling.ts -> file:src/components/logout/logout.ts
+- imports: file:src/components/error/errorHandling.ts -> file:src/components/sessionCookie/accessSessionCookie.ts
+
+### External ORISO Dependencies
+
+- ORISO-Frontend -> ORISO-Keycloak: depends_on (ORISO-Frontend::file:src/api/apiLogoutKeycloak.ts)
+- ORISO-Frontend -> ORISO-Keycloak: depends_on (ORISO-Frontend::function:src/api/apiLogoutKeycloak.ts:apiKeycloakLogout)
+- ORISO-Frontend -> ORISO-Keycloak: depends_on (ORISO-Frontend::file:src/components/sessionCookie/refreshKeycloakAccessToken.ts)
+- ORISO-Frontend -> ORISO-Keycloak: depends_on (ORISO-Frontend::function:src/components/sessionCookie/refreshKeycloakAccessToken.ts:refreshKeycloakAccessToken)
+- ORISO-Frontend -> ORISO-UserService: depends_on (ORISO-Frontend::file:src/api/apiAppointmentServiceSet.ts)
+- ORISO-Frontend -> ORISO-UserService: depends_on (ORISO-Frontend::function:src/api/apiAppointmentServiceSet.ts:apiAppointmentServiceSet)
+- ORISO-Frontend -> ORISO-UserService: depends_on (ORISO-Frontend::file:src/api/apiGetApiAppointmentServiceEventTypes.ts)
+- ORISO-Frontend -> ORISO-UserService: depends_on (ORISO-Frontend::function:src/api/apiGetApiAppointmentServiceEventTypes.ts:getCounselorAppointmentLink)
+- ORISO-Frontend -> ORISO-UserService: depends_on (ORISO-Frontend::file:src/api/apiGetAppointmentServiceTeam.ts)
+- ORISO-Frontend -> ORISO-UserService: depends_on (ORISO-Frontend::function:src/api/apiGetAppointmentServiceTeam.ts:getTeamAppointmentLink)
+- ORISO-Frontend -> ORISO-Keycloak: depends_on (ORISO-Frontend::file:src/components/sessionCookie/getKeycloakAccessToken.ts)
+- ORISO-Frontend -> ORISO-Keycloak: depends_on (ORISO-Frontend::function:src/components/sessionCookie/getKeycloakAccessToken.ts:getKeycloakAccessToken)
+- ORISO-Frontend -> ORISO-Keycloak: depends_on (ORISO-Frontend::function:src/utils/anonymousSessionFetchGuard.ts:decodeKeycloakPreferredUsername)
+- ORISO-Frontend -> ORISO-Keycloak: depends_on (ORISO-Frontend::file:src/utils/keycloakSession.ts)
+- ORISO-Frontend -> ORISO-Keycloak: depends_on (ORISO-Frontend::function:src/utils/keycloakSession.ts:isKeycloakConsultantSession)
+- ORISO-Frontend -> ORISO-Keycloak: depends_on (ORISO-Frontend::function:src/utils/keycloakSession.ts:buildAnonymousUserData)
+- ORISO-Frontend -> ORISO-Kubernetes: depends_on (ORISO-Frontend::document:STORYBOOK_KUBERNETES.md)
+- ORISO-Frontend -> ORISO-Kubernetes: depends_on (ORISO-Frontend::config:ingress-v2.yaml)
+- ORISO-Frontend -> ORISO-Kubernetes: depends_on (ORISO-Frontend::config:ingress.yaml)
+- ORISO-Frontend -> ORISO-Kubernetes: depends_on (ORISO-Frontend::config:storybook-ingress.yaml)
+- ORISO-Frontend -> ORISO-Keycloak: depends_on (ORISO-Frontend::file:src/components/sessionCookie/getKeycloakAccessToken.ts.backup)
+- ORISO-Frontend -> ORISO-AgencyService: depends_on (ORISO-Frontend::file:src/generated/agencyservice.d.ts)
+- ORISO-Frontend -> ORISO-UserService: depends_on (ORISO-Frontend::file:src/generated/userservice.d.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/api/apiLogoutKeycloak.ts -> ORISO-Frontend::function:src/api/apiLogoutKeycloak.ts:apiKeycloakLogout)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/api/apiLogoutKeycloak.ts -> ORISO-Frontend::file:src/components/sessionCookie/accessSessionCookie.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/api/apiLogoutKeycloak.ts -> ORISO-Frontend::file:src/resources/scripts/endpoints.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/askerInfo/AskerInfoTools.tsx -> ORISO-Frontend::file:src/components/sessionCookie/refreshKeycloakAccessToken.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/auth/auth.ts -> ORISO-Frontend::file:src/components/sessionCookie/refreshKeycloakAccessToken.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/logout/logout.ts -> ORISO-Frontend::file:src/api/apiLogoutKeycloak.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/messageSubmitInterface/useDraftMessage.tsx -> ORISO-Frontend::file:src/utils/keycloakSession.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/sessionCookie/refreshKeycloakAccessToken.ts -> ORISO-Frontend::function:src/components/sessionCookie/refreshKeycloakAccessToken.ts:refreshKeycloakAccessToken)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/sessionCookie/refreshKeycloakAccessToken.ts -> ORISO-Frontend::file:src/components/registration/autoLogin.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/sessionCookie/refreshKeycloakAccessToken.ts -> ORISO-Frontend::file:src/components/sessionCookie/accessSessionCookie.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/sessionCookie/refreshKeycloakAccessToken.ts -> ORISO-Frontend::file:src/resources/scripts/endpoints.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/api/apiPatchUserData.ts -> ORISO-Frontend::file:src/utils/keycloakSession.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/localeSwitch/LocaleSwitch.tsx -> ORISO-Frontend::file:src/utils/keycloakSession.ts)
+- ORISO-Frontend -> ORISO-UserService: related (ORISO-Frontend::file:src/api/apiAppointmentServiceSet.ts -> ORISO-Frontend::function:src/api/apiAppointmentServiceSet.ts:apiAppointmentServiceSet)
+- ORISO-Frontend -> ORISO-UserService: related (ORISO-Frontend::file:src/api/apiAppointmentServiceSet.ts -> ORISO-Frontend::file:src/api/fetchData.ts)
+- ORISO-Frontend -> ORISO-UserService: related (ORISO-Frontend::file:src/api/apiAppointmentServiceSet.ts -> ORISO-Frontend::file:src/resources/scripts/endpoints.ts)
+- ORISO-Frontend -> ORISO-UserService: related (ORISO-Frontend::file:src/api/apiGetApiAppointmentServiceEventTypes.ts -> ORISO-Frontend::function:src/api/apiGetApiAppointmentServiceEventTypes.ts:getCounselorAppointmentLink)
+- ORISO-Frontend -> ORISO-UserService: related (ORISO-Frontend::file:src/api/apiGetApiAppointmentServiceEventTypes.ts -> ORISO-Frontend::file:src/api/fetchData.ts)
+- ORISO-Frontend -> ORISO-UserService: related (ORISO-Frontend::file:src/api/apiGetApiAppointmentServiceEventTypes.ts -> ORISO-Frontend::file:src/resources/scripts/endpoints.ts)
+- ORISO-Frontend -> ORISO-UserService: related (ORISO-Frontend::file:src/api/apiGetAppointmentServiceTeam.ts -> ORISO-Frontend::function:src/api/apiGetAppointmentServiceTeam.ts:getTeamAppointmentLink)
+- ORISO-Frontend -> ORISO-UserService: related (ORISO-Frontend::file:src/api/apiGetAppointmentServiceTeam.ts -> ORISO-Frontend::file:src/api/fetchData.ts)
+- ORISO-Frontend -> ORISO-UserService: related (ORISO-Frontend::file:src/api/apiGetAppointmentServiceTeam.ts -> ORISO-Frontend::file:src/resources/scripts/endpoints.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/api/apiGetAskerSessionList.ts -> ORISO-Frontend::file:src/utils/keycloakSession.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/api/apiGetUserData.ts -> ORISO-Frontend::file:src/utils/keycloakSession.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/login/Login.tsx -> ORISO-Frontend::file:src/utils/keycloakSession.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/registration/autoLogin.ts -> ORISO-Frontend::file:src/components/sessionCookie/getKeycloakAccessToken.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/sessionCookie/getKeycloakAccessToken.ts -> ORISO-Frontend::function:src/components/sessionCookie/getKeycloakAccessToken.ts:getKeycloakAccessToken)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/sessionCookie/getKeycloakAccessToken.ts -> ORISO-Frontend::file:src/api/index.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/sessionCookie/getKeycloakAccessToken.ts -> ORISO-Frontend::file:src/components/registration/autoLogin.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/sessionCookie/getKeycloakAccessToken.ts -> ORISO-Frontend::file:src/resources/scripts/endpoints.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/app/NavigationBar.tsx -> ORISO-Frontend::file:src/utils/keycloakSession.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/draftsCenter/DraftsCenter.tsx -> ORISO-Frontend::file:src/utils/keycloakSession.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/globalState/provider/UserDataProvider.tsx -> ORISO-Frontend::file:src/utils/keycloakSession.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/hooks/useJoinGroupChat.ts -> ORISO-Frontend::file:src/utils/keycloakSession.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/utils/anonymousSessionFetchGuard.ts -> ORISO-Frontend::function:src/utils/anonymousSessionFetchGuard.ts:decodeKeycloakPreferredUsername)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/utils/keycloakSession.ts -> ORISO-Frontend::function:src/utils/keycloakSession.ts:isKeycloakConsultantSession)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/utils/keycloakSession.ts -> ORISO-Frontend::function:src/utils/keycloakSession.ts:buildAnonymousUserData)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/utils/keycloakSession.ts -> ORISO-Frontend::file:src/components/sessionCookie/accessSessionCookie.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/utils/keycloakSession.ts -> ORISO-Frontend::file:src/globalState/helpers/stateHelpers.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/utils/keycloakSession.ts -> ORISO-Frontend::file:src/globalState/interfaces/UserDataInterface.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/utils/keycloakSession.ts -> ORISO-Frontend::file:src/utils/anonymousSessionFetchGuard.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/utils/keycloakSession.ts -> ORISO-Frontend::file:src/utils/parseJWT.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/api/apiUserDrafts.ts -> ORISO-Frontend::file:src/utils/keycloakSession.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/sessionsList/SessionsList.tsx -> ORISO-Frontend::file:src/utils/keycloakSession.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/session/SessionItemComponent.tsx -> ORISO-Frontend::file:src/utils/keycloakSession.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/app/AuthenticatedApp.tsx -> ORISO-Frontend::file:src/utils/keycloakSession.ts)
+- ORISO-Frontend -> ORISO-Kubernetes: related (ORISO-Frontend::document:STORYBOOK_KUBERNETES.md -> ORISO-Frontend::document:README.md)
+- ORISO-Frontend -> ORISO-Kubernetes: related (ORISO-Frontend::config:ingress-v2.yaml -> ORISO-Frontend::file:src/initApp.tsx)
+- ORISO-Frontend -> ORISO-Kubernetes: related (ORISO-Frontend::config:ingress.yaml -> ORISO-Frontend::file:src/initApp.tsx)
+- ORISO-Frontend -> ORISO-Kubernetes: related (ORISO-Frontend::config:storybook-ingress.yaml -> ORISO-Frontend::file:src/initApp.tsx)
+- ORISO-Kubernetes -> ORISO-Frontend: deploys (ORISO-Kubernetes::concept:external-utilities)
+- ORISO-Kubernetes -> ORISO-Frontend: deploys (ORISO-Kubernetes::concept:loadbalancer-plus-ingress)
+- ORISO-Kubernetes -> ORISO-Frontend: deploys (ORISO-Kubernetes::concept:oriso-dev-domains)
+- ORISO-Kubernetes -> ORISO-Frontend: deploys (ORISO-Kubernetes::config:helm/charts/frontend/Chart.yaml)
+- ORISO-Kubernetes -> ORISO-Frontend: deploys (ORISO-Kubernetes::config:helm/charts/frontend/values.yaml)
+- ORISO-Kubernetes -> ORISO-Frontend: deploys (ORISO-Kubernetes::config:helm/charts/storybook/Chart.yaml)
+- ORISO-Kubernetes -> ORISO-Frontend: deploys (ORISO-Kubernetes::config:helm/charts/storybook/values.yaml)
+
+### Auth References
+
+- file: tokens.cy.ts — cypress/e2e/tokens.cy.ts
+- file: apiLogoutKeycloak.ts — src/api/apiLogoutKeycloak.ts
+- function: apiKeycloakLogout — src/api/apiLogoutKeycloak.ts
+- file: auth.ts — src/components/auth/auth.ts
+- function: RENEW_BEFORE_EXPIRY_IN_MS — src/components/auth/auth.ts
+- function: setTokens — src/components/auth/auth.ts
+- function: handleTokenRefresh — src/components/auth/auth.ts
+- function: setTokenExpiryInLocalStorage — src/components/sessionCookie/accessSessionLocalStorage.ts
+- function: getTokenExpiryFromLocalStorage — src/components/sessionCookie/accessSessionLocalStorage.ts
+- function: removeTokenExpiryFromLocalStorage — src/components/sessionCookie/accessSessionLocalStorage.ts
+- file: getBudibaseAccessToken.ts — src/components/sessionCookie/getBudibaseAccessToken.ts
+- function: getBudibaseAccessToken — src/components/sessionCookie/getBudibaseAccessToken.ts
+- function: waitForLogin — src/components/sessionCookie/getBudibaseAccessToken.ts
+- file: refreshKeycloakAccessToken.ts — src/components/sessionCookie/refreshKeycloakAccessToken.ts
+- function: refreshKeycloakAccessToken — src/components/sessionCookie/refreshKeycloakAccessToken.ts
+- file: generateCsrfToken.ts — src/utils/generateCsrfToken.ts
+- function: generateCsrfToken — src/utils/generateCsrfToken.ts
+- file: MagicLinksLoginFeature.tsx — src/components/profile/MagicLinksLoginFeature.tsx
+- file: fastLogin.ts — cypress/support/commands/helper/fastLogin.ts
+- file: login.ts — cypress/support/commands/helper/login.ts
+- file: apiRequestMagicLinkLogin.ts — src/api/apiRequestMagicLinkLogin.ts
+- file: apiConsumeMagicLinkLogin.ts — src/api/apiConsumeMagicLinkLogin.ts
+- file: Login.tsx — src/components/login/Login.tsx
+- file: autoLogin.ts — src/components/registration/autoLogin.ts
+- file: getKeycloakAccessToken.ts — src/components/sessionCookie/getKeycloakAccessToken.ts
+- function: getKeycloakAccessToken — src/components/sessionCookie/getKeycloakAccessToken.ts
+- file: getRocketchatAccessToken.ts — src/components/sessionCookie/getRocketchatAccessToken.ts
+- function: getRocketchatAccessToken — src/components/sessionCookie/getRocketchatAccessToken.ts
+- function: hasUserAuthority — src/globalState/helpers/stateHelpers.ts
+- function: AUTHORITIES — src/globalState/helpers/stateHelpers.ts
+- function: decodeKeycloakPreferredUsername — src/utils/anonymousSessionFetchGuard.ts
+- file: keycloakSession.ts — src/utils/keycloakSession.ts
+- function: isKeycloakConsultantSession — src/utils/keycloakSession.ts
+- function: buildAnonymousUserData — src/utils/keycloakSession.ts
+- file: parseJWT.ts — src/utils/parseJWT.ts
+- function: parseJwt — src/utils/parseJWT.ts
+- file: TwoFactorAuth.tsx — src/components/twoFactorAuth/TwoFactorAuth.tsx
+- function: OTP_LENGTH — src/components/twoFactorAuth/TwoFactorAuth.tsx
+- function: TWO_FACTOR_TYPES — src/components/twoFactorAuth/TwoFactorAuth.tsx
+- function: TwoFactorAuth — src/components/twoFactorAuth/TwoFactorAuth.tsx
+- file: TwoFactorAuthResendMail.tsx — src/components/twoFactorAuth/TwoFactorAuthResendMail.tsx
+- file: useCalcomLogin.ts — src/containers/bookings/hooks/useCalcomLogin.ts
+- file: useNotificationPermission.ts — src/hooks/useNotificationPermission.ts
+- function: useNotificationPermission — src/hooks/useNotificationPermission.ts
+- file: apiTwoFactorAuth.ts — src/api/apiTwoFactorAuth.ts
+- function: apiPutTwoFactorAuthApp — src/api/apiTwoFactorAuth.ts
+- function: apiPutTwoFactorAuthEmail — src/api/apiTwoFactorAuth.ts
+- function: apiPatchTwoFactorAuthEncourage — src/api/apiTwoFactorAuth.ts
+- function: apiPostTwoFactorAuthEmailWithCode — src/api/apiTwoFactorAuth.ts
+- function: apiDeleteTwoFactorAuth — src/api/apiTwoFactorAuth.ts
+- file: getJwt.ts — src/api/videocalls/getJwt.ts
+- function: getJwt — src/api/videocalls/getJwt.ts
+- file: getMatrixAccessToken.ts — src/components/sessionCookie/getMatrixAccessToken.ts
+- function: getMatrixAccessToken — src/components/sessionCookie/getMatrixAccessToken.ts
+- function: createMatrixClient — src/components/sessionCookie/getMatrixAccessToken.ts
+- file: TwoFactorNag.tsx — src/components/twoFactorAuth/TwoFactorNag.tsx
+- file: login.cy.ts — cypress/e2e/login.cy.ts
+- file: AuthenticatedApp.tsx — src/components/app/AuthenticatedApp.tsx
+- function: AuthenticatedApp — src/components/app/AuthenticatedApp.tsx
+- function: METHOD_PERMISSIONS_GET — src/components/app/RocketChat.ts
+
+### Database References
+
+- file: EditableData.tsx — src/components/editableData/EditableData.tsx
+- function: EditableData — src/components/editableData/EditableData.tsx
+- file: bookingEventTableColumnAttendee.tsx — src/containers/bookings/components/BookingEventTableColumnAttendee/bookingEventTableColumnAttendee.tsx
+- file: editableData.styles.scss — src/components/editableData/editableData.styles.scss
+
+### Deployment/Config References
+
+- None found in graph artifacts.
+
+- function: inputValuesFit — src/utils/validateInputValue.ts
+- service: .dockerignore
+- service: Dockerfile
+- pipeline: frontend-deploy.yml — .github/workflows/frontend-deploy.yml
+- service: Dockerfile.storybook
+- document: STORYBOOK_KUBERNETES.md
+- config: deployment-v2.yaml
+- config: https-redirect-middleware.yaml
+- config: ingress-v2.yaml
+- config: ingress.yaml
+- config: k8s-temp-frontend.yaml
+- config: service-v2.yaml
+- config: storybook-deployment.yaml
+- config: storybook-ingress.yaml
+- config: storybook-redirect-middleware.yaml
+- config: storybook-service.yaml
+
+### Important Graph Nodes
+
+- file: tokens.cy.ts — cypress/e2e/tokens.cy.ts
+- file: apiLogoutKeycloak.ts — src/api/apiLogoutKeycloak.ts
+- function: apiKeycloakLogout — src/api/apiLogoutKeycloak.ts
+- file: apiMatrixUpload.ts — src/api/apiMatrixUpload.ts
+- function: apiMatrixUploadFile — src/api/apiMatrixUpload.ts
+- function: apiMatrixSendFileMessage — src/api/apiMatrixUpload.ts
+- file: apiPostError.ts — src/api/apiPostError.ts
+- function: ERROR_LEVEL_FATAL — src/api/apiPostError.ts
+- function: ERROR_LEVEL_ERROR — src/api/apiPostError.ts
+- function: ERROR_LEVEL_WARN — src/api/apiPostError.ts
+- function: ERROR_LEVEL_INFO — src/api/apiPostError.ts
+- function: ERROR_LEVEL_DEBUG — src/api/apiPostError.ts
+- function: ERROR_LEVEL_TRACE — src/api/apiPostError.ts
+- function: apiPostError — src/api/apiPostError.ts
+- file: apiUploadAttachment.ts — src/api/apiUploadAttachment.ts
+- function: apiUploadAttachment — src/api/apiUploadAttachment.ts
+- file: ErrorBoundary.tsx — src/components/app/ErrorBoundary.tsx
+- class: ErrorBoundary — src/components/app/ErrorBoundary.tsx
+- file: AskerInfoTools.tsx — src/components/askerInfo/AskerInfoTools.tsx
+- function: AskerInfoTools — src/components/askerInfo/AskerInfoTools.tsx
+- file: auth.ts — src/components/auth/auth.ts
+- function: RENEW_BEFORE_EXPIRY_IN_MS — src/components/auth/auth.ts
+- function: setTokens — src/components/auth/auth.ts
+- function: handleTokenRefresh — src/components/auth/auth.ts
+- file: budibaseLogout.ts — src/components/budibase/budibaseLogout.ts
+- function: budibaseLogout — src/components/budibase/budibaseLogout.ts
+- file: DragAndDropArea.tsx — src/components/dragAndDropArea/DragAndDropArea.tsx
+- function: DragAndDropArea — src/components/dragAndDropArea/DragAndDropArea.tsx
+- file: errorHandling.ts — src/components/error/errorHandling.ts
+- function: ERROR_TYPES — src/components/error/errorHandling.ts
+- function: getErrorCaseForStatus — src/components/error/errorHandling.ts
+- function: redirectToErrorPage — src/components/error/errorHandling.ts
+- file: LoadingSpinner.stories.ts — src/components/loadingSpinner/LoadingSpinner.stories.ts
+- file: LoadingSpinner.tsx — src/components/loadingSpinner/LoadingSpinner.tsx
+- file: calcomLogout.ts — src/components/logout/calcomLogout.ts
+- function: calcomLogout — src/components/logout/calcomLogout.ts
+- file: logout.ts — src/components/logout/logout.ts
+- function: EVENT_PRE_LOGOUT — src/components/logout/logout.ts
+- function: logout — src/components/logout/logout.ts
+- file: MessageAttachment.stories.ts — src/components/message/MessageAttachment.stories.ts
+
+### Important Graph Edges
+
+- imports: file:cypress/e2e/tokens.cy.ts -> file:cypress/support/websocket.ts
+- imports: file:cypress/e2e/tokens.cy.ts -> file:src/components/auth/auth.ts
+- imports: file:cypress/e2e/tokens.cy.ts -> file:src/components/sessionCookie/accessSessionLocalStorage.ts
+- contains: file:src/api/apiLogoutKeycloak.ts -> function:src/api/apiLogoutKeycloak.ts:apiKeycloakLogout
+- exports: file:src/api/apiLogoutKeycloak.ts -> function:src/api/apiLogoutKeycloak.ts:apiKeycloakLogout
+- imports: file:src/api/apiLogoutKeycloak.ts -> file:src/components/sessionCookie/accessSessionCookie.ts
+- imports: file:src/api/apiLogoutKeycloak.ts -> file:src/resources/scripts/endpoints.ts
+- contains: file:src/api/apiMatrixUpload.ts -> function:src/api/apiMatrixUpload.ts:apiMatrixUploadFile
+- exports: file:src/api/apiMatrixUpload.ts -> function:src/api/apiMatrixUpload.ts:apiMatrixUploadFile
+- contains: file:src/api/apiMatrixUpload.ts -> function:src/api/apiMatrixUpload.ts:apiMatrixSendFileMessage
+- exports: file:src/api/apiMatrixUpload.ts -> function:src/api/apiMatrixUpload.ts:apiMatrixSendFileMessage
+- imports: file:src/api/apiMatrixUpload.ts -> file:src/components/sessionCookie/accessSessionCookie.ts
+- imports: file:src/api/apiMatrixUpload.ts -> file:src/resources/scripts/endpoints.ts
+- imports: file:src/api/apiMatrixUpload.ts -> file:src/utils/generateCsrfToken.ts
+- contains: file:src/api/apiPostError.ts -> function:src/api/apiPostError.ts:ERROR_LEVEL_FATAL
+- exports: file:src/api/apiPostError.ts -> function:src/api/apiPostError.ts:ERROR_LEVEL_FATAL
+- contains: file:src/api/apiPostError.ts -> function:src/api/apiPostError.ts:ERROR_LEVEL_ERROR
+- exports: file:src/api/apiPostError.ts -> function:src/api/apiPostError.ts:ERROR_LEVEL_ERROR
+- contains: file:src/api/apiPostError.ts -> function:src/api/apiPostError.ts:ERROR_LEVEL_WARN
+- exports: file:src/api/apiPostError.ts -> function:src/api/apiPostError.ts:ERROR_LEVEL_WARN
+- contains: file:src/api/apiPostError.ts -> function:src/api/apiPostError.ts:ERROR_LEVEL_INFO
+- exports: file:src/api/apiPostError.ts -> function:src/api/apiPostError.ts:ERROR_LEVEL_INFO
+- contains: file:src/api/apiPostError.ts -> function:src/api/apiPostError.ts:ERROR_LEVEL_DEBUG
+- exports: file:src/api/apiPostError.ts -> function:src/api/apiPostError.ts:ERROR_LEVEL_DEBUG
+- contains: file:src/api/apiPostError.ts -> function:src/api/apiPostError.ts:ERROR_LEVEL_TRACE
+- exports: file:src/api/apiPostError.ts -> function:src/api/apiPostError.ts:ERROR_LEVEL_TRACE
+- contains: file:src/api/apiPostError.ts -> function:src/api/apiPostError.ts:apiPostError
+- exports: file:src/api/apiPostError.ts -> function:src/api/apiPostError.ts:apiPostError
+- imports: file:src/api/apiPostError.ts -> file:src/api/fetchData.ts
+- imports: file:src/api/apiPostError.ts -> file:src/resources/scripts/endpoints.ts
+
+### Missing or Weak Areas
+
+- No endpoint nodes detected; API/routes may only be represented as files/functions.
+- No visual graph artifacts found.
+
+### Needs Verification
+
+- No endpoint nodes detected; API/routes may only be represented as files/functions.
+- No visual graph artifacts found.
+
+## ORISO-Admin
+
+### Graph Source
+
+- graph path: ../ORISO-Admin/.understand-anything/knowledge-graph.json
+- artifacts used: 11
+- node count: 776
+- edge count: 1547
+
+Artifacts used:
+
+- .understand-anything/ARCHITECTURE.md (6.9 KB)
+- .understand-anything/DEPENDENCY-AUDIT.md (1.7 KB)
+- .understand-anything/FINDINGS.md (4.1 KB)
+- .understand-anything/knowledge-graph.json (692.1 KB)
+- .understand-anything/ONBOARDING.md (5.1 KB)
+- .understand-anything/ORISO-ECOSYSTEM.md (2.3 KB)
+- .understand-anything/README.md (1.5 KB)
+- .understand-anything/visuals/architecture-flow.mmd (976 B)
+- .understand-anything/visuals/auth-flow.mmd (863 B)
+- .understand-anything/visuals/data-flow.mmd (390 B)
+- .understand-anything/visuals/deployment-flow.mmd (456 B)
+
+### Repository Purpose
+
+Admin dashboard for the Online-Beratung platform, managing tenants, agencies, counselors, topics, invite links, global settings, user administration, and audit/log views.
+
+### Main Files/Modules
+
+- file: .eslintignore
+- file: .prettierignore
+- file: .understandignore — .understand-anything/.understandignore
+- file: babel.config.js
+- file: counselor.spec.js — cypress/integration/counselor.spec.js
+- file: post-login.spec.js — cypress/integration/post-login.spec.js
+- file: pre-login.spec.js — cypress/integration/pre-login.spec.js
+- file: index.js — cypress/plugins/index.js
+- file: commands.js — cypress/support/commands.js
+- file: index.js — cypress/support/index.js
+- file: deploy-admin.sh
+- file: deploy-development.sh
+- file: index.d.ts
+- file: index.html
+- file: nginx.conf
+- file: addAgencyAdminData.ts — src/api/admins/addAgencyAdminData.ts
+- file: deleteAgencyAdminData.ts — src/api/admins/deleteAgencyAdminData.ts
+- file: ediAgencytAdminData.ts — src/api/admins/ediAgencytAdminData.ts
+- file: addAgencyData.ts — src/api/agency/addAgencyData.ts
+- file: deleteAgencyData.ts — src/api/agency/deleteAgencyData.ts
+- file: deleteAgencyEventType.ts — src/api/agency/deleteAgencyEventType.ts
+- file: getAgencyByCounselorData.ts — src/api/agency/getAgencyByCounselorData.ts
+- file: getAgencyById.ts — src/api/agency/getAgencyById.ts
+- file: getAgencyByTenantData.ts — src/api/agency/getAgencyByTenantData.ts
+- file: getAgencyConsultants.ts — src/api/agency/getAgencyConsultants.ts
+- file: getAgencyData.ts — src/api/agency/getAgencyData.ts
+- file: getAgencyEventTypeById.ts — src/api/agency/getAgencyEventTypeById.ts
+- file: getAgencyEventTypes.ts — src/api/agency/getAgencyEventTypes.ts
+- file: getAgencyPostCodeRange.ts — src/api/agency/getAgencyPostCodeRange.ts
+- file: getDiocesesData.ts — src/api/agency/getDiocesesData.ts
+- file: postConsultantForAgencyEventTypes.ts — src/api/agency/postConsultantForAgencyEventTypes.ts
+- file: putAgenciesForAdmin.ts — src/api/agency/putAgenciesForAdmin.ts
+- file: putAgenciesForCounselor.ts — src/api/agency/putAgenciesForCounselor.ts
+- file: putConsultantForAgencyEventTypes.ts — src/api/agency/putConsultantForAgencyEventTypes.ts
+- file: updateAgencyData.ts — src/api/agency/updateAgencyData.ts
+- file: updateAgencyPostCodeRange.ts — src/api/agency/updateAgencyPostCodeRange.ts
+- file: updateAgencyType.ts — src/api/agency/updateAgencyType.ts
+- file: accessSessionCookie.ts — src/api/auth/accessSessionCookie.ts
+- file: accessSessionLocalStorage.ts — src/api/auth/accessSessionLocalStorage.ts
+- file: apiLogoutKeycloak.ts — src/api/auth/apiLogoutKeycloak.ts
+- file: auth.ts — src/api/auth/auth.ts
+- file: getAccessToken.ts — src/api/auth/getAccessToken.ts
+- file: logout.ts — src/api/auth/logout.ts
+- file: refreshKeycloakAccessToken.ts — src/api/auth/refreshKeycloakAccessToken.ts
+- file: getConsultingType4Tenant.ts — src/api/consultingtype/getConsultingType4Tenant.ts
+- file: getConsultingTypes.ts — src/api/consultingtype/getConsultingTypes.ts
+- file: addCounselorData.ts — src/api/counselor/addCounselorData.ts
+- file: addFAKECounselorData.ts — src/api/counselor/addFAKECounselorData.ts
+- file: deleteCounselorData.ts — src/api/counselor/deleteCounselorData.ts
+- file: deleteFAKECounselorData.ts — src/api/counselor/deleteFAKECounselorData.ts
+- file: editCounselorData.ts — src/api/counselor/editCounselorData.ts
+- file: editFAKECounselorData.ts — src/api/counselor/editFAKECounselorData.ts
+- file: getCounselorSearchData.ts — src/api/counselor/getCounselorSearchData.ts
+- file: fetchData.ts — src/api/fetchData.ts
+- file: invitelinks.ts — src/api/invitelinks/invitelinks.ts
+- file: apiServerSettings.ts — src/api/settings/apiServerSettings.ts
+- file: sendGlobalSmtpTestEmail.ts — src/api/settings/sendGlobalSmtpTestEmail.ts
+- file: getRegistrationData.ts — src/api/statistic/getRegistrationData.ts
+- file: addTenantData.ts — src/api/tenant/addTenantData.ts
+- file: deleteTenantData.ts — src/api/tenant/deleteTenantData.ts
+
+### Classes/Functions
+
+- function: addAgencyAdminData — src/api/admins/addAgencyAdminData.ts
+- function: deleteAgencyAdminData — src/api/admins/deleteAgencyAdminData.ts
+- function: editAgencyAdminData — src/api/admins/ediAgencytAdminData.ts
+- function: buildAgencyDataRequestBody — src/api/agency/addAgencyData.ts
+- function: createAgency — src/api/agency/addAgencyData.ts
+- function: addAgencyData — src/api/agency/addAgencyData.ts
+- function: hasAgencyConsultants — src/api/agency/getAgencyConsultants.ts
+- function: getAgencyConsultants — src/api/agency/getAgencyConsultants.ts
+- function: DEFAULT_SORT — src/api/agency/getAgencyData.ts
+- function: DEFAULT_ORDER — src/api/agency/getAgencyData.ts
+- function: getDiocesesData — src/api/agency/getDiocesesData.ts
+- function: DEFAULT_ROLE — src/api/agency/putAgenciesForAdmin.ts
+- function: putAgenciesForAgencyAdmin — src/api/agency/putAgenciesForAdmin.ts
+- function: DEFAULT_ROLE — src/api/agency/putAgenciesForCounselor.ts
+- function: putAgenciesForCounselor — src/api/agency/putAgenciesForCounselor.ts
+- function: updateAgencyData — src/api/agency/updateAgencyData.ts
+- function: updateAgencyType — src/api/agency/updateAgencyType.ts
+- function: setValueInCookie — src/api/auth/accessSessionCookie.ts
+- function: deleteCookieByName — src/api/auth/accessSessionCookie.ts
+- function: getValueFromCookie — src/api/auth/accessSessionCookie.ts
+- function: removeAllCookies — src/api/auth/accessSessionCookie.ts
+- function: getLocalStorageItem — src/api/auth/accessSessionLocalStorage.ts
+- function: removeLocalStorageItem — src/api/auth/accessSessionLocalStorage.ts
+- function: setTokenExpiryInLocalStorage — src/api/auth/accessSessionLocalStorage.ts
+- function: getTokenExpiryFromLocalStorage — src/api/auth/accessSessionLocalStorage.ts
+- function: removeTokenExpiryFromLocalStorage — src/api/auth/accessSessionLocalStorage.ts
+- function: RENEW_BEFORE_EXPIRY_IN_MS — src/api/auth/auth.ts
+- function: setTokens — src/api/auth/auth.ts
+- function: handleTokenRefresh — src/api/auth/auth.ts
+- function: getConsultingType4Tenant — src/api/consultingtype/getConsultingType4Tenant.ts
+- function: getConsultingTypes — src/api/consultingtype/getConsultingTypes.ts
+- function: addCounselorData — src/api/counselor/addCounselorData.ts
+- function: fakeCounselors — src/api/counselor/addFAKECounselorData.ts
+- function: deleteCounselorData — src/api/counselor/deleteCounselorData.ts
+- function: editCounselorData — src/api/counselor/editCounselorData.ts
+- function: DEFAULT_SORT — src/api/counselor/getCounselorSearchData.ts
+- function: DEFAULT_ORDER — src/api/counselor/getCounselorSearchData.ts
+- function: FETCH_METHODS — src/api/fetchData.ts
+- function: FETCH_ERRORS — src/api/fetchData.ts
+- function: X_REASON — src/api/fetchData.ts
+- function: FETCH_SUCCESS — src/api/fetchData.ts
+- function: fetchData — src/api/fetchData.ts
+- class: FetchErrorWithOptions — src/api/fetchData.ts
+- function: listInviteLinks — src/api/invitelinks/invitelinks.ts
+- function: createInviteLink — src/api/invitelinks/invitelinks.ts
+- function: apiServerSettings — src/api/settings/apiServerSettings.ts
+- function: sendGlobalSmtpTestEmail — src/api/settings/sendGlobalSmtpTestEmail.ts
+- function: deleteTenantData — src/api/tenant/deleteTenantData.ts
+- function: randomDate — src/api/tenant/getFakeMultipleTenants.ts
+- function: getSingleTenantData — src/api/tenant/getSingleTenantData.ts
+- function: searchTenantData — src/api/tenant/searchTenantData.ts
+- function: buildTopicDataRequestBody — src/api/topic/addTopicData.ts
+- function: createTopic — src/api/topic/addTopicData.ts
+- function: addTopicData — src/api/topic/addTopicData.ts
+- function: deleteTopicData — src/api/topic/deleteTopicData.ts
+- function: DEFAULT_SORT — src/api/topic/getTopicData.ts
+- function: DEFAULT_ORDER — src/api/topic/getTopicData.ts
+- function: apiPutTwoFactorAuthApp — src/api/user/apiTwoFactorAuth.ts
+- function: apiPutTwoFactorAuthEmail — src/api/user/apiTwoFactorAuth.ts
+- function: apiPatchTwoFactorAuthEncourage — src/api/user/apiTwoFactorAuth.ts
+
+### APIs/Routes
+
+- file: addAgencyAdminData.ts — src/api/admins/addAgencyAdminData.ts
+- function: addAgencyAdminData — src/api/admins/addAgencyAdminData.ts
+- file: deleteAgencyAdminData.ts — src/api/admins/deleteAgencyAdminData.ts
+- function: deleteAgencyAdminData — src/api/admins/deleteAgencyAdminData.ts
+- file: ediAgencytAdminData.ts — src/api/admins/ediAgencytAdminData.ts
+- function: editAgencyAdminData — src/api/admins/ediAgencytAdminData.ts
+- file: addAgencyData.ts — src/api/agency/addAgencyData.ts
+- function: buildAgencyDataRequestBody — src/api/agency/addAgencyData.ts
+- function: createAgency — src/api/agency/addAgencyData.ts
+- function: addAgencyData — src/api/agency/addAgencyData.ts
+- file: deleteAgencyData.ts — src/api/agency/deleteAgencyData.ts
+- file: deleteAgencyEventType.ts — src/api/agency/deleteAgencyEventType.ts
+- file: getAgencyByCounselorData.ts — src/api/agency/getAgencyByCounselorData.ts
+- file: getAgencyById.ts — src/api/agency/getAgencyById.ts
+- file: getAgencyByTenantData.ts — src/api/agency/getAgencyByTenantData.ts
+- file: getAgencyConsultants.ts — src/api/agency/getAgencyConsultants.ts
+- function: hasAgencyConsultants — src/api/agency/getAgencyConsultants.ts
+- function: getAgencyConsultants — src/api/agency/getAgencyConsultants.ts
+- file: getAgencyData.ts — src/api/agency/getAgencyData.ts
+- function: DEFAULT_SORT — src/api/agency/getAgencyData.ts
+- function: DEFAULT_ORDER — src/api/agency/getAgencyData.ts
+- file: getAgencyEventTypeById.ts — src/api/agency/getAgencyEventTypeById.ts
+- file: getAgencyEventTypes.ts — src/api/agency/getAgencyEventTypes.ts
+- file: getAgencyPostCodeRange.ts — src/api/agency/getAgencyPostCodeRange.ts
+- file: getDiocesesData.ts — src/api/agency/getDiocesesData.ts
+- function: getDiocesesData — src/api/agency/getDiocesesData.ts
+- file: postConsultantForAgencyEventTypes.ts — src/api/agency/postConsultantForAgencyEventTypes.ts
+- file: putAgenciesForAdmin.ts — src/api/agency/putAgenciesForAdmin.ts
+- function: DEFAULT_ROLE — src/api/agency/putAgenciesForAdmin.ts
+- function: putAgenciesForAgencyAdmin — src/api/agency/putAgenciesForAdmin.ts
+- file: putAgenciesForCounselor.ts — src/api/agency/putAgenciesForCounselor.ts
+- function: DEFAULT_ROLE — src/api/agency/putAgenciesForCounselor.ts
+- function: putAgenciesForCounselor — src/api/agency/putAgenciesForCounselor.ts
+- file: putConsultantForAgencyEventTypes.ts — src/api/agency/putConsultantForAgencyEventTypes.ts
+- file: updateAgencyData.ts — src/api/agency/updateAgencyData.ts
+- function: updateAgencyData — src/api/agency/updateAgencyData.ts
+- file: updateAgencyPostCodeRange.ts — src/api/agency/updateAgencyPostCodeRange.ts
+- file: updateAgencyType.ts — src/api/agency/updateAgencyType.ts
+- function: updateAgencyType — src/api/agency/updateAgencyType.ts
+- file: accessSessionCookie.ts — src/api/auth/accessSessionCookie.ts
+- function: setValueInCookie — src/api/auth/accessSessionCookie.ts
+- function: deleteCookieByName — src/api/auth/accessSessionCookie.ts
+- function: getValueFromCookie — src/api/auth/accessSessionCookie.ts
+- function: removeAllCookies — src/api/auth/accessSessionCookie.ts
+- file: accessSessionLocalStorage.ts — src/api/auth/accessSessionLocalStorage.ts
+- function: getLocalStorageItem — src/api/auth/accessSessionLocalStorage.ts
+- function: removeLocalStorageItem — src/api/auth/accessSessionLocalStorage.ts
+- function: setTokenExpiryInLocalStorage — src/api/auth/accessSessionLocalStorage.ts
+- function: getTokenExpiryFromLocalStorage — src/api/auth/accessSessionLocalStorage.ts
+- function: removeTokenExpiryFromLocalStorage — src/api/auth/accessSessionLocalStorage.ts
+- file: apiLogoutKeycloak.ts — src/api/auth/apiLogoutKeycloak.ts
+- file: auth.ts — src/api/auth/auth.ts
+- function: RENEW_BEFORE_EXPIRY_IN_MS — src/api/auth/auth.ts
+- function: setTokens — src/api/auth/auth.ts
+- function: handleTokenRefresh — src/api/auth/auth.ts
+- file: getAccessToken.ts — src/api/auth/getAccessToken.ts
+- file: logout.ts — src/api/auth/logout.ts
+- file: refreshKeycloakAccessToken.ts — src/api/auth/refreshKeycloakAccessToken.ts
+- file: getConsultingType4Tenant.ts — src/api/consultingtype/getConsultingType4Tenant.ts
+- function: getConsultingType4Tenant — src/api/consultingtype/getConsultingType4Tenant.ts
+
+### Internal Dependencies
+
+- configures: config:.env.example -> file:src/index.tsx
+- configures: config:.prettierrc.json -> file:src/index.tsx
+- configures: config:.understand-anything/config.json -> file:src/index.tsx
+- configures: config:cypress.json -> file:src/index.tsx
+- imports: file:cypress/support/index.js -> file:cypress/support/commands.js
+- configures: config:ingress.yaml -> file:src/index.tsx
+- configures: config:package.json -> file:src/index.tsx
+- configures: config:public/browserconfig.xml -> file:src/index.tsx
+- configures: config:public/manifest.json -> file:src/index.tsx
+- imports: file:src/api/admins/addAgencyAdminData.ts -> file:src/api/agency/putAgenciesForAdmin.ts
+- imports: file:src/api/admins/addAgencyAdminData.ts -> file:src/api/fetchData.ts
+- imports: file:src/api/admins/addAgencyAdminData.ts -> file:src/appConfig.ts
+- imports: file:src/api/admins/addAgencyAdminData.ts -> file:src/types/admin.ts
+- imports: file:src/api/admins/addAgencyAdminData.ts -> file:src/utils/encryptionHelpers.ts
+- imports: file:src/api/admins/deleteAgencyAdminData.ts -> file:src/api/fetchData.ts
+- imports: file:src/api/admins/deleteAgencyAdminData.ts -> file:src/appConfig.ts
+- imports: file:src/api/admins/ediAgencytAdminData.ts -> file:src/api/agency/putAgenciesForAdmin.ts
+- imports: file:src/api/admins/ediAgencytAdminData.ts -> file:src/api/fetchData.ts
+- imports: file:src/api/admins/ediAgencytAdminData.ts -> file:src/appConfig.ts
+- imports: file:src/api/admins/ediAgencytAdminData.ts -> file:src/types/admin.ts
+- imports: file:src/api/admins/ediAgencytAdminData.ts -> file:src/utils/encryptionHelpers.ts
+- imports: file:src/api/agency/addAgencyData.ts -> file:src/api/agency/updateAgencyPostCodeRange.ts
+- imports: file:src/api/agency/addAgencyData.ts -> file:src/api/consultingtype/getConsultingType4Tenant.ts
+- imports: file:src/api/agency/addAgencyData.ts -> file:src/api/fetchData.ts
+- imports: file:src/api/agency/addAgencyData.ts -> file:src/appConfig.ts
+- imports: file:src/api/agency/addAgencyData.ts -> file:src/utils/parseUserAuthInfo.ts
+- imports: file:src/api/agency/deleteAgencyData.ts -> file:src/api/fetchData.ts
+- imports: file:src/api/agency/deleteAgencyData.ts -> file:src/appConfig.ts
+- imports: file:src/api/agency/deleteAgencyEventType.ts -> file:src/api/fetchData.ts
+- imports: file:src/api/agency/deleteAgencyEventType.ts -> file:src/appConfig.ts
+- imports: file:src/api/agency/getAgencyByCounselorData.ts -> file:src/api/fetchData.ts
+- imports: file:src/api/agency/getAgencyByCounselorData.ts -> file:src/appConfig.ts
+- imports: file:src/api/agency/getAgencyByCounselorData.ts -> file:src/utils/removeEmbedded.ts
+- imports: file:src/api/agency/getAgencyById.ts -> file:src/api/fetchData.ts
+- imports: file:src/api/agency/getAgencyById.ts -> file:src/appConfig.ts
+
+### External ORISO Dependencies
+
+- ORISO-Admin -> ORISO-Kubernetes: depends_on (ORISO-Admin::config:ingress.yaml)
+- ORISO-Admin -> ORISO-Keycloak: depends_on (ORISO-Admin::file:src/api/auth/apiLogoutKeycloak.ts)
+- ORISO-Admin -> ORISO-Keycloak: depends_on (ORISO-Admin::file:src/api/auth/refreshKeycloakAccessToken.ts)
+- ORISO-Admin -> ORISO-Keycloak: depends_on (ORISO-Admin::file:src/hooks/useLoginMutation.hook.ts)
+- ORISO-Admin -> ORISO-Keycloak: depends_on (ORISO-Admin::file:src/router/ProtectedRoute.tsx)
+- ORISO-Admin -> ORISO-Kubernetes: related (ORISO-Admin::config:ingress.yaml -> ORISO-Admin::file:src/index.tsx)
+- ORISO-Admin -> ORISO-Keycloak: related (ORISO-Admin::file:src/api/auth/apiLogoutKeycloak.ts -> ORISO-Admin::file:src/api/auth/accessSessionCookie.ts)
+- ORISO-Admin -> ORISO-Keycloak: related (ORISO-Admin::file:src/api/auth/apiLogoutKeycloak.ts -> ORISO-Admin::file:src/appConfig.ts)
+- ORISO-Admin -> ORISO-Keycloak: related (ORISO-Admin::file:src/api/auth/auth.ts -> ORISO-Admin::file:src/api/auth/refreshKeycloakAccessToken.ts)
+- ORISO-Admin -> ORISO-Keycloak: related (ORISO-Admin::file:src/api/auth/logout.ts -> ORISO-Admin::file:src/api/auth/apiLogoutKeycloak.ts)
+- ORISO-Admin -> ORISO-Keycloak: related (ORISO-Admin::file:src/api/auth/refreshKeycloakAccessToken.ts -> ORISO-Admin::file:src/api/auth/accessSessionCookie.ts)
+- ORISO-Admin -> ORISO-Keycloak: related (ORISO-Admin::file:src/api/auth/refreshKeycloakAccessToken.ts -> ORISO-Admin::file:src/appConfig.ts)
+- ORISO-Admin -> ORISO-Database: writes_to (ORISO-Database::concept:phpmyadmin-readonly-access)
+- ORISO-Admin -> ORISO-Database: writes_to (ORISO-Database::document:k8s/mariadb-client/README.md)
+- ORISO-Admin -> ORISO-Database: writes_to (ORISO-Database::module:devops-access)
+- ORISO-Admin -> ORISO-Database: writes_to (ORISO-Database::resource:k8s/mariadb-client/configmap.yaml)
+- ORISO-Admin -> ORISO-Database: writes_to (ORISO-Database::resource:k8s/mariadb-client/deployment.yaml)
+- ORISO-Admin -> ORISO-Database: writes_to (ORISO-Database::resource:k8s/mariadb-client/ingress.yaml)
+- ORISO-Admin -> ORISO-Database: writes_to (ORISO-Database::resource:k8s/mariadb-client/kustomization.yaml)
+- ORISO-Admin -> ORISO-Database: writes_to (ORISO-Database::resource:k8s/mariadb-client/service.yaml)
+- ORISO-Admin -> ORISO-Database: writes_to (ORISO-Database::schema:mariadb:userservice:sequence:sequence_admin_agency)
+- ORISO-Admin -> ORISO-Database: writes_to (ORISO-Database::table:mariadb:userservice:admin)
+- ORISO-Admin -> ORISO-Database: writes_to (ORISO-Database::table:mariadb:userservice:admin_agency)
+- ORISO-Admin -> ORISO-Database: writes_to (ORISO-Database::table:mariadb:userservice:event_notification)
+- ORISO-Kubernetes -> ORISO-Admin: deploys (ORISO-Kubernetes::concept:keycloak-dev-mode)
+- ORISO-Kubernetes -> ORISO-Admin: deploys (ORISO-Kubernetes::concept:loadbalancer-plus-ingress)
+- ORISO-Kubernetes -> ORISO-Admin: deploys (ORISO-Kubernetes::concept:oriso-dev-domains)
+- ORISO-Kubernetes -> ORISO-Admin: deploys (ORISO-Kubernetes::config:helm/charts/admin/Chart.yaml)
+- ORISO-Kubernetes -> ORISO-Admin: deploys (ORISO-Kubernetes::config:helm/charts/admin/values.yaml)
+- ORISO-Kubernetes -> ORISO-Admin: deploys (ORISO-Kubernetes::endpoint:host:admin.oriso-dev.site)
+- ORISO-Kubernetes -> ORISO-Admin: deploys (ORISO-Kubernetes::endpoint:ingress:14-admin-ingress)
+- ORISO-Kubernetes -> ORISO-Admin: deploys (ORISO-Kubernetes::endpoint:ingress:agencyservice-agencyadmin-ingress)
+- ORISO-Kubernetes -> ORISO-Admin: deploys (ORISO-Kubernetes::endpoint:ingress:agencyservice-topicadmin-ingress)
+- ORISO-Kubernetes -> ORISO-Admin: deploys (ORISO-Kubernetes::endpoint:ingress:consultingtypeservice-settingsadmin-ingress)
+- ORISO-Kubernetes -> ORISO-Admin: deploys (ORISO-Kubernetes::endpoint:ingress:tenantservice-tenantadmin-ingress)
+- ORISO-Kubernetes -> ORISO-Admin: deploys (ORISO-Kubernetes::endpoint:ingress:userservice-useradmin-ingress)
+- ORISO-Kubernetes -> ORISO-Admin: deploys (ORISO-Kubernetes::endpoint:route:agencyservice-agencyadmin-ingress:0)
+- ORISO-Kubernetes -> ORISO-Admin: deploys (ORISO-Kubernetes::endpoint:route:agencyservice-topicadmin-ingress:0)
+- ORISO-Kubernetes -> ORISO-Admin: deploys (ORISO-Kubernetes::endpoint:route:consultingtypeservice-settingsadmin-ingress:0)
+- ORISO-Kubernetes -> ORISO-Admin: deploys (ORISO-Kubernetes::endpoint:route:tenantservice-tenantadmin-ingress:0)
+- ORISO-Kubernetes -> ORISO-Admin: deploys (ORISO-Kubernetes::endpoint:route:userservice-useradmin-ingress:0)
+- ORISO-Kubernetes -> ORISO-Admin: deploys (ORISO-Kubernetes::module:frontend-services)
+- ORISO-Kubernetes -> ORISO-Admin: deploys (ORISO-Kubernetes::resource:helm/charts/admin/templates/_helpers.tpl)
+- ORISO-Kubernetes -> ORISO-Admin: deploys (ORISO-Kubernetes::resource:helm/charts/admin/templates/deployment.yaml)
+- ORISO-Kubernetes -> ORISO-Admin: deploys (ORISO-Kubernetes::resource:helm/charts/admin/templates/service.yaml)
+- ORISO-Kubernetes -> ORISO-Admin: deploys (ORISO-Kubernetes::resource:ingress/14-admin-ingress.yaml)
+- ORISO-Kubernetes -> ORISO-Admin: deploys (ORISO-Kubernetes::service:chart:admin)
+- ORISO-Kubernetes -> ORISO-Admin: deploys (ORISO-Kubernetes::service:runtime:admin)
+
+### Auth References
+
+- file: post-login.spec.js — cypress/integration/post-login.spec.js
+- file: pre-login.spec.js — cypress/integration/pre-login.spec.js
+- function: DEFAULT_ROLE — src/api/agency/putAgenciesForAdmin.ts
+- function: DEFAULT_ROLE — src/api/agency/putAgenciesForCounselor.ts
+- file: accessSessionCookie.ts — src/api/auth/accessSessionCookie.ts
+- function: setValueInCookie — src/api/auth/accessSessionCookie.ts
+- function: deleteCookieByName — src/api/auth/accessSessionCookie.ts
+- function: getValueFromCookie — src/api/auth/accessSessionCookie.ts
+- function: removeAllCookies — src/api/auth/accessSessionCookie.ts
+- file: accessSessionLocalStorage.ts — src/api/auth/accessSessionLocalStorage.ts
+- function: getLocalStorageItem — src/api/auth/accessSessionLocalStorage.ts
+- function: removeLocalStorageItem — src/api/auth/accessSessionLocalStorage.ts
+- function: setTokenExpiryInLocalStorage — src/api/auth/accessSessionLocalStorage.ts
+- function: getTokenExpiryFromLocalStorage — src/api/auth/accessSessionLocalStorage.ts
+- function: removeTokenExpiryFromLocalStorage — src/api/auth/accessSessionLocalStorage.ts
+- file: apiLogoutKeycloak.ts — src/api/auth/apiLogoutKeycloak.ts
+- file: auth.ts — src/api/auth/auth.ts
+- function: RENEW_BEFORE_EXPIRY_IN_MS — src/api/auth/auth.ts
+- function: setTokens — src/api/auth/auth.ts
+- function: handleTokenRefresh — src/api/auth/auth.ts
+- file: getAccessToken.ts — src/api/auth/getAccessToken.ts
+- file: logout.ts — src/api/auth/logout.ts
+- file: refreshKeycloakAccessToken.ts — src/api/auth/refreshKeycloakAccessToken.ts
+- file: fetchData.ts — src/api/fetchData.ts
+- file: apiTwoFactorAuth.ts — src/api/user/apiTwoFactorAuth.ts
+- function: apiPutTwoFactorAuthApp — src/api/user/apiTwoFactorAuth.ts
+- function: apiPutTwoFactorAuthEmail — src/api/user/apiTwoFactorAuth.ts
+- function: apiPatchTwoFactorAuthEncourage — src/api/user/apiTwoFactorAuth.ts
+- function: apiPostTwoFactorAuthEmailWithCode — src/api/user/apiTwoFactorAuth.ts
+- function: apiDeleteTwoFactorAuth — src/api/user/apiTwoFactorAuth.ts
+- file: App.tsx — src/App.tsx
+- function: twoFactorAuth — src/appConfig.ts
+- function: twoFactorAuthApp — src/appConfig.ts
+- function: twoFactorAuthAppEmail — src/appConfig.ts
+- file: index.tsx — src/components/Tenants/AppSettings/PermissionsSettings/index.tsx
+- function: PermissionsSettings — src/components/Tenants/AppSettings/PermissionsSettings/index.tsx
+- file: styles.module.scss — src/components/Tenants/AppSettings/PermissionsSettings/styles.module.scss
+- file: client.ts — src/constants/client.ts
+- function: queryClient — src/constants/client.ts
+- file: userRolesToPermissions.ts — src/constants/userRolesToPermissions.ts
+- function: useUserRolesToPermission — src/constants/userRolesToPermissions.ts
+- file: userTableSort.ts — src/constants/userTableSort.ts
+- function: USER_TABLE_API_SAFE_SORT — src/constants/userTableSort.ts
+- function: USER_TABLE_API_SAFE_ORDER — src/constants/userTableSort.ts
+- function: USER_TABLE_PREFERRED_SORT — src/constants/userTableSort.ts
+- function: USER_TABLE_PREFERRED_ORDER — src/constants/userTableSort.ts
+- function: USER_TABLE_DEFAULT_SORT — src/constants/userTableSort.ts
+- function: USER_TABLE_DEFAULT_ORDER — src/constants/userTableSort.ts
+- file: CounsellingRelation.ts — src/enums/CounsellingRelation.ts
+- file: FeatureFlag.ts — src/enums/FeatureFlag.ts
+- file: Gender.ts — src/enums/Gender.ts
+- file: PermissionAction.ts — src/enums/PermissionAction.ts
+- file: ReleaseToggle.ts — src/enums/ReleaseToggle.ts
+- file: Resource.ts — src/enums/Resource.ts
+- file: TwoFactorType.ts — src/enums/TwoFactorType.ts
+- file: TypeOfUser.ts — src/enums/TypeOfUser.ts
+- file: UserRole.ts — src/enums/UserRole.ts
+- file: useLoginMutation.hook.ts — src/hooks/useLoginMutation.hook.ts
+- file: useUserPermission.ts — src/hooks/useUserPermission.ts
+- function: useUserPermissions — src/hooks/useUserPermission.ts
+
+### Database References
+
+- file: index.tsx — src/components/CardEditable/components/UnsavedChanges/index.tsx
+- function: UnsavedChangesModal — src/components/CardEditable/components/UnsavedChanges/index.tsx
+- file: index.tsx — src/components/CardEditable/index.tsx
+- function: CardEditable — src/components/CardEditable/index.tsx
+- file: styles.module.scss — src/components/CardEditable/styles.module.scss
+- file: AddButton.tsx — src/components/EditableTable/AddButton.tsx
+- file: EditableTable.tsx — src/components/EditableTable/EditableTable.tsx
+- file: EditButtons.tsx — src/components/EditableTable/EditButtons.tsx
+- function: EditButtons — src/components/EditableTable/EditButtons.tsx
+- file: StatusIcons.tsx — src/components/EditableTable/StatusIcons.tsx
+- file: styles.module.scss — src/components/EditableTable/styles.module.scss
+- file: index.tsx — src/components/ResizableTable/index.tsx
+- function: ResizeTable — src/components/ResizableTable/index.tsx
+- file: Resizable.tsx — src/components/ResizableTable/Resizable/Resizable.tsx
+- file: styles.module.scss — src/components/ResizableTable/styles.module.scss
+- file: index.tsx — src/components/TranslatableFormField/index.tsx
+- function: TranslatableFormField — src/components/TranslatableFormField/index.tsx
+- file: styles.module.scss — src/components/TranslatableFormField/styles.module.scss
+- file: userTableSort.ts — src/constants/userTableSort.ts
+- function: USER_TABLE_API_SAFE_SORT — src/constants/userTableSort.ts
+- function: USER_TABLE_API_SAFE_ORDER — src/constants/userTableSort.ts
+- function: USER_TABLE_PREFERRED_SORT — src/constants/userTableSort.ts
+- function: USER_TABLE_PREFERRED_ORDER — src/constants/userTableSort.ts
+- function: USER_TABLE_DEFAULT_SORT — src/constants/userTableSort.ts
+- function: USER_TABLE_DEFAULT_ORDER — src/constants/userTableSort.ts
+- function: defineTableColumns — src/pages/Agency/EditInitialMeeting/index.tsx
+- file: index.tsx — src/pages/users/List/components/TenantAdminsTableData/index.tsx
+- file: styles.module.scss — src/pages/users/List/components/TenantAdminsTableData/styles.module.scss
+- file: index.tsx — src/pages/users/List/components/UsersTableData/index.tsx
+- file: styles.module.scss — src/pages/users/List/components/UsersTableData/styles.module.scss
+- file: TenantsManagementTable.tsx — src/pages/users/management/TenantsManagementTable.tsx
+- file: UserManagementTable.module.scss — src/pages/users/management/UserManagementTable.module.scss
+- file: UserManagementTable.tsx — src/pages/users/management/UserManagementTable.tsx
+- function: UserManagementTable — src/pages/users/management/UserManagementTable.tsx
+- file: userTableConfigs.ts — src/pages/users/management/userTableConfigs.ts
+- function: getVisibleColumns — src/pages/users/management/userTableConfigs.ts
+- function: canReadSection — src/pages/users/management/userTableConfigs.ts
+- file: useUserTableColumns.tsx — src/pages/users/management/useUserTableColumns.tsx
+- function: useUserTableColumns — src/pages/users/management/useUserTableColumns.tsx
+- function: mapSorterToApiField — src/pages/users/management/useUserTableColumns.tsx
+- file: listTables.less — src/styles/components/listTables.less
+- file: editabletable.d.ts — src/types/editabletable.d.ts
+- file: tableState.d.ts — src/types/tableState.d.ts
+
+### Deployment/Config References
+
+- None found in graph artifacts.
+
+- service: .dockerignore
+- file: deploy-admin.sh
+- file: deploy-development.sh
+- service: Dockerfile
+- config: ingress.yaml
+- file: nginx.conf
+
+### Important Graph Nodes
+
+- service: .dockerignore
+- config: .env.example
+- file: .eslintignore
+- file: .prettierignore
+- config: .prettierrc.json
+- file: .understandignore — .understand-anything/.understandignore
+- config: config.json — .understand-anything/config.json
+- file: babel.config.js
+- config: cypress.json
+- file: counselor.spec.js — cypress/integration/counselor.spec.js
+- file: post-login.spec.js — cypress/integration/post-login.spec.js
+- file: pre-login.spec.js — cypress/integration/pre-login.spec.js
+- file: index.js — cypress/plugins/index.js
+- file: commands.js — cypress/support/commands.js
+- file: index.js — cypress/support/index.js
+- file: deploy-admin.sh
+- file: deploy-development.sh
+- service: Dockerfile
+- file: index.d.ts
+- file: index.html
+- config: ingress.yaml
+- file: nginx.conf
+- config: package.json
+- config: browserconfig.xml — public/browserconfig.xml
+- config: manifest.json — public/manifest.json
+- document: robots.txt — public/robots.txt
+- document: README.md
+- file: addAgencyAdminData.ts — src/api/admins/addAgencyAdminData.ts
+- function: addAgencyAdminData — src/api/admins/addAgencyAdminData.ts
+- file: deleteAgencyAdminData.ts — src/api/admins/deleteAgencyAdminData.ts
+- function: deleteAgencyAdminData — src/api/admins/deleteAgencyAdminData.ts
+- file: ediAgencytAdminData.ts — src/api/admins/ediAgencytAdminData.ts
+- function: editAgencyAdminData — src/api/admins/ediAgencytAdminData.ts
+- file: addAgencyData.ts — src/api/agency/addAgencyData.ts
+- function: buildAgencyDataRequestBody — src/api/agency/addAgencyData.ts
+- function: createAgency — src/api/agency/addAgencyData.ts
+- function: addAgencyData — src/api/agency/addAgencyData.ts
+- file: deleteAgencyData.ts — src/api/agency/deleteAgencyData.ts
+- file: deleteAgencyEventType.ts — src/api/agency/deleteAgencyEventType.ts
+- file: getAgencyByCounselorData.ts — src/api/agency/getAgencyByCounselorData.ts
+
+### Important Graph Edges
+
+- serves: service:.dockerignore -> file:src/index.tsx
+- configures: config:.env.example -> file:src/index.tsx
+- configures: config:.prettierrc.json -> file:src/index.tsx
+- configures: config:.understand-anything/config.json -> file:src/index.tsx
+- configures: config:cypress.json -> file:src/index.tsx
+- imports: file:cypress/support/index.js -> file:cypress/support/commands.js
+- deploys: service:Dockerfile -> file:src/index.tsx
+- configures: config:ingress.yaml -> file:src/index.tsx
+- configures: config:package.json -> file:src/index.tsx
+- configures: config:public/browserconfig.xml -> file:src/index.tsx
+- configures: config:public/manifest.json -> file:src/index.tsx
+- related: document:public/robots.txt -> file:src/index.tsx
+- documents: document:README.md -> file:src/index.tsx
+- contains: file:src/api/admins/addAgencyAdminData.ts -> function:src/api/admins/addAgencyAdminData.ts:addAgencyAdminData
+- exports: file:src/api/admins/addAgencyAdminData.ts -> function:src/api/admins/addAgencyAdminData.ts:addAgencyAdminData
+- imports: file:src/api/admins/addAgencyAdminData.ts -> file:src/api/agency/putAgenciesForAdmin.ts
+- imports: file:src/api/admins/addAgencyAdminData.ts -> file:src/api/fetchData.ts
+- imports: file:src/api/admins/addAgencyAdminData.ts -> file:src/appConfig.ts
+- imports: file:src/api/admins/addAgencyAdminData.ts -> file:src/types/admin.ts
+- imports: file:src/api/admins/addAgencyAdminData.ts -> file:src/utils/encryptionHelpers.ts
+- contains: file:src/api/admins/deleteAgencyAdminData.ts -> function:src/api/admins/deleteAgencyAdminData.ts:deleteAgencyAdminData
+- exports: file:src/api/admins/deleteAgencyAdminData.ts -> function:src/api/admins/deleteAgencyAdminData.ts:deleteAgencyAdminData
+- imports: file:src/api/admins/deleteAgencyAdminData.ts -> file:src/api/fetchData.ts
+- imports: file:src/api/admins/deleteAgencyAdminData.ts -> file:src/appConfig.ts
+- contains: file:src/api/admins/ediAgencytAdminData.ts -> function:src/api/admins/ediAgencytAdminData.ts:editAgencyAdminData
+- exports: file:src/api/admins/ediAgencytAdminData.ts -> function:src/api/admins/ediAgencytAdminData.ts:editAgencyAdminData
+- imports: file:src/api/admins/ediAgencytAdminData.ts -> file:src/api/agency/putAgenciesForAdmin.ts
+- imports: file:src/api/admins/ediAgencytAdminData.ts -> file:src/api/fetchData.ts
+- imports: file:src/api/admins/ediAgencytAdminData.ts -> file:src/appConfig.ts
+- imports: file:src/api/admins/ediAgencytAdminData.ts -> file:src/types/admin.ts
+
+### Missing or Weak Areas
+
+- No endpoint nodes detected; API/routes may only be represented as files/functions.
+
+### Needs Verification
+
+- No endpoint nodes detected; API/routes may only be represented as files/functions.
+
+## ORISO-UserService
+
+### Graph Source
+
+- graph path: ../ORISO-UserService/.understand-anything/knowledge-graph.json
+- artifacts used: 12
+- node count: 2295
+- edge count: 3854
+
+Artifacts used:
+
+- .understand-anything/ARCHITECTURE.md (8.3 KB)
+- .understand-anything/DEPENDENCY-AUDIT.md (1.8 KB)
+- .understand-anything/FINDINGS.md (4.6 KB)
+- .understand-anything/knowledge-graph.json (3.2 MB)
+- .understand-anything/ONBOARDING.md (4.4 KB)
+- .understand-anything/ORISO-ECOSYSTEM.md (2.8 KB)
+- .understand-anything/README.md (1.4 KB)
+- .understand-anything/visuals/architecture-flow.mmd (555 B)
+- .understand-anything/visuals/auth-flow.mmd (519 B)
+- .understand-anything/visuals/data-flow.mmd (676 B)
+- .understand-anything/visuals/deployment-flow.mmd (384 B)
+- .understand-anything/visuals/ecosystem-flow.mmd (670 B)
+
+### Repository Purpose
+
+Spring Boot backend responsible for user, asker, consultant, session, conversation, chat, admin, notification, deletion, and external messaging lifecycle behavior in the ORISO Online-Beratung platform.
+
+### Main Files/Modules
+
+- file: .gitignore
+- file: .swagger-codegen-ignore
+- file: LICENSE
+- file: commitlint.config.js
+- file: mvnw
+- file: run-local-remote-db.sh.example
+- file: src/main/java/de/caritas/cob/userservice/api/AccountManager.java
+- file: src/main/java/de/caritas/cob/userservice/api/IdentityManager.java
+- file: src/main/java/de/caritas/cob/userservice/api/Messenger.java
+- file: src/main/java/de/caritas/cob/userservice/api/Organizer.java
+- file: src/main/java/de/caritas/cob/userservice/api/PatchConsultantSaga.java
+- file: src/main/java/de/caritas/cob/userservice/api/PatchConsultantSagaRollbackHandler.java
+- file: src/main/java/de/caritas/cob/userservice/api/UserServiceApplication.java
+- file: src/main/java/de/caritas/cob/userservice/api/UserServiceMapper.java
+- file: src/main/java/de/caritas/cob/userservice/api/actions/ActionCommand.java
+- file: src/main/java/de/caritas/cob/userservice/api/actions/chat/ChatReCreator.java
+- file: src/main/java/de/caritas/cob/userservice/api/actions/chat/StopChatActionCommand.java
+- file: src/main/java/de/caritas/cob/userservice/api/actions/registry/ActionContainer.java
+- file: src/main/java/de/caritas/cob/userservice/api/actions/registry/ActionsRegistry.java
+- file: src/main/java/de/caritas/cob/userservice/api/actions/session/DeactivateSessionActionCommand.java
+- file: src/main/java/de/caritas/cob/userservice/api/actions/session/PostConversationFinishedAliasMessageActionCommand.java
+- file: src/main/java/de/caritas/cob/userservice/api/actions/session/SendFinishedAnonymousConversationEventActionCommand.java
+- file: src/main/java/de/caritas/cob/userservice/api/actions/session/SetRocketChatRoomReadOnlyActionCommand.java
+- file: src/main/java/de/caritas/cob/userservice/api/actions/user/DeactivateKeycloakUserActionCommand.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakClient.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakMapper.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakService.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/config/KeycloakConfig.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/config/KeycloakCustomConfig.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/dto/KeycloakCreateUserResponseDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/dto/KeycloakLoginResponseDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/matrix/MatrixSynapseService.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/matrix/config/MatrixConfig.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/matrix/dto/MatrixCreateRoomRequestDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/matrix/dto/MatrixCreateRoomResponseDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/matrix/dto/MatrixCreateUserRequestDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/matrix/dto/MatrixCreateUserResponseDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/matrix/dto/MatrixInviteUserRequestDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/matrix/dto/MatrixInviteUserResponseDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/RocketChatClient.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/RocketChatCredentials.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/RocketChatCredentialsProvider.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/RocketChatMapper.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/RocketChatRollbackService.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/RocketChatService.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/config/RocketChatConfig.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/StandardResponseDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupAddUserBodyDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupCleanHistoryDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupCounterResponseDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupCreateBodyDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupDeleteBodyDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupDeleteResponseDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupLeaveBodyDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupMemberDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupMemberResponseDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupRemoveUserBodyDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupResponseDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupUpdateKeyDTO.java
+
+### Classes/Functions
+
+- class: AccountManager — src/main/java/de/caritas/cob/userservice/api/AccountManager.java
+- class: IdentityManager — src/main/java/de/caritas/cob/userservice/api/IdentityManager.java
+- class: Messenger — src/main/java/de/caritas/cob/userservice/api/Messenger.java
+- class: Organizer — src/main/java/de/caritas/cob/userservice/api/Organizer.java
+- class: PatchConsultantSaga — src/main/java/de/caritas/cob/userservice/api/PatchConsultantSaga.java
+- class: PatchConsultantSagaRollbackHandler — src/main/java/de/caritas/cob/userservice/api/PatchConsultantSagaRollbackHandler.java
+- class: UserServiceApplication — src/main/java/de/caritas/cob/userservice/api/UserServiceApplication.java
+- class: UserServiceMapper — src/main/java/de/caritas/cob/userservice/api/UserServiceMapper.java
+- class: ActionCommand — src/main/java/de/caritas/cob/userservice/api/actions/ActionCommand.java
+- class: ChatReCreator — src/main/java/de/caritas/cob/userservice/api/actions/chat/ChatReCreator.java
+- class: StopChatActionCommand — src/main/java/de/caritas/cob/userservice/api/actions/chat/StopChatActionCommand.java
+- class: to — src/main/java/de/caritas/cob/userservice/api/actions/registry/ActionContainer.java
+- class: ActionContainer — src/main/java/de/caritas/cob/userservice/api/actions/registry/ActionContainer.java
+- class: ActionsRegistry — src/main/java/de/caritas/cob/userservice/api/actions/registry/ActionsRegistry.java
+- class: DeactivateSessionActionCommand — src/main/java/de/caritas/cob/userservice/api/actions/session/DeactivateSessionActionCommand.java
+- class: PostConversationFinishedAliasMessageActionCommand — src/main/java/de/caritas/cob/userservice/api/actions/session/PostConversationFinishedAliasMessageActionCommand.java
+- class: SendFinishedAnonymousConversationEventActionCommand — src/main/java/de/caritas/cob/userservice/api/actions/session/SendFinishedAnonymousConversationEventActionCommand.java
+- class: SetRocketChatRoomReadOnlyActionCommand — src/main/java/de/caritas/cob/userservice/api/actions/session/SetRocketChatRoomReadOnlyActionCommand.java
+- class: DeactivateKeycloakUserActionCommand — src/main/java/de/caritas/cob/userservice/api/actions/user/DeactivateKeycloakUserActionCommand.java
+- class: KeycloakClient — src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakClient.java
+- class: KeycloakMapper — src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakMapper.java
+- class: KeycloakService — src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakService.java
+- class: KeycloakConfig — src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/config/KeycloakConfig.java
+- class: KeycloakCustomConfig — src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/config/KeycloakCustomConfig.java
+- class: KeycloakCreateUserResponseDTO — src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/dto/KeycloakCreateUserResponseDTO.java
+- class: KeycloakLoginResponseDTO — src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/dto/KeycloakLoginResponseDTO.java
+- class: MatrixSynapseService — src/main/java/de/caritas/cob/userservice/api/adapters/matrix/MatrixSynapseService.java
+- class: MatrixConfig — src/main/java/de/caritas/cob/userservice/api/adapters/matrix/config/MatrixConfig.java
+- class: MatrixCreateRoomRequestDTO — src/main/java/de/caritas/cob/userservice/api/adapters/matrix/dto/MatrixCreateRoomRequestDTO.java
+- class: InitialStateEvent — src/main/java/de/caritas/cob/userservice/api/adapters/matrix/dto/MatrixCreateRoomRequestDTO.java
+- class: MatrixCreateRoomResponseDTO — src/main/java/de/caritas/cob/userservice/api/adapters/matrix/dto/MatrixCreateRoomResponseDTO.java
+- class: MatrixCreateUserRequestDTO — src/main/java/de/caritas/cob/userservice/api/adapters/matrix/dto/MatrixCreateUserRequestDTO.java
+- class: MatrixCreateUserResponseDTO — src/main/java/de/caritas/cob/userservice/api/adapters/matrix/dto/MatrixCreateUserResponseDTO.java
+- class: MatrixInviteUserRequestDTO — src/main/java/de/caritas/cob/userservice/api/adapters/matrix/dto/MatrixInviteUserRequestDTO.java
+- class: MatrixInviteUserResponseDTO — src/main/java/de/caritas/cob/userservice/api/adapters/matrix/dto/MatrixInviteUserResponseDTO.java
+- class: RocketChatClient — src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/RocketChatClient.java
+- class: RocketChatCredentials — src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/RocketChatCredentials.java
+- class: RocketChatCredentialsProvider — src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/RocketChatCredentialsProvider.java
+- class: RocketChatMapper — src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/RocketChatMapper.java
+- class: RocketChatRollbackService — src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/RocketChatRollbackService.java
+- class: RocketChatService — src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/RocketChatService.java
+- class: RocketChatConfig — src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/config/RocketChatConfig.java
+- class: StandardResponseDTO — src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/StandardResponseDTO.java
+- class: GroupAddUserBodyDTO — src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupAddUserBodyDTO.java
+- class: GroupCleanHistoryDTO — src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupCleanHistoryDTO.java
+- class: GroupCounterResponseDTO — src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupCounterResponseDTO.java
+- class: GroupCreateBodyDTO — src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupCreateBodyDTO.java
+- class: GroupDTO — src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupDTO.java
+- class: GroupDeleteBodyDTO — src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupDeleteBodyDTO.java
+- class: GroupDeleteResponseDTO — src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupDeleteResponseDTO.java
+- class: GroupLeaveBodyDTO — src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupLeaveBodyDTO.java
+- class: GroupMemberDTO — src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupMemberDTO.java
+- class: GroupMemberResponseDTO — src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupMemberResponseDTO.java
+- class: GroupRemoveUserBodyDTO — src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupRemoveUserBodyDTO.java
+- class: GroupResponseDTO — src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupResponseDTO.java
+- class: GroupUpdateKeyDTO — src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupUpdateKeyDTO.java
+- class: GroupsListAllResponseDTO — src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupsListAllResponseDTO.java
+- class: DataDTO — src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/login/DataDTO.java
+- class: EmailsDTO — src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/login/EmailsDTO.java
+- class: LdapLoginDTO — src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/login/LdapLoginDTO.java
+
+### APIs/Routes
+
+- config: api/appointmentservice.yaml
+- config: api/conversationservice.yaml
+- config: api/useradminservice.yaml
+- config: api/userservice.yaml
+- config: api/userstatisticsservice.yaml
+- file: src/main/java/de/caritas/cob/userservice/api/AccountManager.java
+- file: src/main/java/de/caritas/cob/userservice/api/IdentityManager.java
+- file: src/main/java/de/caritas/cob/userservice/api/Messenger.java
+- file: src/main/java/de/caritas/cob/userservice/api/Organizer.java
+- file: src/main/java/de/caritas/cob/userservice/api/PatchConsultantSaga.java
+- file: src/main/java/de/caritas/cob/userservice/api/PatchConsultantSagaRollbackHandler.java
+- file: src/main/java/de/caritas/cob/userservice/api/UserServiceApplication.java
+- file: src/main/java/de/caritas/cob/userservice/api/UserServiceMapper.java
+- file: src/main/java/de/caritas/cob/userservice/api/actions/ActionCommand.java
+- file: src/main/java/de/caritas/cob/userservice/api/actions/chat/ChatReCreator.java
+- file: src/main/java/de/caritas/cob/userservice/api/actions/chat/StopChatActionCommand.java
+- file: src/main/java/de/caritas/cob/userservice/api/actions/registry/ActionContainer.java
+- file: src/main/java/de/caritas/cob/userservice/api/actions/registry/ActionsRegistry.java
+- file: src/main/java/de/caritas/cob/userservice/api/actions/session/DeactivateSessionActionCommand.java
+- file: src/main/java/de/caritas/cob/userservice/api/actions/session/PostConversationFinishedAliasMessageActionCommand.java
+- file: src/main/java/de/caritas/cob/userservice/api/actions/session/SendFinishedAnonymousConversationEventActionCommand.java
+- file: src/main/java/de/caritas/cob/userservice/api/actions/session/SetRocketChatRoomReadOnlyActionCommand.java
+- file: src/main/java/de/caritas/cob/userservice/api/actions/user/DeactivateKeycloakUserActionCommand.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakClient.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakMapper.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakService.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/config/KeycloakConfig.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/config/KeycloakCustomConfig.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/dto/KeycloakCreateUserResponseDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/dto/KeycloakLoginResponseDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/matrix/MatrixSynapseService.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/matrix/config/MatrixConfig.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/matrix/dto/MatrixCreateRoomRequestDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/matrix/dto/MatrixCreateRoomResponseDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/matrix/dto/MatrixCreateUserRequestDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/matrix/dto/MatrixCreateUserResponseDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/matrix/dto/MatrixInviteUserRequestDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/matrix/dto/MatrixInviteUserResponseDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/RocketChatClient.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/RocketChatCredentials.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/RocketChatCredentialsProvider.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/RocketChatMapper.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/RocketChatRollbackService.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/RocketChatService.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/config/RocketChatConfig.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/StandardResponseDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupAddUserBodyDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupCleanHistoryDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupCounterResponseDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupCreateBodyDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupDeleteBodyDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupDeleteResponseDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupLeaveBodyDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupMemberDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupMemberResponseDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupRemoveUserBodyDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupResponseDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupUpdateKeyDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/group/GroupsListAllResponseDTO.java
+
+### Internal Dependencies
+
+- imports: file:src/main/java/de/caritas/cob/userservice/api/actions/chat/StopChatActionCommand.java -> class:de.caritas.cob.userservice.api.actions.ActionCommand — src/main/java/de/caritas/cob/userservice/api/actions/chat/StopChatActionCommand.java imports de.caritas.cob.userservice.api.actions.ActionCommand.
+- imports: file:src/main/java/de/caritas/cob/userservice/api/actions/registry/ActionContainer.java -> class:de.caritas.cob.userservice.api.actions.ActionCommand — src/main/java/de/caritas/cob/userservice/api/actions/registry/ActionContainer.java imports de.caritas.cob.userservice.api.actions.ActionCommand.
+- imports: file:src/main/java/de/caritas/cob/userservice/api/actions/registry/ActionsRegistry.java -> class:de.caritas.cob.userservice.api.actions.ActionCommand — src/main/java/de/caritas/cob/userservice/api/actions/registry/ActionsRegistry.java imports de.caritas.cob.userservice.api.actions.ActionCommand.
+- imports: file:src/main/java/de/caritas/cob/userservice/api/actions/session/DeactivateSessionActionCommand.java -> class:de.caritas.cob.userservice.api.actions.ActionCommand — src/main/java/de/caritas/cob/userservice/api/actions/session/DeactivateSessionActionCommand.java imports de.caritas.cob.userservice.api.actions.ActionCommand.
+- imports: file:src/main/java/de/caritas/cob/userservice/api/actions/session/PostConversationFinishedAliasMessageActionCommand.java -> class:de.caritas.cob.userservice.api.actions.ActionCommand — src/main/java/de/caritas/cob/userservice/api/actions/session/PostConversationFinishedAliasMessageActionCommand.java imports de.caritas.cob.userservice.api.actions.ActionCommand.
+- imports: file:src/main/java/de/caritas/cob/userservice/api/actions/session/SendFinishedAnonymousConversationEventActionCommand.java -> class:de.caritas.cob.userservice.api.actions.ActionCommand — src/main/java/de/caritas/cob/userservice/api/actions/session/SendFinishedAnonymousConversationEventActionCommand.java imports de.caritas.cob.userservice.api.actions.ActionCommand.
+- imports: file:src/main/java/de/caritas/cob/userservice/api/actions/session/SetRocketChatRoomReadOnlyActionCommand.java -> class:de.caritas.cob.userservice.api.actions.ActionCommand — src/main/java/de/caritas/cob/userservice/api/actions/session/SetRocketChatRoomReadOnlyActionCommand.java imports de.caritas.cob.userservice.api.actions.ActionCommand.
+- imports: file:src/main/java/de/caritas/cob/userservice/api/actions/user/DeactivateKeycloakUserActionCommand.java -> class:de.caritas.cob.userservice.api.actions.ActionCommand — src/main/java/de/caritas/cob/userservice/api/actions/user/DeactivateKeycloakUserActionCommand.java imports de.caritas.cob.userservice.api.actions.ActionCommand.
+- imports: file:src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/config/RocketChatConfig.java -> class:de.caritas.cob.userservice.api.adapters.rocketchat.RocketChatCredentials — src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/config/RocketChatConfig.java imports de.caritas.cob.userservice.api.adapters.rocketchat.RocketChatCredentials.
+- imports: file:src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/login/PresenceOtherDTO.java -> class:de.caritas.cob.userservice.api.adapters.rocketchat.dto.login.PresenceStatus — src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/login/PresenceOtherDTO.java imports de.caritas.cob.userservice.api.adapters.rocketchat.dto.login.PresenceDTO.Pr
+- imports: file:src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/room/RoomsLastMessageDTO.java -> class:de.caritas.cob.userservice.api.adapters.rocketchat.dto.message.attachment.AttachmentDTO — src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/room/RoomsLastMessageDTO.java imports de.caritas.cob.userservice.api.adapters.rocketchat.dto.message.attachment
+- imports: file:src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/room/RoomsLastMessageDTO.java -> class:de.caritas.cob.userservice.api.adapters.rocketchat.dto.message.attachment.FileDTO — src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/dto/room/RoomsLastMessageDTO.java imports de.caritas.cob.userservice.api.adapters.rocketchat.dto.message.attachment
+- imports: file:src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/AppointmentController.java -> class:de.caritas.cob.userservice.api.adapters.rocketchat.RocketChatCredentials — src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/AppointmentController.java imports de.caritas.cob.userservice.api.adapters.rocketchat.RocketChatCredentials.
+- imports: file:src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/MatrixMessageController.java -> class:de.caritas.cob.userservice.api.adapters.matrix.MatrixSynapseService — src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/MatrixMessageController.java imports de.caritas.cob.userservice.api.adapters.matrix.MatrixSynapseService.
+- imports: file:src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/UserController.java -> class:de.caritas.cob.userservice.api.adapters.rocketchat.RocketChatCredentials — src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/UserController.java imports de.caritas.cob.userservice.api.adapters.rocketchat.RocketChatCredentials.
+- imports: file:src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/UserController.java -> class:de.caritas.cob.userservice.api.adapters.rocketchat.dto.user.User — src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/UserController.java imports de.caritas.cob.userservice.api.model.User.
+- imports: file:src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/UserController.java -> class:de.caritas.cob.userservice.api.adapters.keycloak.dto.KeycloakLoginResponseDTO — src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/UserController.java imports de.caritas.cob.userservice.api.adapters.keycloak.dto.KeycloakLoginResponseDTO.
+- imports: file:src/main/java/de/caritas/cob/userservice/api/adapters/web/dto/validation/ValidAge.java -> class:de.caritas.cob.userservice.api.adapters.web.dto.UserDTO — src/main/java/de/caritas/cob/userservice/api/adapters/web/dto/validation/ValidAge.java imports de.caritas.cob.userservice.api.adapters.web.dto.UserDTO.
+- imports: file:src/main/java/de/caritas/cob/userservice/api/adapters/web/dto/validation/ValidAgeValidator.java -> class:de.caritas.cob.userservice.api.adapters.web.dto.UserDTO — src/main/java/de/caritas/cob/userservice/api/adapters/web/dto/validation/ValidAgeValidator.java imports de.caritas.cob.userservice.api.adapters.web.dto.UserDTO.
+- imports: file:src/main/java/de/caritas/cob/userservice/api/adapters/web/dto/validation/ValidStateValidator.java -> class:de.caritas.cob.userservice.api.adapters.web.dto.UserDTO — src/main/java/de/caritas/cob/userservice/api/adapters/web/dto/validation/ValidStateValidator.java imports de.caritas.cob.userservice.api.adapters.web.dto.UserDTO.
+- imports: file:src/main/java/de/caritas/cob/userservice/api/adapters/web/mapping/AdminDtoMapper.java -> class:de.caritas.cob.userservice.api.adapters.web.controller.UserAdminController — src/main/java/de/caritas/cob/userservice/api/adapters/web/mapping/AdminDtoMapper.java imports de.caritas.cob.userservice.api.adapters.web.controller.UserAdminController.
+- imports: file:src/main/java/de/caritas/cob/userservice/api/adapters/web/mapping/ConsultantDtoMapper.java -> class:de.caritas.cob.userservice.api.adapters.web.controller.UserController — src/main/java/de/caritas/cob/userservice/api/adapters/web/mapping/ConsultantDtoMapper.java imports de.caritas.cob.userservice.api.adapters.web.controller.UserController.
+- imports: file:src/main/java/de/caritas/cob/userservice/api/adapters/web/mapping/UserDtoMapper.java -> class:de.caritas.cob.userservice.api.adapters.web.dto.UserDataResponseDTO — src/main/java/de/caritas/cob/userservice/api/adapters/web/mapping/UserDtoMapper.java imports de.caritas.cob.userservice.api.adapters.web.dto.UserDataResponseDTO.
+- imports: file:src/main/java/de/caritas/cob/userservice/api/admin/facade/AskerUserAdminFacade.java -> class:de.caritas.cob.userservice.api.adapters.rocketchat.dto.user.User — src/main/java/de/caritas/cob/userservice/api/admin/facade/AskerUserAdminFacade.java imports de.caritas.cob.userservice.api.model.User.
+- imports: file:src/main/java/de/caritas/cob/userservice/api/admin/hallink/RootDTOBuilder.java -> class:de.caritas.cob.userservice.api.adapters.web.controller.UserAdminController — src/main/java/de/caritas/cob/userservice/api/admin/hallink/RootDTOBuilder.java imports de.caritas.cob.userservice.api.adapters.web.controller.UserAdminController.
+- imports: file:src/main/java/de/caritas/cob/userservice/api/admin/report/registry/ViolationRuleRegistry.java -> class:de.caritas.cob.userservice.api.admin.report.model.AgencyDependedViolationReportRule — src/main/java/de/caritas/cob/userservice/api/admin/report/registry/ViolationRuleRegistry.java imports de.caritas.cob.userservice.api.admin.report.model.AgencyDependedViolationRepor
+- imports: file:src/main/java/de/caritas/cob/userservice/api/admin/report/registry/ViolationRuleRegistry.java -> class:de.caritas.cob.userservice.api.admin.report.model.ViolationReportRule — src/main/java/de/caritas/cob/userservice/api/admin/report/registry/ViolationRuleRegistry.java imports de.caritas.cob.userservice.api.admin.report.model.ViolationReportRule.
+- imports: file:src/main/java/de/caritas/cob/userservice/api/admin/report/rule/ConsultantWithWrongTeamConsultantFlagViolationReportRule.java -> class:de.caritas.cob.userservice.api.admin.report.builder.ViolationByConsultantBuilder — src/main/java/de/caritas/cob/userservice/api/admin/report/rule/ConsultantWithWrongTeamConsultantFlagViolationReportRule.java imports de.caritas.cob.userservice.api.admin.report.bui
+- imports: file:src/main/java/de/caritas/cob/userservice/api/admin/report/rule/ConsultantWithWrongTeamConsultantFlagViolationReportRule.java -> class:de.caritas.cob.userservice.api.admin.report.model.AgencyDependedViolationReportRule — src/main/java/de/caritas/cob/userservice/api/admin/report/rule/ConsultantWithWrongTeamConsultantFlagViolationReportRule.java imports de.caritas.cob.userservice.api.admin.report.mod
+- imports: file:src/main/java/de/caritas/cob/userservice/api/admin/report/rule/InvalidAgencyForConsultantViolationReportRule.java -> class:de.caritas.cob.userservice.api.admin.report.builder.ViolationByConsultantBuilder — src/main/java/de/caritas/cob/userservice/api/admin/report/rule/InvalidAgencyForConsultantViolationReportRule.java imports de.caritas.cob.userservice.api.admin.report.builder.Violat
+- imports: file:src/main/java/de/caritas/cob/userservice/api/admin/report/rule/InvalidAgencyForConsultantViolationReportRule.java -> class:de.caritas.cob.userservice.api.admin.report.model.AgencyDependedViolationReportRule — src/main/java/de/caritas/cob/userservice/api/admin/report/rule/InvalidAgencyForConsultantViolationReportRule.java imports de.caritas.cob.userservice.api.admin.report.model.AgencyDe
+- imports: file:src/main/java/de/caritas/cob/userservice/api/admin/report/rule/MissingAgencyForConsultantViolationReportRule.java -> class:de.caritas.cob.userservice.api.admin.report.builder.ViolationByConsultantBuilder — src/main/java/de/caritas/cob/userservice/api/admin/report/rule/MissingAgencyForConsultantViolationReportRule.java imports de.caritas.cob.userservice.api.admin.report.builder.Violat
+- imports: file:src/main/java/de/caritas/cob/userservice/api/admin/report/rule/MissingAgencyForConsultantViolationReportRule.java -> class:de.caritas.cob.userservice.api.admin.report.model.ViolationReportRule — src/main/java/de/caritas/cob/userservice/api/admin/report/rule/MissingAgencyForConsultantViolationReportRule.java imports de.caritas.cob.userservice.api.admin.report.model.Violatio
+- imports: file:src/main/java/de/caritas/cob/userservice/api/admin/report/rule/MissingRocketChatRoomForConsultantViolationReportRule.java -> class:de.caritas.cob.userservice.api.adapters.rocketchat.RocketChatService — src/main/java/de/caritas/cob/userservice/api/admin/report/rule/MissingRocketChatRoomForConsultantViolationReportRule.java imports de.caritas.cob.userservice.api.adapters.rocketchat
+- imports: file:src/main/java/de/caritas/cob/userservice/api/admin/report/rule/MissingRocketChatRoomForConsultantViolationReportRule.java -> class:de.caritas.cob.userservice.api.adapters.rocketchat.dto.user.UserInfoResponseDTO — src/main/java/de/caritas/cob/userservice/api/admin/report/rule/MissingRocketChatRoomForConsultantViolationReportRule.java imports de.caritas.cob.userservice.api.adapters.rocketchat
+
+### External ORISO Dependencies
+
+- ORISO-Frontend -> ORISO-UserService: depends_on (ORISO-Frontend::file:src/api/apiAppointmentServiceSet.ts)
+- ORISO-Frontend -> ORISO-UserService: depends_on (ORISO-Frontend::function:src/api/apiAppointmentServiceSet.ts:apiAppointmentServiceSet)
+- ORISO-Frontend -> ORISO-UserService: depends_on (ORISO-Frontend::file:src/api/apiGetApiAppointmentServiceEventTypes.ts)
+- ORISO-Frontend -> ORISO-UserService: depends_on (ORISO-Frontend::function:src/api/apiGetApiAppointmentServiceEventTypes.ts:getCounselorAppointmentLink)
+- ORISO-Frontend -> ORISO-UserService: depends_on (ORISO-Frontend::file:src/api/apiGetAppointmentServiceTeam.ts)
+- ORISO-Frontend -> ORISO-UserService: depends_on (ORISO-Frontend::function:src/api/apiGetAppointmentServiceTeam.ts:getTeamAppointmentLink)
+- ORISO-Frontend -> ORISO-UserService: depends_on (ORISO-Frontend::file:src/generated/userservice.d.ts)
+- ORISO-Frontend -> ORISO-UserService: related (ORISO-Frontend::file:src/api/apiAppointmentServiceSet.ts -> ORISO-Frontend::function:src/api/apiAppointmentServiceSet.ts:apiAppointmentServiceSet)
+- ORISO-Frontend -> ORISO-UserService: related (ORISO-Frontend::file:src/api/apiAppointmentServiceSet.ts -> ORISO-Frontend::file:src/api/fetchData.ts)
+- ORISO-Frontend -> ORISO-UserService: related (ORISO-Frontend::file:src/api/apiAppointmentServiceSet.ts -> ORISO-Frontend::file:src/resources/scripts/endpoints.ts)
+- ORISO-Frontend -> ORISO-UserService: related (ORISO-Frontend::file:src/api/apiGetApiAppointmentServiceEventTypes.ts -> ORISO-Frontend::function:src/api/apiGetApiAppointmentServiceEventTypes.ts:getCounselorAppointmentLink)
+- ORISO-Frontend -> ORISO-UserService: related (ORISO-Frontend::file:src/api/apiGetApiAppointmentServiceEventTypes.ts -> ORISO-Frontend::file:src/api/fetchData.ts)
+- ORISO-Frontend -> ORISO-UserService: related (ORISO-Frontend::file:src/api/apiGetApiAppointmentServiceEventTypes.ts -> ORISO-Frontend::file:src/resources/scripts/endpoints.ts)
+- ORISO-Frontend -> ORISO-UserService: related (ORISO-Frontend::file:src/api/apiGetAppointmentServiceTeam.ts -> ORISO-Frontend::function:src/api/apiGetAppointmentServiceTeam.ts:getTeamAppointmentLink)
+- ORISO-Frontend -> ORISO-UserService: related (ORISO-Frontend::file:src/api/apiGetAppointmentServiceTeam.ts -> ORISO-Frontend::file:src/api/fetchData.ts)
+- ORISO-Frontend -> ORISO-UserService: related (ORISO-Frontend::file:src/api/apiGetAppointmentServiceTeam.ts -> ORISO-Frontend::file:src/resources/scripts/endpoints.ts)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::config:services/agencyadminservice.yaml)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::config:services/agencyservice.yaml)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::config:services/applicationsettingsservice.yaml)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::config:services/consultingtypeservice.yaml)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::config:services/keycloakextension.yaml)
+- ORISO-UserService -> ORISO-TenantService: depends_on (ORISO-UserService::config:services/tenantadminservice.yaml)
+- ORISO-UserService -> ORISO-TenantService: depends_on (ORISO-UserService::config:services/tenantservice.yaml)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::config:services/topicservice.yaml)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/actions/user/DeactivateKeycloakUserActionCommand.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakClient.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakMapper.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakService.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/config/KeycloakConfig.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/config/KeycloakCustomConfig.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/dto/KeycloakCreateUserResponseDTO.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/dto/KeycloakLoginResponseDTO.java)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/admin/service/agency/AgencyAdminService.java)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/admin/service/agency/ConsultantAgencyAdminService.java)
+- ORISO-UserService -> ORISO-TenantService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/admin/service/tenant/TenantAdminService.java)
+- ORISO-UserService -> ORISO-TenantService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/admin/service/tenant/TenantService.java)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/AgencyAdminServiceApiControllerFactory.java)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/AgencyServiceApiClientConfig.java)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/AgencyServiceApiControllerFactory.java)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/AppointmentAgencyServiceApiControllerFactory.java)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/ConsultingTypeServiceApiControllerFactory.java)
+- ORISO-UserService -> ORISO-TenantService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/TenantAdminServiceApiClient.java)
+- ORISO-UserService -> ORISO-TenantService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/TenantAdminServiceApiControllerFactory.java)
+- ORISO-UserService -> ORISO-TenantService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/TenantServiceApiClient.java)
+- ORISO-UserService -> ORISO-TenantService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/TenantServiceApiControllerFactory.java)
+- ORISO-UserService -> ORISO-TenantService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/TenantServiceHelper.java)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/TopicServiceApiClient.java)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/TopicServiceApiControllerFactory.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/auth/SecurityConfig.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/exception/keycloak/KeycloakException.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/facade/CreateUserFacade.java)
+- ORISO-UserService -> ORISO-Database: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/facade/CreateUserFacade.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/facade/userdata/KeycloakUserDataProvider.java)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/ConsultantAgencyService.java)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/ConsultingTypeService.java)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/UserAgencyService.java)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/agency/AgencyService.java)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/consultingtype/ApplicationSettingsService.java)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/consultingtype/TopicService.java)
+- ORISO-UserService -> ORISO-Database: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/matrix/RedisMessageMirrorService.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/workflow/delete/action/DeleteKeycloakUserAction.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/workflow/delete/action/asker/DeleteKeycloakAskerAction.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/workflow/delete/action/consultant/DeleteKeycloakConsultantAction.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/resources/migration/KeycloakRoleNameMigration.py)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/actions/user/DeactivateKeycloakUserActionCommandTest.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakServiceTest.java)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/admin/report/service/AgencyAdminServiceTest.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/facade/userdata/KeycloakUserDataProviderTest.java)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/service/ConsultantAgencyServiceTest.java)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/service/ConsultingTypeServiceTest.java)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/service/UserAgencyServiceTest.java)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/service/agency/AgencyServiceTest.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/testConfig/KeycloakTestConfig.java)
+- ORISO-UserService -> ORISO-Database: depends_on (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/testConfig/RabbitMqTestConfig.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/testHelper/KeycloakConstants.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/workflow/delete/action/asker/DeleteKeycloakAskerActionTest.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/workflow/delete/action/consultant/DeleteKeycloakConsultantActionTest.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::config:user-service-realm.json)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.actions.user.DeactivateKeycloakUserActionCommand)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.adapters.keycloak.KeycloakClient)
+
+### Auth References
+
+- document: documentation/ADR-SECURITY-02-unified-crypto-boundary.md
+- config: services/keycloakextension.yaml
+- file: src/main/java/de/caritas/cob/userservice/api/actions/user/DeactivateKeycloakUserActionCommand.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakClient.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakMapper.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakService.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/config/KeycloakConfig.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/config/KeycloakCustomConfig.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/dto/KeycloakCreateUserResponseDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/dto/KeycloakLoginResponseDTO.java
+- file: src/main/java/de/caritas/cob/userservice/api/config/CsrfSecurityProperties.java
+- file: src/main/java/de/caritas/cob/userservice/api/config/GlobalMethodSecurityConfig.java
+- file: src/main/java/de/caritas/cob/userservice/api/config/auth/Authority.java
+- file: src/main/java/de/caritas/cob/userservice/api/config/auth/IdentityConfig.java
+- file: src/main/java/de/caritas/cob/userservice/api/config/auth/RoleAuthorizationAuthorityMapper.java
+- file: src/main/java/de/caritas/cob/userservice/api/config/auth/SecurityConfig.java
+- file: src/main/java/de/caritas/cob/userservice/api/config/auth/TechnicalUserConfig.java
+- file: src/main/java/de/caritas/cob/userservice/api/config/auth/UserRole.java
+- file: src/main/java/de/caritas/cob/userservice/api/exception/httpresponses/RocketChatUnauthorizedException.java
+- file: src/main/java/de/caritas/cob/userservice/api/exception/keycloak/KeycloakException.java
+- file: src/main/java/de/caritas/cob/userservice/api/facade/CreateUserFacade.java
+- file: src/main/java/de/caritas/cob/userservice/api/facade/assignsession/UnauthorizedMembersProvider.java
+- file: src/main/java/de/caritas/cob/userservice/api/facade/userdata/KeycloakUserDataProvider.java
+- file: src/main/java/de/caritas/cob/userservice/api/helper/AuthenticatedUser.java
+- file: src/main/java/de/caritas/cob/userservice/api/helper/ChatPermissionVerifier.java
+- file: src/main/java/de/caritas/cob/userservice/api/manager/consultingtype/roles/Consultant.java
+- file: src/main/java/de/caritas/cob/userservice/api/model/ConsultantMobileToken.java
+- file: src/main/java/de/caritas/cob/userservice/api/model/UserMobileToken.java
+- file: src/main/java/de/caritas/cob/userservice/api/port/out/ConsultantMobileTokenRepository.java
+- file: src/main/java/de/caritas/cob/userservice/api/port/out/UserMobileTokenRepository.java
+- file: src/main/java/de/caritas/cob/userservice/api/service/auth/MagicLinkLoginService.java
+- file: src/main/java/de/caritas/cob/userservice/api/service/httpheader/SecurityHeaderSupplier.java
+- file: src/main/java/de/caritas/cob/userservice/api/tenant/AccessTokenTenantResolver.java
+- file: src/main/java/de/caritas/cob/userservice/api/tenant/TenantResolverService.java
+- file: src/main/java/de/caritas/cob/userservice/api/workflow/delete/action/DeleteKeycloakUserAction.java
+- file: src/main/java/de/caritas/cob/userservice/api/workflow/delete/action/asker/DeleteKeycloakAskerAction.java
+- file: src/main/java/de/caritas/cob/userservice/api/workflow/delete/action/consultant/DeleteKeycloakConsultantAction.java
+- file: src/main/java/de/caritas/cob/userservice/api/workflow/inactiveaccountnotification/model/InactiveAccountRole.java
+- config: src/main/resources/db/changelog/changeset/0011_add_mobile_token_for_user/0011_changeSet.xml
+- schema: src/main/resources/db/changelog/changeset/0011_add_mobile_token_for_user/add-mobile-token-for-user-rollback.sql
+- schema: src/main/resources/db/changelog/changeset/0011_add_mobile_token_for_user/add-mobile-token-for-user.sql
+- config: src/main/resources/db/changelog/changeset/0015_add_app_mobile_token/0015_changeSet.xml
+- schema: src/main/resources/db/changelog/changeset/0015_add_app_mobile_token/add-app-mobile-token-rollback.sql
+- schema: src/main/resources/db/changelog/changeset/0015_add_app_mobile_token/add-app-mobile-token-trigger.sql
+- schema: src/main/resources/db/changelog/changeset/0015_add_app_mobile_token/add-app-mobile-token.sql
+- config: src/main/resources/db/changelog/changeset/0050_security05_deletion_lifecycle/0050_changeSet.xml
+- schema: src/main/resources/db/changelog/changeset/0050_security05_deletion_lifecycle/alterDeletionLifecycle.sql
+- file: src/main/resources/migration/KeycloakRoleNameMigration.py
+- file: src/test/java/de/caritas/cob/userservice/api/actions/user/DeactivateKeycloakUserActionCommandTest.java
+- file: src/test/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakServiceTest.java
+- file: src/test/java/de/caritas/cob/userservice/api/adapters/web/controller/AppointmentControllerAuthorizationIT.java
+- file: src/test/java/de/caritas/cob/userservice/api/adapters/web/controller/ConversationControllerAuthorizationIT.java
+- file: src/test/java/de/caritas/cob/userservice/api/adapters/web/controller/UserAdminControllerAuthorizationIT.java
+- file: src/test/java/de/caritas/cob/userservice/api/adapters/web/controller/UserControllerAuthorizationIT.java
+- file: src/test/java/de/caritas/cob/userservice/api/config/auth/AuthorityTest.java
+- file: src/test/java/de/caritas/cob/userservice/api/config/auth/IdentityConfigTest.java
+- file: src/test/java/de/caritas/cob/userservice/api/config/auth/RoleAuthorizationAuthorityMapperTest.java
+- file: src/test/java/de/caritas/cob/userservice/api/facade/assignsession/UnauthorizedMembersProviderTest.java
+- file: src/test/java/de/caritas/cob/userservice/api/facade/userdata/KeycloakUserDataProviderTest.java
+- file: src/test/java/de/caritas/cob/userservice/api/helper/AuthenticatedUserHelperTest.java
+
+### Database References
+
+- file: src/main/java/de/caritas/cob/userservice/api/config/BeanAwareSpringLiquibase.java
+- file: src/main/java/de/caritas/cob/userservice/api/config/LiquibaseConfig.java
+- file: src/main/java/de/caritas/cob/userservice/api/facade/CreateUserFacade.java
+- file: src/main/java/de/caritas/cob/userservice/api/facade/assignsession/AssignSessionFacade.java
+- file: src/main/java/de/caritas/cob/userservice/api/service/matrix/RedisMessageMirrorService.java
+- file: src/main/java/de/caritas/cob/userservice/api/workflow/delete/action/asker/DeleteDatabaseAskerAction.java
+- file: src/main/java/de/caritas/cob/userservice/api/workflow/delete/action/asker/DeleteDatabaseAskerAgencyAction.java
+- file: src/main/java/de/caritas/cob/userservice/api/workflow/delete/action/consultant/DeleteDatabaseConsultantAction.java
+- file: src/main/java/de/caritas/cob/userservice/api/workflow/delete/action/consultant/DeleteDatabaseConsultantAgencyAction.java
+- config: src/main/resources/db/changelog/changeset/0001_initsql/initSql.xml
+- schema: src/main/resources/db/changelog/changeset/0001_initsql/initTables.sql
+- schema: src/main/resources/db/changelog/changeset/0001_initsql/initTrigger.sql
+- config: src/main/resources/db/changelog/changeset/0002_monitoringKeys_feedbackChatClumn/0002_changeSet.xml
+- schema: src/main/resources/db/changelog/changeset/0002_monitoringKeys_feedbackChatClumn/feedbackChatColumn-rollback.sql
+- schema: src/main/resources/db/changelog/changeset/0002_monitoringKeys_feedbackChatClumn/feedbackChatColumn.sql
+- schema: src/main/resources/db/changelog/changeset/0002_monitoringKeys_feedbackChatClumn/monitoringKeys-rollback.sql
+- schema: src/main/resources/db/changelog/changeset/0002_monitoringKeys_feedbackChatClumn/monitoringKeys.sql
+- config: src/main/resources/db/changelog/changeset/0003_user_attribute_languageFormal/0003_changeSet.xml
+- schema: src/main/resources/db/changelog/changeset/0003_user_attribute_languageFormal/userLanguageFormalColumn-rollback.sql
+- schema: src/main/resources/db/changelog/changeset/0003_user_attribute_languageFormal/userLanguageFormalColumn.sql
+- config: src/main/resources/db/changelog/changeset/0004_consultant_attribute_languageFormal/0004_changeSet.xml
+- schema: src/main/resources/db/changelog/changeset/0004_consultant_attribute_languageFormal/consultantLanguageFormalColumn-rollback.sql
+- schema: src/main/resources/db/changelog/changeset/0004_consultant_attribute_languageFormal/consultantLanguageFormalColumn.sql
+- config: src/main/resources/db/changelog/changeset/0005_session_attribute_isMonitoring/0005_changeSet.xml
+- schema: src/main/resources/db/changelog/changeset/0005_session_attribute_isMonitoring/sessionIsMonitoringColumn-rollback.sql
+- schema: src/main/resources/db/changelog/changeset/0005_session_attribute_isMonitoring/sessionIsMonitoringColumn.sql
+- config: src/main/resources/db/changelog/changeset/0006_chat/0006_changeSet.xml
+- schema: src/main/resources/db/changelog/changeset/0006_chat/chat-rollback.sql
+- schema: src/main/resources/db/changelog/changeset/0006_chat/chat-trigger.sql
+- schema: src/main/resources/db/changelog/changeset/0006_chat/chat.sql
+- config: src/main/resources/db/changelog/changeset/0007_user_agency_relation/0007_changeSet.xml
+- schema: src/main/resources/db/changelog/changeset/0007_user_agency_relation/user-agency-relation-rollback.sql
+- schema: src/main/resources/db/changelog/changeset/0007_user_agency_relation/user-agency-relation-trigger.sql
+- schema: src/main/resources/db/changelog/changeset/0007_user_agency_relation/user-agency-relation.sql
+- config: src/main/resources/db/changelog/changeset/0008_chat_extension/0008_changeSet.xml
+- schema: src/main/resources/db/changelog/changeset/0008_chat_extension/chat-extension-rollback.sql
+- schema: src/main/resources/db/changelog/changeset/0008_chat_extension/chat-extension.sql
+- config: src/main/resources/db/changelog/changeset/0009_delete_timestamp_for_user_consultant/0009_changeSet.xml
+- schema: src/main/resources/db/changelog/changeset/0009_delete_timestamp_for_user_consultant/delete-timestamp-for-user-consultant-rollback.sql
+- schema: src/main/resources/db/changelog/changeset/0009_delete_timestamp_for_user_consultant/delete-timestamp-for-user-consultant.sql
+- config: src/main/resources/db/changelog/changeset/0010_delete_timestamp_for_consultant_agency/0010_changeSet.xml
+- schema: src/main/resources/db/changelog/changeset/0010_delete_timestamp_for_consultant_agency/delete-timestamp-for-consultant-agency-rollback.sql
+- schema: src/main/resources/db/changelog/changeset/0010_delete_timestamp_for_consultant_agency/delete-timestamp-for-consultant-agency.sql
+- config: src/main/resources/db/changelog/changeset/0011_add_mobile_token_for_user/0011_changeSet.xml
+- schema: src/main/resources/db/changelog/changeset/0011_add_mobile_token_for_user/add-mobile-token-for-user-rollback.sql
+- schema: src/main/resources/db/changelog/changeset/0011_add_mobile_token_for_user/add-mobile-token-for-user.sql
+- config: src/main/resources/db/changelog/changeset/0012_add_type_to_session/0012_changeSet.xml
+- schema: src/main/resources/db/changelog/changeset/0012_add_type_to_session/add-type-to-session-rollback.sql
+- schema: src/main/resources/db/changelog/changeset/0012_add_type_to_session/add-type-to-session.sql
+- config: src/main/resources/db/changelog/changeset/0013_add_assign_date_to_session/0013_changeSet.xml
+- schema: src/main/resources/db/changelog/changeset/0013_add_assign_date_to_session/add-assign-date-to-session-rollback.sql
+- schema: src/main/resources/db/changelog/changeset/0013_add_assign_date_to_session/add-assign-date-to-session.sql
+- schema: src/main/resources/db/changelog/changeset/0013_add_assign_date_to_session/assign-date-trigger.sql
+- config: src/main/resources/db/changelog/changeset/0014_add_is_peer_chat_to_session/0014_changeSet.xml
+- schema: src/main/resources/db/changelog/changeset/0014_add_is_peer_chat_to_session/add-is-peer-chat-to-session-rollback.sql
+- schema: src/main/resources/db/changelog/changeset/0014_add_is_peer_chat_to_session/add-is-peer-chat-to-session.sql
+- config: src/main/resources/db/changelog/changeset/0015_add_app_mobile_token/0015_changeSet.xml
+- schema: src/main/resources/db/changelog/changeset/0015_add_app_mobile_token/add-app-mobile-token-rollback.sql
+- schema: src/main/resources/db/changelog/changeset/0015_add_app_mobile_token/add-app-mobile-token-trigger.sql
+- schema: src/main/resources/db/changelog/changeset/0015_add_app_mobile_token/add-app-mobile-token.sql
+
+### Deployment/Config References
+
+- None found in graph artifacts.
+
+- pipeline: Dockerfile
+- config: api/appointmentservice.yaml
+- config: api/conversationservice.yaml
+- config: api/useradminservice.yaml
+- config: api/userservice.yaml
+- config: api/userstatisticsservice.yaml
+- pipeline: check-version.sh
+- pipeline: deploy-development.sh
+- pipeline: docker-build.cmd
+- document: documentation/Enquiry-flowchart.graphml
+- document: documentation/Get-list-of-team-sessions-flowchart.graphml
+- document: documentation/Group-chat-flowchart.graphml
+- document: documentation/Registration-flowchart.graphml
+- pipeline: mvnw.cmd
+- pipeline: run-trivy.sh
+- config: services/agencyadminservice.yaml
+- config: services/agencyservice.yaml
+- config: services/applicationsettingsservice.yaml
+- config: services/appointmentService.yaml
+- config: services/consultingtypeservice.yaml
+- config: services/liveservice.yaml
+- config: services/mailservice.yaml
+- config: services/messageservice.yaml
+- config: services/statisticsservice.yaml
+- config: services/tenantadminservice.yaml
+- config: services/tenantservice.yaml
+- config: services/topicservice.yaml
+- endpoint: getAppointmentByBookingId /appointments/booking/{id} — api/appointmentservice.yaml
+- endpoint: getAppointment /appointments/{id} — api/appointmentservice.yaml
+- endpoint: updateAppointment /appointments/{id} — api/appointmentservice.yaml
+- endpoint: DeleteAppointment /appointments/{id} — api/appointmentservice.yaml
+- endpoint: getAppointments /appointments — api/appointmentservice.yaml
+- endpoint: createAppointment /appointments — api/appointmentservice.yaml
+- endpoint: createEnquiryAppointment /appointments/sessions/{sessionId}/enquiry/new — api/appointmentservice.yaml
+- endpoint: getRegisteredEnquiries /conversations/consultants/enquiries/registered — api/conversationservice.yaml
+- endpoint: getAnonymousEnquiries /conversations/consultants/enquiries/anonymous — api/conversationservice.yaml
+- endpoint: getArchivedSessions /conversations/consultants/mymessages/archive — api/conversationservice.yaml
+- endpoint: getArchivedTeamSessions /conversations/consultants/teamsessions/archive — api/conversationservice.yaml
+- endpoint: createAnonymousEnquiry /conversations/askers/anonymous/new — api/conversationservice.yaml
+- endpoint: acceptAnonymousEnquiry /conversations/askers/anonymous/{sessionId}/accept — api/conversationservice.yaml
+
+### Important Graph Nodes
+
+- file: .gitignore
+- file: .swagger-codegen-ignore
+- document: CHANGELOG.md
+- pipeline: Dockerfile
+- document: INVITE_LINKS_API.md
+- file: LICENSE
+- config: api/appointmentservice.yaml
+- config: api/conversationservice.yaml
+- config: api/useradminservice.yaml
+- config: api/userservice.yaml
+- config: api/userstatisticsservice.yaml
+- pipeline: check-version.sh
+- file: commitlint.config.js
+- document: cookies.txt
+- pipeline: deploy-development.sh
+- pipeline: docker-build.cmd
+- document: documentation/ADR-SECURITY-02-unified-crypto-boundary.md
+- document: documentation/Anonyme-1zu1Chats-Workflows.graphml
+- document: documentation/Enquiry-flowchart.graphml
+- document: documentation/Get-list-of-team-sessions-flowchart.graphml
+- document: documentation/Group-chat-flowchart.graphml
+- document: documentation/Registration-flowchart.graphml
+- document: documentation/Registration-login-enquiry.graphml
+- document: documentation/RocketChat-Raumzuordnungen-Beratung-annehmen-und-zuordnen-Workflow.graphml
+- document: documentation/RocketChat-Raumzuordnungen_Erstanfragen-Workflow.graphml
+- document: documentation/RocketChatCredentialsProvider.graphml
+- document: documentation/UserService-architecture.graphml
+- document: documentation/User_Account_Deletion_Workflow.puml
+- document: documentation/User_Anonymous_Deactivation_Workflow.puml
+- file: mvnw
+- pipeline: mvnw.cmd
+- config: package-lock.json
+- config: package.json
+- config: pom.xml
+- document: readme.md
+- file: run-local-remote-db.sh.example
+- pipeline: run-trivy.sh
+- config: services/agencyadminservice.yaml
+- config: services/agencyservice.yaml
+- config: services/applicationsettingsservice.yaml
+
+### Important Graph Edges
+
+- contains: file:src/main/java/de/caritas/cob/userservice/api/AccountManager.java -> class:de.caritas.cob.userservice.api.AccountManager — src/main/java/de/caritas/cob/userservice/api/AccountManager.java declares AccountManager.
+- contains: file:src/main/java/de/caritas/cob/userservice/api/IdentityManager.java -> class:de.caritas.cob.userservice.api.IdentityManager — src/main/java/de/caritas/cob/userservice/api/IdentityManager.java declares IdentityManager.
+- contains: file:src/main/java/de/caritas/cob/userservice/api/Messenger.java -> class:de.caritas.cob.userservice.api.Messenger — src/main/java/de/caritas/cob/userservice/api/Messenger.java declares Messenger.
+- contains: file:src/main/java/de/caritas/cob/userservice/api/Organizer.java -> class:de.caritas.cob.userservice.api.Organizer — src/main/java/de/caritas/cob/userservice/api/Organizer.java declares Organizer.
+- contains: file:src/main/java/de/caritas/cob/userservice/api/PatchConsultantSaga.java -> class:de.caritas.cob.userservice.api.PatchConsultantSaga — src/main/java/de/caritas/cob/userservice/api/PatchConsultantSaga.java declares PatchConsultantSaga.
+- contains: file:src/main/java/de/caritas/cob/userservice/api/PatchConsultantSagaRollbackHandler.java -> class:de.caritas.cob.userservice.api.PatchConsultantSagaRollbackHandler — src/main/java/de/caritas/cob/userservice/api/PatchConsultantSagaRollbackHandler.java declares PatchConsultantSagaRollbackHandler.
+- contains: file:src/main/java/de/caritas/cob/userservice/api/UserServiceApplication.java -> class:de.caritas.cob.userservice.api.UserServiceApplication — src/main/java/de/caritas/cob/userservice/api/UserServiceApplication.java declares UserServiceApplication.
+- contains: file:src/main/java/de/caritas/cob/userservice/api/UserServiceMapper.java -> class:de.caritas.cob.userservice.api.UserServiceMapper — src/main/java/de/caritas/cob/userservice/api/UserServiceMapper.java declares UserServiceMapper.
+- contains: file:src/main/java/de/caritas/cob/userservice/api/actions/ActionCommand.java -> class:de.caritas.cob.userservice.api.actions.ActionCommand — src/main/java/de/caritas/cob/userservice/api/actions/ActionCommand.java declares ActionCommand.
+- contains: file:src/main/java/de/caritas/cob/userservice/api/actions/chat/ChatReCreator.java -> class:de.caritas.cob.userservice.api.actions.chat.ChatReCreator — src/main/java/de/caritas/cob/userservice/api/actions/chat/ChatReCreator.java declares ChatReCreator.
+- contains: file:src/main/java/de/caritas/cob/userservice/api/actions/chat/StopChatActionCommand.java -> class:de.caritas.cob.userservice.api.actions.chat.StopChatActionCommand — src/main/java/de/caritas/cob/userservice/api/actions/chat/StopChatActionCommand.java declares StopChatActionCommand.
+- imports: file:src/main/java/de/caritas/cob/userservice/api/actions/chat/StopChatActionCommand.java -> class:de.caritas.cob.userservice.api.actions.ActionCommand — src/main/java/de/caritas/cob/userservice/api/actions/chat/StopChatActionCommand.java imports de.caritas.cob.userservice.api.actions.ActionCommand.
+- contains: file:src/main/java/de/caritas/cob/userservice/api/actions/registry/ActionContainer.java -> class:de.caritas.cob.userservice.api.actions.registry.to — src/main/java/de/caritas/cob/userservice/api/actions/registry/ActionContainer.java declares to.
+- contains: file:src/main/java/de/caritas/cob/userservice/api/actions/registry/ActionContainer.java -> class:de.caritas.cob.userservice.api.actions.registry.ActionContainer — src/main/java/de/caritas/cob/userservice/api/actions/registry/ActionContainer.java declares ActionContainer.
+- imports: file:src/main/java/de/caritas/cob/userservice/api/actions/registry/ActionContainer.java -> class:de.caritas.cob.userservice.api.actions.ActionCommand — src/main/java/de/caritas/cob/userservice/api/actions/registry/ActionContainer.java imports de.caritas.cob.userservice.api.actions.ActionCommand.
+- contains: file:src/main/java/de/caritas/cob/userservice/api/actions/registry/ActionsRegistry.java -> class:de.caritas.cob.userservice.api.actions.registry.ActionsRegistry — src/main/java/de/caritas/cob/userservice/api/actions/registry/ActionsRegistry.java declares ActionsRegistry.
+- imports: file:src/main/java/de/caritas/cob/userservice/api/actions/registry/ActionsRegistry.java -> class:de.caritas.cob.userservice.api.actions.ActionCommand — src/main/java/de/caritas/cob/userservice/api/actions/registry/ActionsRegistry.java imports de.caritas.cob.userservice.api.actions.ActionCommand.
+- contains: file:src/main/java/de/caritas/cob/userservice/api/actions/session/DeactivateSessionActionCommand.java -> class:de.caritas.cob.userservice.api.actions.session.DeactivateSessionActionCommand — src/main/java/de/caritas/cob/userservice/api/actions/session/DeactivateSessionActionCommand.java declares DeactivateSessionActionCommand.
+- imports: file:src/main/java/de/caritas/cob/userservice/api/actions/session/DeactivateSessionActionCommand.java -> class:de.caritas.cob.userservice.api.actions.ActionCommand — src/main/java/de/caritas/cob/userservice/api/actions/session/DeactivateSessionActionCommand.java imports de.caritas.cob.userservice.api.actions.ActionCommand.
+- contains: file:src/main/java/de/caritas/cob/userservice/api/actions/session/PostConversationFinishedAliasMessageActionCommand.java -> class:de.caritas.cob.userservice.api.actions.session.PostConversationFinishedAliasMessageActionCommand — src/main/java/de/caritas/cob/userservice/api/actions/session/PostConversationFinishedAliasMessageActionCommand.java declares PostConversationFinishedAliasMessageActionCommand.
+- imports: file:src/main/java/de/caritas/cob/userservice/api/actions/session/PostConversationFinishedAliasMessageActionCommand.java -> class:de.caritas.cob.userservice.api.actions.ActionCommand — src/main/java/de/caritas/cob/userservice/api/actions/session/PostConversationFinishedAliasMessageActionCommand.java imports de.caritas.cob.userservice.api.actions.ActionCommand.
+- contains: file:src/main/java/de/caritas/cob/userservice/api/actions/session/SendFinishedAnonymousConversationEventActionCommand.java -> class:de.caritas.cob.userservice.api.actions.session.SendFinishedAnonymousConversationEventActionCommand — src/main/java/de/caritas/cob/userservice/api/actions/session/SendFinishedAnonymousConversationEventActionCommand.java declares SendFinishedAnonymousConversationEventActionCommand.
+- imports: file:src/main/java/de/caritas/cob/userservice/api/actions/session/SendFinishedAnonymousConversationEventActionCommand.java -> class:de.caritas.cob.userservice.api.actions.ActionCommand — src/main/java/de/caritas/cob/userservice/api/actions/session/SendFinishedAnonymousConversationEventActionCommand.java imports de.caritas.cob.userservice.api.actions.ActionCommand.
+- contains: file:src/main/java/de/caritas/cob/userservice/api/actions/session/SetRocketChatRoomReadOnlyActionCommand.java -> class:de.caritas.cob.userservice.api.actions.session.SetRocketChatRoomReadOnlyActionCommand — src/main/java/de/caritas/cob/userservice/api/actions/session/SetRocketChatRoomReadOnlyActionCommand.java declares SetRocketChatRoomReadOnlyActionCommand.
+- imports: file:src/main/java/de/caritas/cob/userservice/api/actions/session/SetRocketChatRoomReadOnlyActionCommand.java -> class:de.caritas.cob.userservice.api.actions.ActionCommand — src/main/java/de/caritas/cob/userservice/api/actions/session/SetRocketChatRoomReadOnlyActionCommand.java imports de.caritas.cob.userservice.api.actions.ActionCommand.
+- contains: file:src/main/java/de/caritas/cob/userservice/api/actions/user/DeactivateKeycloakUserActionCommand.java -> class:de.caritas.cob.userservice.api.actions.user.DeactivateKeycloakUserActionCommand — src/main/java/de/caritas/cob/userservice/api/actions/user/DeactivateKeycloakUserActionCommand.java declares DeactivateKeycloakUserActionCommand.
+- imports: file:src/main/java/de/caritas/cob/userservice/api/actions/user/DeactivateKeycloakUserActionCommand.java -> class:de.caritas.cob.userservice.api.actions.ActionCommand — src/main/java/de/caritas/cob/userservice/api/actions/user/DeactivateKeycloakUserActionCommand.java imports de.caritas.cob.userservice.api.actions.ActionCommand.
+- contains: file:src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakClient.java -> class:de.caritas.cob.userservice.api.adapters.keycloak.KeycloakClient — src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakClient.java declares KeycloakClient.
+- contains: file:src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakMapper.java -> class:de.caritas.cob.userservice.api.adapters.keycloak.KeycloakMapper — src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakMapper.java declares KeycloakMapper.
+- contains: file:src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakService.java -> class:de.caritas.cob.userservice.api.adapters.keycloak.KeycloakService — src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakService.java declares KeycloakService.
+
+### Missing or Weak Areas
+
+- Database tables may be represented in ORISO-Database, not this service graph.
+
+### Needs Verification
+
+- Database tables may be represented in ORISO-Database, not this service graph.
+
+## ORISO-AgencyService
+
+### Graph Source
+
+- graph path: ../ORISO-AgencyService/.understand-anything/knowledge-graph.json
+- artifacts used: 12
+- node count: 623
+- edge count: 835
+
+Artifacts used:
+
+- .understand-anything/ARCHITECTURE.md (8.9 KB)
+- .understand-anything/DEPENDENCY-AUDIT.md (2.5 KB)
+- .understand-anything/FINDINGS.md (3.8 KB)
+- .understand-anything/knowledge-graph.json (784.3 KB)
+- .understand-anything/ONBOARDING.md (5.3 KB)
+- .understand-anything/ORISO-ECOSYSTEM.md (2.8 KB)
+- .understand-anything/README.md (1.6 KB)
+- .understand-anything/visuals/architecture-flow.mmd (924 B)
+- .understand-anything/visuals/auth-flow.mmd (1.0 KB)
+- .understand-anything/visuals/data-flow.mmd (844 B)
+- .understand-anything/visuals/deployment-flow.mmd (692 B)
+- .understand-anything/visuals/ecosystem-flow.mmd (663 B)
+
+### Repository Purpose
+
+Spring Boot backend for public agency lookup, agency administration, postcode ranges, topic/demographic enrichment, Matrix agency accounts, and ORISO peer-service integration.
+
+### Main Files/Modules
+
+- file: .swagger-codegen-ignore
+- file: check-version.sh
+- file: commitlint.config.js
+- file: docker-build.cmd
+- file: AgencyService-Architektur.graphml — documentation/AgencyService-Architektur.graphml
+- file: mvnw
+- file: mvnw.cmd
+- file: run-trivy.sh
+- file: AgencyServiceApplication.java — src/main/java/de/caritas/cob/agencyservice/AgencyServiceApplication.java
+- file: AgencyAdminController.java — src/main/java/de/caritas/cob/agencyservice/api/admin/controller/AgencyAdminController.java
+- file: AgencyLinksBuilder.java — src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/AgencyLinksBuilder.java
+- file: HalLinkBuilder.java — src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/HalLinkBuilder.java
+- file: RootDTOBuilder.java — src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/RootDTOBuilder.java
+- file: SearchResultLinkBuilder.java — src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/SearchResultLinkBuilder.java
+- file: AgencyAdminFullResponseDTOBuilder.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminFullResponseDTOBuilder.java
+- file: AgencyAdminSearch.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearch.java
+- file: AgencyAdminSearchService.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearchService.java
+- file: AgencyAdminSearchTenantSupportService.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearchTenantSupportService.java
+- file: AgencyTopicEnrichmentService.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyTopicEnrichmentService.java
+- file: DataProtectionConverter.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/DataProtectionConverter.java
+- file: DataProtectionDTOBuilder.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/DataProtectionDTOBuilder.java
+- file: DemographicsConverter.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/DemographicsConverter.java
+- file: SearchResult.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/SearchResult.java
+- file: AgencyAdminService.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyAdminService.java
+- file: AgencyPostcodeRangeAdminService.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/AgencyPostcodeRangeAdminService.java
+- file: AgencyPostcodeRangeResponseDTOBuilder.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/AgencyPostcodeRangeResponseDTOBuilder.java
+- file: PostcodeRangeTransformer.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/PostcodeRangeTransformer.java
+- file: PostcodeRangeValidator.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/PostcodeRangeValidator.java
+- file: AgencyTopicMergeService.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyTopicMergeService.java
+- file: UserAdminService.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/UserAdminService.java
+- file: AgencyValidator.java — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/AgencyValidator.java
+- file: DeleteAgencyValidator.java — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/DeleteAgencyValidator.java
+- file: AgencyConsultingTypeValidator.java — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyConsultingTypeValidator.java
+- file: AgencyDataProtectionValidationService.java — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyDataProtectionValidationService.java
+- file: AgencyDataProtectionValidator.java — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyDataProtectionValidator.java
+- file: AgencyDemographicsValidator.java — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyDemographicsValidator.java
+- file: AgencyOfflineStatusValidator.java — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyOfflineStatusValidator.java
+- file: AgencyPostcodeValidator.java — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyPostcodeValidator.java
+- file: AgencyTenantValidator.java — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyTenantValidator.java
+- file: AgencyUpdatePermissionValidator.java — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyUpdatePermissionValidator.java
+- file: CreateAgencyValidator.java — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/annotation/CreateAgencyValidator.java
+- file: UpdateAgencyValidator.java — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/annotation/UpdateAgencyValidator.java
+- file: ConcreteAgencyValidator.java — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/ConcreteAgencyValidator.java
+- file: ValidateAgencyDTO.java — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/model/ValidateAgencyDTO.java
+- file: ApiDefaultResponseEntityExceptionHandler.java — src/main/java/de/caritas/cob/agencyservice/api/ApiDefaultResponseEntityExceptionHandler.java
+- file: ApiResponseEntityExceptionHandler.java — src/main/java/de/caritas/cob/agencyservice/api/ApiResponseEntityExceptionHandler.java
+- file: Authority.java — src/main/java/de/caritas/cob/agencyservice/api/authorization/Authority.java
+- file: RoleAuthorizationAuthorityMapper.java — src/main/java/de/caritas/cob/agencyservice/api/authorization/RoleAuthorizationAuthorityMapper.java
+- file: AgencyController.java — src/main/java/de/caritas/cob/agencyservice/api/controller/AgencyController.java
+- file: CustomSwaggerUIController.java — src/main/java/de/caritas/cob/agencyservice/api/controller/CustomSwaggerUIController.java
+- file: VersionController.java — src/main/java/de/caritas/cob/agencyservice/api/controller/VersionController.java
+- file: CustomHttpHeader.java — src/main/java/de/caritas/cob/agencyservice/api/exception/customheader/CustomHttpHeader.java
+- file: AgencyAccessDeniedException.java — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/AgencyAccessDeniedException.java
+- file: BadRequestException.java — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/BadRequestException.java
+- file: ConflictException.java — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/ConflictException.java
+- file: CustomHttpStatusException.java — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/CustomHttpStatusException.java
+- file: CustomValidationHttpStatusException.java — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/CustomValidationHttpStatusException.java
+- file: HttpStatusExceptionReason.java — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/HttpStatusExceptionReason.java
+- file: InternalServerErrorException.java — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/InternalServerErrorException.java
+- file: InvalidConsultingTypeException.java — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/InvalidConsultingTypeException.java
+
+### Classes/Functions
+
+- class: AgencyServiceApplication — src/main/java/de/caritas/cob/agencyservice/AgencyServiceApplication.java
+- class: AgencyAdminController — src/main/java/de/caritas/cob/agencyservice/api/admin/controller/AgencyAdminController.java
+- class: AgencyLinksBuilder — src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/AgencyLinksBuilder.java
+- class: HalLinkBuilder — src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/HalLinkBuilder.java
+- class: RootDTOBuilder — src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/RootDTOBuilder.java
+- class: SearchResultLinkBuilder — src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/SearchResultLinkBuilder.java
+- class: AgencyAdminFullResponseDTOBuilder — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminFullResponseDTOBuilder.java
+- class: AgencyAdminSearch — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearch.java
+- class: AgencyAdminSearchService — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearchService.java
+- class: AgencyAdminSearchTenantSupportService — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearchTenantSupportService.java
+- class: AgencyTopicEnrichmentService — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyTopicEnrichmentService.java
+- class: DataProtectionConverter — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/DataProtectionConverter.java
+- class: DataProtectionDTOBuilder — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/DataProtectionDTOBuilder.java
+- class: DemographicsConverter — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/DemographicsConverter.java
+- class: SearchResult — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/SearchResult.java
+- class: to — src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyAdminService.java
+- class: AgencyAdminService — src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyAdminService.java
+- class: to — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/AgencyPostcodeRangeAdminService.java
+- class: AgencyPostcodeRangeAdminService — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/AgencyPostcodeRangeAdminService.java
+- class: to — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/AgencyPostcodeRangeResponseDTOBuilder.java
+- class: AgencyPostcodeRangeResponseDTOBuilder — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/AgencyPostcodeRangeResponseDTOBuilder.java
+- class: PostcodeRangeTransformer — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/PostcodeRangeTransformer.java
+- class: PostcodeRangeValidator — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/PostcodeRangeValidator.java
+- class: AgencyTopicMergeService — src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyTopicMergeService.java
+- class: UserAdminService — src/main/java/de/caritas/cob/agencyservice/api/admin/service/UserAdminService.java
+- class: AgencyValidator — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/AgencyValidator.java
+- class: DeleteAgencyValidator — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/DeleteAgencyValidator.java
+- class: AgencyConsultingTypeValidator — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyConsultingTypeValidator.java
+- class: AgencyDataProtectionValidationService — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyDataProtectionValidationService.java
+- class: AgencyDataProtectionValidator — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyDataProtectionValidator.java
+- class: AgencyDemographicsValidator — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyDemographicsValidator.java
+- class: AgencyOfflineStatusValidator — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyOfflineStatusValidator.java
+- class: AgencyPostcodeValidator — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyPostcodeValidator.java
+- class: AgencyTenantValidator — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyTenantValidator.java
+- class: AgencyUpdatePermissionValidator — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyUpdatePermissionValidator.java
+- class: CreateAgencyValidator — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/annotation/CreateAgencyValidator.java
+- class: UpdateAgencyValidator — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/annotation/UpdateAgencyValidator.java
+- class: ConcreteAgencyValidator — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/ConcreteAgencyValidator.java
+- class: ValidateAgencyDTO — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/model/ValidateAgencyDTO.java
+- class: ApiDefaultResponseEntityExceptionHandler — src/main/java/de/caritas/cob/agencyservice/api/ApiDefaultResponseEntityExceptionHandler.java
+- class: ApiResponseEntityExceptionHandler — src/main/java/de/caritas/cob/agencyservice/api/ApiResponseEntityExceptionHandler.java
+- class: Authority — src/main/java/de/caritas/cob/agencyservice/api/authorization/Authority.java
+- class: AuthorityValue — src/main/java/de/caritas/cob/agencyservice/api/authorization/Authority.java
+- class: RoleAuthorizationAuthorityMapper — src/main/java/de/caritas/cob/agencyservice/api/authorization/RoleAuthorizationAuthorityMapper.java
+- class: AgencyController — src/main/java/de/caritas/cob/agencyservice/api/controller/AgencyController.java
+- class: CustomSwaggerUIController — src/main/java/de/caritas/cob/agencyservice/api/controller/CustomSwaggerUIController.java
+- class: VersionController — src/main/java/de/caritas/cob/agencyservice/api/controller/VersionController.java
+- class: CustomHttpHeader — src/main/java/de/caritas/cob/agencyservice/api/exception/customheader/CustomHttpHeader.java
+- class: AgencyAccessDeniedException — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/AgencyAccessDeniedException.java
+- class: BadRequestException — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/BadRequestException.java
+- class: ConflictException — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/ConflictException.java
+- class: CustomHttpStatusException — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/CustomHttpStatusException.java
+- class: CustomValidationHttpStatusException — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/CustomValidationHttpStatusException.java
+- class: HttpStatusExceptionReason — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/HttpStatusExceptionReason.java
+- class: InternalServerErrorException — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/InternalServerErrorException.java
+- class: InvalidConsultingTypeException — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/InvalidConsultingTypeException.java
+- class: InvalidDemographicsException — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/InvalidDemographicsException.java
+- class: InvalidOfflineStatusException — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/InvalidOfflineStatusException.java
+- class: InvalidPostcodeException — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/InvalidPostcodeException.java
+- class: NotFoundException — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/NotFoundException.java
+
+### APIs/Routes
+
+- schema: agencyadminservice.yaml — api/agencyadminservice.yaml
+- schema: agencyservice.yaml — api/agencyservice.yaml
+- file: AgencyServiceApplication.java — src/main/java/de/caritas/cob/agencyservice/AgencyServiceApplication.java
+- file: AgencyAdminController.java — src/main/java/de/caritas/cob/agencyservice/api/admin/controller/AgencyAdminController.java
+- file: AgencyLinksBuilder.java — src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/AgencyLinksBuilder.java
+- file: HalLinkBuilder.java — src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/HalLinkBuilder.java
+- file: RootDTOBuilder.java — src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/RootDTOBuilder.java
+- file: SearchResultLinkBuilder.java — src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/SearchResultLinkBuilder.java
+- file: AgencyAdminFullResponseDTOBuilder.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminFullResponseDTOBuilder.java
+- file: AgencyAdminSearch.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearch.java
+- file: AgencyAdminSearchService.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearchService.java
+- file: AgencyAdminSearchTenantSupportService.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearchTenantSupportService.java
+- file: AgencyTopicEnrichmentService.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyTopicEnrichmentService.java
+- file: DataProtectionConverter.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/DataProtectionConverter.java
+- file: DataProtectionDTOBuilder.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/DataProtectionDTOBuilder.java
+- file: DemographicsConverter.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/DemographicsConverter.java
+- file: SearchResult.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/SearchResult.java
+- file: AgencyAdminService.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyAdminService.java
+- file: AgencyPostcodeRangeAdminService.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/AgencyPostcodeRangeAdminService.java
+- file: AgencyPostcodeRangeResponseDTOBuilder.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/AgencyPostcodeRangeResponseDTOBuilder.java
+- file: PostcodeRangeTransformer.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/PostcodeRangeTransformer.java
+- file: PostcodeRangeValidator.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/PostcodeRangeValidator.java
+- file: AgencyTopicMergeService.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyTopicMergeService.java
+- file: UserAdminService.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/UserAdminService.java
+- file: AgencyValidator.java — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/AgencyValidator.java
+- file: DeleteAgencyValidator.java — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/DeleteAgencyValidator.java
+- file: AgencyConsultingTypeValidator.java — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyConsultingTypeValidator.java
+- file: AgencyDataProtectionValidationService.java — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyDataProtectionValidationService.java
+- file: AgencyDataProtectionValidator.java — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyDataProtectionValidator.java
+- file: AgencyDemographicsValidator.java — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyDemographicsValidator.java
+- file: AgencyOfflineStatusValidator.java — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyOfflineStatusValidator.java
+- file: AgencyPostcodeValidator.java — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyPostcodeValidator.java
+- file: AgencyTenantValidator.java — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyTenantValidator.java
+- file: AgencyUpdatePermissionValidator.java — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyUpdatePermissionValidator.java
+- file: CreateAgencyValidator.java — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/annotation/CreateAgencyValidator.java
+- file: UpdateAgencyValidator.java — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/annotation/UpdateAgencyValidator.java
+- file: ConcreteAgencyValidator.java — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/ConcreteAgencyValidator.java
+- file: ValidateAgencyDTO.java — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/model/ValidateAgencyDTO.java
+- file: ApiDefaultResponseEntityExceptionHandler.java — src/main/java/de/caritas/cob/agencyservice/api/ApiDefaultResponseEntityExceptionHandler.java
+- file: ApiResponseEntityExceptionHandler.java — src/main/java/de/caritas/cob/agencyservice/api/ApiResponseEntityExceptionHandler.java
+- file: Authority.java — src/main/java/de/caritas/cob/agencyservice/api/authorization/Authority.java
+- file: RoleAuthorizationAuthorityMapper.java — src/main/java/de/caritas/cob/agencyservice/api/authorization/RoleAuthorizationAuthorityMapper.java
+- file: AgencyController.java — src/main/java/de/caritas/cob/agencyservice/api/controller/AgencyController.java
+- file: CustomSwaggerUIController.java — src/main/java/de/caritas/cob/agencyservice/api/controller/CustomSwaggerUIController.java
+- file: VersionController.java — src/main/java/de/caritas/cob/agencyservice/api/controller/VersionController.java
+- file: CustomHttpHeader.java — src/main/java/de/caritas/cob/agencyservice/api/exception/customheader/CustomHttpHeader.java
+- file: AgencyAccessDeniedException.java — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/AgencyAccessDeniedException.java
+- file: BadRequestException.java — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/BadRequestException.java
+- file: ConflictException.java — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/ConflictException.java
+- file: CustomHttpStatusException.java — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/CustomHttpStatusException.java
+- file: CustomValidationHttpStatusException.java — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/CustomValidationHttpStatusException.java
+- file: HttpStatusExceptionReason.java — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/HttpStatusExceptionReason.java
+- file: InternalServerErrorException.java — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/InternalServerErrorException.java
+- file: InvalidConsultingTypeException.java — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/InvalidConsultingTypeException.java
+- file: InvalidDemographicsException.java — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/InvalidDemographicsException.java
+- file: InvalidOfflineStatusException.java — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/InvalidOfflineStatusException.java
+- file: InvalidPostcodeException.java — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/InvalidPostcodeException.java
+- file: NotFoundException.java — src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/NotFoundException.java
+- file: KeycloakException.java — src/main/java/de/caritas/cob/agencyservice/api/exception/KeycloakException.java
+- file: MissingConsultingTypeException.java — src/main/java/de/caritas/cob/agencyservice/api/exception/MissingConsultingTypeException.java
+
+### Internal Dependencies
+
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/controller/AgencyAdminController.java -> file:src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/RootDTOBuilder.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/controller/AgencyAdminController.java -> file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminFullResponseDTOBuilder.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/controller/AgencyAdminController.java -> file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearchService.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/controller/AgencyAdminController.java -> file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyAdminService.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/controller/AgencyAdminController.java -> file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/AgencyPostcodeRangeAdminService.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/controller/AgencyAdminController.java -> file:src/main/java/de/caritas/cob/agencyservice/api/admin/validation/AgencyValidator.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/AgencyLinksBuilder.java -> file:src/main/java/de/caritas/cob/agencyservice/api/repository/agency/Agency.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminFullResponseDTOBuilder.java -> file:src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/AgencyLinksBuilder.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminFullResponseDTOBuilder.java -> file:src/main/java/de/caritas/cob/agencyservice/api/repository/agency/Agency.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminFullResponseDTOBuilder.java -> file:src/main/java/de/caritas/cob/agencyservice/api/repository/agencytopic/AgencyTopic.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearchService.java -> file:src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/SearchResultLinkBuilder.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearchService.java -> file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/UserAdminService.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearchService.java -> file:src/main/java/de/caritas/cob/agencyservice/api/repository/agency/Agency.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearchService.java -> file:src/main/java/de/caritas/cob/agencyservice/api/repository/agency/AgencyRepository.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearchService.java -> file:src/main/java/de/caritas/cob/agencyservice/api/util/AuthenticatedUser.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearchTenantSupportService.java -> file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/UserAdminService.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearchTenantSupportService.java -> file:src/main/java/de/caritas/cob/agencyservice/api/repository/agency/Agency.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearchTenantSupportService.java -> file:src/main/java/de/caritas/cob/agencyservice/api/tenant/TenantContext.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearchTenantSupportService.java -> file:src/main/java/de/caritas/cob/agencyservice/api/util/AuthenticatedUser.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyTopicEnrichmentService.java -> file:src/main/java/de/caritas/cob/agencyservice/api/repository/agency/Agency.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyTopicEnrichmentService.java -> file:src/main/java/de/caritas/cob/agencyservice/api/repository/agencytopic/AgencyTopic.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyTopicEnrichmentService.java -> file:src/main/java/de/caritas/cob/agencyservice/api/service/TopicService.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/DataProtectionConverter.java -> file:src/main/java/de/caritas/cob/agencyservice/api/repository/agency/DataProtectionResponsibleEntity.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/DataProtectionConverter.java -> file:src/main/java/de/caritas/cob/agencyservice/api/util/JsonConverter.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/DataProtectionDTOBuilder.java -> file:src/main/java/de/caritas/cob/agencyservice/api/repository/agency/Agency.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/DataProtectionDTOBuilder.java -> file:src/main/java/de/caritas/cob/agencyservice/api/repository/agency/DataProtectionResponsibleEntity.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/DataProtectionDTOBuilder.java -> file:src/main/java/de/caritas/cob/agencyservice/api/util/JsonConverter.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/DemographicsConverter.java -> file:src/main/java/de/caritas/cob/agencyservice/api/repository/agency/Agency.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/DemographicsConverter.java -> file:src/main/java/de/caritas/cob/agencyservice/api/repository/agency/Gender.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyAdminService.java -> file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminFullResponseDTOBuilder.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyAdminService.java -> file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyTopicEnrichmentService.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyAdminService.java -> file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/DataProtectionConverter.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyAdminService.java -> file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/DemographicsConverter.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyAdminService.java -> file:src/main/java/de/caritas/cob/agencyservice/api/admin/validation/DeleteAgencyValidator.java
+- imports: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyAdminService.java -> file:src/main/java/de/caritas/cob/agencyservice/api/exception/httpresponses/ConflictException.java
+
+### External ORISO Dependencies
+
+- ORISO-Frontend -> ORISO-AgencyService: depends_on (ORISO-Frontend::file:src/generated/agencyservice.d.ts)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::config:services/agencyadminservice.yaml)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::config:services/agencyservice.yaml)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/admin/service/agency/AgencyAdminService.java)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/admin/service/agency/ConsultantAgencyAdminService.java)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/AgencyAdminServiceApiControllerFactory.java)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/AgencyServiceApiClientConfig.java)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/AgencyServiceApiControllerFactory.java)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/AppointmentAgencyServiceApiControllerFactory.java)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/ConsultantAgencyService.java)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/UserAgencyService.java)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/agency/AgencyService.java)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/admin/report/service/AgencyAdminServiceTest.java)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/service/ConsultantAgencyServiceTest.java)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/service/UserAgencyServiceTest.java)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/service/agency/AgencyServiceTest.java)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.admin.service.agency.AgencyAdminService)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.admin.service.agency.ConsultantAgencyAdminService)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.AgencyAdminServiceApiControllerFactory)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.for)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.AgencyServiceApiClientConfig)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.AgencyServiceApiControllerFactory)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.AppointmentAgencyServiceApiControllerFactory)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.service.ConsultantAgencyService)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.service.UserAgencyService)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.service.agency.to)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.service.agency.AgencyService)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.admin.report.service.AgencyAdminServiceTest)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.service.ConsultantAgencyServiceTest)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.service.UserAgencyServiceTest)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.service.agency.AgencyServiceTest)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::endpoint:services/agencyadminservice.yaml:getRoot)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::endpoint:services/agencyadminservice.yaml:searchAgencies)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::endpoint:services/agencyadminservice.yaml:createAgency)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::endpoint:services/agencyadminservice.yaml:getAgency)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::endpoint:services/agencyadminservice.yaml:deleteAgency)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::endpoint:services/agencyadminservice.yaml:updateAgency)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::endpoint:services/agencyadminservice.yaml:getDioceses)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::endpoint:services/agencyadminservice.yaml:changeAgencyType)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::endpoint:services/agencyadminservice.yaml:getAgencyPostcodeRanges)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::endpoint:services/agencyadminservice.yaml:createAgencyPostcodeRange)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::endpoint:services/agencyadminservice.yaml:updateAgencyPostcodeRange)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::endpoint:services/agencyadminservice.yaml:deleteAgencyPostcodeRange)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::endpoint:services/agencyservice.yaml:getAgencies)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::endpoint:services/agencyservice.yaml:getAgenciesByIds)
+- ORISO-UserService -> ORISO-AgencyService: depends_on (ORISO-UserService::endpoint:services/agencyservice.yaml:getAgenciesByConsultingType)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/admin/service/agency/AgencyAdminService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.admin.service.agency.AgencyAdminService)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/admin/service/agency/ConsultantAgencyAdminService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.admin.service.agency.to)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/admin/service/agency/ConsultantAgencyAdminService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.admin.service.agency.ConsultantAgencyAdminService)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/AgencyAdminServiceApiControllerFactory.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.AgencyAdminServiceApiControllerFactory)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/AgencyServiceApiClientConfig.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.for)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/AgencyServiceApiClientConfig.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.AgencyServiceApiClientConfig)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/AgencyServiceApiControllerFactory.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.AgencyServiceApiControllerFactory)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/AppointmentAgencyServiceApiControllerFactory.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.AppointmentAgencyServiceApiControllerFactory)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/ConsultantAgencyService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.ConsultantAgencyService)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/ConsultantAgencyService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.adapters.web.mapping.UserDtoMapper)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/ConsultantAgencyService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.exception.httpresponses.InternalServerErrorException)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/ConsultantAgencyService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.manager.consultingtype.roles.Consultant)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/ConsultantAgencyService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.model.ConsultantAgency)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/ConsultantAgencyService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.model.Language)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/ConsultantAgencyService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.port.in.AccountManaging)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/ConsultantAgencyService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.port.out.ConsultantAgencyRepository)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/UserAgencyService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.UserAgencyService)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/UserAgencyService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.exception.httpresponses.InternalServerErrorException)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/UserAgencyService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.adapters.rocketchat.dto.user.User)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/UserAgencyService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.model.UserAgency)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/UserAgencyService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.port.out.UserAgencyRepository)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/agency/AgencyService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.agency.to)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/agency/AgencyService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.agency.AgencyService)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/agency/AgencyService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.config.CacheManagerConfig)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/agency/AgencyService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.AgencyServiceApiControllerFactory)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/agency/AgencyService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.exception.httpresponses.InternalServerErrorException)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/appointment/AppointmentService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.AppointmentAgencyServiceApiControllerFactory)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/emailsupplier/NewEnquiryEmailSupplier.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.agency.AgencyService)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/emailsupplier/NewMessageEmailSupplier.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.ConsultantAgencyService)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/session/SessionService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.agency.AgencyService)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/tenant/MultitenancyWithSingleDomainTenantResolver.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.agency.AgencyService)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/workflow/enquirynotification/service/EnquiryNotificationService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.ConsultantAgencyService)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/workflow/enquirynotification/service/EnquiryNotificationService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.agency.AgencyService)
+- ORISO-UserService -> ORISO-AgencyService: related (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/AccountManagerTest.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.agency.AgencyService)
+
+### Auth References
+
+- file: AgencyUpdatePermissionValidator.java — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyUpdatePermissionValidator.java
+- file: Authority.java — src/main/java/de/caritas/cob/agencyservice/api/authorization/Authority.java
+- file: RoleAuthorizationAuthorityMapper.java — src/main/java/de/caritas/cob/agencyservice/api/authorization/RoleAuthorizationAuthorityMapper.java
+- file: KeycloakException.java — src/main/java/de/caritas/cob/agencyservice/api/exception/KeycloakException.java
+- file: SecurityHeaderSupplier.java — src/main/java/de/caritas/cob/agencyservice/api/service/securityheader/SecurityHeaderSupplier.java
+- file: AccessTokenTenantResolver.java — src/main/java/de/caritas/cob/agencyservice/api/tenant/AccessTokenTenantResolver.java
+- file: CustomHeaderTenantResolver.java — src/main/java/de/caritas/cob/agencyservice/api/tenant/CustomHeaderTenantResolver.java
+- file: MultitenancyWithSingleDomainTenantResolver.java — src/main/java/de/caritas/cob/agencyservice/api/tenant/MultitenancyWithSingleDomainTenantResolver.java
+- file: SubdomainTenantResolver.java — src/main/java/de/caritas/cob/agencyservice/api/tenant/SubdomainTenantResolver.java
+- file: TechnicalUserTenantResolver.java — src/main/java/de/caritas/cob/agencyservice/api/tenant/TechnicalUserTenantResolver.java
+- file: TenantAspect.java — src/main/java/de/caritas/cob/agencyservice/api/tenant/TenantAspect.java
+- file: TenantContext.java — src/main/java/de/caritas/cob/agencyservice/api/tenant/TenantContext.java
+- file: TenantContextProvider.java — src/main/java/de/caritas/cob/agencyservice/api/tenant/TenantContextProvider.java
+- file: TenantResolver.java — src/main/java/de/caritas/cob/agencyservice/api/tenant/TenantResolver.java
+- file: TenantResolverService.java — src/main/java/de/caritas/cob/agencyservice/api/tenant/TenantResolverService.java
+- file: AuthenticatedUser.java — src/main/java/de/caritas/cob/agencyservice/api/util/AuthenticatedUser.java
+- file: AuthenticatedUserConfig.java — src/main/java/de/caritas/cob/agencyservice/config/AuthenticatedUserConfig.java
+- file: AuthorisationService.java — src/main/java/de/caritas/cob/agencyservice/config/security/AuthorisationService.java
+- file: JwtAuthConverter.java — src/main/java/de/caritas/cob/agencyservice/config/security/JwtAuthConverter.java
+- file: JwtAuthConverterProperties.java — src/main/java/de/caritas/cob/agencyservice/config/security/JwtAuthConverterProperties.java
+- file: KeycloakLogoutHandler.java — src/main/java/de/caritas/cob/agencyservice/config/security/KeycloakLogoutHandler.java
+- file: SecurityConfig.java — src/main/java/de/caritas/cob/agencyservice/config/SecurityConfig.java
+- file: HttpTenantFilter.java — src/main/java/de/caritas/cob/agencyservice/filter/HttpTenantFilter.java
+- file: StatelessCsrfFilter.java — src/main/java/de/caritas/cob/agencyservice/filter/StatelessCsrfFilter.java
+- file: SubdomainExtractor.java — src/main/java/de/caritas/cob/agencyservice/filter/SubdomainExtractor.java
+- config: application.properties — src/main/resources/application.properties
+- file: AgencyAdminControllerAuthorizationIT.java — src/test/java/de/caritas/cob/agencyservice/api/admin/controller/AgencyAdminControllerAuthorizationIT.java
+- file: AgencyUpdatePermissionValidatorTest.java — src/test/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyUpdatePermissionValidatorTest.java
+- file: AuthorityTest.java — src/test/java/de/caritas/cob/agencyservice/api/authorization/AuthorityTest.java
+- file: RoleAuthorizationAuthorityMapperTest.java — src/test/java/de/caritas/cob/agencyservice/api/authorization/RoleAuthorizationAuthorityMapperTest.java
+- file: AccessTokenTenantResolverTest.java — src/test/java/de/caritas/cob/agencyservice/api/tenant/AccessTokenTenantResolverTest.java
+- file: CustomHeaderTenantResolverTest.java — src/test/java/de/caritas/cob/agencyservice/api/tenant/CustomHeaderTenantResolverTest.java
+- file: MultitenancyWithSingleDomainTenantResolverTest.java — src/test/java/de/caritas/cob/agencyservice/api/tenant/MultitenancyWithSingleDomainTenantResolverTest.java
+- file: SubdomainTenantResolverTest.java — src/test/java/de/caritas/cob/agencyservice/api/tenant/SubdomainTenantResolverTest.java
+- file: TechnicalUserTenantResolverTest.java — src/test/java/de/caritas/cob/agencyservice/api/tenant/TechnicalUserTenantResolverTest.java
+- file: TenantResolverServiceTest.java — src/test/java/de/caritas/cob/agencyservice/api/tenant/TenantResolverServiceTest.java
+- file: AuthenticatedUserTest.java — src/test/java/de/caritas/cob/agencyservice/api/util/AuthenticatedUserTest.java
+- file: HttpTenantFilterTest.java — src/test/java/de/caritas/cob/agencyservice/filter/HttpTenantFilterTest.java
+- file: SubdomainExtractorTest.java — src/test/java/de/caritas/cob/agencyservice/filter/SubdomainExtractorTest.java
+- class: AgencyUpdatePermissionValidator — src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyUpdatePermissionValidator.java
+- class: Authority — src/main/java/de/caritas/cob/agencyservice/api/authorization/Authority.java
+- class: AuthorityValue — src/main/java/de/caritas/cob/agencyservice/api/authorization/Authority.java
+- class: RoleAuthorizationAuthorityMapper — src/main/java/de/caritas/cob/agencyservice/api/authorization/RoleAuthorizationAuthorityMapper.java
+- class: KeycloakException — src/main/java/de/caritas/cob/agencyservice/api/exception/KeycloakException.java
+- class: SecurityHeaderSupplier — src/main/java/de/caritas/cob/agencyservice/api/service/securityheader/SecurityHeaderSupplier.java
+- class: AccessTokenTenantResolver — src/main/java/de/caritas/cob/agencyservice/api/tenant/AccessTokenTenantResolver.java
+- class: CustomHeaderTenantResolver — src/main/java/de/caritas/cob/agencyservice/api/tenant/CustomHeaderTenantResolver.java
+- class: MultitenancyWithSingleDomainTenantResolver — src/main/java/de/caritas/cob/agencyservice/api/tenant/MultitenancyWithSingleDomainTenantResolver.java
+- class: SubdomainTenantResolver — src/main/java/de/caritas/cob/agencyservice/api/tenant/SubdomainTenantResolver.java
+- class: TechnicalUserTenantResolver — src/main/java/de/caritas/cob/agencyservice/api/tenant/TechnicalUserTenantResolver.java
+- class: TenantAspect — src/main/java/de/caritas/cob/agencyservice/api/tenant/TenantAspect.java
+- class: TenantContext — src/main/java/de/caritas/cob/agencyservice/api/tenant/TenantContext.java
+- class: TenantContextProvider — src/main/java/de/caritas/cob/agencyservice/api/tenant/TenantContextProvider.java
+- class: TenantResolver — src/main/java/de/caritas/cob/agencyservice/api/tenant/TenantResolver.java
+- class: TenantResolverService — src/main/java/de/caritas/cob/agencyservice/api/tenant/TenantResolverService.java
+- class: AuthenticatedUser — src/main/java/de/caritas/cob/agencyservice/api/util/AuthenticatedUser.java
+- class: AuthenticatedUserConfig — src/main/java/de/caritas/cob/agencyservice/config/AuthenticatedUserConfig.java
+- class: AuthorisationService — src/main/java/de/caritas/cob/agencyservice/config/security/AuthorisationService.java
+- class: JwtAuthConverter — src/main/java/de/caritas/cob/agencyservice/config/security/JwtAuthConverter.java
+- class: JwtAuthConverterProperties — src/main/java/de/caritas/cob/agencyservice/config/security/JwtAuthConverterProperties.java
+
+### Database References
+
+- schema: agencyadminservice.yaml — api/agencyadminservice.yaml
+- schema: agencyservice.yaml — api/agencyservice.yaml
+- config: pom.xml
+- schema: applicationsettingsservice.yml — services/applicationsettingsservice.yml
+- schema: appointmentService.yaml — services/appointmentService.yaml
+- schema: consultingtypeservice.yaml — services/consultingtypeservice.yaml
+- schema: tenantservice.yaml — services/tenantservice.yaml
+- schema: topicservice.yaml — services/topicservice.yaml
+- schema: useradminservice.yaml — services/useradminservice.yaml
+- file: Agency.java — src/main/java/de/caritas/cob/agencyservice/api/repository/agency/Agency.java
+- config: application.properties — src/main/resources/application.properties
+- config: agencyservice-dev-master.xml — src/main/resources/db/changelog/agencyservice-dev-master.xml
+- config: agencyservice-local-master.xml — src/main/resources/db/changelog/agencyservice-local-master.xml
+- config: agencyservice-prod-master.xml — src/main/resources/db/changelog/agencyservice-prod-master.xml
+- config: agencyservice-staging-master.xml — src/main/resources/db/changelog/agencyservice-staging-master.xml
+- config: agencyservice-testing-master.xml — src/main/resources/db/changelog/agencyservice-testing-master.xml
+- config: initSql.xml — src/main/resources/db/changelog/changeset/0001_initsql/initSql.xml
+- table: initTables.sql — src/main/resources/db/changelog/changeset/0001_initsql/initTables.sql
+- table: initTrigger.sql — src/main/resources/db/changelog/changeset/0001_initsql/initTrigger.sql
+- config: 0002_changeSet.xml — src/main/resources/db/changelog/changeset/0002_agency_id_old_null/0002_changeSet.xml
+- table: agenyIdOldNull-rollback.sql — src/main/resources/db/changelog/changeset/0002_agency_id_old_null/agenyIdOldNull-rollback.sql
+- table: agenyIdOldNull.sql — src/main/resources/db/changelog/changeset/0002_agency_id_old_null/agenyIdOldNull.sql
+- config: 0003_changeSet.xml — src/main/resources/db/changelog/changeset/0003_agency_consulting_type/0003_changeSet.xml
+- table: agencyConsultingType-rollback.sql — src/main/resources/db/changelog/changeset/0003_agency_consulting_type/agencyConsultingType-rollback.sql
+- table: agencyConsultingType.sql — src/main/resources/db/changelog/changeset/0003_agency_consulting_type/agencyConsultingType.sql
+- config: 0004_changeSet.xml — src/main/resources/db/changelog/changeset/0004_agency_offline/0004_changeSet.xml
+- table: agencyOffline-rollback.sql — src/main/resources/db/changelog/changeset/0004_agency_offline/agencyOffline-rollback.sql
+- table: agencyOffline.sql — src/main/resources/db/changelog/changeset/0004_agency_offline/agencyOffline.sql
+- config: 0005_changeSet.xml — src/main/resources/db/changelog/changeset/0005_agency_delete_flag/0005_changeSet.xml
+- table: agencyDeleteFlag-rollback.sql — src/main/resources/db/changelog/changeset/0005_agency_delete_flag/agencyDeleteFlag-rollback.sql
+- table: agencyDeleteFlag.sql — src/main/resources/db/changelog/changeset/0005_agency_delete_flag/agencyDeleteFlag.sql
+- config: 0006_changeSet.xml — src/main/resources/db/changelog/changeset/0006_agency_url_and_external_flag/0006_changeSet.xml
+- table: agencyUrlAndExternalFlag-rollback.sql — src/main/resources/db/changelog/changeset/0006_agency_url_and_external_flag/agencyUrlAndExternalFlag-rollback.sql
+- table: agencyUrlAndExternalFlag.sql — src/main/resources/db/changelog/changeset/0006_agency_url_and_external_flag/agencyUrlAndExternalFlag.sql
+- config: 0007_changeSet.xml — src/main/resources/db/changelog/changeset/0007_tenant_id/0007_changeSet.xml
+- table: tenant_id-rollback.sql — src/main/resources/db/changelog/changeset/0007_tenant_id/tenant_id-rollback.sql
+- table: tenant_id.sql — src/main/resources/db/changelog/changeset/0007_tenant_id/tenant_id.sql
+- config: 0008_changeSet.xml — src/main/resources/db/changelog/changeset/0008_tenant_id_remove/0008_changeSet.xml
+- table: tenant_id.sql — src/main/resources/db/changelog/changeset/0008_tenant_id_remove/tenant_id.sql
+- config: 0009_changeSet.xml — src/main/resources/db/changelog/changeset/0009_agency_topic/0009_changeSet.xml
+- table: agencyTopic-rollback.sql — src/main/resources/db/changelog/changeset/0009_agency_topic/agencyTopic-rollback.sql
+- table: agencyTopic.sql — src/main/resources/db/changelog/changeset/0009_agency_topic/agencyTopic.sql
+- table: agencyTopicTrigger-rollback.sql — src/main/resources/db/changelog/changeset/0009_agency_topic/agencyTopicTrigger-rollback.sql
+- table: agencyTopicTrigger.sql — src/main/resources/db/changelog/changeset/0009_agency_topic/agencyTopicTrigger.sql
+- config: 0010_changeSet.xml — src/main/resources/db/changelog/changeset/0010_agency_demographics/0010_changeSet.xml
+- table: agencyDemographics-rollback.sql — src/main/resources/db/changelog/changeset/0010_agency_demographics/agencyDemographics-rollback.sql
+- table: agencyDemographics.sql — src/main/resources/db/changelog/changeset/0010_agency_demographics/agencyDemographics.sql
+- config: 0011_changeSet.xml — src/main/resources/db/changelog/changeset/0011_agency_demographics_gender_column_change/0011_changeSet.xml
+- table: genderColumn-rename-rollback.sql — src/main/resources/db/changelog/changeset/0011_agency_demographics_gender_column_change/genderColumn-rename-rollback.sql
+- table: genderColumn-rename.sql — src/main/resources/db/changelog/changeset/0011_agency_demographics_gender_column_change/genderColumn-rename.sql
+- config: 0012_changeSet.xml — src/main/resources/db/changelog/changeset/0012_agency_counseling_relations/0012_changeSet.xml
+- table: agencyCounselingRelations-rollback.sql — src/main/resources/db/changelog/changeset/0012_agency_counseling_relations/agencyCounselingRelations-rollback.sql
+- table: agencyCounselingRelations.sql — src/main/resources/db/changelog/changeset/0012_agency_counseling_relations/agencyCounselingRelations.sql
+- config: 0013_changeSet.xml — src/main/resources/db/changelog/changeset/0013_make_diocese_nullable/0013_changeSet.xml
+- table: makeDioceseNullable-rollback.sql — src/main/resources/db/changelog/changeset/0013_make_diocese_nullable/makeDioceseNullable-rollback.sql
+- table: makeDioceseNullable.sql — src/main/resources/db/changelog/changeset/0013_make_diocese_nullable/makeDioceseNullable.sql
+- config: 0014_changeSet.xml — src/main/resources/db/changelog/changeset/0014_drop_diocese/0014_changeSet.xml
+- table: dropDiocese-rollback.sql — src/main/resources/db/changelog/changeset/0014_drop_diocese/dropDiocese-rollback.sql
+- table: dropDiocese.sql — src/main/resources/db/changelog/changeset/0014_drop_diocese/dropDiocese.sql
+- config: 0015_changeSet.xml — src/main/resources/db/changelog/changeset/0015_change_consultingtype_column_type/0015_changeSet.xml
+
+### Deployment/Config References
+
+- None found in graph artifacts.
+
+- schema: agencyadminservice.yaml — api/agencyadminservice.yaml
+- schema: agencyservice.yaml — api/agencyservice.yaml
+- file: docker-build.cmd
+- service: Dockerfile
+- schema: appointmentService.yaml — services/appointmentService.yaml
+- schema: consultingtypeservice.yaml — services/consultingtypeservice.yaml
+- schema: tenantservice.yaml — services/tenantservice.yaml
+- schema: topicservice.yaml — services/topicservice.yaml
+- schema: useradminservice.yaml — services/useradminservice.yaml
+- endpoint: GET /agencies — api/agencyservice.yaml
+- endpoint: GET /agencies/by-tenant — api/agencyservice.yaml
+- endpoint: GET /agencies/topics — api/agencyservice.yaml
+- endpoint: GET /agencies/{agencyIds} — api/agencyservice.yaml
+- endpoint: GET /agencies/consultingtype/{consultingTypeId} — api/agencyservice.yaml
+- endpoint: GET /agencyadmin — api/agencyadminservice.yaml
+- endpoint: GET /agencyadmin/agencies — api/agencyadminservice.yaml
+- endpoint: POST /agencyadmin/agencies — api/agencyadminservice.yaml
+- endpoint: GET /agencyadmin/agencies/{agencyId} — api/agencyadminservice.yaml
+- endpoint: DELETE /agencyadmin/agencies/{agencyId} — api/agencyadminservice.yaml
+- endpoint: PUT /agencyadmin/agencies/{agencyId} — api/agencyadminservice.yaml
+- endpoint: GET /agencyadmin/agencies/tenant/{tenantId} — api/agencyadminservice.yaml
+- endpoint: POST /agencyadmin/agencies/{agencyId}/changetype — api/agencyadminservice.yaml
+- endpoint: GET /agencyadmin/postcoderanges/{agencyId} — api/agencyadminservice.yaml
+- endpoint: POST /agencyadmin/postcoderanges/{agencyId} — api/agencyadminservice.yaml
+- endpoint: PUT /agencyadmin/postcoderanges/{agencyId} — api/agencyadminservice.yaml
+- endpoint: DELETE /agencyadmin/postcoderanges/{agencyId} — api/agencyadminservice.yaml
+- endpoint: GET /useradmin — services/useradminservice.yaml
+- endpoint: GET /useradmin/sessions — services/useradminservice.yaml
+- endpoint: GET /useradmin/consultants — services/useradminservice.yaml
+- endpoint: POST /useradmin/consultants — services/useradminservice.yaml
+- endpoint: GET /useradmin/consultants/{consultantId} — services/useradminservice.yaml
+- endpoint: PUT /useradmin/consultants/{consultantId} — services/useradminservice.yaml
+- endpoint: DELETE /useradmin/consultants/{consultantId} — services/useradminservice.yaml
+- endpoint: GET /useradmin/askers/{askerId} — services/useradminservice.yaml
+- endpoint: DELETE /useradmin/askers/{askerId} — services/useradminservice.yaml
+- endpoint: GET /useradmin/report — services/useradminservice.yaml
+- endpoint: GET /useradmin/agencies/{agencyId}/consultants — services/useradminservice.yaml
+- endpoint: GET /useradmin/consultants/{consultantId}/agencies — services/useradminservice.yaml
+- endpoint: POST /useradmin/consultants/{consultantId}/agencies — services/useradminservice.yaml
+- endpoint: PUT /useradmin/consultants/{consultantId}/agencies — services/useradminservice.yaml
+
+### Important Graph Nodes
+
+- file: .swagger-codegen-ignore
+- schema: agencyadminservice.yaml — api/agencyadminservice.yaml
+- schema: agencyservice.yaml — api/agencyservice.yaml
+- document: CHANGELOG.md
+- file: check-version.sh
+- file: commitlint.config.js
+- file: docker-build.cmd
+- service: Dockerfile
+- file: AgencyService-Architektur.graphml — documentation/AgencyService-Architektur.graphml
+- config: google_checks_light.xml
+- file: mvnw
+- file: mvnw.cmd
+- config: package.json
+- config: pom.xml
+- document: readme.md
+- document: README.md
+- file: run-trivy.sh
+- schema: applicationsettingsservice.yml — services/applicationsettingsservice.yml
+- schema: appointmentService.yaml — services/appointmentService.yaml
+- schema: consultingtypeservice.yaml — services/consultingtypeservice.yaml
+- schema: tenantservice.yaml — services/tenantservice.yaml
+- schema: topicservice.yaml — services/topicservice.yaml
+- schema: useradminservice.yaml — services/useradminservice.yaml
+- file: AgencyServiceApplication.java — src/main/java/de/caritas/cob/agencyservice/AgencyServiceApplication.java
+- file: AgencyAdminController.java — src/main/java/de/caritas/cob/agencyservice/api/admin/controller/AgencyAdminController.java
+- file: AgencyLinksBuilder.java — src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/AgencyLinksBuilder.java
+- file: HalLinkBuilder.java — src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/HalLinkBuilder.java
+- file: RootDTOBuilder.java — src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/RootDTOBuilder.java
+- file: SearchResultLinkBuilder.java — src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/SearchResultLinkBuilder.java
+- file: AgencyAdminFullResponseDTOBuilder.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminFullResponseDTOBuilder.java
+- file: AgencyAdminSearch.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearch.java
+- file: AgencyAdminSearchService.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearchService.java
+- file: AgencyAdminSearchTenantSupportService.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearchTenantSupportService.java
+- file: AgencyTopicEnrichmentService.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyTopicEnrichmentService.java
+- file: DataProtectionConverter.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/DataProtectionConverter.java
+- file: DataProtectionDTOBuilder.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/DataProtectionDTOBuilder.java
+- file: DemographicsConverter.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/DemographicsConverter.java
+- file: SearchResult.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/SearchResult.java
+- file: AgencyAdminService.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyAdminService.java
+- file: AgencyPostcodeRangeAdminService.java — src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/AgencyPostcodeRangeAdminService.java
+
+### Important Graph Edges
+
+- contains: file:src/main/java/de/caritas/cob/agencyservice/AgencyServiceApplication.java -> class:src/main/java/de/caritas/cob/agencyservice/AgencyServiceApplication.java:AgencyServiceApplication
+- contains: file:src/main/java/de/caritas/cob/agencyservice/api/admin/controller/AgencyAdminController.java -> class:src/main/java/de/caritas/cob/agencyservice/api/admin/controller/AgencyAdminController.java:AgencyAdminController
+- contains: file:src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/AgencyLinksBuilder.java -> class:src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/AgencyLinksBuilder.java:AgencyLinksBuilder
+- contains: file:src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/HalLinkBuilder.java -> class:src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/HalLinkBuilder.java:HalLinkBuilder
+- contains: file:src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/RootDTOBuilder.java -> class:src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/RootDTOBuilder.java:RootDTOBuilder
+- contains: file:src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/SearchResultLinkBuilder.java -> class:src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/SearchResultLinkBuilder.java:SearchResultLinkBuilder
+- contains: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminFullResponseDTOBuilder.java -> class:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminFullResponseDTOBuilder.java:AgencyAdminFullResponseDTOBuilder
+- contains: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearch.java -> class:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearch.java:AgencyAdminSearch
+- contains: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearchService.java -> class:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearchService.java:AgencyAdminSearchService
+- contains: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearchTenantSupportService.java -> class:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearchTenantSupportService.java:AgencyAdminSearchTenantSupportService
+- contains: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyTopicEnrichmentService.java -> class:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyTopicEnrichmentService.java:AgencyTopicEnrichmentService
+- contains: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/DataProtectionConverter.java -> class:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/DataProtectionConverter.java:DataProtectionConverter
+- contains: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/DataProtectionDTOBuilder.java -> class:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/DataProtectionDTOBuilder.java:DataProtectionDTOBuilder
+- contains: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/DemographicsConverter.java -> class:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/DemographicsConverter.java:DemographicsConverter
+- contains: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/SearchResult.java -> class:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/SearchResult.java:SearchResult
+- contains: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyAdminService.java -> class:src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyAdminService.java:to
+- contains: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyAdminService.java -> class:src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyAdminService.java:AgencyAdminService
+- contains: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/AgencyPostcodeRangeAdminService.java -> class:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/AgencyPostcodeRangeAdminService.java:to
+- contains: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/AgencyPostcodeRangeAdminService.java -> class:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/AgencyPostcodeRangeAdminService.java:AgencyPostcodeRangeAdminService
+- contains: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/AgencyPostcodeRangeResponseDTOBuilder.java -> class:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/AgencyPostcodeRangeResponseDTOBuilder.java:to
+- contains: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/AgencyPostcodeRangeResponseDTOBuilder.java -> class:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/AgencyPostcodeRangeResponseDTOBuilder.java:AgencyPostcodeRangeResponseDTOBuilder
+- contains: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/PostcodeRangeTransformer.java -> class:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/PostcodeRangeTransformer.java:PostcodeRangeTransformer
+- contains: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/PostcodeRangeValidator.java -> class:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/PostcodeRangeValidator.java:PostcodeRangeValidator
+- contains: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyTopicMergeService.java -> class:src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyTopicMergeService.java:AgencyTopicMergeService
+- contains: file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/UserAdminService.java -> class:src/main/java/de/caritas/cob/agencyservice/api/admin/service/UserAdminService.java:UserAdminService
+- contains: file:src/main/java/de/caritas/cob/agencyservice/api/admin/validation/AgencyValidator.java -> class:src/main/java/de/caritas/cob/agencyservice/api/admin/validation/AgencyValidator.java:AgencyValidator
+- contains: file:src/main/java/de/caritas/cob/agencyservice/api/admin/validation/DeleteAgencyValidator.java -> class:src/main/java/de/caritas/cob/agencyservice/api/admin/validation/DeleteAgencyValidator.java:DeleteAgencyValidator
+- contains: file:src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyConsultingTypeValidator.java -> class:src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyConsultingTypeValidator.java:AgencyConsultingTypeValidator
+- contains: file:src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyDataProtectionValidationService.java -> class:src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyDataProtectionValidationService.java:AgencyDataProtectionValidationService
+- contains: file:src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyDataProtectionValidator.java -> class:src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyDataProtectionValidator.java:AgencyDataProtectionValidator
+
+### Missing or Weak Areas
+
+- Source graph uses legacy edge direction labels; merge normalized directions and preserves originalDirection.
+
+### Needs Verification
+
+- Source graph uses legacy edge direction labels; merge normalized directions and preserves originalDirection.
+
+## ORISO-ConsultingTypeService
+
+### Graph Source
+
+- graph path: ../ORISO-ConsultingTypeService/.understand-anything/knowledge-graph.json
+- artifacts used: 12
+- node count: 470
+- edge count: 515
+
+Artifacts used:
+
+- .understand-anything/ARCHITECTURE.md (8.9 KB)
+- .understand-anything/DEPENDENCY-AUDIT.md (3.0 KB)
+- .understand-anything/FINDINGS.md (4.9 KB)
+- .understand-anything/knowledge-graph.json (574.2 KB)
+- .understand-anything/ONBOARDING.md (6.9 KB)
+- .understand-anything/ORISO-ECOSYSTEM.md (2.7 KB)
+- .understand-anything/README.md (10.9 KB)
+- .understand-anything/visuals/architecture-flow.mmd (738 B)
+- .understand-anything/visuals/auth-flow.mmd (894 B)
+- .understand-anything/visuals/data-flow.mmd (696 B)
+- .understand-anything/visuals/deployment-flow.mmd (563 B)
+- .understand-anything/visuals/ecosystem-flow.mmd (458 B)
+
+### Repository Purpose
+
+Spring Boot service that owns consulting type settings, topics, topic groups, application settings, tenant-aware access, and OpenAPI contracts for the ORISO platform.
+
+### Main Files/Modules
+
+- file: check-version.sh
+- file: docker-build.cmd
+- file: ConsultingTypeService-architecture.graphml — documentation/ConsultingTypeService-architecture.graphml
+- file: mvnw
+- file: mvnw.cmd
+- file: run-trivy.sh
+- file: ConsultingTypeServiceApplication.java — src/main/java/de/caritas/cob/consultingtypeservice/ConsultingTypeServiceApplication.java
+- file: ApiDefaultResponseEntityExceptionHandler.java — src/main/java/de/caritas/cob/consultingtypeservice/api/ApiDefaultResponseEntityExceptionHandler.java
+- file: ApiResponseEntityExceptionHandler.java — src/main/java/de/caritas/cob/consultingtypeservice/api/ApiResponseEntityExceptionHandler.java
+- file: ConsultingTypeAdminController.java — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/controller/ConsultingTypeAdminController.java
+- file: TopicFeatureAssertionAspect.java — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/controller/TopicFeatureAssertionAspect.java
+- file: ConsultingTypePaginationLinksBuilder.java — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/hallink/ConsultingTypePaginationLinksBuilder.java
+- file: HalLinkBuilder.java — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/hallink/HalLinkBuilder.java
+- file: RootDTOBuilder.java — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/hallink/RootDTOBuilder.java
+- file: ConsultingTypeAdminService.java — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/service/ConsultingTypeAdminService.java
+- file: AuthenticatedUser.java — src/main/java/de/caritas/cob/consultingtypeservice/api/auth/AuthenticatedUser.java
+- file: Authority.java — src/main/java/de/caritas/cob/consultingtypeservice/api/auth/Authority.java
+- file: RoleAuthorizationAuthorityMapper.java — src/main/java/de/caritas/cob/consultingtypeservice/api/auth/RoleAuthorizationAuthorityMapper.java
+- file: UserRole.java — src/main/java/de/caritas/cob/consultingtypeservice/api/auth/UserRole.java
+- file: ConsultingTypeConverter.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeConverter.java
+- file: ConsultingTypeGroupRepository.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeGroupRepository.java
+- file: ConsultingTypeGroupRepositoryImpl.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeGroupRepositoryImpl.java
+- file: ConsultingTypeGroupTenantAwareRepositoryImpl.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeGroupTenantAwareRepositoryImpl.java
+- file: ConsultingTypeLoader.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeLoader.java
+- file: ConsultingTypeMongoRepositoryService.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoRepositoryService.java
+- file: ConsultingTypeMongoTenantAwareRepositoryService.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoTenantAwareRepositoryService.java
+- file: ConsultingTypeRepository.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeRepository.java
+- file: ConsultingTypeRepositoryService.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeRepositoryService.java
+- file: ConsultingTypeTenantAwareRepository.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeTenantAwareRepository.java
+- file: ConsultingTypeValidator.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeValidator.java
+- file: Consultant.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/roles/Consultant.java
+- file: ApplicationSettingsController.java — src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ApplicationSettingsController.java
+- file: ConsultingTypeController.java — src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ConsultingTypeController.java
+- file: TopicAdminController.java — src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicAdminController.java
+- file: TopicController.java — src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicController.java
+- file: TopicGroupsController.java — src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicGroupsController.java
+- file: VersionController.java — src/main/java/de/caritas/cob/consultingtypeservice/api/controller/VersionController.java
+- file: TopicConverter.java — src/main/java/de/caritas/cob/consultingtypeservice/api/converter/TopicConverter.java
+- file: TopicGroupConverter.java — src/main/java/de/caritas/cob/consultingtypeservice/api/converter/TopicGroupConverter.java
+- file: KeycloakException.java — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/KeycloakException.java
+- file: TopicAccessDeniedException.java — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/TopicAccessDeniedException.java
+- file: TopicNotFoundException.java — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/TopicNotFoundException.java
+- file: TopicValidationException.java — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/TopicValidationException.java
+- file: UnexpectedErrorException.java — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/UnexpectedErrorException.java
+- file: BadRequestException.java — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/httpresponses/BadRequestException.java
+- file: CustomHttpStatusException.java — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/httpresponses/CustomHttpStatusException.java
+- file: HttpStatusExceptionReason.java — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/httpresponses/HttpStatusExceptionReason.java
+- file: InternalServerErrorException.java — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/httpresponses/InternalServerErrorException.java
+- file: NotFoundException.java — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/httpresponses/NotFoundException.java
+- file: BasicConsultingTypeMapper.java — src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/BasicConsultingTypeMapper.java
+- file: ConsultingTypeCoreMapper.java — src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/ConsultingTypeCoreMapper.java
+- file: ConsultingTypeMapper.java — src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/ConsultingTypeMapper.java
+- file: ExtendedConsultingTypeMapper.java — src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/ExtendedConsultingTypeMapper.java
+- file: FullConsultingTypeMapper.java — src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/FullConsultingTypeMapper.java
+- file: ConsultingTypeGroupMapper.java — src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/group/ConsultingTypeGroupMapper.java
+- file: ConsultingTypeGroupResponseMapper.java — src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/group/ConsultingTypeGroupResponseMapper.java
+- file: ApplicationSettingsEntity.java — src/main/java/de/caritas/cob/consultingtypeservice/api/model/ApplicationSettingsEntity.java
+- file: ConsultingTypeEntity.java — src/main/java/de/caritas/cob/consultingtypeservice/api/model/ConsultingTypeEntity.java
+- file: TopicEntity.java — src/main/java/de/caritas/cob/consultingtypeservice/api/model/TopicEntity.java
+- file: TopicGroupEntity.java — src/main/java/de/caritas/cob/consultingtypeservice/api/model/TopicGroupEntity.java
+
+### Classes/Functions
+
+- class: ConsultingTypeServiceApplication — src/main/java/de/caritas/cob/consultingtypeservice/ConsultingTypeServiceApplication.java
+- class: ApiDefaultResponseEntityExceptionHandler — src/main/java/de/caritas/cob/consultingtypeservice/api/ApiDefaultResponseEntityExceptionHandler.java
+- class: ApiResponseEntityExceptionHandler — src/main/java/de/caritas/cob/consultingtypeservice/api/ApiResponseEntityExceptionHandler.java
+- class: ConsultingTypeAdminController — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/controller/ConsultingTypeAdminController.java
+- class: TopicFeatureAssertionAspect — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/controller/TopicFeatureAssertionAspect.java
+- class: ConsultingTypePaginationLinksBuilder — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/hallink/ConsultingTypePaginationLinksBuilder.java
+- class: HalLinkBuilder — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/hallink/HalLinkBuilder.java
+- class: RootDTOBuilder — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/hallink/RootDTOBuilder.java
+- class: to — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/service/ConsultingTypeAdminService.java
+- class: ConsultingTypeAdminService — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/service/ConsultingTypeAdminService.java
+- class: AuthenticatedUser — src/main/java/de/caritas/cob/consultingtypeservice/api/auth/AuthenticatedUser.java
+- class: Authority — src/main/java/de/caritas/cob/consultingtypeservice/api/auth/Authority.java
+- class: AuthorityValue — src/main/java/de/caritas/cob/consultingtypeservice/api/auth/Authority.java
+- class: RoleAuthorizationAuthorityMapper — src/main/java/de/caritas/cob/consultingtypeservice/api/auth/RoleAuthorizationAuthorityMapper.java
+- class: UserRole — src/main/java/de/caritas/cob/consultingtypeservice/api/auth/UserRole.java
+- class: ConsultingTypeConverter — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeConverter.java
+- class: ConsultingTypeGroupRepository — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeGroupRepository.java
+- class: ConsultingTypeGroupRepositoryImpl — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeGroupRepositoryImpl.java
+- class: ConsultingTypeGroupTenantAwareRepositoryImpl — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeGroupTenantAwareRepositoryImpl.java
+- class: ConsultingTypeLoader — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeLoader.java
+- class: ConsultingTypeMongoRepositoryService — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoRepositoryService.java
+- class: ConsultingTypeMongoTenantAwareRepositoryService — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoTenantAwareRepositoryService.java
+- class: ConsultingTypeRepository — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeRepository.java
+- class: ConsultingTypeRepositoryService — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeRepositoryService.java
+- class: ConsultingTypeTenantAwareRepository — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeTenantAwareRepository.java
+- class: ConsultingTypeValidator — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeValidator.java
+- class: Consultant — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/roles/Consultant.java
+- class: ApplicationSettingsController — src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ApplicationSettingsController.java
+- class: ConsultingTypeController — src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ConsultingTypeController.java
+- class: TopicAdminController — src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicAdminController.java
+- class: TopicController — src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicController.java
+- class: TopicGroupsController — src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicGroupsController.java
+- class: VersionController — src/main/java/de/caritas/cob/consultingtypeservice/api/controller/VersionController.java
+- class: TopicConverter — src/main/java/de/caritas/cob/consultingtypeservice/api/converter/TopicConverter.java
+- class: TopicGroupConverter — src/main/java/de/caritas/cob/consultingtypeservice/api/converter/TopicGroupConverter.java
+- class: KeycloakException — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/KeycloakException.java
+- class: TopicAccessDeniedException — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/TopicAccessDeniedException.java
+- class: TopicNotFoundException — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/TopicNotFoundException.java
+- class: TopicValidationException — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/TopicValidationException.java
+- class: UnexpectedErrorException — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/UnexpectedErrorException.java
+- class: BadRequestException — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/httpresponses/BadRequestException.java
+- class: CustomHttpStatusException — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/httpresponses/CustomHttpStatusException.java
+- class: HttpStatusExceptionReason — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/httpresponses/HttpStatusExceptionReason.java
+- class: InternalServerErrorException — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/httpresponses/InternalServerErrorException.java
+- class: NotFoundException — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/httpresponses/NotFoundException.java
+- class: BasicConsultingTypeMapper — src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/BasicConsultingTypeMapper.java
+- class: ConsultingTypeCoreMapper — src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/ConsultingTypeCoreMapper.java
+- class: ConsultingTypeMapper — src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/ConsultingTypeMapper.java
+- class: ExtendedConsultingTypeMapper — src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/ExtendedConsultingTypeMapper.java
+- class: FullConsultingTypeMapper — src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/FullConsultingTypeMapper.java
+- class: ConsultingTypeGroupMapper — src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/group/ConsultingTypeGroupMapper.java
+- class: ConsultingTypeGroupResponseMapper — src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/group/ConsultingTypeGroupResponseMapper.java
+- class: ApplicationSettingsEntity — src/main/java/de/caritas/cob/consultingtypeservice/api/model/ApplicationSettingsEntity.java
+- class: ConsultingTypeEntity — src/main/java/de/caritas/cob/consultingtypeservice/api/model/ConsultingTypeEntity.java
+- class: TopicEntity — src/main/java/de/caritas/cob/consultingtypeservice/api/model/TopicEntity.java
+- class: TopicGroupEntity — src/main/java/de/caritas/cob/consultingtypeservice/api/model/TopicGroupEntity.java
+- class: TopicStatus — src/main/java/de/caritas/cob/consultingtypeservice/api/model/TopicStatus.java
+- class: ApplicationSettingsRepository — src/main/java/de/caritas/cob/consultingtypeservice/api/repository/ApplicationSettingsRepository.java
+- class: for — src/main/java/de/caritas/cob/consultingtypeservice/api/repository/TenantAware.java
+- class: TenantAware — src/main/java/de/caritas/cob/consultingtypeservice/api/repository/TenantAware.java
+
+### APIs/Routes
+
+- config: applicationsettingsservice.yml — api/applicationsettingsservice.yml
+- config: consultingtypeadminservice.yml — api/consultingtypeadminservice.yml
+- config: consultingtypeservice.yml — api/consultingtypeservice.yml
+- config: topicservice.yml — api/topicservice.yml
+- file: ConsultingTypeServiceApplication.java — src/main/java/de/caritas/cob/consultingtypeservice/ConsultingTypeServiceApplication.java
+- file: ApiDefaultResponseEntityExceptionHandler.java — src/main/java/de/caritas/cob/consultingtypeservice/api/ApiDefaultResponseEntityExceptionHandler.java
+- file: ApiResponseEntityExceptionHandler.java — src/main/java/de/caritas/cob/consultingtypeservice/api/ApiResponseEntityExceptionHandler.java
+- file: ConsultingTypeAdminController.java — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/controller/ConsultingTypeAdminController.java
+- file: TopicFeatureAssertionAspect.java — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/controller/TopicFeatureAssertionAspect.java
+- file: ConsultingTypePaginationLinksBuilder.java — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/hallink/ConsultingTypePaginationLinksBuilder.java
+- file: HalLinkBuilder.java — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/hallink/HalLinkBuilder.java
+- file: RootDTOBuilder.java — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/hallink/RootDTOBuilder.java
+- file: ConsultingTypeAdminService.java — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/service/ConsultingTypeAdminService.java
+- file: AuthenticatedUser.java — src/main/java/de/caritas/cob/consultingtypeservice/api/auth/AuthenticatedUser.java
+- file: Authority.java — src/main/java/de/caritas/cob/consultingtypeservice/api/auth/Authority.java
+- file: RoleAuthorizationAuthorityMapper.java — src/main/java/de/caritas/cob/consultingtypeservice/api/auth/RoleAuthorizationAuthorityMapper.java
+- file: UserRole.java — src/main/java/de/caritas/cob/consultingtypeservice/api/auth/UserRole.java
+- file: ConsultingTypeConverter.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeConverter.java
+- file: ConsultingTypeGroupRepository.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeGroupRepository.java
+- file: ConsultingTypeGroupRepositoryImpl.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeGroupRepositoryImpl.java
+- file: ConsultingTypeGroupTenantAwareRepositoryImpl.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeGroupTenantAwareRepositoryImpl.java
+- file: ConsultingTypeLoader.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeLoader.java
+- file: ConsultingTypeMongoRepositoryService.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoRepositoryService.java
+- file: ConsultingTypeMongoTenantAwareRepositoryService.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoTenantAwareRepositoryService.java
+- file: ConsultingTypeRepository.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeRepository.java
+- file: ConsultingTypeRepositoryService.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeRepositoryService.java
+- file: ConsultingTypeTenantAwareRepository.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeTenantAwareRepository.java
+- file: ConsultingTypeValidator.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeValidator.java
+- file: Consultant.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/roles/Consultant.java
+- file: ApplicationSettingsController.java — src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ApplicationSettingsController.java
+- file: ConsultingTypeController.java — src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ConsultingTypeController.java
+- file: TopicAdminController.java — src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicAdminController.java
+- file: TopicController.java — src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicController.java
+- file: TopicGroupsController.java — src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicGroupsController.java
+- file: VersionController.java — src/main/java/de/caritas/cob/consultingtypeservice/api/controller/VersionController.java
+- file: TopicConverter.java — src/main/java/de/caritas/cob/consultingtypeservice/api/converter/TopicConverter.java
+- file: TopicGroupConverter.java — src/main/java/de/caritas/cob/consultingtypeservice/api/converter/TopicGroupConverter.java
+- file: KeycloakException.java — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/KeycloakException.java
+- file: TopicAccessDeniedException.java — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/TopicAccessDeniedException.java
+- file: TopicNotFoundException.java — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/TopicNotFoundException.java
+- file: TopicValidationException.java — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/TopicValidationException.java
+- file: UnexpectedErrorException.java — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/UnexpectedErrorException.java
+- file: BadRequestException.java — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/httpresponses/BadRequestException.java
+- file: CustomHttpStatusException.java — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/httpresponses/CustomHttpStatusException.java
+- file: HttpStatusExceptionReason.java — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/httpresponses/HttpStatusExceptionReason.java
+- file: InternalServerErrorException.java — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/httpresponses/InternalServerErrorException.java
+- file: NotFoundException.java — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/httpresponses/NotFoundException.java
+- file: BasicConsultingTypeMapper.java — src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/BasicConsultingTypeMapper.java
+- file: ConsultingTypeCoreMapper.java — src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/ConsultingTypeCoreMapper.java
+- file: ConsultingTypeMapper.java — src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/ConsultingTypeMapper.java
+- file: ExtendedConsultingTypeMapper.java — src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/ExtendedConsultingTypeMapper.java
+- file: FullConsultingTypeMapper.java — src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/FullConsultingTypeMapper.java
+- file: ConsultingTypeGroupMapper.java — src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/group/ConsultingTypeGroupMapper.java
+- file: ConsultingTypeGroupResponseMapper.java — src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/group/ConsultingTypeGroupResponseMapper.java
+- file: ApplicationSettingsEntity.java — src/main/java/de/caritas/cob/consultingtypeservice/api/model/ApplicationSettingsEntity.java
+- file: ConsultingTypeEntity.java — src/main/java/de/caritas/cob/consultingtypeservice/api/model/ConsultingTypeEntity.java
+- file: TopicEntity.java — src/main/java/de/caritas/cob/consultingtypeservice/api/model/TopicEntity.java
+- file: TopicGroupEntity.java — src/main/java/de/caritas/cob/consultingtypeservice/api/model/TopicGroupEntity.java
+- file: TopicStatus.java — src/main/java/de/caritas/cob/consultingtypeservice/api/model/TopicStatus.java
+- file: ApplicationSettingsRepository.java — src/main/java/de/caritas/cob/consultingtypeservice/api/repository/ApplicationSettingsRepository.java
+
+### Internal Dependencies
+
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/controller/ConsultingTypeAdminController.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/hallink/RootDTOBuilder.java — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/controller/ConsultingTypeAdminController.java imports src/main/java/de/caritas/cob/consultingtypeservice/api/admin/hall
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/controller/ConsultingTypeAdminController.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/service/ConsultingTypeAdminService.java — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/controller/ConsultingTypeAdminController.java imports src/main/java/de/caritas/cob/consultingtypeservice/api/admin/serv
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/controller/TopicFeatureAssertionAspect.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicFeatureAuthorisationService.java — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/controller/TopicFeatureAssertionAspect.java imports src/main/java/de/caritas/cob/consultingtypeservice/api/service/Topi
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/hallink/RootDTOBuilder.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/controller/ConsultingTypeAdminController.java — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/hallink/RootDTOBuilder.java imports src/main/java/de/caritas/cob/consultingtypeservice/api/admin/controller/ConsultingT
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/service/ConsultingTypeAdminService.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/hallink/ConsultingTypePaginationLinksBuilder.java — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/service/ConsultingTypeAdminService.java imports src/main/java/de/caritas/cob/consultingtypeservice/api/admin/hallink/Co
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/service/ConsultingTypeAdminService.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeRepositoryService.java — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/service/ConsultingTypeAdminService.java imports src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/service/ConsultingTypeAdminService.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/ConsultingTypeMapper.java — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/service/ConsultingTypeAdminService.java imports src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/Consultin
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/service/ConsultingTypeAdminService.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/ExtendedConsultingTypeMapper.java — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/service/ConsultingTypeAdminService.java imports src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/ExtendedC
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/ApiDefaultResponseEntityExceptionHandler.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/LogService.java — src/main/java/de/caritas/cob/consultingtypeservice/api/ApiDefaultResponseEntityExceptionHandler.java imports src/main/java/de/caritas/cob/consultingtypeservice/api/service/LogServi
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/ApiResponseEntityExceptionHandler.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/exception/httpresponses/BadRequestException.java — src/main/java/de/caritas/cob/consultingtypeservice/api/ApiResponseEntityExceptionHandler.java imports src/main/java/de/caritas/cob/consultingtypeservice/api/exception/httpresponses
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/ApiResponseEntityExceptionHandler.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/exception/httpresponses/InternalServerErrorException.java — src/main/java/de/caritas/cob/consultingtypeservice/api/ApiResponseEntityExceptionHandler.java imports src/main/java/de/caritas/cob/consultingtypeservice/api/exception/httpresponses
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/ApiResponseEntityExceptionHandler.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/exception/httpresponses/NotFoundException.java — src/main/java/de/caritas/cob/consultingtypeservice/api/ApiResponseEntityExceptionHandler.java imports src/main/java/de/caritas/cob/consultingtypeservice/api/exception/httpresponses
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/ApiResponseEntityExceptionHandler.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/LogService.java — src/main/java/de/caritas/cob/consultingtypeservice/api/ApiResponseEntityExceptionHandler.java imports src/main/java/de/caritas/cob/consultingtypeservice/api/service/LogService.java
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeConverter.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/model/ConsultingTypeEntity.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeConverter.java imports src/main/java/de/caritas/cob/consultingtypeservice/api/model/ConsultingT
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeGroupRepositoryImpl.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/config/CacheManagerConfig.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeGroupRepositoryImpl.java imports src/main/java/de/caritas/cob/consultingtypeservice/config/Cach
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeGroupTenantAwareRepositoryImpl.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/model/ConsultingTypeEntity.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeGroupTenantAwareRepositoryImpl.java imports src/main/java/de/caritas/cob/consultingtypeservice/
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeGroupTenantAwareRepositoryImpl.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/tenant/TenantContext.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeGroupTenantAwareRepositoryImpl.java imports src/main/java/de/caritas/cob/consultingtypeservice/
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeLoader.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/exception/UnexpectedErrorException.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeLoader.java imports src/main/java/de/caritas/cob/consultingtypeservice/api/exception/Unexpected
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeLoader.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/LogService.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeLoader.java imports src/main/java/de/caritas/cob/consultingtypeservice/api/service/LogService.j
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeLoader.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/tenant/TenantContext.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeLoader.java imports src/main/java/de/caritas/cob/consultingtypeservice/api/tenant/TenantContext
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoRepositoryService.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/exception/httpresponses/NotFoundException.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoRepositoryService.java imports src/main/java/de/caritas/cob/consultingtypeservice/api/exce
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoRepositoryService.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/model/ConsultingTypeEntity.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoRepositoryService.java imports src/main/java/de/caritas/cob/consultingtypeservice/api/mode
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoRepositoryService.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/LogService.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoRepositoryService.java imports src/main/java/de/caritas/cob/consultingtypeservice/api/serv
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoTenantAwareRepositoryService.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/exception/httpresponses/NotFoundException.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoTenantAwareRepositoryService.java imports src/main/java/de/caritas/cob/consultingtypeservi
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoTenantAwareRepositoryService.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/model/ConsultingTypeEntity.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoTenantAwareRepositoryService.java imports src/main/java/de/caritas/cob/consultingtypeservi
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoTenantAwareRepositoryService.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/LogService.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoTenantAwareRepositoryService.java imports src/main/java/de/caritas/cob/consultingtypeservi
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoTenantAwareRepositoryService.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/tenant/TenantContext.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoTenantAwareRepositoryService.java imports src/main/java/de/caritas/cob/consultingtypeservi
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeRepository.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/model/ConsultingTypeEntity.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeRepository.java imports src/main/java/de/caritas/cob/consultingtypeservice/api/model/Consulting
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeRepositoryService.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/model/ConsultingTypeEntity.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeRepositoryService.java imports src/main/java/de/caritas/cob/consultingtypeservice/api/model/Con
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeTenantAwareRepository.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/model/ConsultingTypeEntity.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeTenantAwareRepository.java imports src/main/java/de/caritas/cob/consultingtypeservice/api/model
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ApplicationSettingsController.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/ApplicationSettingsServiceFacade.java — src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ApplicationSettingsController.java imports src/main/java/de/caritas/cob/consultingtypeservice/api/service/Applicat
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ConsultingTypeController.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/ConsultingTypeGroupService.java — src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ConsultingTypeController.java imports src/main/java/de/caritas/cob/consultingtypeservice/api/service/ConsultingTyp
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ConsultingTypeController.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/ConsultingTypeService.java — src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ConsultingTypeController.java imports src/main/java/de/caritas/cob/consultingtypeservice/api/service/ConsultingTyp
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicAdminController.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/auth/AuthenticatedUser.java — src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicAdminController.java imports src/main/java/de/caritas/cob/consultingtypeservice/api/auth/AuthenticatedUser.ja
+- imports: file:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicAdminController.java -> file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicFeatureAuthorisationService.java — src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicAdminController.java imports src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicFeatureAutho
+
+### External ORISO Dependencies
+
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::config:services/applicationsettingsservice.yaml)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::config:services/consultingtypeservice.yaml)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::config:services/topicservice.yaml)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/ConsultingTypeServiceApiControllerFactory.java)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/TopicServiceApiClient.java)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/TopicServiceApiControllerFactory.java)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/ConsultingTypeService.java)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/consultingtype/ApplicationSettingsService.java)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/consultingtype/TopicService.java)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/service/ConsultingTypeServiceTest.java)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.ConsultingTypeServiceApiControllerFactory)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.TopicServiceApiClient)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.TopicServiceApiControllerFactory)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.service.to)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.service.ConsultingTypeService)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.service.consultingtype.to)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.service.consultingtype.ApplicationSettingsService)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.service.consultingtype.TopicService)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.service.ConsultingTypeServiceTest)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::endpoint:services/applicationsettingsservice.yaml:getApplicationSettings)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::endpoint:services/consultingtypeservice.yaml:getBasicConsultingTypeList)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::endpoint:services/consultingtypeservice.yaml:getBasicConsultingTypeById)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::endpoint:services/consultingtypeservice.yaml:getExtendedConsultingTypeById)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::endpoint:services/consultingtypeservice.yaml:getFullConsultingTypeById)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::endpoint:services/consultingtypeservice.yaml:getFullConsultingTypeBySlug)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::endpoint:services/consultingtypeservice.yaml:getConsultingTypeGroups)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::endpoint:services/topicservice.yaml:createTopic)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::endpoint:services/topicservice.yaml:getAllTopics)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::endpoint:services/topicservice.yaml:getTopicById)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::endpoint:services/topicservice.yaml:updateTopic)
+- ORISO-UserService -> ORISO-ConsultingTypeService: depends_on (ORISO-UserService::endpoint:services/topicservice.yaml:getAllActiveTopics)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/ConsultingTypeServiceApiControllerFactory.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.ConsultingTypeServiceApiControllerFactory)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/TopicServiceApiClient.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.TopicServiceApiClient)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/TopicServiceApiControllerFactory.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.TopicServiceApiControllerFactory)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/ConsultingTypeService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.to)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/ConsultingTypeService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.ConsultingTypeService)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/ConsultingTypeService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.config.CacheManagerConfig)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/ConsultingTypeService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.ConsultingTypeServiceApiControllerFactory)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/agencyinvitelink/AgencyInviteLinkService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.ConsultingTypeService)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/consultingtype/ApplicationSettingsService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.consultingtype.to)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/consultingtype/ApplicationSettingsService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.consultingtype.ApplicationSettingsService)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/consultingtype/ApplicationSettingsService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.config.CacheManagerConfig)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/consultingtype/ApplicationSettingsService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.ApplicationSettingsApiControllerFactory)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/consultingtype/TopicService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.consultingtype.TopicService)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/consultingtype/TopicService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.config.CacheManagerConfig)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/consultingtype/TopicService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.TopicServiceApiControllerFactory)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/emailsupplier/TenantTemplateSupplier.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.consultingtype.ApplicationSettingsService)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/session/ConsultantSessionTopicEnrichmentService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.consultingtype.TopicService)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/session/SessionTopicEnrichmentService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.consultingtype.TopicService)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/tenant/MultitenancyWithSingleDomainTenantResolver.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.consultingtype.ApplicationSettingsService)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/adapters/web/controller/ConversationControllerE2EIT.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.TopicServiceApiControllerFactory)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/adapters/web/controller/UserAdminControllerE2EIT.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.ConsultingTypeServiceApiControllerFactory)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/adapters/web/controller/UserControllerConsultantE2EIT.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.TopicServiceApiControllerFactory)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/adapters/web/controller/UserControllerE2EIT.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.ConsultingTypeServiceApiControllerFactory)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/adapters/web/controller/UserControllerE2EIT.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.TopicServiceApiControllerFactory)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/adapters/web/controller/UserControllerE2EIT.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.consultingtype.ApplicationSettingsService)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/facade/CreateUserFacadeTest.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.consultingtype.TopicService)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/manager/consultingtype/ConsultingTypeManagerTest.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.ConsultingTypeService)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/service/ConsultingTypeServiceTest.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.ConsultingTypeServiceTest)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/service/ConsultingTypeServiceTest.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.ConsultingTypeServiceApiControllerFactory)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/service/ConsultingTypeServiceTest.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.httpheader.SecurityHeaderSupplier)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/service/ConsultingTypeServiceTest.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.httpheader.TenantHeaderSupplier)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/service/emailsupplier/TenantTemplateSupplierTest.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.consultingtype.ApplicationSettingsService)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/service/session/ConsultantSessionTopicEnrichmentServiceTest.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.consultingtype.TopicService)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/service/session/SessionServiceIT.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.TopicServiceApiControllerFactory)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/service/session/SessionTopicEnrichmentServiceTest.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.consultingtype.TopicService)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/testConfig/ConsultingTypeManagerTestConfig.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.ConsultingTypeService)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::config:services/applicationsettingsservice.yaml -> ORISO-UserService::endpoint:services/applicationsettingsservice.yaml:getApplicationSettings)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::config:services/consultingtypeservice.yaml -> ORISO-UserService::endpoint:services/consultingtypeservice.yaml:getBasicConsultingTypeList)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::config:services/consultingtypeservice.yaml -> ORISO-UserService::endpoint:services/consultingtypeservice.yaml:getBasicConsultingTypeById)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::config:services/consultingtypeservice.yaml -> ORISO-UserService::endpoint:services/consultingtypeservice.yaml:getExtendedConsultingTypeById)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::config:services/consultingtypeservice.yaml -> ORISO-UserService::endpoint:services/consultingtypeservice.yaml:getFullConsultingTypeById)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::config:services/consultingtypeservice.yaml -> ORISO-UserService::endpoint:services/consultingtypeservice.yaml:getFullConsultingTypeBySlug)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::config:services/consultingtypeservice.yaml -> ORISO-UserService::endpoint:services/consultingtypeservice.yaml:getConsultingTypeGroups)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::config:services/topicservice.yaml -> ORISO-UserService::endpoint:services/topicservice.yaml:createTopic)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::config:services/topicservice.yaml -> ORISO-UserService::endpoint:services/topicservice.yaml:getAllTopics)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::config:services/topicservice.yaml -> ORISO-UserService::endpoint:services/topicservice.yaml:getTopicById)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::config:services/topicservice.yaml -> ORISO-UserService::endpoint:services/topicservice.yaml:updateTopic)
+- ORISO-UserService -> ORISO-ConsultingTypeService: related (ORISO-UserService::config:services/topicservice.yaml -> ORISO-UserService::endpoint:services/topicservice.yaml:getAllActiveTopics)
+- ORISO-AgencyService -> ORISO-ConsultingTypeService: depends_on (ORISO-AgencyService::schema:services/applicationsettingsservice.yml)
+
+### Auth References
+
+- file: AuthenticatedUser.java — src/main/java/de/caritas/cob/consultingtypeservice/api/auth/AuthenticatedUser.java
+- file: Authority.java — src/main/java/de/caritas/cob/consultingtypeservice/api/auth/Authority.java
+- file: RoleAuthorizationAuthorityMapper.java — src/main/java/de/caritas/cob/consultingtypeservice/api/auth/RoleAuthorizationAuthorityMapper.java
+- file: UserRole.java — src/main/java/de/caritas/cob/consultingtypeservice/api/auth/UserRole.java
+- file: Consultant.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/roles/Consultant.java
+- file: TopicController.java — src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicController.java
+- file: KeycloakException.java — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/KeycloakException.java
+- file: TopicFeatureAuthorisationService.java — src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicFeatureAuthorisationService.java
+- file: SecurityHeaderSupplier.java — src/main/java/de/caritas/cob/consultingtypeservice/api/service/securityheader/SecurityHeaderSupplier.java
+- file: KeycloakConfig.java — src/main/java/de/caritas/cob/consultingtypeservice/config/KeycloakConfig.java
+- file: SecurityConfig.java — src/main/java/de/caritas/cob/consultingtypeservice/config/SecurityConfig.java
+- file: HttpTenantFilter.java — src/main/java/de/caritas/cob/consultingtypeservice/filter/HttpTenantFilter.java
+- file: HttpUrlUtils.java — src/main/java/de/caritas/cob/consultingtypeservice/filter/HttpUrlUtils.java
+- file: StatelessCsrfFilter.java — src/main/java/de/caritas/cob/consultingtypeservice/filter/StatelessCsrfFilter.java
+- file: SubdomainExtractor.java — src/main/java/de/caritas/cob/consultingtypeservice/filter/SubdomainExtractor.java
+- config: application-local.properties — src/main/resources/application-local.properties
+- config: application.properties — src/main/resources/application.properties
+- file: AuthenticationMockBuilder.java — src/test/java/de/caritas/cob/consultingtypeservice/api/controller/AuthenticationMockBuilder.java
+- file: HttpTenantFilterTest.java — src/test/java/de/caritas/cob/consultingtypeservice/filter/HttpTenantFilterTest.java
+- file: StatelessCsrfFilterTest.java — src/test/java/de/caritas/cob/consultingtypeservice/filter/StatelessCsrfFilterTest.java
+- class: AuthenticatedUser — src/main/java/de/caritas/cob/consultingtypeservice/api/auth/AuthenticatedUser.java
+- class: Authority — src/main/java/de/caritas/cob/consultingtypeservice/api/auth/Authority.java
+- class: AuthorityValue — src/main/java/de/caritas/cob/consultingtypeservice/api/auth/Authority.java
+- class: RoleAuthorizationAuthorityMapper — src/main/java/de/caritas/cob/consultingtypeservice/api/auth/RoleAuthorizationAuthorityMapper.java
+- class: UserRole — src/main/java/de/caritas/cob/consultingtypeservice/api/auth/UserRole.java
+- class: Consultant — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/roles/Consultant.java
+- class: KeycloakException — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/KeycloakException.java
+- class: TopicFeatureAuthorisationService — src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicFeatureAuthorisationService.java
+- class: SecurityHeaderSupplier — src/main/java/de/caritas/cob/consultingtypeservice/api/service/securityheader/SecurityHeaderSupplier.java
+- class: KeycloakConfig — src/main/java/de/caritas/cob/consultingtypeservice/config/KeycloakConfig.java
+- class: SecurityConfig — src/main/java/de/caritas/cob/consultingtypeservice/config/SecurityConfig.java
+- class: HttpTenantFilter — src/main/java/de/caritas/cob/consultingtypeservice/filter/HttpTenantFilter.java
+- class: DefaultRequiresTenantFilterMatcher — src/main/java/de/caritas/cob/consultingtypeservice/filter/HttpTenantFilter.java
+- class: HttpUrlUtils — src/main/java/de/caritas/cob/consultingtypeservice/filter/HttpUrlUtils.java
+- class: StatelessCsrfFilter — src/main/java/de/caritas/cob/consultingtypeservice/filter/StatelessCsrfFilter.java
+- class: DefaultRequiresCsrfMatcher — src/main/java/de/caritas/cob/consultingtypeservice/filter/StatelessCsrfFilter.java
+- class: SubdomainExtractor — src/main/java/de/caritas/cob/consultingtypeservice/filter/SubdomainExtractor.java
+- class: AuthenticationMockBuilder — src/test/java/de/caritas/cob/consultingtypeservice/api/controller/AuthenticationMockBuilder.java
+- class: HttpTenantFilterTest — src/test/java/de/caritas/cob/consultingtypeservice/filter/HttpTenantFilterTest.java
+- class: StatelessCsrfFilterTest — src/test/java/de/caritas/cob/consultingtypeservice/filter/StatelessCsrfFilterTest.java
+- concept: TenantContext request scoping — When multitenancy is enabled, HttpTenantFilter resolves the tenant from a header or subdomain and stores it in TenantContext for repository filtering 
+- concept: Role to authority mapping — Keycloak roles such as tenant-admin, single-tenant-admin, and topic-admin are mapped to local AUTHORIZATION values used by PreAuthorize.
+- domain: Security And Tenancy — Combines stateless JWT authentication, role-authority conversion, CSRF header and cookie checks, tenant resolution, tenant filters, and outgoing tenan
+- flow: Topic Admin Mutation Flow — Topic admin endpoints require JWT authorization, feature-gate checks, validation, sanitization, conversion, and JPA writes.
+- step: JWT and method authorization — SecurityConfig maps JWT roles; TopicAdminController methods require create or update topic authorization.
+- step: Topic feature gate — TopicFeatureAssertionAspect calls TopicFeatureAuthorisationService before TopicAdminController methods.
+- step: Public settings read — ApplicationSettingsController exposes GET /settings without authentication.
+- step: Admin patch — PATCH /settingsadmin requires patch application settings authorization and updates mutable setting values.
+- flow: Authentication And Tenant Resolution Flow — Requests enter the stateless Spring Security chain, JWT claims are converted to local authorities, and optional tenant resolution populates TenantCont
+- step: Stateless CSRF filter — StatelessCsrfFilter checks header and cookie token equality for non-read requests except whitelisted paths.
+- step: JWT resource server — SecurityConfig reads Keycloak JWT claims from realm_access and resource_access.
+- step: Role authority mapper — RoleAuthorizationAuthorityMapper maps tenant-admin, single-tenant-admin, and topic-admin to local grants.
+- step: Tenant filter — HttpTenantFilter resolves tenantId from header or subdomain when multitenancy is enabled.
+- step: Persistence scope — TenantAspect enables Hibernate filters and TenantHibernateInterceptor stamps tenant-aware writes.
+- flow: Deployment And Configuration Flow — Build and runtime configuration connect Maven generation, Spring profile properties, datasource URLs, Keycloak and TenantService endpoints, and the Do
+
+### Database References
+
+- config: pom.xml
+- file: TopicFeatureAssertionAspect.java — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/controller/TopicFeatureAssertionAspect.java
+- file: ConsultingTypeValidator.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeValidator.java
+- file: TopicAdminController.java — src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicAdminController.java
+- file: TopicController.java — src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicController.java
+- file: TopicGroupsController.java — src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicGroupsController.java
+- file: TopicConverter.java — src/main/java/de/caritas/cob/consultingtypeservice/api/converter/TopicConverter.java
+- file: TopicGroupConverter.java — src/main/java/de/caritas/cob/consultingtypeservice/api/converter/TopicGroupConverter.java
+- file: TopicAccessDeniedException.java — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/TopicAccessDeniedException.java
+- file: TopicNotFoundException.java — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/TopicNotFoundException.java
+- file: TopicValidationException.java — src/main/java/de/caritas/cob/consultingtypeservice/api/exception/TopicValidationException.java
+- file: BasicConsultingTypeMapper.java — src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/BasicConsultingTypeMapper.java
+- file: ConsultingTypeCoreMapper.java — src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/ConsultingTypeCoreMapper.java
+- file: ConsultingTypeMapper.java — src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/ConsultingTypeMapper.java
+- file: ExtendedConsultingTypeMapper.java — src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/ExtendedConsultingTypeMapper.java
+- file: FullConsultingTypeMapper.java — src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/FullConsultingTypeMapper.java
+- file: ConsultingTypeGroupMapper.java — src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/group/ConsultingTypeGroupMapper.java
+- file: ConsultingTypeGroupResponseMapper.java — src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/group/ConsultingTypeGroupResponseMapper.java
+- file: TopicEntity.java — src/main/java/de/caritas/cob/consultingtypeservice/api/model/TopicEntity.java
+- file: TopicGroupEntity.java — src/main/java/de/caritas/cob/consultingtypeservice/api/model/TopicGroupEntity.java
+- file: TopicStatus.java — src/main/java/de/caritas/cob/consultingtypeservice/api/model/TopicStatus.java
+- file: TopicGroupRepository.java — src/main/java/de/caritas/cob/consultingtypeservice/api/repository/TopicGroupRepository.java
+- file: TopicRepository.java — src/main/java/de/caritas/cob/consultingtypeservice/api/repository/TopicRepository.java
+- file: ConsultingTypeService.java — src/main/java/de/caritas/cob/consultingtypeservice/api/service/ConsultingTypeService.java
+- file: DefaultApplicationSettingsInitializer.java — src/main/java/de/caritas/cob/consultingtypeservice/api/service/DefaultApplicationSettingsInitializer.java
+- file: TopicFeatureAuthorisationService.java — src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicFeatureAuthorisationService.java
+- file: TopicGroupService.java — src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicGroupService.java
+- file: TopicService.java — src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicService.java
+- file: TopicServiceFacade.java — src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicServiceFacade.java
+- file: TopicInputSanitizer.java — src/main/java/de/caritas/cob/consultingtypeservice/api/validation/TopicInputSanitizer.java
+- file: TopicValidationService.java — src/main/java/de/caritas/cob/consultingtypeservice/api/validation/TopicValidationService.java
+- config: initSql.xml — src/main/resources/db/changelog/changeset/0001_initsql/initSql.xml
+- table: initTables.sql — src/main/resources/db/changelog/changeset/0001_initsql/initTables.sql
+- table: topic_internal_identifier_column.sql — src/main/resources/db/changelog/changeset/0002_topic_internal_identifier/topic_internal_identifier_column.sql
+- config: topic_internal_identifier_column.xml — src/main/resources/db/changelog/changeset/0002_topic_internal_identifier/topic_internal_identifier_column.xml
+- config: 0003-changeSet.xml — src/main/resources/db/changelog/changeset/0003_migrate_topic_to_multilingual_structure/0003-changeSet.xml
+- table: migrateToMultilingualTopic.sql — src/main/resources/db/changelog/changeset/0003_migrate_topic_to_multilingual_structure/migrateToMultilingualTopic.sql
+- config: 0004-changeSet.xml — src/main/resources/db/changelog/changeset/0004_topic_groups/0004-changeSet.xml
+- table: topicGroups-rollback.sql — src/main/resources/db/changelog/changeset/0004_topic_groups/topicGroups-rollback.sql
+- table: topicGroups.sql — src/main/resources/db/changelog/changeset/0004_topic_groups/topicGroups.sql
+- table: topic_fallback_agency_id-rollback.sql — src/main/resources/db/changelog/changeset/0005_topic_fallback_agency_id/topic_fallback_agency_id-rollback.sql
+- table: topic_fallback_agency_id.sql — src/main/resources/db/changelog/changeset/0005_topic_fallback_agency_id/topic_fallback_agency_id.sql
+- config: topic_fallback_agency_id.xml — src/main/resources/db/changelog/changeset/0005_topic_fallback_agency_id/topic_fallback_agency_id.xml
+- table: topic_fallback_url-rollback.sql — src/main/resources/db/changelog/changeset/0006_topic_fallback_url/topic_fallback_url-rollback.sql
+- table: topic_fallback_url.sql — src/main/resources/db/changelog/changeset/0006_topic_fallback_url/topic_fallback_url.sql
+- config: topic_fallback_url.xml — src/main/resources/db/changelog/changeset/0006_topic_fallback_url/topic_fallback_url.xml
+- table: topic_welcome_message-rollback.sql — src/main/resources/db/changelog/changeset/0007_topic_welcome_message/topic_welcome_message-rollback.sql
+- table: topic_welcome_message.sql — src/main/resources/db/changelog/changeset/0007_topic_welcome_message/topic_welcome_message.sql
+- config: topic_welcome_message.xml — src/main/resources/db/changelog/changeset/0007_topic_welcome_message/topic_welcome_message.xml
+- table: topic_send_next_step_message-rollback.sql — src/main/resources/db/changelog/changeset/0008_topic_send_next_step_message/topic_send_next_step_message-rollback.sql
+- table: topic_send_next_step_message.sql — src/main/resources/db/changelog/changeset/0008_topic_send_next_step_message/topic_send_next_step_message.sql
+- config: topic_send_next_step_message.xml — src/main/resources/db/changelog/changeset/0008_topic_send_next_step_message/topic_send_next_step_message.xml
+- config: 0009_topic_add_titles_and_extend_internal_identifier.xml — src/main/resources/db/changelog/changeset/0009_topic_add_titles_and_extend_internal_identifier/0009_topic_add_titles_and_extend_internal_identifier.xm
+- table: topic_add_titles_and_extend_internal_identifier-rollback.sql — src/main/resources/db/changelog/changeset/0009_topic_add_titles_and_extend_internal_identifier/topic_add_titles_and_extend_internal_identifier-rollbac
+- table: topic_add_titles_and_extend_internal_identifier.sql — src/main/resources/db/changelog/changeset/0009_topic_add_titles_and_extend_internal_identifier/topic_add_titles_and_extend_internal_identifier.sql
+- table: 0010_change_topic_and_topic_groups_to_be_i18n_aware-rollback.sql — src/main/resources/db/changelog/changeset/0010_change_topic_and_topic_groups_to_be_i18n_aware/0010_change_topic_and_topic_groups_to_be_i18n_aware-roll
+- table: 0010_change_topic_and_topic_groups_to_be_i18n_aware.sql — src/main/resources/db/changelog/changeset/0010_change_topic_and_topic_groups_to_be_i18n_aware/0010_change_topic_and_topic_groups_to_be_i18n_aware.sql
+- config: 0010_change_topic_and_topic_groups_to_be_i18n_aware.xml — src/main/resources/db/changelog/changeset/0010_change_topic_and_topic_groups_to_be_i18n_aware/0010_change_topic_and_topic_groups_to_be_i18n_aware.xml
+- config: consultingtypeservice-dev-master.xml — src/main/resources/db/changelog/consultingtypeservice-dev-master.xml
+- config: consultingtypeservice-local-master.xml — src/main/resources/db/changelog/consultingtypeservice-local-master.xml
+
+### Deployment/Config References
+
+- None found in graph artifacts.
+
+- pipeline: Dockerfile
+- file: docker-build.cmd
+- config: tenantservice.yaml — services/tenantservice.yaml
+- file: RoleAuthorizationAuthorityMapper.java — src/main/java/de/caritas/cob/consultingtypeservice/api/auth/RoleAuthorizationAuthorityMapper.java
+- endpoint: POST /tenantadmin — services/tenantservice.yaml
+- endpoint: GET /tenantadmin — services/tenantservice.yaml
+- endpoint: GET /tenantadmin/search — services/tenantservice.yaml
+- endpoint: PUT /tenantadmin/{id} — services/tenantservice.yaml
+- endpoint: GET /tenantadmin/{id} — services/tenantservice.yaml
+- endpoint: GET /tenant — services/tenantservice.yaml
+- endpoint: GET /tenant/{id} — services/tenantservice.yaml
+- endpoint: GET /tenant/public/{subdomain} — services/tenantservice.yaml
+- endpoint: GET /tenant/public/id/{tenantId} — services/tenantservice.yaml
+- endpoint: GET /tenant/public/single — services/tenantservice.yaml
+- endpoint: GET /tenant/access — services/tenantservice.yaml
+- concept: Role to authority mapping — Keycloak roles such as tenant-admin, single-tenant-admin, and topic-admin are mapped to local AUTHORIZATION values used by PreAuthorize.
+- step: Admin patch — PATCH /settingsadmin requires patch application settings authorization and updates mutable setting values.
+- flow: Deployment And Configuration Flow — Build and runtime configuration connect Maven generation, Spring profile properties, datasource URLs, Keycloak and TenantService endpoints, and the Do
+- step: Maven build — pom.xml generates schema models, generated APIs, tenant client code, and the Spring Boot jar.
+- step: Spring properties — application.properties and application-local.properties supply env-backed URLs, credentials, and toggles.
+- step: Docker runtime — Dockerfile copies ConsultingTypeService.jar and starts it with JDWP enabled.
+- step: External service endpoints — TenantServiceApiControllerFactory uses tenant.service.api.url to call ORISO TenantService.
+
+### Important Graph Nodes
+
+- config: maven-wrapper.properties — .mvn/wrapper/maven-wrapper.properties
+- config: .swagger-codegen-ignore
+- document: CHANGELOG.md
+- pipeline: Dockerfile
+- document: README.md
+- config: applicationsettingsservice.yml — api/applicationsettingsservice.yml
+- config: consultingtypeadminservice.yml — api/consultingtypeadminservice.yml
+- config: consultingtypeservice.yml — api/consultingtypeservice.yml
+- config: topicservice.yml — api/topicservice.yml
+- file: check-version.sh
+- config: commitlint.config.js
+- config: consulting-type-0.json — consulting-type-settings/consulting-type-0.json
+- config: consulting-type-1.json — consulting-type-settings/consulting-type-1.json
+- config: consulting-type-2.json — consulting-type-settings/consulting-type-2.json
+- file: docker-build.cmd
+- file: ConsultingTypeService-architecture.graphml — documentation/ConsultingTypeService-architecture.graphml
+- config: google_checks_light.xml
+- file: mvnw
+- file: mvnw.cmd
+- config: package.json
+- config: pom.xml
+- document: readme.md
+- file: run-trivy.sh
+- config: tenantservice.yaml — services/tenantservice.yaml
+- file: ConsultingTypeServiceApplication.java — src/main/java/de/caritas/cob/consultingtypeservice/ConsultingTypeServiceApplication.java
+- file: ApiDefaultResponseEntityExceptionHandler.java — src/main/java/de/caritas/cob/consultingtypeservice/api/ApiDefaultResponseEntityExceptionHandler.java
+- file: ApiResponseEntityExceptionHandler.java — src/main/java/de/caritas/cob/consultingtypeservice/api/ApiResponseEntityExceptionHandler.java
+- file: ConsultingTypeAdminController.java — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/controller/ConsultingTypeAdminController.java
+- file: TopicFeatureAssertionAspect.java — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/controller/TopicFeatureAssertionAspect.java
+- file: ConsultingTypePaginationLinksBuilder.java — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/hallink/ConsultingTypePaginationLinksBuilder.java
+- file: HalLinkBuilder.java — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/hallink/HalLinkBuilder.java
+- file: RootDTOBuilder.java — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/hallink/RootDTOBuilder.java
+- file: ConsultingTypeAdminService.java — src/main/java/de/caritas/cob/consultingtypeservice/api/admin/service/ConsultingTypeAdminService.java
+- file: AuthenticatedUser.java — src/main/java/de/caritas/cob/consultingtypeservice/api/auth/AuthenticatedUser.java
+- file: Authority.java — src/main/java/de/caritas/cob/consultingtypeservice/api/auth/Authority.java
+- file: RoleAuthorizationAuthorityMapper.java — src/main/java/de/caritas/cob/consultingtypeservice/api/auth/RoleAuthorizationAuthorityMapper.java
+- file: UserRole.java — src/main/java/de/caritas/cob/consultingtypeservice/api/auth/UserRole.java
+- file: ConsultingTypeConverter.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeConverter.java
+- file: ConsultingTypeGroupRepository.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeGroupRepository.java
+- file: ConsultingTypeGroupRepositoryImpl.java — src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeGroupRepositoryImpl.java
+
+### Important Graph Edges
+
+- contains: file:src/main/java/de/caritas/cob/consultingtypeservice/ConsultingTypeServiceApplication.java -> class:src/main/java/de/caritas/cob/consultingtypeservice/ConsultingTypeServiceApplication.java:ConsultingTypeServiceApplication — ConsultingTypeServiceApplication.java declares ConsultingTypeServiceApplication.
+- contains: file:src/main/java/de/caritas/cob/consultingtypeservice/api/ApiDefaultResponseEntityExceptionHandler.java -> class:src/main/java/de/caritas/cob/consultingtypeservice/api/ApiDefaultResponseEntityExceptionHandler.java:ApiDefaultResponseEntityExceptionHandler — ApiDefaultResponseEntityExceptionHandler.java declares ApiDefaultResponseEntityExceptionHandler.
+- contains: file:src/main/java/de/caritas/cob/consultingtypeservice/api/ApiResponseEntityExceptionHandler.java -> class:src/main/java/de/caritas/cob/consultingtypeservice/api/ApiResponseEntityExceptionHandler.java:ApiResponseEntityExceptionHandler — ApiResponseEntityExceptionHandler.java declares ApiResponseEntityExceptionHandler.
+- contains: file:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/controller/ConsultingTypeAdminController.java -> class:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/controller/ConsultingTypeAdminController.java:ConsultingTypeAdminController — ConsultingTypeAdminController.java declares ConsultingTypeAdminController.
+- contains: file:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/controller/TopicFeatureAssertionAspect.java -> class:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/controller/TopicFeatureAssertionAspect.java:TopicFeatureAssertionAspect — TopicFeatureAssertionAspect.java declares TopicFeatureAssertionAspect.
+- contains: file:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/hallink/ConsultingTypePaginationLinksBuilder.java -> class:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/hallink/ConsultingTypePaginationLinksBuilder.java:ConsultingTypePaginationLinksBuilder — ConsultingTypePaginationLinksBuilder.java declares ConsultingTypePaginationLinksBuilder.
+- contains: file:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/hallink/HalLinkBuilder.java -> class:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/hallink/HalLinkBuilder.java:HalLinkBuilder — HalLinkBuilder.java declares HalLinkBuilder.
+- contains: file:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/hallink/RootDTOBuilder.java -> class:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/hallink/RootDTOBuilder.java:RootDTOBuilder — RootDTOBuilder.java declares RootDTOBuilder.
+- contains: file:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/service/ConsultingTypeAdminService.java -> class:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/service/ConsultingTypeAdminService.java:to — ConsultingTypeAdminService.java declares to.
+- contains: file:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/service/ConsultingTypeAdminService.java -> class:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/service/ConsultingTypeAdminService.java:ConsultingTypeAdminService — ConsultingTypeAdminService.java declares ConsultingTypeAdminService.
+- contains: file:src/main/java/de/caritas/cob/consultingtypeservice/api/auth/AuthenticatedUser.java -> class:src/main/java/de/caritas/cob/consultingtypeservice/api/auth/AuthenticatedUser.java:AuthenticatedUser — AuthenticatedUser.java declares AuthenticatedUser.
+- contains: file:src/main/java/de/caritas/cob/consultingtypeservice/api/auth/Authority.java -> class:src/main/java/de/caritas/cob/consultingtypeservice/api/auth/Authority.java:Authority — Authority.java declares Authority.
+- contains: file:src/main/java/de/caritas/cob/consultingtypeservice/api/auth/Authority.java -> class:src/main/java/de/caritas/cob/consultingtypeservice/api/auth/Authority.java:AuthorityValue — Authority.java declares AuthorityValue.
+- contains: file:src/main/java/de/caritas/cob/consultingtypeservice/api/auth/RoleAuthorizationAuthorityMapper.java -> class:src/main/java/de/caritas/cob/consultingtypeservice/api/auth/RoleAuthorizationAuthorityMapper.java:RoleAuthorizationAuthorityMapper — RoleAuthorizationAuthorityMapper.java declares RoleAuthorizationAuthorityMapper.
+- contains: file:src/main/java/de/caritas/cob/consultingtypeservice/api/auth/UserRole.java -> class:src/main/java/de/caritas/cob/consultingtypeservice/api/auth/UserRole.java:UserRole — UserRole.java declares UserRole.
+- contains: file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeConverter.java -> class:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeConverter.java:ConsultingTypeConverter — ConsultingTypeConverter.java declares ConsultingTypeConverter.
+- contains: file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeGroupRepository.java -> class:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeGroupRepository.java:ConsultingTypeGroupRepository — ConsultingTypeGroupRepository.java declares ConsultingTypeGroupRepository.
+- contains: file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeGroupRepositoryImpl.java -> class:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeGroupRepositoryImpl.java:ConsultingTypeGroupRepositoryImpl — ConsultingTypeGroupRepositoryImpl.java declares ConsultingTypeGroupRepositoryImpl.
+- contains: file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeGroupTenantAwareRepositoryImpl.java -> class:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeGroupTenantAwareRepositoryImpl.java:ConsultingTypeGroupTenantAwareRepositoryImpl — ConsultingTypeGroupTenantAwareRepositoryImpl.java declares ConsultingTypeGroupTenantAwareRepositoryImpl.
+- contains: file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeLoader.java -> class:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeLoader.java:ConsultingTypeLoader — ConsultingTypeLoader.java declares ConsultingTypeLoader.
+- contains: file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoRepositoryService.java -> class:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoRepositoryService.java:ConsultingTypeMongoRepositoryService — ConsultingTypeMongoRepositoryService.java declares ConsultingTypeMongoRepositoryService.
+- contains: file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoTenantAwareRepositoryService.java -> class:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoTenantAwareRepositoryService.java:ConsultingTypeMongoTenantAwareRepositoryService — ConsultingTypeMongoTenantAwareRepositoryService.java declares ConsultingTypeMongoTenantAwareRepositoryService.
+- contains: file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeRepository.java -> class:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeRepository.java:ConsultingTypeRepository — ConsultingTypeRepository.java declares ConsultingTypeRepository.
+- contains: file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeRepositoryService.java -> class:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeRepositoryService.java:ConsultingTypeRepositoryService — ConsultingTypeRepositoryService.java declares ConsultingTypeRepositoryService.
+- contains: file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeTenantAwareRepository.java -> class:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeTenantAwareRepository.java:ConsultingTypeTenantAwareRepository — ConsultingTypeTenantAwareRepository.java declares ConsultingTypeTenantAwareRepository.
+- contains: file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeValidator.java -> class:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeValidator.java:ConsultingTypeValidator — ConsultingTypeValidator.java declares ConsultingTypeValidator.
+- contains: file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/roles/Consultant.java -> class:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/roles/Consultant.java:Consultant — Consultant.java declares Consultant.
+- contains: file:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ApplicationSettingsController.java -> class:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ApplicationSettingsController.java:ApplicationSettingsController — ApplicationSettingsController.java declares ApplicationSettingsController.
+- contains: file:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ConsultingTypeController.java -> class:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ConsultingTypeController.java:ConsultingTypeController — ConsultingTypeController.java declares ConsultingTypeController.
+- contains: file:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicAdminController.java -> class:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicAdminController.java:TopicAdminController — TopicAdminController.java declares TopicAdminController.
+
+### Missing or Weak Areas
+
+- No major graph-shape gaps detected; still verify behavior in source before changing production flows.
+
+### Needs Verification
+
+- No major graph-shape gaps detected; still verify behavior in source before changing production flows.
+
+## ORISO-TenantService
+
+### Graph Source
+
+- graph path: ../ORISO-TenantService/.understand-anything/knowledge-graph.json
+- artifacts used: 12
+- node count: 380
+- edge count: 623
+
+Artifacts used:
+
+- .understand-anything/ARCHITECTURE.md (6.4 KB)
+- .understand-anything/DEPENDENCY-AUDIT.md (2.7 KB)
+- .understand-anything/FINDINGS.md (4.7 KB)
+- .understand-anything/knowledge-graph.json (466.2 KB)
+- .understand-anything/ONBOARDING.md (4.9 KB)
+- .understand-anything/ORISO-ECOSYSTEM.md (2.5 KB)
+- .understand-anything/README.md (4.0 KB)
+- .understand-anything/visuals/architecture-flow.mmd (658 B)
+- .understand-anything/visuals/auth-flow.mmd (657 B)
+- .understand-anything/visuals/data-flow.mmd (635 B)
+- .understand-anything/visuals/deployment-flow.mmd (455 B)
+- .understand-anything/visuals/ecosystem-flow.mmd (518 B)
+
+### Repository Purpose
+
+Spring Boot service that owns ORISO tenant records, tenant settings, legal content, subdomain resolution, and tenant-specific integration with ConsultingType, ApplicationSettings, and UserAdmin services.
+
+### Main Files/Modules
+
+- file: mvnw
+- file: Authority.java — src/main/java/com/vi/tenantservice/api/authorisation/Authority.java
+- file: RoleAuthorizationAuthorityMapper.java — src/main/java/com/vi/tenantservice/api/authorisation/RoleAuthorizationAuthorityMapper.java
+- file: UserRole.java — src/main/java/com/vi/tenantservice/api/authorisation/UserRole.java
+- file: CacheEventLogger.java — src/main/java/com/vi/tenantservice/api/cache/CacheEventLogger.java
+- file: ApplicationSettingsApiClient.java — src/main/java/com/vi/tenantservice/api/config/apiclient/ApplicationSettingsApiClient.java
+- file: ApplicationSettingsApiControllerFactory.java — src/main/java/com/vi/tenantservice/api/config/apiclient/ApplicationSettingsApiControllerFactory.java
+- file: ConsultingTypeServiceApiControllerFactory.java — src/main/java/com/vi/tenantservice/api/config/apiclient/ConsultingTypeServiceApiControllerFactory.java
+- file: UserAdminServiceApiControllerFactory.java — src/main/java/com/vi/tenantservice/api/config/apiclient/UserAdminServiceApiControllerFactory.java
+- file: CacheManagerConfig.java — src/main/java/com/vi/tenantservice/api/config/CacheManagerConfig.java
+- file: CustomResponseErrorHandler.java — src/main/java/com/vi/tenantservice/api/config/CustomResponseErrorHandler.java
+- file: CustomSwaggerPathWebMvcConfigurer.java — src/main/java/com/vi/tenantservice/api/config/CustomSwaggerPathWebMvcConfigurer.java
+- file: FreeMarkerConfig.java — src/main/java/com/vi/tenantservice/api/config/FreeMarkerConfig.java
+- file: RestTemplateConfig.java — src/main/java/com/vi/tenantservice/api/config/RestTemplateConfig.java
+- file: SpringFoxConfig.java — src/main/java/com/vi/tenantservice/api/config/SpringFoxConfig.java
+- file: ExceptionHandlerAdvice.java — src/main/java/com/vi/tenantservice/api/controller/ExceptionHandlerAdvice.java
+- file: TenantController.java — src/main/java/com/vi/tenantservice/api/controller/TenantController.java
+- file: TenantDtoMapper.java — src/main/java/com/vi/tenantservice/api/controller/TenantDtoMapper.java
+- file: VersionController.java — src/main/java/com/vi/tenantservice/api/controller/VersionController.java
+- file: ConsultingTypePatchDTOConverter.java — src/main/java/com/vi/tenantservice/api/converter/ConsultingTypePatchDTOConverter.java
+- file: ConverterUtils.java — src/main/java/com/vi/tenantservice/api/converter/ConverterUtils.java
+- file: TenantConverter.java — src/main/java/com/vi/tenantservice/api/converter/TenantConverter.java
+- file: ApplicationSettingsUpdateException.java — src/main/java/com/vi/tenantservice/api/exception/ApplicationSettingsUpdateException.java
+- file: ConsultingTypeCommunicationException.java — src/main/java/com/vi/tenantservice/api/exception/ConsultingTypeCommunicationException.java
+- file: ConsultingTypeCreationException.java — src/main/java/com/vi/tenantservice/api/exception/ConsultingTypeCreationException.java
+- file: CustomHttpHeader.java — src/main/java/com/vi/tenantservice/api/exception/httpresponse/CustomHttpHeader.java
+- file: HttpStatusExceptionReason.java — src/main/java/com/vi/tenantservice/api/exception/httpresponse/HttpStatusExceptionReason.java
+- file: TenantAuthorisationException.java — src/main/java/com/vi/tenantservice/api/exception/TenantAuthorisationException.java
+- file: TenantNotFoundException.java — src/main/java/com/vi/tenantservice/api/exception/TenantNotFoundException.java
+- file: TenantValidationException.java — src/main/java/com/vi/tenantservice/api/exception/TenantValidationException.java
+- file: TenantFacadeAuthorisationService.java — src/main/java/com/vi/tenantservice/api/facade/TenantFacadeAuthorisationService.java
+- file: TenantFacadeChangeDetectionService.java — src/main/java/com/vi/tenantservice/api/facade/TenantFacadeChangeDetectionService.java
+- file: TenantFacadeDependentSettingsOverrideService.java — src/main/java/com/vi/tenantservice/api/facade/TenantFacadeDependentSettingsOverrideService.java
+- file: TenantServiceFacade.java — src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java
+- file: Consultant.java — src/main/java/com/vi/tenantservice/api/manager/consultingtype/roles/Consultant.java
+- file: DataProtectionPlaceHolderType.java — src/main/java/com/vi/tenantservice/api/model/DataProtectionPlaceHolderType.java
+- file: TenantAdminAllowedPermissionTogglesSettings.java — src/main/java/com/vi/tenantservice/api/model/TenantAdminAllowedPermissionTogglesSettings.java
+- file: TenantAdminControlsSettings.java — src/main/java/com/vi/tenantservice/api/model/TenantAdminControlsSettings.java
+- file: TenantContent.java — src/main/java/com/vi/tenantservice/api/model/TenantContent.java
+- file: TenantEntity.java — src/main/java/com/vi/tenantservice/api/model/TenantEntity.java
+- file: TenantSetting.java — src/main/java/com/vi/tenantservice/api/model/TenantSetting.java
+- file: TenantSettings.java — src/main/java/com/vi/tenantservice/api/model/TenantSettings.java
+- file: TenantSmtpSettings.java — src/main/java/com/vi/tenantservice/api/model/TenantSmtpSettings.java
+- file: TenantRepository.java — src/main/java/com/vi/tenantservice/api/repository/TenantRepository.java
+- file: ConfigurationFileLoader.java — src/main/java/com/vi/tenantservice/api/service/ConfigurationFileLoader.java
+- file: ApplicationSettingsService.java — src/main/java/com/vi/tenantservice/api/service/consultingtype/ApplicationSettingsService.java
+- file: ConsultingTypeService.java — src/main/java/com/vi/tenantservice/api/service/consultingtype/ConsultingTypeService.java
+- file: UserAdminService.java — src/main/java/com/vi/tenantservice/api/service/consultingtype/UserAdminService.java
+- file: SecurityHeaderSupplier.java — src/main/java/com/vi/tenantservice/api/service/httpheader/SecurityHeaderSupplier.java
+- file: SingleDomainTenantOverrideService.java — src/main/java/com/vi/tenantservice/api/service/SingleDomainTenantOverrideService.java
+- file: TemplateDescriptionServiceException.java — src/main/java/com/vi/tenantservice/api/service/TemplateDescriptionServiceException.java
+- file: TemplateRenderer.java — src/main/java/com/vi/tenantservice/api/service/TemplateRenderer.java
+- file: TemplateService.java — src/main/java/com/vi/tenantservice/api/service/TemplateService.java
+- file: TenantService.java — src/main/java/com/vi/tenantservice/api/service/TenantService.java
+- file: TranslationService.java — src/main/java/com/vi/tenantservice/api/service/TranslationService.java
+- file: AccessTokenTenantResolver.java — src/main/java/com/vi/tenantservice/api/tenant/AccessTokenTenantResolver.java
+- file: CookieTenantResolver.java — src/main/java/com/vi/tenantservice/api/tenant/CookieTenantResolver.java
+- file: HttpUrlUtils.java — src/main/java/com/vi/tenantservice/api/tenant/HttpUrlUtils.java
+- file: SubdomainExtractor.java — src/main/java/com/vi/tenantservice/api/tenant/SubdomainExtractor.java
+- file: SubdomainTenantResolver.java — src/main/java/com/vi/tenantservice/api/tenant/SubdomainTenantResolver.java
+
+### Classes/Functions
+
+- class: Authority — src/main/java/com/vi/tenantservice/api/authorisation/Authority.java
+- class: AuthorityValue — src/main/java/com/vi/tenantservice/api/authorisation/Authority.java
+- class: RoleAuthorizationAuthorityMapper — src/main/java/com/vi/tenantservice/api/authorisation/RoleAuthorizationAuthorityMapper.java
+- class: UserRole — src/main/java/com/vi/tenantservice/api/authorisation/UserRole.java
+- class: CacheEventLogger — src/main/java/com/vi/tenantservice/api/cache/CacheEventLogger.java
+- class: ApplicationSettingsApiClient — src/main/java/com/vi/tenantservice/api/config/apiclient/ApplicationSettingsApiClient.java
+- class: ApplicationSettingsApiControllerFactory — src/main/java/com/vi/tenantservice/api/config/apiclient/ApplicationSettingsApiControllerFactory.java
+- class: ConsultingTypeServiceApiControllerFactory — src/main/java/com/vi/tenantservice/api/config/apiclient/ConsultingTypeServiceApiControllerFactory.java
+- class: UserAdminServiceApiControllerFactory — src/main/java/com/vi/tenantservice/api/config/apiclient/UserAdminServiceApiControllerFactory.java
+- class: CacheManagerConfig — src/main/java/com/vi/tenantservice/api/config/CacheManagerConfig.java
+- class: CustomResponseErrorHandler — src/main/java/com/vi/tenantservice/api/config/CustomResponseErrorHandler.java
+- class: CustomSwaggerPathWebMvcConfigurer — src/main/java/com/vi/tenantservice/api/config/CustomSwaggerPathWebMvcConfigurer.java
+- class: FreeMarkerConfig — src/main/java/com/vi/tenantservice/api/config/FreeMarkerConfig.java
+- class: RestTemplateConfig — src/main/java/com/vi/tenantservice/api/config/RestTemplateConfig.java
+- class: SpringFoxConfig — src/main/java/com/vi/tenantservice/api/config/SpringFoxConfig.java
+- class: ExceptionHandlerAdvice — src/main/java/com/vi/tenantservice/api/controller/ExceptionHandlerAdvice.java
+- class: TenantController — src/main/java/com/vi/tenantservice/api/controller/TenantController.java
+- class: TenantDtoMapper — src/main/java/com/vi/tenantservice/api/controller/TenantDtoMapper.java
+- class: VersionController — src/main/java/com/vi/tenantservice/api/controller/VersionController.java
+- class: ConsultingTypePatchDTOConverter — src/main/java/com/vi/tenantservice/api/converter/ConsultingTypePatchDTOConverter.java
+- class: ConverterUtils — src/main/java/com/vi/tenantservice/api/converter/ConverterUtils.java
+- class: TenantConverter — src/main/java/com/vi/tenantservice/api/converter/TenantConverter.java
+- class: ApplicationSettingsUpdateException — src/main/java/com/vi/tenantservice/api/exception/ApplicationSettingsUpdateException.java
+- class: ConsultingTypeCommunicationException — src/main/java/com/vi/tenantservice/api/exception/ConsultingTypeCommunicationException.java
+- class: ConsultingTypeCreationException — src/main/java/com/vi/tenantservice/api/exception/ConsultingTypeCreationException.java
+- class: CustomHttpHeader — src/main/java/com/vi/tenantservice/api/exception/httpresponse/CustomHttpHeader.java
+- class: HttpStatusExceptionReason — src/main/java/com/vi/tenantservice/api/exception/httpresponse/HttpStatusExceptionReason.java
+- class: TenantAuthorisationException — src/main/java/com/vi/tenantservice/api/exception/TenantAuthorisationException.java
+- class: TenantNotFoundException — src/main/java/com/vi/tenantservice/api/exception/TenantNotFoundException.java
+- class: TenantValidationException — src/main/java/com/vi/tenantservice/api/exception/TenantValidationException.java
+- class: TenantFacadeAuthorisationService — src/main/java/com/vi/tenantservice/api/facade/TenantFacadeAuthorisationService.java
+- class: TenantFacadeChangeDetectionService — src/main/java/com/vi/tenantservice/api/facade/TenantFacadeChangeDetectionService.java
+- class: TenantFacadeDependentSettingsOverrideService — src/main/java/com/vi/tenantservice/api/facade/TenantFacadeDependentSettingsOverrideService.java
+- class: TenantServiceFacade — src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java
+- class: Consultant — src/main/java/com/vi/tenantservice/api/manager/consultingtype/roles/Consultant.java
+- class: DataProtectionPlaceHolderType — src/main/java/com/vi/tenantservice/api/model/DataProtectionPlaceHolderType.java
+- class: TenantAdminAllowedPermissionTogglesSettings — src/main/java/com/vi/tenantservice/api/model/TenantAdminAllowedPermissionTogglesSettings.java
+- class: TenantAdminControlsSettings — src/main/java/com/vi/tenantservice/api/model/TenantAdminControlsSettings.java
+- class: TenantContent — src/main/java/com/vi/tenantservice/api/model/TenantContent.java
+- class: TenantBase — src/main/java/com/vi/tenantservice/api/model/TenantEntity.java
+- class: TenantEntity — src/main/java/com/vi/tenantservice/api/model/TenantEntity.java
+- class: TenantSetting — src/main/java/com/vi/tenantservice/api/model/TenantSetting.java
+- class: TenantSettings — src/main/java/com/vi/tenantservice/api/model/TenantSettings.java
+- class: TenantSmtpSettings — src/main/java/com/vi/tenantservice/api/model/TenantSmtpSettings.java
+- class: TenantRepository — src/main/java/com/vi/tenantservice/api/repository/TenantRepository.java
+- class: ConfigurationFileLoader — src/main/java/com/vi/tenantservice/api/service/ConfigurationFileLoader.java
+- class: ApplicationSettingsService — src/main/java/com/vi/tenantservice/api/service/consultingtype/ApplicationSettingsService.java
+- class: ConsultingTypeService — src/main/java/com/vi/tenantservice/api/service/consultingtype/ConsultingTypeService.java
+- class: UserAdminService — src/main/java/com/vi/tenantservice/api/service/consultingtype/UserAdminService.java
+- class: SecurityHeaderSupplier — src/main/java/com/vi/tenantservice/api/service/httpheader/SecurityHeaderSupplier.java
+- class: SingleDomainTenantOverrideService — src/main/java/com/vi/tenantservice/api/service/SingleDomainTenantOverrideService.java
+- class: TemplateDescriptionServiceException — src/main/java/com/vi/tenantservice/api/service/TemplateDescriptionServiceException.java
+- class: TemplateRenderer — src/main/java/com/vi/tenantservice/api/service/TemplateRenderer.java
+- class: TemplateService — src/main/java/com/vi/tenantservice/api/service/TemplateService.java
+- class: TenantService — src/main/java/com/vi/tenantservice/api/service/TenantService.java
+- class: TranslationService — src/main/java/com/vi/tenantservice/api/service/TranslationService.java
+- class: AccessTokenTenantResolver — src/main/java/com/vi/tenantservice/api/tenant/AccessTokenTenantResolver.java
+- class: CookieTenantResolver — src/main/java/com/vi/tenantservice/api/tenant/CookieTenantResolver.java
+- class: HttpUrlUtils — src/main/java/com/vi/tenantservice/api/tenant/HttpUrlUtils.java
+- class: SubdomainExtractor — src/main/java/com/vi/tenantservice/api/tenant/SubdomainExtractor.java
+
+### APIs/Routes
+
+- class: Authority — src/main/java/com/vi/tenantservice/api/authorisation/Authority.java
+- class: AuthorityValue — src/main/java/com/vi/tenantservice/api/authorisation/Authority.java
+- class: RoleAuthorizationAuthorityMapper — src/main/java/com/vi/tenantservice/api/authorisation/RoleAuthorizationAuthorityMapper.java
+- class: UserRole — src/main/java/com/vi/tenantservice/api/authorisation/UserRole.java
+- class: CacheEventLogger — src/main/java/com/vi/tenantservice/api/cache/CacheEventLogger.java
+- class: ApplicationSettingsApiClient — src/main/java/com/vi/tenantservice/api/config/apiclient/ApplicationSettingsApiClient.java
+- class: ApplicationSettingsApiControllerFactory — src/main/java/com/vi/tenantservice/api/config/apiclient/ApplicationSettingsApiControllerFactory.java
+- class: ConsultingTypeServiceApiControllerFactory — src/main/java/com/vi/tenantservice/api/config/apiclient/ConsultingTypeServiceApiControllerFactory.java
+- class: UserAdminServiceApiControllerFactory — src/main/java/com/vi/tenantservice/api/config/apiclient/UserAdminServiceApiControllerFactory.java
+- class: CacheManagerConfig — src/main/java/com/vi/tenantservice/api/config/CacheManagerConfig.java
+- class: CustomResponseErrorHandler — src/main/java/com/vi/tenantservice/api/config/CustomResponseErrorHandler.java
+- class: CustomSwaggerPathWebMvcConfigurer — src/main/java/com/vi/tenantservice/api/config/CustomSwaggerPathWebMvcConfigurer.java
+- class: FreeMarkerConfig — src/main/java/com/vi/tenantservice/api/config/FreeMarkerConfig.java
+- class: RestTemplateConfig — src/main/java/com/vi/tenantservice/api/config/RestTemplateConfig.java
+- class: SpringFoxConfig — src/main/java/com/vi/tenantservice/api/config/SpringFoxConfig.java
+- class: ExceptionHandlerAdvice — src/main/java/com/vi/tenantservice/api/controller/ExceptionHandlerAdvice.java
+- class: TenantController — src/main/java/com/vi/tenantservice/api/controller/TenantController.java
+- class: TenantDtoMapper — src/main/java/com/vi/tenantservice/api/controller/TenantDtoMapper.java
+- class: VersionController — src/main/java/com/vi/tenantservice/api/controller/VersionController.java
+- class: ConsultingTypePatchDTOConverter — src/main/java/com/vi/tenantservice/api/converter/ConsultingTypePatchDTOConverter.java
+- class: ConverterUtils — src/main/java/com/vi/tenantservice/api/converter/ConverterUtils.java
+- class: TenantConverter — src/main/java/com/vi/tenantservice/api/converter/TenantConverter.java
+- class: ApplicationSettingsUpdateException — src/main/java/com/vi/tenantservice/api/exception/ApplicationSettingsUpdateException.java
+- class: ConsultingTypeCommunicationException — src/main/java/com/vi/tenantservice/api/exception/ConsultingTypeCommunicationException.java
+- class: ConsultingTypeCreationException — src/main/java/com/vi/tenantservice/api/exception/ConsultingTypeCreationException.java
+- class: CustomHttpHeader — src/main/java/com/vi/tenantservice/api/exception/httpresponse/CustomHttpHeader.java
+- class: HttpStatusExceptionReason — src/main/java/com/vi/tenantservice/api/exception/httpresponse/HttpStatusExceptionReason.java
+- class: TenantAuthorisationException — src/main/java/com/vi/tenantservice/api/exception/TenantAuthorisationException.java
+- class: TenantNotFoundException — src/main/java/com/vi/tenantservice/api/exception/TenantNotFoundException.java
+- class: TenantValidationException — src/main/java/com/vi/tenantservice/api/exception/TenantValidationException.java
+- class: TenantFacadeAuthorisationService — src/main/java/com/vi/tenantservice/api/facade/TenantFacadeAuthorisationService.java
+- class: TenantFacadeChangeDetectionService — src/main/java/com/vi/tenantservice/api/facade/TenantFacadeChangeDetectionService.java
+- class: TenantFacadeDependentSettingsOverrideService — src/main/java/com/vi/tenantservice/api/facade/TenantFacadeDependentSettingsOverrideService.java
+- class: TenantServiceFacade — src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java
+- class: Consultant — src/main/java/com/vi/tenantservice/api/manager/consultingtype/roles/Consultant.java
+- class: DataProtectionPlaceHolderType — src/main/java/com/vi/tenantservice/api/model/DataProtectionPlaceHolderType.java
+- class: TenantAdminAllowedPermissionTogglesSettings — src/main/java/com/vi/tenantservice/api/model/TenantAdminAllowedPermissionTogglesSettings.java
+- class: TenantAdminControlsSettings — src/main/java/com/vi/tenantservice/api/model/TenantAdminControlsSettings.java
+- class: TenantContent — src/main/java/com/vi/tenantservice/api/model/TenantContent.java
+- class: TenantBase — src/main/java/com/vi/tenantservice/api/model/TenantEntity.java
+- class: TenantEntity — src/main/java/com/vi/tenantservice/api/model/TenantEntity.java
+- class: TenantSetting — src/main/java/com/vi/tenantservice/api/model/TenantSetting.java
+- class: TenantSettings — src/main/java/com/vi/tenantservice/api/model/TenantSettings.java
+- class: TenantSmtpSettings — src/main/java/com/vi/tenantservice/api/model/TenantSmtpSettings.java
+- class: TenantRepository — src/main/java/com/vi/tenantservice/api/repository/TenantRepository.java
+- class: ConfigurationFileLoader — src/main/java/com/vi/tenantservice/api/service/ConfigurationFileLoader.java
+- class: ApplicationSettingsService — src/main/java/com/vi/tenantservice/api/service/consultingtype/ApplicationSettingsService.java
+- class: ConsultingTypeService — src/main/java/com/vi/tenantservice/api/service/consultingtype/ConsultingTypeService.java
+- class: UserAdminService — src/main/java/com/vi/tenantservice/api/service/consultingtype/UserAdminService.java
+- class: SecurityHeaderSupplier — src/main/java/com/vi/tenantservice/api/service/httpheader/SecurityHeaderSupplier.java
+- class: SingleDomainTenantOverrideService — src/main/java/com/vi/tenantservice/api/service/SingleDomainTenantOverrideService.java
+- class: TemplateDescriptionServiceException — src/main/java/com/vi/tenantservice/api/service/TemplateDescriptionServiceException.java
+- class: TemplateRenderer — src/main/java/com/vi/tenantservice/api/service/TemplateRenderer.java
+- class: TemplateService — src/main/java/com/vi/tenantservice/api/service/TemplateService.java
+- class: TenantService — src/main/java/com/vi/tenantservice/api/service/TenantService.java
+- class: TranslationService — src/main/java/com/vi/tenantservice/api/service/TranslationService.java
+- class: AccessTokenTenantResolver — src/main/java/com/vi/tenantservice/api/tenant/AccessTokenTenantResolver.java
+- class: CookieTenantResolver — src/main/java/com/vi/tenantservice/api/tenant/CookieTenantResolver.java
+- class: HttpUrlUtils — src/main/java/com/vi/tenantservice/api/tenant/HttpUrlUtils.java
+- class: SubdomainExtractor — src/main/java/com/vi/tenantservice/api/tenant/SubdomainExtractor.java
+
+### Internal Dependencies
+
+- depends_on: class:src/main/java/com/vi/tenantservice/api/authorisation/RoleAuthorizationAuthorityMapper.java:RoleAuthorizationAuthorityMapper -> class:src/main/java/com/vi/tenantservice/api/authorisation/Authority.java:Authority — Role mapper is backed by the role-to-authority matrix.
+- calls: class:src/main/java/com/vi/tenantservice/api/controller/TenantController.java:TenantController -> class:src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java:TenantServiceFacade — Controller delegates tenant use cases to the facade.
+- depends_on: class:src/main/java/com/vi/tenantservice/api/controller/TenantController.java:TenantController -> class:src/main/java/com/vi/tenantservice/config/security/AuthorisationService.java:AuthorisationService — Controller reads authorization context for selected access checks.
+- calls: class:src/main/java/com/vi/tenantservice/api/converter/TenantConverter.java:TenantConverter -> class:src/main/java/com/vi/tenantservice/api/service/TemplateRenderer.java:TemplateRenderer — Converter delegates FreeMarker rendering for template placeholders.
+- calls: class:src/main/java/com/vi/tenantservice/api/converter/TenantConverter.java:TenantConverter -> class:src/main/java/com/vi/tenantservice/api/service/TemplateService.java:TemplateService — Converter renders privacy text from template data.
+- calls: class:src/main/java/com/vi/tenantservice/api/facade/TenantFacadeAuthorisationService.java:TenantFacadeAuthorisationService -> class:src/main/java/com/vi/tenantservice/api/facade/TenantFacadeChangeDetectionService.java:TenantFacadeChangeDetectionService — Authorization checks decide whether a changed setting/content is allowed.
+- calls: class:src/main/java/com/vi/tenantservice/api/facade/TenantFacadeAuthorisationService.java:TenantFacadeAuthorisationService -> class:src/main/java/com/vi/tenantservice/api/service/consultingtype/ApplicationSettingsService.java:ApplicationSettingsService — Legal content rules depend on central application settings.
+- depends_on: class:src/main/java/com/vi/tenantservice/api/facade/TenantFacadeAuthorisationService.java:TenantFacadeAuthorisationService -> class:src/main/java/com/vi/tenantservice/config/security/AuthorisationService.java:AuthorisationService — Facade authorization checks read user role, authority, username, and tenant claims.
+- calls: class:src/main/java/com/vi/tenantservice/api/facade/TenantFacadeDependentSettingsOverrideService.java:TenantFacadeDependentSettingsOverrideService -> class:src/main/java/com/vi/tenantservice/api/facade/TenantFacadeChangeDetectionService.java:TenantFacadeChangeDetectionService — Dependent setting overrides reuse settings change detection.
+- depends_on: class:src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java:TenantServiceFacade -> class:src/main/java/com/vi/tenantservice/api/facade/TenantFacadeAuthorisationService.java:TenantFacadeAuthorisationService — Facade enforces role-specific update and access rules.
+- calls: class:src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java:TenantServiceFacade -> class:src/main/java/com/vi/tenantservice/api/facade/TenantFacadeDependentSettingsOverrideService.java:TenantFacadeDependentSettingsOverrideService — Facade applies dependent feature-toggle overrides.
+- calls: class:src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java:TenantServiceFacade -> class:src/main/java/com/vi/tenantservice/api/service/consultingtype/ApplicationSettingsService.java:ApplicationSettingsService — Single-domain tenant setup reads and writes central application settings.
+- calls: class:src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java:TenantServiceFacade -> class:src/main/java/com/vi/tenantservice/api/service/consultingtype/ConsultingTypeService.java:ConsultingTypeService — Tenant create/update synchronizes default consulting type settings.
+- calls: class:src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java:TenantServiceFacade -> class:src/main/java/com/vi/tenantservice/api/service/consultingtype/UserAdminService.java:UserAdminService — Tenant admin search enriches tenants with admin emails.
+- calls: class:src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java:TenantServiceFacade -> class:src/main/java/com/vi/tenantservice/api/service/SingleDomainTenantOverrideService.java:SingleDomainTenantOverrideService — Facade delegates single-domain restricted tenant overrides.
+- calls: class:src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java:TenantServiceFacade -> class:src/main/java/com/vi/tenantservice/api/service/TenantService.java:TenantService — Facade persists and reads tenant entities through TenantService.
+- depends_on: class:src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java:TenantServiceFacade -> class:src/main/java/com/vi/tenantservice/api/tenant/TenantResolverService.java:TenantResolverService — Facade resolves tenant context for restricted public reads.
+- depends_on: class:src/main/java/com/vi/tenantservice/api/service/consultingtype/ApplicationSettingsService.java:ApplicationSettingsService -> class:src/main/java/com/vi/tenantservice/api/config/apiclient/ApplicationSettingsApiControllerFactory.java:ApplicationSettingsApiControllerFactory — Application settings wrapper obtains generated ApplicationSettings API controllers from the factory.
+- depends_on: class:src/main/java/com/vi/tenantservice/api/service/consultingtype/ApplicationSettingsService.java:ApplicationSettingsService -> class:src/main/java/com/vi/tenantservice/api/service/httpheader/SecurityHeaderSupplier.java:SecurityHeaderSupplier — Application settings writes include CSRF and Authorization headers.
+- depends_on: class:src/main/java/com/vi/tenantservice/api/service/consultingtype/ConsultingTypeService.java:ConsultingTypeService -> class:src/main/java/com/vi/tenantservice/api/config/apiclient/ConsultingTypeServiceApiControllerFactory.java:ConsultingTypeServiceApiControllerFactory — Client wrapper obtains generated ConsultingType API controllers from the factory.
+- depends_on: class:src/main/java/com/vi/tenantservice/api/service/consultingtype/ConsultingTypeService.java:ConsultingTypeService -> class:src/main/java/com/vi/tenantservice/api/service/httpheader/SecurityHeaderSupplier.java:SecurityHeaderSupplier — External service calls include CSRF and Authorization headers.
+- depends_on: class:src/main/java/com/vi/tenantservice/api/service/consultingtype/UserAdminService.java:UserAdminService -> class:src/main/java/com/vi/tenantservice/api/config/apiclient/UserAdminServiceApiControllerFactory.java:UserAdminServiceApiControllerFactory — User admin wrapper obtains generated UserAdmin API controllers from the factory.
+- depends_on: class:src/main/java/com/vi/tenantservice/api/service/consultingtype/UserAdminService.java:UserAdminService -> class:src/main/java/com/vi/tenantservice/api/service/httpheader/SecurityHeaderSupplier.java:SecurityHeaderSupplier — User admin calls include CSRF and Authorization headers.
+- depends_on: class:src/main/java/com/vi/tenantservice/api/service/TemplateService.java:TemplateService -> class:src/main/java/com/vi/tenantservice/api/config/FreeMarkerConfig.java:FreeMarkerConfig — Template loading and rendering rely on the FreeMarker setup.
+- reads_from: class:src/main/java/com/vi/tenantservice/api/service/TenantService.java:TenantService -> class:src/main/java/com/vi/tenantservice/api/repository/TenantRepository.java:TenantRepository — Service reads tenants from the JPA repository.
+- writes_to: class:src/main/java/com/vi/tenantservice/api/service/TenantService.java:TenantService -> class:src/main/java/com/vi/tenantservice/api/repository/TenantRepository.java:TenantRepository — Service creates, updates, and deletes tenant records.
+- depends_on: class:src/main/java/com/vi/tenantservice/api/service/TenantService.java:TenantService -> class:src/main/java/com/vi/tenantservice/api/service/ConfigurationFileLoader.java:ConfigurationFileLoader — Service loads default tenant settings JSON.
+- depends_on: class:src/main/java/com/vi/tenantservice/api/tenant/AccessTokenTenantResolver.java:AccessTokenTenantResolver -> class:src/main/java/com/vi/tenantservice/config/security/AuthorisationService.java:AuthorisationService — Token resolver reuses JWT tenant claim extraction rules.
+- depends_on: class:src/main/java/com/vi/tenantservice/api/tenant/CookieTenantResolver.java:CookieTenantResolver -> class:src/main/java/com/vi/tenantservice/api/tenant/SubdomainExtractor.java:SubdomainExtractor — Cookie resolver uses request host helpers for fallback behavior.
+- reads_from: class:src/main/java/com/vi/tenantservice/api/tenant/SubdomainTenantResolver.java:SubdomainTenantResolver -> class:src/main/java/com/vi/tenantservice/api/repository/TenantRepository.java:TenantRepository — Subdomain resolver looks up TenantEntity by subdomain.
+- calls: class:src/main/java/com/vi/tenantservice/api/tenant/TenantResolverService.java:TenantResolverService -> class:src/main/java/com/vi/tenantservice/api/tenant/AccessTokenTenantResolver.java:AccessTokenTenantResolver — Authenticated requests resolve tenant context from the access token.
+- calls: class:src/main/java/com/vi/tenantservice/api/tenant/TenantResolverService.java:TenantResolverService -> class:src/main/java/com/vi/tenantservice/api/tenant/CookieTenantResolver.java:CookieTenantResolver — Single-domain anonymous requests can resolve tenant context from cookies.
+- calls: class:src/main/java/com/vi/tenantservice/api/tenant/TenantResolverService.java:TenantResolverService -> class:src/main/java/com/vi/tenantservice/api/tenant/SubdomainTenantResolver.java:SubdomainTenantResolver — Fallback tenant resolution uses request subdomain.
+- calls: class:src/main/java/com/vi/tenantservice/config/security/AuthorisationService.java:AuthorisationService -> class:src/main/java/com/vi/tenantservice/api/authorisation/RoleAuthorizationAuthorityMapper.java:RoleAuthorizationAuthorityMapper — AuthorisationService maps Keycloak roles to local authorities.
+- calls: class:src/main/java/com/vi/tenantservice/config/security/JwtAuthConverter.java:JwtAuthConverter -> class:src/main/java/com/vi/tenantservice/config/security/AuthorisationService.java:AuthorisationService — JWT converter extracts realm roles through AuthorisationService.
+
+### External ORISO Dependencies
+
+- ORISO-UserService -> ORISO-TenantService: depends_on (ORISO-UserService::config:services/tenantadminservice.yaml)
+- ORISO-UserService -> ORISO-TenantService: depends_on (ORISO-UserService::config:services/tenantservice.yaml)
+- ORISO-UserService -> ORISO-TenantService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/admin/service/tenant/TenantAdminService.java)
+- ORISO-UserService -> ORISO-TenantService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/admin/service/tenant/TenantService.java)
+- ORISO-UserService -> ORISO-TenantService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/TenantAdminServiceApiClient.java)
+- ORISO-UserService -> ORISO-TenantService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/TenantAdminServiceApiControllerFactory.java)
+- ORISO-UserService -> ORISO-TenantService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/TenantServiceApiClient.java)
+- ORISO-UserService -> ORISO-TenantService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/TenantServiceApiControllerFactory.java)
+- ORISO-UserService -> ORISO-TenantService: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/TenantServiceHelper.java)
+- ORISO-UserService -> ORISO-TenantService: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.admin.service.tenant.TenantAdminService)
+- ORISO-UserService -> ORISO-TenantService: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.admin.service.tenant.TenantService)
+- ORISO-UserService -> ORISO-TenantService: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.TenantAdminServiceApiClient)
+- ORISO-UserService -> ORISO-TenantService: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.TenantAdminServiceApiControllerFactory)
+- ORISO-UserService -> ORISO-TenantService: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.TenantServiceApiClient)
+- ORISO-UserService -> ORISO-TenantService: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.TenantServiceApiControllerFactory)
+- ORISO-UserService -> ORISO-TenantService: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.TenantServiceHelper)
+- ORISO-UserService -> ORISO-TenantService: depends_on (ORISO-UserService::endpoint:services/tenantadminservice.yaml:createTenant)
+- ORISO-UserService -> ORISO-TenantService: depends_on (ORISO-UserService::endpoint:services/tenantadminservice.yaml:getAllTenants)
+- ORISO-UserService -> ORISO-TenantService: depends_on (ORISO-UserService::endpoint:services/tenantadminservice.yaml:getTenantById)
+- ORISO-UserService -> ORISO-TenantService: depends_on (ORISO-UserService::endpoint:services/tenantadminservice.yaml:updateTenant)
+- ORISO-UserService -> ORISO-TenantService: depends_on (ORISO-UserService::endpoint:services/tenantservice.yaml:getRestrictedTenantDataBySubdomain)
+- ORISO-UserService -> ORISO-TenantService: depends_on (ORISO-UserService::endpoint:services/tenantservice.yaml:getRestrictedTenantDataByTenantId)
+- ORISO-UserService -> ORISO-TenantService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/admin/service/tenant/TenantAdminService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.admin.service.tenant.TenantAdminService)
+- ORISO-UserService -> ORISO-TenantService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/admin/service/tenant/TenantService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.admin.service.tenant.TenantService)
+- ORISO-UserService -> ORISO-TenantService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/TenantAdminServiceApiClient.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.TenantAdminServiceApiClient)
+- ORISO-UserService -> ORISO-TenantService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/TenantAdminServiceApiControllerFactory.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.TenantAdminServiceApiControllerFactory)
+- ORISO-UserService -> ORISO-TenantService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/TenantServiceApiClient.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.TenantServiceApiClient)
+- ORISO-UserService -> ORISO-TenantService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/TenantServiceApiControllerFactory.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.TenantServiceApiControllerFactory)
+- ORISO-UserService -> ORISO-TenantService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/TenantServiceHelper.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.config.apiclient.TenantServiceHelper)
+- ORISO-UserService -> ORISO-TenantService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/facade/CreateUserFacade.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.admin.service.tenant.TenantService)
+- ORISO-UserService -> ORISO-TenantService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/emailsupplier/TenantTemplateSupplier.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.admin.service.tenant.TenantService)
+- ORISO-UserService -> ORISO-TenantService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/notification/SystemNotificationEmailSettingsService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.admin.service.tenant.TenantAdminService)
+- ORISO-UserService -> ORISO-TenantService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/tenant/MultitenancyWithSingleDomainTenantResolver.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.admin.service.tenant.TenantService)
+- ORISO-UserService -> ORISO-TenantService: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/tenant/SubdomainTenantResolver.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.admin.service.tenant.TenantService)
+- ORISO-UserService -> ORISO-TenantService: related (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/AccountManagerTest.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.admin.service.tenant.TenantService)
+- ORISO-UserService -> ORISO-TenantService: related (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/adapters/web/controller/UserAdminControllerE2EIT.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.admin.service.tenant.TenantService)
+- ORISO-UserService -> ORISO-TenantService: related (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/adapters/web/controller/UserAdminControllerMultiTenancyTrueE2EIT.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.admin.service.tenant.TenantService)
+- ORISO-UserService -> ORISO-TenantService: related (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/adapters/web/controller/interceptor/HttpTenantFilterTest.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.admin.service.tenant.TenantService)
+- ORISO-UserService -> ORISO-TenantService: related (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/admin/service/admin/TenantAdminUserServiceTest.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.admin.service.tenant.TenantService)
+- ORISO-UserService -> ORISO-TenantService: related (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/admin/service/consultant/create/CreateConsultantSagaIT.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.admin.service.tenant.TenantAdminService)
+- ORISO-UserService -> ORISO-TenantService: related (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/admin/service/consultant/create/CreateConsultantSagaTenantAwareIT.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.admin.service.tenant.TenantAdminService)
+- ORISO-UserService -> ORISO-TenantService: related (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/facade/CreateUserFacadeTest.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.admin.service.tenant.TenantService)
+- ORISO-UserService -> ORISO-TenantService: related (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/service/emailsupplier/TenantTemplateSupplierTest.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.admin.service.tenant.TenantService)
+- ORISO-UserService -> ORISO-TenantService: related (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/service/notification/SystemNotificationEmailSettingsServiceTest.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.admin.service.tenant.TenantAdminService)
+- ORISO-UserService -> ORISO-TenantService: related (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/tenant/SubdomainTenantResolverTest.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.admin.service.tenant.TenantService)
+- ORISO-UserService -> ORISO-TenantService: related (ORISO-UserService::config:services/tenantadminservice.yaml -> ORISO-UserService::endpoint:services/tenantadminservice.yaml:createTenant)
+- ORISO-UserService -> ORISO-TenantService: related (ORISO-UserService::config:services/tenantadminservice.yaml -> ORISO-UserService::endpoint:services/tenantadminservice.yaml:getAllTenants)
+- ORISO-UserService -> ORISO-TenantService: related (ORISO-UserService::config:services/tenantadminservice.yaml -> ORISO-UserService::endpoint:services/tenantadminservice.yaml:getTenantById)
+- ORISO-UserService -> ORISO-TenantService: related (ORISO-UserService::config:services/tenantadminservice.yaml -> ORISO-UserService::endpoint:services/tenantadminservice.yaml:updateTenant)
+- ORISO-UserService -> ORISO-TenantService: related (ORISO-UserService::config:services/tenantservice.yaml -> ORISO-UserService::endpoint:services/tenantservice.yaml:getRestrictedTenantDataBySubdomain)
+- ORISO-UserService -> ORISO-TenantService: related (ORISO-UserService::config:services/tenantservice.yaml -> ORISO-UserService::endpoint:services/tenantservice.yaml:getRestrictedTenantDataByTenantId)
+- ORISO-UserService -> ORISO-TenantService: related (ORISO-UserService::config:pom.xml -> ORISO-UserService::config:services/tenantservice.yaml)
+- ORISO-AgencyService -> ORISO-TenantService: depends_on (ORISO-AgencyService::schema:services/tenantservice.yaml)
+- ORISO-AgencyService -> ORISO-TenantService: depends_on (ORISO-AgencyService::file:src/main/java/de/caritas/cob/agencyservice/api/service/TenantService.java)
+- ORISO-AgencyService -> ORISO-TenantService: depends_on (ORISO-AgencyService::file:src/main/java/de/caritas/cob/agencyservice/config/apiclient/TenantServiceApiClient.java)
+- ORISO-AgencyService -> ORISO-TenantService: depends_on (ORISO-AgencyService::file:src/main/java/de/caritas/cob/agencyservice/config/apiclient/TenantServiceApiControllerFactory.java)
+- ORISO-AgencyService -> ORISO-TenantService: depends_on (ORISO-AgencyService::class:src/main/java/de/caritas/cob/agencyservice/api/service/TenantService.java:TenantService)
+- ORISO-AgencyService -> ORISO-TenantService: depends_on (ORISO-AgencyService::class:src/main/java/de/caritas/cob/agencyservice/config/apiclient/TenantServiceApiClient.java:TenantServiceApiClient)
+- ORISO-AgencyService -> ORISO-TenantService: depends_on (ORISO-AgencyService::class:src/main/java/de/caritas/cob/agencyservice/config/apiclient/TenantServiceApiControllerFactory.java:TenantServiceApiControllerFactory)
+- ORISO-AgencyService -> ORISO-TenantService: depends_on (ORISO-AgencyService::endpoint:services/tenantservice.yaml:createTenant)
+- ORISO-AgencyService -> ORISO-TenantService: depends_on (ORISO-AgencyService::endpoint:services/tenantservice.yaml:getAllTenantsWithAdminData)
+- ORISO-AgencyService -> ORISO-TenantService: depends_on (ORISO-AgencyService::endpoint:services/tenantservice.yaml:searchTenants)
+- ORISO-AgencyService -> ORISO-TenantService: depends_on (ORISO-AgencyService::endpoint:services/tenantservice.yaml:updateTenant)
+- ORISO-AgencyService -> ORISO-TenantService: depends_on (ORISO-AgencyService::endpoint:services/tenantservice.yaml:getMultilingualTenantById)
+- ORISO-AgencyService -> ORISO-TenantService: depends_on (ORISO-AgencyService::endpoint:services/tenantservice.yaml:getAllTenants)
+- ORISO-AgencyService -> ORISO-TenantService: depends_on (ORISO-AgencyService::endpoint:services/tenantservice.yaml:getTenantById)
+- ORISO-AgencyService -> ORISO-TenantService: depends_on (ORISO-AgencyService::endpoint:services/tenantservice.yaml:getRestrictedTenantDataBySubdomain)
+- ORISO-AgencyService -> ORISO-TenantService: depends_on (ORISO-AgencyService::endpoint:services/tenantservice.yaml:getRestrictedTenantDataByTenantId)
+- ORISO-AgencyService -> ORISO-TenantService: depends_on (ORISO-AgencyService::endpoint:services/tenantservice.yaml:getRestrictedSingleTenancyTenantData)
+- ORISO-AgencyService -> ORISO-TenantService: depends_on (ORISO-AgencyService::endpoint:services/tenantservice.yaml:getRestrictedTenantData)
+- ORISO-AgencyService -> ORISO-TenantService: depends_on (ORISO-AgencyService::endpoint:services/tenantservice.yaml:canAccessTenant)
+- ORISO-AgencyService -> ORISO-TenantService: depends_on (ORISO-AgencyService::concept:oriso-peer-clients)
+- ORISO-AgencyService -> ORISO-TenantService: related (ORISO-AgencyService::file:src/main/java/de/caritas/cob/agencyservice/api/service/TenantService.java -> ORISO-AgencyService::class:src/main/java/de/caritas/cob/agencyservice/api/service/TenantService.java:TenantService)
+- ORISO-AgencyService -> ORISO-TenantService: related (ORISO-AgencyService::file:src/main/java/de/caritas/cob/agencyservice/config/apiclient/TenantServiceApiClient.java -> ORISO-AgencyService::class:src/main/java/de/caritas/cob/agencyservice/config/apiclient/TenantServiceApiClient.java:TenantServiceApiClient)
+- ORISO-AgencyService -> ORISO-TenantService: related (ORISO-AgencyService::file:src/main/java/de/caritas/cob/agencyservice/config/apiclient/TenantServiceApiControllerFactory.java -> ORISO-AgencyService::class:src/main/java/de/caritas/cob/agencyservice/config/apiclient/TenantServiceApiControllerFactory.java:TenantServiceApiControllerFactory)
+- ORISO-AgencyService -> ORISO-TenantService: related (ORISO-AgencyService::file:src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyDataProtectionValidator.java -> ORISO-AgencyService::file:src/main/java/de/caritas/cob/agencyservice/api/service/TenantService.java)
+- ORISO-AgencyService -> ORISO-TenantService: related (ORISO-AgencyService::file:src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyTenantValidator.java -> ORISO-AgencyService::file:src/main/java/de/caritas/cob/agencyservice/api/service/TenantService.java)
+- ORISO-AgencyService -> ORISO-TenantService: related (ORISO-AgencyService::file:src/main/java/de/caritas/cob/agencyservice/api/service/TenantService.java -> ORISO-AgencyService::file:src/main/java/de/caritas/cob/agencyservice/config/apiclient/TenantServiceApiControllerFactory.java)
+- ORISO-AgencyService -> ORISO-TenantService: related (ORISO-AgencyService::file:src/main/java/de/caritas/cob/agencyservice/api/service/TenantService.java -> ORISO-AgencyService::file:src/main/java/de/caritas/cob/agencyservice/config/CacheManagerConfig.java)
+- ORISO-AgencyService -> ORISO-TenantService: related (ORISO-AgencyService::file:src/main/java/de/caritas/cob/agencyservice/api/tenant/AccessTokenTenantResolver.java -> ORISO-AgencyService::file:src/main/java/de/caritas/cob/agencyservice/api/service/TenantService.java)
+
+### Auth References
+
+- class: Authority — src/main/java/com/vi/tenantservice/api/authorisation/Authority.java
+- class: AuthorityValue — src/main/java/com/vi/tenantservice/api/authorisation/Authority.java
+- class: RoleAuthorizationAuthorityMapper — src/main/java/com/vi/tenantservice/api/authorisation/RoleAuthorizationAuthorityMapper.java
+- class: UserRole — src/main/java/com/vi/tenantservice/api/authorisation/UserRole.java
+- class: TenantAuthorisationException — src/main/java/com/vi/tenantservice/api/exception/TenantAuthorisationException.java
+- class: TenantFacadeAuthorisationService — src/main/java/com/vi/tenantservice/api/facade/TenantFacadeAuthorisationService.java
+- class: Consultant — src/main/java/com/vi/tenantservice/api/manager/consultingtype/roles/Consultant.java
+- class: TenantAdminAllowedPermissionTogglesSettings — src/main/java/com/vi/tenantservice/api/model/TenantAdminAllowedPermissionTogglesSettings.java
+- class: SecurityHeaderSupplier — src/main/java/com/vi/tenantservice/api/service/httpheader/SecurityHeaderSupplier.java
+- class: AccessTokenTenantResolver — src/main/java/com/vi/tenantservice/api/tenant/AccessTokenTenantResolver.java
+- class: AuthorisationService — src/main/java/com/vi/tenantservice/config/security/AuthorisationService.java
+- class: JwtAuthConverter — src/main/java/com/vi/tenantservice/config/security/JwtAuthConverter.java
+- class: JwtAuthConverterProperties — src/main/java/com/vi/tenantservice/config/security/JwtAuthConverterProperties.java
+- class: KeycloakLogoutHandler — src/main/java/com/vi/tenantservice/config/security/KeycloakLogoutHandler.java
+- class: WebSecurityConfig — src/main/java/com/vi/tenantservice/config/security/WebSecurityConfig.java
+- class: AuthenticationMockBuilder — src/test/java/com/vi/tenantservice/api/controller/AuthenticationMockBuilder.java
+- class: TenantFacadeAuthorisationServiceTest — src/test/java/com/vi/tenantservice/api/facade/TenantFacadeAuthorisationServiceTest.java
+- class: AccessTokenTenantResolverTest — src/test/java/com/vi/tenantservice/api/tenant/AccessTokenTenantResolverTest.java
+- class: AuthorisationServiceTest — src/test/java/com/vi/tenantservice/config/security/AuthorisationServiceTest.java
+- concept: Keycloak JWT role authorization — JWT realm roles are mapped into local AUTHORIZATION_* authorities and enforced mainly with @PreAuthorize annotations.
+- concept: Authorization workaround risk — TenantFacadeAuthorisationService contains a temporary technical-user bypass in canAccessTenant.
+- concept: Stale dependency stack risk — Spring Boot 3.0.0, old Keycloak adapters, Springfox, Springdoc, and javax.ws.rs create an upgrade and compatibility hotspot.
+- concept: Runtime configuration validation — ConfigurationValidator fails startup when database, Keycloak, JWT, and service URL settings are missing.
+- concept: Tenant resolution strategy — Tenant context is resolved from an authenticated token first, then cookie state in single-domain mode, then subdomain lookup.
+- concept: Tenant settings and legal content governance — TenantSetting and TenantContent rules restrict which roles may change feature toggles, privacy, terms, and impressum content.
+- domain: Tenant Access Control — Maps Keycloak roles and JWT tenant claims to local authorities and tenant access decisions.
+- file: Authority.java — src/main/java/com/vi/tenantservice/api/authorisation/Authority.java
+- file: RoleAuthorizationAuthorityMapper.java — src/main/java/com/vi/tenantservice/api/authorisation/RoleAuthorizationAuthorityMapper.java
+- file: UserRole.java — src/main/java/com/vi/tenantservice/api/authorisation/UserRole.java
+- file: TenantAuthorisationException.java — src/main/java/com/vi/tenantservice/api/exception/TenantAuthorisationException.java
+- file: TenantFacadeAuthorisationService.java — src/main/java/com/vi/tenantservice/api/facade/TenantFacadeAuthorisationService.java
+- file: Consultant.java — src/main/java/com/vi/tenantservice/api/manager/consultingtype/roles/Consultant.java
+- file: TenantAdminAllowedPermissionTogglesSettings.java — src/main/java/com/vi/tenantservice/api/model/TenantAdminAllowedPermissionTogglesSettings.java
+- file: SecurityHeaderSupplier.java — src/main/java/com/vi/tenantservice/api/service/httpheader/SecurityHeaderSupplier.java
+- file: AccessTokenTenantResolver.java — src/main/java/com/vi/tenantservice/api/tenant/AccessTokenTenantResolver.java
+- file: AuthorisationService.java — src/main/java/com/vi/tenantservice/config/security/AuthorisationService.java
+- file: JwtAuthConverter.java — src/main/java/com/vi/tenantservice/config/security/JwtAuthConverter.java
+- file: JwtAuthConverterProperties.java — src/main/java/com/vi/tenantservice/config/security/JwtAuthConverterProperties.java
+- file: KeycloakLogoutHandler.java — src/main/java/com/vi/tenantservice/config/security/KeycloakLogoutHandler.java
+- file: WebSecurityConfig.java — src/main/java/com/vi/tenantservice/config/security/WebSecurityConfig.java
+- file: AuthenticationMockBuilder.java — src/test/java/com/vi/tenantservice/api/controller/AuthenticationMockBuilder.java
+- file: TenantFacadeAuthorisationServiceTest.java — src/test/java/com/vi/tenantservice/api/facade/TenantFacadeAuthorisationServiceTest.java
+- file: AccessTokenTenantResolverTest.java — src/test/java/com/vi/tenantservice/api/tenant/AccessTokenTenantResolverTest.java
+- file: AuthorisationServiceTest.java — src/test/java/com/vi/tenantservice/config/security/AuthorisationServiceTest.java
+- flow: Authenticate and Resolve Tenant — Security flow authenticates JWTs, maps roles to authorities, then resolves tenant context from token, cookies, or subdomain.
+- flow: Update Tenant — Admin update flow checks tenant-specific permissions, sanitizes and validates fields, persists changes, and patches external consulting-type settings 
+- module: Security and Tenant Resolution — JWT role mapping, method authorization, and request tenant detection.
+- module: Tests — Integration and unit tests for controller, facade, converter, service, resolver, and security behavior.
+- step: Authenticate JWT — WebSecurityConfig configures stateless OAuth2 resource-server JWT authentication.
+- step: Enforce method authorization — @PreAuthorize expressions on TenantController protect admin and tenant endpoints.
+- step: Extract tenant context — AccessTokenTenantResolver, CookieTenantResolver, and SubdomainTenantResolver choose the current tenant.
+- step: Map realm roles — JwtAuthConverter and AuthorisationService convert Keycloak realm roles into local authorities.
+- step: Receive create request — TenantController receives POST /tenantadmin and enforces AUTHORIZATION_CREATE_TENANT.
+- step: Validate runtime config — ConfigurationValidator fails startup if database, Keycloak, JWT, or service URL properties are blank.
+- step: Resolve tenant context — TenantResolverService resolves tenant id from JWT, cookies, or request subdomain.
+- step: Load and authorize tenant — Facade loads the current tenant and checks whether the user can update this tenant and changed fields.
+
+### Database References
+
+- concept: MariaDB and Liquibase persistence — TenantEntity maps to the tenant table and Liquibase changelogs describe historical schema evolution.
+- concept: Runtime configuration validation — ConfigurationValidator fails startup when database, Keycloak, JWT, and service URL settings are missing.
+- concept: Unused contracts and helpers — services/agencyadminservice.yaml is only referenced through useradminservice.yaml schemas, and TenantHeaderSupplier has no active call site in the sca
+- config: liquibase.properties — src/main/resources/liquibase.properties
+- module: Persistence and Migrations — MariaDB tenant table, JPA repository, Liquibase changelogs, and cache configuration.
+- schema: tenantservice.yaml — api/tenantservice.yaml
+- schema: agencyadminservice.yaml — services/agencyadminservice.yaml
+- schema: applicationsettingsservice.yml — services/applicationsettingsservice.yml
+- schema: consultingtypeservice.yaml — services/consultingtypeservice.yaml
+- schema: useradminservice.yaml — services/useradminservice.yaml
+- step: Validate runtime config — ConfigurationValidator fails startup if database, Keycloak, JWT, or service URL properties are blank.
+- table: initSql.xml — src/main/resources/db/changelog/changeset/0001_initsql/initSql.xml
+- table: initTables.sql — src/main/resources/db/changelog/changeset/0001_initsql/initTables.sql
+- table: 0002-changeSet.xml — src/main/resources/db/changelog/changeset/0002_add_privacy_and_terms_and_conditions/0002-changeSet.xml
+- table: addPrivacyAndTermsAndConditionsColumns.sql — src/main/resources/db/changelog/changeset/0002_add_privacy_and_terms_and_conditions/addPrivacyAndTermsAndConditionsColumns.sql
+- table: 0003-changeSet.xml — src/main/resources/db/changelog/changeset/0003_change_tenant_attributes/0003-changeSet.xml
+- table: changeTenantAttributes.sql — src/main/resources/db/changelog/changeset/0003_change_tenant_attributes/changeTenantAttributes.sql
+- table: 0004-changeSet.xml — src/main/resources/db/changelog/changeset/0004_add_tenant_settings/0004-changeSet.xml
+- table: addSettingTopicsInRegistrationEnabled.sql — src/main/resources/db/changelog/changeset/0004_add_tenant_settings/addSettingTopicsInRegistrationEnabled.sql
+- table: 0005-changeSet.xml — src/main/resources/db/changelog/changeset/0005_change_tenant_settings_structure/0005-changeSet.xml
+- table: migrateToGeneralSettings.sql — src/main/resources/db/changelog/changeset/0005_change_tenant_settings_structure/migrateToGeneralSettings.sql
+- table: 0006-changeSet.xml — src/main/resources/db/changelog/changeset/0006_migrate_content_to_multilingual_structure/0006-changeSet.xml
+- table: migrateToMultilingualContent.sql — src/main/resources/db/changelog/changeset/0006_migrate_content_to_multilingual_structure/migrateToMultilingualContent.sql
+- table: 0007-changeSet.xml — src/main/resources/db/changelog/changeset/0007_content_activation_dates/0007-changeSet.xml
+- table: contentActivationDates.sql — src/main/resources/db/changelog/changeset/0007_content_activation_dates/contentActivationDates.sql
+- table: 0008-changeSet.xml — src/main/resources/db/changelog/changeset/0008_drop_unique_constraint_for_subdomain/0008-changeSet.xml
+- table: dropUniqueConstraintForSubdomain.sql — src/main/resources/db/changelog/changeset/0008_drop_unique_constraint_for_subdomain/dropUniqueConstraintForSubdomain.sql
+- table: 0009-fixSequenceStartValue.xml — src/main/resources/db/changelog/changeset/0009_fix_sequence_start_value/0009-fixSequenceStartValue.xml
+- table: fixSequenceStartValue.sql — src/main/resources/db/changelog/changeset/0009_fix_sequence_start_value/fixSequenceStartValue.sql
+- table: 0010-addAssociationLogo.xml — src/main/resources/db/changelog/changeset/0010_add_association_logo/0010-addAssociationLogo.xml
+- table: addAssociationLogo.sql — src/main/resources/db/changelog/changeset/0010_add_association_logo/addAssociationLogo.sql
+- table: tenantIdDefaultValue.sql — src/main/resources/db/changelog/changeset/0010_tenant_id_default_value/tenantIdDefaultValue.sql
+- table: tenantIdDefaultValue.xml — src/main/resources/db/changelog/changeset/0010_tenant_id_default_value/tenantIdDefaultValue.xml
+- table: tenantAddIsVideoCallAllowed-rollback.sql — src/main/resources/db/changelog/changeset/0011_tenant_add_is_video_call_allowed/tenantAddIsVideoCallAllowed-rollback.sql
+- table: tenantAddIsVideoCallAllowed.sql — src/main/resources/db/changelog/changeset/0011_tenant_add_is_video_call_allowed/tenantAddIsVideoCallAllowed.sql
+- table: tenantAddIsVideoCallAllowed.xml — src/main/resources/db/changelog/changeset/0011_tenant_add_is_video_call_allowed/tenantAddIsVideoCallAllowed.xml
+- table: tenantRemoveIsVideoCallAllowed.sql — src/main/resources/db/changelog/changeset/0012_tenant_remove_is_video_call_allowed/tenantRemoveIsVideoCallAllowed.sql
+- table: tenantRemoveIsVideoCallAllowed.xml — src/main/resources/db/changelog/changeset/0012_tenant_remove_is_video_call_allowed/tenantRemoveIsVideoCallAllowed.xml
+- table: tenantservice-dev-master.xml — src/main/resources/db/changelog/tenantservice-dev-master.xml
+- table: tenantservice-local-master.xml — src/main/resources/db/changelog/tenantservice-local-master.xml
+- table: tenantservice-prod-master.xml — src/main/resources/db/changelog/tenantservice-prod-master.xml
+- table: tenantservice-staging-master.xml — src/main/resources/db/changelog/tenantservice-staging-master.xml
+- table: tenantservice-testing-master.xml — src/main/resources/db/changelog/tenantservice-testing-master.xml
+- table: MultiTenantData.sql — src/test/resources/database/MultiTenantData.sql
+- table: SingleTenantData.sql — src/test/resources/database/SingleTenantData.sql
+- table: TenantServiceDatabase.sql — src/test/resources/database/TenantServiceDatabase.sql
+
+### Deployment/Config References
+
+- None found in graph artifacts.
+
+- concept: OpenAPI-first REST boundary — The public TenantService API is described in api/tenantservice.yaml and implemented by TenantController through generated Spring interfaces.
+- concept: Single-domain multitenancy override — Single-domain deployments can override subdomain behavior and selected legal/privacy content from ApplicationSettingsService.
+- concept: Unused contracts and helpers — services/agencyadminservice.yaml is only referenced through useradminservice.yaml schemas, and TenantHeaderSupplier has no active call site in the sca
+- endpoint: GET /tenant/access — api/tenantservice.yaml
+- endpoint: POST /tenantadmin — api/tenantservice.yaml
+- endpoint: GET /tenant — api/tenantservice.yaml
+- endpoint: GET /tenantadmin — api/tenantservice.yaml
+- endpoint: GET /tenantadmin/{id} — api/tenantservice.yaml
+- endpoint: GET /tenant/public/single — api/tenantservice.yaml
+- endpoint: GET /tenant/public/ — api/tenantservice.yaml
+- endpoint: GET /tenant/public/{subdomain} — api/tenantservice.yaml
+- endpoint: GET /tenant/public/id/{tenantId} — api/tenantservice.yaml
+- endpoint: GET /tenant/{id} — api/tenantservice.yaml
+- endpoint: GET /tenantadmin/search — api/tenantservice.yaml
+- endpoint: PUT /tenantadmin/{id} — api/tenantservice.yaml
+- endpoint: POST /agencyadmin/agencies — services/agencyadminservice.yaml
+- endpoint: POST /agencyadmin/postcoderanges/{agencyId} — services/agencyadminservice.yaml
+- endpoint: DELETE /agencyadmin/agencies/{agencyId} — services/agencyadminservice.yaml
+- endpoint: DELETE /agencyadmin/postcoderanges/{agencyId} — services/agencyadminservice.yaml
+- endpoint: GET /agencyadmin/agencies/tenant/{tenantId} — services/agencyadminservice.yaml
+- endpoint: GET /agencyadmin/agencies/{agencyId} — services/agencyadminservice.yaml
+- endpoint: GET /agencyadmin/postcoderanges/{agencyId} — services/agencyadminservice.yaml
+- endpoint: GET /agencyadmin — services/agencyadminservice.yaml
+- endpoint: GET /agencyadmin/agencies — services/agencyadminservice.yaml
+- endpoint: PUT /agencyadmin/agencies/{agencyId} — services/agencyadminservice.yaml
+- endpoint: PUT /agencyadmin/postcoderanges/{agencyId} — services/agencyadminservice.yaml
+- endpoint: POST /consultingtypes — services/consultingtypeservice.yaml
+- endpoint: GET /consultingtypes/{consultingTypeId}/basic — services/consultingtypeservice.yaml
+- endpoint: GET /consultingtypes/basic — services/consultingtypeservice.yaml
+- endpoint: GET /consultingtypes/groups — services/consultingtypeservice.yaml
+- endpoint: GET /consultingtypes/{consultingTypeId}/extended — services/consultingtypeservice.yaml
+- endpoint: GET /consultingtypes/{consultingTypeId}/full — services/consultingtypeservice.yaml
+- endpoint: GET /consultingtypes/byslug/{slug}/full — services/consultingtypeservice.yaml
+- endpoint: GET /consultingtypes/bytenant/{tenantId}/full — services/consultingtypeservice.yaml
+- endpoint: PATCH /consultingtypes/{id} — services/consultingtypeservice.yaml
+- endpoint: POST /useradmin/agencyadmins/{adminId}/agencies — services/useradminservice.yaml
+- endpoint: POST /useradmin/agencyadmins — services/useradminservice.yaml
+- endpoint: POST /useradmin/consultants — services/useradminservice.yaml
+- endpoint: POST /useradmin/consultants/{consultantId}/agencies — services/useradminservice.yaml
+- endpoint: POST /useradmin/tenantadmins — services/useradminservice.yaml
+
+### Important Graph Nodes
+
+- class: Authority — src/main/java/com/vi/tenantservice/api/authorisation/Authority.java
+- class: AuthorityValue — src/main/java/com/vi/tenantservice/api/authorisation/Authority.java
+- class: RoleAuthorizationAuthorityMapper — src/main/java/com/vi/tenantservice/api/authorisation/RoleAuthorizationAuthorityMapper.java
+- class: UserRole — src/main/java/com/vi/tenantservice/api/authorisation/UserRole.java
+- class: CacheEventLogger — src/main/java/com/vi/tenantservice/api/cache/CacheEventLogger.java
+- class: ApplicationSettingsApiClient — src/main/java/com/vi/tenantservice/api/config/apiclient/ApplicationSettingsApiClient.java
+- class: ApplicationSettingsApiControllerFactory — src/main/java/com/vi/tenantservice/api/config/apiclient/ApplicationSettingsApiControllerFactory.java
+- class: ConsultingTypeServiceApiControllerFactory — src/main/java/com/vi/tenantservice/api/config/apiclient/ConsultingTypeServiceApiControllerFactory.java
+- class: UserAdminServiceApiControllerFactory — src/main/java/com/vi/tenantservice/api/config/apiclient/UserAdminServiceApiControllerFactory.java
+- class: CacheManagerConfig — src/main/java/com/vi/tenantservice/api/config/CacheManagerConfig.java
+- class: CustomResponseErrorHandler — src/main/java/com/vi/tenantservice/api/config/CustomResponseErrorHandler.java
+- class: CustomSwaggerPathWebMvcConfigurer — src/main/java/com/vi/tenantservice/api/config/CustomSwaggerPathWebMvcConfigurer.java
+- class: FreeMarkerConfig — src/main/java/com/vi/tenantservice/api/config/FreeMarkerConfig.java
+- class: RestTemplateConfig — src/main/java/com/vi/tenantservice/api/config/RestTemplateConfig.java
+- class: SpringFoxConfig — src/main/java/com/vi/tenantservice/api/config/SpringFoxConfig.java
+- class: ExceptionHandlerAdvice — src/main/java/com/vi/tenantservice/api/controller/ExceptionHandlerAdvice.java
+- class: TenantController — src/main/java/com/vi/tenantservice/api/controller/TenantController.java
+- class: TenantDtoMapper — src/main/java/com/vi/tenantservice/api/controller/TenantDtoMapper.java
+- class: VersionController — src/main/java/com/vi/tenantservice/api/controller/VersionController.java
+- class: ConsultingTypePatchDTOConverter — src/main/java/com/vi/tenantservice/api/converter/ConsultingTypePatchDTOConverter.java
+- class: ConverterUtils — src/main/java/com/vi/tenantservice/api/converter/ConverterUtils.java
+- class: TenantConverter — src/main/java/com/vi/tenantservice/api/converter/TenantConverter.java
+- class: ApplicationSettingsUpdateException — src/main/java/com/vi/tenantservice/api/exception/ApplicationSettingsUpdateException.java
+- class: ConsultingTypeCommunicationException — src/main/java/com/vi/tenantservice/api/exception/ConsultingTypeCommunicationException.java
+- class: ConsultingTypeCreationException — src/main/java/com/vi/tenantservice/api/exception/ConsultingTypeCreationException.java
+- class: CustomHttpHeader — src/main/java/com/vi/tenantservice/api/exception/httpresponse/CustomHttpHeader.java
+- class: HttpStatusExceptionReason — src/main/java/com/vi/tenantservice/api/exception/httpresponse/HttpStatusExceptionReason.java
+- class: TenantAuthorisationException — src/main/java/com/vi/tenantservice/api/exception/TenantAuthorisationException.java
+- class: TenantNotFoundException — src/main/java/com/vi/tenantservice/api/exception/TenantNotFoundException.java
+- class: TenantValidationException — src/main/java/com/vi/tenantservice/api/exception/TenantValidationException.java
+- class: TenantFacadeAuthorisationService — src/main/java/com/vi/tenantservice/api/facade/TenantFacadeAuthorisationService.java
+- class: TenantFacadeChangeDetectionService — src/main/java/com/vi/tenantservice/api/facade/TenantFacadeChangeDetectionService.java
+- class: TenantFacadeDependentSettingsOverrideService — src/main/java/com/vi/tenantservice/api/facade/TenantFacadeDependentSettingsOverrideService.java
+- class: TenantServiceFacade — src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java
+- class: Consultant — src/main/java/com/vi/tenantservice/api/manager/consultingtype/roles/Consultant.java
+- class: DataProtectionPlaceHolderType — src/main/java/com/vi/tenantservice/api/model/DataProtectionPlaceHolderType.java
+- class: TenantAdminAllowedPermissionTogglesSettings — src/main/java/com/vi/tenantservice/api/model/TenantAdminAllowedPermissionTogglesSettings.java
+- class: TenantAdminControlsSettings — src/main/java/com/vi/tenantservice/api/model/TenantAdminControlsSettings.java
+- class: TenantContent — src/main/java/com/vi/tenantservice/api/model/TenantContent.java
+- class: TenantBase — src/main/java/com/vi/tenantservice/api/model/TenantEntity.java
+
+### Important Graph Edges
+
+- depends_on: class:src/main/java/com/vi/tenantservice/api/authorisation/RoleAuthorizationAuthorityMapper.java:RoleAuthorizationAuthorityMapper -> class:src/main/java/com/vi/tenantservice/api/authorisation/Authority.java:Authority — Role mapper is backed by the role-to-authority matrix.
+- transforms: class:src/main/java/com/vi/tenantservice/api/controller/TenantController.java:TenantController -> class:src/main/java/com/vi/tenantservice/api/controller/TenantDtoMapper.java:TenantDtoMapper — Controller maps paginated tenant search responses into generated DTOs.
+- calls: class:src/main/java/com/vi/tenantservice/api/controller/TenantController.java:TenantController -> class:src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java:TenantServiceFacade — Controller delegates tenant use cases to the facade.
+- depends_on: class:src/main/java/com/vi/tenantservice/api/controller/TenantController.java:TenantController -> class:src/main/java/com/vi/tenantservice/config/security/AuthorisationService.java:AuthorisationService — Controller reads authorization context for selected access checks.
+- tested_by: class:src/main/java/com/vi/tenantservice/api/controller/TenantController.java:TenantController -> file:src/test/java/com/vi/tenantservice/api/controller/TenantControllerIT.java — TenantController has focused test coverage.
+- calls: class:src/main/java/com/vi/tenantservice/api/converter/TenantConverter.java:TenantConverter -> class:src/main/java/com/vi/tenantservice/api/service/TemplateRenderer.java:TemplateRenderer — Converter delegates FreeMarker rendering for template placeholders.
+- calls: class:src/main/java/com/vi/tenantservice/api/converter/TenantConverter.java:TenantConverter -> class:src/main/java/com/vi/tenantservice/api/service/TemplateService.java:TemplateService — Converter renders privacy text from template data.
+- transforms: class:src/main/java/com/vi/tenantservice/api/converter/TenantConverter.java:TenantConverter -> class:src/main/java/com/vi/tenantservice/api/util/JsonConverter.java:JsonConverter — Converter serializes and deserializes tenant settings and content JSON.
+- tested_by: class:src/main/java/com/vi/tenantservice/api/converter/TenantConverter.java:TenantConverter -> file:src/test/java/com/vi/tenantservice/api/converter/TenantConverterTest.java — TenantConverter has focused test coverage.
+- calls: class:src/main/java/com/vi/tenantservice/api/facade/TenantFacadeAuthorisationService.java:TenantFacadeAuthorisationService -> class:src/main/java/com/vi/tenantservice/api/facade/TenantFacadeChangeDetectionService.java:TenantFacadeChangeDetectionService — Authorization checks decide whether a changed setting/content is allowed.
+- calls: class:src/main/java/com/vi/tenantservice/api/facade/TenantFacadeAuthorisationService.java:TenantFacadeAuthorisationService -> class:src/main/java/com/vi/tenantservice/api/service/consultingtype/ApplicationSettingsService.java:ApplicationSettingsService — Legal content rules depend on central application settings.
+- depends_on: class:src/main/java/com/vi/tenantservice/api/facade/TenantFacadeAuthorisationService.java:TenantFacadeAuthorisationService -> class:src/main/java/com/vi/tenantservice/config/security/AuthorisationService.java:AuthorisationService — Facade authorization checks read user role, authority, username, and tenant claims.
+- tested_by: class:src/main/java/com/vi/tenantservice/api/facade/TenantFacadeAuthorisationService.java:TenantFacadeAuthorisationService -> file:src/test/java/com/vi/tenantservice/api/facade/TenantFacadeAuthorisationServiceTest.java — TenantFacadeAuthorisationService has focused test coverage.
+- tested_by: class:src/main/java/com/vi/tenantservice/api/facade/TenantFacadeChangeDetectionService.java:TenantFacadeChangeDetectionService -> file:src/test/java/com/vi/tenantservice/api/facade/TenantFacadeChangeDetectionServiceTest.java — TenantFacadeChangeDetectionService has focused test coverage.
+- calls: class:src/main/java/com/vi/tenantservice/api/facade/TenantFacadeDependentSettingsOverrideService.java:TenantFacadeDependentSettingsOverrideService -> class:src/main/java/com/vi/tenantservice/api/facade/TenantFacadeChangeDetectionService.java:TenantFacadeChangeDetectionService — Dependent setting overrides reuse settings change detection.
+- transforms: class:src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java:TenantServiceFacade -> class:src/main/java/com/vi/tenantservice/api/converter/TenantConverter.java:TenantConverter — Facade converts between generated DTOs and TenantEntity.
+- depends_on: class:src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java:TenantServiceFacade -> class:src/main/java/com/vi/tenantservice/api/facade/TenantFacadeAuthorisationService.java:TenantFacadeAuthorisationService — Facade enforces role-specific update and access rules.
+- calls: class:src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java:TenantServiceFacade -> class:src/main/java/com/vi/tenantservice/api/facade/TenantFacadeDependentSettingsOverrideService.java:TenantFacadeDependentSettingsOverrideService — Facade applies dependent feature-toggle overrides.
+- calls: class:src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java:TenantServiceFacade -> class:src/main/java/com/vi/tenantservice/api/service/consultingtype/ApplicationSettingsService.java:ApplicationSettingsService — Single-domain tenant setup reads and writes central application settings.
+- calls: class:src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java:TenantServiceFacade -> class:src/main/java/com/vi/tenantservice/api/service/consultingtype/ConsultingTypeService.java:ConsultingTypeService — Tenant create/update synchronizes default consulting type settings.
+- calls: class:src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java:TenantServiceFacade -> class:src/main/java/com/vi/tenantservice/api/service/consultingtype/UserAdminService.java:UserAdminService — Tenant admin search enriches tenants with admin emails.
+- calls: class:src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java:TenantServiceFacade -> class:src/main/java/com/vi/tenantservice/api/service/SingleDomainTenantOverrideService.java:SingleDomainTenantOverrideService — Facade delegates single-domain restricted tenant overrides.
+- calls: class:src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java:TenantServiceFacade -> class:src/main/java/com/vi/tenantservice/api/service/TenantService.java:TenantService — Facade persists and reads tenant entities through TenantService.
+- depends_on: class:src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java:TenantServiceFacade -> class:src/main/java/com/vi/tenantservice/api/tenant/TenantResolverService.java:TenantResolverService — Facade resolves tenant context for restricted public reads.
+- validates: class:src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java:TenantServiceFacade -> class:src/main/java/com/vi/tenantservice/api/validation/TenantInputSanitizer.java:TenantInputSanitizer — Facade sanitizes tenant input before validation and persistence.
+- tested_by: class:src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java:TenantServiceFacade -> file:src/test/java/com/vi/tenantservice/api/facade/TenantServiceFacadeTest.java — TenantServiceFacade has focused test coverage.
+- defines_schema: class:src/main/java/com/vi/tenantservice/api/model/TenantEntity.java:TenantEntity -> class:src/main/java/com/vi/tenantservice/api/repository/TenantRepository.java:TenantRepository — TenantRepository persists TenantEntity records.
+- tested_by: class:src/main/java/com/vi/tenantservice/api/repository/TenantRepository.java:TenantRepository -> file:src/test/java/com/vi/tenantservice/api/repository/TenantRepositoryTest.java — TenantRepository has focused test coverage.
+- depends_on: class:src/main/java/com/vi/tenantservice/api/service/consultingtype/ApplicationSettingsService.java:ApplicationSettingsService -> class:src/main/java/com/vi/tenantservice/api/config/apiclient/ApplicationSettingsApiControllerFactory.java:ApplicationSettingsApiControllerFactory — Application settings wrapper obtains generated ApplicationSettings API controllers from the factory.
+- depends_on: class:src/main/java/com/vi/tenantservice/api/service/consultingtype/ApplicationSettingsService.java:ApplicationSettingsService -> class:src/main/java/com/vi/tenantservice/api/service/httpheader/SecurityHeaderSupplier.java:SecurityHeaderSupplier — Application settings writes include CSRF and Authorization headers.
+
+### Missing or Weak Areas
+
+- No major graph-shape gaps detected; still verify behavior in source before changing production flows.
+
+### Needs Verification
+
+- No major graph-shape gaps detected; still verify behavior in source before changing production flows.
+
+## ORISO-Database
+
+### Graph Source
+
+- graph path: ../ORISO-Database/.understand-anything/knowledge-graph.json
+- artifacts used: 12
+- node count: 192
+- edge count: 312
+
+Artifacts used:
+
+- .understand-anything/ARCHITECTURE.md (5.7 KB)
+- .understand-anything/DEPENDENCY-AUDIT.md (2.0 KB)
+- .understand-anything/FINDINGS.md (3.6 KB)
+- .understand-anything/knowledge-graph.json (217.3 KB)
+- .understand-anything/ONBOARDING.md (4.7 KB)
+- .understand-anything/ORISO-ECOSYSTEM.md (1.8 KB)
+- .understand-anything/README.md (3.6 KB)
+- .understand-anything/visuals/backup-recovery-flow.mmd (472 B)
+- .understand-anything/visuals/er-relationships.mmd (652 B)
+- .understand-anything/visuals/initialization-flow.mmd (453 B)
+- .understand-anything/visuals/platform-flow.mmd (493 B)
+- .understand-anything/visuals/tenant-user-flow.mmd (592 B)
+
+### Repository Purpose
+
+Central ORISO database architecture and operations repository containing service-owned MariaDB schema exports, MongoDB dumps, Matrix PostgreSQL docs, Redis/RabbitMQ docs, backup artifacts, and initialization jobs.
+
+### Main Files/Modules
+
+- module: Backup and Recovery — Timestamped MariaDB/MongoDB backups and Kubernetes restore job.
+- module: Cache and Messaging — Redis cache/session and RabbitMQ async messaging operational docs.
+- module: Database Platform — Central schema and data operations repository for ORISO persistence systems.
+- module: DevOps Access and Initialization — phpMyAdmin access, database restore job, and system user creation job.
+- module: MariaDB Service Schemas — Relational schemas owned per backend service: agency, consulting type metadata, tenant, user, upload, video, and caritas.
+- module: Matrix PostgreSQL — Matrix Synapse owned PostgreSQL database boundary.
+- module: Migration and Schema Management — Schema exports are maintained here while backend Liquibase auto-migrations are disabled.
+- module: MongoDB Documents — Consulting type and application settings documents stored in MongoDB dumps/collections.
+- module: Database Risk Map — Risky data dumps, missing indexes, schema ownership gaps, and operational security concerns.
+- module: Tenant Isolation Strategy — tenant_id appears across service schemas and is enforced by backend services instead of cross-database foreign keys.
+- module: UserService Core Data Model — Largest relational schema: users, consultants, sessions, chats, assignments, notifications, audit logs, and mobile tokens.
+
+### Classes/Functions
+
+- function: agency_postcode_range_update — mariadb/agencyservice/schema.sql
+- function: agency_topic_update — mariadb/agencyservice/schema.sql
+- function: agency_update — mariadb/agencyservice/schema.sql
+- function: diocese_update — mariadb/agencyservice/schema.sql
+- function: assign_date_update — mariadb/userservice/schema.sql
+- function: chat_agency_update — mariadb/userservice/schema.sql
+- function: chat_update — mariadb/userservice/schema.sql
+- function: consultant_agency_update — mariadb/userservice/schema.sql
+- function: consultant_update — mariadb/userservice/schema.sql
+- function: session_data_update — mariadb/userservice/schema.sql
+- function: session_update — mariadb/userservice/schema.sql
+- function: user_agency_update — mariadb/userservice/schema.sql
+- function: user_update — mariadb/userservice/schema.sql
+
+### APIs/Routes
+
+- concept: Cross-service ids without FK enforcement — Many agency_id, user_id, session_id, consulting_type, and tenant_id references cross service/database boundaries and are not enforced by MariaDB const
+- config: collections.txt — mongodb/consultingtypeservice/collections.txt
+- config: application_settings.metadata.json — mongodb/consultingtypeservice/dump/application_settings.metadata.json
+- config: consulting_types.metadata.json — mongodb/consultingtypeservice/dump/consulting_types.metadata.json
+- config: prelude.json — mongodb/consultingtypeservice/dump/prelude.json
+- function: agency_postcode_range_update — mariadb/agencyservice/schema.sql
+- function: agency_topic_update — mariadb/agencyservice/schema.sql
+- function: agency_update — mariadb/agencyservice/schema.sql
+- function: diocese_update — mariadb/agencyservice/schema.sql
+- function: assign_date_update — mariadb/userservice/schema.sql
+- function: chat_agency_update — mariadb/userservice/schema.sql
+- function: chat_update — mariadb/userservice/schema.sql
+- function: consultant_agency_update — mariadb/userservice/schema.sql
+- function: consultant_update — mariadb/userservice/schema.sql
+- function: session_data_update — mariadb/userservice/schema.sql
+- function: session_update — mariadb/userservice/schema.sql
+- function: user_agency_update — mariadb/userservice/schema.sql
+- function: user_update — mariadb/userservice/schema.sql
+- schema: sequence_agency — mariadb/agencyservice/schema.sql
+- schema: sequence_agency_postcode_range — mariadb/agencyservice/schema.sql
+- schema: sequence_agency_topic — mariadb/agencyservice/schema.sql
+- schema: sequence_diocese — mariadb/agencyservice/schema.sql
+- schema: sequence_topic — mariadb/consultingtypeservice/schema.sql
+- schema: sequence_topic_group — mariadb/consultingtypeservice/schema.sql
+- schema: sequence_topic_group_x_topic — mariadb/consultingtypeservice/schema.sql
+- schema: sequence_tenant — mariadb/tenantservice/schema.sql
+- schema: sequence_uploadbyuser — mariadb/uploadservice/schema.sql
+- schema: sequence_admin_agency — mariadb/userservice/schema.sql
+- schema: sequence_chat — mariadb/userservice/schema.sql
+- schema: sequence_chat_agency — mariadb/userservice/schema.sql
+- schema: sequence_consultant_agency — mariadb/userservice/schema.sql
+- schema: sequence_consultant_mobile_token — mariadb/userservice/schema.sql
+- schema: sequence_session — mariadb/userservice/schema.sql
+- schema: sequence_session_data — mariadb/userservice/schema.sql
+- schema: sequence_session_topic — mariadb/userservice/schema.sql
+- schema: sequence_user_agency — mariadb/userservice/schema.sql
+- schema: sequence_user_chat — mariadb/userservice/schema.sql
+- schema: sequence_user_mobile_token — mariadb/userservice/schema.sql
+- schema: sequence_videoroom — mariadb/videoservice/schema.sql
+- source: application_settings.bson — mongodb/consultingtypeservice/dump/application_settings.bson
+- source: consulting_types.bson — mongodb/consultingtypeservice/dump/consulting_types.bson
+- table: agencyservice.agency — mariadb/agencyservice/schema.sql
+- table: agencyservice.agency_postcode_range — mariadb/agencyservice/schema.sql
+- table: agencyservice.agency_topic — mariadb/agencyservice/schema.sql
+- table: agencyservice.DATABASECHANGELOG — mariadb/agencyservice/schema.sql
+- table: agencyservice.DATABASECHANGELOGLOCK — mariadb/agencyservice/schema.sql
+- table: agencyservice.diocese — mariadb/agencyservice/schema.sql
+- table: consultingtypeservice.DATABASECHANGELOG — mariadb/consultingtypeservice/schema.sql
+- table: consultingtypeservice.DATABASECHANGELOGLOCK — mariadb/consultingtypeservice/schema.sql
+- table: consultingtypeservice.topic — mariadb/consultingtypeservice/schema.sql
+- table: consultingtypeservice.topic_group — mariadb/consultingtypeservice/schema.sql
+- table: consultingtypeservice.topic_group_x_topic — mariadb/consultingtypeservice/schema.sql
+- table: tenantservice.DATABASECHANGELOG — mariadb/tenantservice/schema.sql
+- table: tenantservice.DATABASECHANGELOGLOCK — mariadb/tenantservice/schema.sql
+- table: tenantservice.tenant — mariadb/tenantservice/schema.sql
+- table: uploadservice.DATABASECHANGELOG — mariadb/uploadservice/schema.sql
+- table: uploadservice.DATABASECHANGELOGLOCK — mariadb/uploadservice/schema.sql
+- table: uploadservice.uploadbyuser — mariadb/uploadservice/schema.sql
+- table: userservice.admin — mariadb/userservice/schema.sql
+- table: userservice.admin_agency — mariadb/userservice/schema.sql
+
+### Internal Dependencies
+
+- depends_on: flow:backup-recovery -> concept:backup-timestamp-layout — Backup and Recovery depends on Timestamped backup layout.
+- depends_on: flow:backup-recovery -> resource:scripts/database-initialize.yaml — Backup and Recovery depends on database-initialize.yaml.
+- depends_on: flow:counseling-session-lifecycle -> table:mariadb:userservice:consultant — Counseling Session Lifecycle depends on userservice.consultant.
+- depends_on: flow:counseling-session-lifecycle -> table:mariadb:userservice:session — Counseling Session Lifecycle depends on userservice.session.
+- depends_on: flow:counseling-session-lifecycle -> table:mariadb:userservice:user — Counseling Session Lifecycle depends on userservice.user.
+- depends_on: flow:local-initialize -> concept:backup-timestamp-layout — Local/Cluster Database Initialize depends on Timestamped backup layout.
+- depends_on: flow:local-initialize -> concept:database-initialize-job — Local/Cluster Database Initialize depends on Database initialize job.
+- depends_on: flow:manual-schema-change -> concept:liquibase-disabled — Manual Schema Change depends on Liquibase disabled in services.
+- depends_on: flow:manual-schema-change -> concept:manual-schema-exports — Manual Schema Change depends on Manual schema exports.
+- depends_on: flow:tenant-data-lifecycle -> concept:tenant-id-convention — Tenant Data Lifecycle depends on tenant_id convention.
+- depends_on: flow:tenant-data-lifecycle -> table:mariadb:tenantservice:tenant — Tenant Data Lifecycle depends on tenantservice.tenant.
+- depends_on: module:migration-management -> concept:liquibase-disabled — Liquibase is documented as disabled in backend services.
+- depends_on: module:migration-management -> concept:manual-schema-exports — Schema export workflow is documented in README.md.
+- configures: resource:scripts/database-initialize.yaml -> concept:database-initialize-job — database-initialize.yaml restores MariaDB and MongoDB backups.
+- depends_on: resource:scripts/system-users-job.yaml -> concept:risk-static-secrets — System users job embeds secret stringData and a Matrix registration secret in YAML.
+- configures: resource:scripts/system-users-job.yaml -> concept:system-users-seed — system-users-job.yaml creates Matrix and MariaDB users.
+- depends_on: step:backup-recovery:copy -> resource:scripts/database-initialize.yaml — Copy archives uses database-initialize.yaml.
+- depends_on: step:backup-recovery:restore -> resource:scripts/database-initialize.yaml — Restore data uses database-initialize.yaml.
+- depends_on: step:backup-recovery:snapshot -> concept:backup-timestamp-layout — Create backups uses Timestamped backup layout.
+- depends_on: step:counseling-session-lifecycle:chat-video-upload -> table:mariadb:uploadservice:uploadbyuser — Connect chat/video/upload uses uploadservice.uploadbyuser.
+- depends_on: step:counseling-session-lifecycle:chat-video-upload -> table:mariadb:userservice:chat — Connect chat/video/upload uses userservice.chat.
+- depends_on: step:counseling-session-lifecycle:chat-video-upload -> table:mariadb:videoservice:videoroom — Connect chat/video/upload uses videoservice.videoroom.
+- depends_on: step:counseling-session-lifecycle:metadata -> table:mariadb:userservice:session_data — Store metadata uses userservice.session_data.
+- depends_on: step:counseling-session-lifecycle:metadata -> table:mariadb:userservice:session_supervisor — Store metadata uses userservice.session_supervisor.
+- depends_on: step:counseling-session-lifecycle:metadata -> table:mariadb:userservice:session_topic — Store metadata uses userservice.session_topic.
+- depends_on: step:counseling-session-lifecycle:participants -> table:mariadb:userservice:session — Link user and consultant uses userservice.session.
+- depends_on: step:local-initialize:choose-backup -> concept:backup-timestamp-layout — Choose backup timestamp uses Timestamped backup layout.
+- depends_on: step:local-initialize:restore-mariadb -> resource:scripts/database-initialize.yaml — Restore MariaDB uses database-initialize.yaml.
+- depends_on: step:local-initialize:restore-mongo -> resource:scripts/database-initialize.yaml — Restore MongoDB uses database-initialize.yaml.
+- depends_on: step:local-initialize:seed-users -> resource:scripts/system-users-job.yaml — Seed system users uses system-users-job.yaml.
+- depends_on: step:manual-schema-change:apply -> concept:liquibase-disabled — Apply change manually uses Liquibase disabled in services.
+- depends_on: step:manual-schema-change:export -> concept:manual-schema-exports — Export schema uses Manual schema exports.
+- depends_on: step:manual-schema-change:review -> module:risk-map — Review and commit uses Database Risk Map.
+- depends_on: step:manual-schema-change:test -> module:mariadb-service-schemas — Test services uses MariaDB Service Schemas.
+- depends_on: step:tenant-data-lifecycle:agency -> table:mariadb:agencyservice:agency_topic — Attach agencies/topics uses agencyservice.agency_topic.
+
+### External ORISO Dependencies
+
+- ORISO-UserService -> ORISO-Database: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/facade/CreateUserFacade.java)
+- ORISO-UserService -> ORISO-Database: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/matrix/RedisMessageMirrorService.java)
+- ORISO-UserService -> ORISO-Database: depends_on (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/testConfig/RabbitMqTestConfig.java)
+- ORISO-UserService -> ORISO-Database: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.service.matrix.RedisMessageMirrorService)
+- ORISO-UserService -> ORISO-Database: depends_on (ORISO-UserService::class:de.caritas.cob.userservice.api.testConfig.RabbitMqTestConfig)
+- ORISO-UserService -> ORISO-Database: related (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/service/matrix/RedisMessageMirrorService.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.service.matrix.RedisMessageMirrorService)
+- ORISO-UserService -> ORISO-Database: related (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/testConfig/RabbitMqTestConfig.java -> ORISO-UserService::class:de.caritas.cob.userservice.api.testConfig.RabbitMqTestConfig)
+- ORISO-AgencyService -> ORISO-Database: depends_on (ORISO-AgencyService::config:src/main/resources/application.properties)
+- ORISO-AgencyService -> ORISO-Database: depends_on (ORISO-AgencyService::table:agency)
+- ORISO-AgencyService -> ORISO-Database: depends_on (ORISO-AgencyService::table:agency_postcode_range)
+- ORISO-AgencyService -> ORISO-Database: depends_on (ORISO-AgencyService::table:agency_topic)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/controller/TopicFeatureAssertionAspect.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicAdminController.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicController.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicGroupsController.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/main/java/de/caritas/cob/consultingtypeservice/api/converter/TopicConverter.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/main/java/de/caritas/cob/consultingtypeservice/api/converter/TopicGroupConverter.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/main/java/de/caritas/cob/consultingtypeservice/api/exception/TopicAccessDeniedException.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/main/java/de/caritas/cob/consultingtypeservice/api/exception/TopicNotFoundException.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/main/java/de/caritas/cob/consultingtypeservice/api/exception/TopicValidationException.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/main/java/de/caritas/cob/consultingtypeservice/api/model/TopicEntity.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/main/java/de/caritas/cob/consultingtypeservice/api/model/TopicGroupEntity.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/main/java/de/caritas/cob/consultingtypeservice/api/model/TopicStatus.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/main/java/de/caritas/cob/consultingtypeservice/api/repository/TopicGroupRepository.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/main/java/de/caritas/cob/consultingtypeservice/api/repository/TopicRepository.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/DefaultApplicationSettingsInitializer.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicFeatureAuthorisationService.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicGroupService.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicService.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicServiceFacade.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/main/java/de/caritas/cob/consultingtypeservice/api/validation/TopicInputSanitizer.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/main/java/de/caritas/cob/consultingtypeservice/api/validation/TopicValidationService.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::config:src/main/resources/db/changelog/changeset/0001_initsql/initSql.xml)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::table:src/main/resources/db/changelog/changeset/0001_initsql/initTables.sql)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::table:src/main/resources/db/changelog/changeset/0002_topic_internal_identifier/topic_internal_identifier_column.sql)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::config:src/main/resources/db/changelog/changeset/0002_topic_internal_identifier/topic_internal_identifier_column.xml)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::config:src/main/resources/db/changelog/changeset/0003_migrate_topic_to_multilingual_structure/0003-changeSet.xml)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::table:src/main/resources/db/changelog/changeset/0003_migrate_topic_to_multilingual_structure/migrateToMultilingualTopic.sql)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::config:src/main/resources/db/changelog/changeset/0004_topic_groups/0004-changeSet.xml)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::table:src/main/resources/db/changelog/changeset/0004_topic_groups/topicGroups-rollback.sql)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::table:src/main/resources/db/changelog/changeset/0004_topic_groups/topicGroups.sql)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::table:src/main/resources/db/changelog/changeset/0005_topic_fallback_agency_id/topic_fallback_agency_id-rollback.sql)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::table:src/main/resources/db/changelog/changeset/0005_topic_fallback_agency_id/topic_fallback_agency_id.sql)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::config:src/main/resources/db/changelog/changeset/0005_topic_fallback_agency_id/topic_fallback_agency_id.xml)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::table:src/main/resources/db/changelog/changeset/0006_topic_fallback_url/topic_fallback_url-rollback.sql)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::table:src/main/resources/db/changelog/changeset/0006_topic_fallback_url/topic_fallback_url.sql)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::config:src/main/resources/db/changelog/changeset/0006_topic_fallback_url/topic_fallback_url.xml)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::table:src/main/resources/db/changelog/changeset/0007_topic_welcome_message/topic_welcome_message-rollback.sql)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::table:src/main/resources/db/changelog/changeset/0007_topic_welcome_message/topic_welcome_message.sql)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::config:src/main/resources/db/changelog/changeset/0007_topic_welcome_message/topic_welcome_message.xml)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::table:src/main/resources/db/changelog/changeset/0008_topic_send_next_step_message/topic_send_next_step_message-rollback.sql)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::table:src/main/resources/db/changelog/changeset/0008_topic_send_next_step_message/topic_send_next_step_message.sql)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::config:src/main/resources/db/changelog/changeset/0008_topic_send_next_step_message/topic_send_next_step_message.xml)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::config:src/main/resources/db/changelog/changeset/0009_topic_add_titles_and_extend_internal_identifier/0009_topic_add_titles_and_extend_internal_identifier.xml)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::table:src/main/resources/db/changelog/changeset/0009_topic_add_titles_and_extend_internal_identifier/topic_add_titles_and_extend_internal_identifier-rollback.sql)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::table:src/main/resources/db/changelog/changeset/0009_topic_add_titles_and_extend_internal_identifier/topic_add_titles_and_extend_internal_identifier.sql)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::table:src/main/resources/db/changelog/changeset/0010_change_topic_and_topic_groups_to_be_i18n_aware/0010_change_topic_and_topic_groups_to_be_i18n_aware-rollback.sql)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::table:src/main/resources/db/changelog/changeset/0010_change_topic_and_topic_groups_to_be_i18n_aware/0010_change_topic_and_topic_groups_to_be_i18n_aware.sql)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::config:src/main/resources/db/changelog/changeset/0010_change_topic_and_topic_groups_to_be_i18n_aware/0010_change_topic_and_topic_groups_to_be_i18n_aware.xml)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::config:src/main/resources/db/changelog/consultingtypeservice-dev-master.xml)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::config:src/main/resources/db/changelog/consultingtypeservice-local-master.xml)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::config:src/main/resources/db/changelog/consultingtypeservice-prod-master.xml)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::config:src/main/resources/db/changelog/consultingtypeservice-staging-master.xml)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::config:src/main/resources/db/changelog/consultingtypeservice-testing-master.xml)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/test/java/de/caritas/cob/consultingtypeservice/api/controller/TopicAdminControllerIT.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/test/java/de/caritas/cob/consultingtypeservice/api/controller/TopicControllerIT.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/test/java/de/caritas/cob/consultingtypeservice/api/controller/TopicGroupsControllerIT.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/test/java/de/caritas/cob/consultingtypeservice/api/converter/TopicConverterTest.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/test/java/de/caritas/cob/consultingtypeservice/api/converter/TopicGroupConverterTest.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/test/java/de/caritas/cob/consultingtypeservice/api/repository/TopicGroupRepositoryIT.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/test/java/de/caritas/cob/consultingtypeservice/api/repository/TopicRepositoryIT.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/test/java/de/caritas/cob/consultingtypeservice/api/repository/TopicRepositoryTenantAwareIT.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/test/java/de/caritas/cob/consultingtypeservice/api/service/TopicGroupsServiceIT.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/test/java/de/caritas/cob/consultingtypeservice/api/service/TopicServiceFacadeTest.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/test/java/de/caritas/cob/consultingtypeservice/api/service/TopicServiceIT.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/test/java/de/caritas/cob/consultingtypeservice/api/service/TopicServiceTenantAwareIT.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/test/java/de/caritas/cob/consultingtypeservice/api/service/TopicServiceTest.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/test/java/de/caritas/cob/consultingtypeservice/api/util/MultilingualTopicTestDataBuilder.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/test/java/de/caritas/cob/consultingtypeservice/api/validation/TopicInputSanitizerTest.java)
+- ORISO-ConsultingTypeService -> ORISO-Database: depends_on (ORISO-ConsultingTypeService::file:src/test/java/de/caritas/cob/consultingtypeservice/api/validation/TopicValidationServiceTest.java)
+
+### Auth References
+
+- concept: Redis cache and sessions — Redis is used for Spring sessions, cache prefixes, tokens, and temporary/rate-limit data.
+- concept: phpMyAdmin read-only access — k8s/mariadb-client exposes phpMyAdmin through ingress, basic auth, and a view-only database user.
+- concept: MongoDB auth and validation gap — MongoDB docs state no authentication and disabled JSON schema validation for consulting types.
+- concept: Sensitive dumps in repository — The targeted SQL dump contains user, consultant, session, notification, Matrix id, email, and password-like values.
+- domain: userservice database — Users, consultants, sessions, chats, assignments, mobile tokens, notifications, and audit records.
+- domain: Redis cache/session store — Schema-less Redis instance for sessions, caches, tokens, and rate limits.
+- module: Database Risk Map — Risky data dumps, missing indexes, schema ownership gaps, and operational security concerns.
+- module: UserService Core Data Model — Largest relational schema: users, consultants, sessions, chats, assignments, notifications, audit logs, and mobile tokens.
+- schema: sequence_consultant_mobile_token — mariadb/userservice/schema.sql
+- schema: sequence_user_mobile_token — mariadb/userservice/schema.sql
+- table: userservice.agency_invite_link — mariadb/userservice/schema.sql
+- table: userservice.consultant_mobile_token — mariadb/userservice/schema.sql
+- table: userservice.user_mobile_token — mariadb/userservice/schema.sql
+
+### Database References
+
+- concept: Timestamped backup layout — Backups are organized by timestamp with paired MariaDB SQL gz and MongoDB archive gz files.
+- concept: Redis cache and sessions — Redis is used for Spring sessions, cache prefixes, tokens, and temporary/rate-limit data.
+- concept: Consulting type MongoDB — MongoDB stores consulting type and application settings documents; JSON/schema validation is documented as disabled.
+- concept: Cross-service ids without FK enforcement — Many agency_id, user_id, session_id, consulting_type, and tenant_id references cross service/database boundaries and are not enforced by MariaDB const
+- concept: Database initialize job — database-initialize.yaml restores MariaDB and MongoDB from backup files copied into the job pod.
+- concept: Liquibase disabled in services — ORISO backend services do not auto-migrate schemas; this repository is the operational source of schema truth.
+- concept: Manual schema exports — Schema changes are applied manually to running databases, then exported back into mariadb/*/schema.sql.
+- concept: Matrix-owned PostgreSQL — PostgreSQL is dedicated to Matrix Synapse and is not part of ORISO service schema ownership.
+- concept: phpMyAdmin read-only access — k8s/mariadb-client exposes phpMyAdmin through ingress, basic auth, and a view-only database user.
+- concept: RabbitMQ auto-created topology — Services create queues/exchanges/bindings at runtime; repository documents operations but not definitions.
+- concept: Missing tenant/id indexes — Several tenant_id and *_id columns used for filtering or cross-service joins are not indexed in exported schemas.
+- concept: MongoDB auth and validation gap — MongoDB docs state no authentication and disabled JSON schema validation for consulting types.
+- concept: No executable migration history — The repo stores schema snapshots and DATABASECHANGELOG tables, but not the actual ordered migration files for each service.
+- concept: Service-owned databases — Each backend service owns its MariaDB database and service user, limiting schema ownership by service boundary.
+- concept: tenant_id convention — Tenant ownership is represented by tenant_id columns across schemas, without cross-database foreign keys to tenantservice.tenant.
+- config: collections.txt — mongodb/consulting_types/collections.txt
+- config: application_settings.metadata.json — mongodb/consulting_types/dump/application_settings.metadata.json
+- config: consulting_types.metadata.json — mongodb/consulting_types/dump/consulting_types.metadata.json
+- config: prelude.json — mongodb/consulting_types/dump/prelude.json
+- config: collections.txt — mongodb/consultingtypeservice/collections.txt
+- config: application_settings.metadata.json — mongodb/consultingtypeservice/dump/application_settings.metadata.json
+- config: consulting_types.metadata.json — mongodb/consultingtypeservice/dump/consulting_types.metadata.json
+- config: prelude.json — mongodb/consultingtypeservice/dump/prelude.json
+- document: README.md — k8s/mariadb-client/README.md
+- document: README.md — mariadb/README.md
+- document: README.md — mongodb/README.md
+- document: STATUS.md — postgresql/matrix/STATUS.md
+- document: README.md — postgresql/README.md
+- document: README.md — rabbitmq/README.md
+- document: README.md
+- document: README.md — redis/README.md
+- document: README.md — scripts/README.md
+- domain: agencyservice database — Agency master data, dioceses, agency postcode ranges, and agency-topic relationships.
+- domain: caritas database — General/shared database export; currently contains no tables in schema.sql.
+- domain: consultingtypeservice database — Relational topic and topic group metadata; main consulting type documents live in MongoDB.
+- domain: tenantservice database — Tenant master configuration, branding, feature settings, subdomains, and legal content.
+- domain: uploadservice database — File upload metadata keyed by upload id, user id, session id, and file name.
+- domain: userservice database — Users, consultants, sessions, chats, assignments, mobile tokens, notifications, and audit records.
+- domain: videoservice database — Video/Jitsi room metadata by session/group/chat reference.
+- domain: consulting_types MongoDB — MongoDB dump/collection set for consulting_types.
+- domain: consultingtypeservice MongoDB — MongoDB dump/collection set for consultingtypeservice.
+- domain: Matrix Synapse PostgreSQL — Dedicated PostgreSQL database for Matrix Synapse; managed by Synapse, not ORISO services.
+- domain: RabbitMQ message broker — Schema-less AMQP broker for queues, exchanges, notifications, and async tasks.
+- domain: Redis cache/session store — Schema-less Redis instance for sessions, caches, tokens, and rate limits.
+- flow: Backup and Recovery — Backups are kept as timestamped MariaDB SQL gz and MongoDB archive gz pairs and restored through scripts/database-initialize.yaml or manual commands.
+- flow: Counseling Session Lifecycle — A user and consultant are connected through userservice.session, with optional session_data, session_topic, session_supervisor, chats, notifications, 
+- flow: Local/Cluster Database Initialize — Developers initialize by restoring timestamped MariaDB and MongoDB backups or applying exported schemas to local containers.
+- flow: Manual Schema Change — Schema changes are made against the running DB, tested, exported into schema.sql, and committed because service Liquibase is disabled.
+- flow: Tenant Data Lifecycle — Tenant records originate in tenantservice.tenant and are referenced by tenant_id columns across user, agency, consultant, session, topic, notification
+- function: agency_postcode_range_update — mariadb/agencyservice/schema.sql
+- function: agency_topic_update — mariadb/agencyservice/schema.sql
+- function: agency_update — mariadb/agencyservice/schema.sql
+- function: diocese_update — mariadb/agencyservice/schema.sql
+- function: assign_date_update — mariadb/userservice/schema.sql
+- function: chat_agency_update — mariadb/userservice/schema.sql
+- function: chat_update — mariadb/userservice/schema.sql
+- function: consultant_agency_update — mariadb/userservice/schema.sql
+- function: consultant_update — mariadb/userservice/schema.sql
+- function: session_data_update — mariadb/userservice/schema.sql
+- function: session_update — mariadb/userservice/schema.sql
+
+### Deployment/Config References
+
+- None found in graph artifacts.
+
+- concept: Database initialize job — database-initialize.yaml restores MariaDB and MongoDB from backup files copied into the job pod.
+- concept: phpMyAdmin read-only access — k8s/mariadb-client exposes phpMyAdmin through ingress, basic auth, and a view-only database user.
+- concept: Sensitive dumps in repository — The targeted SQL dump contains user, consultant, session, notification, Matrix id, email, and password-like values.
+- concept: Static secrets and default credentials — Docs and YAML include root/default credentials and system user password material; these should be externalized or rotated.
+- document: README.md — k8s/mariadb-client/README.md
+- module: Backup and Recovery — Timestamped MariaDB/MongoDB backups and Kubernetes restore job.
+- module: DevOps Access and Initialization — phpMyAdmin access, database restore job, and system user creation job.
+- resource: configmap.yaml — k8s/mariadb-client/configmap.yaml
+- resource: deployment.yaml — k8s/mariadb-client/deployment.yaml
+- resource: ingress.yaml — k8s/mariadb-client/ingress.yaml
+- resource: kustomization.yaml — k8s/mariadb-client/kustomization.yaml
+- resource: service.yaml — k8s/mariadb-client/service.yaml
+- resource: database-initialize.yaml — scripts/database-initialize.yaml
+- resource: system-users-job.yaml — scripts/system-users-job.yaml
+
+### Important Graph Nodes
+
+- concept: Timestamped backup layout — Backups are organized by timestamp with paired MariaDB SQL gz and MongoDB archive gz files.
+- concept: Redis cache and sessions — Redis is used for Spring sessions, cache prefixes, tokens, and temporary/rate-limit data.
+- concept: Consulting type MongoDB — MongoDB stores consulting type and application settings documents; JSON/schema validation is documented as disabled.
+- concept: Cross-service ids without FK enforcement — Many agency_id, user_id, session_id, consulting_type, and tenant_id references cross service/database boundaries and are not enforced by MariaDB const
+- concept: Database initialize job — database-initialize.yaml restores MariaDB and MongoDB from backup files copied into the job pod.
+- concept: Liquibase disabled in services — ORISO backend services do not auto-migrate schemas; this repository is the operational source of schema truth.
+- concept: Manual schema exports — Schema changes are applied manually to running databases, then exported back into mariadb/*/schema.sql.
+- concept: Matrix-owned PostgreSQL — PostgreSQL is dedicated to Matrix Synapse and is not part of ORISO service schema ownership.
+- concept: phpMyAdmin read-only access — k8s/mariadb-client exposes phpMyAdmin through ingress, basic auth, and a view-only database user.
+- concept: RabbitMQ auto-created topology — Services create queues/exchanges/bindings at runtime; repository documents operations but not definitions.
+- concept: Environment drift — Docs mix ClusterIPs, localhost with hostNetwork, and service DNS names; generated cluster metadata appears in operational docs/manifests.
+- concept: Missing tenant/id indexes — Several tenant_id and *_id columns used for filtering or cross-service joins are not indexed in exported schemas.
+- concept: MongoDB auth and validation gap — MongoDB docs state no authentication and disabled JSON schema validation for consulting types.
+- concept: No executable migration history — The repo stores schema snapshots and DATABASECHANGELOG tables, but not the actual ordered migration files for each service.
+- concept: Sensitive dumps in repository — The targeted SQL dump contains user, consultant, session, notification, Matrix id, email, and password-like values.
+- concept: Static secrets and default credentials — Docs and YAML include root/default credentials and system user password material; these should be externalized or rotated.
+- concept: Service-owned databases — Each backend service owns its MariaDB database and service user, limiting schema ownership by service boundary.
+- concept: System user seed job — system-users-job.yaml creates Matrix users and userservice.user rows for platform system accounts.
+- concept: tenant_id convention — Tenant ownership is represented by tenant_id columns across schemas, without cross-database foreign keys to tenantservice.tenant.
+- concept: UserService relational core — userservice stores users, consultants, sessions, chats, assignments, notifications, audits, and Matrix/Rocket.Chat linkage.
+- config: collections.txt — mongodb/consulting_types/collections.txt
+- config: application_settings.metadata.json — mongodb/consulting_types/dump/application_settings.metadata.json
+- config: consulting_types.metadata.json — mongodb/consulting_types/dump/consulting_types.metadata.json
+- config: prelude.json — mongodb/consulting_types/dump/prelude.json
+- config: collections.txt — mongodb/consultingtypeservice/collections.txt
+- config: application_settings.metadata.json — mongodb/consultingtypeservice/dump/application_settings.metadata.json
+- config: consulting_types.metadata.json — mongodb/consultingtypeservice/dump/consulting_types.metadata.json
+- config: prelude.json — mongodb/consultingtypeservice/dump/prelude.json
+- document: README.md — k8s/mariadb-client/README.md
+- document: README.md — mariadb/README.md
+- document: README.md — mongodb/README.md
+- document: STATUS.md — postgresql/matrix/STATUS.md
+- document: README.md — postgresql/README.md
+- document: README.md — rabbitmq/README.md
+- document: README.md
+- document: README.md — redis/README.md
+- document: README.md — scripts/README.md
+- domain: agencyservice database — Agency master data, dioceses, agency postcode ranges, and agency-topic relationships.
+- domain: caritas database — General/shared database export; currently contains no tables in schema.sql.
+- domain: consultingtypeservice database — Relational topic and topic group metadata; main consulting type documents live in MongoDB.
+
+### Important Graph Edges
+
+- contains: concept:backup-timestamp-layout -> source:backups:20251227_084654 — 20251227_084654 is one timestamped backup directory.
+- contains: concept:backup-timestamp-layout -> source:backups:20260210_143930 — 20260210_143930 is one timestamped backup directory.
+- contains: concept:backup-timestamp-layout -> source:backups:20260210_152440 — 20260210_152440 is one timestamped backup directory.
+- contains: concept:backup-timestamp-layout -> source:backups:20260211_210708 — 20260211_210708 is one timestamped backup directory.
+- contains: concept:backup-timestamp-layout -> source:backups:20260302_075146 — 20260302_075146 is one timestamped backup directory.
+- contains: concept:backup-timestamp-layout -> source:backups:20260309_072006 — 20260309_072006 is one timestamped backup directory.
+- contains: concept:backup-timestamp-layout -> source:backups:20260313_162041 — 20260313_162041 is one timestamped backup directory.
+- documents: document:mariadb/README.md -> concept:risk-static-secrets — MariaDB docs use root/root examples.
+- documents: document:mongodb/README.md -> concept:risk-mongodb-no-auth-validation — MongoDB README documents no authentication and disabled schema validation.
+- documents: document:rabbitmq/README.md -> concept:risk-static-secrets — RabbitMQ docs show default user/password examples.
+- documents: document:README.md -> concept:risk-environment-drift — Root README mentions both ClusterIP and hostNetwork/localhost patterns.
+- contains: domain:mariadb:agencyservice -> function:mariadb:agencyservice:trigger:agency_postcode_range_update — agencyservice owns trigger agency_postcode_range_update.
+- contains: domain:mariadb:agencyservice -> function:mariadb:agencyservice:trigger:agency_topic_update — agencyservice owns trigger agency_topic_update.
+- contains: domain:mariadb:agencyservice -> function:mariadb:agencyservice:trigger:agency_update — agencyservice owns trigger agency_update.
+- contains: domain:mariadb:agencyservice -> function:mariadb:agencyservice:trigger:diocese_update — agencyservice owns trigger diocese_update.
+- contains: domain:mariadb:agencyservice -> schema:mariadb:agencyservice:sequence:sequence_agency_postcode_range — agencyservice owns sequence sequence_agency_postcode_range.
+- contains: domain:mariadb:agencyservice -> schema:mariadb:agencyservice:sequence:sequence_agency_topic — agencyservice owns sequence sequence_agency_topic.
+- contains: domain:mariadb:agencyservice -> schema:mariadb:agencyservice:sequence:sequence_agency — agencyservice owns sequence sequence_agency.
+- contains: domain:mariadb:agencyservice -> schema:mariadb:agencyservice:sequence:sequence_diocese — agencyservice owns sequence sequence_diocese.
+- contains: domain:mariadb:agencyservice -> table:mariadb:agencyservice:agency_postcode_range — agencyservice contains table agency_postcode_range.
+- contains: domain:mariadb:agencyservice -> table:mariadb:agencyservice:agency_topic — agencyservice contains table agency_topic.
+- contains: domain:mariadb:agencyservice -> table:mariadb:agencyservice:agency — agencyservice contains table agency.
+- contains: domain:mariadb:agencyservice -> table:mariadb:agencyservice:DATABASECHANGELOG — agencyservice contains table DATABASECHANGELOG.
+- contains: domain:mariadb:agencyservice -> table:mariadb:agencyservice:DATABASECHANGELOGLOCK — agencyservice contains table DATABASECHANGELOGLOCK.
+- contains: domain:mariadb:agencyservice -> table:mariadb:agencyservice:diocese — agencyservice contains table diocese.
+- documents: domain:mariadb:agencyservice -> table:mariadb/agencyservice/schema.sql — agencyservice schema is exported in mariadb/agencyservice/schema.sql.
+- documents: domain:mariadb:caritas -> table:mariadb/caritas/schema.sql — caritas schema is exported in mariadb/caritas/schema.sql.
+- contains: domain:mariadb:consultingtypeservice -> schema:mariadb:consultingtypeservice:sequence:sequence_topic_group_x_topic — consultingtypeservice owns sequence sequence_topic_group_x_topic.
+- contains: domain:mariadb:consultingtypeservice -> schema:mariadb:consultingtypeservice:sequence:sequence_topic_group — consultingtypeservice owns sequence sequence_topic_group.
+- contains: domain:mariadb:consultingtypeservice -> schema:mariadb:consultingtypeservice:sequence:sequence_topic — consultingtypeservice owns sequence sequence_topic.
+
+### Missing or Weak Areas
+
+- No major graph-shape gaps detected; still verify behavior in source before changing production flows.
+
+### Needs Verification
+
+- No major graph-shape gaps detected; still verify behavior in source before changing production flows.
+- unmapped-data-reference: matrix data/deployment is referenced but no target repo is included in this merge.
+- unmapped-data-reference: status data/deployment is referenced but no target repo is included in this merge.
+- unmapped-data-reference: uploadservice data/deployment is referenced but no target repo is included in this merge.
+
+## ORISO-Keycloak
+
+### Graph Source
+
+- graph path: ../ORISO-Keycloak/.understand-anything/knowledge-graph.json
+- artifacts used: 12
+- node count: 152
+- edge count: 247
+
+Artifacts used:
+
+- .understand-anything/ARCHITECTURE.md (5.4 KB)
+- .understand-anything/DEPENDENCY-AUDIT.md (1.7 KB)
+- .understand-anything/FINDINGS.md (3.2 KB)
+- .understand-anything/knowledge-graph.json (133.6 KB)
+- .understand-anything/ONBOARDING.md (4.2 KB)
+- .understand-anything/ORISO-ECOSYSTEM.md (2.1 KB)
+- .understand-anything/README.md (3.0 KB)
+- .understand-anything/visuals/auth-flow.mmd (593 B)
+- .understand-anything/visuals/deployment-flow.mmd (394 B)
+- .understand-anything/visuals/ecosystem-flow.mmd (479 B)
+- .understand-anything/visuals/realm-map.mmd (633 B)
+- .understand-anything/visuals/token-flow.mmd (590 B)
+
+### Repository Purpose
+
+Keycloak realm and deployment configuration for ORISO identity, authentication, authorization, token issuance, and IAM integration.
+
+### Main Files/Modules
+
+- module: Authentication Flows — Browser, direct grant, registration, reset credentials, client, and Docker auth flows exported from the realm.
+- module: Kubernetes Runtime — Deployment, Service, Ingress, namespace, host networking, hostname, proxy, and TLS configuration.
+- module: OIDC Clients — Keycloak clients used by the ORISO frontend, admin console, CLI, account console, and built-in realm management.
+- module: Operations and Admin Scripts — HTTP access setup, realm export/backup, deployment documentation, and status notes.
+- module: ORISO Service Integration — How ORISO frontend, admin, and backend services authenticate against the realm and validate tokens.
+- module: Realm Configuration — The online-beratung Keycloak realm, clients, scopes, roles, flows, token settings, and user-attribute mappers.
+- module: Security Risk Map — Hardcoded secrets, weak defaults, production gaps, and unclear environment ownership.
+- module: Roles and Permissions — Realm roles and built-in client roles that ORISO services consume from JWT claims.
+- module: Token Claims and Scopes — Default and optional client scopes that put roles, username, tenantId, userId, profile, and email into tokens.
+
+### Classes/Functions
+
+- None found in graph artifacts.
+
+### APIs/Routes
+
+- endpoint: client:account — realm.json
+- endpoint: client:account-console — realm.json
+- endpoint: client:admin-cli — realm.json
+- endpoint: client:app — realm.json
+- endpoint: client:broker — realm.json
+- endpoint: client:realm-management — realm.json
+- endpoint: client:security-admin-console — realm.json
+
+### Internal Dependencies
+
+- depends_on: concept:realm-roles-authorization -> concept:backend-token-validation — Backends read realm roles from JWT realm_access.roles.
+- depends_on: concept:tenant-isolation-claim -> concept:backend-token-validation — Backends must enforce tenantId after JWT validation.
+- depends_on: config:realm.json -> concept:risk-long-tokens — Realm token lifespans are configured in realm.json.
+- depends_on: config:realm.json -> concept:risk-weak-realm-defaults — Realm disables brute force protection and lacks password policy.
+- depends_on: endpoint:realm.json:client:app -> concept:app-custom-scope — app receives app-custom claims by default.
+- routes: endpoint:realm.json:client:app -> concept:frontend-oidc-login — The app client is the frontend/admin login client.
+- depends_on: endpoint:realm.json:client:app -> concept:risk-wide-redirects — The app client contains wildcard redirects/web origins.
+- depends_on: flow:admin-setup -> config:realm.json — Admin Setup depends on realm.json.
+- depends_on: flow:admin-setup -> pipeline:backup/realm-backup.sh — Admin Setup depends on realm-backup.sh.
+- depends_on: flow:admin-setup -> pipeline:configure-http-access.sh — Admin Setup depends on configure-http-access.sh.
+- depends_on: flow:admin-setup -> resource:keycloak-deployment.yaml — Admin Setup depends on keycloak-deployment.yaml.
+- depends_on: flow:backend-api-call -> concept:backend-token-validation — Backend API Authorization depends on Backend token validation.
+- depends_on: flow:backend-api-call -> concept:realm-roles-authorization — Backend API Authorization depends on Realm roles authorization.
+- depends_on: flow:backend-api-call -> concept:tenant-isolation-claim — Backend API Authorization depends on Tenant isolation by tenantId claim.
+- depends_on: flow:developer-login -> concept:frontend-oidc-login — Developer/Admin Frontend Login depends on Frontend OIDC login.
+- depends_on: flow:developer-login -> endpoint:realm.json:client:app — Developer/Admin Frontend Login depends on client:app.
+- depends_on: flow:tenant-isolation -> concept:tenant-isolation-claim — Tenant Isolation depends on Tenant isolation by tenantId claim.
+- depends_on: flow:tenant-isolation -> schema:realm.json:scope:app-custom — Tenant Isolation depends on scope:app-custom.
+- depends_on: pipeline:backup/realm-backup.sh -> concept:risk-hardcoded-admin — Backup script authenticates with admin/admin.
+- configures: pipeline:configure-http-access.sh -> concept:http-access-mode — Script sets sslRequired=NONE for all realms.
+- depends_on: pipeline:configure-http-access.sh -> concept:risk-hardcoded-admin — HTTP configuration script authenticates with admin/admin.
+- routes: resource:ingress.yaml -> concept:http-access-mode — Ingress terminates TLS for auth.oriso.site and sends traffic to HTTP service port 8080.
+- depends_on: resource:keycloak-deployment.yaml -> concept:risk-hardcoded-admin — Deployment contains KEYCLOAK_ADMIN and KEYCLOAK_ADMIN_PASSWORD values.
+- depends_on: resource:keycloak-deployment.yaml -> concept:risk-start-dev — Deployment uses start-dev and hostNetwork with no resources.
+- depends_on: step:admin-setup:backup -> pipeline:backup/realm-backup.sh — Back up realm uses realm-backup.sh.
+- depends_on: step:admin-setup:deploy -> resource:ingress.yaml — Deploy Keycloak uses ingress.yaml.
+- depends_on: step:admin-setup:deploy -> resource:keycloak-deployment.yaml — Deploy Keycloak uses keycloak-deployment.yaml.
+- depends_on: step:admin-setup:deploy -> resource:keycloak-service.yaml — Deploy Keycloak uses keycloak-service.yaml.
+- depends_on: step:admin-setup:http -> pipeline:configure-http-access.sh — Configure HTTP access uses configure-http-access.sh.
+- depends_on: step:admin-setup:import -> config:realm.json — Import realm uses realm.json.
+- depends_on: step:backend-api-call:authorize -> concept:realm-roles-authorization — Authorize request uses Realm roles authorization.
+- depends_on: step:backend-api-call:authorize -> concept:tenant-isolation-claim — Authorize request uses Tenant isolation by tenantId claim.
+- depends_on: step:backend-api-call:bearer -> concept:backend-token-validation — Send bearer token uses Backend token validation.
+- depends_on: step:backend-api-call:validate -> config:realm.json — Validate JWT uses realm.json.
+- depends_on: step:developer-login:authenticate -> flow:realm.json:browser — Authenticate user uses browser.
+
+### External ORISO Dependencies
+
+- ORISO-Frontend -> ORISO-Keycloak: depends_on (ORISO-Frontend::file:src/api/apiLogoutKeycloak.ts)
+- ORISO-Frontend -> ORISO-Keycloak: depends_on (ORISO-Frontend::function:src/api/apiLogoutKeycloak.ts:apiKeycloakLogout)
+- ORISO-Frontend -> ORISO-Keycloak: depends_on (ORISO-Frontend::file:src/components/sessionCookie/refreshKeycloakAccessToken.ts)
+- ORISO-Frontend -> ORISO-Keycloak: depends_on (ORISO-Frontend::function:src/components/sessionCookie/refreshKeycloakAccessToken.ts:refreshKeycloakAccessToken)
+- ORISO-Frontend -> ORISO-Keycloak: depends_on (ORISO-Frontend::file:src/components/sessionCookie/getKeycloakAccessToken.ts)
+- ORISO-Frontend -> ORISO-Keycloak: depends_on (ORISO-Frontend::function:src/components/sessionCookie/getKeycloakAccessToken.ts:getKeycloakAccessToken)
+- ORISO-Frontend -> ORISO-Keycloak: depends_on (ORISO-Frontend::function:src/utils/anonymousSessionFetchGuard.ts:decodeKeycloakPreferredUsername)
+- ORISO-Frontend -> ORISO-Keycloak: depends_on (ORISO-Frontend::file:src/utils/keycloakSession.ts)
+- ORISO-Frontend -> ORISO-Keycloak: depends_on (ORISO-Frontend::function:src/utils/keycloakSession.ts:isKeycloakConsultantSession)
+- ORISO-Frontend -> ORISO-Keycloak: depends_on (ORISO-Frontend::function:src/utils/keycloakSession.ts:buildAnonymousUserData)
+- ORISO-Frontend -> ORISO-Keycloak: depends_on (ORISO-Frontend::file:src/components/sessionCookie/getKeycloakAccessToken.ts.backup)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/api/apiLogoutKeycloak.ts -> ORISO-Frontend::function:src/api/apiLogoutKeycloak.ts:apiKeycloakLogout)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/api/apiLogoutKeycloak.ts -> ORISO-Frontend::file:src/components/sessionCookie/accessSessionCookie.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/api/apiLogoutKeycloak.ts -> ORISO-Frontend::file:src/resources/scripts/endpoints.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/askerInfo/AskerInfoTools.tsx -> ORISO-Frontend::file:src/components/sessionCookie/refreshKeycloakAccessToken.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/auth/auth.ts -> ORISO-Frontend::file:src/components/sessionCookie/refreshKeycloakAccessToken.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/logout/logout.ts -> ORISO-Frontend::file:src/api/apiLogoutKeycloak.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/messageSubmitInterface/useDraftMessage.tsx -> ORISO-Frontend::file:src/utils/keycloakSession.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/sessionCookie/refreshKeycloakAccessToken.ts -> ORISO-Frontend::function:src/components/sessionCookie/refreshKeycloakAccessToken.ts:refreshKeycloakAccessToken)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/sessionCookie/refreshKeycloakAccessToken.ts -> ORISO-Frontend::file:src/components/registration/autoLogin.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/sessionCookie/refreshKeycloakAccessToken.ts -> ORISO-Frontend::file:src/components/sessionCookie/accessSessionCookie.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/sessionCookie/refreshKeycloakAccessToken.ts -> ORISO-Frontend::file:src/resources/scripts/endpoints.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/api/apiPatchUserData.ts -> ORISO-Frontend::file:src/utils/keycloakSession.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/localeSwitch/LocaleSwitch.tsx -> ORISO-Frontend::file:src/utils/keycloakSession.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/api/apiGetAskerSessionList.ts -> ORISO-Frontend::file:src/utils/keycloakSession.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/api/apiGetUserData.ts -> ORISO-Frontend::file:src/utils/keycloakSession.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/login/Login.tsx -> ORISO-Frontend::file:src/utils/keycloakSession.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/registration/autoLogin.ts -> ORISO-Frontend::file:src/components/sessionCookie/getKeycloakAccessToken.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/sessionCookie/getKeycloakAccessToken.ts -> ORISO-Frontend::function:src/components/sessionCookie/getKeycloakAccessToken.ts:getKeycloakAccessToken)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/sessionCookie/getKeycloakAccessToken.ts -> ORISO-Frontend::file:src/api/index.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/sessionCookie/getKeycloakAccessToken.ts -> ORISO-Frontend::file:src/components/registration/autoLogin.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/sessionCookie/getKeycloakAccessToken.ts -> ORISO-Frontend::file:src/resources/scripts/endpoints.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/app/NavigationBar.tsx -> ORISO-Frontend::file:src/utils/keycloakSession.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/draftsCenter/DraftsCenter.tsx -> ORISO-Frontend::file:src/utils/keycloakSession.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/globalState/provider/UserDataProvider.tsx -> ORISO-Frontend::file:src/utils/keycloakSession.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/hooks/useJoinGroupChat.ts -> ORISO-Frontend::file:src/utils/keycloakSession.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/utils/anonymousSessionFetchGuard.ts -> ORISO-Frontend::function:src/utils/anonymousSessionFetchGuard.ts:decodeKeycloakPreferredUsername)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/utils/keycloakSession.ts -> ORISO-Frontend::function:src/utils/keycloakSession.ts:isKeycloakConsultantSession)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/utils/keycloakSession.ts -> ORISO-Frontend::function:src/utils/keycloakSession.ts:buildAnonymousUserData)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/utils/keycloakSession.ts -> ORISO-Frontend::file:src/components/sessionCookie/accessSessionCookie.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/utils/keycloakSession.ts -> ORISO-Frontend::file:src/globalState/helpers/stateHelpers.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/utils/keycloakSession.ts -> ORISO-Frontend::file:src/globalState/interfaces/UserDataInterface.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/utils/keycloakSession.ts -> ORISO-Frontend::file:src/utils/anonymousSessionFetchGuard.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/utils/keycloakSession.ts -> ORISO-Frontend::file:src/utils/parseJWT.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/api/apiUserDrafts.ts -> ORISO-Frontend::file:src/utils/keycloakSession.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/sessionsList/SessionsList.tsx -> ORISO-Frontend::file:src/utils/keycloakSession.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/session/SessionItemComponent.tsx -> ORISO-Frontend::file:src/utils/keycloakSession.ts)
+- ORISO-Frontend -> ORISO-Keycloak: related (ORISO-Frontend::file:src/components/app/AuthenticatedApp.tsx -> ORISO-Frontend::file:src/utils/keycloakSession.ts)
+- ORISO-Admin -> ORISO-Keycloak: depends_on (ORISO-Admin::file:src/api/auth/apiLogoutKeycloak.ts)
+- ORISO-Admin -> ORISO-Keycloak: depends_on (ORISO-Admin::file:src/api/auth/refreshKeycloakAccessToken.ts)
+- ORISO-Admin -> ORISO-Keycloak: depends_on (ORISO-Admin::file:src/hooks/useLoginMutation.hook.ts)
+- ORISO-Admin -> ORISO-Keycloak: depends_on (ORISO-Admin::file:src/router/ProtectedRoute.tsx)
+- ORISO-Admin -> ORISO-Keycloak: related (ORISO-Admin::file:src/api/auth/apiLogoutKeycloak.ts -> ORISO-Admin::file:src/api/auth/accessSessionCookie.ts)
+- ORISO-Admin -> ORISO-Keycloak: related (ORISO-Admin::file:src/api/auth/apiLogoutKeycloak.ts -> ORISO-Admin::file:src/appConfig.ts)
+- ORISO-Admin -> ORISO-Keycloak: related (ORISO-Admin::file:src/api/auth/auth.ts -> ORISO-Admin::file:src/api/auth/refreshKeycloakAccessToken.ts)
+- ORISO-Admin -> ORISO-Keycloak: related (ORISO-Admin::file:src/api/auth/logout.ts -> ORISO-Admin::file:src/api/auth/apiLogoutKeycloak.ts)
+- ORISO-Admin -> ORISO-Keycloak: related (ORISO-Admin::file:src/api/auth/refreshKeycloakAccessToken.ts -> ORISO-Admin::file:src/api/auth/accessSessionCookie.ts)
+- ORISO-Admin -> ORISO-Keycloak: related (ORISO-Admin::file:src/api/auth/refreshKeycloakAccessToken.ts -> ORISO-Admin::file:src/appConfig.ts)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::config:services/keycloakextension.yaml)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/actions/user/DeactivateKeycloakUserActionCommand.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakClient.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakMapper.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakService.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/config/KeycloakConfig.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/config/KeycloakCustomConfig.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/dto/KeycloakCreateUserResponseDTO.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/dto/KeycloakLoginResponseDTO.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/config/auth/SecurityConfig.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/exception/keycloak/KeycloakException.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/facade/CreateUserFacade.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/facade/userdata/KeycloakUserDataProvider.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/workflow/delete/action/DeleteKeycloakUserAction.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/workflow/delete/action/asker/DeleteKeycloakAskerAction.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/java/de/caritas/cob/userservice/api/workflow/delete/action/consultant/DeleteKeycloakConsultantAction.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/main/resources/migration/KeycloakRoleNameMigration.py)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/actions/user/DeactivateKeycloakUserActionCommandTest.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakServiceTest.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/facade/userdata/KeycloakUserDataProviderTest.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/testConfig/KeycloakTestConfig.java)
+- ORISO-UserService -> ORISO-Keycloak: depends_on (ORISO-UserService::file:src/test/java/de/caritas/cob/userservice/api/testHelper/KeycloakConstants.java)
+
+### Auth References
+
+- concept: app-custom scope — The app-custom client scope maps username, tenantId, and userId user attributes into access, ID, and userinfo tokens.
+- concept: Backend token validation — Backend services validate JWTs through the realm issuer URI and JWK set URI, then read roles and tenant/user claims.
+- concept: Environment drift — Docs reference direct IPs, Nginx /auth proxy paths, auth.oriso.site ingress, current realm sslRequired=external, and scripts that set sslRequired=NONE
+- concept: Frontend OIDC login — Frontend/admin clients authenticate through the public app client using browser-based OIDC authorization code flow.
+- concept: kcadm admin automation — configure-http-access.sh and backup/realm-backup.sh use kcadm inside the running Keycloak pod to change realm settings and export configuration.
+- concept: Keycloak as central IAM — ORISO-Keycloak is the identity provider for ORISO services, issuing OIDC tokens and centralizing user role management.
+- concept: No groups configured — realm.json exports an empty groups array; group-based authorization is not currently modeled in this repository.
+- concept: No external identity providers — identityProviders is empty; SSO is internal to Keycloak, with no Google/Azure/SAML/social broker configured in this realm export.
+- concept: online-beratung realm — The online-beratung realm is the tenant for ORISO identity configuration in realm.json.
+- concept: Realm roles authorization — ORISO authorization is role-driven through realm_access.roles, including tenant-admin, agency-admin, consultant, user, and technical roles.
+- concept: Hardcoded admin credentials — keycloak-deployment.yaml and scripts use admin/admin directly instead of Kubernetes Secrets.
+- concept: Long token lifetimes — Access tokens last 18000 seconds and implicit-flow access token lifespan is 54000 seconds, increasing exposure if tokens leak.
+- concept: start-dev runtime risk — The Deployment runs Keycloak with start-dev, no external database configuration, no probes, no resource limits, and hostNetwork enabled.
+- concept: Weak realm security defaults — Brute force protection, password policy, email verification, event logging, and admin event logging are disabled or absent.
+- concept: Wide redirect and CORS risk — The app client allows wildcard redirect URI and web origin entries, plus localhost and public IP HTTP origins.
+- concept: Tenant isolation by tenantId claim — Tenant isolation is represented by a user attribute mapped into the tenantId token claim; services enforce tenant boundaries from the token, not Keycl
+- config: realm.json
+- config: realm.json.backup-http
+- document: DEPLOYMENT.md
+- document: README.md
+- document: STATUS.md
+- endpoint: client:account — realm.json
+- endpoint: client:account-console — realm.json
+- endpoint: client:admin-cli — realm.json
+- endpoint: client:app — realm.json
+- endpoint: client:broker — realm.json
+- endpoint: client:realm-management — realm.json
+- endpoint: client:security-admin-console — realm.json
+- entity: CONFIGURE_TOTP — realm.json
+- entity: delete_account — realm.json
+- entity: terms_and_conditions — realm.json
+- entity: UPDATE_PASSWORD — realm.json
+- entity: UPDATE_PROFILE — realm.json
+- entity: VERIFY_EMAIL — realm.json
+- entity: agency-admin — realm.json
+- entity: consultant — realm.json
+- entity: default-roles-online-beratung — realm.json
+- entity: offline_access — realm.json
+- entity: single-tenant-admin — realm.json
+- entity: technical — realm.json
+- entity: TECHNICAL_DEFAULT — realm.json
+- entity: tenant-admin — realm.json
+- entity: topic-admin — realm.json
+- entity: uma_authorization — realm.json
+- entity: user — realm.json
+- entity: USER_ADMIN — realm.json
+- entity: user-admin — realm.json
+- flow: Admin Setup — DevOps deploys Keycloak, imports realm.json, applies HTTP access settings if needed, and backs up realm changes through kcadm scripts.
+- flow: Backend API Authorization — The frontend sends the access token as a bearer token; Spring Boot services validate issuer/JWK and read realm roles plus tenant/user claims.
+- flow: Developer/Admin Frontend Login — A browser user opens an ORISO frontend/admin app, is redirected to the app client in Keycloak, authenticates, receives tokens, and returns to the fron
+- flow: browser — realm.json
+- flow: clients — realm.json
+- flow: direct grant — realm.json
+- flow: direct grant - direct-grant-validate-otp - Conditional — realm.json
+- flow: docker auth — realm.json
+- flow: first broker login — realm.json
+- flow: first broker login - Alternatives - 0 — realm.json
+- flow: forms — realm.json
+- flow: forms - auth-otp-form - Conditional — realm.json
+- flow: Handle Existing Account — realm.json
+
+### Database References
+
+- concept: start-dev runtime risk — The Deployment runs Keycloak with start-dev, no external database configuration, no probes, no resource limits, and hostNetwork enabled.
+- schema: scope:acr — realm.json
+- schema: scope:address — realm.json
+- schema: scope:app-custom — realm.json
+- schema: scope:email — realm.json
+- schema: scope:microprofile-jwt — realm.json
+- schema: scope:offline_access — realm.json
+- schema: scope:phone — realm.json
+- schema: scope:profile — realm.json
+- schema: scope:role_list — realm.json
+- schema: scope:roles — realm.json
+- schema: scope:web-origins — realm.json
+
+### Deployment/Config References
+
+- None found in graph artifacts.
+
+- concept: Environment drift — Docs reference direct IPs, Nginx /auth proxy paths, auth.oriso.site ingress, current realm sslRequired=external, and scripts that set sslRequired=NONE
+- concept: Hardcoded admin credentials — keycloak-deployment.yaml and scripts use admin/admin directly instead of Kubernetes Secrets.
+- concept: start-dev runtime risk — The Deployment runs Keycloak with start-dev, no external database configuration, no probes, no resource limits, and hostNetwork enabled.
+- document: DEPLOYMENT.md
+- flow: docker auth — realm.json
+- module: Authentication Flows — Browser, direct grant, registration, reset credentials, client, and Docker auth flows exported from the realm.
+- module: Kubernetes Runtime — Deployment, Service, Ingress, namespace, host networking, hostname, proxy, and TLS configuration.
+- module: Operations and Admin Scripts — HTTP access setup, realm export/backup, deployment documentation, and status notes.
+- module: Security Risk Map — Hardcoded secrets, weak defaults, production gaps, and unclear environment ownership.
+- pipeline: realm-backup.sh — backup/realm-backup.sh
+- pipeline: configure-http-access.sh
+- resource: ingress.yaml
+- resource: keycloak-deployment.yaml
+- resource: keycloak-service.yaml
+- step: Deploy Keycloak — Apply Deployment, Service, and optionally Ingress manifests.
+- step: client-secret-jwt — realm.json
+- step: client-secret — realm.json
+- step: docker-http-basic-authenticator — realm.json
+
+### Important Graph Nodes
+
+- concept: app-custom scope — The app-custom client scope maps username, tenantId, and userId user attributes into access, ID, and userinfo tokens.
+- concept: Backend token validation — Backend services validate JWTs through the realm issuer URI and JWK set URI, then read roles and tenant/user claims.
+- concept: Environment drift — Docs reference direct IPs, Nginx /auth proxy paths, auth.oriso.site ingress, current realm sslRequired=external, and scripts that set sslRequired=NONE
+- concept: Frontend OIDC login — Frontend/admin clients authenticate through the public app client using browser-based OIDC authorization code flow.
+- concept: HTTP access mode — Docs and scripts intentionally disable SSL requirement for internal HTTP access while relying on proxy/TLS termination.
+- concept: kcadm admin automation — configure-http-access.sh and backup/realm-backup.sh use kcadm inside the running Keycloak pod to change realm settings and export configuration.
+- concept: Keycloak as central IAM — ORISO-Keycloak is the identity provider for ORISO services, issuing OIDC tokens and centralizing user role management.
+- concept: No groups configured — realm.json exports an empty groups array; group-based authorization is not currently modeled in this repository.
+- concept: No external identity providers — identityProviders is empty; SSO is internal to Keycloak, with no Google/Azure/SAML/social broker configured in this realm export.
+- concept: online-beratung realm — The online-beratung realm is the tenant for ORISO identity configuration in realm.json.
+- concept: Realm roles authorization — ORISO authorization is role-driven through realm_access.roles, including tenant-admin, agency-admin, consultant, user, and technical roles.
+- concept: Hardcoded admin credentials — keycloak-deployment.yaml and scripts use admin/admin directly instead of Kubernetes Secrets.
+- concept: Long token lifetimes — Access tokens last 18000 seconds and implicit-flow access token lifespan is 54000 seconds, increasing exposure if tokens leak.
+- concept: start-dev runtime risk — The Deployment runs Keycloak with start-dev, no external database configuration, no probes, no resource limits, and hostNetwork enabled.
+- concept: Weak realm security defaults — Brute force protection, password policy, email verification, event logging, and admin event logging are disabled or absent.
+- concept: Wide redirect and CORS risk — The app client allows wildcard redirect URI and web origin entries, plus localhost and public IP HTTP origins.
+- concept: Tenant isolation by tenantId claim — Tenant isolation is represented by a user attribute mapped into the tenantId token claim; services enforce tenant boundaries from the token, not Keycl
+- config: realm.json
+- config: realm.json.backup-http
+- document: DEPLOYMENT.md
+- document: README.md
+- document: STATUS.md
+- endpoint: client:account — realm.json
+- endpoint: client:account-console — realm.json
+- endpoint: client:admin-cli — realm.json
+- endpoint: client:app — realm.json
+- endpoint: client:broker — realm.json
+- endpoint: client:realm-management — realm.json
+- endpoint: client:security-admin-console — realm.json
+- entity: CONFIGURE_TOTP — realm.json
+- entity: delete_account — realm.json
+- entity: terms_and_conditions — realm.json
+- entity: UPDATE_PASSWORD — realm.json
+- entity: UPDATE_PROFILE — realm.json
+- entity: VERIFY_EMAIL — realm.json
+- entity: agency-admin — realm.json
+- entity: consultant — realm.json
+- entity: default-roles-online-beratung — realm.json
+- entity: offline_access — realm.json
+- entity: single-tenant-admin — realm.json
+
+### Important Graph Edges
+
+- triggers: concept:frontend-oidc-login -> concept:backend-token-validation — Frontend sends bearer token to backend services after login.
+- depends_on: concept:realm-roles-authorization -> concept:backend-token-validation — Backends read realm roles from JWT realm_access.roles.
+- depends_on: concept:tenant-isolation-claim -> concept:backend-token-validation — Backends must enforce tenantId after JWT validation.
+- related: config:realm.json -> concept:environment-drift — Current realm export has sslRequired=external.
+- defines_schema: config:realm.json -> concept:no-groups-configured — groups is an empty array.
+- defines_schema: config:realm.json -> concept:no-identity-providers — identityProviders is empty.
+- depends_on: config:realm.json -> concept:risk-long-tokens — Realm token lifespans are configured in realm.json.
+- depends_on: config:realm.json -> concept:risk-weak-realm-defaults — Realm disables brute force protection and lacks password policy.
+- defines_schema: config:realm.json -> realm:online-beratung — realm.json defines the online-beratung realm.
+- documents: document:STATUS.md -> concept:environment-drift — Status notes IP/proxy endpoints and SSL Required NONE.
+- depends_on: endpoint:realm.json:client:app -> concept:app-custom-scope — app receives app-custom claims by default.
+- routes: endpoint:realm.json:client:app -> concept:frontend-oidc-login — The app client is the frontend/admin login client.
+- depends_on: endpoint:realm.json:client:app -> concept:risk-wide-redirects — The app client contains wildcard redirects/web origins.
+- related: entity:realm.json:role:agency-admin -> concept:realm-roles-authorization — agency-admin is emitted through realm_access.roles when assigned to a user.
+- related: entity:realm.json:role:consultant -> concept:realm-roles-authorization — consultant is emitted through realm_access.roles when assigned to a user.
+- related: entity:realm.json:role:default-roles-online-beratung -> concept:realm-roles-authorization — default-roles-online-beratung is emitted through realm_access.roles when assigned to a user.
+- related: entity:realm.json:role:offline_access -> concept:realm-roles-authorization — offline_access is emitted through realm_access.roles when assigned to a user.
+- related: entity:realm.json:role:single-tenant-admin -> concept:realm-roles-authorization — single-tenant-admin is emitted through realm_access.roles when assigned to a user.
+- related: entity:realm.json:role:TECHNICAL_DEFAULT -> concept:realm-roles-authorization — TECHNICAL_DEFAULT is emitted through realm_access.roles when assigned to a user.
+- related: entity:realm.json:role:technical -> concept:realm-roles-authorization — technical is emitted through realm_access.roles when assigned to a user.
+- related: entity:realm.json:role:tenant-admin -> concept:realm-roles-authorization — tenant-admin is emitted through realm_access.roles when assigned to a user.
+- related: entity:realm.json:role:topic-admin -> concept:realm-roles-authorization — topic-admin is emitted through realm_access.roles when assigned to a user.
+- related: entity:realm.json:role:uma_authorization -> concept:realm-roles-authorization — uma_authorization is emitted through realm_access.roles when assigned to a user.
+- related: entity:realm.json:role:USER_ADMIN -> concept:realm-roles-authorization — USER_ADMIN is emitted through realm_access.roles when assigned to a user.
+- related: entity:realm.json:role:user-admin -> concept:realm-roles-authorization — user-admin is emitted through realm_access.roles when assigned to a user.
+- related: entity:realm.json:role:user -> concept:realm-roles-authorization — user is emitted through realm_access.roles when assigned to a user.
+- depends_on: flow:admin-setup -> config:realm.json — Admin Setup depends on realm.json.
+- depends_on: flow:admin-setup -> pipeline:backup/realm-backup.sh — Admin Setup depends on realm-backup.sh.
+- depends_on: flow:admin-setup -> pipeline:configure-http-access.sh — Admin Setup depends on configure-http-access.sh.
+- depends_on: flow:admin-setup -> resource:keycloak-deployment.yaml — Admin Setup depends on keycloak-deployment.yaml.
+
+### Missing or Weak Areas
+
+- No major graph-shape gaps detected; still verify behavior in source before changing production flows.
+
+### Needs Verification
+
+- No major graph-shape gaps detected; still verify behavior in source before changing production flows.
+
+## ORISO-Kubernetes
+
+### Graph Source
+
+- graph path: ../ORISO-Kubernetes/.understand-anything/knowledge-graph.json
+- artifacts used: 13
+- node count: 339
+- edge count: 588
+
+Artifacts used:
+
+- .understand-anything/ARCHITECTURE.md (5.1 KB)
+- .understand-anything/DEPENDENCY-AUDIT.md (2.1 KB)
+- .understand-anything/FINDINGS.md (4.3 KB)
+- .understand-anything/knowledge-graph.json (347.0 KB)
+- .understand-anything/ONBOARDING.md (4.6 KB)
+- .understand-anything/ORISO-ECOSYSTEM.md (1.8 KB)
+- .understand-anything/README.md (3.4 KB)
+- .understand-anything/visuals/deploy-flow.mmd (474 B)
+- .understand-anything/visuals/helm-phases.mmd (508 B)
+- .understand-anything/visuals/ingress-traffic-flow.mmd (406 B)
+- .understand-anything/visuals/observability-flow.mmd (397 B)
+- .understand-anything/visuals/platform-topology.mmd (540 B)
+- .understand-anything/visuals/service-communication.mmd (583 B)
+
+### Repository Purpose
+
+Kubernetes infrastructure and deployment orchestration repository for the ORISO platform.
+
+### Main Files/Modules
+
+- file: apply-ingress.sh — ingress/apply-ingress.sh
+- module: Authentication and Communication — Keycloak, Matrix Synapse, Element, Element Call, and LiveKit workloads.
+- module: Backend Services — TenantService, UserService, AgencyService, and ConsultingTypeService deployment/config boundaries.
+- module: Environment Values — Global dev values and a local macOS override example; no committed staging/prod overlay exists.
+- module: Frontend Services — Frontend, Admin, Storybook, Status Page, and Health Dashboard web workloads.
+- module: Helm Umbrella Chart — helm/oriso-platform composes all subcharts through local file dependencies and enable flags.
+- module: Infrastructure Services — MariaDB, MongoDB, Redis, RabbitMQ, ClickHouse, and storage-backed infrastructure.
+- module: Ingress Routing — Standalone ingress manifests route API paths and subdomains to platform services.
+- module: Kubernetes Platform — Top-level Kubernetes deployment and operations boundary for ORISO.
+- module: Observability — SigNoz, ClickHouse, OTEL Collector, Redis Exporter, Health Dashboard, and Service Health Exporter.
+- module: Operational Risk Map — Security, scaling, availability, duplication, and environment risks found in manifests.
+- module: Rollout Strategy — Helm upgrade/install and Kubernetes RollingUpdate behavior; no HPA/PDB manifests.
+- module: Storage — StatefulSet/PVC storage for MariaDB, ClickHouse, SigNoz, Matrix, MongoDB, and Redis.
+
+### Classes/Functions
+
+- None found in graph artifacts.
+
+### APIs/Routes
+
+- concept: Observability stack — SigNoz uses ClickHouse; OTEL Collector receives OTLP and forwards metrics; service-health-exporter polls backend health endpoints.
+- concept: oriso-dev.site domains — Dev/staging-like external domains route app, admin, API, auth, Matrix, LiveKit, SigNoz, Redis Commander, Status Page, and Storybook.
+- config: Chart.yaml — helm/charts/agencyservice/Chart.yaml
+- config: values.yaml — helm/charts/agencyservice/values.yaml
+- config: Chart.yaml — helm/charts/consultingtypeservice/Chart.yaml
+- config: values.yaml — helm/charts/consultingtypeservice/values.yaml
+- config: Chart.yaml — helm/charts/tenantservice/Chart.yaml
+- config: values.yaml — helm/charts/tenantservice/values.yaml
+- config: Chart.yaml — helm/charts/userservice/Chart.yaml
+- config: values.yaml — helm/charts/userservice/values.yaml
+- document: README.md — helm/charts/agencyservice/README.md
+- endpoint: admin.oriso-dev.site — External DNS host routed by ORISO ingress resources.
+- endpoint: api.oriso-dev.site — External DNS host routed by ORISO ingress resources.
+- endpoint: app.oriso-dev.site — External DNS host routed by ORISO ingress resources.
+- endpoint: auth.oriso-dev.site — External DNS host routed by ORISO ingress resources.
+- endpoint: call.oriso-dev.site — External DNS host routed by ORISO ingress resources.
+- endpoint: element.oriso-dev.site — External DNS host routed by ORISO ingress resources.
+- endpoint: health.oriso-dev.site — External DNS host routed by ORISO ingress resources.
+- endpoint: livekit.oriso-dev.site — External DNS host routed by ORISO ingress resources.
+- endpoint: matrix.oriso-dev.site — External DNS host routed by ORISO ingress resources.
+- endpoint: redis.oriso-dev.site — External DNS host routed by ORISO ingress resources.
+- endpoint: signoz.oriso-dev.site — External DNS host routed by ORISO ingress resources.
+- endpoint: status.oriso-dev.site — External DNS host routed by ORISO ingress resources.
+- endpoint: storybook.oriso-dev.site — External DNS host routed by ORISO ingress resources.
+- endpoint: 00-keycloak-auth-domain-ingress — ingress/00-keycloak-auth-domain-ingress.yaml
+- endpoint: 01-keycloak-ingress — ingress/01-keycloak-ingress.yaml
+- endpoint: 06-matrix-ingress — ingress/06-matrix-ingress.yaml
+- endpoint: 08-uploadservice-ingress — ingress/08-uploadservice-ingress.yaml
+- endpoint: 10-health-ingress — ingress/10-health-ingress.yaml
+- endpoint: 11-rocketchat-ingress — ingress/11-rocketchat-ingress.yaml
+- endpoint: 12-matrix-domain-ingress — ingress/12-matrix-domain-ingress.yaml
+- endpoint: 13-frontend-ingress — ingress/13-frontend-ingress.yaml
+- endpoint: 14-admin-ingress — ingress/14-admin-ingress.yaml
+- endpoint: 15-health-dashboard-ingress — ingress/15-health-dashboard-ingress.yaml
+- endpoint: 16-element-ingress — ingress/16-element-ingress.yaml
+- endpoint: 17-element-call-ingress — ingress/17-element-call-ingress.yaml
+- endpoint: 18-livekit-ingress — ingress/18-livekit-ingress.yaml
+- endpoint: 19-redis-commander-ingress — ingress/19-redis-commander-ingress.yaml
+- endpoint: 20-signoz-ingress — ingress/20-signoz-ingress.yaml
+- endpoint: 21-status-page-ingress — ingress/21-status-page-ingress.yaml
+- endpoint: 22-storybook-ingress — ingress/22-storybook-ingress.yaml
+- endpoint: agencyservice-agencies-ingress — ingress/03-agencyservice-ingress.yaml
+- endpoint: agencyservice-agencyadmin-ingress — ingress/03-agencyservice-ingress.yaml
+- endpoint: agencyservice-appointmentservice-ingress — ingress/03-agencyservice-ingress.yaml
+- endpoint: agencyservice-topicadmin-ingress — ingress/03-agencyservice-ingress.yaml
+- endpoint: consultingtypeservice-consultingtypes-ingress — ingress/04-consultingtypeservice-ingress.yaml
+- endpoint: consultingtypeservice-settings-ingress — ingress/04-consultingtypeservice-ingress.yaml
+- endpoint: consultingtypeservice-settingsadmin-ingress — ingress/04-consultingtypeservice-ingress.yaml
+- endpoint: consultingtypeservice-topic-groups-ingress — ingress/04-consultingtypeservice-ingress.yaml
+- endpoint: consultingtypeservice-topic-ingress — ingress/04-consultingtypeservice-ingress.yaml
+- endpoint: tenantservice-mock-ingress — ingress/05-tenantservice-ingress.yaml
+- endpoint: tenantservice-service-tenant-numeric-ingress — ingress/05-tenantservice-ingress.yaml
+- endpoint: tenantservice-service-tenant-public-ingress — ingress/05-tenantservice-ingress.yaml
+- endpoint: tenantservice-tenant-ingress — ingress/05-tenantservice-ingress.yaml
+- endpoint: tenantservice-tenantadmin-ingress — ingress/05-tenantservice-ingress.yaml
+- endpoint: userservice-conversations-ingress — ingress/02-userservice-ingress.yaml
+- endpoint: userservice-ingress — ingress/02-userservice-ingress.yaml
+- endpoint: userservice-matrix-ingress — ingress/02-userservice-ingress.yaml
+- endpoint: userservice-sessions-ingress — ingress/02-userservice-ingress.yaml
+- endpoint: userservice-useradmin-ingress — ingress/02-userservice-ingress.yaml
+
+### Internal Dependencies
+
+- depends_on: concept:manual-ingress-apply -> module:ingress-routing — Ingress is applied separately from Helm.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:admin — helm/oriso-platform/Chart.yaml declares admin as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:agencyservice — helm/oriso-platform/Chart.yaml declares agencyservice as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:clickhouse — helm/oriso-platform/Chart.yaml declares clickhouse as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:consultingtypeservice — helm/oriso-platform/Chart.yaml declares consultingtypeservice as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:element-call — helm/oriso-platform/Chart.yaml declares element-call as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:element — helm/oriso-platform/Chart.yaml declares element as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:frontend — helm/oriso-platform/Chart.yaml declares frontend as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:health-dashboard — helm/oriso-platform/Chart.yaml declares health-dashboard as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:keycloak — helm/oriso-platform/Chart.yaml declares keycloak as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:livekit — helm/oriso-platform/Chart.yaml declares livekit as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:mariadb — helm/oriso-platform/Chart.yaml declares mariadb as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:matrix-synapse — helm/oriso-platform/Chart.yaml declares matrix-synapse as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:mongodb — helm/oriso-platform/Chart.yaml declares mongodb as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:otel-collector — helm/oriso-platform/Chart.yaml declares otel-collector as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:rabbitmq — helm/oriso-platform/Chart.yaml declares rabbitmq as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:redis-commander — helm/oriso-platform/Chart.yaml declares redis-commander as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:redis-exporter — helm/oriso-platform/Chart.yaml declares redis-exporter as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:redis — helm/oriso-platform/Chart.yaml declares redis as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:service-health-exporter — helm/oriso-platform/Chart.yaml declares service-health-exporter as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:signoz — helm/oriso-platform/Chart.yaml declares signoz as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:status-page — helm/oriso-platform/Chart.yaml declares status-page as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:storybook — helm/oriso-platform/Chart.yaml declares storybook as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:tenantservice — helm/oriso-platform/Chart.yaml declares tenantservice as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:userservice — helm/oriso-platform/Chart.yaml declares userservice as a dependency.
+- configures: config:helm/oriso-platform/values-local-macos.example.yaml -> concept:local-namespace-oriso-local — Local macOS override changes namespace and domains.
+- depends_on: config:helm/oriso-platform/values.yaml -> concept:secrets-from-values — Umbrella values include credential fields that should come from external secrets.
+- configures: config:helm/values.yaml -> concept:cluster-dns — helm/values.yaml defines internal service DNS values.
+- configures: config:helm/values.yaml -> concept:oriso-dev-domains — helm/values.yaml defines oriso-dev.site domains.
+- routes: endpoint:host:admin.oriso-dev.site -> endpoint:ingress:14-admin-ingress — admin.oriso-dev.site routes to 14-admin-ingress.
+- routes: endpoint:host:api.oriso-dev.site -> endpoint:ingress:01-keycloak-ingress — api.oriso-dev.site routes to 01-keycloak-ingress.
+- routes: endpoint:host:api.oriso-dev.site -> endpoint:ingress:06-matrix-ingress — api.oriso-dev.site routes to 06-matrix-ingress.
+- routes: endpoint:host:api.oriso-dev.site -> endpoint:ingress:08-uploadservice-ingress — api.oriso-dev.site routes to 08-uploadservice-ingress.
+- routes: endpoint:host:api.oriso-dev.site -> endpoint:ingress:10-health-ingress — api.oriso-dev.site routes to 10-health-ingress.
+- routes: endpoint:host:api.oriso-dev.site -> endpoint:ingress:11-rocketchat-ingress — api.oriso-dev.site routes to 11-rocketchat-ingress.
+
+### External ORISO Dependencies
+
+- ORISO-Frontend -> ORISO-Kubernetes: depends_on (ORISO-Frontend::document:STORYBOOK_KUBERNETES.md)
+- ORISO-Frontend -> ORISO-Kubernetes: depends_on (ORISO-Frontend::config:ingress-v2.yaml)
+- ORISO-Frontend -> ORISO-Kubernetes: depends_on (ORISO-Frontend::config:ingress.yaml)
+- ORISO-Frontend -> ORISO-Kubernetes: depends_on (ORISO-Frontend::config:storybook-ingress.yaml)
+- ORISO-Frontend -> ORISO-Kubernetes: related (ORISO-Frontend::document:STORYBOOK_KUBERNETES.md -> ORISO-Frontend::document:README.md)
+- ORISO-Frontend -> ORISO-Kubernetes: related (ORISO-Frontend::config:ingress-v2.yaml -> ORISO-Frontend::file:src/initApp.tsx)
+- ORISO-Frontend -> ORISO-Kubernetes: related (ORISO-Frontend::config:ingress.yaml -> ORISO-Frontend::file:src/initApp.tsx)
+- ORISO-Frontend -> ORISO-Kubernetes: related (ORISO-Frontend::config:storybook-ingress.yaml -> ORISO-Frontend::file:src/initApp.tsx)
+- ORISO-Admin -> ORISO-Kubernetes: depends_on (ORISO-Admin::config:ingress.yaml)
+- ORISO-Admin -> ORISO-Kubernetes: related (ORISO-Admin::config:ingress.yaml -> ORISO-Admin::file:src/index.tsx)
+- ORISO-TenantService -> ORISO-Kubernetes: depends_on (ORISO-TenantService::flow:deploy-configure-runtime)
+- ORISO-TenantService -> ORISO-Kubernetes: related (ORISO-TenantService::pipeline:deploy-development.sh -> ORISO-TenantService::service:Dockerfile)
+- ORISO-Database -> ORISO-Kubernetes: depends_on (ORISO-Database::concept:database-initialize-job)
+- ORISO-Database -> ORISO-Kubernetes: depends_on (ORISO-Database::concept:phpmyadmin-readonly-access)
+- ORISO-Database -> ORISO-Kubernetes: depends_on (ORISO-Database::document:k8s/mariadb-client/README.md)
+- ORISO-Database -> ORISO-Kubernetes: depends_on (ORISO-Database::module:backup-recovery)
+- ORISO-Database -> ORISO-Kubernetes: depends_on (ORISO-Database::module:devops-access)
+- ORISO-Database -> ORISO-Kubernetes: depends_on (ORISO-Database::resource:k8s/mariadb-client/configmap.yaml)
+- ORISO-Database -> ORISO-Kubernetes: depends_on (ORISO-Database::resource:k8s/mariadb-client/deployment.yaml)
+- ORISO-Database -> ORISO-Kubernetes: depends_on (ORISO-Database::resource:k8s/mariadb-client/ingress.yaml)
+- ORISO-Database -> ORISO-Kubernetes: depends_on (ORISO-Database::resource:k8s/mariadb-client/kustomization.yaml)
+- ORISO-Database -> ORISO-Kubernetes: depends_on (ORISO-Database::resource:k8s/mariadb-client/service.yaml)
+- ORISO-Database -> ORISO-Kubernetes: depends_on (ORISO-Database::resource:scripts/database-initialize.yaml)
+- ORISO-Database -> ORISO-Kubernetes: depends_on (ORISO-Database::resource:scripts/system-users-job.yaml)
+- ORISO-Keycloak -> ORISO-Kubernetes: depends_on (ORISO-Keycloak::concept:environment-drift)
+- ORISO-Keycloak -> ORISO-Kubernetes: depends_on (ORISO-Keycloak::concept:risk-hardcoded-admin)
+- ORISO-Keycloak -> ORISO-Kubernetes: depends_on (ORISO-Keycloak::module:kubernetes-runtime)
+- ORISO-Keycloak -> ORISO-Kubernetes: depends_on (ORISO-Keycloak::resource:ingress.yaml)
+- ORISO-Keycloak -> ORISO-Kubernetes: depends_on (ORISO-Keycloak::resource:keycloak-deployment.yaml)
+- ORISO-Keycloak -> ORISO-Kubernetes: depends_on (ORISO-Keycloak::resource:keycloak-service.yaml)
+- ORISO-Keycloak -> ORISO-Kubernetes: depends_on (ORISO-Keycloak::step:admin-setup:deploy)
+- ORISO-Keycloak -> ORISO-Kubernetes: related (ORISO-Keycloak::module:kubernetes-runtime -> ORISO-Keycloak::resource:ingress.yaml)
+- ORISO-Keycloak -> ORISO-Kubernetes: related (ORISO-Keycloak::module:kubernetes-runtime -> ORISO-Keycloak::resource:keycloak-deployment.yaml)
+- ORISO-Keycloak -> ORISO-Kubernetes: related (ORISO-Keycloak::module:kubernetes-runtime -> ORISO-Keycloak::resource:keycloak-service.yaml)
+- ORISO-Keycloak -> ORISO-Kubernetes: related (ORISO-Keycloak::module:operations -> ORISO-Keycloak::document:DEPLOYMENT.md)
+- ORISO-Keycloak -> ORISO-Kubernetes: related (ORISO-Keycloak::resource:ingress.yaml -> ORISO-Keycloak::concept:http-access-mode)
+- ORISO-Keycloak -> ORISO-Kubernetes: related (ORISO-Keycloak::step:admin-setup:deploy -> ORISO-Keycloak::resource:ingress.yaml)
+- ORISO-Kubernetes -> ORISO-Database: depends_on (ORISO-Kubernetes::concept:external-utilities)
+- ORISO-Kubernetes -> ORISO-Database: deploys (ORISO-Kubernetes::concept:external-utilities)
+- ORISO-Kubernetes -> ORISO-Frontend: deploys (ORISO-Kubernetes::concept:external-utilities)
+- ORISO-Kubernetes -> ORISO-Keycloak: depends_on (ORISO-Kubernetes::concept:keycloak-dev-mode)
+- ORISO-Kubernetes -> ORISO-Admin: deploys (ORISO-Kubernetes::concept:keycloak-dev-mode)
+- ORISO-Kubernetes -> ORISO-Keycloak: deploys (ORISO-Kubernetes::concept:keycloak-dev-mode)
+- ORISO-Kubernetes -> ORISO-Frontend: deploys (ORISO-Kubernetes::concept:loadbalancer-plus-ingress)
+- ORISO-Kubernetes -> ORISO-Admin: deploys (ORISO-Kubernetes::concept:loadbalancer-plus-ingress)
+- ORISO-Kubernetes -> ORISO-Database: depends_on (ORISO-Kubernetes::concept:oriso-dev-domains)
+- ORISO-Kubernetes -> ORISO-Admin: deploys (ORISO-Kubernetes::concept:oriso-dev-domains)
+- ORISO-Kubernetes -> ORISO-Database: deploys (ORISO-Kubernetes::concept:oriso-dev-domains)
+- ORISO-Kubernetes -> ORISO-Frontend: deploys (ORISO-Kubernetes::concept:oriso-dev-domains)
+- ORISO-Kubernetes -> ORISO-Database: depends_on (ORISO-Kubernetes::concept:stateful-storage)
+- ORISO-Kubernetes -> ORISO-Database: deploys (ORISO-Kubernetes::concept:stateful-storage)
+- ORISO-Kubernetes -> ORISO-Admin: deploys (ORISO-Kubernetes::config:helm/charts/admin/Chart.yaml)
+- ORISO-Kubernetes -> ORISO-Admin: deploys (ORISO-Kubernetes::config:helm/charts/admin/values.yaml)
+- ORISO-Kubernetes -> ORISO-AgencyService: depends_on (ORISO-Kubernetes::config:helm/charts/agencyservice/Chart.yaml)
+- ORISO-Kubernetes -> ORISO-AgencyService: deploys (ORISO-Kubernetes::config:helm/charts/agencyservice/Chart.yaml)
+- ORISO-Kubernetes -> ORISO-AgencyService: depends_on (ORISO-Kubernetes::config:helm/charts/agencyservice/values.yaml)
+- ORISO-Kubernetes -> ORISO-AgencyService: deploys (ORISO-Kubernetes::config:helm/charts/agencyservice/values.yaml)
+- ORISO-Kubernetes -> ORISO-ConsultingTypeService: depends_on (ORISO-Kubernetes::config:helm/charts/consultingtypeservice/Chart.yaml)
+- ORISO-Kubernetes -> ORISO-ConsultingTypeService: deploys (ORISO-Kubernetes::config:helm/charts/consultingtypeservice/Chart.yaml)
+- ORISO-Kubernetes -> ORISO-ConsultingTypeService: depends_on (ORISO-Kubernetes::config:helm/charts/consultingtypeservice/values.yaml)
+- ORISO-Kubernetes -> ORISO-ConsultingTypeService: deploys (ORISO-Kubernetes::config:helm/charts/consultingtypeservice/values.yaml)
+- ORISO-Kubernetes -> ORISO-Frontend: deploys (ORISO-Kubernetes::config:helm/charts/frontend/Chart.yaml)
+- ORISO-Kubernetes -> ORISO-Frontend: deploys (ORISO-Kubernetes::config:helm/charts/frontend/values.yaml)
+- ORISO-Kubernetes -> ORISO-Keycloak: depends_on (ORISO-Kubernetes::config:helm/charts/keycloak/Chart.yaml)
+- ORISO-Kubernetes -> ORISO-Keycloak: deploys (ORISO-Kubernetes::config:helm/charts/keycloak/Chart.yaml)
+- ORISO-Kubernetes -> ORISO-Keycloak: depends_on (ORISO-Kubernetes::config:helm/charts/keycloak/values.yaml)
+- ORISO-Kubernetes -> ORISO-Keycloak: deploys (ORISO-Kubernetes::config:helm/charts/keycloak/values.yaml)
+- ORISO-Kubernetes -> ORISO-Database: depends_on (ORISO-Kubernetes::config:helm/charts/mariadb/Chart.yaml)
+- ORISO-Kubernetes -> ORISO-Database: deploys (ORISO-Kubernetes::config:helm/charts/mariadb/Chart.yaml)
+- ORISO-Kubernetes -> ORISO-Database: depends_on (ORISO-Kubernetes::config:helm/charts/mariadb/values.yaml)
+- ORISO-Kubernetes -> ORISO-Database: deploys (ORISO-Kubernetes::config:helm/charts/mariadb/values.yaml)
+- ORISO-Kubernetes -> ORISO-Database: depends_on (ORISO-Kubernetes::config:helm/charts/mongodb/Chart.yaml)
+- ORISO-Kubernetes -> ORISO-Database: deploys (ORISO-Kubernetes::config:helm/charts/mongodb/Chart.yaml)
+- ORISO-Kubernetes -> ORISO-Database: depends_on (ORISO-Kubernetes::config:helm/charts/mongodb/values.yaml)
+- ORISO-Kubernetes -> ORISO-Database: deploys (ORISO-Kubernetes::config:helm/charts/mongodb/values.yaml)
+- ORISO-Kubernetes -> ORISO-Database: depends_on (ORISO-Kubernetes::config:helm/charts/rabbitmq/Chart.yaml)
+- ORISO-Kubernetes -> ORISO-Database: deploys (ORISO-Kubernetes::config:helm/charts/rabbitmq/Chart.yaml)
+- ORISO-Kubernetes -> ORISO-Database: depends_on (ORISO-Kubernetes::config:helm/charts/rabbitmq/values.yaml)
+- ORISO-Kubernetes -> ORISO-Database: deploys (ORISO-Kubernetes::config:helm/charts/rabbitmq/values.yaml)
+- ORISO-Kubernetes -> ORISO-Database: depends_on (ORISO-Kubernetes::config:helm/charts/redis-commander/Chart.yaml)
+
+### Auth References
+
+- concept: Sensitive values in ConfigMaps — Some ConfigMaps render password-like values into non-Secret application.properties blocks.
+- concept: Externally exposed utility UIs — Redis Commander, SigNoz, Storybook, Health Dashboard, and Status Page have public ingress definitions.
+- concept: Keycloak dev mode — Keycloak starts with start-dev, hostNetwork true, default-style admin values, no probes, and no resources in chart values.
+- concept: LoadBalancer plus Ingress exposure — frontend, admin, and status-page values use LoadBalancer while separate ingress resources expose them too.
+- concept: No NetworkPolicy manifests — No NetworkPolicy manifests were found; service isolation depends on namespace/default cluster policy.
+- concept: oriso-dev.site domains — Dev/staging-like external domains route app, admin, API, auth, Matrix, LiveKit, SigNoz, Redis Commander, Status Page, and Storybook.
+- config: Chart.yaml — helm/charts/keycloak/Chart.yaml
+- config: values.yaml — helm/charts/keycloak/values.yaml
+- config: values.yaml — helm/values.yaml
+- endpoint: auth.oriso-dev.site — External DNS host routed by ORISO ingress resources.
+- endpoint: 00-keycloak-auth-domain-ingress — ingress/00-keycloak-auth-domain-ingress.yaml
+- endpoint: 01-keycloak-ingress — ingress/01-keycloak-ingress.yaml
+- endpoint: 18-livekit-ingress — ingress/18-livekit-ingress.yaml
+- module: Authentication and Communication — Keycloak, Matrix Synapse, Element, Element Call, and LiveKit workloads.
+- module: Operational Risk Map — Security, scaling, availability, duplication, and environment risks found in manifests.
+- resource: _helpers.tpl — helm/charts/keycloak/templates/_helpers.tpl
+- resource: deployment.yaml — helm/charts/keycloak/templates/deployment.yaml
+- resource: service.yaml — helm/charts/keycloak/templates/service.yaml
+- resource: token-service-deployment.yaml — helm/charts/livekit/templates/token-service-deployment.yaml
+- resource: token-service-service.yaml — helm/charts/livekit/templates/token-service-service.yaml
+- resource: 00-keycloak-auth-domain-ingress.yaml — ingress/00-keycloak-auth-domain-ingress.yaml
+- resource: 01-keycloak-ingress.yaml — ingress/01-keycloak-ingress.yaml
+- service: element chart — helm/charts/element/Chart.yaml
+- service: element-call chart — helm/charts/element-call/Chart.yaml
+- service: keycloak chart — helm/charts/keycloak/Chart.yaml
+- service: livekit chart — helm/charts/livekit/Chart.yaml
+- service: matrix-synapse chart — helm/charts/matrix-synapse/Chart.yaml
+- service: oriso-platform-element — helm/charts/element/values.yaml
+- service: oriso-platform-element-call — helm/charts/element-call/values.yaml
+- service: oriso-platform-keycloak — helm/charts/keycloak/values.yaml
+- service: oriso-platform-livekit — helm/charts/livekit/values.yaml
+- service: oriso-platform-matrix-synapse — helm/charts/matrix-synapse/values.yaml
+- step: Validate JWT — Backends validate tokens against Keycloak issuer/JWK URLs.
+
+### Database References
+
+- concept: Externally exposed utility UIs — Redis Commander, SigNoz, Storybook, Health Dashboard, and Status Page have public ingress definitions.
+- concept: oriso-dev.site domains — Dev/staging-like external domains route app, admin, API, auth, Matrix, LiveKit, SigNoz, Redis Commander, Status Page, and Storybook.
+- concept: Stateful storage — MariaDB, ClickHouse, and SigNoz use StatefulSets/volumeClaimTemplates; MongoDB/Redis/Matrix mount existing PVCs.
+- config: Chart.yaml — helm/charts/mariadb/Chart.yaml
+- config: values.yaml — helm/charts/mariadb/values.yaml
+- config: Chart.yaml — helm/charts/mongodb/Chart.yaml
+- config: values.yaml — helm/charts/mongodb/values.yaml
+- config: Chart.yaml — helm/charts/rabbitmq/Chart.yaml
+- config: values.yaml — helm/charts/rabbitmq/values.yaml
+- config: Chart.yaml — helm/charts/redis-commander/Chart.yaml
+- config: values.yaml — helm/charts/redis-commander/values.yaml
+- config: Chart.yaml — helm/charts/redis-exporter/Chart.yaml
+- config: values.yaml — helm/charts/redis-exporter/values.yaml
+- config: Chart.yaml — helm/charts/redis/Chart.yaml
+- config: values.yaml — helm/charts/redis/values.yaml
+- config: values.yaml — helm/values.yaml
+- endpoint: redis.oriso-dev.site — External DNS host routed by ORISO ingress resources.
+- endpoint: 19-redis-commander-ingress — ingress/19-redis-commander-ingress.yaml
+- module: Infrastructure Services — MariaDB, MongoDB, Redis, RabbitMQ, ClickHouse, and storage-backed infrastructure.
+- module: Observability — SigNoz, ClickHouse, OTEL Collector, Redis Exporter, Health Dashboard, and Service Health Exporter.
+- module: Storage — StatefulSet/PVC storage for MariaDB, ClickHouse, SigNoz, Matrix, MongoDB, and Redis.
+- resource: _helpers.tpl — helm/charts/mariadb/templates/_helpers.tpl
+- resource: service.yaml — helm/charts/mariadb/templates/service.yaml
+- resource: statefulset.yaml — helm/charts/mariadb/templates/statefulset.yaml
+- resource: _helpers.tpl — helm/charts/mongodb/templates/_helpers.tpl
+- resource: deployment.yaml — helm/charts/mongodb/templates/deployment.yaml
+- resource: service.yaml — helm/charts/mongodb/templates/service.yaml
+- resource: _helpers.tpl — helm/charts/rabbitmq/templates/_helpers.tpl
+- resource: deployment.yaml — helm/charts/rabbitmq/templates/deployment.yaml
+- resource: service.yaml — helm/charts/rabbitmq/templates/service.yaml
+- resource: _helpers.tpl — helm/charts/redis-commander/templates/_helpers.tpl
+- resource: deployment.yaml — helm/charts/redis-commander/templates/deployment.yaml
+- resource: service.yaml — helm/charts/redis-commander/templates/service.yaml
+- resource: _helpers.tpl — helm/charts/redis-exporter/templates/_helpers.tpl
+- resource: deployment.yaml — helm/charts/redis-exporter/templates/deployment.yaml
+- resource: service.yaml — helm/charts/redis-exporter/templates/service.yaml
+- resource: _helpers.tpl — helm/charts/redis/templates/_helpers.tpl
+- resource: deployment.yaml — helm/charts/redis/templates/deployment.yaml
+- resource: service.yaml — helm/charts/redis/templates/service.yaml
+- resource: 19-redis-commander-ingress.yaml — ingress/19-redis-commander-ingress.yaml
+- service: mariadb chart — helm/charts/mariadb/Chart.yaml
+- service: mongodb chart — helm/charts/mongodb/Chart.yaml
+- service: rabbitmq chart — helm/charts/rabbitmq/Chart.yaml
+- service: redis chart — helm/charts/redis/Chart.yaml
+- service: redis-commander chart — helm/charts/redis-commander/Chart.yaml
+- service: redis-exporter chart — helm/charts/redis-exporter/Chart.yaml
+- service: oriso-platform-mariadb — helm/charts/mariadb/values.yaml
+- service: oriso-platform-mongodb — helm/charts/mongodb/values.yaml
+- service: oriso-platform-rabbitmq — helm/charts/rabbitmq/values.yaml
+- service: oriso-platform-redis — helm/charts/redis/values.yaml
+- service: oriso-platform-redis-commander — helm/charts/redis-commander/values.yaml
+- service: oriso-platform-redis-exporter — helm/charts/redis-exporter/values.yaml
+
+### Deployment/Config References
+
+- None found in graph artifacts.
+
+- concept: cert-manager TLS — Ingress TLS resources use cert-manager cluster issuer letsencrypt-prod.
+- concept: Kubernetes service DNS — Internal services use oriso-platform-* names under caritas.svc.cluster.local.
+- concept: Sensitive values in ConfigMaps — Some ConfigMaps render password-like values into non-Secret application.properties blocks.
+- concept: Environment drift — Values mix prod/local Spring profiles, dev domains, localhost local override, hostNetwork, and missing staging/prod overlays.
+- concept: Externally exposed utility UIs — Redis Commander, SigNoz, Storybook, Health Dashboard, and Status Page have public ingress definitions.
+- concept: Local Helm dependencies — The umbrella chart depends on local file:// subcharts and packaged chart archives.
+- concept: Keycloak dev mode — Keycloak starts with start-dev, hostNetwork true, default-style admin values, no probes, and no resources in chart values.
+- concept: latest tags and pullPolicy Never — Several application images use latest tags and pullPolicy Never, which couples deployments to node-local image state.
+- concept: LoadBalancer plus Ingress exposure — frontend, admin, and status-page values use LoadBalancer while separate ingress resources expose them too.
+- concept: oriso-local namespace override — values-local-macos.example.yaml switches local deployment to the oriso-local namespace.
+- concept: local-path storage class — Stateful charts use local-path storage, which is simple for k3s but weak for multi-node production recovery.
+- concept: Manual ingress apply — Ingress resources are not part of the umbrella chart and are applied separately with kubectl apply -f ingress/.
+- concept: caritas namespace — Most manifests and values deploy into the caritas namespace.
+- concept: Nginx Ingress — Ingress manifests assume nginx ingress class, regex rewrites, CORS annotations, and cert-manager TLS.
+- concept: Ingress backends without charts — UploadService and Rocket.Chat ingress/config references exist without matching Helm subcharts in this repo.
+- concept: RollingUpdate strategy — Most Deployment templates use RollingUpdate with 25 percent maxSurge and maxUnavailable.
+- concept: Secrets rendered from values — Several Secret templates and values files contain credential fields instead of referencing externally managed secret names.
+- concept: kubectl last-applied annotations committed — Several ingress files include kubectl.kubernetes.io/last-applied-configuration annotations with stale embedded service names.
+- config: Chart.yaml — helm/charts/admin/Chart.yaml
+- config: values.yaml — helm/charts/admin/values.yaml
+- config: Chart.yaml — helm/charts/agencyservice/Chart.yaml
+- config: values.yaml — helm/charts/agencyservice/values.yaml
+- config: Chart.yaml — helm/charts/clickhouse/Chart.yaml
+- config: values.yaml — helm/charts/clickhouse/values.yaml
+- config: Chart.yaml — helm/charts/consultingtypeservice/Chart.yaml
+- config: values.yaml — helm/charts/consultingtypeservice/values.yaml
+- config: Chart.yaml — helm/charts/element-call/Chart.yaml
+- config: values.yaml — helm/charts/element-call/values.yaml
+- config: Chart.yaml — helm/charts/element/Chart.yaml
+- config: values.yaml — helm/charts/element/values.yaml
+- config: Chart.yaml — helm/charts/frontend/Chart.yaml
+- config: values.yaml — helm/charts/frontend/values.yaml
+- config: Chart.yaml — helm/charts/health-dashboard/Chart.yaml
+- config: values.yaml — helm/charts/health-dashboard/values.yaml
+- config: Chart.yaml — helm/charts/keycloak/Chart.yaml
+- config: values.yaml — helm/charts/keycloak/values.yaml
+- config: Chart.yaml — helm/charts/livekit/Chart.yaml
+- config: values.yaml — helm/charts/livekit/values.yaml
+- config: Chart.yaml — helm/charts/mariadb/Chart.yaml
+- config: values.yaml — helm/charts/mariadb/values.yaml
+
+### Important Graph Nodes
+
+- concept: cert-manager TLS — Ingress TLS resources use cert-manager cluster issuer letsencrypt-prod.
+- concept: Kubernetes service DNS — Internal services use oriso-platform-* names under caritas.svc.cluster.local.
+- concept: Sensitive values in ConfigMaps — Some ConfigMaps render password-like values into non-Secret application.properties blocks.
+- concept: Environment drift — Values mix prod/local Spring profiles, dev domains, localhost local override, hostNetwork, and missing staging/prod overlays.
+- concept: Externally exposed utility UIs — Redis Commander, SigNoz, Storybook, Health Dashboard, and Status Page have public ingress definitions.
+- concept: Local Helm dependencies — The umbrella chart depends on local file:// subcharts and packaged chart archives.
+- concept: Keycloak dev mode — Keycloak starts with start-dev, hostNetwork true, default-style admin values, no probes, and no resources in chart values.
+- concept: latest tags and pullPolicy Never — Several application images use latest tags and pullPolicy Never, which couples deployments to node-local image state.
+- concept: LoadBalancer plus Ingress exposure — frontend, admin, and status-page values use LoadBalancer while separate ingress resources expose them too.
+- concept: oriso-local namespace override — values-local-macos.example.yaml switches local deployment to the oriso-local namespace.
+- concept: local-path storage class — Stateful charts use local-path storage, which is simple for k3s but weak for multi-node production recovery.
+- concept: Manual ingress apply — Ingress resources are not part of the umbrella chart and are applied separately with kubectl apply -f ingress/.
+- concept: caritas namespace — Most manifests and values deploy into the caritas namespace.
+- concept: Nginx Ingress — Ingress manifests assume nginx ingress class, regex rewrites, CORS annotations, and cert-manager TLS.
+- concept: No CI/CD definitions — The repository has no GitHub Actions, GitLab CI, Jenkinsfile, or similar pipeline definitions.
+- concept: No autoscaling manifests — No HorizontalPodAutoscaler manifests were found; most workloads default to one replica.
+- concept: No NetworkPolicy manifests — No NetworkPolicy manifests were found; service isolation depends on namespace/default cluster policy.
+- concept: No PodDisruptionBudget manifests — No PodDisruptionBudget manifests were found for stateful or critical workloads.
+- concept: Observability stack — SigNoz uses ClickHouse; OTEL Collector receives OTLP and forwards metrics; service-health-exporter polls backend health endpoints.
+- concept: oriso-dev.site domains — Dev/staging-like external domains route app, admin, API, auth, Matrix, LiveKit, SigNoz, Redis Commander, Status Page, and Storybook.
+- concept: Ingress backends without charts — UploadService and Rocket.Chat ingress/config references exist without matching Helm subcharts in this repo.
+- concept: RollingUpdate strategy — Most Deployment templates use RollingUpdate with 25 percent maxSurge and maxUnavailable.
+- concept: Secrets rendered from values — Several Secret templates and values files contain credential fields instead of referencing externally managed secret names.
+- concept: service-health-exporter runtime install — The health exporter installs Python packages at container startup and the script references an undefined exporter symbol.
+- concept: kubectl last-applied annotations committed — Several ingress files include kubectl.kubernetes.io/last-applied-configuration annotations with stale embedded service names.
+- concept: Stateful storage — MariaDB, ClickHouse, and SigNoz use StatefulSets/volumeClaimTemplates; MongoDB/Redis/Matrix mount existing PVCs.
+- config: Chart.yaml — helm/charts/admin/Chart.yaml
+- config: values.yaml — helm/charts/admin/values.yaml
+- config: Chart.yaml — helm/charts/agencyservice/Chart.yaml
+- config: values.yaml — helm/charts/agencyservice/values.yaml
+- config: Chart.yaml — helm/charts/clickhouse/Chart.yaml
+- config: values.yaml — helm/charts/clickhouse/values.yaml
+- config: Chart.yaml — helm/charts/consultingtypeservice/Chart.yaml
+- config: values.yaml — helm/charts/consultingtypeservice/values.yaml
+- config: Chart.yaml — helm/charts/element-call/Chart.yaml
+- config: values.yaml — helm/charts/element-call/values.yaml
+- config: Chart.yaml — helm/charts/element/Chart.yaml
+- config: values.yaml — helm/charts/element/values.yaml
+- config: Chart.yaml — helm/charts/frontend/Chart.yaml
+- config: values.yaml — helm/charts/frontend/values.yaml
+
+### Important Graph Edges
+
+- related: concept:external-utilities -> module:ingress-routing — Utility UIs are reachable through subdomain ingress manifests.
+- depends_on: concept:manual-ingress-apply -> module:ingress-routing — Ingress is applied separately from Helm.
+- related: concept:no-ci-cd -> module:rollout-strategy — Deployments are documented as manual Helm/kubectl commands.
+- related: concept:no-hpa -> module:rollout-strategy — Scaling is static replicas, not HPA-based.
+- contains: concept:no-networkpolicy -> module:risk-map — No NetworkPolicy manifests were found.
+- contains: concept:no-pdb -> module:risk-map — No PDB manifests were found.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:admin — helm/oriso-platform/Chart.yaml declares admin as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:agencyservice — helm/oriso-platform/Chart.yaml declares agencyservice as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:clickhouse — helm/oriso-platform/Chart.yaml declares clickhouse as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:consultingtypeservice — helm/oriso-platform/Chart.yaml declares consultingtypeservice as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:element-call — helm/oriso-platform/Chart.yaml declares element-call as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:element — helm/oriso-platform/Chart.yaml declares element as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:frontend — helm/oriso-platform/Chart.yaml declares frontend as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:health-dashboard — helm/oriso-platform/Chart.yaml declares health-dashboard as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:keycloak — helm/oriso-platform/Chart.yaml declares keycloak as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:livekit — helm/oriso-platform/Chart.yaml declares livekit as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:mariadb — helm/oriso-platform/Chart.yaml declares mariadb as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:matrix-synapse — helm/oriso-platform/Chart.yaml declares matrix-synapse as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:mongodb — helm/oriso-platform/Chart.yaml declares mongodb as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:otel-collector — helm/oriso-platform/Chart.yaml declares otel-collector as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:rabbitmq — helm/oriso-platform/Chart.yaml declares rabbitmq as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:redis-commander — helm/oriso-platform/Chart.yaml declares redis-commander as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:redis-exporter — helm/oriso-platform/Chart.yaml declares redis-exporter as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:redis — helm/oriso-platform/Chart.yaml declares redis as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:service-health-exporter — helm/oriso-platform/Chart.yaml declares service-health-exporter as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:signoz — helm/oriso-platform/Chart.yaml declares signoz as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:status-page — helm/oriso-platform/Chart.yaml declares status-page as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:storybook — helm/oriso-platform/Chart.yaml declares storybook as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:tenantservice — helm/oriso-platform/Chart.yaml declares tenantservice as a dependency.
+- configures: config:helm/oriso-platform/Chart.yaml -> service:chart:userservice — helm/oriso-platform/Chart.yaml declares userservice as a dependency.
+
+### Missing or Weak Areas
+
+- No major graph-shape gaps detected; still verify behavior in source before changing production flows.
+
+### Needs Verification
+
+- No major graph-shape gaps detected; still verify behavior in source before changing production flows.
+- unmapped-deployment-reference: signoz is referenced in Kubernetes graph but no target repo is included in this merge.
+- unmapped-deployment-reference: status is referenced in Kubernetes graph but no target repo is included in this merge.
+- unmapped-deployment-reference: matrix is referenced in Kubernetes graph but no target repo is included in this merge.
+- unmapped-deployment-reference: livekit is referenced in Kubernetes graph but no target repo is included in this merge.
+- unmapped-deployment-reference: uploadservice is referenced in Kubernetes graph but no target repo is included in this merge.
+- unmapped-deployment-reference: element is referenced in Kubernetes graph but no target repo is included in this merge.
+- unmapped-deployment-reference: health-dashboard is referenced in Kubernetes graph but no target repo is included in this merge.
+- unmapped-deployment-reference: rocketchat is referenced in Kubernetes graph but no target repo is included in this merge.

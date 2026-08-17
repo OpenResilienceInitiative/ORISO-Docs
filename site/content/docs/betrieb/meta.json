@@ -1,0 +1,11 @@
+{
+  "title": "Betrieb & Einrichtung",
+  "root": true,
+  "pages": [
+    "getting-started",
+    "architecture",
+    "deployment",
+    "configuration-und-testing",
+    "operations"
+  ]
+}

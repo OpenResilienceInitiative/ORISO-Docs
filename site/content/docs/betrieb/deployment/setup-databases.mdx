@@ -1,0 +1,243 @@
+---
+title: "Setup Databases"
+description: "Initialize databases using ORISO-Database repository with centralized schema management"
+---
+
+# Setup Databases
+
+Initialize all databases using the centralized ORISO-Database repository. **Liquibase is DISABLED** in all services - schemas are managed separately.
+
+<Callout>
+All database schemas are managed in the `ORISO-Database` repository, not by individual services. This provides centralized control and versioning of database schemas.
+</Callout>
+
+<Steps>
+<Step title="Verify Database Pods are Running">
+
+Ensure database pods are operational before proceeding. Databases are deployed via Helm.
+
+```bash
+# Check database pods
+kubectl get pods -n caritas | grep -E "mariadb|mongodb|postgres"
+
+# Should see:
+# oriso-platform-mariadb-xxx    1/1     Running
+# oriso-platform-mongodb-xxx    1/1     Running
+# oriso-platform-postgresql-xxx 1/1     Running (for Matrix)
+```
+
+<Callout type="success">
+All database pods should show status `Running` and `1/1` ready. If not, check [Deploy Infrastructure](/oriso-platform/deploy-infrastructure).
+</Callout>
+
+</Step>
+
+<Step title="Run Master Setup Script">
+
+Use the master setup script to initialize all databases at once.
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Database
+
+# Make script executable
+chmod +x scripts/setup/00-master-setup.sh
+
+# Run master setup
+./scripts/setup/00-master-setup.sh
+```
+
+<Callout>
+The master setup script will:
+1. Create all MariaDB databases (7 databases)
+2. Import all MariaDB schemas from `mariadb/*/schema.sql`
+3. Initialize MongoDB collections
+4. Create system users
+5. Verify all databases are accessible
+</Callout>
+
+<Callout type="success">
+The script should complete without errors. Verify by checking databases:
+```bash
+kubectl exec -n caritas deployment/oriso-platform-mariadb -- \
+  mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "SHOW DATABASES;"
+```
+</Callout>
+
+</Step>
+
+<Step title="Create System Users">
+
+Create system users required for Matrix and other services.
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Database/scripts
+
+# Apply system users job
+kubectl apply -f system-users-job.yaml
+
+# Wait for job to complete
+kubectl wait --for=condition=complete job/system-users -n caritas --timeout=300s
+
+# Check job logs
+kubectl logs job/system-users -n caritas
+```
+
+<Callout>
+System users created:
+- `caritas_admin` - Admin user for Caritas operations
+- `oriso_call_admin` - Admin for call management
+- `group-chat-system` - System user for group chats
+</Callout>
+
+<Callout type="success">
+Job should complete successfully. Check logs to verify all users were created.
+</Callout>
+
+</Step>
+
+<Step title="Verify Database Setup">
+
+Verify all databases and schemas are properly initialized.
+
+```bash
+# Check MariaDB databases
+kubectl exec -n caritas deployment/oriso-platform-mariadb -- \
+  mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "SHOW DATABASES;"
+
+# Check MariaDB tables (example: userservice)
+kubectl exec -n caritas deployment/oriso-platform-mariadb -- \
+  mysql -u root -p${MYSQL_ROOT_PASSWORD} userservice -e "SHOW TABLES;"
+
+# Check MongoDB databases
+kubectl exec -n caritas deployment/oriso-platform-mongodb -- \
+  mongosh --eval "show dbs"
+
+# Check MongoDB collections
+kubectl exec -n caritas deployment/oriso-platform-mongodb -- \
+  mongosh consulting_types --eval "show collections"
+```
+
+<Callout type="success">
+Expected MariaDB databases:
+- `tenantservice`
+- `userservice`
+- `consultingtypeservice`
+- `agencyservice`
+- `keycloak`
+- `caritas_master`
+- Additional service databases
+
+Expected MongoDB:
+- `consulting_types` database with `consultingTypes` collection
+</Callout>
+
+</Step>
+</Steps>
+
+## Database Schema Management
+
+### Schema Location
+All schemas are in `ORISO-Database`:
+```
+caritas-workspace/ORISO-Database/
+├── mariadb/
+│   ├── tenantservice/
+│   │   └── schema.sql
+│   ├── userservice/
+│   │   └── schema.sql
+│   ├── consultingtypeservice/
+│   │   └── schema.sql
+│   └── agencyservice/
+│       └── schema.sql
+├── mongodb/
+│   └── consulting_types/
+│       └── schema.json
+└── scripts/
+    └── setup/
+        └── 00-master-setup.sh
+```
+
+### Liquibase Status
+**Liquibase is DISABLED in all backend services.** This means:
+- Services do NOT auto-migrate on startup
+- All schema changes must be done manually via ORISO-Database scripts
+- Schema versions are tracked in ORISO-Database repository
+
+### Updating Schemas
+1. Update schema files in `ORISO-Database/mariadb/<service>/schema.sql`
+2. Run migration scripts manually
+3. Services will use updated schemas on next connection
+
+## Backup and Restore
+
+### Backup Scripts
+**Location:** `caritas-workspace/ORISO-Database/scripts/backup/`
+
+```bash
+# Backup all databases
+cd ~/online-beratung/caritas-workspace/ORISO-Database/scripts/backup
+./backup-all.sh
+
+# Backup MariaDB only
+./backup-mariadb.sh
+
+# Backup MongoDB only
+./backup-mongodb.sh
+```
+
+### Restore Scripts
+**Location:** `caritas-workspace/ORISO-Database/scripts/restore/`
+
+```bash
+# Restore MariaDB
+./restore-mariadb.sh <backup-file>
+
+# Restore MongoDB
+./restore-mongodb.sh <backup-file>
+```
+
+## Troubleshooting
+
+### Master Setup Script Fails
+```bash
+# Check script logs
+cd ~/online-beratung/caritas-workspace/ORISO-Database
+./scripts/setup/00-master-setup.sh 2>&1 | tee setup.log
+
+# Verify database pods are running
+kubectl get pods -n caritas | grep -E "mariadb|mongodb"
+
+# Check database connectivity
+kubectl exec -n caritas deployment/oriso-platform-mariadb -- \
+  mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "SELECT 1;"
+```
+
+### Schema Import Errors
+```bash
+# Check schema file exists
+ls -la ~/online-beratung/caritas-workspace/ORISO-Database/mariadb/*/schema.sql
+
+# Test schema import manually
+kubectl exec -i -n caritas deployment/oriso-platform-mariadb -- \
+  mysql -u root -p${MYSQL_ROOT_PASSWORD} userservice < \
+  ~/online-beratung/caritas-workspace/ORISO-Database/mariadb/userservice/schema.sql
+```
+
+### System Users Not Created
+```bash
+# Check job status
+kubectl get job system-users -n caritas
+
+# Check job logs
+kubectl logs job/system-users -n caritas
+
+# Re-run job if needed
+kubectl delete job system-users -n caritas
+kubectl apply -f ~/online-beratung/caritas-workspace/ORISO-Database/scripts/system-users-job.yaml
+```
+
+## Next Steps
+
+- [Deploy Infrastructure](/oriso-platform/deploy-infrastructure) - If databases not yet deployed
+- [Configure Keycloak](/oriso-platform/configure-keycloak) - Import Keycloak realm
+- [Post-Deployment](/oriso-platform/post-deployment) - Complete post-deployment steps

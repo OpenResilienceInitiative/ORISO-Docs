@@ -1,31 +1,30 @@
 ---
 title: ORISO Dokumentation
-description: Belegte Compliance und Architekturentscheidungen der ORISO-Plattform — aus dem Quellcode abgeleitet, versioniert im Repository ORISO-Docs.
+description: Produkt-, Architektur- und Betriebsdokumentation der ORISO-Plattform, dazu die Architekturentscheidungen. Der Quellcode erklärt sich daneben im Code-Graphen.
 ---
 
 <Cards>
-  <Card title="DSFA — Datenschutz-Folgenabschätzung" href="/legal/dsfa">
-    Die Kapitel, die das Entwicklungsteam verantworten kann: Schwellwertanalyse, Verfahren und
-    Technik, Rechtsgrundlagen, Betroffenenrechte, Ergebnis. Jede code-gestützte Aussage trägt ihren
-    Beleg mit Repository, Pfad und Zeilenbereich.
+  <Card title="Produkt" href="/produkt/overview/overview">
+    Was die Plattform kann: Beratungsformen, Rollen, Abläufe, Datenmodell, Grenzfälle.
   </Card>
-  <Card title="Architekturentscheidungen (ADR)" href="/decisions">
-    Die plattformweite ADR-Reihe 001–023. Die DSFA verweist auf sie; jede Nennung im Text ist
-    verlinkt.
+  <Card title="Plattform-Architektur" href="/plattform/architecture-hub/overview">
+    Wie sie gebaut ist: Dienste, Authentifizierung, Datenhaltung, Deployment, Repository-Karte.
+  </Card>
+  <Card title="Betrieb & Einrichtung" href="/betrieb/getting-started/clone-repositories">
+    Wie man sie aufsetzt und betreibt: Runbooks von der Serverinstallation bis zur Abnahme.
+  </Card>
+  <Card title="Architekturentscheidungen" href="/decisions">
+    ADR-001 bis ADR-023 — warum es so gebaut ist und was dabei verworfen wurde.
   </Card>
 </Cards>
 
-## Drei Regeln, nach denen die Texte geschrieben sind
+## Die drei Wahrheiten nebeneinander
 
-1. **Was nicht live ist, wird nicht als vorhanden beschrieben.** Der Status jedes Belegs
-   (`live`, `standardmäßig aus`, `nicht ausgeliefert`, `Live-Prüfung offen`) steht neben der Aussage.
-2. **Risiko benennen, Kompensation sofort nachschieben.**
-3. **Grenzen ehrlich benennen.** „Beinahe unmöglich", „nicht haltbar", „darf nicht behauptet werden"
-   sind Absicht.
+| Wo | Was dort steht | Wie es entsteht |
+|---|---|---|
+| **Diese Seite** | Erklärung: Produkt, Architektur, Betrieb, Entscheidungen | von Hand geschrieben, im Repository `ORISO-Docs` versioniert |
+| [Code-Graph](https://understand.oriso.org/) | der Quellcode selbst: Dateien, Funktionen, Aufrufwege je Repository | nächtlich erzeugt, deterministisch und ohne Sprachmodell |
+| [Rechtliches](https://understand.oriso.org/legal/dsfa/) | Datenschutz-Folgenabschätzung mit Belegen aus dem Code | aus Kapiteltexten erzeugt, Belege gegen den Graphen geprüft |
 
-## Wie die Belege funktionieren
-
-Unter jedem technischen Abschnitt liegt ein Block **„Belege aus dem Code"**. „Code anzeigen" öffnet
-den Quelltext aus dem Understand-Anything-Knowledge-Graphen mit hervorgehobenem Zeilenbereich;
-„GitHub" führt auf denselben Pfad im Repository. Die Belegtabelle selbst liegt maschinenlesbar in
-`oriso-platform/dsfa-text/evidence-map.yaml`.
+Widersprechen sich Seite und Graph, gilt der Graph — er wird aus dem Code gebaut, dieser Text von
+Menschen gepflegt.

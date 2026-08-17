@@ -1,0 +1,12 @@
+{
+  "title": "Plattform-Architektur",
+  "root": true,
+  "pages": [
+    "architecture-hub",
+    "core-systems",
+    "platform-flows",
+    "repository-graphs",
+    "graphs-und-diagrams",
+    "operations"
+  ]
+}

@@ -7,7 +7,7 @@
 // The sources stay the single source of truth; everything written here is git-ignored and
 // regenerated on every `pnpm dev` / `pnpm build`.
 
-import { readFileSync, writeFileSync, mkdirSync, rmSync, readdirSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, rmSync, readdirSync, existsSync, cpSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse as parseYaml } from 'yaml';
@@ -273,9 +273,146 @@ function syncDsfa(byChapter, adrKnown) {
   return pages;
 }
 
+// ------------------------------------------------------------------ Produkt- und Plattformdoku
+
+/**
+ * Übernimmt die vorhandenen MDX-Seiten (bislang Mintlify) in die Site.
+ *
+ * `docs.json` ist die Navigationsquelle: je Tab ein Wurzelordner, je Gruppe ein
+ * Unterordner mit `meta.json`. Die Mintlify-Komponenten werden auf ihre Fumadocs-
+ * Entsprechung abgebildet — ausserhalb von Codebloecken, damit Beispiele unangetastet
+ * bleiben (in den Runbooks stehen Heredocs mit `<<EOF`).
+ */
+const COMPONENT_MAP = [
+  [/<Note>/g, '<Callout>'], [/<\/Note>/g, '</Callout>'],
+  [/<Info>/g, '<Callout>'], [/<\/Info>/g, '</Callout>'],
+  [/<Tip>/g, '<Callout type="info">'], [/<\/Tip>/g, '</Callout>'],
+  [/<Check>/g, '<Callout type="success">'], [/<\/Check>/g, '</Callout>'],
+  [/<Warning>/g, '<Callout type="warn">'], [/<\/Warning>/g, '</Callout>'],
+  [/<CardGroup[^>]*>/g, '<Cards>'], [/<\/CardGroup>/g, '</Cards>'],
+  [/<AccordionGroup>/g, '<Accordions type="single">'], [/<\/AccordionGroup>/g, '</Accordions>'],
+  [/<Frame[^>]*>/g, ''], [/<\/Frame>/g, ''],
+];
+
+/**
+ * Mintlify: <Tabs><Tab title="A">…</Tab></Tabs>. Fumadocs braucht die Beschriftungen
+ * als `items` am Tabs-Element und `value` je Tab.
+ */
+function migrateTabs(text) {
+  return text.replace(/<Tabs>([\s\S]*?)<\/Tabs>/g, (whole, inner) => {
+    const titles = [...inner.matchAll(/<Tab\s+title="([^"]*)"/g)].map((m) => m[1]);
+    if (!titles.length) return whole;
+    const body = inner.replace(/<Tab\s+title="([^"]*)"/g, (_m, t) => `<Tab value="${t}"`);
+    return `<Tabs items={${JSON.stringify(titles)}}>${body}</Tabs>`;
+  });
+}
+
+/** Wendet eine Ersetzung nur ausserhalb von ``` -Bloecken an. */
+function outsideCode(text, apply) {
+  return text
+    .split(/(^```[\s\S]*?^```)/m)
+    .map((part) => (part.startsWith('```') ? part : apply(part)))
+    .join('');
+}
+
+function migrateMdx(raw) {
+  // Tabs zuerst, auf dem ganzen Text: zwischen <Tabs> und </Tabs> stehen Codebloecke,
+  // eine abschnittsweise Ersetzung wuerde das Paar nie zusammen sehen.
+  const withTabs = migrateTabs(raw);
+  let out = outsideCode(withTabs, (t) => {
+    for (const [re, to] of COMPONENT_MAP) t = t.replace(re, to);
+    // <Card title="…" icon="x" href="…"> — Fumadocs kennt `icon` nur als Node, nicht als Name
+    t = t.replace(/(<Card\b[^>]*?)\s+icon=(?:"[^"]*"|\{[^}]*\})/g, '$1');
+    // Geschweifte Klammern sind in MDX ein JSX-Ausdruck. In diesen Seiten stehen sie
+    // ausschliesslich in Prosa und Tabellen (`token={JWT}`, `{ client: bool }`) — geprüft
+    // 2026-08-17: keine Komponente nutzt Ausdrucks-Attribute. Also maskieren, sonst
+    // scheitert der Build mit „Could not parse expression with acorn".
+    t = t.replace(/(<[A-Za-z][^>]*>)|([{}])/g, (m, tag, brace) =>
+      tag ?? (brace === '{' ? '&#123;' : '&#125;'));  // Tags bleiben unangetastet
+    return t;
+  });
+  // Frontmatter: Mintlify nutzt dieselben Schluessel (title, description) — nichts zu tun.
+  return out;
+}
+
+/** Bilder der Alt-Doku unter public/ bereitstellen — die Seiten verweisen absolut darauf. */
+function copyDocsAssets() {
+  let n = 0;
+  for (const rel of ['oriso-platform/assets', 'product/assets', 'logo']) {
+    const src = join(repo, rel);
+    if (!existsSync(src)) continue;
+    const dst = join(site, 'public', rel);
+    rmSync(dst, { recursive: true, force: true });
+    cpSync(src, dst, { recursive: true });
+    n += readdirSync(dst).length;
+  }
+  return n;
+}
+
+function syncProductDocs() {
+  const cfgPath = join(repo, 'docs.json');
+  if (!existsSync(cfgPath)) return [];
+  const cfg = JSON.parse(readUtf8(cfgPath));
+  const tabs = cfg.navigation?.tabs ?? [];
+  // Tab-Titel -> Ordnername und Anzeigename in der Seitenleiste
+  const TAB_DIRS = {
+    'Product': ['produkt', 'Produkt'],
+    'ORISO Platform Architecture': ['plattform', 'Plattform-Architektur'],
+    'ORISO Platform Setup': ['betrieb', 'Betrieb & Einrichtung'],
+  };
+  const roots = [];
+  let pages = 0;
+  const missing = [];
+
+  for (const tab of tabs) {
+    const [dir, label] = TAB_DIRS[tab.tab] ?? [tab.tab.toLowerCase().replace(/\W+/g, '-'), tab.tab];
+    const outRoot = join(OUT_DOCS, dir);
+    rmSync(outRoot, { recursive: true, force: true });
+    mkdirSync(outRoot, { recursive: true });
+    const groupDirs = [];
+
+    for (const group of tab.groups ?? []) {
+      const gdir = group.group.toLowerCase().replace(/&/g, 'und').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      const gPath = join(outRoot, gdir);
+      mkdirSync(gPath, { recursive: true });
+      const gPages = [];
+
+      for (const page of group.pages ?? []) {
+        // Mintlify referenziert ohne Endung; im Repo liegen .mdx und .md gemischt.
+        const src = [page + '.mdx', page + '.md'].map((c) => join(repo, c)).find(existsSync);
+        if (!src) { missing.push(page); continue; }
+        const name = page.split('/').pop();
+        // .md-Quellen bleiben .md — sie enthalten keine Komponenten und dürfen nicht
+        // versehentlich als JSX geparst werden (spitze Klammern in Beispielen).
+        const isMdx = src.endsWith('.mdx');
+        writeFileSync(join(gPath, name + (isMdx ? '.mdx' : '.md')),
+                      isMdx ? migrateMdx(readUtf8(src)) : readUtf8(src));
+        gPages.push(name);
+        pages++;
+      }
+      if (!gPages.length) { rmSync(gPath, { recursive: true, force: true }); continue; }
+      writeFileSync(join(gPath, 'meta.json'),
+        JSON.stringify({ title: group.group, pages: gPages }, null, 2) + '\n');
+      groupDirs.push(gdir);
+    }
+
+    writeFileSync(join(outRoot, 'meta.json'),
+      JSON.stringify({ title: label, root: true, pages: groupDirs }, null, 2) + '\n');
+    roots.push(dir);
+  }
+  console.log(`[sync-content] ${pages} Produkt-/Plattformseiten übernommen` +
+              (missing.length ? `, ${missing.length} fehlen: ${missing.slice(0, 4).join(', ')}` : ''));
+  return roots;
+}
+
 // ------------------------------------------------------------------ main
 
+// Die DSFA lebt als eigenständiges Dokument auf understand.oriso.org/legal/dsfa/ und wird
+// hier bewusst NICHT gerendert — diese Site trägt die Entwickler- und Produktdokumentation.
+rmSync(join(OUT_DOCS, 'legal'), { recursive: true, force: true });
 const adrKnown = syncAdrs();
-const byChapter = loadEvidence();
-const dsfaPages = syncDsfa(byChapter, adrKnown);
-console.log(`[sync-content] ${adrKnown.size} ADRs, ${dsfaPages.length} DSFA pages, ${[...byChapter.values()].flat().length} evidence entries`);
+const roots = syncProductDocs();
+const assets = copyDocsAssets();
+writeFileSync(join(OUT_DOCS, 'meta.json'),
+  JSON.stringify({ pages: ['index', ...roots, 'decisions'] }, null, 2) + '\n');
+console.log(`[sync-content] ${adrKnown.size} ADRs, ${assets} Bilddateien, Wurzeln: ${roots.join(', ')}`);

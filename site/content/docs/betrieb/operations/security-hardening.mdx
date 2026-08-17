@@ -1,0 +1,227 @@
+---
+title: "Security Hardening"
+description: "Change default passwords, setup Fail2Ban, disable root SSH, and enable security features"
+---
+
+# Security Hardening
+
+Apply security best practices to harden your ORISO Platform v3.0.0 deployment on Kubernetes.
+
+<Callout type="warn">
+These security measures should be applied before exposing the platform to production traffic.
+</Callout>
+
+<Callout>
+Kubernetes provides additional security layers:
+- RBAC for access control
+- Network Policies for network segmentation
+- Secrets management for sensitive data
+- TLS automation via cert-manager
+</Callout>
+
+<Steps>
+<Step title="Change Default Passwords">
+
+Change all default passwords to strong, unique passwords.
+
+**Change Keycloak Admin Password:**
+
+```bash
+KEYCLOAK_POD=$(kubectl get pods -n caritas -l app=keycloak -o jsonpath="{.items[0].metadata.name}")
+
+kubectl exec -n caritas $KEYCLOAK_POD -- \
+  /opt/keycloak/bin/kcadm.sh config credentials \
+  --server http://localhost:8080 \
+  --realm master \
+  --user admin \
+  --password admin
+
+kubectl exec -n caritas $KEYCLOAK_POD -- \
+  /opt/keycloak/bin/kcadm.sh update users/$(kubectl exec -n caritas $KEYCLOAK_POD -- \
+  /opt/keycloak/bin/kcadm.sh get users -r master -q username=admin --fields id --format csv | tail -n 1) \
+  -r master -s 'credentials=[{"type":"password","value":"NEW_STRONG_PASSWORD","temporary":false}]'
+```
+
+**Change MariaDB Root Password:**
+
+```bash
+# Update Kubernetes secret
+kubectl create secret generic mariadb-secrets -n caritas \
+  --from-literal=MYSQL_ROOT_PASSWORD=NEW_STRONG_PASSWORD \
+  --from-literal=MYSQL_PASSWORD=NEW_STRONG_PASSWORD \
+  --dry-run=client -o yaml | kubectl apply -f -
+
+# Restart MariaDB to pick up new password
+kubectl rollout restart deployment/oriso-platform-mariadb -n caritas
+```
+
+<Callout type="warn">
+Update Helm values with new password and restart all services that use MariaDB.
+</Callout>
+
+</Step>
+
+<Step title="Setup Fail2Ban (SSH Protection)">
+
+Install and configure Fail2Ban to protect against brute force attacks.
+
+```bash
+# Install Fail2Ban
+sudo apt install -y fail2ban
+
+# Configure Fail2Ban
+sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+
+# Edit jail.local
+sudo nano /etc/fail2ban/jail.local
+
+# Add/modify:
+# [sshd]
+# enabled = true
+# port = ssh
+# filter = sshd
+# logpath = /var/log/auth.log
+# maxretry = 3
+# bantime = 3600
+
+# Start Fail2Ban
+sudo systemctl enable fail2ban
+sudo systemctl start fail2ban
+
+# Check status
+sudo fail2ban-client status
+sudo fail2ban-client status sshd
+```
+
+<Callout type="success">
+Fail2Ban should be active and monitoring SSH.
+</Callout>
+
+</Step>
+
+<Step title="Disable Root SSH Login">
+
+Disable root SSH login for better security.
+
+```bash
+# Edit SSH config
+sudo nano /etc/ssh/sshd_config
+
+# Change:
+PermitRootLogin no
+PasswordAuthentication no  # Use SSH keys only
+PubkeyAuthentication yes
+
+# Restart SSH
+sudo systemctl restart sshd
+```
+
+<Callout type="warn">
+Ensure you have SSH key access before disabling password authentication, or you may lock yourself out!
+</Callout>
+
+</Step>
+
+<Step title="Setup Automatic Security Updates">
+
+Enable automatic security updates.
+
+```bash
+# Install unattended-upgrades
+sudo apt install -y unattended-upgrades
+
+# Configure
+sudo dpkg-reconfigure -plow unattended-upgrades
+
+# Edit config
+sudo nano /etc/apt/apt.conf.d/50unattended-upgrades
+
+# Enable automatic updates
+echo 'APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "1";
+APT::Periodic::AutocleanInterval "7";' | sudo tee /etc/apt/apt.conf.d/20auto-upgrades
+```
+
+</Step>
+
+<Step title="Enable Audit Logging">
+
+Enable audit logging for security monitoring.
+
+```bash
+# Install auditd
+sudo apt install -y auditd
+
+# Enable auditd
+sudo systemctl enable auditd
+sudo systemctl start auditd
+
+# Check status
+sudo systemctl status auditd
+```
+
+<Callout type="success">
+Audit daemon should be active and running.
+</Callout>
+
+</Step>
+</Steps>
+
+## Kubernetes Security
+
+### RBAC Configuration
+```bash
+# Review RBAC policies
+kubectl get role -n caritas
+kubectl get rolebinding -n caritas
+
+# Limit service account permissions
+# Use least-privilege principle
+```
+
+### Network Policies
+```bash
+# Create NetworkPolicy to restrict pod-to-pod communication
+# Example: Only allow backend services to access databases
+kubectl apply -f network-policies.yaml
+```
+
+### Secrets Management
+```bash
+# Rotate secrets regularly
+kubectl create secret generic <secret-name> -n caritas \
+  --from-literal=key=new-value \
+  --dry-run=client -o yaml | kubectl apply -f -
+
+# Use external secret management (e.g., Sealed Secrets, External Secrets Operator)
+```
+
+### TLS Everywhere
+- All external access via Ingress with TLS
+- Cert-manager automatically manages certificates
+- Internal services use ClusterIP (not exposed externally)
+
+### Database Security
+- Databases use ClusterIP (internal only)
+- No direct external database access
+- Strong passwords in Kubernetes Secrets
+- Regular password rotation
+
+## Additional Recommendations
+
+- Regularly review security logs
+- Keep all packages up to date
+- Monitor failed login attempts
+- Use firewall rules to restrict access (ports 80/443 only)
+- Implement network segmentation via Kubernetes Network Policies
+- Regular security audits
+- Rotate Kubernetes secrets regularly
+- Monitor pod security contexts
+- Use Pod Security Standards
+- Enable audit logging for Kubernetes API
+
+## Next Steps
+
+- [Troubleshooting](/oriso-platform/troubleshooting) - Common issues and solutions
+- [Quick Reference](/oriso-platform/quick-reference) - Essential commands
+
