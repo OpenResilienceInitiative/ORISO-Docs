@@ -15,7 +15,14 @@ export const gitConfig = {
 /** Branch the Understand-Anything graph is built from — GitHub deep links point there. */
 export const codeBranch = 'pre-dev';
 
-/** Understand-Anything dashboards on the same origin: repo -> { slug, token }. */
+/**
+ * Understand-Anything dashboards on the same origin: repo -> { slug, token }.
+ *
+ * These tokens ship in the client bundle — they are read-only viewer tokens for
+ * dashboards that are public anyway. Repositories that are private on GitHub
+ * (ORISO-E2E, ORISO-Infra) must NOT be listed here: their source would become
+ * world-readable through the viewer. They are additionally blocked at the proxy.
+ */
 export const uaDashboards: Record<string, { slug: string; token: string }> = {
   'ORISO-Frontend': { slug: 'frontend', token: 'oriso-frontend-dashboard' },
   'ORISO-Admin': { slug: 'admin-service', token: 'oriso-admin-dashboard' },
@@ -26,8 +33,6 @@ export const uaDashboards: Record<string, { slug: string; token: string }> = {
   'ORISO-Keycloak': { slug: 'keycloak', token: 'oriso-keycloak-dashboard' },
   'ORISO-Helm': { slug: 'helm', token: 'oriso-helm-dashboard' },
   'ORISO-Docs': { slug: 'docs', token: 'oriso-docs-dashboard' },
-  'ORISO-E2E': { slug: 'e2e', token: 'oriso-e2e-dashboard' },
-  'ORISO-Infra': { slug: 'infra', token: 'oriso-infra-dashboard' },
 };
 
 /** Where the graph explorer lives when this site is NOT hosted next to it. */
