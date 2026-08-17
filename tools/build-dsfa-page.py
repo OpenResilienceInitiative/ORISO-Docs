@@ -221,6 +221,72 @@ def template_section(md: str, key: str) -> str:
     return "\n".join(lines[start + 1: end])
 
 
+# ---------------------------------------------------------------- Live-Stammdaten
+
+# Kleines Skript am Seitenende: holt die Stammdaten aus dem Administrationsbereich und
+# ersetzt die Vorgabewerte. Faellt der Abruf aus (kein Netz, Datei lokal geoeffnet,
+# PDF-Erzeugung), bleiben die im Dokument stehenden Werte unveraendert stehen.
+LIVE_MASTER_DATA_SCRIPT = r"""
+<script>
+/* Stammdaten aus dem Administrationsbereich (TenantService: GET /tenant/public/dpia,
+   gleiche Herkunft ueber den Proxy /api/dpia). Schlaegt der Abruf fehl, bleibt der im
+   Dokument gedruckte Stand stehen — die Seite muss auch offline vollstaendig sein. */
+(function () {
+  var URL_ = '/api/dpia';
+  var d = function (n) { return document.querySelectorAll('[title$="' + n + '"]'); };
+  var date = function (iso) {
+    if (!iso) return null;
+    var p = String(iso).split('-');
+    return p.length === 3 ? p[2] + '.' + p[1] + '.' + p[0] : iso;
+  };
+  var put = function (key, value) {
+    if (value === null || value === undefined || value === '') return 0;
+    var els = d(key), n = 0;
+    els.forEach(function (el) { el.textContent = String(value); el.dataset.live = '1'; n++; });
+    return n;
+  };
+  fetch(URL_, { headers: { Accept: 'application/json' } })
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function (m) {
+      var o = m.operator || {}, a = m.supervisoryAuthority || {},
+          doc = m.document || {}, k = m.keyFigures || {}, n = 0;
+      n += put('operator.legalName', o.legalName);
+      n += put('operator.address', (o.address || '').replace(/\n/g, ', ') || null);
+      n += put('operator.dpoName', o.dpoName);
+      n += put('operator.department', o.department);
+      n += put('operator.contact', [o.contactEmail, o.contactPhone].filter(Boolean).join(' · ') || null);
+      n += put('legal.supervisoryAuthority',
+               [a.name, (a.address || '').replace(/\n/g, ', ')].filter(Boolean).join(', ') || null);
+      n += put('document.nextReviewDate', date(doc.nextReviewDate));
+      n += put('stats.tenants', k.tenants && k.tenants.count);
+      n += put('stats.counsellingCentres', k.counsellingCentres && k.counsellingCentres.count);
+      n += put('stats.activeCounsellors', k.activeCounsellors && k.activeCounsellors.count);
+      n += put('stats.registeredClients', k.registeredClients && k.registeredClients.count);
+      var asOf = (k.tenants && k.tenants.asOfDate) || doc.documentDate;
+      n += put('stats.referenceDate', date(asOf));
+      if (n) {
+        var s = document.createElement('span');
+        s.className = 'live-badge';
+        s.textContent = 'Stammdaten aus dem Administrationsbereich übernommen';
+        s.title = n + ' Felder aktualisiert';
+        var host = document.querySelector('.appbar-tools') || document.querySelector('.appbar');
+        if (host) host.appendChild(s);
+      }
+    })
+    .catch(function () { /* Vorgabewerte des Dokuments bleiben stehen */ });
+})();
+</script>
+"""
+
+LIVE_BADGE_CSS = (
+    "  .live-badge { margin-left: 10px; padding: 3px 8px; border-radius: 999px;\\n"
+    "      font: 600 10px/1.4 var(--mono,monospace); letter-spacing: .03em;\\n"
+    "      background: #e7f4ec; color: #1c6b3f; white-space: nowrap; }\\n"
+    "  [data-live] { background: #f2fbf5; }\\n"
+    "  @media print { .live-badge { display: none; } [data-live] { background: none; } }\\n"
+)
+
+
 # ---------------------------------------------------------------- Stammdaten
 
 # Die Seite fuehrt die Betreiber-Stammdaten in <span class="dyn" title="…">-Feldern.
@@ -613,6 +679,9 @@ def main() -> int:
         )
 
     page_out, filled = fill_master_data(head + new_body + tail)
+    if "live-badge" not in page_out:
+        page_out = page_out.replace("  .qnote--todo {", LIVE_BADGE_CSS + "  .qnote--todo {", 1)
+        page_out = page_out.replace("</body>", LIVE_MASTER_DATA_SCRIPT + "</body>", 1)
     OUT.write_text(page_out, encoding="utf-8")
 
     words = len(re.sub(r"<[^>]+>", " ", new_body).split())
