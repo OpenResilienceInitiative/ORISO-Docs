@@ -2,7 +2,7 @@ import { Inter } from 'next/font/google';
 import { Provider } from '@/components/provider';
 import './global.css';
 import type { Metadata } from 'next';
-import { appName } from '@/lib/shared';
+import { appName, basePath } from '@/lib/shared';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -10,6 +10,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: { default: appName, template: `%s · ${appName}` },
+  icons: { icon: `${basePath}/favicon.svg` },
   robots: { index: false, follow: false },
 };
 

@@ -346,6 +346,11 @@ function copyDocsAssets() {
     cpSync(src, dst, { recursive: true });
     n += readdirSync(dst).length;
   }
+  const favicon = join(repo, 'favicon.svg');
+  if (existsSync(favicon)) {
+    cpSync(favicon, join(site, 'public', 'favicon.svg'));
+    n += 1;
+  }
   return n;
 }
 

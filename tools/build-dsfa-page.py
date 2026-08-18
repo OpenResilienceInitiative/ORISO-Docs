@@ -245,11 +245,29 @@ LIVE_MASTER_DATA_SCRIPT = r"""
     els.forEach(function (el) { el.textContent = String(value); el.dataset.live = '1'; n++; });
     return n;
   };
+  var asset = function (value, fallbackType) {
+    if (!value) return null;
+    var clean = String(value).trim();
+    if (/^(https?:|data:image\/)/i.test(clean)) return clean;
+    return 'data:' + fallbackType + ';base64,' + clean;
+  };
   fetch(URL_, { headers: { Accept: 'application/json' } })
     .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(function (m) {
       var o = m.operator || {}, a = m.supervisoryAuthority || {},
-          doc = m.document || {}, k = m.keyFigures || {}, n = 0;
+          doc = m.document || {}, k = m.keyFigures || {}, n = 0,
+          branding = m.branding || {}, theming = branding.theming || {};
+      var logo = asset(theming.logo || theming.associationLogo, 'image/png');
+      if (logo) {
+        document.querySelectorAll('[data-branding-placeholder="logo"]').forEach(function (el) {
+          el.src = logo; el.dataset.live = '1'; n++;
+        });
+      }
+      var favicon = asset(theming.favicon, 'image/x-icon');
+      if (favicon) {
+        var icon = document.getElementById('operator-favicon');
+        if (icon) { icon.href = favicon; icon.dataset.live = '1'; n++; }
+      }
       n += put('operator.legalName', o.legalName);
       n += put('operator.address', (o.address || '').replace(/\n/g, ', ') || null);
       n += put('operator.dpoName', o.dpoName);
@@ -285,6 +303,41 @@ LIVE_BADGE_CSS = (
     "  [data-live] { background: #f2fbf5; }\\n"
     "  @media print { .live-badge { display: none; } [data-live] { background: none; } }\\n"
 )
+
+
+def add_branding_placeholders(page: str) -> str:
+    """Keep usable repository assets offline and mark them for live branding replacement."""
+    favicon = (
+        '<link id="operator-favicon" rel="icon" href="favicon.svg" '
+        'data-branding-placeholder="favicon">'
+    )
+    if 'id="operator-favicon"' not in page:
+        page = page.replace("</head>", favicon + "\n</head>", 1)
+
+    appbar_logo = (
+        '<span class="appbar-logo" title="aus Admin-Panel Global Settings: operator.logo">'
+        '<img id="operator-logo" data-branding-placeholder="logo" src="logo/light.svg" '
+        'alt="Betreiber-Logo"></span>'
+    )
+    page = re.sub(
+        r'<span class="appbar-logo"[^>]*>.*?</span>', appbar_logo, page, count=1, flags=re.S
+    )
+    document_logo = (
+        '<div class="logo-slot" title="aus Admin-Panel Global Settings: operator.logo">'
+        '<img data-branding-placeholder="logo" src="logo/light.svg" alt="Betreiber-Logo"></div>'
+    )
+    page = re.sub(
+        r'<div class="logo-slot"[^>]*>.*?</div>', document_logo, page, count=1, flags=re.S
+    )
+    if ".appbar-logo img" not in page:
+        page = page.replace(
+            "  .appbar-title {",
+            "  .appbar-logo img { display:block; width:32px; height:32px; object-fit:contain; }\n"
+            "  .logo-slot img { display:block; max-width:180px; max-height:72px; object-fit:contain; }\n"
+            "  .appbar-title {",
+            1,
+        )
+    return page
 
 
 # ---------------------------------------------------------------- Stammdaten
@@ -679,6 +732,7 @@ def main() -> int:
         )
 
     page_out, filled = fill_master_data(head + new_body + tail)
+    page_out = add_branding_placeholders(page_out)
     if "live-badge" not in page_out:
         page_out = page_out.replace("  .qnote--todo {", LIVE_BADGE_CSS + "  .qnote--todo {", 1)
         page_out = page_out.replace("</body>", LIVE_MASTER_DATA_SCRIPT + "</body>", 1)
