@@ -1,0 +1,17 @@
+{
+  "title": "Repository Graphs",
+  "pages": [
+    "ORISO-Frontend",
+    "ORISO-Admin",
+    "ORISO-UserService",
+    "ORISO-AgencyService",
+    "ORISO-ConsultingTypeService",
+    "ORISO-TenantService",
+    "ORISO-Database",
+    "ORISO-Keycloak",
+    "ORISO-Kubernetes",
+    "ORISO-Helm",
+    "ORISO-E2E",
+    "ORISO-Infra"
+  ]
+}

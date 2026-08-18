@@ -1,0 +1,13 @@
+{
+  "title": "Deployment",
+  "pages": [
+    "deploy-infrastructure",
+    "configure-keycloak",
+    "setup-databases",
+    "deploy-backend-services",
+    "deploy-frontend",
+    "deploy-matrix",
+    "deploy-nginx",
+    "deploy-monitoring"
+  ]
+}

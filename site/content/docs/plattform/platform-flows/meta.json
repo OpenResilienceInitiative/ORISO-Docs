@@ -1,0 +1,8 @@
+{
+  "title": "Platform Flows",
+  "pages": [
+    "tenant-lifecycle",
+    "user-management-flow",
+    "local-development"
+  ]
+}

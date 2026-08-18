@@ -1,0 +1,10 @@
+{
+  "title": "Operations",
+  "pages": [
+    "coding-standards",
+    "backup-configuration",
+    "security-hardening",
+    "troubleshooting",
+    "quick-reference"
+  ]
+}

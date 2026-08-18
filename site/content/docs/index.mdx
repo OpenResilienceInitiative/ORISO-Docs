@@ -1,0 +1,30 @@
+---
+title: ORISO Dokumentation
+description: Produkt-, Architektur- und Betriebsdokumentation der ORISO-Plattform, dazu die Architekturentscheidungen. Der Quellcode erklärt sich daneben im Code-Graphen.
+---
+
+<Cards>
+  <Card title="Produkt" href="/produkt/overview/overview">
+    Was die Plattform kann: Beratungsformen, Rollen, Abläufe, Datenmodell, Grenzfälle.
+  </Card>
+  <Card title="Plattform-Architektur" href="/plattform/architecture-hub/overview">
+    Wie sie gebaut ist: Dienste, Authentifizierung, Datenhaltung, Deployment, Repository-Karte.
+  </Card>
+  <Card title="Betrieb & Einrichtung" href="/betrieb/getting-started/clone-repositories">
+    Wie man sie aufsetzt und betreibt: Runbooks von der Serverinstallation bis zur Abnahme.
+  </Card>
+  <Card title="Architekturentscheidungen" href="/decisions">
+    ADR-001 bis ADR-023 — warum es so gebaut ist und was dabei verworfen wurde.
+  </Card>
+</Cards>
+
+## Die drei Wahrheiten nebeneinander
+
+| Wo | Was dort steht | Wie es entsteht |
+|---|---|---|
+| **Diese Seite** | Erklärung: Produkt, Architektur, Betrieb, Entscheidungen | von Hand geschrieben, im Repository `ORISO-Docs` versioniert |
+| [Code-Graph](https://understand.oriso.org/) | der Quellcode selbst: Dateien, Funktionen, Aufrufwege je Repository | nächtlich erzeugt, deterministisch und ohne Sprachmodell |
+| [Rechtliches](https://understand.oriso.org/legal/dsfa/) | Datenschutz-Folgenabschätzung mit Belegen aus dem Code | aus Kapiteltexten erzeugt, Belege gegen den Graphen geprüft |
+
+Widersprechen sich Seite und Graph, gilt der Graph — er wird aus dem Code gebaut, dieser Text von
+Menschen gepflegt.

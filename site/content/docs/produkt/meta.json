@@ -1,0 +1,11 @@
+{
+  "title": "Produkt",
+  "root": true,
+  "pages": [
+    "overview",
+    "architecture-und-roles",
+    "core-features",
+    "flows-und-internals",
+    "design-und-quality"
+  ]
+}

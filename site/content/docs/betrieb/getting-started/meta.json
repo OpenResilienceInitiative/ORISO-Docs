@@ -1,0 +1,12 @@
+{
+  "title": "Getting Started",
+  "pages": [
+    "index",
+    "overview",
+    "initial-setup",
+    "network-firewall",
+    "install-software",
+    "clone-repositories",
+    "setup-kubernetes"
+  ]
+}

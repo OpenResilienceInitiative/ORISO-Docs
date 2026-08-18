@@ -1,0 +1,88 @@
+---
+title: "ORISO Platform Documentation"
+description: "Complete setup and deployment guide for ORISO Platform"
+---
+
+# Welcome to ORISO Platform Documentation
+
+Welcome to the ORISO (Online Beratung) Platform documentation. ORISO is a multi-tenant, anonymous online counseling platform. This documentation covers both the **product** (what it does and why) and the **operations** (how to deploy and run it).
+
+## Where to Start
+
+<Cards>
+<Card title="Product Overview" href="/product/overview">
+Understand what ORISO is, its roles, features and flows
+</Card>
+
+<Card title="Summary (TL;DR)" href="/product/summary">
+One-page compressed view of the entire system
+</Card>
+
+<Card title="Platform Architecture Hub" href="/docs/platform/overview">
+Enriched cross-repository graph, repo summaries, auth, data, backend and deployment docs
+</Card>
+
+<Card title="Platform Setup" href="/oriso-platform/overview">
+Server requirements and deployment
+</Card>
+
+<Card title="Quick Reference" href="/oriso-platform/quick-reference">
+Essential commands and troubleshooting tips
+</Card>
+</Cards>
+
+## Three Documentation Tracks
+
+The docs are split into three top-level tabs:
+
+- **Product** — for product managers, developers, designers and AI systems reasoning about ORISO. Covers user roles, the live-chat flow, GDPR inheritance, the data model, edge cases and the Figma-derived UI/UX.
+- **ORISO Platform Architecture** — for developers, backend engineers, frontend engineers and DevOps. Covers the cross-repository knowledge graph, service ownership, authentication, data model, backend services, tenant lifecycle and local development.
+- **ORISO Platform Setup** — for operators and SREs. Covers server requirements, Kubernetes (k3s + Helm), database setup, monitoring, security hardening and troubleshooting.
+
+## What is ORISO Platform?
+
+ORISO Platform v3.0.0 is a comprehensive online consultation platform deployed on Kubernetes using Helm charts:
+
+- **21 Services** - Deployed via single Helm umbrella chart
+- **Kubernetes/Helm** - k3s with Helm 3.x for deployment
+- **Microservices** - Spring Boot 2.7.14 backend services (Java 17)
+- **Authentication** - Keycloak OIDC/OAuth2
+- **Communication** - Matrix Synapse + LiveKit for chat and video
+- **Databases** - MariaDB (7 DBs), MongoDB, PostgreSQL (Matrix)
+- **Frontend** - React 18 + Vite 4 applications
+- **Monitoring** - SignOZ observability + Health Dashboard
+
+## Documentation Structure
+
+The setup documentation is organized into four main sections, and the architecture hub adds cross-repository system documentation generated from the existing Understand-Anything graphs:
+
+1. **Getting Started** - Server requirements, initial setup, and software installation
+2. **Deployment** - Step-by-step deployment of all services
+3. **Configuration & Testing** - Post-deployment configuration and verification
+4. **Operations** - Backup, security, troubleshooting, and reference guides
+
+## Prerequisites
+
+Before you begin, ensure you have:
+
+- ✅ Kubernetes cluster (k3s recommended, 1.24+)
+- ✅ Helm 3.x installed
+- ✅ kubectl configured
+- ✅ Nginx Ingress Controller installed
+- ✅ Cert-Manager installed (for TLS)
+- ✅ DNS records configured (for HTTPS)
+- ✅ Minimum 4 CPU cores and 8GB RAM (16GB+ recommended)
+- ✅ 50GB+ disk space (100GB+ recommended)
+
+## Next Steps
+
+Ready to get started? Begin with the [Overview and Requirements](/oriso-platform/overview) page to understand server requirements and then proceed through the setup guide step by step.
+
+If you're looking for specific information:
+
+- **Architecture Hub** - See [Platform Architecture Overview](/docs/platform/overview)
+- **Troubleshooting** - See [Troubleshooting Guide](/oriso-platform/troubleshooting)
+- **Commands** - See [Quick Reference](/oriso-platform/quick-reference)
+- **Security** - See [Security Hardening](/oriso-platform/security-hardening)
+
+    

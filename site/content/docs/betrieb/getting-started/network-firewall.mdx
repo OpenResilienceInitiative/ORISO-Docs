@@ -1,0 +1,222 @@
+---
+title: "Network & Firewall Configuration"
+description: "Configure network settings and firewall for Kubernetes deployment with Ingress-based access"
+---
+
+# Network & Firewall Configuration
+
+Configure network settings and firewall for ORISO Platform v3.0.0 deployed on Kubernetes. External access is via Ingress (ports 80/443), not individual service ports.
+
+<Callout>
+In Kubernetes deployment:
+- **External Access:** Via Ingress Controller (ports 80/443)
+- **Internal Services:** ClusterIP (not exposed externally)
+- **Firewall:** Only needs to allow ports 80, 443, 22, and 6443 (Kubernetes API)
+</Callout>
+
+<Steps>
+<Step title="Check Network Configuration">
+
+Verify network connectivity and configuration.
+
+```bash
+# Check IP address
+ip addr show
+
+# Check default gateway
+ip route show
+
+# Check DNS
+cat /etc/resolv.conf
+
+# Test internet connectivity
+ping -c 4 8.8.8.8
+ping -c 4 google.com
+```
+
+<Callout type="success">
+Ensure you can ping external addresses and DNS resolution is working correctly.
+</Callout>
+
+</Step>
+
+<Step title="Configure Firewall for Kubernetes">
+
+Configure firewall to allow only necessary ports for Kubernetes and Ingress.
+
+<Callout type="warn">
+**IMPORTANT**: Always allow SSH (port 22) first before enabling the firewall, or you may lock yourself out!
+</Callout>
+
+```bash
+# Install UFW
+sudo apt install -y ufw
+
+# Set default policies
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+
+# Allow SSH (IMPORTANT - do this first!)
+sudo ufw allow 22/tcp
+
+# Allow HTTP/HTTPS (for Ingress Controller)
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+
+# Allow Kubernetes API (optional, for kubectl access)
+sudo ufw allow 6443/tcp
+
+# Enable UFW
+sudo ufw enable
+
+# Check status
+sudo ufw status verbose
+```
+
+<Callout type="success">
+Expected output should show ports 22, 80, 443, and optionally 6443 as `ALLOW IN` with status `active`.
+</Callout>
+
+<Callout>
+In Kubernetes deployment:
+- All services are accessed via Ingress (ports 80/443)
+- Internal services use ClusterIP (not exposed externally)
+- No need to open individual service ports (8081, 8082, etc.)
+</Callout>
+
+</Step>
+
+<Step title="Configure System Limits">
+
+Increase system file and process limits required for Kubernetes operation.
+
+```bash
+# Increase file limits for Kubernetes
+sudo tee -a /etc/security/limits.conf <<EOF
+* soft nofile 65536
+* hard nofile 65536
+* soft nproc 32768
+* hard nproc 32768
+EOF
+
+# Increase kernel limits
+sudo tee -a /etc/sysctl.conf <<EOF
+fs.file-max = 2097152
+fs.inotify.max_user_watches = 524288
+fs.inotify.max_user_instances = 512
+vm.max_map_count = 262144
+net.ipv4.ip_forward = 1
+EOF
+
+# Apply sysctl settings
+sudo sysctl -p
+
+# Verify
+ulimit -n
+```
+
+<Callout type="success">
+The `ulimit -n` command should output `65536`.
+</Callout>
+
+<Callout>
+You may need to log out and log back in for the limits.conf changes to take full effect.
+</Callout>
+
+</Step>
+</Steps>
+
+## Kubernetes Network Model
+
+### External Access
+- **Ingress Controller:** Ports 80 (HTTP) and 443 (HTTPS)
+- **All Services:** Accessed via Ingress with domain names
+- **TLS:** Automatic via cert-manager
+
+### Internal Communication
+- **Service Discovery:** Kubernetes DNS (`.svc.cluster.local`)
+- **Service Type:** ClusterIP (internal only)
+- **No Direct Access:** Services not exposed externally
+
+### Required Firewall Ports
+
+| Port | Service | Required | Description |
+|------|---------|----------|-------------|
+| `22` | SSH | ✅ Required | Server access |
+| `80` | HTTP | ✅ Required | Ingress Controller (redirects to HTTPS) |
+| `443` | HTTPS | ✅ Required | Ingress Controller (TLS termination) |
+| `6443` | Kubernetes API | Optional | kubectl access (if needed) |
+
+### Ports NOT Required
+The following ports are **NOT** needed in firewall rules:
+- Service ports (8081, 8082, 8083, 8084, etc.) - Internal only
+- Database ports (3306, 27017, 5432) - ClusterIP only
+- Keycloak port (8080) - Accessed via Ingress
+- Matrix ports (8008, 8009) - Accessed via Ingress
+
+## Network Policies (Optional)
+
+For additional security, implement Kubernetes Network Policies:
+
+```yaml
+# Example: Only allow backend services to access databases
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: database-access
+  namespace: caritas
+spec:
+  podSelector:
+    matchLabels:
+      app: mariadb
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          tier: backend
+    ports:
+    - protocol: TCP
+      port: 3306
+```
+
+## Troubleshooting
+
+### Cannot Access Services
+```bash
+# Check Ingress Controller
+kubectl get pods -n ingress-nginx
+
+# Check Ingress resources
+kubectl get ingress -n caritas
+
+# Check firewall
+sudo ufw status verbose
+
+# Test HTTP access
+curl -I http://<server-ip>
+```
+
+### Firewall Lockout
+If you're locked out of SSH after enabling the firewall:
+
+1. Access your server via console (not SSH)
+2. Disable UFW: `sudo ufw disable`
+3. Re-add SSH rule: `sudo ufw allow 22/tcp`
+4. Re-enable UFW: `sudo ufw enable`
+
+### DNS Issues
+```bash
+# Check DNS resolution
+nslookup app.oriso.org
+
+# Check Ingress Controller logs
+kubectl logs -n ingress-nginx -l app.kubernetes.io/component=controller
+```
+
+## Next Steps
+
+- [Install Required Software](/oriso-platform/install-software) - Install Kubernetes and Helm
+- [Setup Kubernetes](/oriso-platform/setup-kubernetes) - Configure Kubernetes cluster
+- [Deploy Infrastructure](/oriso-platform/deploy-infrastructure) - Deploy all services

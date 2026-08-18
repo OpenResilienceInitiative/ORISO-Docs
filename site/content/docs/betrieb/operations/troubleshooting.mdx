@@ -1,0 +1,441 @@
+---
+title: "Troubleshooting"
+description: "Comprehensive troubleshooting guide for pods, network, databases, Keycloak, backend services, and frontend issues"
+---
+
+# Troubleshooting
+
+Common issues and solutions for ORISO Platform v3.0.0 deployed on Kubernetes with Helm charts.
+
+<Accordions type="single">
+<Accordion title="Pod Issues">
+
+### Pods Stuck in Pending
+
+Check pod events and resource availability:
+
+```bash
+# Check pod events
+kubectl describe pod <pod-name> -n caritas
+
+# Common causes:
+# - Insufficient resources
+# - Persistent volume issues
+# - Image pull errors
+
+# Check node resources
+kubectl describe nodes
+
+# Check available resources
+kubectl top nodes
+```
+
+### Pods CrashLoopBackOff
+
+Investigate application errors and configuration:
+
+```bash
+# Check logs
+kubectl logs <pod-name> -n caritas
+kubectl logs <pod-name> -n caritas --previous
+
+# Common causes:
+# - Application errors
+# - Database connection issues
+# - Missing configuration
+# - Resource limits too low
+
+# Check events
+kubectl get events -n caritas --sort-by='.lastTimestamp'
+```
+
+### Image Pull Errors
+
+Resolve image pull and registry issues:
+
+```bash
+# Check image pull secrets
+kubectl get secrets -n caritas
+
+# Check pod image
+kubectl get pod <pod-name> -n caritas -o jsonpath='{.spec.containers[0].image}'
+
+# Pull image manually
+docker pull <image>
+
+# Import to k3s
+docker save <image> | sudo k3s ctr images import -
+```
+
+</Accordion>
+
+<Accordion title="Network Issues">
+
+### Service Not Accessible
+
+Verify service configuration and pod selection:
+
+```bash
+# Check service (use oriso-platform-* prefix)
+kubectl get svc -n caritas oriso-platform-<service>
+
+# Check endpoints
+kubectl get endpoints -n caritas oriso-platform-<service>
+
+# Check if pods are selected
+kubectl get pods -n caritas -l app=oriso-platform-<service>
+
+# Test from within cluster using Kubernetes DNS
+kubectl run test-pod --rm -it --image=busybox -n caritas -- /bin/sh
+wget -O- http://oriso-platform-<service>.caritas.svc.cluster.local:<port>
+
+# Test service communication
+kubectl exec -n caritas deployment/oriso-platform-userservice -- \
+  curl http://oriso-platform-tenantservice.caritas.svc.cluster.local:8081/actuator/health
+```
+
+### Port Not Responding
+
+Check firewall and network configuration:
+
+```bash
+# Check if port is listening
+sudo netstat -tulpn | grep <port>
+
+# Check UFW
+sudo ufw status verbose
+
+# Allow port if needed
+sudo ufw allow <port>/tcp
+
+# Check iptables
+sudo iptables -L -n
+```
+
+</Accordion>
+
+<Accordion title="Database Issues">
+
+### Cannot Connect to MariaDB
+
+Verify MariaDB pod and service:
+
+```bash
+# Check MariaDB pod
+kubectl get pod -n caritas | grep mariadb
+
+# Check logs
+kubectl logs deployment/oriso-platform-mariadb -n caritas
+
+# Test connection (use service DNS name)
+kubectl exec -it -n caritas deployment/oriso-platform-mariadb -- \
+  mysql -h oriso-platform-mariadb.caritas.svc.cluster.local -u root -p${MYSQL_ROOT_PASSWORD} -e "SHOW DATABASES;"
+
+# Check service
+kubectl get svc -n caritas oriso-platform-mariadb
+
+# Test from another pod
+kubectl exec -n caritas deployment/oriso-platform-userservice -- \
+  curl http://oriso-platform-mariadb.caritas.svc.cluster.local:3306
+```
+
+### Cannot Connect to MongoDB
+
+Verify MongoDB pod and service:
+
+```bash
+# Check MongoDB pod
+kubectl get pod -n caritas | grep mongodb
+
+# Check logs
+kubectl logs deployment/mongodb -n caritas
+
+# Test connection
+MONGODB_POD=$(kubectl get pods -n caritas -l app=mongodb -o jsonpath="{.items[0].metadata.name}")
+kubectl exec -it -n caritas $MONGODB_POD -- mongosh --eval "show dbs"
+
+# Check service
+kubectl get svc -n caritas mongodb
+```
+
+</Accordion>
+
+<Accordion title="Keycloak Issues">
+
+### HTTPS Required Error
+
+<Callout type="warn">
+This means HTTP access was not configured. This is a critical configuration step.
+</Callout>
+
+```bash
+# Run the configuration script
+cd ~/online-beratung/caritas-workspace/ORISO-Keycloak
+chmod +x configure-http-access.sh
+./configure-http-access.sh
+
+# Or configure manually
+KEYCLOAK_POD=$(kubectl get pods -n caritas -l app=keycloak -o jsonpath="{.items[0].metadata.name}")
+kubectl exec -n caritas $KEYCLOAK_POD -- \
+  /opt/keycloak/bin/kcadm.sh update realms/master -s sslRequired=NONE
+```
+
+See [Configure Keycloak](/oriso-platform/configure-keycloak) for detailed instructions.
+
+### Cannot Login to Keycloak
+
+Check Keycloak logs and accessibility:
+
+```bash
+# Check Keycloak logs
+kubectl logs deployment/oriso-platform-keycloak -n caritas
+
+# Verify Keycloak is accessible (internal)
+kubectl exec -n caritas deployment/oriso-platform-keycloak -- \
+  curl -I http://localhost:8080
+
+# Verify Keycloak is accessible (external via Ingress)
+curl -I https://auth.oriso.org
+
+# Check Keycloak service
+kubectl get svc -n caritas oriso-platform-keycloak
+
+# Reset admin password if needed (see Security Hardening)
+```
+
+### Realm Not Found
+
+Verify realm exists and re-import if necessary:
+
+```bash
+# Check if realm exists
+KEYCLOAK_POD=$(kubectl get pods -n caritas -l app=keycloak -o jsonpath="{.items[0].metadata.name}")
+
+kubectl exec -n caritas $KEYCLOAK_POD -- \
+  /opt/keycloak/bin/kcadm.sh config credentials \
+  --server http://localhost:8080 \
+  --realm master \
+  --user admin \
+  --password admin
+
+kubectl exec -n caritas $KEYCLOAK_POD -- \
+  /opt/keycloak/bin/kcadm.sh get realms --fields realm
+
+# If realm missing, re-import (see Configure Keycloak)
+```
+
+</Accordion>
+
+<Accordion title="Backend Service Issues">
+
+### Service Returns 500 Error
+
+Check service logs and configuration:
+
+```bash
+# Check service logs (use oriso-platform-* prefix)
+kubectl logs deployment/oriso-platform-<service> -n caritas --tail=100
+
+# Common issues:
+# - Database connection failed (check DNS: oriso-platform-mariadb.caritas.svc.cluster.local)
+# - Keycloak not accessible (check DNS: oriso-platform-keycloak.caritas.svc.cluster.local)
+# - Missing environment variables
+# - Application errors
+
+# Check environment variables
+kubectl get deployment oriso-platform-<service> -n caritas -o yaml | grep -A 20 env:
+
+# Check service communication
+kubectl exec -n caritas deployment/oriso-platform-<service> -- \
+  curl http://oriso-platform-mariadb.caritas.svc.cluster.local:3306
+```
+
+### Service Health Check Fails
+
+Verify health endpoints and dependencies:
+
+```bash
+# Check actuator health endpoint
+curl http://127.0.0.1:<port>/actuator/health | jq .
+
+# Check detailed health
+curl http://127.0.0.1:<port>/actuator/health/db | jq .
+curl http://127.0.0.1:<port>/actuator/health/redis | jq .
+
+# Restart service
+kubectl rollout restart deployment/<service-name> -n caritas
+```
+
+</Accordion>
+
+<Accordion title="Frontend Issues">
+
+### Frontend Shows White Screen
+
+Check frontend logs and environment:
+
+```bash
+# Check frontend logs
+kubectl logs deployment/frontend -n caritas
+
+# Common causes:
+# - Build errors
+# - Missing environment variables
+# - API URL incorrect
+
+# Check frontend environment
+kubectl exec -it deployment/frontend -n caritas -- env | grep VITE
+```
+
+### Frontend 403 Errors
+
+Check Ingress configuration and CORS:
+
+```bash
+# Check Ingress Controller logs
+kubectl logs -n ingress-nginx -l app.kubernetes.io/component=controller
+
+# Check Ingress resources
+kubectl get ingress -n caritas
+kubectl describe ingress -n caritas
+
+# Check CORS configuration in Ingress
+kubectl get ingress -n caritas -o yaml | grep -A 5 cors
+
+# Verify backend is accessible
+curl -I https://api.oriso.org/actuator/health
+```
+
+### Ingress Not Working
+
+```bash
+# Check Ingress Controller
+kubectl get pods -n ingress-nginx
+
+# Check Ingress resources
+kubectl get ingress -n caritas
+
+# Check Ingress Controller logs
+kubectl logs -n ingress-nginx -l app.kubernetes.io/component=controller --tail=100
+
+# Test Ingress routing
+curl -I https://app.oriso.org
+```
+
+### TLS Certificate Issues
+
+```bash
+# Check cert-manager
+kubectl get pods -n cert-manager
+
+# Check certificates
+kubectl get certificate -n caritas
+kubectl describe certificate <cert-name> -n caritas
+
+# Check certificate requests
+kubectl get certificaterequest -n caritas
+kubectl describe certificaterequest <name> -n caritas
+
+# Check ClusterIssuer
+kubectl get clusterissuer letsencrypt-prod
+kubectl describe clusterissuer letsencrypt-prod
+```
+
+### Helm Issues
+
+```bash
+# Check Helm release
+helm list -n caritas
+
+# Check release status
+helm status oriso-platform -n caritas
+
+# View release values
+helm get values oriso-platform -n caritas
+
+# Check for errors in manifest
+helm get manifest oriso-platform -n caritas | grep -i error
+
+# View release history
+helm history oriso-platform -n caritas
+
+# Rollback if needed
+helm rollback oriso-platform -n caritas
+```
+
+</Accordion>
+
+<Accordion title="Useful Debug Commands">
+
+### General Debugging
+
+```bash
+# Check all pods status
+kubectl get pods -n caritas
+
+# Check all services (use oriso-platform-* prefix)
+kubectl get svc -n caritas
+
+# Check all deployments
+kubectl get deployments -n caritas
+
+# Check Helm release
+helm list -n caritas
+helm status oriso-platform -n caritas
+
+# Check Ingress
+kubectl get ingress -n caritas
+
+# Check TLS certificates
+kubectl get certificate -n caritas
+
+# Check events (last 1 hour)
+kubectl get events -n caritas --sort-by='.lastTimestamp' | tail -50
+
+# Check node resources
+kubectl top nodes
+kubectl top pods -n caritas
+
+# Get all logs for a pod (use oriso-platform-* prefix)
+kubectl logs deployment/oriso-platform-<name> -n caritas --tail=200
+
+# Follow logs in real-time
+kubectl logs deployment/oriso-platform-<name> -n caritas -f
+
+# Execute command in pod
+kubectl exec -it deployment/oriso-platform-<name> -n caritas -- /bin/sh
+
+# Port-forward for local access
+kubectl port-forward -n caritas svc/oriso-platform-<service> 8080:8080
+
+# Describe resource (shows events and details)
+kubectl describe pod <pod-name> -n caritas
+kubectl describe deployment oriso-platform-<name> -n caritas
+kubectl describe svc oriso-platform-<service> -n caritas
+
+# Check resource usage
+kubectl top pod <pod-name> -n caritas
+
+# Restart deployment
+kubectl rollout restart deployment/oriso-platform-<name> -n caritas
+
+# Check rollout status
+kubectl rollout status deployment/oriso-platform-<name> -n caritas
+
+# Scale deployment
+kubectl scale deployment/oriso-platform-<name> --replicas=2 -n caritas
+
+# Test service DNS resolution
+kubectl run test-pod --rm -it --image=busybox -n caritas -- \
+  nslookup oriso-platform-userservice.caritas.svc.cluster.local
+```
+
+</Accordion>
+</Accordions>
+
+## Related Documentation
+
+- [Quick Reference](/oriso-platform/quick-reference) - Essential commands
+- [Post-Deployment Configuration](/oriso-platform/post-deployment) - Verification steps
+- [Configure Keycloak](/oriso-platform/configure-keycloak) - Keycloak configuration
+
