@@ -26,6 +26,11 @@ REPOS=(
   "ORISO-Helm:enrich-helm.json"
   "ORISO-E2E:enrich-e2e.json"
   "ORISO-Infra:enrich-infra.json"
+  "ORISO-ElementCall:"
+  "ORISO-Livekit:"
+  "ORISO-HealthDashboard:"
+  "ORISO-Status:"
+  "ORISO-SigNoz:"
 )
 
 FAIL=0

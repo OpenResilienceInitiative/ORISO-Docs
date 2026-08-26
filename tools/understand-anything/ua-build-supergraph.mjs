@@ -21,6 +21,8 @@ const REPOS = [
   "ORISO-Frontend", "ORISO-Admin", "ORISO-UserService", "ORISO-AgencyService",
   "ORISO-ConsultingTypeService", "ORISO-TenantService", "ORISO-Database",
   "ORISO-Keycloak", "ORISO-Kubernetes", "ORISO-Helm", "ORISO-E2E", "ORISO-Infra",
+  "ORISO-ElementCall", "ORISO-Livekit", "ORISO-HealthDashboard",
+  "ORISO-Status", "ORISO-SigNoz",
 ];
 
 // keyword -> owning repo, for deterministic cross-repo dependency inference
