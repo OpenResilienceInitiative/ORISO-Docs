@@ -40,6 +40,14 @@ Added 2026-08-26 — the five repos that had no graph at all:
 | ORISO-Status | `pre-dev` | `/status/` (5189) — **container stopped** | 35 / 16 |
 | ORISO-SigNoz | `main` | `/signoz/` (5190) — **container stopped** | 18 / 3 |
 
+Two of those five cannot receive their graph in the branch yet:
+
+- **ORISO-SigNoz** has only `main`. A `pre-dev` branch is being created so the graph
+  can land there like everywhere else; until then the graph exists only on the server.
+  Tracked in ORISO-Docs#102.
+- **ORISO-Status** is archived on GitHub — no PR is possible at all. Its graph is
+  server-side only, and stays that way unless the repo is unarchived.
+
 **RAM ceiling.** The host has 3.8 GB and no swap. Bringing all five dashboards
 up at once pushed it over the edge and the OOM killer took the `docs` dashboard
 (the 34 MB Docs graph is the largest consumer). Sixteen containers fit, eighteen
