@@ -10,7 +10,7 @@ see ORISO-Docs#61).
 
 | Script | Purpose |
 |---|---|
-| `ua-nightly-full.sh` | **The nightly driver (02:00 cron).** Full deterministic rebuild: advances every repo clone to its origin tip, regenerates all 12 per-repo graphs (generate + enrich), installs them, and rebuilds the super-graph. ~90 s total. Replaces the overlay/baseline approach, which could silently freeze on a stale base. |
+| `ua-nightly-full.sh` | **The nightly driver (02:00 cron).** Full deterministic rebuild: advances every repo clone to its origin tip, regenerates all 17 per-repo graphs (generate + enrich), installs them, and rebuilds the super-graph. ~90 s total. Replaces the overlay/baseline approach, which could silently freeze on a stale base. |
 | `ua-generate.mjs` | Per-repo deterministic graph generator. Walks tracked files, runs the understand-anything-plugin core (tree-sitter for code, built-in parsers for yaml/md/sql/sh/…), builds nodes/edges (contains/imports/calls), heuristic layers + tour, fingerprints, meta. ~3s per repo, no LLM. |
 | `ua-enrich-merge.mjs` | Merges a coarse enrichment JSON (concept/flow nodes + related-edges, authored per repo) into a staging graph; adds a "Domain Concepts" layer; validates (unresolved refs are reported and must be fixed). |
 | `enrichments/*.json` | The per-repo enrichment content (concepts/flows grounded in READMEs + class inventories). 12 repos covered since 2026-08-05 (added helm, e2e, infra, database). |
@@ -20,7 +20,7 @@ see ORISO-Docs#61).
 ## Indexed repos & branches
 
 Since 2026-08-05 the board tracks the **pre-dev integration branches** where they
-exist, and 13 dashboards run on ports 5173–5185:
+exist, and 16 dashboards run on ports 5173–5190 (two are stopped, see below):
 
 | Repo | Branch | Dashboard |
 |---|---|---|
@@ -29,6 +29,32 @@ exist, and 13 dashboards run on ports 5173–5185:
 | ORISO-Keycloak | `feature/understand-anything-graph` | per-repo |
 | ORISO-Helm, ORISO-E2E, ORISO-Infra | `main` | per-repo (added 2026-08-05) |
 | ORISO-Docs | `main` | hosts the super-graph (`/docs/`) |
+
+Added 2026-08-26 — the five repos that had no graph at all:
+
+| Repo | Branch | Dashboard | Nodes/edges |
+|---|---|---|---|
+| ORISO-ElementCall | `pre-dev` | `/element-call/` (5186) | 789 / 713 |
+| ORISO-Livekit | `pre-dev` | `/livekit/` (5187) | 81 / 68 |
+| ORISO-HealthDashboard | `pre-dev` | `/health-dashboard/` (5188) | 49 / 37 |
+| ORISO-Status | `pre-dev` | `/status/` (5189) — **container stopped** | 35 / 16 |
+| ORISO-SigNoz | `main` | `/signoz/` (5190) — **container stopped** | 18 / 3 |
+
+Two of those five cannot receive their graph in the branch yet:
+
+- **ORISO-SigNoz** has only `main`. A `pre-dev` branch is being created so the graph
+  can land there like everywhere else; until then the graph exists only on the server.
+  Tracked in ORISO-Docs#102.
+- **ORISO-Status** is archived on GitHub — no PR is possible at all. Its graph is
+  server-side only, and stays that way unless the repo is unarchived.
+
+**RAM ceiling.** The host has 3.8 GB and no swap. Bringing all five dashboards
+up at once pushed it over the edge and the OOM killer took the `docs` dashboard
+(the 34 MB Docs graph is the largest consumer). Sixteen containers fit, eighteen
+do not. `status` and `signoz` are therefore stopped and their nginx locations
+return a 503 with an explanation; their graphs are still rebuilt nightly and
+committed to their repos. Raising the limit needs swap or more RAM — until then,
+do not start further dashboards. Peak of `ua-build-supergraph.mjs`: 487 MB RSS.
 
 Note (2026-08-14 rebuild): the committed snapshot artifacts in this repo were
 rebuilt from `pre-dev` for **ORISO-E2E** (its `main` is ~75 commits behind) and
