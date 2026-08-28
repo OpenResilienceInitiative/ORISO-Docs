@@ -37,8 +37,8 @@ Added 2026-08-26 — the five repos that had no graph at all:
 | ORISO-ElementCall | `pre-dev` | `/element-call/` (5186) | 789 / 713 |
 | ORISO-Livekit | `pre-dev` | `/livekit/` (5187) | 81 / 68 |
 | ORISO-HealthDashboard | `pre-dev` | `/health-dashboard/` (5188) | 49 / 37 |
-| ORISO-Status | `pre-dev` | `/status/` (5189) — **container stopped** | 35 / 16 |
-| ORISO-SigNoz | `main` | `/signoz/` (5190) — **container stopped** | 18 / 3 |
+| ORISO-Status | `pre-dev` | `/status/` (5189) | 35 / 16 |
+| ORISO-SigNoz | `main` | `/signoz/` (5190) | 18 / 3 |
 
 Two of those five cannot receive their graph in the branch yet:
 
@@ -48,13 +48,22 @@ Two of those five cannot receive their graph in the branch yet:
 - **ORISO-Status** is archived on GitHub — no PR is possible at all. Its graph is
   server-side only, and stays that way unless the repo is unarchived.
 
-**RAM ceiling.** The host has 3.8 GB and no swap. Bringing all five dashboards
-up at once pushed it over the edge and the OOM killer took the `docs` dashboard
-(the 34 MB Docs graph is the largest consumer). Sixteen containers fit, eighteen
-do not. `status` and `signoz` are therefore stopped and their nginx locations
-return a 503 with an explanation; their graphs are still rebuilt nightly and
-committed to their repos. Raising the limit needs swap or more RAM — until then,
-do not start further dashboards. Peak of `ua-build-supergraph.mjs`: 487 MB RSS.
+**RAM situation (updated 2026-08-28).** The host has 3.8 GB and no swap. On
+2026-08-26 the OOM killer twice took the `docs` dashboard while dashboards were
+being added (the 34 MB Docs graph is the largest consumer); `status`/`signoz`
+were temporarily stopped as mitigation. Since 2026-08-27 **all 18 dashboards run
+again** (operator decision, see the `bak-enable-livekit-health-*` nginx backups)
+and the nightly passes with ~1 GB available — but the machine has no headroom
+reserve and no swap, so a memory-hungry change can OOM again. Peak of
+`ua-build-supergraph.mjs`: 487 MB RSS. The `/kubernetes/` dashboard was removed
+from nginx on 2026-08-27 (repo deprecated); the graph is still built for
+super-graph analysis.
+
+**Incident 2026-08-27/28:** the root crontab was found EMPTY on 2026-08-28
+(wiped 2026-08-27 07:14 UTC, probably collateral of a manual server session) —
+the 2026-08-28 02:00 rebuild did not fire. All three entries were restored on
+2026-08-28 and `crontab.orig.txt` in `_rebuild/` now holds the current crontab
+as reference. If graphs ever look one day stale, check `crontab -l` first.
 
 Note (2026-08-14 rebuild): the committed snapshot artifacts in this repo were
 rebuilt from `pre-dev` for **ORISO-E2E** (its `main` is ~75 commits behind) and
