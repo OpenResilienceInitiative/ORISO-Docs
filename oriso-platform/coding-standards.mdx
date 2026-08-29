@@ -54,6 +54,36 @@ description: "Frontend and backend coding standards, project structure, i18n rul
 - **No force push** to `main`
 - **Keep hooks** (no `--no-verify`)
 - **Commit only** when explicitly asked
+- **PRs target the integration branch** `pre-dev` — never `main`
+
+## AI agent delivery rules
+
+These apply to every AI coding agent working in ORISO repositories (Claude Code,
+Codex, Cursor and any successor). They exist because an agent can produce and
+verify code faster than the team can review it, and the tempting shortcuts all
+lead to the same place: unreviewed code and an environment nobody can trust.
+
+- **An agent never merges its own pull request.** Not when CI is green, not when
+  the user says "finish it", not for chores or test-only changes. Merging is the
+  human reviewer's act. The agent's delivery ends at: verified → PR open with
+  evidence and a reviewer test plan → reviewers requested → issue set to
+  `In review`. Merge only on an explicit, per-PR instruction naming that PR.
+- **Reviewers are requested in the same step that opens the PR.** A PR without
+  requested reviewers is not open for review. Pick them from the repository's
+  reviewer routing, excluding the PR author.
+- **"Pre-Dev is free" means the server, not the branch.** Deploying branch
+  images, mutating config or data, and running E2E on the Pre-Dev server
+  (`46.224.170.69`) needs no approval. The `pre-dev` *branch* is a different
+  thing and is gated by human review like any other shared branch.
+- **Restore the environment you borrowed.** Before swapping an image on Pre-Dev,
+  record the previous image reference and its `imagePullPolicy`; put both back
+  before reporting the work done, and say in the report what was swapped and
+  restored. Leftover images with `imagePullPolicy: Never` silently freeze the
+  cluster on stale code for everyone else.
+- **Report where it was verified.** Every PR body states the environment and
+  image the change was exercised on, or says plainly that it was only tested
+  locally. A reviewer must never have to guess how much verification already
+  happened.
 
 ## Testing
 
