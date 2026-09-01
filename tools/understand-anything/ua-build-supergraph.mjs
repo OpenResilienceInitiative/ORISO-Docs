@@ -3,6 +3,11 @@
 // per-repo Understand-Anything graphs. Replaces the lost one-off June builder;
 // deterministic and committed so it cannot get lost again.
 //
+// v3 (2026-08-27): explicit microservice architecture — repos carry curated
+// role descriptions, are grouped into architecture tiers (own layers), the
+// per-repo layers are ordered architecture-first, and the tour walks the
+// platform tier by tier before diving into per-repo domain concepts.
+//
 // Usage: node ua-build-supergraph.mjs [--install]
 //   default: writes to /opt/oriso-understand/_rebuild/supergraph/knowledge-graph.json
 //   --install: additionally backs up + installs into ORISO-Docs/.understand-anything/
@@ -17,13 +22,30 @@ const OUT = `${BASE}/_rebuild/supergraph`;
 mkdirSync(OUT, { recursive: true });
 const INSTALL = process.argv.includes("--install");
 
-const REPOS = [
-  "ORISO-Frontend", "ORISO-Admin", "ORISO-UserService", "ORISO-AgencyService",
-  "ORISO-ConsultingTypeService", "ORISO-TenantService", "ORISO-Database",
-  "ORISO-Keycloak", "ORISO-Kubernetes", "ORISO-Helm", "ORISO-E2E", "ORISO-Infra",
-  "ORISO-ElementCall", "ORISO-Livekit", "ORISO-HealthDashboard",
-  "ORISO-Status", "ORISO-SigNoz",
+// The microservice map: repo -> architecture tier + curated one-line role.
+// Order here IS the presentation order (tiers, then repos within a tier).
+const REPO_INFO = [
+  ["ORISO-Frontend", "User Interfaces", "User-facing counselling web app (React): registration, enquiries, sessions, chat, calls."],
+  ["ORISO-Admin", "User Interfaces", "Admin panel (React/MUI): tenants, agencies, consultants, legal texts, statistics."],
+  ["ORISO-UserService", "Backend Microservices", "Core backend (Java/Spring Boot): users, consultants, sessions, enquiries, messaging integration."],
+  ["ORISO-AgencyService", "Backend Microservices", "Backend microservice (Java/Spring Boot): agencies, postcode ranges, agency admin."],
+  ["ORISO-ConsultingTypeService", "Backend Microservices", "Backend microservice (Java/Spring Boot): consulting types, topics, application settings."],
+  ["ORISO-TenantService", "Backend Microservices", "Backend microservice (Java/Spring Boot): tenants, theming, legal/privacy settings, feature flags."],
+  ["ORISO-Keycloak", "Identity & Data", "Identity provider (Keycloak): realms, OIDC clients, 2FA, custom theme and realm config."],
+  ["ORISO-Database", "Identity & Data", "Database schemas and baseline seed data (MariaDB/MongoDB)."],
+  ["ORISO-ElementCall", "Communication & Media", "Video calls (Element Call fork) on the Matrix stack; widget and standalone modes."],
+  ["ORISO-Livekit", "Communication & Media", "Media SFU backend (LiveKit) configuration serving the call stack."],
+  ["ORISO-Helm", "Operations & Deployment", "Canonical Helm charts: deploys every service — ingress, Matrix stack, seeds, config."],
+  ["ORISO-Kubernetes", "Operations & Deployment", "Legacy Kubernetes manifests (archived upstream; kept for analysis only)."],
+  ["ORISO-Infra", "Operations & Deployment", "Infrastructure automation (Hetzner, k3s provisioning)."],
+  ["ORISO-E2E", "Observability & Quality", "End-to-end Playwright quality gate across app and admin."],
+  ["ORISO-HealthDashboard", "Observability & Quality", "Service health dashboard."],
+  ["ORISO-SigNoz", "Observability & Quality", "Observability stack (SigNoz) configuration."],
+  ["ORISO-Status", "Observability & Quality", "Public status page (repository archived on GitHub; graph is server-side only)."],
 ];
+const REPOS = REPO_INFO.map(([r]) => r);
+const TIERS = [...new Set(REPO_INFO.map(([, t]) => t))];
+const infoOf = Object.fromEntries(REPO_INFO.map(([r, tier, desc]) => [r, { tier, desc }]));
 
 // keyword -> owning repo, for deterministic cross-repo dependency inference
 const SERVICE_KEYWORDS = [
@@ -36,20 +58,38 @@ const SERVICE_KEYWORDS = [
   [/\bhelm\b/i, "ORISO-Helm"],
   [/playwright/i, "ORISO-E2E"],
   [/hetzner|\bk3s\b/i, "ORISO-Infra"],
+  [/element.?call/i, "ORISO-ElementCall"],
+  [/livekit/i, "ORISO-Livekit"],
+  [/signoz/i, "ORISO-SigNoz"],
 ];
 
-const nodes = [], edges = [], layers = [];
+// architecture-first per-repo layer order (matches ua-generate.mjs / ua-enrich-merge.mjs)
+const LAYER_ORDER = [
+  "Domain Concepts", "API Endpoints", "API Layer", "Service Layer", "Data Layer",
+  "Middleware Layer", "External Services", "Background Tasks", "UI Layer",
+  "Core", "Utility Layer", "Configuration Layer", "Test Layer",
+];
+const layerRank = n => { const i = LAYER_ORDER.indexOf(n); return i === -1 ? LAYER_ORDER.length : i; };
+
+const nodes = [], edges = [];
 const mergeSources = [];
 
-// Repositories layer + repo nodes
-const repoLayer = {
-  id: "layer:repositories", name: "Repositories",
-  description: "Top-level repository nodes included in this ORISO graph explorer.",
+// Architecture layers: platform overview + one layer per tier
+const archLayer = {
+  id: "layer:microservice-architecture", name: "Microservice Architecture",
+  description: "All ORISO repositories as one map: user interfaces, backend microservices, identity & data, communication, operations, observability. Edges between repositories are deterministic dependency inference.",
   nodeIds: [],
 };
+const tierLayers = TIERS.map((t, i) => ({
+  id: `layer:tier-${i}`, name: `Architecture · ${t}`,
+  description: `${t} — repositories of this tier and everything they contain.`,
+  nodeIds: [],
+}));
+const tierLayerOf = Object.fromEntries(TIERS.map((t, i) => [t, tierLayers[i]]));
 
 // evidence[srcRepo][dstRepo] = count of nodes referencing dst's service
 const evidence = {};
+const perRepoLayers = [];
 
 for (const r of REPOS) {
   const gPath = `${BASE}/${r}/.understand-anything/knowledge-graph.json`;
@@ -58,17 +98,21 @@ for (const r of REPOS) {
   let meta = {};
   try { meta = JSON.parse(readFileSync(`${BASE}/${r}/.understand-anything/meta.json`, "utf8")); } catch { }
 
+  const info = infoOf[r];
   const repoNodeId = `repo:${r}`;
   const conceptCount = g.nodes.filter(n => n.type === "concept" || n.type === "flow").length;
+  const endpointCount = g.nodes.filter(n => n.type === "endpoint").length;
   nodes.push({
     id: repoNodeId, type: "module", name: r,
-    summary: `Repository ${r} — ${g.nodes.length} nodes, ${g.edges.length} edges` +
-      (meta.gitCommitHash ? `, built from ${meta.gitCommitHash.slice(0, 8)}` : "") +
-      (conceptCount ? `, ${conceptCount} domain concepts/flows` : "") + ".",
-    tags: ["repository"], complexity: "complex",
-    metadata: { kind: "repo-root", gitCommitHash: meta.gitCommitHash ?? null, generator: meta.generator ?? null },
+    summary: `${info.desc} ${g.nodes.length} nodes, ${g.edges.length} edges` +
+      (endpointCount ? `, ${endpointCount} API endpoints` : "") +
+      (conceptCount ? `, ${conceptCount} domain concepts/flows` : "") +
+      (meta.gitCommitHash ? `. Built from ${meta.gitCommitHash.slice(0, 8)}.` : "."),
+    tags: ["repository", info.tier], complexity: "complex",
+    metadata: { kind: "repo-root", tier: info.tier, gitCommitHash: meta.gitCommitHash ?? null, generator: meta.generator ?? null },
   });
-  repoLayer.nodeIds.push(repoNodeId);
+  archLayer.nodeIds.push(repoNodeId);
+  tierLayerOf[info.tier].nodeIds.push(repoNodeId);
   mergeSources.push({ repo: r, gitCommitHash: meta.gitCommitHash ?? null, nodes: g.nodes.length, edges: g.edges.length });
 
   for (const n of g.nodes) {
@@ -90,11 +134,15 @@ for (const r of REPOS) {
   for (const e of g.edges) {
     edges.push({ ...e, id: e.id ? `${r}::${e.id}` : undefined, source: `${r}::${e.source}`, target: `${r}::${e.target}`, sourceRepo: r });
   }
-  for (const l of g.layers ?? []) {
-    layers.push({ id: `${r}::${l.id ?? l.name}`, name: `${r} · ${l.name}`, description: l.description, nodeIds: (l.nodeIds ?? []).map(id => `${r}::${id}`) });
+  // per-repo layers, sorted architecture-first within the repo
+  const sorted = [...(g.layers ?? [])].sort((a, b) => layerRank(a.name) - layerRank(b.name));
+  for (const l of sorted) {
+    perRepoLayers.push({ id: `${r}::${l.id ?? l.name}`, name: `${r} · ${l.name}`, description: l.description, nodeIds: (l.nodeIds ?? []).map(id => `${r}::${id}`) });
   }
 }
-layers.unshift(repoLayer);
+
+// final layer order: platform map, tiers, then per-repo (repo order = REPO_INFO order)
+const layers = [archLayer, ...tierLayers.filter(t => t.nodeIds.length), ...perRepoLayers];
 
 // aggregated deterministic cross-repo dependency edges
 let crossEdges = 0;
@@ -111,13 +159,17 @@ for (const [src, targets] of Object.entries(evidence)) {
   }
 }
 
-// simple overview tour: repositories first, then each repo's domain concepts
+// tour: platform map -> each tier -> each repo's domain concepts
 const tour = [{
-  order: 1, title: "ORISO Platform Overview",
-  description: "The nine ORISO repositories and how they depend on each other (aggregated deterministic inference).",
-  nodeIds: repoLayer.nodeIds,
+  order: 1, title: "ORISO Microservice Architecture",
+  description: "The ORISO platform as a map of repositories. Dependency edges are aggregated deterministic inference (evidence count >= 2).",
+  nodeIds: archLayer.nodeIds,
 }];
 let order = 2;
+for (const t of tierLayers) {
+  if (!t.nodeIds.length) continue;
+  tour.push({ order: order++, title: t.name.replace("Architecture · ", ""), description: t.description, nodeIds: t.nodeIds });
+}
 for (const r of REPOS) {
   const concepts = nodes.filter(n => n.metadata?.sourceRepo === r && (n.type === "concept" || n.type === "flow")).map(n => n.id);
   if (concepts.length) tour.push({ order: order++, title: `${r} — Domain Concepts`, description: `High-level concepts and flows of ${r}.`, nodeIds: concepts });
@@ -138,14 +190,14 @@ let graph = {
     name: "ORISO",
     languages: [...allLanguages].sort(),
     frameworks: [],
-    description: "Cross-repo super-graph merging the per-repo Understand-Anything graphs of the ORISO platform.",
+    description: "Cross-repo super-graph merging the per-repo Understand-Anything graphs of the ORISO platform, organized as a microservice architecture map.",
     analyzedAt: new Date().toISOString(),
     gitCommitHash: mergeSources.map(s => `${s.repo}@${(s.gitCommitHash ?? "?").slice(0, 8)}`).join(","),
   },
   nodes, edges, layers, tour,
   mergeMetadata: {
     mergedAt: new Date().toISOString(),
-    generatedBy: "ua-build-supergraph.mjs (deterministic, 2026-07)",
+    generatedBy: "ua-build-supergraph.mjs v3 (deterministic, architecture tiers)",
     sourceRepos: mergeSources, crossRepoEdges: crossEdges,
   },
 };
@@ -170,8 +222,11 @@ if (INSTALL) {
   copyFileSync(`${OUT}/knowledge-graph.json`, `${live}/knowledge-graph.json`);
   copyFileSync(`${OUT}/knowledge-graph.json`, `${live}/oriso-super-graph.json`);
   writeFileSync(`${live}/oriso-super-graph-summary.md`,
-    `# ORISO Super-Graph\n\nRebuilt ${new Date().toISOString()} by ua-build-supergraph.mjs (deterministic).\n\n` +
-    mergeSources.map(s => `- ${s.repo}: ${s.nodes} nodes / ${s.edges} edges @ ${(s.gitCommitHash ?? "?").slice(0, 8)}`).join("\n") +
+    `# ORISO Super-Graph\n\nRebuilt ${new Date().toISOString()} by ua-build-supergraph.mjs v3 (deterministic, architecture tiers).\n\n` +
+    TIERS.map(t => `## ${t}\n${REPO_INFO.filter(([, tier]) => tier === t).map(([r, , d]) => {
+      const s = mergeSources.find(x => x.repo === r);
+      return `- **${r}** — ${d}${s ? ` (${s.nodes} nodes / ${s.edges} edges @ ${(s.gitCommitHash ?? "?").slice(0, 8)})` : " (no graph)"}`;
+    }).join("\n")}`).join("\n\n") +
     `\n\nCross-repo dependency edges: ${crossEdges} (keyword inference, evidence-count >= 2).\n`);
   writeFileSync(`${live}/meta.json`, JSON.stringify({
     lastAnalyzedAt: new Date().toISOString(),
@@ -179,7 +234,7 @@ if (INSTALL) {
     version: "1.0.0",
     analyzedNodes: graph.nodes.length,
     analyzedFiles: new Set(graph.nodes.map(n => n.filePath).filter(Boolean)).size,
-    generator: "ua-build-supergraph.mjs (deterministic cross-repo merge)",
+    generator: "ua-build-supergraph.mjs v3 (deterministic cross-repo merge, architecture tiers)",
     repos: Object.fromEntries(mergeSources.map(s => [s.repo, (s.gitCommitHash ?? "?").slice(0, 9)])),
   }, null, 2) + "\n");
   console.log("INSTALLED into ORISO-Docs/.understand-anything/");

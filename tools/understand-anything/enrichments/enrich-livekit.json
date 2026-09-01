@@ -1,0 +1,26 @@
+{
+  "concepts": [
+    {
+      "id": "concept:sfu-token-service",
+      "name": "LiveKit Token Service",
+      "summary": "Small Node service (token-service/server.js) that mints LiveKit access tokens for call participants — the bridge between the Matrix/Element Call world and the LiveKit SFU. Tests pin the immutable base-URL and wrong-origin behavior.",
+      "tags": ["domain", "core", "calls"],
+      "related": ["token-service/server.js", "token-service/package.json", "token-service/test/immutable-bases.test.js", "token-service/test/wrong-origin.test.js"]
+    },
+    {
+      "id": "concept:authorization-overrides",
+      "name": "SFU Authorization Overrides",
+      "summary": "Go override files patched into the upstream LiveKit authorization service: call_policy.patch adjusts the call policy, federation_url_override.go pins federation URLs for the ORISO deployment.",
+      "tags": ["security", "integration"],
+      "related": ["authorization-service/overrides/main.go", "authorization-service/overrides/federation_url_override.go", "authorization-service/overrides/call_policy_test.go"]
+    }
+  ],
+  "flows": [
+    {
+      "id": "flow:token-issue",
+      "name": "Issuing a Call Token",
+      "summary": "Element Call requests a LiveKit token → token-service validates origin and identity → returns a scoped LiveKit JWT → the client connects to the SFU with it.",
+      "related": ["token-service/server.js", "authorization-service/overrides/main.go"]
+    }
+  ]
+}

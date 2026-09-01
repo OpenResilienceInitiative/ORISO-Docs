@@ -58,6 +58,16 @@ for (const [name, desc] of Object.entries(enr.layerDescriptions ?? {})) {
   if (l) l.description = desc;
 }
 
+// keep the architecture-first layer order after adding Domain Concepts
+// (must match LAYER_ORDER in ua-generate.mjs)
+const LAYER_ORDER = [
+  "Domain Concepts", "API Endpoints", "API Layer", "Service Layer", "Data Layer",
+  "Middleware Layer", "External Services", "Background Tasks", "UI Layer",
+  "Core", "Utility Layer", "Configuration Layer", "Test Layer",
+];
+const layerRank = n => { const i = LAYER_ORDER.indexOf(n); return i === -1 ? LAYER_ORDER.length : i; };
+if (Array.isArray(graph.layers)) graph.layers.sort((a, b) => layerRank(a.name) - layerRank(b.name));
+
 const v = c.validateGraph(graph);
 console.error(`validate: success=${v.success} issues=${(v.issues ?? []).length}${v.fatal ? " FATAL " + v.fatal : ""}`);
 if (v.graph) graph = v.graph; else if (v.data) graph = v.data;

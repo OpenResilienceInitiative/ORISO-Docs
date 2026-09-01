@@ -11,10 +11,10 @@ see ORISO-Docs#61).
 | Script | Purpose |
 |---|---|
 | `ua-nightly-full.sh` | **The nightly driver (02:00 cron).** Full deterministic rebuild: advances every repo clone to its origin tip, regenerates all 17 per-repo graphs (generate + enrich), installs them, and rebuilds the super-graph. ~90 s total. Replaces the overlay/baseline approach, which could silently freeze on a stale base. |
-| `ua-generate.mjs` | Per-repo deterministic graph generator. Walks tracked files, runs the understand-anything-plugin core (tree-sitter for code, built-in parsers for yaml/md/sql/sh/…), builds nodes/edges (contains/imports/calls), heuristic layers + tour, fingerprints, meta. ~3s per repo, no LLM. |
-| `ua-enrich-merge.mjs` | Merges a coarse enrichment JSON (concept/flow nodes + related-edges, authored per repo) into a staging graph; adds a "Domain Concepts" layer; validates (unresolved refs are reported and must be fixed). |
-| `enrichments/*.json` | The per-repo enrichment content (concepts/flows grounded in READMEs + class inventories). 12 repos covered since 2026-08-05 (added helm, e2e, infra, database). |
-| `ua-build-supergraph.mjs` | Builds the cross-repo super-graph: prefixes node ids (`<Repo>::<id>`), adds `repo:*` root nodes + containment edges, per-repo layers, an overview tour, and **deterministic cross-repo `depends_on` edges** (service-keyword evidence, count ≥ 2). `--install` deploys into `ORISO-Docs/.understand-anything/` and writes a `meta.json` for freshness checks. |
+| `ua-generate.mjs` | Per-repo deterministic graph generator. Walks tracked files, runs the understand-anything-plugin core (tree-sitter for code, built-in parsers for yaml/md/sql/sh/…), builds nodes/edges (contains/imports/calls), heuristic layers + tour, fingerprints, meta. Since 2026-08-27 it also **extracts OpenAPI endpoints** (own indentation scanner — the generic YAML parser claims specs but yields none; 547 endpoint nodes platform-wide, method-level) into an "API Endpoints" layer, and sorts layers architecture-first (`LAYER_ORDER`). ~3s per repo, no LLM. |
+| `ua-enrich-merge.mjs` | Merges a coarse enrichment JSON (concept/flow nodes + related-edges, authored per repo) into a staging graph; adds a "Domain Concepts" layer, then re-applies the `LAYER_ORDER` sort; validates (unresolved refs are reported and must be fixed). |
+| `enrichments/*.json` | The per-repo enrichment content (concepts/flows grounded in READMEs + class inventories). **All 17 repos covered since 2026-08-27** (added elementcall, livekit, healthdashboard, status, signoz). |
+| `ua-build-supergraph.mjs` | **v3 (2026-08-27):** builds the cross-repo super-graph as a **microservice architecture map** — curated role descriptions per repo, tier layers (User Interfaces / Backend Microservices / Identity & Data / Communication & Media / Operations & Deployment / Observability & Quality), per-repo layers ordered architecture-first, and a tour that walks the platform tier by tier. Prefixes node ids (`<Repo>::<id>`), adds `repo:*` root nodes + containment edges and **deterministic cross-repo `depends_on` edges** (service-keyword evidence, count ≥ 2 — keywords now include elementcall/livekit/signoz). `--install` deploys into `ORISO-Docs/.understand-anything/` and writes a `meta.json` for freshness checks. |
 | `refresh-understand-ultralite-local.sh` | RETIRED 2026-08-05 (kept for reference). The old nightly overlay refresh; superseded by `ua-nightly-full.sh`. |
 
 ## Indexed repos & branches
@@ -37,8 +37,8 @@ Added 2026-08-26 — the five repos that had no graph at all:
 | ORISO-ElementCall | `pre-dev` | `/element-call/` (5186) | 789 / 713 |
 | ORISO-Livekit | `pre-dev` | `/livekit/` (5187) | 81 / 68 |
 | ORISO-HealthDashboard | `pre-dev` | `/health-dashboard/` (5188) | 49 / 37 |
-| ORISO-Status | `pre-dev` | `/status/` (5189) — **container stopped** | 35 / 16 |
-| ORISO-SigNoz | `main` | `/signoz/` (5190) — **container stopped** | 18 / 3 |
+| ORISO-Status | `pre-dev` | `/status/` (5189) | 35 / 16 |
+| ORISO-SigNoz | `main` | `/signoz/` (5190) | 18 / 3 |
 
 Two of those five cannot receive their graph in the branch yet:
 
@@ -48,13 +48,22 @@ Two of those five cannot receive their graph in the branch yet:
 - **ORISO-Status** is archived on GitHub — no PR is possible at all. Its graph is
   server-side only, and stays that way unless the repo is unarchived.
 
-**RAM ceiling.** The host has 3.8 GB and no swap. Bringing all five dashboards
-up at once pushed it over the edge and the OOM killer took the `docs` dashboard
-(the 34 MB Docs graph is the largest consumer). Sixteen containers fit, eighteen
-do not. `status` and `signoz` are therefore stopped and their nginx locations
-return a 503 with an explanation; their graphs are still rebuilt nightly and
-committed to their repos. Raising the limit needs swap or more RAM — until then,
-do not start further dashboards. Peak of `ua-build-supergraph.mjs`: 487 MB RSS.
+**RAM situation (updated 2026-08-28).** The host has 3.8 GB and no swap. On
+2026-08-26 the OOM killer twice took the `docs` dashboard while dashboards were
+being added (the 34 MB Docs graph is the largest consumer); `status`/`signoz`
+were temporarily stopped as mitigation. Since 2026-08-27 **all 18 dashboards run
+again** (operator decision, see the `bak-enable-livekit-health-*` nginx backups)
+and the nightly passes with ~1 GB available — but the machine has no headroom
+reserve and no swap, so a memory-hungry change can OOM again. Peak of
+`ua-build-supergraph.mjs`: 487 MB RSS. The `/kubernetes/` dashboard was removed
+from nginx on 2026-08-27 (repo deprecated); the graph is still built for
+super-graph analysis.
+
+**Incident 2026-08-27/28:** the root crontab was found EMPTY on 2026-08-28
+(wiped 2026-08-27 07:14 UTC, probably collateral of a manual server session) —
+the 2026-08-28 02:00 rebuild did not fire. All three entries were restored on
+2026-08-28 and `crontab.orig.txt` in `_rebuild/` now holds the current crontab
+as reference. If graphs ever look one day stale, check `crontab -l` first.
 
 Note (2026-08-14 rebuild): the committed snapshot artifacts in this repo were
 rebuilt from `pre-dev` for **ORISO-E2E** (its `main` is ~75 commits behind) and
