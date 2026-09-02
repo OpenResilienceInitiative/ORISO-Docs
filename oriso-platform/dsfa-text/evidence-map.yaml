@@ -1,0 +1,956 @@
+"$schema": internal/dsfa-evidence-map/v1
+version: 1
+generated: 2026-08-17
+repo_root: /Users/frankgerhardt/ORISO
+
+# Zweck
+#   Je Aussage der DSFA-Kapitel, die auf Code oder Konfiguration fußt: wo der Beleg liegt,
+#   welcher Zeilenbereich gemeint ist und welche Bezeichner dort erwartet werden.
+#   Grundlage (a) für den Verfall-Detektor — verschwindet ein erwarteter Bezeichner aus dem
+#   Zeilenbereich, gilt die Aussage als potenziell veraltet und die DSFA-Zeile als "stale" —
+#   und (b) für die Evidenz-Dialoge der HTML-Fassung.
+#
+# Konventionen
+#   slug      stabile Kennung, nie umbenennen (Textverweise hängen daran)
+#   chapter   Abschnitt der DSFA-Kapiteltexte in diesem Verzeichnis
+#   status    live | not-deployed | disabled-by-default | needs-live-verification
+#             "live" heißt: im Auslieferungsstand wirksam. Alles andere darf im Trägertext
+#             nicht als vorhanden beschrieben werden.
+#   lines     Zeilenbereiche zum Stand der Inventare (2026-08-14); Drift ist erwartbar,
+#             maßgeblich für den Detektor sind die Bezeichner unter `expect`.
+
+entries:
+  # ---------------------------------------------------------------- Kapitel 6.3 / 6.4
+  - slug: username-base32-not-encrypted
+    chapter: "6.3"
+    claim: "Benutzernamen sind nicht verschlüsselt, sondern lediglich Base32-kodiert; sie sind als Klartext zu behandeln."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/helper/UsernameTranscoder.java
+        lines: "3-15"
+        expect: ["UsernameTranscoder", "encodeUsername", "Base32"]
+
+  - slug: session-quasi-identifier-set
+    chapter: "6.3"
+    claim: "Postleitzahl, Alter, Geschlecht, Beratungsanlass, Beziehungskonstellation und Herkunftsverweis stehen in einer Datenzeile der Beratungssitzung."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/model/Session.java
+        lines: "47-221"
+        expect: ["postcode", "userAge", "userGender", "counsellingRelation", "referer", "mainTopicId"]
+
+  - slug: session-data-initializing-scope
+    chapter: "6.3"
+    claim: "Welche fachbereichsbezogenen Zusatzangaben erhoben werden, steuert die Konfiguration der Beratungsart."
+    status: live
+    evidence:
+      - repo: ORISO-ConsultingTypeService
+        path: src/main/resources/schemas/consulting-type.json
+        lines: "274-426"
+        expect: ["sessionDataInitializing", "addictiveDrugs", "age", "gender", "relation", "state"]
+
+  - slug: account-invite-pii-before-registration
+    chapter: "6.4"
+    claim: "Einladungen speichern Name und E-Mail-Adresse von Personen vor deren Registrierung, dazu Token-Hash und 2FA-Status."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/model/AccountInvite.java
+        lines: "1-160"
+        expect: ["recipientEmail", "tokenHash", "twoFactorStatus", "twoFactorWaivedBy", "expiresAt"]
+
+  - slug: invite-email-delivery-full-body-archive
+    chapter: "6.4"
+    claim: "Der vollständige Text versendeter Einladungs-E-Mails wird mit Empfängeradresse archiviert; eine Frist besteht nicht."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/model/InviteEmailDelivery.java
+        expect: ["bodySnapshot", "subjectSnapshot", "recipientSnapshot"]
+
+  # ---------------------------------------------------------------- Kapitel 6.5
+  - slug: tenant-admin-composite-roles
+    chapter: "6.5"
+    claim: "Die Anlage einer Träger-Administration vergibt ein Bündel mehrerer Rollen (Komposit-Rollen)."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/admin/service/admin/create/CreateAdminService.java
+        lines: "87-94"
+        expect: ["getUserRolesForTenantAdmin", "USER_ADMIN", "AGENCY_ADMIN", "TENANT_ADMIN", "TOPIC_ADMIN"]
+
+  - slug: invite-two-factor-gate-blocking
+    chapter: "6.5"
+    claim: "Über Einladung angelegte Konten bleiben gesperrt, bis ein zweiter Faktor aktiv, befreit, nicht erforderlich oder per Richtlinie abgeschaltet ist."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/service/accountinvite/AccountInviteService.java
+        lines: "379-412"
+        expect: ["calculateAccessGate", "BLOCKED_TWO_FACTOR", "isTwoFactorGateSatisfied", "TwoFactorGateStatus"]
+
+  - slug: two-factor-waiver-documented
+    chapter: "6.5"
+    claim: "Eine Befreiung von der Zwei-Faktor-Pflicht erfordert einen Grund und wird mit Person und Zeitpunkt dokumentiert."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/service/accountinvite/AccountInviteService.java
+        lines: "392-412"
+        expect: ["waiveTwoFactor", "WaiveTwoFactorCommand", "setTwoFactorWaivedBy", "setTwoFactorWaiverReason"]
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/AccountInviteController.java
+        lines: "154-162"
+        expect: ["waive-two-factor", "PreAuthorize"]
+
+  - slug: platform-admin-two-factor-deferrable
+    chapter: "6.5"
+    claim: "Für die Plattform-Administration ist die 2FA-Einrichtung nur eine Aufforderung, die sitzungsweise zurückgestellt werden kann."
+    status: live
+    evidence:
+      - repo: ORISO-Admin
+        path: src/utils/platformAdminTwoFactorGate.ts
+        lines: "10-21"
+        expect: ["requiresPlatformAdminTwoFactor", "isSetupDeferred", "isToEncourage"]
+      - repo: ORISO-Admin
+        path: src/utils/twoFactorSetupDeferral.ts
+        lines: "1-36"
+        expect: ["oriso.admin.twoFactorSetupDeferredFor", "deferTwoFactorSetup", "sessionStorage"]
+
+  - slug: otp-mechanics
+    chapter: "6.5"
+    claim: "Zweiter Faktor: TOTP (6 Stellen, 30 s) oder E-Mail-Einmalcode (6 Stellen, 15 min, max. 3 Fehlversuche)."
+    status: needs-live-verification
+    note: "Realm-Dateien sind nicht autoritativ — Import nur beim Erststart, danach Skripte. kcadm-Export erforderlich."
+    evidence:
+      - repo: ORISO-Keycloak
+        path: keycloak-image/otp-config-spi/src/main/java/.../MemoryOtpService.java
+        lines: "15-18"
+        expect: ["OTP_LENGTH", "TTL"]
+      - repo: ORISO-Helm
+        path: charts/keycloak/keycloak-resources/realm.json
+        expect: ["otpPolicyAlgorithm", "HmacSHA1", "otpPolicyDigits", "otpPolicyPeriod"]
+
+  - slug: keycloak-brute-force-disabled
+    chapter: "6.5"
+    claim: "Ein automatischer Anmeldeschutz gegen systematisches Durchprobieren ist nicht aktiviert; es werden keine Fehlversuchs-/IP-Historien gespeichert."
+    status: needs-live-verification
+    evidence:
+      - repo: ORISO-Helm
+        path: charts/keycloak/keycloak-resources/realm.json
+        expect: ["bruteForceProtected", "permanentLockout"]
+
+  - slug: keycloak-token-lifetimes
+    chapter: "6.5"
+    claim: "Zugriffstoken sind fünf Stunden gültig; Offline-Sitzungen haben keine harte Obergrenze."
+    status: needs-live-verification
+    evidence:
+      - repo: ORISO-Helm
+        path: charts/keycloak/keycloak-resources/realm.json
+        lines: "6-16"
+        expect: ["accessTokenLifespan", "ssoSessionIdleTimeout", "offlineSessionMaxLifespanEnabled"]
+
+  # ---------------------------------------------------------------- Kapitel 6.6
+  - slug: ip-header-filter-default-standard
+    chapter: "6.6"
+    claim: "Der Filter zum Entfernen des Weiterleitungs-Headers hat einen strengen Modus, ist standardmäßig aber nicht aktiv."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/interceptor/IpPrivacyHeaderFilter.java
+        lines: "20-43"
+        expect: ["IpPrivacyHeaderFilter", "STRICT", "X-Forwarded-For"]
+      - repo: ORISO-UserService
+        path: src/main/resources/application.properties
+        lines: "360-361"
+        expect: ["privacy.ipMode", "STANDARD"]
+
+  - slug: ingress-access-log-with-ip
+    chapter: "6.6"
+    claim: "Der Eingangs-Proxy protokolliert im Standardformat mit Client-IP; ein Log-Versand ist nicht eingerichtet."
+    status: live
+    evidence:
+      - repo: ORISO-Helm
+        path: templates/nginx/ingress-nginx-controller-configmap.yaml
+        expect: ["ingress-nginx-controller"]
+        absent: ["log-format-upstream"]
+
+  - slug: admin-access-log-without-ip
+    chapter: "6.6"
+    claim: "Der Container der Administrationsoberfläche protokolliert bewusst ohne Client-IP."
+    status: live
+    evidence:
+      - repo: ORISO-Admin
+        path: nginx.conf
+        lines: "1-11"
+        expect: ["anonymous_log_format", "$remote_user"]
+        absent: ["$remote_addr"]
+
+  - slug: keycloak-login-events-with-ip-in-log
+    chapter: "6.6"
+    claim: "Anmeldeereignisse werden nicht in der Datenbank gespeichert, aber mit IP-Adresse in den Server-Log-Strom geschrieben; eine IP-freie Variante existiert, ist aber nicht aktiviert."
+    status: needs-live-verification
+    evidence:
+      - repo: ORISO-Helm
+        path: charts/keycloak/keycloak-resources/realm.json
+        expect: ["eventsEnabled", "eventsListeners", "jboss-logging"]
+      - repo: ORISO-Keycloak
+        path: keycloak-image/otp-config-spi/src/main/java/.../log/LoggingEventListenerProvider.java
+        lines: "18-20"
+        expect: ["LoggingEventListenerProvider"]
+
+  - slug: otp-username-in-url-path
+    chapter: "6.6"
+    claim: "Endpunkte der Zwei-Faktor-Erweiterung führen den Benutzernamen im URL-Pfad und gelangen so in Zugriffsprotokolle."
+    status: needs-live-verification
+    evidence:
+      - repo: ORISO-Keycloak
+        path: keycloak-image/otp-config-spi/src/main/java/.../RealmOtpResourceProvider.java
+        lines: "66-190"
+        expect: ["fetch-otp-setup-info/{username}"]
+
+  # ---------------------------------------------------------------- Kapitel 6.7 / 6.8
+  - slug: auth-cookies-not-httponly
+    chapter: "6.7"
+    claim: "Die Authentifizierungs-Cookies der Anwendung sind nicht HttpOnly und werden zusätzlich im lokalen Speicher gespiegelt."
+    status: live
+    evidence:
+      - repo: ORISO-Frontend
+        path: src/components/auth/auth.ts
+        lines: "40-47"
+        expect: ["keycloak", "refreshToken"]
+      - repo: ORISO-Frontend
+        path: src/components/sessionCookie/accessSessionCookie.ts
+        lines: "42-59"
+        expect: ["setValueInCookie", "setAuthStorageValue", "SameSite=Strict"]
+
+  - slug: matrix-sso-cookies-lax
+    chapter: "6.7"
+    claim: "Beim Wechsel der Oberflächenversion wird ein Matrix-Zugriffstoken in Cookies mit gelockertem SameSite-Attribut übergeben."
+    status: live
+    evidence:
+      - repo: ORISO-Frontend
+        path: src/components/uiVersionToggle/UIVersionToggle.tsx
+        lines: "69-72"
+        expect: ["matrix_sso_access_token", "matrix_sso_device_id", "SameSite=Lax"]
+
+  - slug: no-consent-banner-only-essential-cookies
+    chapter: "6.7"
+    claim: "Es besteht kein Einwilligungsbanner; eingesetzt werden ausschließlich technisch notwendige Cookies, ohne Tracking-SDK oder externe Ressourcen."
+    status: live
+    evidence:
+      - repo: ORISO-Frontend
+        path: src/components/app/PreConditions.tsx
+        lines: "20-87"
+        expect: ["PreConditions", "cookie"]
+      - repo: ORISO-Frontend
+        path: package.json
+        absent: ["sentry", "posthog", "matomo", "plausible", "gtag"]
+
+  - slug: chat-drafts-plaintext-localstorage
+    chapter: "6.8"
+    claim: "Noch nicht versendete Nachrichtenentwürfe liegen im Klartext im lokalen Speicher des Browsers."
+    status: live
+    evidence:
+      - repo: ORISO-Frontend
+        path: src/services/draftStore.ts
+        lines: "1-15"
+        expect: ["oriso.chatDrafts.v1"]
+
+  - slug: indexeddb-crypto-store-survives-logout
+    chapter: "6.8"
+    claim: "Der kryptografische Speicher in der Browser-Datenbank wird beim Abmelden nicht geleert."
+    status: live
+    evidence:
+      - repo: ORISO-Frontend
+        path: src/services/matrixClientService.ts
+        lines: "154-160"
+        expect: ["oriso-matrix-", "initRustCrypto", "indexeddb"]
+      - repo: ORISO-Frontend
+        path: src/components/logout/logout.ts
+        expect: ["localStorage.clear", "sessionStorage.clear"]
+        absent: ["indexedDB.deleteDatabase"]
+
+  # ---------------------------------------------------------------- Kapitel 6.9
+  - slug: rooms-created-with-megolm
+    chapter: "6.9"
+    claim: "Alle Beratungsräume werden serverseitig mit aktivierter Ende-zu-Ende-Verschlüsselung angelegt; ein unverschlüsselter Sendepfad existiert nicht."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/adapters/matrix/MatrixRoomClient.java
+        lines: "53-67,100-111"
+        expect: ["m.room.encryption", "m.megolm.v1.aes-sha2", "private_chat"]
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/adapters/matrix/MatrixSynapseService.java
+        lines: "864-869"
+        expect: ["encryptionEnabled"]
+      - repo: ORISO-Helm
+        path: templates/userservice/userservice-configmap-env.yaml
+        lines: "140-145"
+        expect: ["MATRIX_ENCRYPTIONENABLED"]
+
+  - slug: attachment-encryption-aes256
+    chapter: "6.9"
+    claim: "Dateien werden clientseitig mit einem einmaligen AES-256-Schlüssel verschlüsselt; Dateiname und Inhaltstyp erreichen den Server nicht."
+    status: live
+    evidence:
+      - repo: ORISO-Frontend
+        path: src/utils/matrixEncryptedAttachment.ts
+        expect: ["encryptMatrixAttachment", "AES-CTR", "EncryptedFile"]
+      - repo: ORISO-Frontend
+        path: src/services/matrixClientService.ts
+        lines: "727-764"
+        expect: ["includeFilename", "application/octet-stream", "uploadFileMessageContent"]
+
+  - slug: server-key-backup-secret-storage
+    chapter: "6.9"
+    claim: "Serverseitiges, verschlüsseltes Schlüssel-Backup mit Geheimspeicher (4S); der Wiederherstellungsschlüssel verbleibt beim Nutzer, der Server kann die Schlüssel nicht lesen."
+    status: live
+    evidence:
+      - repo: ORISO-Frontend
+        path: src/services/matrixKeyBackupService.ts
+        lines: "6-175"
+        expect: ["bootstrapSecretStorage", "recoveryKey", "keyBackup"]
+
+  - slug: device-dehydration-behind-toggle
+    chapter: "6.9"
+    claim: "Ein geparktes Pseudo-Gerät (Device Dehydration) ist implementiert, steht aber unter einem Freigabeschalter."
+    status: disabled-by-default
+    evidence:
+      - repo: ORISO-Frontend
+        path: src/services/matrixDeviceDehydration.ts
+        lines: "1-40"
+        expect: ["enableDeviceDehydration", "dehydrat"]
+
+  - slug: key-sharing-cross-signed-only
+    chapter: "6.9"
+    claim: "Raumschlüssel werden nur an gegengezeichnete Geräte verteilt; Ausnahme sind anonyme Live-Chat-Nutzer:innen."
+    status: live
+    evidence:
+      - repo: ORISO-Frontend
+        path: src/services/matrixDeviceIsolation.ts
+        lines: "20-40"
+        expect: ["crossSign", "deviceIsolation"]
+      - repo: ORISO-Frontend
+        path: src/services/matrixClientService.ts
+        lines: "170-185"
+        expect: ["OnlySignedDevicesIsolationMode", "AllDevicesIsolationMode"]
+
+  - slug: matrix-federation-off
+    chapter: "6.9"
+    claim: "Die Föderation mit fremden Matrix-Servern ist deaktiviert."
+    status: live
+    evidence:
+      - repo: ORISO-Helm
+        path: templates/matrix/matrix-configmaps.yaml
+        expect: ["federation_domain_whitelist"]
+      - repo: "0 - Docs"
+        path: ADR-005-matrix-federation-off-dns-server-name.md
+        expect: ["federation", "Accepted"]
+
+  - slug: synapse-admin-login-as-user
+    chapter: "6.9"
+    claim: "Der Heimserver verfügt über eine administrative Funktion, mit der sich Sitzungstoken für Nutzerkonten ausstellen lassen."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/adapters/matrix/MatrixSynapseService.java
+        lines: "379-449"
+        expect: ["ENDPOINT_ADMIN_LOGIN_AS_USER", "/users/%s/login"]
+
+  - slug: presence-not-disabled
+    chapter: "6.9"
+    claim: "Der Online-Status (Presence) ist am Chat-Dienst nicht deaktiviert."
+    status: live
+    evidence:
+      - repo: ORISO-Helm
+        path: templates/matrix/matrix-configmaps.yaml
+        lines: "109-227"
+        absent: ["presence:\n    enabled: false"]
+      - repo: ORISO-UserService
+        path: src/main/resources/application.properties
+        lines: "335-345"
+        expect: ["matrix.presenceEnabled"]
+
+  # ---------------------------------------------------------------- Kapitel 6.10
+  - slug: livekit-no-recording
+    chapter: "6.10"
+    claim: "Für die Medienvermittlung ist kein Aufzeichnungs- oder Ausleitungsdienst konfiguriert."
+    status: live
+    evidence:
+      - repo: ORISO-Livekit
+        path: livekit.yaml
+        expect: ["empty_timeout"]
+        absent: ["egress"]
+
+  - slug: element-call-no-third-party-telemetry
+    chapter: "6.10"
+    claim: "Die ausgelieferte Konfiguration der Anrufanwendung enthält keine Telemetrie an Dritte."
+    status: live
+    evidence:
+      - repo: ORISO-Helm
+        path: templates/element-call/element-call-configmap.yaml
+        absent: ["posthog", "rageshake", "sentry"]
+
+  - slug: google-stun-third-country
+    chapter: "6.10"
+    claim: "Beim Verbindungsaufbau werden öffentliche STUN-Server eines US-Anbieters angefragt; dabei fließen Client-IP-Adressen in ein Drittland."
+    status: live
+    evidence:
+      - repo: ORISO-Helm
+        path: templates/matrix/matrix-configmaps.yaml
+        lines: "164-167"
+        expect: ["turn_uris", "stun.l.google.com"]
+
+  # ---------------------------------------------------------------- Kapitel 6.11
+  - slug: voice-message-flags-default-on
+    chapter: "6.11"
+    claim: "Sprachnachrichten sind je Träger und Chat-Typ abschaltbar, standardmäßig aktiv und an die Freigabe des Medien-Uploads gekoppelt."
+    status: live
+    evidence:
+      - repo: ORISO-Frontend
+        path: src/components/messageSubmitInterface/messageSubmitInterfaceComponent.tsx
+        lines: "1990-2006"
+        expect: ["isVoiceMessageEnabledForCurrentChat", "featureVoiceMessagesEnabled", "hasUploadFunctionality"]
+      - repo: ORISO-Admin
+        path: src/components/Tenants/AppSettings/PermissionsSettings/permissionsSettingsUtils.ts
+        lines: "28-32,110-120"
+        expect: ["voiceMessages", "allowedPermissionToggles"]
+
+  - slug: voice-message-max-duration
+    chapter: "6.11"
+    claim: "Die Aufnahmedauer ist auf 180 Sekunden begrenzt; die Dauer steckt im Dateinamen innerhalb des Chiffrats."
+    status: live
+    evidence:
+      - repo: ORISO-Frontend
+        path: src/components/messageSubmitInterface/messageSubmitInterfaceComponent.tsx
+        lines: "125,2949-2951"
+        expect: ["VOICE_RECORDING_MAX_DURATION_SEC", "voice-message-"]
+
+  # ---------------------------------------------------------------- Kapitel 6.12
+  - slug: media-scanner-not-deployed
+    chapter: "6.12"
+    claim: "Der fail-closed Prüf-Proxy ist als Proof of Concept gebaut, aber in keiner Umgebung ausgerollt."
+    status: not-deployed
+    evidence:
+      - repo: ORISO-Helm
+        path: templates/
+        absent: ["media-scanner"]
+      - repo: ORISO-Helm
+        path: values.yaml.default
+        absent: ["mediaScanner"]
+      - repo: ORISO-Helm
+        ref: "branch feat/media-scanner-poc"
+        path: templates/media-scanner/
+        expect: ["clamav", "matrix-content-scanner"]
+
+  - slug: media-blur-click-to-reveal
+    chapter: "6.12"
+    claim: "Bilder anonymer Gäste werden zunächst unscharf angezeigt; ein Sperrvermerk kann vom Absender nicht manipuliert werden."
+    status: live
+    evidence:
+      - repo: ORISO-Frontend
+        path: src/components/message/MessageAttachment.tsx
+        lines: "170-200"
+        expect: ["mediaCheckState", "blocked", "unchecked"]
+
+  - slug: tenant-media-magic-bytes
+    chapter: "6.12"
+    claim: "Redaktionelle Bilder unterliegen einer Signaturprüfung (PNG/JPEG/WebP, kein SVG) und einem 2-MB-Limit."
+    status: live
+    evidence:
+      - repo: ORISO-TenantService
+        path: src/main/java/com/vi/tenantservice/api/service/TenantMediaService.java
+        expect: ["image/png", "image/jpeg", "image/webp", "MAX_SIZE"]
+
+  - slug: unauthenticated-media-downloads
+    chapter: "6.12"
+    claim: "Medien-Downloads am Heimserver erfordern kein Zugriffstoken."
+    status: live
+    evidence:
+      - repo: ORISO-Helm
+        path: templates/matrix/matrix-configmaps.yaml
+        lines: "146-152"
+        expect: ["enable_authenticated_media", "media_store_path"]
+
+  - slug: synapse-open-registration
+    chapter: "6.17"
+    claim: "Am Chat-Dienst sind offene Registrierung ohne Verifikation aktiviert und Ratenbegrenzungen praktisch aufgehoben."
+    status: live
+    evidence:
+      - repo: ORISO-Helm
+        path: templates/matrix/matrix-configmaps.yaml
+        lines: "154-211"
+        expect: ["enable_registration", "enable_registration_without_verification", "rc_message"]
+
+  # ---------------------------------------------------------------- Kapitel 6.13
+  - slug: team-discussion-agency-scoped
+    chapter: "6.13"
+    claim: "Zugriff auf die Team-Besprechung haben ausschließlich Berater:innen der Beratungsstelle des Falls; die ratsuchende Person ist nie Mitglied."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/facade/TeamDiscussionFacade.java
+        lines: "30-37,163-176,224-253"
+        expect: ["requireEligibleConsultant", "consultant_agency"]
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/config/auth/SecurityConfig.java
+        lines: "299-301"
+        expect: ["CONSULTANT_DEFAULT"]
+
+  - slug: team-discussion-hard-close
+    chapter: "6.13"
+    claim: "Mit Annahme der Anfrage wird der Besprechungsraum dauerhaft geschlossen und ist nur noch lesend erreichbar (Matrix-Berechtigungsstufe)."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/facade/TeamDiscussionFacade.java
+        lines: "44,273-302"
+        expect: ["ARCHIVED", "events_default"]
+
+  - slug: case-handover-consent-policy
+    chapter: "6.13"
+    claim: "Je Übergabegrund ist festgelegt, ob die Zustimmung der ratsuchenden Person erforderlich ist; sie entscheidet selbst in der Anwendung."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/model/CaseHandoverReasonPolicy.java
+        lines: "33-34"
+        expect: ["clientConsentRequired"]
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/service/CaseHandoverService.java
+        lines: "331-334,368-412"
+        expect: ["PENDING_CLIENT_CONSENT", "client-consent"]
+
+  - slug: case-handover-audit-trail
+    chapter: "6.13"
+    claim: "Jeder Übergabeantrag — auch abgelehnte — wird mit Grund, Ergebnis, Richtlinie und Zeitstempel protokolliert; die Einsicht ist mandanten- und agenturscharf, fail-closed."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/resources/db/changelog/changeset/0057_case_handover_request/case-handover-request.sql
+        lines: "1-31"
+        expect: ["reason_code", "audit_outcome", "client_consent_required"]
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/service/CaseHandoverLogsService.java
+        lines: "33-109"
+        expect: ["agencyIds", "isEmpty"]
+
+  - slug: case-handover-explanation-freetext
+    chapter: "6.13"
+    claim: "Das Pflicht-Freitextfeld „Begründung\" wird gespeichert und der Administration angezeigt; es kann Fallinhalte enthalten."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/model/CaseHandoverRequest.java
+        expect: ["explanation"]
+
+  - slug: case-handover-policy-platform-scoped
+    chapter: "6.13"
+    claim: "Der Grundkatalog ist plattformweit, nicht je Träger konfigurierbar; eine Delegationskaskade bis auf Beratungsstellenebene besteht für Team-Besprechung und Fallübergabe nicht."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/resources/db/changelog/changeset/0057_case_handover_request/case-handover-request.sql
+        absent: ["tenant_id"]
+      - repo: ORISO-Admin
+        path: src/types/PermissionToggleVisibility.ts
+        absent: ["teamDiscussion", "caseHandover"]
+
+  # ---------------------------------------------------------------- Kapitel 6.14
+  - slug: notification-preview-mode-none
+    chapter: "6.14"
+    claim: "Der Vorschaumodus für Benachrichtigungen steht in allen Umgebungen auf „keine Vorschau\"; verschlüsselte Ereignisse tragen ohnehin keinen Nachrichtenkörper."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/resources/application.properties
+        lines: "358-359"
+        expect: ["PRIVACY_NOTIFICATION_PREVIEW_MODE", "NONE"]
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/service/matrix/MatrixEventListenerService.java
+        lines: "430-437"
+        expect: ["m.room.encrypted", "metadata-only"]
+      - repo: ORISO-Frontend
+        path: src/api/apiPostMessageEventNotification.ts
+        lines: "41-46"
+        expect: ["canIncludePlaintextPreview", "messagePreview"]
+
+  - slug: event-notification-no-retention
+    chapter: "6.14"
+    claim: "Für Benachrichtigungen besteht keine Aufbewahrungsfrist; der Konto-Löschworkflow erfasst sie nicht."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/port/out/EventNotificationRepository.java
+        lines: "9-24"
+        expect: ["deleteByRecipientUserId"]
+        absent: ["deleteByCreateDateBefore"]
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/workflow/delete/service/DeleteUserAccountService.java
+        lines: "47-106"
+        absent: ["EventNotification"]
+
+  - slug: event-notification-read-timestamp
+    chapter: "6.14"
+    claim: "Der Lesezeitpunkt wird sekundengenau je Benachrichtigung gespeichert."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/model/EventNotification.java
+        lines: "60-94"
+        expect: ["readDate", "actionPath", "sourceSessionId"]
+
+  - slug: case-handover-explanation-in-notification
+    chapter: "6.14"
+    claim: "Bei Fallübergaben fließt der Begründungs-Freitext in den Anzeigetext der Benachrichtigung."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/service/CaseHandoverService.java
+        lines: "714-843"
+        expect: ["notifyGranted", "getExplanation"]
+
+  - slug: no-chat-content-in-emails
+    chapter: "6.14"
+    claim: "E-Mail-Benachrichtigungen enthalten keine Chat- oder Beratungsinhalte, wohl aber Postleitzahl, Agenturname und teils das Pseudonym."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/service/emailsupplier/NewEnquiryEmailSupplier.java
+        lines: "153-176"
+        expect: ["postcode", "agencyName"]
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/service/emailsupplier/AssignEnquiryEmailSupplier.java
+        lines: "105-121"
+        expect: ["name_user"]
+
+  - slug: smtp-starttls-required
+    chapter: "6.14"
+    claim: "Der Direktversand erzwingt Transportverschlüsselung (STARTTLS)."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/service/accountinvite/mail/JakartaInviteMailTransport.java
+        lines: "34-111"
+        expect: ["starttls", "mail.smtp.starttls.required"]
+
+  - slug: firebase-push-disabled
+    chapter: "6.14"
+    claim: "Push-Benachrichtigungen an mobile Geräte sind deaktiviert; sie enthielten keinen Inhalt, aber Metadaten an einen Drittlandempfänger."
+    status: disabled-by-default
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/resources/application.properties
+        lines: "155-157"
+        expect: ["firebase"]
+
+  # ---------------------------------------------------------------- Kapitel 6.15
+  - slug: small-cell-suppression
+    chapter: "6.15"
+    claim: "Aggregate werden erst ab mindestens fünf beitragenden Beratenden ausgewiesen; die Prüfung ist fail-closed und in der Produktivumgebung erzwungen."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/resources/application.properties
+        lines: "241-244"
+        expect: ["smallCell", "minimum"]
+      - repo: ORISO-UserService
+        path: src/main/resources/application-prod.properties
+        lines: "90-94"
+        expect: ["smallCell"]
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/service/statistics/AdminDashboardStatisticsService.java
+        lines: "490-515"
+        expect: ["suppress", "MIN_"]
+
+  - slug: consultant-message-stat-hmac
+    chapter: "6.15"
+    claim: "Die Nachrichtenstatistik der Beratenden nutzt ein HMAC-Pseudonym; daneben steht die Sitzungskennung im Klartext, eine Aufbewahrungsfrist besteht nicht."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/model/ConsultantMessageStat.java
+        lines: "30-54"
+        expect: ["consultantHmac", "sourceSessionId", "sentDate"]
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/service/statistics/ConsultantIdentityHasher.java
+        lines: "23-46"
+        expect: ["HmacSHA256", "STATISTICS_MESSAGE_COUNT_HMAC_SECRET"]
+
+  - slug: statistics-events-disabled
+    chapter: "6.15"
+    claim: "Die Veröffentlichung von Statistikereignissen an den Nachrichtenbus ist abgeschaltet; ein Registrierungsereignis enthielte Kontokennung, Alter, Geschlecht, PLZ, Thema und Herkunftsverweis."
+    status: disabled-by-default
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/resources/application.properties
+        lines: "235-240"
+        expect: ["statistics.enabled"]
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/service/statistics/event/RegistrationStatisticsEvent.java
+        lines: "69-87"
+        expect: ["age", "gender", "postalCode", "referer", "userId"]
+
+  - slug: session-statistics-single-record-endpoint
+    chapter: "6.15"
+    claim: "Ein Einzelfall-Endpunkt liefert Sitzungsdaten einschließlich Postleitzahl und ist technischen Dienstkonten vorbehalten."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/UserStatisticsController.java
+        lines: "29-34"
+        expect: ["getSession"]
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/config/auth/SecurityConfig.java
+        lines: "425-430"
+        expect: ["TECHNICAL_DEFAULT"]
+
+  # ---------------------------------------------------------------- Kapitel 6.16
+  - slug: tenant-separation-application-side
+    chapter: "6.16"
+    claim: "Die Mandantentrennung wird anwendungsseitig über einen Filter durchgesetzt, nicht datenbankseitig."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/model/EventNotification.java
+        lines: "34-43"
+        expect: ["FilterDef", "tenantFilter", "tenantId"]
+
+  - slug: platform-admin-sees-tenant-smtp-plaintext
+    chapter: "6.16"
+    claim: "Die Plattform-Administration kann die Mailserver-Zugangsdaten jedes Trägers im Klartext abrufen; sie liegen auch unverschlüsselt in der Datenbank."
+    status: live
+    severity: critical
+    evidence:
+      - repo: ORISO-TenantService
+        path: src/main/java/com/vi/tenantservice/api/facade/TenantFacadeAuthorisationService.java
+        lines: "40-60"
+        expect: ["assertUserIsAuthorizedToAccessTenant", "hasSingleTenantAccessAuthority"]
+      - repo: ORISO-TenantService
+        path: src/main/java/com/vi/tenantservice/api/converter/TenantConverter.java
+        lines: "670-705"
+        expect: ["toTenantSmtpSettings", "setPassword"]
+      - repo: ORISO-TenantService
+        path: src/main/java/com/vi/tenantservice/api/model/TenantEntity.java
+        lines: "95-109"
+        expect: ["settings"]
+        absent: ["@Convert"]
+
+  - slug: cts-smtp-encryption-conditional
+    chapter: "6.16"
+    claim: "Das globale Mailserver-Passwort wird nur dann verschlüsselt gespeichert, wenn ein Geheimnis gesetzt ist; andernfalls Klartext mit Warnhinweis."
+    status: needs-live-verification
+    evidence:
+      - repo: ORISO-ConsultingTypeService
+        path: src/main/java/.../api/service/SmtpPasswordEncryptionService.java
+        lines: "16-50"
+        expect: ["AES", "GCM", "SETTINGS_SMTP_PASSWORD_ENCRYPTION_SECRET", "warn"]
+
+  # ---------------------------------------------------------------- Kapitel 6.17
+  - slug: otel-export-disabled
+    chapter: "6.17"
+    claim: "Der Export von Ablaufverfolgungen und Metriken ist standardmäßig und in der Produktivumgebung deaktiviert; die Vorabumgebung exportiert nur Metriken."
+    status: disabled-by-default
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/resources/application.properties
+        lines: "313-326"
+        expect: ["MANAGEMENT_OTLP"]
+      - repo: ORISO-Helm
+        path: values.yaml.default
+        lines: "14-17"
+        expect: ["otlpEnabled"]
+
+  - slug: pii-in-service-logs
+    chapter: "6.17"
+    claim: "An einzelnen Stellen gelangen Benutzernamen, E-Mail-Adressen und Datensatz-Ausgaben in Protokolltexte; die Protokollstufe ist zur Laufzeit veränderbar."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/service/emailsupplier/NewEnquiryEmailSupplier.java
+        lines: "68-80"
+        expect: ["log.info", "ConsultantAgency"]
+      - repo: ORISO-UserService
+        path: src/main/resources/application.properties
+        lines: "218-224,300-305"
+        expect: ["actuator", "loggers"]
+      - repo: ORISO-AgencyService
+        path: src/main/java/.../api/tenant/AccessTokenTenantResolver.java
+        lines: "30-40"
+        expect: ["log.debug", "getClaims"]
+
+  - slug: browser-error-ingestion
+    chapter: "6.17"
+    claim: "Fehlermeldungen aus dem Browser werden serverseitig protokolliert (Meldung, Adresse, Browserkennung, Aufrufkette)."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/ErrorReportController.java
+        lines: "40-96"
+        expect: ["userAgent", "stack", "correlationId"]
+
+  - slug: matrix-backup-github-sync
+    chapter: "6.17"
+    claim: "Die Sicherungsskripte des Chat-Dienstes enthalten einen Pfad, der Datenbankauszüge in ein externes Quellcode-Verwaltungssystem überträgt."
+    status: needs-live-verification
+    severity: critical
+    evidence:
+      - repo: ORISO-Helm
+        path: templates/matrix/matrix-configmaps.yaml
+        lines: "3-64"
+        expect: ["pg_dump", "RETENTION_DAYS", "GITHUB_REPO", "GITHUB_TOKEN"]
+      - repo: ORISO-Helm
+        path: templates/matrix/matrix-postgres-statefulset.yaml
+        lines: "74-85"
+        expect: ["backup.sh", "github-sync.sh"]
+
+  - slug: no-backup-for-core-databases
+    chapter: "6.17"
+    claim: "Für die Kern-Datenbanken außerhalb des Chat-Dienstes sind keine Sicherungsaufträge hinterlegt."
+    status: live
+    evidence:
+      - repo: ORISO-Helm
+        path: charts/
+        absent: ["mariadb-backup", "mongodb-backup"]
+
+  - slug: legal-text-translation-third-country
+    chapter: "6.17"
+    claim: "Redaktionelle Rechtstexte können zur Übersetzung an externe Sprachmodell-Schnittstellen übermittelt werden; Beratungsinhalte nicht."
+    status: live
+    evidence:
+      - repo: ORISO-TenantService
+        path: src/main/java/com/vi/tenantservice/api/service/translation/OpenAiCompatibleChatClient.java
+        lines: "57-75"
+        expect: ["chat/completions"]
+      - repo: ORISO-TenantService
+        path: src/main/resources/application.properties
+        lines: "28-34"
+        expect: ["mistral", "openrouter"]
+
+  # ---------------------------------------------------------------- Kapitel 6.18 / 8
+  - slug: delete-workflow-chain
+    chapter: "6.18"
+    claim: "Der Konto-Löschlauf entfernt Identitätskonto, Chat-Konto (mit Löschkennzeichen und Raumbereinigung), Sitzungen, Zuordnungen und Kontodatensatz."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/workflow/delete/service/DeleteUserAccountService.java
+        lines: "47-106"
+        expect: ["DeleteKeycloakUserAction", "DeleteMatrixAskerAction", "DeleteSingleRoomAndSessionAction"]
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/adapters/matrix/MatrixSynapseService.java
+        lines: "636-705"
+        expect: ["erase", "purge"]
+
+  - slug: deletion-read-only-window
+    chapter: "6.18"
+    claim: "Der Löschung geht ein Schutzfenster von 48 Stunden mit ausschließlich lesendem Zugriff voraus; eine Aussetzung ist für 3 bis 12 Monate möglich."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/resources/application.properties
+        lines: "79-86"
+        expect: ["deletion.readOnlyWindow.hours", "deletion.pause"]
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/workflow/delete/service/DeletionLifecycleService.java
+        lines: "170-195"
+        expect: ["READ_ONLY", "PAUSED"]
+
+  - slug: anonymous-account-lifecycle
+    chapter: "6.18"
+    claim: "Anonyme Konten werden nach 360 Minuten Inaktivität deaktiviert und nach 2820 Minuten gelöscht."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/resources/application.properties
+        lines: "79-90"
+        expect: ["user.anonymous.deactivateworkflow.periodMinutes", "user.anonymous.deleteworkflow.periodMinutes"]
+
+  - slug: registered-only-deletion-disabled
+    chapter: "6.18"
+    claim: "Der Löschlauf für Konten ohne Beratung nach 30 Tagen ist implementiert, aber deaktiviert."
+    status: disabled-by-default
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/resources/application.properties
+        lines: "92-95"
+        expect: ["user.registeredonly.deleteWorkflow.enabled"]
+
+  - slug: identity-tombstone-unbounded
+    chapter: "6.18"
+    claim: "Nach der Löschung verbleibt ein Verweisdatensatz mit der vollständigen früheren Kontokennung, ohne Frist."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/model/IdentityTombstone.java
+        expect: ["subjectId", "displayLabel", "hardDeletedAt"]
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/workflow/delete/service/IdentityTombstoneService.java
+        lines: "20-48"
+        expect: ["IdentityTombstoneService"]
+
+  - slug: legacy-chat-identifier-archive-invisible
+    chapter: "6.18"
+    claim: "Eine aus der Migration verbliebene Zuordnungstabelle zwischen Person und Chat-Raum existiert nur in den Migrationsskripten und ist für alle Löschverfahren unsichtbar."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/resources/db/changelog/changeset/0074_remove_rocket_chat_room_ids/0074_changeSet.xml
+        lines: "14-58"
+        expect: ["legacy_chat_identifier_archive", "matrix_room_id"]
+
+  - slug: draft-message-server-side
+    chapter: "6.18"
+    claim: "Nachrichtenentwürfe werden auch serverseitig im Klartext gespeichert und vom Löschlauf nicht erfasst."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/model/DraftMessage.java
+        expect: ["text", "scopeKey", "roomRef"]
+
+  - slug: support-access-audit-purge-12-months
+    chapter: "6.18"
+    claim: "Das Prüfprotokoll der Support-Zugriffe wird nach zwölf Monaten automatisiert gelöscht — die einzige ausdrücklich dokumentierte Aufbewahrungsfrist im Bestand."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/service/handshake/HandshakeService.java
+        lines: "178-195"
+        expect: ["audit-purge-cron", "purgeAudit"]
+      - repo: ORISO-Helm
+        path: templates/userservice/userservice-configmap-env.yaml
+        lines: "145-150"
+        expect: ["SUPPORT_", "AUDIT"]
+
+  - slug: matrix-backup-retention-30-days
+    chapter: "6.18"
+    claim: "Gelöschte Daten bestehen bis zu 30 Tage in den Sicherungen des Chat-Dienstes fort (WAL 7 Tage)."
+    status: live
+    evidence:
+      - repo: ORISO-Helm
+        path: templates/matrix/matrix-configmaps.yaml
+        lines: "3-64,263-311"
+        expect: ["RETENTION_DAYS=30", "archive_mode"]
+
+  - slug: no-media-or-message-retention
+    chapter: "6.18"
+    claim: "Am Chat-Dienst ist weder für Nachrichten noch für Mediendateien eine Aufbewahrungsfrist konfiguriert."
+    status: live
+    evidence:
+      - repo: ORISO-Helm
+        path: templates/matrix/matrix-configmaps.yaml
+        lines: "109-227"
+        absent: ["retention:", "media_retention"]
+
+  - slug: self-deletion-not-via-keycloak
+    chapter: "8.6"
+    claim: "Die Selbstlöschung läuft über den Anwendungsdienst, nicht über eine Funktion des Identitätsmanagements."
+    status: needs-live-verification
+    evidence:
+      - repo: ORISO-Helm
+        path: charts/keycloak/keycloak-resources/realm.json
+        expect: ["delete_account"]

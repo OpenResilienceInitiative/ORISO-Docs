@@ -1,0 +1,41 @@
+name: Truth chain
+
+on:
+  pull_request:
+  push:
+    branches: [main, pre-dev]
+
+jobs:
+  node-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Syntax
+        run: |
+          node --check tools/understand-anything/ua-export-docs.mjs
+          node --check tools/understand-anything/ua-generate-docs-pages.mjs
+          node --check tools/evidence-decay-check.mjs
+          bash -n tools/understand-anything/ua-nightly-full.sh
+      - name: Unit tests
+        run: node --test tools/truth-chain/test/*.test.mjs
+      - name: Canary (expected broken)
+        run: |
+          node tools/evidence-decay-check.mjs \
+            --map tools/truth-chain/fixtures/evidence-map.yaml \
+            --repos-root tools/truth-chain/fixtures/clones \
+            --expect-broken \
+            --out /tmp/canary-status.json
+      - name: Export is small
+        run: |
+          node tools/understand-anything/ua-export-docs.mjs \
+            --graph .understand-anything/oriso-super-graph.json \
+            --out /tmp/docs-export-ci
+          python3 - <<'PY'
+          import os
+          total = sum(os.path.getsize(os.path.join("/tmp/docs-export-ci", n)) for n in os.listdir("/tmp/docs-export-ci"))
+          print("docs-export bytes", total)
+          assert total < 2_000_000, total
+          PY

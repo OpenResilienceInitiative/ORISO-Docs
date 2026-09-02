@@ -1,0 +1,65 @@
+{
+  "generatedAt": "2026-09-02T04:01:19.859Z",
+  "tiers": [
+    {
+      "id": "user-interfaces",
+      "name": "User Interfaces",
+      "repos": [
+        "ORISO-Frontend",
+        "ORISO-Admin",
+        "ORISO-ElementCall",
+        "ORISO-Status",
+        "ORISO-HealthDashboard"
+      ],
+      "source": "curated-default"
+    },
+    {
+      "id": "backend-microservices",
+      "name": "Backend Microservices",
+      "repos": [
+        "ORISO-UserService",
+        "ORISO-AgencyService",
+        "ORISO-TenantService",
+        "ORISO-ConsultingTypeService"
+      ],
+      "source": "curated-default"
+    },
+    {
+      "id": "identity-data",
+      "name": "Identity & Data",
+      "repos": [
+        "ORISO-Keycloak",
+        "ORISO-Database"
+      ],
+      "source": "curated-default"
+    },
+    {
+      "id": "communication-media",
+      "name": "Communication & Media",
+      "repos": [
+        "ORISO-Livekit"
+      ],
+      "source": "curated-default"
+    },
+    {
+      "id": "operations-deployment",
+      "name": "Operations & Deployment",
+      "repos": [
+        "ORISO-Helm",
+        "ORISO-Kubernetes",
+        "ORISO-Infra",
+        "ORISO-Docs"
+      ],
+      "source": "curated-default"
+    },
+    {
+      "id": "observability-quality",
+      "name": "Observability & Quality",
+      "repos": [
+        "ORISO-SigNoz",
+        "ORISO-E2E"
+      ],
+      "source": "curated-default"
+    }
+  ]
+}

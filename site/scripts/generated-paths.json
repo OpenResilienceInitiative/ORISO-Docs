@@ -1,0 +1,17 @@
+[
+  "docs/platform/repo-graphs/",
+  "docs/platform/repository-map.md",
+  "docs/platform/backend-services.md",
+  "docs/platform/super-graph-index.md",
+  "docs/platform/super-graph-explorer.md",
+  "docs/platform/super-graph-detailed.md",
+  "docs/platform/understand-anything-inventory.md",
+  "docs/platform/graph-validation-report.md",
+  "docs/platform/architecture-tiers.md",
+  "docs/platform/endpoint-inventory.md",
+  "docs/platform/truth-chain-status.md",
+  "site/content/docs/plattform/repository-graphs/",
+  "site/content/docs/plattform/graphs-und-diagrams/",
+  "site/content/docs/plattform/architecture-hub/repository-map.md",
+  "site/content/docs/plattform/core-systems/backend-services.md"
+]

@@ -1,0 +1,14 @@
+{
+  "comment": "Legacy Mintlify and Fumadocs graph URLs. Apply in nginx on docs.oriso.org; Fumadocs can consume the same map when site/ lands from pre-dev.",
+  "redirects": [
+    { "source": "/product/assumptions", "destination": "/product/overview", "permanent": true },
+    { "source": "/product/figma-analysis-2026-05", "destination": "/product/ui-ux", "permanent": true },
+    { "source": "/docs/platform/user-management-flow", "destination": "/docs/platform/authentication-and-keycloak", "permanent": true },
+    { "source": "/plattform/graphs-und-diagrams/super-graph-index", "destination": "/plattform/architecture-tiers", "permanent": true },
+    { "source": "/plattform/graphs-und-diagrams/super-graph-explorer", "destination": "/plattform/architecture-tiers", "permanent": true },
+    { "source": "/plattform/graphs-und-diagrams/super-graph-detailed", "destination": "/plattform/architecture-tiers", "permanent": true },
+    { "source": "/plattform/graphs-und-diagrams/understand-anything-inventory", "destination": "/plattform/truth-chain-status", "permanent": true },
+    { "source": "/plattform/graphs-und-diagrams/graph-validation-report", "destination": "/docs/platform/graph-validation-report", "permanent": true },
+    { "source": "/plattform/graphs-und-diagrams/diagrams", "destination": "/docs/platform/diagrams", "permanent": true }
+  ]
+}
