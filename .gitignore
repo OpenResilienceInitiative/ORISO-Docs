@@ -1,3 +1,7 @@
 # Agent working notes — local only, not part of shipped docs
 docs/agent-tasks/
 docs/cursor-orchestrator/
+# =============================================================================
+# Local Obsidian vault config
+# =============================================================================
+.obsidian/
