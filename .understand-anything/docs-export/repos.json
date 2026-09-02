@@ -1,0 +1,87 @@
+{
+  "generatedAt": "2026-09-02T04:01:19.859Z",
+  "commits": {},
+  "repos": [
+    {
+      "name": "ORISO-Frontend",
+      "commit": null,
+      "summary": "Frontend application for the Online-Beratung platform, covering registration, messaging, bookings, profile flows, theming, and Matrix-backed real-time communication.",
+      "nodeCount": 1967,
+      "edgeCount": 4204,
+      "endpointCount": 0,
+      "tier": "User Interfaces"
+    },
+    {
+      "name": "ORISO-Admin",
+      "commit": null,
+      "summary": "Admin dashboard for the Online-Beratung platform, managing tenants, agencies, counselors, topics, invite links, global settings, user administration, and audit/log views.",
+      "nodeCount": 776,
+      "edgeCount": 1547,
+      "endpointCount": 0,
+      "tier": "User Interfaces"
+    },
+    {
+      "name": "ORISO-UserService",
+      "commit": null,
+      "summary": "Spring Boot backend responsible for user, asker, consultant, session, conversation, chat, admin, notification, deletion, and external messaging lifecycle behavior in the ORISO Online-Beratung platform.",
+      "nodeCount": 2295,
+      "edgeCount": 3854,
+      "endpointCount": 182,
+      "tier": "Backend Microservices"
+    },
+    {
+      "name": "ORISO-AgencyService",
+      "commit": null,
+      "summary": "Spring Boot backend for public agency lookup, agency administration, postcode ranges, topic/demographic enrichment, Matrix agency accounts, and ORISO peer-service integration.",
+      "nodeCount": 623,
+      "edgeCount": 835,
+      "endpointCount": 86,
+      "tier": "Backend Microservices"
+    },
+    {
+      "name": "ORISO-ConsultingTypeService",
+      "commit": null,
+      "summary": "Spring Boot service that owns consulting type settings, topics, topic groups, application settings, tenant-aware access, and OpenAPI contracts for the ORISO platform.",
+      "nodeCount": 470,
+      "edgeCount": 515,
+      "endpointCount": 32,
+      "tier": "Backend Microservices"
+    },
+    {
+      "name": "ORISO-TenantService",
+      "commit": null,
+      "summary": "Spring Boot service that owns ORISO tenant records, tenant settings, legal content, subdomain resolution, and tenant-specific integration with ConsultingType, ApplicationSettings, and UserAdmin services.",
+      "nodeCount": 380,
+      "edgeCount": 623,
+      "endpointCount": 66,
+      "tier": "Backend Microservices"
+    },
+    {
+      "name": "ORISO-Database",
+      "commit": null,
+      "summary": "Central ORISO database architecture and operations repository containing service-owned MariaDB schema exports, MongoDB dumps, Matrix PostgreSQL docs, Redis/RabbitMQ docs, backup artifacts, and initialization jobs.",
+      "nodeCount": 192,
+      "edgeCount": 312,
+      "endpointCount": 0,
+      "tier": "Identity & Data"
+    },
+    {
+      "name": "ORISO-Keycloak",
+      "commit": null,
+      "summary": "Keycloak realm and deployment configuration for ORISO identity, authentication, authorization, token issuance, and IAM integration.",
+      "nodeCount": 152,
+      "edgeCount": 247,
+      "endpointCount": 7,
+      "tier": "Identity & Data"
+    },
+    {
+      "name": "ORISO-Kubernetes",
+      "commit": null,
+      "summary": "Kubernetes infrastructure and deployment orchestration repository for the ORISO platform.",
+      "nodeCount": 339,
+      "edgeCount": 588,
+      "endpointCount": 68,
+      "tier": "Operations & Deployment"
+    }
+  ]
+}

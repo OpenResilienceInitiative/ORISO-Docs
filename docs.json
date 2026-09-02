@@ -53,9 +53,7 @@
             "group": "Design & Quality",
             "pages": [
               "product/ui-ux",
-              "product/edge-cases",
-              "product/figma-analysis-2026-05",
-              "product/assumptions"
+              "product/edge-cases"
             ]
           }
         ]
@@ -68,7 +66,8 @@
             "pages": [
               "docs/platform/overview",
               "docs/platform/repository-map",
-              "docs/platform/architecture"
+              "docs/platform/architecture",
+              "docs/platform/architecture-tiers"
             ]
           },
           {
@@ -85,7 +84,6 @@
             "group": "Platform Flows",
             "pages": [
               "docs/platform/tenant-lifecycle",
-              "docs/platform/user-management-flow",
               "docs/platform/local-development"
             ]
           },
@@ -106,10 +104,10 @@
           {
             "group": "Graphs & Diagrams",
             "pages": [
+              "docs/platform/architecture-tiers",
+              "docs/platform/endpoint-inventory",
+              "docs/platform/truth-chain-status",
               "docs/platform/super-graph-index",
-              "docs/platform/super-graph-explorer",
-              "docs/platform/super-graph-detailed",
-              "docs/platform/understand-anything-inventory",
               "docs/platform/diagrams",
               "docs/platform/graph-validation-report"
             ]

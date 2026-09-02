@@ -1,0 +1,3436 @@
+{
+  "version": 1,
+  "generatedAt": "2026-09-02T04:01:19.859Z",
+  "generator": "ua-export-docs.mjs",
+  "graphKind": "codebase",
+  "analyzedAt": "2026-05-28T17:43:11.408Z",
+  "analyzedNodes": 7203,
+  "analyzedEdges": 22342,
+  "commits": {},
+  "repos": [
+    {
+      "name": "ORISO-Frontend",
+      "commit": null,
+      "summary": "Frontend application for the Online-Beratung platform, covering registration, messaging, bookings, profile flows, theming, and Matrix-backed real-time communication.",
+      "nodeCount": 1967,
+      "edgeCount": 4204,
+      "endpointCount": 0,
+      "tier": "User Interfaces"
+    },
+    {
+      "name": "ORISO-Admin",
+      "commit": null,
+      "summary": "Admin dashboard for the Online-Beratung platform, managing tenants, agencies, counselors, topics, invite links, global settings, user administration, and audit/log views.",
+      "nodeCount": 776,
+      "edgeCount": 1547,
+      "endpointCount": 0,
+      "tier": "User Interfaces"
+    },
+    {
+      "name": "ORISO-UserService",
+      "commit": null,
+      "summary": "Spring Boot backend responsible for user, asker, consultant, session, conversation, chat, admin, notification, deletion, and external messaging lifecycle behavior in the ORISO Online-Beratung platform.",
+      "nodeCount": 2295,
+      "edgeCount": 3854,
+      "endpointCount": 182,
+      "tier": "Backend Microservices"
+    },
+    {
+      "name": "ORISO-AgencyService",
+      "commit": null,
+      "summary": "Spring Boot backend for public agency lookup, agency administration, postcode ranges, topic/demographic enrichment, Matrix agency accounts, and ORISO peer-service integration.",
+      "nodeCount": 623,
+      "edgeCount": 835,
+      "endpointCount": 86,
+      "tier": "Backend Microservices"
+    },
+    {
+      "name": "ORISO-ConsultingTypeService",
+      "commit": null,
+      "summary": "Spring Boot service that owns consulting type settings, topics, topic groups, application settings, tenant-aware access, and OpenAPI contracts for the ORISO platform.",
+      "nodeCount": 470,
+      "edgeCount": 515,
+      "endpointCount": 32,
+      "tier": "Backend Microservices"
+    },
+    {
+      "name": "ORISO-TenantService",
+      "commit": null,
+      "summary": "Spring Boot service that owns ORISO tenant records, tenant settings, legal content, subdomain resolution, and tenant-specific integration with ConsultingType, ApplicationSettings, and UserAdmin services.",
+      "nodeCount": 380,
+      "edgeCount": 623,
+      "endpointCount": 66,
+      "tier": "Backend Microservices"
+    },
+    {
+      "name": "ORISO-Database",
+      "commit": null,
+      "summary": "Central ORISO database architecture and operations repository containing service-owned MariaDB schema exports, MongoDB dumps, Matrix PostgreSQL docs, Redis/RabbitMQ docs, backup artifacts, and initialization jobs.",
+      "nodeCount": 192,
+      "edgeCount": 312,
+      "endpointCount": 0,
+      "tier": "Identity & Data"
+    },
+    {
+      "name": "ORISO-Keycloak",
+      "commit": null,
+      "summary": "Keycloak realm and deployment configuration for ORISO identity, authentication, authorization, token issuance, and IAM integration.",
+      "nodeCount": 152,
+      "edgeCount": 247,
+      "endpointCount": 7,
+      "tier": "Identity & Data"
+    },
+    {
+      "name": "ORISO-Kubernetes",
+      "commit": null,
+      "summary": "Kubernetes infrastructure and deployment orchestration repository for the ORISO platform.",
+      "nodeCount": 339,
+      "edgeCount": 588,
+      "endpointCount": 68,
+      "tier": "Operations & Deployment"
+    }
+  ],
+  "endpoints": [
+    {
+      "id": "ORISO-UserService::endpoint:api/appointmentservice.yaml:getAppointmentByBookingId",
+      "repo": "ORISO-UserService",
+      "name": "getAppointmentByBookingId",
+      "method": null,
+      "path": "/appointments/booking/{id}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/appointmentservice.yaml:getAppointment",
+      "repo": "ORISO-UserService",
+      "name": "getAppointment",
+      "method": null,
+      "path": "/appointments/{id}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/appointmentservice.yaml:updateAppointment",
+      "repo": "ORISO-UserService",
+      "name": "updateAppointment",
+      "method": null,
+      "path": "/appointments/{id}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/appointmentservice.yaml:DeleteAppointment",
+      "repo": "ORISO-UserService",
+      "name": "DeleteAppointment",
+      "method": null,
+      "path": "/appointments/{id}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/appointmentservice.yaml:getAppointments",
+      "repo": "ORISO-UserService",
+      "name": "getAppointments",
+      "method": null,
+      "path": "/appointments"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/appointmentservice.yaml:createAppointment",
+      "repo": "ORISO-UserService",
+      "name": "createAppointment",
+      "method": null,
+      "path": "/appointments"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/appointmentservice.yaml:createEnquiryAppointment",
+      "repo": "ORISO-UserService",
+      "name": "createEnquiryAppointment",
+      "method": null,
+      "path": "/appointments/sessions/{sessionId}/enquiry/new"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/conversationservice.yaml:getRegisteredEnquiries",
+      "repo": "ORISO-UserService",
+      "name": "getRegisteredEnquiries",
+      "method": null,
+      "path": "/conversations/consultants/enquiries/registered"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/conversationservice.yaml:getAnonymousEnquiries",
+      "repo": "ORISO-UserService",
+      "name": "getAnonymousEnquiries",
+      "method": null,
+      "path": "/conversations/consultants/enquiries/anonymous"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/conversationservice.yaml:getArchivedSessions",
+      "repo": "ORISO-UserService",
+      "name": "getArchivedSessions",
+      "method": null,
+      "path": "/conversations/consultants/mymessages/archive"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/conversationservice.yaml:getArchivedTeamSessions",
+      "repo": "ORISO-UserService",
+      "name": "getArchivedTeamSessions",
+      "method": null,
+      "path": "/conversations/consultants/teamsessions/archive"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/conversationservice.yaml:createAnonymousEnquiry",
+      "repo": "ORISO-UserService",
+      "name": "createAnonymousEnquiry",
+      "method": null,
+      "path": "/conversations/askers/anonymous/new"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/conversationservice.yaml:acceptAnonymousEnquiry",
+      "repo": "ORISO-UserService",
+      "name": "acceptAnonymousEnquiry",
+      "method": null,
+      "path": "/conversations/askers/anonymous/{sessionId}/accept"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/conversationservice.yaml:finishAnonymousConversation",
+      "repo": "ORISO-UserService",
+      "name": "finishAnonymousConversation",
+      "method": null,
+      "path": "/conversations/anonymous/{sessionId}/finish"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/conversationservice.yaml:getAnonymousEnquiryDetails",
+      "repo": "ORISO-UserService",
+      "name": "getAnonymousEnquiryDetails",
+      "method": null,
+      "path": "/conversations/anonymous/{sessionId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:getRoot",
+      "repo": "ORISO-UserService",
+      "name": "getRoot",
+      "method": null,
+      "path": "/useradmin"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:getSessions",
+      "repo": "ORISO-UserService",
+      "name": "getSessions",
+      "method": null,
+      "path": "/useradmin/sessions"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:getConsultants",
+      "repo": "ORISO-UserService",
+      "name": "getConsultants",
+      "method": null,
+      "path": "/useradmin/consultants"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:createConsultant",
+      "repo": "ORISO-UserService",
+      "name": "createConsultant",
+      "method": null,
+      "path": "/useradmin/consultants"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:getConsultant",
+      "repo": "ORISO-UserService",
+      "name": "getConsultant",
+      "method": null,
+      "path": "/useradmin/consultants/{consultantId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:updateConsultant",
+      "repo": "ORISO-UserService",
+      "name": "updateConsultant",
+      "method": null,
+      "path": "/useradmin/consultants/{consultantId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:markConsultantForDeletion",
+      "repo": "ORISO-UserService",
+      "name": "markConsultantForDeletion",
+      "method": null,
+      "path": "/useradmin/consultants/{consultantId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:getAsker",
+      "repo": "ORISO-UserService",
+      "name": "getAsker",
+      "method": null,
+      "path": "/useradmin/askers/{askerId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:markAskerForDeletion",
+      "repo": "ORISO-UserService",
+      "name": "markAskerForDeletion",
+      "method": null,
+      "path": "/useradmin/askers/{askerId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:generateViolationReport",
+      "repo": "ORISO-UserService",
+      "name": "generateViolationReport",
+      "method": null,
+      "path": "/useradmin/report"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:getAgencyConsultants",
+      "repo": "ORISO-UserService",
+      "name": "getAgencyConsultants",
+      "method": null,
+      "path": "/useradmin/agencies/{agencyId}/consultants"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:getConsultantAgencies",
+      "repo": "ORISO-UserService",
+      "name": "getConsultantAgencies",
+      "method": null,
+      "path": "/useradmin/consultants/{consultantId}/agencies"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:createConsultantAgency",
+      "repo": "ORISO-UserService",
+      "name": "createConsultantAgency",
+      "method": null,
+      "path": "/useradmin/consultants/{consultantId}/agencies"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:setConsultantAgencies",
+      "repo": "ORISO-UserService",
+      "name": "setConsultantAgencies",
+      "method": null,
+      "path": "/useradmin/consultants/{consultantId}/agencies"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:deleteConsultantAgency",
+      "repo": "ORISO-UserService",
+      "name": "deleteConsultantAgency",
+      "method": null,
+      "path": "/useradmin/consultants/{consultantId}/agencies/{agencyId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:changeAgencyType",
+      "repo": "ORISO-UserService",
+      "name": "changeAgencyType",
+      "method": null,
+      "path": "/useradmin/agency/{agencyId}/changetype"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:getAgencyAdmins",
+      "repo": "ORISO-UserService",
+      "name": "getAgencyAdmins",
+      "method": null,
+      "path": "/useradmin/agencyadmins"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:createAgencyAdmin",
+      "repo": "ORISO-UserService",
+      "name": "createAgencyAdmin",
+      "method": null,
+      "path": "/useradmin/agencyadmins"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:searchAgencyAdmins",
+      "repo": "ORISO-UserService",
+      "name": "searchAgencyAdmins",
+      "method": null,
+      "path": "/useradmin/agencyadmins/search"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:getAgencyAdmin",
+      "repo": "ORISO-UserService",
+      "name": "getAgencyAdmin",
+      "method": null,
+      "path": "/useradmin/agencyadmins/{adminId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:updateAgencyAdmin",
+      "repo": "ORISO-UserService",
+      "name": "updateAgencyAdmin",
+      "method": null,
+      "path": "/useradmin/agencyadmins/{adminId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:deleteAgencyAdmin",
+      "repo": "ORISO-UserService",
+      "name": "deleteAgencyAdmin",
+      "method": null,
+      "path": "/useradmin/agencyadmins/{adminId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:getAdminAgencies",
+      "repo": "ORISO-UserService",
+      "name": "getAdminAgencies",
+      "method": null,
+      "path": "/useradmin/agencyadmins/{adminId}/agencies"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:createAdminAgencyRelation",
+      "repo": "ORISO-UserService",
+      "name": "createAdminAgencyRelation",
+      "method": null,
+      "path": "/useradmin/agencyadmins/{adminId}/agencies"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:setAdminAgenciesRelation",
+      "repo": "ORISO-UserService",
+      "name": "setAdminAgenciesRelation",
+      "method": null,
+      "path": "/useradmin/agencyadmins/{adminId}/agencies"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:deleteAdminAgencyRelation",
+      "repo": "ORISO-UserService",
+      "name": "deleteAdminAgencyRelation",
+      "method": null,
+      "path": "/useradmin/agencyadmins/{adminId}/agencies/{agencyId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:getTenantAdmins",
+      "repo": "ORISO-UserService",
+      "name": "getTenantAdmins",
+      "method": null,
+      "path": "/useradmin/tenantadmins"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:createTenantAdmin",
+      "repo": "ORISO-UserService",
+      "name": "createTenantAdmin",
+      "method": null,
+      "path": "/useradmin/tenantadmins"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:searchTenantAdmins",
+      "repo": "ORISO-UserService",
+      "name": "searchTenantAdmins",
+      "method": null,
+      "path": "/useradmin/tenantadmins/search"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:getTenantAdmin",
+      "repo": "ORISO-UserService",
+      "name": "getTenantAdmin",
+      "method": null,
+      "path": "/useradmin/tenantadmins/{adminId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:updateTenantAdmin",
+      "repo": "ORISO-UserService",
+      "name": "updateTenantAdmin",
+      "method": null,
+      "path": "/useradmin/tenantadmins/{adminId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:deleteTenantAdmin",
+      "repo": "ORISO-UserService",
+      "name": "deleteTenantAdmin",
+      "method": null,
+      "path": "/useradmin/tenantadmins/{adminId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/useradminservice.yaml:patchAdminData",
+      "repo": "ORISO-UserService",
+      "name": "patchAdminData",
+      "method": null,
+      "path": "/useradmin/data"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:userExists",
+      "repo": "ORISO-UserService",
+      "name": "userExists",
+      "method": null,
+      "path": "/users/{username}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:registerUser",
+      "repo": "ORISO-UserService",
+      "name": "registerUser",
+      "method": null,
+      "path": "/users/askers/new"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:registerNewSession",
+      "repo": "ORISO-UserService",
+      "name": "registerNewSession",
+      "method": null,
+      "path": "/users/askers/session/new"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:registerNewConsultingType",
+      "repo": "ORISO-UserService",
+      "name": "registerNewConsultingType",
+      "method": null,
+      "path": "/users/askers/consultingType/new"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:createEnquiryMessage",
+      "repo": "ORISO-UserService",
+      "name": "createEnquiryMessage",
+      "method": null,
+      "path": "/users/sessions/{sessionId}/enquiry/new"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:updateSessionData",
+      "repo": "ORISO-UserService",
+      "name": "updateSessionData",
+      "method": null,
+      "path": "/users/sessions/{sessionId}/data"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:acceptEnquiry",
+      "repo": "ORISO-UserService",
+      "name": "acceptEnquiry",
+      "method": null,
+      "path": "/users/sessions/new/{sessionId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:getSessionsForAuthenticatedUser",
+      "repo": "ORISO-UserService",
+      "name": "getSessionsForAuthenticatedUser",
+      "method": null,
+      "path": "/users/sessions/askers"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:getSessionsForGroupIds",
+      "repo": "ORISO-UserService",
+      "name": "getSessionsForGroupIds",
+      "method": null,
+      "path": "/users/sessions/room"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:getSessionForId",
+      "repo": "ORISO-UserService",
+      "name": "getSessionForId",
+      "method": null,
+      "path": "/users/sessions/room/{sessionId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:getRocketChatGroupId",
+      "repo": "ORISO-UserService",
+      "name": "getRocketChatGroupId",
+      "method": null,
+      "path": "/users/sessions/rocketChatGroupId"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:archiveSession",
+      "repo": "ORISO-UserService",
+      "name": "archiveSession",
+      "method": null,
+      "path": "/users/sessions/{sessionId}/archive"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:dearchiveSession",
+      "repo": "ORISO-UserService",
+      "name": "dearchiveSession",
+      "method": null,
+      "path": "/users/sessions/{sessionId}/dearchive"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:updateAbsence",
+      "repo": "ORISO-UserService",
+      "name": "updateAbsence",
+      "method": null,
+      "path": "/users/consultants/absences"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:getLanguages",
+      "repo": "ORISO-UserService",
+      "name": "getLanguages",
+      "method": null,
+      "path": "/users/consultants/languages"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:getUserData",
+      "repo": "ORISO-UserService",
+      "name": "getUserData",
+      "method": null,
+      "path": "/users/data"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:updateConsultantData",
+      "repo": "ORISO-UserService",
+      "name": "updateConsultantData",
+      "method": null,
+      "path": "/users/data"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:patchUser",
+      "repo": "ORISO-UserService",
+      "name": "patchUser",
+      "method": null,
+      "path": "/users/data"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:getUserEmailNotifications",
+      "repo": "ORISO-UserService",
+      "name": "getUserEmailNotifications",
+      "method": null,
+      "path": "/users/notifications"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:updateEmailAddress",
+      "repo": "ORISO-UserService",
+      "name": "updateEmailAddress",
+      "method": null,
+      "path": "/users/email"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:deleteEmailAddress",
+      "repo": "ORISO-UserService",
+      "name": "deleteEmailAddress",
+      "method": null,
+      "path": "/users/email"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:updateMobileToken",
+      "repo": "ORISO-UserService",
+      "name": "updateMobileToken",
+      "method": null,
+      "path": "/users/mobiletoken"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:addMobileAppToken",
+      "repo": "ORISO-UserService",
+      "name": "addMobileAppToken",
+      "method": null,
+      "path": "/users/mobile/app/token"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:getSessionsForAuthenticatedConsultant",
+      "repo": "ORISO-UserService",
+      "name": "getSessionsForAuthenticatedConsultant",
+      "method": null,
+      "path": "/users/sessions/consultants"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:importConsultants",
+      "repo": "ORISO-UserService",
+      "name": "importConsultants",
+      "method": null,
+      "path": "/users/consultants/import"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:importAskers",
+      "repo": "ORISO-UserService",
+      "name": "importAskers",
+      "method": null,
+      "path": "/users/askers/import"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:importAskersWithoutSession",
+      "repo": "ORISO-UserService",
+      "name": "importAskersWithoutSession",
+      "method": null,
+      "path": "/users/askersWithoutSession/import"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:getTeamSessionsForAuthenticatedConsultant",
+      "repo": "ORISO-UserService",
+      "name": "getTeamSessionsForAuthenticatedConsultant",
+      "method": null,
+      "path": "/users/sessions/teams"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:sendNewMessageNotification",
+      "repo": "ORISO-UserService",
+      "name": "sendNewMessageNotification",
+      "method": null,
+      "path": "/users/mails/messages/new"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:sendReassignmentNotification",
+      "repo": "ORISO-UserService",
+      "name": "sendReassignmentNotification",
+      "method": null,
+      "path": "/users/mails/reassignment"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:getConsultants",
+      "repo": "ORISO-UserService",
+      "name": "getConsultants",
+      "method": null,
+      "path": "/users/consultants"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:getConsultantPublicData",
+      "repo": "ORISO-UserService",
+      "name": "getConsultantPublicData",
+      "method": null,
+      "path": "/users/consultants/{consultantId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:searchConsultants",
+      "repo": "ORISO-UserService",
+      "name": "searchConsultants",
+      "method": null,
+      "path": "/users/consultants/search"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:assignSession",
+      "repo": "ORISO-UserService",
+      "name": "assignSession",
+      "method": null,
+      "path": "/users/sessions/{sessionId}/consultant/{consultantId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:removeFromSession",
+      "repo": "ORISO-UserService",
+      "name": "removeFromSession",
+      "method": null,
+      "path": "/users/sessions/{sessionId}/consultant/{consultantId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:updatePassword",
+      "repo": "ORISO-UserService",
+      "name": "updatePassword",
+      "method": null,
+      "path": "/users/password/change"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:updateKey",
+      "repo": "ORISO-UserService",
+      "name": "updateKey",
+      "method": null,
+      "path": "/users/messages/key"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:fetchSessionForConsultant",
+      "repo": "ORISO-UserService",
+      "name": "fetchSessionForConsultant",
+      "method": null,
+      "path": "/users/consultants/sessions/{sessionId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:updateE2eInChats",
+      "repo": "ORISO-UserService",
+      "name": "updateE2eInChats",
+      "method": null,
+      "path": "/users/chat/e2e"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:createChatV1",
+      "repo": "ORISO-UserService",
+      "name": "createChatV1",
+      "method": null,
+      "path": "/users/chat/new"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:createChatV2",
+      "repo": "ORISO-UserService",
+      "name": "createChatV2",
+      "method": null,
+      "path": "/users/chat/v2/new"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:updateChat",
+      "repo": "ORISO-UserService",
+      "name": "updateChat",
+      "method": null,
+      "path": "/users/chat/{chatId}/update"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:banFromChat",
+      "repo": "ORISO-UserService",
+      "name": "banFromChat",
+      "method": null,
+      "path": "/users/{chatUserId}/chat/{chatId}/ban"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:startChat",
+      "repo": "ORISO-UserService",
+      "name": "startChat",
+      "method": null,
+      "path": "/users/chat/{chatId}/start"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:stopChat",
+      "repo": "ORISO-UserService",
+      "name": "stopChat",
+      "method": null,
+      "path": "/users/chat/{chatId}/stop"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:getChat",
+      "repo": "ORISO-UserService",
+      "name": "getChat",
+      "method": null,
+      "path": "/users/chat/{chatId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:assignChat",
+      "repo": "ORISO-UserService",
+      "name": "assignChat",
+      "method": null,
+      "path": "/users/chat/{groupId}/assign"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:joinChat",
+      "repo": "ORISO-UserService",
+      "name": "joinChat",
+      "method": null,
+      "path": "/users/chat/{chatId}/join"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:verifyCanModerateChat",
+      "repo": "ORISO-UserService",
+      "name": "verifyCanModerateChat",
+      "method": null,
+      "path": "/users/chat/{chatId}/verify"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:getChatMembers",
+      "repo": "ORISO-UserService",
+      "name": "getChatMembers",
+      "method": null,
+      "path": "/users/chat/{chatId}/members"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:leaveChat",
+      "repo": "ORISO-UserService",
+      "name": "leaveChat",
+      "method": null,
+      "path": "/users/chat/{chatId}/leave"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:getChatById",
+      "repo": "ORISO-UserService",
+      "name": "getChatById",
+      "method": null,
+      "path": "/users/chat/room/{chatId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:deactivateAndFlagUserAccountForDeletion",
+      "repo": "ORISO-UserService",
+      "name": "deactivateAndFlagUserAccountForDeletion",
+      "method": null,
+      "path": "/users/account"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:deleteSessionAndInactiveUser",
+      "repo": "ORISO-UserService",
+      "name": "deleteSessionAndInactiveUser",
+      "method": null,
+      "path": "/users/sessions/{sessionId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:startTwoFactorAuthByEmailSetup",
+      "repo": "ORISO-UserService",
+      "name": "startTwoFactorAuthByEmailSetup",
+      "method": null,
+      "path": "/users/2fa/email"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:finishTwoFactorAuthByEmailSetup",
+      "repo": "ORISO-UserService",
+      "name": "finishTwoFactorAuthByEmailSetup",
+      "method": null,
+      "path": "/users/2fa/email/validate/{tan}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:activateTwoFactorAuthByApp",
+      "repo": "ORISO-UserService",
+      "name": "activateTwoFactorAuthByApp",
+      "method": null,
+      "path": "/users/2fa/app"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:deactivateTwoFactorAuthByApp",
+      "repo": "ORISO-UserService",
+      "name": "deactivateTwoFactorAuthByApp",
+      "method": null,
+      "path": "/users/2fa"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userservice.yaml:sendLiveEvent",
+      "repo": "ORISO-UserService",
+      "name": "sendLiveEvent",
+      "method": null,
+      "path": "/liveproxy/send"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api/userstatisticsservice.yaml:getSession",
+      "repo": "ORISO-UserService",
+      "name": "getSession",
+      "method": null,
+      "path": "/userstatistics/sessions"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/agencyadminservice.yaml:getRoot",
+      "repo": "ORISO-UserService",
+      "name": "getRoot",
+      "method": null,
+      "path": "/agencyadmin"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/agencyadminservice.yaml:searchAgencies",
+      "repo": "ORISO-UserService",
+      "name": "searchAgencies",
+      "method": null,
+      "path": "/agencyadmin/agencies"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/agencyadminservice.yaml:createAgency",
+      "repo": "ORISO-UserService",
+      "name": "createAgency",
+      "method": null,
+      "path": "/agencyadmin/agencies"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/agencyadminservice.yaml:getAgency",
+      "repo": "ORISO-UserService",
+      "name": "getAgency",
+      "method": null,
+      "path": "/agencyadmin/agencies/{agencyId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/agencyadminservice.yaml:deleteAgency",
+      "repo": "ORISO-UserService",
+      "name": "deleteAgency",
+      "method": null,
+      "path": "/agencyadmin/agencies/{agencyId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/agencyadminservice.yaml:updateAgency",
+      "repo": "ORISO-UserService",
+      "name": "updateAgency",
+      "method": null,
+      "path": "/agencyadmin/agencies/{agencyId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/agencyadminservice.yaml:getDioceses",
+      "repo": "ORISO-UserService",
+      "name": "getDioceses",
+      "method": null,
+      "path": "/agencyadmin/dioceses"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/agencyadminservice.yaml:changeAgencyType",
+      "repo": "ORISO-UserService",
+      "name": "changeAgencyType",
+      "method": null,
+      "path": "/agencyadmin/agencies/{agencyId}/changetype"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/agencyadminservice.yaml:getAgencyPostcodeRanges",
+      "repo": "ORISO-UserService",
+      "name": "getAgencyPostcodeRanges",
+      "method": null,
+      "path": "/agencyadmin/postcoderanges/{agencyId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/agencyadminservice.yaml:createAgencyPostcodeRange",
+      "repo": "ORISO-UserService",
+      "name": "createAgencyPostcodeRange",
+      "method": null,
+      "path": "/agencyadmin/postcoderanges/{agencyId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/agencyadminservice.yaml:updateAgencyPostcodeRange",
+      "repo": "ORISO-UserService",
+      "name": "updateAgencyPostcodeRange",
+      "method": null,
+      "path": "/agencyadmin/postcoderanges/{agencyId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/agencyadminservice.yaml:deleteAgencyPostcodeRange",
+      "repo": "ORISO-UserService",
+      "name": "deleteAgencyPostcodeRange",
+      "method": null,
+      "path": "/agencyadmin/postcoderanges/{agencyId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/agencyservice.yaml:getAgencies",
+      "repo": "ORISO-UserService",
+      "name": "getAgencies",
+      "method": null,
+      "path": "/agencies"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/agencyservice.yaml:getAgenciesByIds",
+      "repo": "ORISO-UserService",
+      "name": "getAgenciesByIds",
+      "method": null,
+      "path": "/agencies/{agencyIds}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/agencyservice.yaml:getAgenciesByConsultingType",
+      "repo": "ORISO-UserService",
+      "name": "getAgenciesByConsultingType",
+      "method": null,
+      "path": "/agencies/consultingtype/{consultingTypeId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/applicationsettingsservice.yaml:getApplicationSettings",
+      "repo": "ORISO-UserService",
+      "name": "getApplicationSettings",
+      "method": null,
+      "path": "/settings"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/appointmentService.yaml:createConsultant",
+      "repo": "ORISO-UserService",
+      "name": "createConsultant",
+      "method": null,
+      "path": "/consultants"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/appointmentService.yaml:patchConsultant",
+      "repo": "ORISO-UserService",
+      "name": "patchConsultant",
+      "method": null,
+      "path": "/consultants/{consultantId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/appointmentService.yaml:updateConsultant",
+      "repo": "ORISO-UserService",
+      "name": "updateConsultant",
+      "method": null,
+      "path": "/consultants/{consultantId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/appointmentService.yaml:deleteConsultant",
+      "repo": "ORISO-UserService",
+      "name": "deleteConsultant",
+      "method": null,
+      "path": "/consultants/{consultantId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/appointmentService.yaml:getAllEventTypesOfConsultant",
+      "repo": "ORISO-UserService",
+      "name": "getAllEventTypesOfConsultant",
+      "method": null,
+      "path": "/consultants/{consultantId}/eventTypes"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/appointmentService.yaml:addEventTypeToConsultant",
+      "repo": "ORISO-UserService",
+      "name": "addEventTypeToConsultant",
+      "method": null,
+      "path": "/consultants/{consultantId}/eventTypes"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/appointmentService.yaml:getAllBookingsOfConsultant",
+      "repo": "ORISO-UserService",
+      "name": "getAllBookingsOfConsultant",
+      "method": null,
+      "path": "/consultants/{consultantId}/bookings"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/appointmentService.yaml:getConsultantMeetingSlug",
+      "repo": "ORISO-UserService",
+      "name": "getConsultantMeetingSlug",
+      "method": null,
+      "path": "/consultants/{consultantId}/meetingSlug"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/appointmentService.yaml:agencyConsultantsSync",
+      "repo": "ORISO-UserService",
+      "name": "agencyConsultantsSync",
+      "method": null,
+      "path": "/agencies/agencyConsultantsSync"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/appointmentService.yaml:agencyMasterDataSync",
+      "repo": "ORISO-UserService",
+      "name": "agencyMasterDataSync",
+      "method": null,
+      "path": "/agencies/agencyMasterDataSync"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/appointmentService.yaml:createAgency",
+      "repo": "ORISO-UserService",
+      "name": "createAgency",
+      "method": null,
+      "path": "/agencies"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/appointmentService.yaml:updateAgency",
+      "repo": "ORISO-UserService",
+      "name": "updateAgency",
+      "method": null,
+      "path": "/agencies/{agencyId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/appointmentService.yaml:deleteAgency",
+      "repo": "ORISO-UserService",
+      "name": "deleteAgency",
+      "method": null,
+      "path": "/agencies/{agencyId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/appointmentService.yaml:getAllEventTypesOfAgency",
+      "repo": "ORISO-UserService",
+      "name": "getAllEventTypesOfAgency",
+      "method": null,
+      "path": "/agencies/{agencyId}/eventTypes"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/appointmentService.yaml:addEventTypeToAgency",
+      "repo": "ORISO-UserService",
+      "name": "addEventTypeToAgency",
+      "method": null,
+      "path": "/agencies/{agencyId}/eventTypes"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/appointmentService.yaml:getInitialMeetingSlug",
+      "repo": "ORISO-UserService",
+      "name": "getInitialMeetingSlug",
+      "method": null,
+      "path": "/agencies/{agencyId}/initialMeetingSlug"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/appointmentService.yaml:getAllBookingsOfAsker",
+      "repo": "ORISO-UserService",
+      "name": "getAllBookingsOfAsker",
+      "method": null,
+      "path": "/askers/{askerId}/bookings"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/appointmentService.yaml:getEventTypeById",
+      "repo": "ORISO-UserService",
+      "name": "getEventTypeById",
+      "method": null,
+      "path": "/eventTypes/{eventTypeId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/appointmentService.yaml:updateEventType",
+      "repo": "ORISO-UserService",
+      "name": "updateEventType",
+      "method": null,
+      "path": "/eventTypes/{eventTypeId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/appointmentService.yaml:deleteEventType",
+      "repo": "ORISO-UserService",
+      "name": "deleteEventType",
+      "method": null,
+      "path": "/eventTypes/{eventTypeId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/appointmentService.yaml:processBooking",
+      "repo": "ORISO-UserService",
+      "name": "processBooking",
+      "method": null,
+      "path": "/askers/processBooking"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/appointmentService.yaml:deleteAskerData",
+      "repo": "ORISO-UserService",
+      "name": "deleteAskerData",
+      "method": null,
+      "path": "/askers/{askerId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/appointmentService.yaml:updateAskerEmail",
+      "repo": "ORISO-UserService",
+      "name": "updateAskerEmail",
+      "method": null,
+      "path": "/askers/{askerId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/consultingtypeservice.yaml:getBasicConsultingTypeList",
+      "repo": "ORISO-UserService",
+      "name": "getBasicConsultingTypeList",
+      "method": null,
+      "path": "/consultingtypes/basic"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/consultingtypeservice.yaml:getBasicConsultingTypeById",
+      "repo": "ORISO-UserService",
+      "name": "getBasicConsultingTypeById",
+      "method": null,
+      "path": "/consultingtypes/{consultingTypeId}/basic"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/consultingtypeservice.yaml:getExtendedConsultingTypeById",
+      "repo": "ORISO-UserService",
+      "name": "getExtendedConsultingTypeById",
+      "method": null,
+      "path": "/consultingtypes/{consultingTypeId}/extended"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/consultingtypeservice.yaml:getFullConsultingTypeById",
+      "repo": "ORISO-UserService",
+      "name": "getFullConsultingTypeById",
+      "method": null,
+      "path": "/consultingtypes/{consultingTypeId}/full"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/consultingtypeservice.yaml:getFullConsultingTypeBySlug",
+      "repo": "ORISO-UserService",
+      "name": "getFullConsultingTypeBySlug",
+      "method": null,
+      "path": "/consultingtypes/byslug/{slug}/full"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/consultingtypeservice.yaml:getConsultingTypeGroups",
+      "repo": "ORISO-UserService",
+      "name": "getConsultingTypeGroups",
+      "method": null,
+      "path": "/consultingtypes/groups"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/keycloakextension.yaml:getOtpSetupInfo",
+      "repo": "ORISO-UserService",
+      "name": "getOtpSetupInfo",
+      "method": null,
+      "path": "/otp-config/fetch-otp-setup-info/{username}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/keycloakextension.yaml:setupOtp",
+      "repo": "ORISO-UserService",
+      "name": "setupOtp",
+      "method": null,
+      "path": "/otp-config/setup-otp/{username}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/keycloakextension.yaml:deleteOtp",
+      "repo": "ORISO-UserService",
+      "name": "deleteOtp",
+      "method": null,
+      "path": "/otp-config/delete-otp/{username}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/keycloakextension.yaml:sendVerificationMail",
+      "repo": "ORISO-UserService",
+      "name": "sendVerificationMail",
+      "method": null,
+      "path": "/otp-config/send-verification-mail/{username}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/keycloakextension.yaml:setupOtpMail",
+      "repo": "ORISO-UserService",
+      "name": "setupOtpMail",
+      "method": null,
+      "path": "/otp-config/setup-otp-mail/{username}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/liveservice.yaml:sendLiveEvent",
+      "repo": "ORISO-UserService",
+      "name": "sendLiveEvent",
+      "method": null,
+      "path": "/liveevent/send"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/mailservice.yaml:sendMails",
+      "repo": "ORISO-UserService",
+      "name": "sendMails",
+      "method": null,
+      "path": "/mails/send"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/mailservice.yaml:sendErrorMail",
+      "repo": "ORISO-UserService",
+      "name": "sendErrorMail",
+      "method": null,
+      "path": "/mails/error/send"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/messageservice.yaml:updateKey",
+      "repo": "ORISO-UserService",
+      "name": "updateKey",
+      "method": null,
+      "path": "/messages/key"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/messageservice.yaml:createMessage",
+      "repo": "ORISO-UserService",
+      "name": "createMessage",
+      "method": null,
+      "path": "/messages/new"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/messageservice.yaml:createVideoHintMessage",
+      "repo": "ORISO-UserService",
+      "name": "createVideoHintMessage",
+      "method": null,
+      "path": "/messages/videohint/new"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/messageservice.yaml:getMessageStream",
+      "repo": "ORISO-UserService",
+      "name": "getMessageStream",
+      "method": null,
+      "path": "/messages"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/messageservice.yaml:saveDraftMessage",
+      "repo": "ORISO-UserService",
+      "name": "saveDraftMessage",
+      "method": null,
+      "path": "/messages/draft"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/messageservice.yaml:findDraftMessage",
+      "repo": "ORISO-UserService",
+      "name": "findDraftMessage",
+      "method": null,
+      "path": "/messages/draft"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/messageservice.yaml:saveAliasOnlyMessage",
+      "repo": "ORISO-UserService",
+      "name": "saveAliasOnlyMessage",
+      "method": null,
+      "path": "/messages/aliasonly/new"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/messageservice.yaml:saveAliasMessageWithContent",
+      "repo": "ORISO-UserService",
+      "name": "saveAliasMessageWithContent",
+      "method": null,
+      "path": "/messages/aliasWithContent/new"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/statisticsservice.yaml:getConsultantStatistics",
+      "repo": "ORISO-UserService",
+      "name": "getConsultantStatistics",
+      "method": null,
+      "path": "/statistics/consultant"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/statisticsservice.yaml:getRegistrationStatistics",
+      "repo": "ORISO-UserService",
+      "name": "getRegistrationStatistics",
+      "method": null,
+      "path": "/statistics/registration"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/tenantadminservice.yaml:createTenant",
+      "repo": "ORISO-UserService",
+      "name": "createTenant",
+      "method": null,
+      "path": "/tenant"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/tenantadminservice.yaml:getAllTenants",
+      "repo": "ORISO-UserService",
+      "name": "getAllTenants",
+      "method": null,
+      "path": "/tenant"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/tenantadminservice.yaml:getTenantById",
+      "repo": "ORISO-UserService",
+      "name": "getTenantById",
+      "method": null,
+      "path": "/tenant/{id}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/tenantadminservice.yaml:updateTenant",
+      "repo": "ORISO-UserService",
+      "name": "updateTenant",
+      "method": null,
+      "path": "/tenant/{id}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/tenantservice.yaml:getRestrictedTenantDataBySubdomain",
+      "repo": "ORISO-UserService",
+      "name": "getRestrictedTenantDataBySubdomain",
+      "method": null,
+      "path": "/tenant/public/{subdomain}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/tenantservice.yaml:getRestrictedTenantDataByTenantId",
+      "repo": "ORISO-UserService",
+      "name": "getRestrictedTenantDataByTenantId",
+      "method": null,
+      "path": "/tenant/public/id/{tenantId}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/topicservice.yaml:createTopic",
+      "repo": "ORISO-UserService",
+      "name": "createTopic",
+      "method": null,
+      "path": "/topic"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/topicservice.yaml:getAllTopics",
+      "repo": "ORISO-UserService",
+      "name": "getAllTopics",
+      "method": null,
+      "path": "/topic"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/topicservice.yaml:getTopicById",
+      "repo": "ORISO-UserService",
+      "name": "getTopicById",
+      "method": null,
+      "path": "/topic/{id}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/topicservice.yaml:updateTopic",
+      "repo": "ORISO-UserService",
+      "name": "updateTopic",
+      "method": null,
+      "path": "/topic/{id}"
+    },
+    {
+      "id": "ORISO-UserService::endpoint:services/topicservice.yaml:getAllActiveTopics",
+      "repo": "ORISO-UserService",
+      "name": "getAllActiveTopics",
+      "method": null,
+      "path": "/topic/public"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:api/agencyservice.yaml:getAgencies",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /agencies",
+      "method": "GET",
+      "path": "/agencies"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:api/agencyservice.yaml:getTenantAgencies",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /agencies/by-tenant",
+      "method": "GET",
+      "path": "/agencies/by-tenant"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:api/agencyservice.yaml:getAgenciesTopics",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /agencies/topics",
+      "method": "GET",
+      "path": "/agencies/topics"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:api/agencyservice.yaml:getAgenciesByIds",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /agencies/{agencyIds}",
+      "method": "GET",
+      "path": "/agencies/{agencyIds}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:api/agencyservice.yaml:getAgenciesByConsultingType",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /agencies/consultingtype/{consultingTypeId}",
+      "method": "GET",
+      "path": "/agencies/consultingtype/{consultingTypeId}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:api/agencyadminservice.yaml:getRoot",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /agencyadmin",
+      "method": "GET",
+      "path": "/agencyadmin"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:api/agencyadminservice.yaml:searchAgencies",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /agencyadmin/agencies",
+      "method": "GET",
+      "path": "/agencyadmin/agencies"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:api/agencyadminservice.yaml:createAgency",
+      "repo": "ORISO-AgencyService",
+      "name": "POST /agencyadmin/agencies",
+      "method": "POST",
+      "path": "/agencyadmin/agencies"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:api/agencyadminservice.yaml:getAgency",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /agencyadmin/agencies/{agencyId}",
+      "method": "GET",
+      "path": "/agencyadmin/agencies/{agencyId}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:api/agencyadminservice.yaml:deleteAgency",
+      "repo": "ORISO-AgencyService",
+      "name": "DELETE /agencyadmin/agencies/{agencyId}",
+      "method": "DELETE",
+      "path": "/agencyadmin/agencies/{agencyId}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:api/agencyadminservice.yaml:updateAgency",
+      "repo": "ORISO-AgencyService",
+      "name": "PUT /agencyadmin/agencies/{agencyId}",
+      "method": "PUT",
+      "path": "/agencyadmin/agencies/{agencyId}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:api/agencyadminservice.yaml:getAgenciesByTenantId",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /agencyadmin/agencies/tenant/{tenantId}",
+      "method": "GET",
+      "path": "/agencyadmin/agencies/tenant/{tenantId}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:api/agencyadminservice.yaml:changeAgencyType",
+      "repo": "ORISO-AgencyService",
+      "name": "POST /agencyadmin/agencies/{agencyId}/changetype",
+      "method": "POST",
+      "path": "/agencyadmin/agencies/{agencyId}/changetype"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:api/agencyadminservice.yaml:getAgencyPostcodeRanges",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /agencyadmin/postcoderanges/{agencyId}",
+      "method": "GET",
+      "path": "/agencyadmin/postcoderanges/{agencyId}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:api/agencyadminservice.yaml:createAgencyPostcodeRange",
+      "repo": "ORISO-AgencyService",
+      "name": "POST /agencyadmin/postcoderanges/{agencyId}",
+      "method": "POST",
+      "path": "/agencyadmin/postcoderanges/{agencyId}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:api/agencyadminservice.yaml:updateAgencyPostcodeRange",
+      "repo": "ORISO-AgencyService",
+      "name": "PUT /agencyadmin/postcoderanges/{agencyId}",
+      "method": "PUT",
+      "path": "/agencyadmin/postcoderanges/{agencyId}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:api/agencyadminservice.yaml:deleteAgencyPostcodeRange",
+      "repo": "ORISO-AgencyService",
+      "name": "DELETE /agencyadmin/postcoderanges/{agencyId}",
+      "method": "DELETE",
+      "path": "/agencyadmin/postcoderanges/{agencyId}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/useradminservice.yaml:getRoot",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /useradmin",
+      "method": "GET",
+      "path": "/useradmin"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/useradminservice.yaml:getSessions",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /useradmin/sessions",
+      "method": "GET",
+      "path": "/useradmin/sessions"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/useradminservice.yaml:getConsultants",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /useradmin/consultants",
+      "method": "GET",
+      "path": "/useradmin/consultants"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/useradminservice.yaml:createConsultant",
+      "repo": "ORISO-AgencyService",
+      "name": "POST /useradmin/consultants",
+      "method": "POST",
+      "path": "/useradmin/consultants"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/useradminservice.yaml:getConsultant",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /useradmin/consultants/{consultantId}",
+      "method": "GET",
+      "path": "/useradmin/consultants/{consultantId}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/useradminservice.yaml:updateConsultant",
+      "repo": "ORISO-AgencyService",
+      "name": "PUT /useradmin/consultants/{consultantId}",
+      "method": "PUT",
+      "path": "/useradmin/consultants/{consultantId}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/useradminservice.yaml:markConsultantForDeletion",
+      "repo": "ORISO-AgencyService",
+      "name": "DELETE /useradmin/consultants/{consultantId}",
+      "method": "DELETE",
+      "path": "/useradmin/consultants/{consultantId}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/useradminservice.yaml:getAsker",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /useradmin/askers/{askerId}",
+      "method": "GET",
+      "path": "/useradmin/askers/{askerId}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/useradminservice.yaml:markAskerForDeletion",
+      "repo": "ORISO-AgencyService",
+      "name": "DELETE /useradmin/askers/{askerId}",
+      "method": "DELETE",
+      "path": "/useradmin/askers/{askerId}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/useradminservice.yaml:generateViolationReport",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /useradmin/report",
+      "method": "GET",
+      "path": "/useradmin/report"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/useradminservice.yaml:getAgencyConsultants",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /useradmin/agencies/{agencyId}/consultants",
+      "method": "GET",
+      "path": "/useradmin/agencies/{agencyId}/consultants"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/useradminservice.yaml:getConsultantAgencies",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /useradmin/consultants/{consultantId}/agencies",
+      "method": "GET",
+      "path": "/useradmin/consultants/{consultantId}/agencies"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/useradminservice.yaml:createConsultantAgency",
+      "repo": "ORISO-AgencyService",
+      "name": "POST /useradmin/consultants/{consultantId}/agencies",
+      "method": "POST",
+      "path": "/useradmin/consultants/{consultantId}/agencies"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/useradminservice.yaml:setConsultantAgencies",
+      "repo": "ORISO-AgencyService",
+      "name": "PUT /useradmin/consultants/{consultantId}/agencies",
+      "method": "PUT",
+      "path": "/useradmin/consultants/{consultantId}/agencies"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/useradminservice.yaml:deleteConsultantAgency",
+      "repo": "ORISO-AgencyService",
+      "name": "DELETE /useradmin/consultants/{consultantId}/agencies/{agencyId}",
+      "method": "DELETE",
+      "path": "/useradmin/consultants/{consultantId}/agencies/{agencyId}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/useradminservice.yaml:changeAgencyType",
+      "repo": "ORISO-AgencyService",
+      "name": "POST /useradmin/agency/{agencyId}/changetype",
+      "method": "POST",
+      "path": "/useradmin/agency/{agencyId}/changetype"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/useradminservice.yaml:getAgencyAdmins",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /useradmin/agencyadmins",
+      "method": "GET",
+      "path": "/useradmin/agencyadmins"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/useradminservice.yaml:createAgencyAdmin",
+      "repo": "ORISO-AgencyService",
+      "name": "POST /useradmin/agencyadmins",
+      "method": "POST",
+      "path": "/useradmin/agencyadmins"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/useradminservice.yaml:getAgencyAdmin",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /useradmin/agencyadmins/{adminId}",
+      "method": "GET",
+      "path": "/useradmin/agencyadmins/{adminId}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/useradminservice.yaml:updateAgencyAdmin",
+      "repo": "ORISO-AgencyService",
+      "name": "PUT /useradmin/agencyadmins/{adminId}",
+      "method": "PUT",
+      "path": "/useradmin/agencyadmins/{adminId}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/useradminservice.yaml:deleteAgencyAdmin",
+      "repo": "ORISO-AgencyService",
+      "name": "DELETE /useradmin/agencyadmins/{adminId}",
+      "method": "DELETE",
+      "path": "/useradmin/agencyadmins/{adminId}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/useradminservice.yaml:getAdminAgencies",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /useradmin/agencyadmins/{adminId}/agencies",
+      "method": "GET",
+      "path": "/useradmin/agencyadmins/{adminId}/agencies"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/useradminservice.yaml:createAdminAgencyRelation",
+      "repo": "ORISO-AgencyService",
+      "name": "POST /useradmin/agencyadmins/{adminId}/agencies",
+      "method": "POST",
+      "path": "/useradmin/agencyadmins/{adminId}/agencies"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/useradminservice.yaml:setAdminAgenciesRelation",
+      "repo": "ORISO-AgencyService",
+      "name": "PUT /useradmin/agencyadmins/{adminId}/agencies",
+      "method": "PUT",
+      "path": "/useradmin/agencyadmins/{adminId}/agencies"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/useradminservice.yaml:deleteAdminAgencyRelation",
+      "repo": "ORISO-AgencyService",
+      "name": "DELETE /useradmin/agencyadmins/{adminId}/agencies/{agencyId}",
+      "method": "DELETE",
+      "path": "/useradmin/agencyadmins/{adminId}/agencies/{agencyId}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/consultingtypeservice.yaml:getBasicConsultingTypeList",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /consultingtypes/basic",
+      "method": "GET",
+      "path": "/consultingtypes/basic"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/consultingtypeservice.yaml:getBasicConsultingTypeById",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /consultingtypes/{consultingTypeId}/basic",
+      "method": "GET",
+      "path": "/consultingtypes/{consultingTypeId}/basic"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/consultingtypeservice.yaml:getExtendedConsultingTypeById",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /consultingtypes/{consultingTypeId}/extended",
+      "method": "GET",
+      "path": "/consultingtypes/{consultingTypeId}/extended"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/consultingtypeservice.yaml:getFullConsultingTypeById",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /consultingtypes/{consultingTypeId}/full",
+      "method": "GET",
+      "path": "/consultingtypes/{consultingTypeId}/full"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/consultingtypeservice.yaml:getFullConsultingTypeBySlug",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /consultingtypes/byslug/{slug}/full",
+      "method": "GET",
+      "path": "/consultingtypes/byslug/{slug}/full"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/consultingtypeservice.yaml:getFullConsultingTypeByTenantId",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /consultingtypes/bytenant/{tenantId}/full",
+      "method": "GET",
+      "path": "/consultingtypes/bytenant/{tenantId}/full"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/consultingtypeservice.yaml:getConsultingTypeGroups",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /consultingtypes/groups",
+      "method": "GET",
+      "path": "/consultingtypes/groups"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/consultingtypeservice.yaml:createConsultingType",
+      "repo": "ORISO-AgencyService",
+      "name": "POST /consultingtypes",
+      "method": "POST",
+      "path": "/consultingtypes"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/consultingtypeservice.yaml:patchConsultingType",
+      "repo": "ORISO-AgencyService",
+      "name": "PATCH /consultingtypes/{id}",
+      "method": "PATCH",
+      "path": "/consultingtypes/{id}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/tenantservice.yaml:createTenant",
+      "repo": "ORISO-AgencyService",
+      "name": "POST /tenantadmin",
+      "method": "POST",
+      "path": "/tenantadmin"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/tenantservice.yaml:getAllTenantsWithAdminData",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /tenantadmin",
+      "method": "GET",
+      "path": "/tenantadmin"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/tenantservice.yaml:searchTenants",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /tenantadmin/search",
+      "method": "GET",
+      "path": "/tenantadmin/search"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/tenantservice.yaml:updateTenant",
+      "repo": "ORISO-AgencyService",
+      "name": "PUT /tenantadmin/{id}",
+      "method": "PUT",
+      "path": "/tenantadmin/{id}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/tenantservice.yaml:getMultilingualTenantById",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /tenantadmin/{id}",
+      "method": "GET",
+      "path": "/tenantadmin/{id}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/tenantservice.yaml:getAllTenants",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /tenant",
+      "method": "GET",
+      "path": "/tenant"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/tenantservice.yaml:getTenantById",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /tenant/{id}",
+      "method": "GET",
+      "path": "/tenant/{id}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/tenantservice.yaml:getRestrictedTenantDataBySubdomain",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /tenant/public/{subdomain}",
+      "method": "GET",
+      "path": "/tenant/public/{subdomain}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/tenantservice.yaml:getRestrictedTenantDataByTenantId",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /tenant/public/id/{tenantId}",
+      "method": "GET",
+      "path": "/tenant/public/id/{tenantId}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/tenantservice.yaml:getRestrictedSingleTenancyTenantData",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /tenant/public/single",
+      "method": "GET",
+      "path": "/tenant/public/single"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/tenantservice.yaml:getRestrictedTenantData",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /tenant/public/",
+      "method": "GET",
+      "path": "/tenant/public/"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/tenantservice.yaml:canAccessTenant",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /tenant/access",
+      "method": "GET",
+      "path": "/tenant/access"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/topicservice.yaml:createTopic",
+      "repo": "ORISO-AgencyService",
+      "name": "POST /topic",
+      "method": "POST",
+      "path": "/topic"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/topicservice.yaml:getAllTopics",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /topic",
+      "method": "GET",
+      "path": "/topic"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/topicservice.yaml:getTopicById",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /topic/{id}",
+      "method": "GET",
+      "path": "/topic/{id}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/topicservice.yaml:updateTopic",
+      "repo": "ORISO-AgencyService",
+      "name": "PUT /topic/{id}",
+      "method": "PUT",
+      "path": "/topic/{id}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/applicationsettingsservice.yml:getApplicationSettings",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /settings",
+      "method": "GET",
+      "path": "/settings"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/applicationsettingsservice.yml:patchApplicationSettings",
+      "repo": "ORISO-AgencyService",
+      "name": "PATCH /settingsadmin",
+      "method": "PATCH",
+      "path": "/settingsadmin"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/appointmentService.yaml:getAllEventTypesOfConsultant",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /consultants/{consultantId}/eventTypes",
+      "method": "GET",
+      "path": "/consultants/{consultantId}/eventTypes"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/appointmentService.yaml:addEventTypeToConsultant",
+      "repo": "ORISO-AgencyService",
+      "name": "POST /consultants/{consultantId}/eventTypes",
+      "method": "POST",
+      "path": "/consultants/{consultantId}/eventTypes"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/appointmentService.yaml:getAllBookingsOfConsultant",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /consultants/{consultantId}/bookings",
+      "method": "GET",
+      "path": "/consultants/{consultantId}/bookings"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/appointmentService.yaml:getConsultantMeetingSlug",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /consultants/{consultantId}/meetingSlug",
+      "method": "GET",
+      "path": "/consultants/{consultantId}/meetingSlug"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/appointmentService.yaml:agencyConsultantsSync",
+      "repo": "ORISO-AgencyService",
+      "name": "POST /agencies/agencyConsultantsSync",
+      "method": "POST",
+      "path": "/agencies/agencyConsultantsSync"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/appointmentService.yaml:agencyMasterDataSync",
+      "repo": "ORISO-AgencyService",
+      "name": "POST /agencies/agencyMasterDataSync",
+      "method": "POST",
+      "path": "/agencies/agencyMasterDataSync"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/appointmentService.yaml:createAgency",
+      "repo": "ORISO-AgencyService",
+      "name": "POST /agencies",
+      "method": "POST",
+      "path": "/agencies"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/appointmentService.yaml:updateAgency",
+      "repo": "ORISO-AgencyService",
+      "name": "PUT /agencies/{agencyId}",
+      "method": "PUT",
+      "path": "/agencies/{agencyId}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/appointmentService.yaml:deleteAgency",
+      "repo": "ORISO-AgencyService",
+      "name": "DELETE /agencies/{agencyId}",
+      "method": "DELETE",
+      "path": "/agencies/{agencyId}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/appointmentService.yaml:getAllEventTypesOfAgency",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /agencies/{agencyId}/eventTypes",
+      "method": "GET",
+      "path": "/agencies/{agencyId}/eventTypes"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/appointmentService.yaml:addEventTypeToAgency",
+      "repo": "ORISO-AgencyService",
+      "name": "POST /agencies/{agencyId}/eventTypes",
+      "method": "POST",
+      "path": "/agencies/{agencyId}/eventTypes"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/appointmentService.yaml:getInitialMeetingSlug",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /agencies/{agencyId}/initialMeetingSlug",
+      "method": "GET",
+      "path": "/agencies/{agencyId}/initialMeetingSlug"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/appointmentService.yaml:getAllBookingsOfAsker",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /askers/{askerId}/bookings",
+      "method": "GET",
+      "path": "/askers/{askerId}/bookings"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/appointmentService.yaml:getEventTypeById",
+      "repo": "ORISO-AgencyService",
+      "name": "GET /eventTypes/{eventTypeId}",
+      "method": "GET",
+      "path": "/eventTypes/{eventTypeId}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/appointmentService.yaml:updateEventType",
+      "repo": "ORISO-AgencyService",
+      "name": "PUT /eventTypes/{eventTypeId}",
+      "method": "PUT",
+      "path": "/eventTypes/{eventTypeId}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/appointmentService.yaml:deleteEventType",
+      "repo": "ORISO-AgencyService",
+      "name": "DELETE /eventTypes/{eventTypeId}",
+      "method": "DELETE",
+      "path": "/eventTypes/{eventTypeId}"
+    },
+    {
+      "id": "ORISO-AgencyService::endpoint:services/appointmentService.yaml:processBooking",
+      "repo": "ORISO-AgencyService",
+      "name": "POST /askers/processBooking",
+      "method": "POST",
+      "path": "/askers/processBooking"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:api/applicationsettingsservice.yml:GET:/settings",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "GET /settings",
+      "method": "GET",
+      "path": "/settings"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:api/applicationsettingsservice.yml:PATCH:/settingsadmin",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "PATCH /settingsadmin",
+      "method": "PATCH",
+      "path": "/settingsadmin"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:api/consultingtypeadminservice.yml:GET:/consultingtypeadmin",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "GET /consultingtypeadmin",
+      "method": "GET",
+      "path": "/consultingtypeadmin"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:api/consultingtypeadminservice.yml:GET:/consultingtypeadmin/consultingtypes",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "GET /consultingtypeadmin/consultingtypes",
+      "method": "GET",
+      "path": "/consultingtypeadmin/consultingtypes"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:api/consultingtypeservice.yml:GET:/consultingtypes/basic",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "GET /consultingtypes/basic",
+      "method": "GET",
+      "path": "/consultingtypes/basic"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:api/consultingtypeservice.yml:GET:/consultingtypes/{consultingTypeId}/basic",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "GET /consultingtypes/{consultingTypeId}/basic",
+      "method": "GET",
+      "path": "/consultingtypes/{consultingTypeId}/basic"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:api/consultingtypeservice.yml:GET:/consultingtypes/{consultingTypeId}/extended",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "GET /consultingtypes/{consultingTypeId}/extended",
+      "method": "GET",
+      "path": "/consultingtypes/{consultingTypeId}/extended"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:api/consultingtypeservice.yml:GET:/consultingtypes/{consultingTypeId}/full",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "GET /consultingtypes/{consultingTypeId}/full",
+      "method": "GET",
+      "path": "/consultingtypes/{consultingTypeId}/full"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:api/consultingtypeservice.yml:GET:/consultingtypes/byslug/{slug}/full",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "GET /consultingtypes/byslug/{slug}/full",
+      "method": "GET",
+      "path": "/consultingtypes/byslug/{slug}/full"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:api/consultingtypeservice.yml:GET:/consultingtypes/bytenant/{tenantId}/full",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "GET /consultingtypes/bytenant/{tenantId}/full",
+      "method": "GET",
+      "path": "/consultingtypes/bytenant/{tenantId}/full"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:api/consultingtypeservice.yml:GET:/consultingtypes/groups",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "GET /consultingtypes/groups",
+      "method": "GET",
+      "path": "/consultingtypes/groups"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:api/consultingtypeservice.yml:POST:/consultingtypes",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "POST /consultingtypes",
+      "method": "POST",
+      "path": "/consultingtypes"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:api/consultingtypeservice.yml:PATCH:/consultingtypes/{id}",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "PATCH /consultingtypes/{id}",
+      "method": "PATCH",
+      "path": "/consultingtypes/{id}"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:api/topicservice.yml:GET:/topic-groups",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "GET /topic-groups",
+      "method": "GET",
+      "path": "/topic-groups"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:api/topicservice.yml:GET:/topic",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "GET /topic",
+      "method": "GET",
+      "path": "/topic"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:api/topicservice.yml:GET:/topic/{id}",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "GET /topic/{id}",
+      "method": "GET",
+      "path": "/topic/{id}"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:api/topicservice.yml:GET:/topic/public",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "GET /topic/public",
+      "method": "GET",
+      "path": "/topic/public"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:api/topicservice.yml:POST:/topicadmin",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "POST /topicadmin",
+      "method": "POST",
+      "path": "/topicadmin"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:api/topicservice.yml:GET:/topicadmin",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "GET /topicadmin",
+      "method": "GET",
+      "path": "/topicadmin"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:api/topicservice.yml:GET:/topicadmin/{id}",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "GET /topicadmin/{id}",
+      "method": "GET",
+      "path": "/topicadmin/{id}"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:api/topicservice.yml:PUT:/topicadmin/{id}",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "PUT /topicadmin/{id}",
+      "method": "PUT",
+      "path": "/topicadmin/{id}"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:services/tenantservice.yaml:POST:/tenantadmin",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "POST /tenantadmin",
+      "method": "POST",
+      "path": "/tenantadmin"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:services/tenantservice.yaml:GET:/tenantadmin",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "GET /tenantadmin",
+      "method": "GET",
+      "path": "/tenantadmin"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:services/tenantservice.yaml:GET:/tenantadmin/search",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "GET /tenantadmin/search",
+      "method": "GET",
+      "path": "/tenantadmin/search"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:services/tenantservice.yaml:PUT:/tenantadmin/{id}",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "PUT /tenantadmin/{id}",
+      "method": "PUT",
+      "path": "/tenantadmin/{id}"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:services/tenantservice.yaml:GET:/tenantadmin/{id}",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "GET /tenantadmin/{id}",
+      "method": "GET",
+      "path": "/tenantadmin/{id}"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:services/tenantservice.yaml:GET:/tenant",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "GET /tenant",
+      "method": "GET",
+      "path": "/tenant"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:services/tenantservice.yaml:GET:/tenant/{id}",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "GET /tenant/{id}",
+      "method": "GET",
+      "path": "/tenant/{id}"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:services/tenantservice.yaml:GET:/tenant/public/{subdomain}",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "GET /tenant/public/{subdomain}",
+      "method": "GET",
+      "path": "/tenant/public/{subdomain}"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:services/tenantservice.yaml:GET:/tenant/public/id/{tenantId}",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "GET /tenant/public/id/{tenantId}",
+      "method": "GET",
+      "path": "/tenant/public/id/{tenantId}"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:services/tenantservice.yaml:GET:/tenant/public/single",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "GET /tenant/public/single",
+      "method": "GET",
+      "path": "/tenant/public/single"
+    },
+    {
+      "id": "ORISO-ConsultingTypeService::endpoint:services/tenantservice.yaml:GET:/tenant/access",
+      "repo": "ORISO-ConsultingTypeService",
+      "name": "GET /tenant/access",
+      "method": "GET",
+      "path": "/tenant/access"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:api/tenantservice.yaml:canAccessTenant",
+      "repo": "ORISO-TenantService",
+      "name": "GET /tenant/access",
+      "method": "GET",
+      "path": "/tenant/access"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:api/tenantservice.yaml:createTenant",
+      "repo": "ORISO-TenantService",
+      "name": "POST /tenantadmin",
+      "method": "POST",
+      "path": "/tenantadmin"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:api/tenantservice.yaml:getAllTenants",
+      "repo": "ORISO-TenantService",
+      "name": "GET /tenant",
+      "method": "GET",
+      "path": "/tenant"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:api/tenantservice.yaml:getAllTenantsWithAdminData",
+      "repo": "ORISO-TenantService",
+      "name": "GET /tenantadmin",
+      "method": "GET",
+      "path": "/tenantadmin"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:api/tenantservice.yaml:getMultilingualTenantById",
+      "repo": "ORISO-TenantService",
+      "name": "GET /tenantadmin/{id}",
+      "method": "GET",
+      "path": "/tenantadmin/{id}"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:api/tenantservice.yaml:getRestrictedSingleTenancyTenantData",
+      "repo": "ORISO-TenantService",
+      "name": "GET /tenant/public/single",
+      "method": "GET",
+      "path": "/tenant/public/single"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:api/tenantservice.yaml:getRestrictedTenantData",
+      "repo": "ORISO-TenantService",
+      "name": "GET /tenant/public/",
+      "method": "GET",
+      "path": "/tenant/public/"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:api/tenantservice.yaml:getRestrictedTenantDataBySubdomain",
+      "repo": "ORISO-TenantService",
+      "name": "GET /tenant/public/{subdomain}",
+      "method": "GET",
+      "path": "/tenant/public/{subdomain}"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:api/tenantservice.yaml:getRestrictedTenantDataByTenantId",
+      "repo": "ORISO-TenantService",
+      "name": "GET /tenant/public/id/{tenantId}",
+      "method": "GET",
+      "path": "/tenant/public/id/{tenantId}"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:api/tenantservice.yaml:getTenantById",
+      "repo": "ORISO-TenantService",
+      "name": "GET /tenant/{id}",
+      "method": "GET",
+      "path": "/tenant/{id}"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:api/tenantservice.yaml:searchTenants",
+      "repo": "ORISO-TenantService",
+      "name": "GET /tenantadmin/search",
+      "method": "GET",
+      "path": "/tenantadmin/search"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:api/tenantservice.yaml:updateTenant",
+      "repo": "ORISO-TenantService",
+      "name": "PUT /tenantadmin/{id}",
+      "method": "PUT",
+      "path": "/tenantadmin/{id}"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/agencyadminservice.yaml:createAgency",
+      "repo": "ORISO-TenantService",
+      "name": "POST /agencyadmin/agencies",
+      "method": "POST",
+      "path": "/agencyadmin/agencies"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/agencyadminservice.yaml:createAgencyPostcodeRange",
+      "repo": "ORISO-TenantService",
+      "name": "POST /agencyadmin/postcoderanges/{agencyId}",
+      "method": "POST",
+      "path": "/agencyadmin/postcoderanges/{agencyId}"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/agencyadminservice.yaml:deleteAgency",
+      "repo": "ORISO-TenantService",
+      "name": "DELETE /agencyadmin/agencies/{agencyId}",
+      "method": "DELETE",
+      "path": "/agencyadmin/agencies/{agencyId}"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/agencyadminservice.yaml:deleteAgencyPostcodeRange",
+      "repo": "ORISO-TenantService",
+      "name": "DELETE /agencyadmin/postcoderanges/{agencyId}",
+      "method": "DELETE",
+      "path": "/agencyadmin/postcoderanges/{agencyId}"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/agencyadminservice.yaml:getAgenciesByTenantId",
+      "repo": "ORISO-TenantService",
+      "name": "GET /agencyadmin/agencies/tenant/{tenantId}",
+      "method": "GET",
+      "path": "/agencyadmin/agencies/tenant/{tenantId}"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/agencyadminservice.yaml:getAgency",
+      "repo": "ORISO-TenantService",
+      "name": "GET /agencyadmin/agencies/{agencyId}",
+      "method": "GET",
+      "path": "/agencyadmin/agencies/{agencyId}"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/agencyadminservice.yaml:getAgencyPostcodeRanges",
+      "repo": "ORISO-TenantService",
+      "name": "GET /agencyadmin/postcoderanges/{agencyId}",
+      "method": "GET",
+      "path": "/agencyadmin/postcoderanges/{agencyId}"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/agencyadminservice.yaml:getRoot",
+      "repo": "ORISO-TenantService",
+      "name": "GET /agencyadmin",
+      "method": "GET",
+      "path": "/agencyadmin"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/agencyadminservice.yaml:searchAgencies",
+      "repo": "ORISO-TenantService",
+      "name": "GET /agencyadmin/agencies",
+      "method": "GET",
+      "path": "/agencyadmin/agencies"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/agencyadminservice.yaml:updateAgency",
+      "repo": "ORISO-TenantService",
+      "name": "PUT /agencyadmin/agencies/{agencyId}",
+      "method": "PUT",
+      "path": "/agencyadmin/agencies/{agencyId}"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/agencyadminservice.yaml:updateAgencyPostcodeRange",
+      "repo": "ORISO-TenantService",
+      "name": "PUT /agencyadmin/postcoderanges/{agencyId}",
+      "method": "PUT",
+      "path": "/agencyadmin/postcoderanges/{agencyId}"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/applicationsettingsservice.yml:getApplicationSettings",
+      "repo": "ORISO-TenantService",
+      "name": "GET /settings",
+      "method": "GET",
+      "path": "/settings"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/applicationsettingsservice.yml:patchApplicationSettings",
+      "repo": "ORISO-TenantService",
+      "name": "PATCH /settingsadmin",
+      "method": "PATCH",
+      "path": "/settingsadmin"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/consultingtypeservice.yaml:createConsultingType",
+      "repo": "ORISO-TenantService",
+      "name": "POST /consultingtypes",
+      "method": "POST",
+      "path": "/consultingtypes"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/consultingtypeservice.yaml:getBasicConsultingTypeById",
+      "repo": "ORISO-TenantService",
+      "name": "GET /consultingtypes/{consultingTypeId}/basic",
+      "method": "GET",
+      "path": "/consultingtypes/{consultingTypeId}/basic"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/consultingtypeservice.yaml:getBasicConsultingTypeList",
+      "repo": "ORISO-TenantService",
+      "name": "GET /consultingtypes/basic",
+      "method": "GET",
+      "path": "/consultingtypes/basic"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/consultingtypeservice.yaml:getConsultingTypeGroups",
+      "repo": "ORISO-TenantService",
+      "name": "GET /consultingtypes/groups",
+      "method": "GET",
+      "path": "/consultingtypes/groups"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/consultingtypeservice.yaml:getExtendedConsultingTypeById",
+      "repo": "ORISO-TenantService",
+      "name": "GET /consultingtypes/{consultingTypeId}/extended",
+      "method": "GET",
+      "path": "/consultingtypes/{consultingTypeId}/extended"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/consultingtypeservice.yaml:getFullConsultingTypeById",
+      "repo": "ORISO-TenantService",
+      "name": "GET /consultingtypes/{consultingTypeId}/full",
+      "method": "GET",
+      "path": "/consultingtypes/{consultingTypeId}/full"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/consultingtypeservice.yaml:getFullConsultingTypeBySlug",
+      "repo": "ORISO-TenantService",
+      "name": "GET /consultingtypes/byslug/{slug}/full",
+      "method": "GET",
+      "path": "/consultingtypes/byslug/{slug}/full"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/consultingtypeservice.yaml:getFullConsultingTypeByTenantId",
+      "repo": "ORISO-TenantService",
+      "name": "GET /consultingtypes/bytenant/{tenantId}/full",
+      "method": "GET",
+      "path": "/consultingtypes/bytenant/{tenantId}/full"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/consultingtypeservice.yaml:patchConsultingType",
+      "repo": "ORISO-TenantService",
+      "name": "PATCH /consultingtypes/{id}",
+      "method": "PATCH",
+      "path": "/consultingtypes/{id}"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:createAdminAgencyRelation",
+      "repo": "ORISO-TenantService",
+      "name": "POST /useradmin/agencyadmins/{adminId}/agencies",
+      "method": "POST",
+      "path": "/useradmin/agencyadmins/{adminId}/agencies"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:createAgencyAdmin",
+      "repo": "ORISO-TenantService",
+      "name": "POST /useradmin/agencyadmins",
+      "method": "POST",
+      "path": "/useradmin/agencyadmins"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:createConsultant",
+      "repo": "ORISO-TenantService",
+      "name": "POST /useradmin/consultants",
+      "method": "POST",
+      "path": "/useradmin/consultants"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:createConsultantAgency",
+      "repo": "ORISO-TenantService",
+      "name": "POST /useradmin/consultants/{consultantId}/agencies",
+      "method": "POST",
+      "path": "/useradmin/consultants/{consultantId}/agencies"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:createTenantAdmin",
+      "repo": "ORISO-TenantService",
+      "name": "POST /useradmin/tenantadmins",
+      "method": "POST",
+      "path": "/useradmin/tenantadmins"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:deleteAdminAgencyRelation",
+      "repo": "ORISO-TenantService",
+      "name": "DELETE /useradmin/agencyadmins/{adminId}/agencies/{agencyId}",
+      "method": "DELETE",
+      "path": "/useradmin/agencyadmins/{adminId}/agencies/{agencyId}"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:deleteAgencyAdmin",
+      "repo": "ORISO-TenantService",
+      "name": "DELETE /useradmin/agencyadmins/{adminId}",
+      "method": "DELETE",
+      "path": "/useradmin/agencyadmins/{adminId}"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:deleteConsultantAgency",
+      "repo": "ORISO-TenantService",
+      "name": "DELETE /useradmin/consultants/{consultantId}/agencies/{agencyId}",
+      "method": "DELETE",
+      "path": "/useradmin/consultants/{consultantId}/agencies/{agencyId}"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:deleteTenantAdmin",
+      "repo": "ORISO-TenantService",
+      "name": "DELETE /useradmin/tenantadmins/{adminId}",
+      "method": "DELETE",
+      "path": "/useradmin/tenantadmins/{adminId}"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:generateViolationReport",
+      "repo": "ORISO-TenantService",
+      "name": "GET /useradmin/report",
+      "method": "GET",
+      "path": "/useradmin/report"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:getAdminAgencies",
+      "repo": "ORISO-TenantService",
+      "name": "GET /useradmin/agencyadmins/{adminId}/agencies",
+      "method": "GET",
+      "path": "/useradmin/agencyadmins/{adminId}/agencies"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:getAgencyAdmin",
+      "repo": "ORISO-TenantService",
+      "name": "GET /useradmin/agencyadmins/{adminId}",
+      "method": "GET",
+      "path": "/useradmin/agencyadmins/{adminId}"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:getAgencyAdmins",
+      "repo": "ORISO-TenantService",
+      "name": "GET /useradmin/agencyadmins",
+      "method": "GET",
+      "path": "/useradmin/agencyadmins"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:getAgencyConsultants",
+      "repo": "ORISO-TenantService",
+      "name": "GET /useradmin/agencies/{agencyId}/consultants",
+      "method": "GET",
+      "path": "/useradmin/agencies/{agencyId}/consultants"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:getAsker",
+      "repo": "ORISO-TenantService",
+      "name": "GET /useradmin/askers/{askerId}",
+      "method": "GET",
+      "path": "/useradmin/askers/{askerId}"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:getConsultant",
+      "repo": "ORISO-TenantService",
+      "name": "GET /useradmin/consultants/{consultantId}",
+      "method": "GET",
+      "path": "/useradmin/consultants/{consultantId}"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:getConsultantAgencies",
+      "repo": "ORISO-TenantService",
+      "name": "GET /useradmin/consultants/{consultantId}/agencies",
+      "method": "GET",
+      "path": "/useradmin/consultants/{consultantId}/agencies"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:getConsultants",
+      "repo": "ORISO-TenantService",
+      "name": "GET /useradmin/consultants",
+      "method": "GET",
+      "path": "/useradmin/consultants"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:getRoot",
+      "repo": "ORISO-TenantService",
+      "name": "GET /useradmin",
+      "method": "GET",
+      "path": "/useradmin"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:getSessions",
+      "repo": "ORISO-TenantService",
+      "name": "GET /useradmin/sessions",
+      "method": "GET",
+      "path": "/useradmin/sessions"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:getTenantAdmin",
+      "repo": "ORISO-TenantService",
+      "name": "GET /useradmin/tenantadmins/{adminId}",
+      "method": "GET",
+      "path": "/useradmin/tenantadmins/{adminId}"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:getTenantAdmins",
+      "repo": "ORISO-TenantService",
+      "name": "GET /useradmin/tenantadmins",
+      "method": "GET",
+      "path": "/useradmin/tenantadmins"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:markAskerForDeletion",
+      "repo": "ORISO-TenantService",
+      "name": "DELETE /useradmin/askers/{askerId}",
+      "method": "DELETE",
+      "path": "/useradmin/askers/{askerId}"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:markConsultantForDeletion",
+      "repo": "ORISO-TenantService",
+      "name": "DELETE /useradmin/consultants/{consultantId}",
+      "method": "DELETE",
+      "path": "/useradmin/consultants/{consultantId}"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:patchAdminData",
+      "repo": "ORISO-TenantService",
+      "name": "PATCH /useradmin/data",
+      "method": "PATCH",
+      "path": "/useradmin/data"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:searchAgencyAdmins",
+      "repo": "ORISO-TenantService",
+      "name": "GET /useradmin/agencyadmins/search",
+      "method": "GET",
+      "path": "/useradmin/agencyadmins/search"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:searchTenantAdmins",
+      "repo": "ORISO-TenantService",
+      "name": "GET /useradmin/tenantadmins/search",
+      "method": "GET",
+      "path": "/useradmin/tenantadmins/search"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:setAdminAgenciesRelation",
+      "repo": "ORISO-TenantService",
+      "name": "PUT /useradmin/agencyadmins/{adminId}/agencies",
+      "method": "PUT",
+      "path": "/useradmin/agencyadmins/{adminId}/agencies"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:setConsultantAgencies",
+      "repo": "ORISO-TenantService",
+      "name": "PUT /useradmin/consultants/{consultantId}/agencies",
+      "method": "PUT",
+      "path": "/useradmin/consultants/{consultantId}/agencies"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:updateAgencyAdmin",
+      "repo": "ORISO-TenantService",
+      "name": "PUT /useradmin/agencyadmins/{adminId}",
+      "method": "PUT",
+      "path": "/useradmin/agencyadmins/{adminId}"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:updateConsultant",
+      "repo": "ORISO-TenantService",
+      "name": "PUT /useradmin/consultants/{consultantId}",
+      "method": "PUT",
+      "path": "/useradmin/consultants/{consultantId}"
+    },
+    {
+      "id": "ORISO-TenantService::endpoint:services/useradminservice.yaml:updateTenantAdmin",
+      "repo": "ORISO-TenantService",
+      "name": "PUT /useradmin/tenantadmins/{adminId}",
+      "method": "PUT",
+      "path": "/useradmin/tenantadmins/{adminId}"
+    },
+    {
+      "id": "ORISO-Keycloak::endpoint:realm.json:client:account",
+      "repo": "ORISO-Keycloak",
+      "name": "client:account",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Keycloak::endpoint:realm.json:client:account-console",
+      "repo": "ORISO-Keycloak",
+      "name": "client:account-console",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Keycloak::endpoint:realm.json:client:admin-cli",
+      "repo": "ORISO-Keycloak",
+      "name": "client:admin-cli",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Keycloak::endpoint:realm.json:client:app",
+      "repo": "ORISO-Keycloak",
+      "name": "client:app",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Keycloak::endpoint:realm.json:client:broker",
+      "repo": "ORISO-Keycloak",
+      "name": "client:broker",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Keycloak::endpoint:realm.json:client:realm-management",
+      "repo": "ORISO-Keycloak",
+      "name": "client:realm-management",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Keycloak::endpoint:realm.json:client:security-admin-console",
+      "repo": "ORISO-Keycloak",
+      "name": "client:security-admin-console",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:host:admin.oriso-dev.site",
+      "repo": "ORISO-Kubernetes",
+      "name": "admin.oriso-dev.site",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:host:api.oriso-dev.site",
+      "repo": "ORISO-Kubernetes",
+      "name": "api.oriso-dev.site",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:host:app.oriso-dev.site",
+      "repo": "ORISO-Kubernetes",
+      "name": "app.oriso-dev.site",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:host:auth.oriso-dev.site",
+      "repo": "ORISO-Kubernetes",
+      "name": "auth.oriso-dev.site",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:host:call.oriso-dev.site",
+      "repo": "ORISO-Kubernetes",
+      "name": "call.oriso-dev.site",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:host:element.oriso-dev.site",
+      "repo": "ORISO-Kubernetes",
+      "name": "element.oriso-dev.site",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:host:health.oriso-dev.site",
+      "repo": "ORISO-Kubernetes",
+      "name": "health.oriso-dev.site",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:host:livekit.oriso-dev.site",
+      "repo": "ORISO-Kubernetes",
+      "name": "livekit.oriso-dev.site",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:host:matrix.oriso-dev.site",
+      "repo": "ORISO-Kubernetes",
+      "name": "matrix.oriso-dev.site",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:host:redis.oriso-dev.site",
+      "repo": "ORISO-Kubernetes",
+      "name": "redis.oriso-dev.site",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:host:signoz.oriso-dev.site",
+      "repo": "ORISO-Kubernetes",
+      "name": "signoz.oriso-dev.site",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:host:status.oriso-dev.site",
+      "repo": "ORISO-Kubernetes",
+      "name": "status.oriso-dev.site",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:host:storybook.oriso-dev.site",
+      "repo": "ORISO-Kubernetes",
+      "name": "storybook.oriso-dev.site",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:00-keycloak-auth-domain-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "00-keycloak-auth-domain-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:01-keycloak-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "01-keycloak-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:06-matrix-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "06-matrix-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:08-uploadservice-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "08-uploadservice-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:10-health-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "10-health-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:11-rocketchat-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "11-rocketchat-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:12-matrix-domain-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "12-matrix-domain-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:13-frontend-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "13-frontend-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:14-admin-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "14-admin-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:15-health-dashboard-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "15-health-dashboard-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:16-element-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "16-element-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:17-element-call-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "17-element-call-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:18-livekit-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "18-livekit-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:19-redis-commander-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "19-redis-commander-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:20-signoz-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "20-signoz-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:21-status-page-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "21-status-page-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:22-storybook-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "22-storybook-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:agencyservice-agencies-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "agencyservice-agencies-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:agencyservice-agencyadmin-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "agencyservice-agencyadmin-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:agencyservice-appointmentservice-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "agencyservice-appointmentservice-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:agencyservice-topicadmin-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "agencyservice-topicadmin-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:consultingtypeservice-consultingtypes-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "consultingtypeservice-consultingtypes-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:consultingtypeservice-settings-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "consultingtypeservice-settings-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:consultingtypeservice-settingsadmin-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "consultingtypeservice-settingsadmin-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:consultingtypeservice-topic-groups-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "consultingtypeservice-topic-groups-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:consultingtypeservice-topic-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "consultingtypeservice-topic-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:tenantservice-mock-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "tenantservice-mock-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:tenantservice-service-tenant-numeric-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "tenantservice-service-tenant-numeric-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:tenantservice-service-tenant-public-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "tenantservice-service-tenant-public-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:tenantservice-tenant-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "tenantservice-tenant-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:tenantservice-tenantadmin-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "tenantservice-tenantadmin-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:userservice-conversations-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "userservice-conversations-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:userservice-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "userservice-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:userservice-matrix-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "userservice-matrix-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:userservice-sessions-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "userservice-sessions-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:ingress:userservice-useradmin-ingress",
+      "repo": "ORISO-Kubernetes",
+      "name": "userservice-useradmin-ingress",
+      "method": null,
+      "path": null
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:route:agencyservice-agencies-ingress:0",
+      "repo": "ORISO-Kubernetes",
+      "name": "api.oriso-dev.site",
+      "method": null,
+      "path": "/service/agencies"
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:route:agencyservice-agencies-ingress:1",
+      "repo": "ORISO-Kubernetes",
+      "name": "api.oriso-dev.site",
+      "method": null,
+      "path": "/service/agencies(/|$)(.*)"
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:route:agencyservice-agencyadmin-ingress:0",
+      "repo": "ORISO-Kubernetes",
+      "name": "api.oriso-dev.site",
+      "method": null,
+      "path": "/service/agencyadmin(/|$)(.*)"
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:route:agencyservice-appointmentservice-ingress:0",
+      "repo": "ORISO-Kubernetes",
+      "name": "api.oriso-dev.site",
+      "method": null,
+      "path": "/service/appointmentservice(/|$)(.*)"
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:route:agencyservice-topicadmin-ingress:0",
+      "repo": "ORISO-Kubernetes",
+      "name": "api.oriso-dev.site",
+      "method": null,
+      "path": "/service/topicadmin(/|$)(.*)"
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:route:consultingtypeservice-consultingtypes-ingress:0",
+      "repo": "ORISO-Kubernetes",
+      "name": "api.oriso-dev.site",
+      "method": null,
+      "path": "/service/consultingtypes(/|$)(.*)"
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:route:consultingtypeservice-settings-ingress:0",
+      "repo": "ORISO-Kubernetes",
+      "name": "api.oriso-dev.site",
+      "method": null,
+      "path": "/service/settings(/|$)(.*)"
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:route:consultingtypeservice-settingsadmin-ingress:0",
+      "repo": "ORISO-Kubernetes",
+      "name": "api.oriso-dev.site",
+      "method": null,
+      "path": "/service/settingsadmin"
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:route:consultingtypeservice-topic-groups-ingress:0",
+      "repo": "ORISO-Kubernetes",
+      "name": "api.oriso-dev.site",
+      "method": null,
+      "path": "/service/topic-groups(/|$)(.*)"
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:route:consultingtypeservice-topic-ingress:0",
+      "repo": "ORISO-Kubernetes",
+      "name": "api.oriso-dev.site",
+      "method": null,
+      "path": "/service/topic(/|$)(.*)"
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:route:tenantservice-service-tenant-numeric-ingress:0",
+      "repo": "ORISO-Kubernetes",
+      "name": "api.oriso-dev.site",
+      "method": null,
+      "path": "/service/tenant/([0-9]+)(/|$)(.*)"
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:route:tenantservice-service-tenant-public-ingress:0",
+      "repo": "ORISO-Kubernetes",
+      "name": "api.oriso-dev.site",
+      "method": null,
+      "path": "/service/tenant/public(/|$)(.*)"
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:route:tenantservice-tenant-ingress:0",
+      "repo": "ORISO-Kubernetes",
+      "name": "api.oriso-dev.site",
+      "method": null,
+      "path": "/tenant(/|$)(.*)"
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:route:tenantservice-tenantadmin-ingress:0",
+      "repo": "ORISO-Kubernetes",
+      "name": "api.oriso-dev.site",
+      "method": null,
+      "path": "/service/tenantadmin(/|$)(.*)"
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:route:userservice-conversations-ingress:0",
+      "repo": "ORISO-Kubernetes",
+      "name": "api.oriso-dev.site",
+      "method": null,
+      "path": "/service/conversations(/|$)(.*)"
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:route:userservice-ingress:0",
+      "repo": "ORISO-Kubernetes",
+      "name": "api.oriso-dev.site",
+      "method": null,
+      "path": "/service/users(/|$)(.*)"
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:route:userservice-matrix-ingress:0",
+      "repo": "ORISO-Kubernetes",
+      "name": "api.oriso-dev.site",
+      "method": null,
+      "path": "/service/matrix(/|$)(.*)"
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:route:userservice-sessions-ingress:0",
+      "repo": "ORISO-Kubernetes",
+      "name": "api.oriso-dev.site",
+      "method": null,
+      "path": "/service/users/sessions(/|$)(.*)"
+    },
+    {
+      "id": "ORISO-Kubernetes::endpoint:route:userservice-useradmin-ingress:0",
+      "repo": "ORISO-Kubernetes",
+      "name": "api.oriso-dev.site",
+      "method": null,
+      "path": "/service/useradmin(/|$)(.*)"
+    }
+  ],
+  "dependsOn": [
+    {
+      "from": "ORISO-ConsultingTypeService",
+      "to": "ORISO-Database",
+      "weight": 123
+    },
+    {
+      "from": "ORISO-AgencyService",
+      "to": "ORISO-UserService",
+      "weight": 58
+    },
+    {
+      "from": "ORISO-Database",
+      "to": "ORISO-UserService",
+      "weight": 55
+    },
+    {
+      "from": "ORISO-Kubernetes",
+      "to": "ORISO-Database",
+      "weight": 51
+    },
+    {
+      "from": "ORISO-UserService",
+      "to": "ORISO-Keycloak",
+      "weight": 50
+    },
+    {
+      "from": "ORISO-UserService",
+      "to": "ORISO-AgencyService",
+      "weight": 45
+    },
+    {
+      "from": "ORISO-TenantService",
+      "to": "ORISO-UserService",
+      "weight": 41
+    },
+    {
+      "from": "ORISO-AgencyService",
+      "to": "ORISO-ConsultingTypeService",
+      "weight": 36
+    },
+    {
+      "from": "ORISO-UserService",
+      "to": "ORISO-ConsultingTypeService",
+      "weight": 31
+    },
+    {
+      "from": "ORISO-TenantService",
+      "to": "ORISO-ConsultingTypeService",
+      "weight": 27
+    },
+    {
+      "from": "ORISO-Kubernetes",
+      "to": "ORISO-UserService",
+      "weight": 23
+    },
+    {
+      "from": "ORISO-UserService",
+      "to": "ORISO-TenantService",
+      "weight": 22
+    },
+    {
+      "from": "ORISO-ConsultingTypeService",
+      "to": "ORISO-TenantService",
+      "weight": 21
+    },
+    {
+      "from": "ORISO-Kubernetes",
+      "to": "ORISO-AgencyService",
+      "weight": 21
+    },
+    {
+      "from": "ORISO-Kubernetes",
+      "to": "ORISO-ConsultingTypeService",
+      "weight": 21
+    },
+    {
+      "from": "ORISO-AgencyService",
+      "to": "ORISO-TenantService",
+      "weight": 20
+    },
+    {
+      "from": "ORISO-Kubernetes",
+      "to": "ORISO-TenantService",
+      "weight": 20
+    },
+    {
+      "from": "ORISO-Database",
+      "to": "ORISO-ConsultingTypeService",
+      "weight": 19
+    },
+    {
+      "from": "ORISO-Database",
+      "to": "ORISO-AgencyService",
+      "weight": 17
+    },
+    {
+      "from": "ORISO-Kubernetes",
+      "to": "ORISO-Keycloak",
+      "weight": 15
+    },
+    {
+      "from": "ORISO-TenantService",
+      "to": "ORISO-AgencyService",
+      "weight": 13
+    },
+    {
+      "from": "ORISO-Database",
+      "to": "ORISO-Kubernetes",
+      "weight": 12
+    },
+    {
+      "from": "ORISO-ConsultingTypeService",
+      "to": "ORISO-Keycloak",
+      "weight": 11
+    },
+    {
+      "from": "ORISO-Frontend",
+      "to": "ORISO-Keycloak",
+      "weight": 11
+    },
+    {
+      "from": "ORISO-Database",
+      "to": "ORISO-TenantService",
+      "weight": 9
+    },
+    {
+      "from": "ORISO-TenantService",
+      "to": "ORISO-Keycloak",
+      "weight": 8
+    },
+    {
+      "from": "ORISO-Frontend",
+      "to": "ORISO-UserService",
+      "weight": 7
+    },
+    {
+      "from": "ORISO-Keycloak",
+      "to": "ORISO-Kubernetes",
+      "weight": 7
+    },
+    {
+      "from": "ORISO-AgencyService",
+      "to": "ORISO-Keycloak",
+      "weight": 5
+    },
+    {
+      "from": "ORISO-UserService",
+      "to": "ORISO-Database",
+      "weight": 5
+    },
+    {
+      "from": "ORISO-Admin",
+      "to": "ORISO-Keycloak",
+      "weight": 4
+    },
+    {
+      "from": "ORISO-AgencyService",
+      "to": "ORISO-Database",
+      "weight": 4
+    },
+    {
+      "from": "ORISO-Frontend",
+      "to": "ORISO-Kubernetes",
+      "weight": 4
+    },
+    {
+      "from": "ORISO-TenantService",
+      "to": "ORISO-Database",
+      "weight": 2
+    },
+    {
+      "from": "ORISO-Admin",
+      "to": "ORISO-Kubernetes",
+      "weight": 1
+    },
+    {
+      "from": "ORISO-Frontend",
+      "to": "ORISO-AgencyService",
+      "weight": 1
+    },
+    {
+      "from": "ORISO-Keycloak",
+      "to": "ORISO-TenantService",
+      "weight": 1
+    },
+    {
+      "from": "ORISO-TenantService",
+      "to": "ORISO-Kubernetes",
+      "weight": 1
+    }
+  ],
+  "tiers": [
+    {
+      "id": "user-interfaces",
+      "name": "User Interfaces",
+      "repos": [
+        "ORISO-Frontend",
+        "ORISO-Admin",
+        "ORISO-ElementCall",
+        "ORISO-Status",
+        "ORISO-HealthDashboard"
+      ],
+      "source": "curated-default"
+    },
+    {
+      "id": "backend-microservices",
+      "name": "Backend Microservices",
+      "repos": [
+        "ORISO-UserService",
+        "ORISO-AgencyService",
+        "ORISO-TenantService",
+        "ORISO-ConsultingTypeService"
+      ],
+      "source": "curated-default"
+    },
+    {
+      "id": "identity-data",
+      "name": "Identity & Data",
+      "repos": [
+        "ORISO-Keycloak",
+        "ORISO-Database"
+      ],
+      "source": "curated-default"
+    },
+    {
+      "id": "communication-media",
+      "name": "Communication & Media",
+      "repos": [
+        "ORISO-Livekit"
+      ],
+      "source": "curated-default"
+    },
+    {
+      "id": "operations-deployment",
+      "name": "Operations & Deployment",
+      "repos": [
+        "ORISO-Helm",
+        "ORISO-Kubernetes",
+        "ORISO-Infra",
+        "ORISO-Docs"
+      ],
+      "source": "curated-default"
+    },
+    {
+      "id": "observability-quality",
+      "name": "Observability & Quality",
+      "repos": [
+        "ORISO-SigNoz",
+        "ORISO-E2E"
+      ],
+      "source": "curated-default"
+    }
+  ]
+}

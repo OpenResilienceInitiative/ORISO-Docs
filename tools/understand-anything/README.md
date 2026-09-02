@@ -15,6 +15,11 @@ see ORISO-Docs#61).
 | `ua-enrich-merge.mjs` | Merges a coarse enrichment JSON (concept/flow nodes + related-edges, authored per repo) into a staging graph; adds a "Domain Concepts" layer; validates (unresolved refs are reported and must be fixed). |
 | `enrichments/*.json` | The per-repo enrichment content (concepts/flows grounded in READMEs + class inventories). 12 repos covered since 2026-08-05 (added helm, e2e, infra, database). |
 | `ua-build-supergraph.mjs` | Builds the cross-repo super-graph: prefixes node ids (`<Repo>::<id>`), adds `repo:*` root nodes + containment edges, per-repo layers, an overview tour, and **deterministic cross-repo `depends_on` edges** (service-keyword evidence, count ≥ 2). `--install` deploys into `ORISO-Docs/.understand-anything/` and writes a `meta.json` for freshness checks. |
+| `ua-export-docs.mjs` | After the supergraph install: writes the small docs-export JSON (repos + commits, endpoints, depends_on, tiers) so Fumadocs/Mintlify never parse the 35 MB graph. |
+| `ua-generate-docs-pages.mjs` | Renders `generated: true` structure pages from the export. Skips hand-written files outside the regenerate allowlist. |
+| `../evidence-decay-check.mjs` | Verifies `oriso-platform/dsfa-text/evidence-map.yaml` against sibling clones; writes `evidence-status.json`. A fixture canary must come back `broken`. |
+
+See `tools/truth-chain/README.md` and issue #106.
 | `refresh-understand-ultralite-local.sh` | RETIRED 2026-08-05 (kept for reference). The old nightly overlay refresh; superseded by `ua-nightly-full.sh`. |
 
 ## Indexed repos & branches

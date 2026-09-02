@@ -1,0 +1,32 @@
+"$schema": internal/dsfa-evidence-map/v1
+version: 1
+generated: 2026-09-02
+entries:
+  - slug: fixture-ok
+    chapter: "6.3"
+    claim: "UsernameTranscoder exists in the fixture clone."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/UsernameTranscoder.java
+        lines: "1-8"
+        expect: ["UsernameTranscoder", "encodeUsername"]
+
+  - slug: fixture-drifted
+    chapter: "6.3"
+    claim: "encodeUsername moved outside the cited range."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/UsernameTranscoder.java
+        lines: "1-2"
+        expect: ["encodeUsername"]
+
+  - slug: truth-chain-canary-broken
+    chapter: "test"
+    claim: "CANARY — deliberately unresolvable identifier so the decay check can prove it flags broken claims. Not a DPIA assertion."
+    status: needs-live-verification
+    evidence:
+      - repo: ORISO-UserService
+        path: src/UsernameTranscoder.java
+        expect: ["THIS_IDENTIFIER_DOES_NOT_EXIST_ON_PURPOSE"]

@@ -1,0 +1,195 @@
+{
+  "generatedAt": "2026-09-02T04:01:19.859Z",
+  "dependsOn": [
+    {
+      "from": "ORISO-ConsultingTypeService",
+      "to": "ORISO-Database",
+      "weight": 123
+    },
+    {
+      "from": "ORISO-AgencyService",
+      "to": "ORISO-UserService",
+      "weight": 58
+    },
+    {
+      "from": "ORISO-Database",
+      "to": "ORISO-UserService",
+      "weight": 55
+    },
+    {
+      "from": "ORISO-Kubernetes",
+      "to": "ORISO-Database",
+      "weight": 51
+    },
+    {
+      "from": "ORISO-UserService",
+      "to": "ORISO-Keycloak",
+      "weight": 50
+    },
+    {
+      "from": "ORISO-UserService",
+      "to": "ORISO-AgencyService",
+      "weight": 45
+    },
+    {
+      "from": "ORISO-TenantService",
+      "to": "ORISO-UserService",
+      "weight": 41
+    },
+    {
+      "from": "ORISO-AgencyService",
+      "to": "ORISO-ConsultingTypeService",
+      "weight": 36
+    },
+    {
+      "from": "ORISO-UserService",
+      "to": "ORISO-ConsultingTypeService",
+      "weight": 31
+    },
+    {
+      "from": "ORISO-TenantService",
+      "to": "ORISO-ConsultingTypeService",
+      "weight": 27
+    },
+    {
+      "from": "ORISO-Kubernetes",
+      "to": "ORISO-UserService",
+      "weight": 23
+    },
+    {
+      "from": "ORISO-UserService",
+      "to": "ORISO-TenantService",
+      "weight": 22
+    },
+    {
+      "from": "ORISO-ConsultingTypeService",
+      "to": "ORISO-TenantService",
+      "weight": 21
+    },
+    {
+      "from": "ORISO-Kubernetes",
+      "to": "ORISO-AgencyService",
+      "weight": 21
+    },
+    {
+      "from": "ORISO-Kubernetes",
+      "to": "ORISO-ConsultingTypeService",
+      "weight": 21
+    },
+    {
+      "from": "ORISO-AgencyService",
+      "to": "ORISO-TenantService",
+      "weight": 20
+    },
+    {
+      "from": "ORISO-Kubernetes",
+      "to": "ORISO-TenantService",
+      "weight": 20
+    },
+    {
+      "from": "ORISO-Database",
+      "to": "ORISO-ConsultingTypeService",
+      "weight": 19
+    },
+    {
+      "from": "ORISO-Database",
+      "to": "ORISO-AgencyService",
+      "weight": 17
+    },
+    {
+      "from": "ORISO-Kubernetes",
+      "to": "ORISO-Keycloak",
+      "weight": 15
+    },
+    {
+      "from": "ORISO-TenantService",
+      "to": "ORISO-AgencyService",
+      "weight": 13
+    },
+    {
+      "from": "ORISO-Database",
+      "to": "ORISO-Kubernetes",
+      "weight": 12
+    },
+    {
+      "from": "ORISO-ConsultingTypeService",
+      "to": "ORISO-Keycloak",
+      "weight": 11
+    },
+    {
+      "from": "ORISO-Frontend",
+      "to": "ORISO-Keycloak",
+      "weight": 11
+    },
+    {
+      "from": "ORISO-Database",
+      "to": "ORISO-TenantService",
+      "weight": 9
+    },
+    {
+      "from": "ORISO-TenantService",
+      "to": "ORISO-Keycloak",
+      "weight": 8
+    },
+    {
+      "from": "ORISO-Frontend",
+      "to": "ORISO-UserService",
+      "weight": 7
+    },
+    {
+      "from": "ORISO-Keycloak",
+      "to": "ORISO-Kubernetes",
+      "weight": 7
+    },
+    {
+      "from": "ORISO-AgencyService",
+      "to": "ORISO-Keycloak",
+      "weight": 5
+    },
+    {
+      "from": "ORISO-UserService",
+      "to": "ORISO-Database",
+      "weight": 5
+    },
+    {
+      "from": "ORISO-Admin",
+      "to": "ORISO-Keycloak",
+      "weight": 4
+    },
+    {
+      "from": "ORISO-AgencyService",
+      "to": "ORISO-Database",
+      "weight": 4
+    },
+    {
+      "from": "ORISO-Frontend",
+      "to": "ORISO-Kubernetes",
+      "weight": 4
+    },
+    {
+      "from": "ORISO-TenantService",
+      "to": "ORISO-Database",
+      "weight": 2
+    },
+    {
+      "from": "ORISO-Admin",
+      "to": "ORISO-Kubernetes",
+      "weight": 1
+    },
+    {
+      "from": "ORISO-Frontend",
+      "to": "ORISO-AgencyService",
+      "weight": 1
+    },
+    {
+      "from": "ORISO-Keycloak",
+      "to": "ORISO-TenantService",
+      "weight": 1
+    },
+    {
+      "from": "ORISO-TenantService",
+      "to": "ORISO-Kubernetes",
+      "weight": 1
+    }
+  ]
+}
