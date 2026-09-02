@@ -50,18 +50,29 @@ Confirmed in Figma:
 Each tenant can override the default consent rules in the **Berechtigungen** matrix (see [Roles & Permissions §3.7](/product/roles-permissions#3-7-per-chat-type-permissions-matrix)).
 </Note>
 
-## 4.7.3 Consent Matrix
+## 4.7.3 Consent Model
 
-| Reason | Client consent | Counselor B consent | Supervisor approval | Reason text shown to client |
-|---|:-:|:-:|:-:|---|
-| Holiday | ✅ | ✅ | ❌ | *"Deine vorherige Beraterin ist im Urlaub …"* |
-| Sickness | informed only | ✅ | ❌ | *"Deine vorherige Beraterin ist leider krank …"* |
-| Emergency | informed only (post-fact OK) | ✅ (best effort) | optional | *"Aus dringenden Gründen wurde dein Fall übertragen …"* |
-| Law Violation | restricted notification | ✅ | ✅ + LEO repr. | locked text from legal team |
-| Colleague fired | informed only | ✅ | ✅ | *"Aus organisatorischen Gründen wurde dein Fall übertragen …"* |
-| Custom | ✅ | ✅ | ❌ | counselor-typed reason text |
+<Warning>
+**Superseded 2026-07-06, corrected 2026-08-08.** The per-reason blocking consent matrix that
+used to stand here was never built, and the model it described was reversed by the decision
+recorded in `ORISO-UserService/CONTEXT.md` and ADR-008: handover is **disclosed by default and
+client-switchable**, and **no reason requires an upfront blocking consent gate**. Three
+descriptions of this existed and all three differed from each other and from the code
+(ORISO-Docs#73).
+</Warning>
 
-The system enforces these rules **server-side** before the room is rotated.
+**What the code does today.** Handover is disclosed to the client, not gated on their approval.
+The client-side opt-out switch that governs team access is tracked separately in
+OpenResilienceInitiative/ORISO-UserService#313 and is deliberately **out of scope** for the
+Erstantwort catalogue (ADR-018 §4), because it carries genuinely new state rather than reading
+state that already exists.
+
+| Reason | Blocking client consent | Counselor B consent | Supervisor approval |
+|---|:-:|:-:|:-:|
+| Holiday · Sickness · Emergency · Law violation · Colleague left · Custom | ❌ — disclosed, not gated | ✅ | only for `law_violation` |
+
+The reason taxonomy itself is platform-global: `case_handover_reason_policy` carries no
+`tenant_id`, so per-tenant overrides are **not representable** (ADR-002). See §4.7.5.
 
 ## 4.7.4 Detailed Sequence
 
@@ -108,6 +119,13 @@ sequenceDiagram
 - **Megolm keys**: Counselor B receives forward history depending on the room's `m.room.history_visibility`. Default for ORISO is `shared` (members see history from when they were invited). For sensitive sessions the tenant can switch to `joined` (no back-history) so a new counselor starts clean.
 - **Client identity** is unchanged — same pseudonym, same cookie. The client doesn't get re-paired; only the counselor seat changes.
 
+<Note>
+**Corrected 2026-08-08 (ORISO-Docs#73).** An earlier revision of this section claimed per-tenant
+overrides of the consent rules. There are none, and there cannot be: `case_handover_reason_policy`
+is platform-global with no `tenant_id` column (ADR-002), and the Admin card's own header comment
+says the same. Treat the taxonomy as a platform decision, not as tenant configuration.
+</Note>
+
 ## 4.7.6 Constraints
 
 - **Cross-agency handover is forbidden** — replacements must be from the same agency. If the agency has no other counselor, a tenant-level escalation path is required (planned, see [Figma analysis §4.6](/product/figma-analysis-2026-05#4-6-handover-reasons-consent)).
@@ -118,15 +136,45 @@ sequenceDiagram
 
 ## 4.7.7 Client Experience
 
-The client always sees an in-chat **System Message** of type `Handover` with a templated body:
+<Warning>
+**Corrected 2026-08-08 (ORISO-Docs#73).** This section used to describe **Akzeptieren /
+Ablehnen / Mehr erfahren** buttons in the chat. **They do not exist and never did.** A reader
+following the old text would have built the wrong thing.
+</Warning>
 
-> Deine vorherige Beraterin ist leider krank. Deshalb wurde dein Fall an **{Beraterin}** übergeben von der **{Beratungsstelle}**.
+**What the client actually sees.** One in-chat card, `CaseHandoverSystemMessageCard`, which is
+explicitly *informational* — its own copy is "Du musst nichts weiter tun". There are no buttons on
+it and there is no "Mehr erfahren" modal.
 
-Buttons (depending on consent rule):
+**Where the decision lives.** In the **Notifications Center**, not in the chat. That is the only
+surface where a client acts on a handover.
 
-- **Akzeptieren** — accept the new counselor, conversation continues.
-- **Ablehnen** — refuse; case is closed; client wiped.
-- **Mehr erfahren** — opens a modal with the full reason text and contact for the agency.
+### The dead predecessor
+
+The reassignment path — `REASSIGN_CONSULTANT`, `apiPatchMessage`, `apiSendAliasMessage` — is the
+**legacy predecessor** of case handover and is dead. Do not extend it; do not cite it as a pattern.
+
+Three separate claims sit behind that, at three different levels of certainty. Keeping them apart
+matters, because an earlier draft collapsed them and got the first one wrong:
+
+| Claim | Status | Evidence |
+|---|---|---|
+| **The renderers cannot fire.** No Matrix code path produces the `alias` object `ReassignMessage` and `FurtherSteps` key off. | **Established** | Read from `origin/pre-dev`. This alone makes the path dead in the client. |
+| **The endpoint is not implemented.** UserService on `origin/pre-dev` has no `PATCH /messages/{id}` handler, and no `messageservice` deployment exists although `MESSAGE_SERVICE_API_URL` still points at one. | **Established from code and the Pre-Dev manifests** | Source-level, not a runtime probe. |
+| **What an authenticated `PATCH /service/messages/{id}` actually does.** | **Untested — do not assume either way** | A 401 is raised by the auth layer before controller mapping, so it is equally consistent with "a handler exists" and "no handler, rejected earlier". |
+
+Both frontend call sites swallow their errors silently, which is why this stayed invisible for so
+long.
+
+<Note>
+**The retraction.** An earlier claim about the *first* row above was wrong: that
+`/service/messages/*` is unrouted and falls through to the SPA. Measured on Pre-Dev 2026-07-30, `GET /service/messages/`
+answers **401 with a Bearer challenge** exactly like the routed control `/service/users/data`,
+while an unknown path answers 404 — so the path *is* routed. The wrong claim came from reading the
+ORISO-Helm chart, which **Pre-Dev does not run** (it still runs the archived ORISO-Kubernetes
+release, ORISO-Helm#110). Whether an *authenticated* `PATCH` reaches a handler remains untested;
+do not assume it either way.
+</Note>
 
 ## 4.7.8 Audit & Compliance
 
