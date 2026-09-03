@@ -4,6 +4,15 @@ This directory holds the platform-level architecture decision records (ADRs) imp
 previously-untracked local folder (`/Users/frankgerhardt/ORISO/0 - Docs/`, `ADR-*.md` files only,
 not its `_artifacts/` subfolder). The 19 files here were copied unchanged (byte-for-byte).
 
+## Decisions authored after the import
+
+- `ADR-020-scheduled-calls-secure-invitations-and-unified-contact-calendar.md` — accepted
+  2026-08-12; governs secure call invitations, planned audio/video contacts, availability,
+  the unified Contact Calendar, and the Future Timeline.
+
+New decisions in this section are repository-owned records and are not part of the unchanged
+19-file import described above.
+
 ## Known issues
 
 - **ADR-014 numbering collision (unresolved):** two files in this very import both use the
