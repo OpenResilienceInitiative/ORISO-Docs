@@ -154,3 +154,76 @@ DPO), not the platform owner.** The merged `case_handover_request` table already
 - **"Hidden" is enforced server-side and already was:** the consultant session list is
   database-driven (`consultant IS NULL` for enquiries, `findByConsultant…` once assigned), so an
   accepted case leaves every other counsellor's list without any Matrix action.
+
+## Addendum 2026-09-05 — case handover gains a push direction; no third consent gate; no room clearing
+
+- **Status:** Accepted — Frank, 2026-09-05. The decisions above are unchanged; this addendum only
+  extends the reveal lifecycle by a second entry direction and records two things that were
+  deliberately *not* built.
+- **Related:** ADR-016 (Team-Besprechung, hard close at acceptance), ADR-022 (exactly two consent
+  gates), UserService #200 (takeover without evicting the previous counsellor), #1111
+  (`teamSession` / `INTERNAL_GROUP` stamping).
+
+**1. Push direction: offer → acceptance by the recipient → the same grant path.**
+Until now a reveal could only be *pulled*: a counsellor asks for access to somebody else's case.
+The owning counsellor can now also *push* — offer their own case to a colleague of the same
+Beratungsstelle. The offer is one record of the existing `case_handover_request` (a `direction`
+of `PULL` or `PUSH`, plus the target counsellor and an expiry), it needs the recipient's
+acceptance (`PENDING_RECIPIENT_ACCEPT` → `RECIPIENT_DECLINED` / `WITHDRAWN` / `EXPIRED`), and on
+acceptance it runs **the same grant path as a pull**: the reason's policy gate, the client-consent
+step where the policy demands it, the Matrix system message, the standing-supervisor attach. One
+open offer per case; an unanswered offer expires (72 h) and the case stays where it was.
+
+There is deliberately **one** handover path: the inherited Rocket.Chat-era alias message
+`REASSIGN_CONSULTANT`, in which the *client* confirmed a reassignment in the chat, is removed
+rather than kept in parallel. Two paths with different consent behaviour would be an audit gap.
+
+**2. The recipient's acceptance is not a consent gate — ADR-022 stands.**
+ADR-022 fixes **exactly two** consent gates (waiting room, and the room before the first message).
+A push introduces **no third gate**. The recipient accepting is a staffing step between
+professionals, not a data-protection consent. Whether the client has to agree is decided, exactly
+as for a pull, by the reason's `client_consent_required` policy — same field, same dialogue, same
+audit entry.
+
+**3. Reason codes carry no health reference (Art. 9 GDPR).**
+The reason taxonomy becomes `PLANNED_ABSENCE`, `UNPLANNED_ABSENCE`, `ASSIGNMENT_ENDED` and
+`ADVICE_REQUESTED`; the old codes (`COUNSELLOR_ON_HOLIDAY`, `COUNSELLOR_IS_ILL`,
+`OTHER_EMERGENCY`, `COUNSELLOR_LEFT`, `COUNSELLOR_ASKED_FOR_ADVICE`) are disabled and existing
+rows are migrated. The reason is that the code and its label do not stay in one place: they are
+written into `case_handover_request`, into the admin audit log, into the notification parameters
+and — as the derived client text — into the client's Matrix room. "Your counsellor is unfortunately
+ill" is **health data about the counsellor**, published to a client and stored in several systems.
+The client-facing text now names neither cause nor duration: the previous counsellor is
+unavailable, a named colleague continues the counselling.
+
+Room events already posted cannot be migrated (Matrix events are immutable). Only dev and pre-dev
+are affected today; this has to be fixed before go-live, not after.
+
+**4. Clearing the room at acceptance is deliberately NOT implemented.**
+The idea — when a counsellor accepts an enquiry or a handover, remove everyone else from the room —
+was examined and rejected:
+
+- It contradicts decision §1 above ("real members from room creation, no invite-then-kick") and the
+  2026-07-30 implementation note "reveal never adds or removes a member". Removing a member makes
+  their history unrecoverable under Megolm, and re-inviting them later fails on an existing
+  membership.
+- It would break the pull handover, which is the whole reason the silent-membership model exists:
+  taking over an absent colleague's case works *because* the covering counsellor is already a
+  member. Clearing the room turns every takeover back into a late join with re-key and
+  history-replay — precisely the brittle model this ADR replaced.
+- It contradicts the product decision in UserService #200 (takeover **without** evicting the
+  previous counsellor, so they can reclaim).
+- Silent membership reconciliation would fight it: the agency membership services re-add
+  counsellors on every sync.
+
+The hard eviction people remember is a different, existing mechanism: **ADR-016 decision 2, the
+hard close of the Team-Besprechung side room at acceptance.** The *side room* is archived and set
+read-only; the *client's room* is untouched. Team coordination and case access stay separate tools.
+If the eviction is ever wanted, it is a revision of §1 of this ADR plus a re-key design plus a
+tenant policy flag — not an implementation detail, and it presupposes the `teamSession` /
+`INTERNAL_GROUP` stamping fix (#1111), or it would empty real group chats.
+
+**5. Vocabulary (used in the UI and in the public documentation).**
+"Fallzugriff" is the umbrella; **Einsichtnahme** = co-access (read-only, time-boxed, owner keeps
+the case); **Übernahme** = takeover (ownership moves, previous counsellor keeps membership and can
+reclaim); **Fall holen** = pull; **Fall abgeben** = push.
