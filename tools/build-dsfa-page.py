@@ -55,6 +55,55 @@ def inline(text: str) -> str:
     return norm_switch(out)
 
 
+# ---------------------------------------------------------------- Zustaendigkeit
+
+# Sichtbare Trennung der beiden Verantwortungen. Quelle ist eine Markerzeile in den
+# Kapiteltexten:  ":::technisch"  bzw.  ":::organisatorisch <kurzer Zusatz>".
+SCOPE_MARKER = re.compile(r"^:::(technisch|organisatorisch)(?:\s+(.*))?$")
+
+SCOPE_LABELS = {
+    "technisch": ("memory", "tech", "Technischer Teil — von ORISO gepflegt"),
+    "organisatorisch": ("groups", "org", "Organisatorischer Teil — vom Träger zu ergänzen"),
+}
+
+# Standardzusatz der organisatorischen Abschnitte. Die Bearbeitung im Administrationsbereich
+# ist zurueckgestellt; das darf im Dokument nicht als vorhanden erscheinen.
+ORG_NOTE = "Bearbeitung im Administrationsbereich folgt"
+
+ORG_PLACEHOLDER = (
+    "Dieser Abschnitt beschreibt die Organisation, die Entscheidungswege und die juristische "
+    "Abwägung des Trägers. Er ist aus Quellcode nicht ableitbar und wird deshalb nicht von ORISO "
+    "gepflegt. Bis der Träger ihn verfasst, trägt das Dokument hier nur den eingeklappten "
+    "Entwurfstext; die eckigen Klammern darin sind bewusst offene Stellen."
+)
+
+
+def scope_badge(kind: str, note: str = "") -> str:
+    icon, css, label = SCOPE_LABELS[kind]
+    extra = '<span class="scope-note">%s</span>' % inline(note) if note else ""
+    return (
+        '<p class="scope scope--%s"><svg class="ico" aria-hidden="true" focusable="false">'
+        '<use href="#ms-%s"/></svg><span class="scope-label">%s</span>%s</p>'
+        % (css, icon, label, extra)
+    )
+
+
+def organisational(inner: str, note: str = ORG_NOTE) -> str:
+    """Einen Betreiber-Abschnitt als organisatorisch kennzeichnen und den Entwurf einklappen."""
+    return (
+        scope_badge("organisatorisch", note)
+        + '<p class="scope-placeholder">%s</p>' % ORG_PLACEHOLDER
+        + '<details class="org-draft"><summary>Entwurfstext einblenden</summary>'
+        '<div class="org-draft-body">%s</div></details>' % inner
+    )
+
+
+def add_scope_to_section(block: str, kind: str, note: str = "") -> str:
+    """Kennzeichnung direkt hinter die Kapitelueberschrift einer fertigen Sektion setzen."""
+    return re.sub(r"(</h2>\n)", lambda m: m.group(1) + "        " + scope_badge(kind, note) + "\n",
+                  block, count=1)
+
+
 # ---------------------------------------------------------------- Blockrenderer
 
 
@@ -96,6 +145,14 @@ def render(md: str, heading_base: int = 3) -> str:
         # Thematische Trennlinie der Vorlagen — im Dokument bedeutungslos
         if re.fullmatch(r"-{3,}|\*{3,}|_{3,}", stripped):
             flush_para()
+            i += 1
+            continue
+
+        # Zuständigkeitsmarker
+        m_scope = SCOPE_MARKER.match(stripped)
+        if m_scope:
+            flush_para()
+            out.append(scope_badge(m_scope.group(1), (m_scope.group(2) or "").strip()))
             i += 1
             continue
 
@@ -594,8 +651,9 @@ def main() -> int:
     chapters: list[str] = []
     unplaced: list[str] = []
 
-    # 1 — Einleitung, Scope und Stammdaten (unveraendert)
-    chapters.append(keep("kap1"))
+    # 1 — Einleitung, Scope und Stammdaten (Stammdaten kommen aus dem Administrationsbereich)
+    chapters.append(add_scope_to_section(
+        keep("kap1"), "organisatorisch", "Stammdaten aus dem Administrationsbereich"))
 
     # 2 — Schwellwertanalyse: Fragetabellen werden zum Checklisten-Bauteil der Seite,
     # die Herleitung bleibt als Fliesstext darunter stehen.
@@ -608,23 +666,27 @@ def main() -> int:
                 + " zu erwarten, die Plattform richtet sich an eine große Zahl teils besonders "
                   "schutzbedürftiger Ratsuchender, und mehrere Verantwortliche wirken zusammen.</p>")
     k2 = threshold_widget(vor, pruef, result_p) + "\n" + render(md2)
-    k2 += "\n" + render(template_section(vorlagen, "2"))
+    k2 += "\n" + organisational(render(template_section(vorlagen, "2")))
     chapters.append(section("2", "Schwellwertanalyse", k2))
 
-    # 3 — Kontext und Kennzahlen (unveraendert)
-    chapters.append(keep("kap3"))
+    # 3 — Kontext und Kennzahlen (Kennzahlen kommen aus dem Administrationsbereich)
+    chapters.append(add_scope_to_section(
+        keep("kap3"), "organisatorisch", "Kennzahlen aus dem Administrationsbereich"))
 
     # 4 — Akteure, Rollen und Berechtigungen (Seite) + Governance-Vorlage
     k4 = keep("kap4")
     # Kapitel 5 heisst jetzt "Verantwortlichkeit" — Kapitel 4 darf den Begriff nicht doppeln.
     k4 = k4.replace("<h2>Akteure und Verantwortlichkeit</h2>", "<h2>Akteure, Rollen und Governance</h2>")
+    k4 = add_scope_to_section(k4, "technisch", "Abschnitt 4.5 ist organisatorisch")
     gov = indent("<h3>4.5 Governance und Entscheidungsgremien</h3>\n"
-                 + render(template_section(vorlagen, "4"), heading_base=4))
+                 + organisational(render(template_section(vorlagen, "4"), heading_base=4)))
     k4 = k4.replace("      </section>\n", gov + "\n      </section>\n")
     chapters.append(k4)
 
     # 5 — Verantwortlichkeit
-    chapters.append(section("5", "Verantwortlichkeit", render(template_section(vorlagen, "5"))))
+    chapters.append(
+        section("5", "Verantwortlichkeit", organisational(render(template_section(vorlagen, "5"))))
+    )
 
     # 6 — Verfahren und Technik
     k6 = render(body_of(read("kap-06-verfahren-und-technik.md")))
@@ -642,13 +704,15 @@ def main() -> int:
     )
 
     # 8 — Betroffenenrechte (Betreiber-Slots 8.1/8.3/8.11 + eigene Kapitel 8.4–8.12)
-    k8 = "<h3>8.1 Identitätsüberprüfung</h3>\n" + render(template_section(vorlagen, "8.1"))
-    k8 += "\n<h3>8.3 Datenschutzhinweise und Informationswege</h3>\n" + render(
-        template_section(vorlagen, "8.3")
+    k8 = "<h3>8.1 Identitätsüberprüfung</h3>\n" + organisational(
+        render(template_section(vorlagen, "8.1"))
+    )
+    k8 += "\n<h3>8.3 Datenschutzhinweise und Informationswege</h3>\n" + organisational(
+        render(template_section(vorlagen, "8.3"))
     )
     k8 += "\n" + render(body_of(read("kap-08-betroffenenrechte.md")))
-    k8 += "\n<h3>8.11 Eskalationskette und Datenweitergabe an Ermittlungsbehörden</h3>\n" + render(
-        template_section(vorlagen, "8.11")
+    k8 += "\n<h3>8.11 Eskalationskette und Datenweitergabe an Ermittlungsbehörden</h3>\n" + (
+        organisational(render(template_section(vorlagen, "8.11")))
     )
     k8, miss = attach_evidence(k8, "8")
     unplaced += miss
@@ -662,7 +726,9 @@ def main() -> int:
         ("9.3", "9.3 Erforderlichkeit"),
         ("9.4", "9.4 Angemessenheit"),
     ]:
-        k9 += "<h3>%s</h3>\n%s\n" % (title, render(template_section(vorlagen, key)))
+        k9 += "<h3>%s</h3>\n%s\n" % (
+            title, organisational(render(template_section(vorlagen, key)))
+        )
     chapters.append(section("9", "Verhältnismäßigkeit", k9))
 
     # 10 — Ergebnis
@@ -675,11 +741,12 @@ def main() -> int:
     a1 = renumber(keep("kap10"), "A1", "Anlage 1 — Risiken und Maßnahmen (Entwurf)")
     a1 = a1.replace('<span class="chapter-no">Kapitel A1</span>',
                     '<span class="chapter-no">Anlage 1</span>')
+    a1 = add_scope_to_section(a1, "technisch")
     chapters.append(a1)
 
     # Anlagenverzeichnis
     chapters.append(
-        section("A", "Anlagenverzeichnis", render(template_section(vorlagen, "A")),
+        section("A", "Anlagenverzeichnis", organisational(render(template_section(vorlagen, "A"))),
                 chapter_label="Anlagen")
     )
 
@@ -718,6 +785,29 @@ def main() -> int:
     )
 
     # Stil für Hinweiskästen aus Zitatblöcken ergänzen (einmalig)
+    # Stil der Zuständigkeitskennzeichnung (einmalig)
+    if ".scope--tech" not in head:
+        head = head.replace(
+            "  .internal-note {",
+            "  .scope { display: flex; align-items: center; gap: 8px; flex-wrap: wrap;\n"
+            "        margin: 10px 0 12px; padding: 7px 12px; border-radius: 999px;\n"
+            "        font: 600 11px/1.5 var(--mono,monospace); letter-spacing: .02em; }\n"
+            "  .scope .ico { width: 16px; height: 16px; flex: none; }\n"
+            "  .scope-note { font-weight: 400; opacity: .8; }\n"
+            "  .scope-note::before { content: '· '; }\n"
+            "  .scope--tech { background: #e7f0fb; color: #14497f; }\n"
+            "  .scope--org { background: #fff4e2; color: #8a5200; }\n"
+            "  .scope-placeholder { margin: 0 0 10px; color: var(--m3-on-surface-variant,#4a5560); }\n"
+            "  .org-draft { margin: 0 0 16px; border-left: 3px solid #e0b874;\n"
+            "        background: #fffaf2; border-radius: 0 8px 8px 0; padding: 8px 14px; }\n"
+            "  .org-draft > summary { cursor: pointer; font: 600 11px/1.6 var(--mono,monospace);\n"
+            "        letter-spacing: .04em; text-transform: uppercase; color: #8a5200; }\n"
+            "  .org-draft-body { padding-top: 6px; }\n"
+            "  @media print { .org-draft[open] > summary { list-style: none; } }\n"
+            "  .internal-note {",
+            1,
+        )
+
     if ".qnote" not in head:
         head = head.replace(
             "  .internal-note {",
@@ -745,6 +835,9 @@ def main() -> int:
           % (words, len(re.sub(r"<[^>]+>", " ", old).split())))
     print("Normumschalter: %d" % new_body.count('class="norm"'))
     print("Belegknöpfe: %d von %d" % (new_body.count("data-ev="), len(EVIDENCE_ANCHORS) + 1))
+    print("Zuständigkeit: %d technisch / %d organisatorisch, %d eingeklappte Entwürfe"
+          % (new_body.count('scope--tech'), new_body.count('scope--org'),
+             new_body.count('class="org-draft"')))
     if unplaced:
         print("NICHT platziert: %s" % ", ".join(unplaced))
     return 0
