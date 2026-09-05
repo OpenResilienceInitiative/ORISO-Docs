@@ -371,6 +371,8 @@ def add_branding_placeholders(page: str) -> str:
     )
     if 'id="operator-favicon"' not in page:
         page = page.replace("</head>", favicon + "\n</head>", 1)
+    # Interne Umgebungs-/Commit-Hinweise aus dem Rahmen gehören nicht in ein öffentliches Rechtsdokument.
+    page = page.replace(" (pre-dev HEAD 7471b852)", "")
 
     appbar_logo = (
         '<span class="appbar-logo" title="aus Admin-Panel Global Settings: operator.logo">'
@@ -730,6 +732,7 @@ def main() -> int:
         k9 += "<h3>%s</h3>\n%s\n" % (
             title, organisational(render(template_section(vorlagen, key)))
         )
+    k9 = add_scope_to_section(k9, "organisatorisch", "Abschnitte 9.1–9.4 sind je einzeln gekennzeichnet")
     chapters.append(section("9", "Verhältnismäßigkeit", k9))
 
     # 10 — Ergebnis

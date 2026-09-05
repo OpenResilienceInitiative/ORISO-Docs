@@ -138,7 +138,8 @@ beschrieben werden, `not-deployed`, `disabled-by-default` und `needs-live-verifi
 Text als Entscheidung, Zielarchitektur oder offener Punkt kenntlich gemacht werden — eine
 beschlossene ADR ist ein Beleg für die Entscheidung, nie für den Ist-Zustand.
 Organisatorische Anteile einer neuen Funktion (Fristen, Zuständigkeiten, Ermessensausübung des
-Trägers) gehören nicht in die Kapiteltexte, sondern nach `vorlagen-betreiber.md`, und werden im
+Trägers) gehören nicht in die Kapiteltexte, sondern nach `vorlagen-betreiber.md` **und** gleichlautend
+nach `dsfa-editor-defaults.ts` (Startinhalt des künftigen Admin-Editors), und werden im
 Kapitel mit der Marke `:::organisatorisch` sichtbar abgesetzt. Diese organisatorischen Teile sind
 Vertragsunterlagen und werden vom Plattformbetreiber eingepflegt — nicht vom einzelnen Träger; die
 Bearbeitung im Administrationsbereich ist zurückgestellt.
