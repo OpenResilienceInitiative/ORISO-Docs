@@ -63,7 +63,6 @@ flowchart TB
   AG --> TS
   AG --> CT
   AG --> US
-  TS --> AG
   TS --> CT
   TS --> US
   CT --> TS

@@ -5,6 +5,8 @@ description: Cluster provisioning, bootstrap, and access-management summary for 
 
 # ORISO-Infra Enriched Graph Summary
 
+> **Archived snapshot (May 2026).** This page is a generated graph summary kept for reference and is not maintained. The live, continuously rebuilt graphs are described on [Understand Anything](../understand-anything).
+
 ## Platform Navigation
 
 - [Overview](../overview.md)
