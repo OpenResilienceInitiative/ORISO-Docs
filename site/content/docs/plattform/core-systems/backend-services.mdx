@@ -12,7 +12,7 @@ implement those interfaces, and a MariaDB schema the service alone writes to.
 | --- | --- | --- | --- | --- |
 | [UserService](#userservice) | users, consultants, sessions, conversations, chats, appointments, notifications | 186 | 54 | Agency, ConsultingType, Tenant, Keycloak |
 | [AgencyService](#agencyservice) | agencies, postcode ranges, agency topics, dioceses | 40 | 7 | Tenant, ConsultingType, User |
-| [TenantService](#tenantservice) | tenants, settings, theming, legal texts | 43 | 12 | Agency, ConsultingType, User |
+| [TenantService](#tenantservice) | tenants, settings, theming, legal texts | 43 | 12 | ConsultingType, User |
 | [ConsultingTypeService](#consultingtypeservice) | consulting types, topics, topic groups, application settings | 23 | 5 | Tenant |
 
 Endpoint and table counts come from the cross-service graph — see

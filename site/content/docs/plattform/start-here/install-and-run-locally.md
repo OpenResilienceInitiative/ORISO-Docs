@@ -65,7 +65,7 @@ cp .env.example .env
 npm run dev        # dev server
 ```
 
-`npm run dev` runs [`scripts/start.js`](https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/dev/package.json#L14-L16);
+`npm run dev` runs [`scripts/start.js`](https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/dev/package.json#L231);
 `npm start` instead serves the built app through the proxy in `proxy/server.js`.
 The API host, Matrix URL, cookie names, LiveKit and legal URLs all come from
 [`.env.example`](https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/dev/.env.example) —

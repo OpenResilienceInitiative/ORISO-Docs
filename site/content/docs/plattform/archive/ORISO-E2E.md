@@ -2,6 +2,8 @@
 title: ORISO-E2E Enriched Graph Summary
 description: Direct source inspection and graph-backed summary for ORISO-E2E.
 ---
+> **Archived snapshot (May 2026).** This page is a generated graph summary kept for reference and is not maintained. The live, continuously rebuilt graphs are described on [Understand Anything](/plattform/knowledge-graphs/understand-anything).
+
 ## Platform Navigation
 
 - [Overview](/plattform/start-here/overview)
