@@ -515,6 +515,19 @@ entries:
         lines: "44,273-302"
         expect: ["ARCHIVED", "events_default"]
 
+  - slug: team-discussion-archive-retention
+    chapter: "6.13"
+    claim: "Für Teambesprechungs-Archive ist eine Aufbewahrung von 90 Tagen ab Archivierung entschieden (Stand 05.09.2026), aber noch nicht implementiert; ADR-016 setzt auf die Archiv-Auto-Löschung, im Löschworkflow wird `TeamDiscussion` jedoch an keiner Stelle angefasst."
+    status: not-deployed
+    decision: oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/workflow/delete/action/asker/DeleteRoomsAndSessionAction.java
+        absent: ["TeamDiscussion", "teamDiscussion"]
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/workflow/delete/action/asker/DeleteSingleRoomAndSessionAction.java
+        absent: ["TeamDiscussion", "teamDiscussion"]
+
   - slug: case-handover-consent-policy
     chapter: "6.13"
     claim: "Je Übergabegrund ist festgelegt, ob die Zustimmung der ratsuchenden Person erforderlich ist; sie entscheidet selbst in der Anwendung."
@@ -623,6 +636,34 @@ entries:
       - repo: ORISO-UserService
         path: src/main/java/de/caritas/cob/userservice/api/workflow/delete/action/consultant/DeleteCaseHandoverRequestsForConsultantAction.java
         expect: ["DeleteCaseHandoverRequestsForConsultantAction"]
+
+  - slug: case-handover-log-retention
+    chapter: "6.13"
+    claim: "Für Fallübergabe-Protokolle ist eine Aufbewahrung von 12 Monaten ab Entstehung des Protokolleintrags entschieden (Stand 05.09.2026), aber noch nicht implementiert; es existiert weder ein Konfigurationsschlüssel noch ein Löschlauf."
+    status: not-deployed
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/resources/application.properties
+        absent: ["case.handover.audit-retention-months", "CASE_HANDOVER_AUDIT_RETENTION_MONTHS"]
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/service/handshake/HandshakeService.java
+        lines: "63-64"
+        expect: ["handshake.audit-retention-months", "12"]
+
+  - slug: supervision-notes-retention
+    chapter: "6.13"
+    claim: "Für Supervisions-Nebenräume ist eine Aufbewahrung von Fallende + 90 Tagen entschieden (Stand 05.09.2026), aber noch nicht implementiert; beim Löschen von Sitzung oder Beratendem wird heute nur die Datenbankzeile `session_supervisor` entfernt, der Matrix-Nebenraum bleibt unbefristet bestehen."
+    status: not-deployed
+    decision: oriso-platform/decisions/ADR-008-supervision-role-and-side-channel-confidentiality.md
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/workflow/delete/action/asker/DeleteRoomsAndSessionAction.java
+        lines: "62-72,113"
+        expect: ["deleteSessionSupervisors", "sessionSupervisorRepository"]
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/workflow/delete/action/consultant/DeleteDatabaseConsultantAction.java
+        lines: "42-46,80-83"
+        expect: ["SessionSupervisorRepository", "deleteAllByConsultantId"]
 
   # ---------------------------------------------------------------- Kapitel 6.14
   - slug: notification-preview-mode-none

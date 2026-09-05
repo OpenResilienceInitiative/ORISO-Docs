@@ -20,6 +20,8 @@ import re
 import sys
 from pathlib import Path
 
+import yaml
+
 HERE = Path(__file__).resolve().parent
 SRC = HERE.parent / "oriso-platform" / "dsfa-text"
 TEMPLATE = Path(os.environ.get("DSFA_TEMPLATE",
@@ -476,6 +478,68 @@ def fill_master_data(page: str) -> tuple[str, int]:
     return page, count
 
 
+# ---------------------------------------------------------------- Versionierung
+
+# Aenderungshistorie der Seite. Quelle ist ausschliesslich `versions.yaml` (aeltest
+# zuerst); die Vorlage traegt keinen eigenen Versionsstand mehr, sie wird hier
+# ueberschrieben. Damit erfordert ein Versionssprung keine Handarbeit mehr in
+# dsfa-page-v2.html: neue Zeile in versions.yaml genuegt.
+
+
+def read_versions() -> list[dict]:
+    data = yaml.safe_load((SRC / "versions.yaml").read_text(encoding="utf-8"))
+    return data["versions"]
+
+
+def display_date(iso: str) -> str:
+    y, m, d = iso.split("-")
+    return "%s.%s.%s" % (d, m, y)
+
+
+def apply_versioning(page: str, versions: list[dict]) -> str:
+    """Versionsblock, Kopf-/Fusszeile und Aenderungshistorie-Dialog aus `versions` speisen."""
+    latest = versions[-1]
+    version, date_disp = latest["version"], display_date(latest["date"])
+
+    page = re.sub(
+        r'(<div class="vlabel">Version</div>\s*<div class="vvalue">)[^<]*(</div>)',
+        lambda m: m.group(1) + version + m.group(2), page, count=1,
+    )
+    page = re.sub(
+        r'(<div class="vlabel">Stand</div>\s*<div class="vvalue">)[^<]*(</div>)',
+        lambda m: m.group(1) + date_disp + m.group(2), page, count=1,
+    )
+    page = re.sub(
+        r'(<span class="appbar-version">)v[^·<]*·[^<]*(</span>)',
+        lambda m: m.group(1) + "v" + version + " · " + date_disp + m.group(2), page, count=1,
+    )
+    page = re.sub(
+        r'(<span class="latest-url">latest → )v[^<]*(</span>)',
+        lambda m: m.group(1) + "v" + version + m.group(2), page, count=1,
+    )
+    page = re.sub(
+        r'(Diese Version: <code>/docs/dsfa/)v[^/<]*(/</code>)',
+        lambda m: m.group(1) + "v" + version + m.group(2), page, count=1,
+    )
+    page = re.sub(
+        r'download="dsfa-oriso-v[^"]*\.pdf"',
+        'download="dsfa-oriso-v%s.pdf"' % version, page, count=1,
+    )
+
+    rows = "".join(
+        "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"
+        % (html.escape(v["version"]), display_date(v["date"]),
+           inline(v["change"]), html.escape(v["editor"]))
+        for v in reversed(versions)
+    )
+    page = re.sub(
+        r'(<thead><tr><th>Version</th><th>Datum</th><th>Änderung</th>'
+        r'<th>Bearbeitung</th></tr></thead>\s*<tbody>).*?(</tbody>)',
+        lambda m: m.group(1) + rows + m.group(2), page, count=1, flags=re.S,
+    )
+    return page
+
+
 # ---------------------------------------------------------------- Schwellwert-Checkliste
 
 CBX_ON = ('<span class="cbx"><svg class="ico" aria-hidden="true" focusable="false">'
@@ -825,7 +889,9 @@ def main() -> int:
             1,
         )
 
-    page_out, filled = fill_master_data(head + new_body + tail)
+    versions = read_versions()
+    page_out = apply_versioning(head + new_body + tail, versions)
+    page_out, filled = fill_master_data(page_out)
     page_out = add_branding_placeholders(page_out)
     if "live-badge" not in page_out:
         page_out = page_out.replace("  .qnote--todo {", LIVE_BADGE_CSS + "  .qnote--todo {", 1)
@@ -842,6 +908,8 @@ def main() -> int:
     print("Zuständigkeit: %d technisch / %d organisatorisch, %d eingeklappte Entwürfe"
           % (new_body.count('scope--tech'), new_body.count('scope--org'),
              new_body.count('class="org-draft"')))
+    print("Version: v%s (Stand %s), %d Einträge in der Änderungshistorie"
+          % (versions[-1]["version"], display_date(versions[-1]["date"]), len(versions)))
     if unplaced:
         print("NICHT platziert: %s" % ", ".join(unplaced))
     return 0

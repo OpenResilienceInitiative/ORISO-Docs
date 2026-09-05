@@ -433,9 +433,20 @@ Empfängerkreise ausgestaltet.
 > **Ehrliche Grenzbenennung.** In der Team-Besprechung wird **über** eine ratsuchende Person
 > gesprochen, ohne dass diese davon Kenntnis erlangt; das Archiv bleibt dauerhaft lesbar. Damit
 > entsteht ein Datenbestand über die betroffene Person außerhalb ihres Beratungsraums, der beim
-> Auskunftsrecht zu berücksichtigen ist (Abschnitt 8.4) und für den eine Aufbewahrungsfrist
-> festzulegen ist. Protokolliert werden derzeit ausschließlich Anlage und Teilnahme, nicht
-> Lese- oder Archivzugriffe.
+> Auskunftsrecht zu berücksichtigen ist (Abschnitt 8.4). Vorgesehen ist eine Aufbewahrung von
+> **90 Tagen ab Archivierung**, spätestens jedoch bis zur Löschung der zugehörigen
+> Beratungssitzung. Der Löschlauf ist entschieden, aber noch nicht implementiert
+> (Stand 05.09.2026); einen Löschpfad für dieses Archiv gibt es im Auslieferungsstand nicht. Der
+> Wert ist als Konfigurationsparameter vorgesehen und kann vom Plattformbetreiber ohne
+> Codeänderung angepasst werden. Begründung: Der Zweck des Archivs — Kontextbrücke für eine neu
+> übernehmende Fachkraft — ist mit der Fallannahme im Kern erfüllt; danach verbleibt reiner
+> Prozessdaten-Fließtext über die ratsuchende Person, dessen unbefristete Aufbewahrung sich
+> gegenüber der Speicherbegrenzung (§ 7 Abs. 1 lit. e KDG) nicht rechtfertigen lässt
+> (Caritas-Fachposition: Prozessdaten werden nach Beendigung des Klientenverhältnisses gelöscht).
+> Der Wert
+> ist eine Konvention, kein Normwert, und steht unter dem Vorbehalt der Freigabe durch den
+> betrieblichen Datenschutzbeauftragten. Protokolliert werden derzeit ausschließlich Anlage und
+> Teilnahme, nicht Lese- oder Archivzugriffe.
 
 **(2) Fallübergabe.** Der Zugriff einer weiteren Beraterin oder eines weiteren Beraters auf einen
 bestehenden Beratungsfall — etwa bei Vertretung im Krankheitsfall, Urlaubsvertretung, kollegialer
@@ -483,7 +494,18 @@ beiden Funktionen **nicht**; sie darf für sie nicht behauptet werden.
 **(6) Supervision — Abgrenzung.** Die Supervision ist ein hiervon getrenntes drittes Werkzeug: Sie
 ist als begleitender Lesezugriff ausgestaltet und verfügt über ein eigenes Widerspruchsverfahren
 (Opt-out) für die ratsuchende Person. Zu Supervisionsvorgängen können Freitext-Notizen erfasst
-werden; für diese ist eine Aufbewahrungsfrist festzulegen.
+werden; sie können besondere Kategorien personenbezogener Daten über die ratsuchende Person
+enthalten (§ 11 KDG, Art. 9 DSGVO). Vorgesehen ist eine Aufbewahrung von **Fallende + 90 Tagen**
+(Startzeitpunkt: Abschluss bzw. Archivierung der Beratungssitzung, hilfsweise Aufhebung der
+Supervisionsbeziehung — was zuerst eintritt). Der Löschlauf ist entschieden, aber noch nicht
+implementiert (Stand 05.09.2026); heute wird beim Löschen von Sitzung oder Beratendem nur die
+Datenbankzeile entfernt, der Matrix-Nebenraum bleibt unbefristet bestehen. Der Wert ist als
+Konfigurationsparameter vorgesehen und kann vom Plattformbetreiber ohne Codeänderung angepasst
+werden. Begründung: Mit dem Fallende entfällt der Zweck der Fachaufsicht; es verbleibt reiner
+Prozessdaten-Fließtext über die ratsuchende Person, der nach der Caritas-Fachposition „nach
+Beendigung des Klientenverhältnisses gelöscht" werden soll. Der Wert ist eine Konvention, kein
+Normwert, und steht unter dem Vorbehalt der Freigabe durch den betrieblichen
+Datenschutzbeauftragten.
 
 **(7) Grundkatalog und besondere Kategorien — Ist-Stand und Beschlusslage.** Der ausgelieferte
 Grundkatalog enthält die Gründe `COUNSELLOR_ASKED_FOR_ADVICE`, `COUNSELLOR_ON_HOLIDAY`,
@@ -521,8 +543,17 @@ Die maschinenlesbare Fassung dieser Belege steht unter den Kennungen `case-hando
 > Konfiguration des Dienstes kennt Fristen für Benachrichtigungen (90 Tage nach Kenntnisnahme,
 > 365 Tage absolut) und für die Protokolle des Break-Glass-Zugriffs (12 Monate), nicht aber für
 > `case_handover_request`. Gelöscht wird dort nur anlassbezogen mit dem Konto der beratenden
-> Person. Die Frist ist im Löschkonzept (Anlage 2) festzulegen; sie ist eine Entscheidung des
-> Verantwortlichen, keine technische Ableitung.
+> Person. Vorgesehen ist eine Aufbewahrung von **12 Monaten ab Entstehung des
+> Protokolleintrags**, mit täglichem Löschlauf. Der Löschlauf ist entschieden, aber noch nicht
+> implementiert (Stand 05.09.2026). Der Wert ist als Konfigurationsparameter vorgesehen und kann
+> vom Plattformbetreiber ohne Codeänderung angepasst werden. Begründung: Das Log enthält keine
+> Gesprächsinhalte und dient allein der Nachprüfbarkeit, wer wann mit welchem Grund Zugriff auf
+> einen Fall erhalten hat; die verbindliche Untergrenze von sechs Monaten (§ 6 lit. f Satz 2
+> KDG-DVO, Eingabekontrolle) wird nicht unterschritten, und der Wert folgt dem bereits
+> ausgelieferten Break-Glass-Audit (zwölf Monate). Die Frist ist im Löschkonzept (Anlage 2)
+> endgültig festzulegen; sie ist eine Entscheidung des Verantwortlichen, keine technische
+> Ableitung, und steht unter dem Vorbehalt der Freigabe durch den betrieblichen
+> Datenschutzbeauftragten.
 
 ## 6.14 In-App-Benachrichtigungen und E-Mail-Benachrichtigungen
 

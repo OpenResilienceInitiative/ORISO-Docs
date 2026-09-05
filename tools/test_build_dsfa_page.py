@@ -78,5 +78,57 @@ class ResponsibilityMarkerTest(unittest.TestCase):
                 )
 
 
+class VersioningTest(unittest.TestCase):
+    PAGE = (
+        '<span class="appbar-version">v0.1-draft · 14.08.2026</span>\n'
+        'Diese Version: <code>/docs/dsfa/v0.1-draft/</code>\n'
+        '<div class="vlabel">Version</div>\n<div class="vvalue">0.1-draft</div>\n'
+        '<div class="vlabel">Stand</div>\n<div class="vvalue">14.08.2026</div>\n'
+        '<a class="btn-pdf" download="dsfa-oriso-v0.1-draft.pdf">PDF</a>\n'
+        '<span class="latest-url">latest → v0.1-draft</span>\n'
+        '<thead><tr><th>Version</th><th>Datum</th><th>Änderung</th>'
+        '<th>Bearbeitung</th></tr></thead>\n<tbody>'
+        '<tr><td>0.1-draft</td><td>14.08.2026</td><td>Erstfassung.</td><td>ORISO Docs</td></tr>'
+        '</tbody>'
+    )
+    VERSIONS = [
+        {"version": "0.1-draft", "date": "2026-08-14", "change": "Erstfassung.",
+         "editor": "ORISO Docs"},
+        {"version": "4", "date": "2026-09-05", "change": "Zweite Fassung.",
+         "editor": "ORISO Docs"},
+    ]
+
+    def test_versions_file_parses_and_ends_with_the_current_release(self):
+        versions = MODULE.read_versions()
+        self.assertGreaterEqual(len(versions), 2)
+        for entry in versions:
+            self.assertIn("version", entry)
+            self.assertIn("date", entry)
+            self.assertIn("change", entry)
+            self.assertIn("editor", entry)
+
+    def test_display_date_formats_iso_as_german(self):
+        self.assertEqual(MODULE.display_date("2026-09-05"), "05.09.2026")
+
+    def test_apply_versioning_bumps_version_block_and_header(self):
+        out = MODULE.apply_versioning(self.PAGE, self.VERSIONS)
+
+        self.assertIn('<div class="vvalue">4</div>', out)
+        self.assertIn('<div class="vvalue">05.09.2026</div>', out)
+        self.assertIn('<span class="appbar-version">v4 · 05.09.2026</span>', out)
+        self.assertIn('Diese Version: <code>/docs/dsfa/v4/</code>', out)
+        self.assertIn('download="dsfa-oriso-v4.pdf"', out)
+        self.assertIn('<span class="latest-url">latest → v4</span>', out)
+
+    def test_apply_versioning_lists_every_version_newest_first_in_history(self):
+        out = MODULE.apply_versioning(self.PAGE, self.VERSIONS)
+
+        row4 = out.index("<td>4</td>")
+        row01 = out.index("<td>0.1-draft</td>")
+        self.assertLess(row4, row01)
+        self.assertIn("Zweite Fassung.", out)
+        self.assertIn("Erstfassung.", out)
+
+
 if __name__ == "__main__":
     unittest.main()
