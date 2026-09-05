@@ -5,9 +5,7 @@ description: Practical local startup order based on inspected repository depende
 
 # Local Development
 
-## Platform Navigation
-
-- [Overview](./overview.md)
+> **Superseded.** Start at [Install and run locally](./install-and-run-locally.md), which carries the current tool versions, the repository list and the local runner. This page is kept for its per-repository start-up notes and its startup order, which are still accurate.
 - [Repository map](./repository-map.md)
 - [Architecture](./architecture.md)
 - [Authentication and Keycloak](./authentication-and-keycloak.md)

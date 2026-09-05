@@ -64,34 +64,49 @@
         "tab": "ORISO Platform Architecture",
         "groups": [
           {
-            "group": "Architecture Hub",
+            "group": "Start here",
             "pages": [
               "docs/platform/overview",
-              "docs/platform/repository-map",
+              "docs/platform/install-and-run-locally",
               "docs/platform/architecture"
             ]
           },
           {
             "group": "Core Systems",
             "pages": [
+              "docs/platform/backend-services",
+              "docs/platform/frontend-admin-overview",
               "docs/platform/authentication-and-keycloak",
               "docs/platform/database-and-data-model",
-              "docs/platform/kubernetes-deployment",
-              "docs/platform/frontend-admin-overview",
-              "docs/platform/backend-services"
+              "docs/platform/kubernetes-deployment"
             ]
           },
           {
-            "group": "Platform Flows",
+            "group": "Flows & Reference",
             "pages": [
               "docs/platform/tenant-lifecycle",
-              "docs/platform/user-management-flow",
-              "docs/platform/local-development"
+              "docs/platform/repository-map",
+              "docs/platform/troubleshooting",
+              "docs/platform/diagrams"
             ]
           },
           {
-            "group": "Repository Graphs",
+            "group": "Knowledge Graphs",
             "pages": [
+              "docs/platform/understand-anything"
+            ]
+          },
+          {
+            "group": "Archive",
+            "pages": [
+              "docs/platform/local-development",
+              "docs/platform/onboarding-guide",
+              "docs/platform/user-management-flow",
+              "docs/platform/super-graph-index",
+              "docs/platform/super-graph-explorer",
+              "docs/platform/super-graph-detailed",
+              "docs/platform/understand-anything-inventory",
+              "docs/platform/graph-validation-report",
               "docs/platform/repo-graphs/ORISO-Frontend",
               "docs/platform/repo-graphs/ORISO-Admin",
               "docs/platform/repo-graphs/ORISO-UserService",
@@ -104,24 +119,6 @@
               "docs/platform/repo-graphs/ORISO-Helm",
               "docs/platform/repo-graphs/ORISO-E2E",
               "docs/platform/repo-graphs/ORISO-Infra"
-            ]
-          },
-          {
-            "group": "Graphs & Diagrams",
-            "pages": [
-              "docs/platform/super-graph-index",
-              "docs/platform/super-graph-explorer",
-              "docs/platform/super-graph-detailed",
-              "docs/platform/understand-anything-inventory",
-              "docs/platform/diagrams",
-              "docs/platform/graph-validation-report"
-            ]
-          },
-          {
-            "group": "Operations",
-            "pages": [
-              "docs/platform/onboarding-guide",
-              "docs/platform/troubleshooting"
             ]
           }
         ]

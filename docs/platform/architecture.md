@@ -1,138 +1,137 @@
 ---
-title: ORISO End-to-End Architecture
-description: Enriched platform architecture from source graphs and direct source inspection.
+title: ORISO end-to-end architecture
+description: The service landscape, who calls whom, and the file you open first when you need to change one of the edges.
 ---
 
-# ORISO End-to-End Architecture
+# ORISO end-to-end architecture
 
-## Platform Navigation
+Two browser applications, four Spring Boot services, one identity provider, one Matrix
+homeserver for real-time communication, and one Helm chart that deploys the lot. This
+page is the map; every box links to the repository, and the sections below name the file
+you open when you need to touch that edge.
 
-- [Overview](./overview.md)
-- [Repository map](./repository-map.md)
-- [Architecture](./architecture.md)
+## The service landscape
+
+Arrows point in the direction of the call. Edge directions are taken from the
+cross-service graph described in
+[how we keep the docs honest](./understand-anything.md); the numbers behind them are
+literal-path matches between callers and OpenAPI/Spring endpoints.
+
+```mermaid
+flowchart TB
+  subgraph BROWSER["Browser"]
+    FE["ORISO-Frontend<br/>counselling app"]
+    AD["ORISO-Admin<br/>admin panel"]
+  end
+
+  KC["ORISO-Keycloak<br/>OIDC, realm online-beratung"]
+
+  subgraph API["Backend services (Spring Boot 4, JDK 21)"]
+    US["UserService<br/>users, sessions, chats"]
+    AG["AgencyService<br/>agencies, postcodes, topics"]
+    TS["TenantService<br/>tenants, settings, legal text"]
+    CT["ConsultingTypeService<br/>consulting types, topics"]
+  end
+
+  subgraph RT["Real-time"]
+    MX["Matrix Synapse<br/>rooms and messages"]
+    LK["LiveKit + Element Call<br/>audio and video"]
+  end
+
+  subgraph DATA["Data"]
+    MDB[("MariaDB<br/>one schema per service")]
+    MGO[("MongoDB<br/>consulting types, settings")]
+    PG[("PostgreSQL<br/>Matrix state")]
+    RQ[("Redis / RabbitMQ")]
+  end
+
+  FE -->|"token"| KC
+  AD -->|"token"| KC
+  FE --> US
+  FE --> AG
+  FE --> TS
+  FE --> CT
+  AD --> US
+  AD --> AG
+  AD --> TS
+  AD --> CT
+
+  US --> AG
+  US --> CT
+  US --> TS
+  US --> KC
+  AG --> TS
+  AG --> CT
+  AG --> US
+  TS --> AG
+  TS --> CT
+  TS --> US
+  CT --> TS
+
+  FE --> MX
+  FE --> LK
+  US --> MX
+
+  US --> MDB
+  AG --> MDB
+  TS --> MDB
+  CT --> MDB
+  CT --> MGO
+  MX --> PG
+  US --> RQ
+```
+
+Two things about this picture are worth internalising early.
+
+**The backend is a mesh, not a layer cake.** All four services call each other. A change
+to a TenantService response shape can surface as a UserService failure, and the graph
+counts 19 such service-to-service dependencies. Before changing a response, check who
+consumes it.
+
+**Neither UI owns data.** Frontend and Admin are pure API consumers with a Keycloak
+token. Anything that looks like state in the browser is a cache of something a service
+owns.
+
+## Layers and owners
+
+| Layer | Repositories | What lives here |
+| --- | --- | --- |
+| UI | [ORISO-Frontend](https://github.com/OpenResilienceInitiative/ORISO-Frontend), [ORISO-Admin](https://github.com/OpenResilienceInitiative/ORISO-Admin) | React apps, routing, API clients, Storybook |
+| Identity | [ORISO-Keycloak](https://github.com/OpenResilienceInitiative/ORISO-Keycloak) | realm, clients, roles, token issuance |
+| Services | [UserService](https://github.com/OpenResilienceInitiative/ORISO-UserService), [AgencyService](https://github.com/OpenResilienceInitiative/ORISO-AgencyService), [TenantService](https://github.com/OpenResilienceInitiative/ORISO-TenantService), [ConsultingTypeService](https://github.com/OpenResilienceInitiative/ORISO-ConsultingTypeService) | OpenAPI contracts, controllers, domain logic, persistence |
+| Data | [ORISO-Database](https://github.com/OpenResilienceInitiative/ORISO-Database), and the schemas shipped with the chart | MariaDB schemas, MongoDB documents, Matrix PostgreSQL |
+| Runtime | [ORISO-Helm](https://github.com/OpenResilienceInitiative/ORISO-Helm) | the umbrella chart, ingress, secrets, all subcharts |
+
+## Where do I intervene?
+
+| I want to change… | Open this first |
+| --- | --- |
+| A screen or a component | the route table — [`ORISO-Frontend/src/components/app/RouterConfig.tsx`](https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/dev/src/components/app/RouterConfig.tsx) or [`ORISO-Admin/src/App.tsx`](https://github.com/OpenResilienceInitiative/ORISO-Admin/blob/dev/src/App.tsx) |
+| How the browser calls an API | the fetch wrapper — [`ORISO-Frontend/src/api/fetchData.ts`](https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/dev/src/api/fetchData.ts), [`ORISO-Admin/src/api/fetchData.ts`](https://github.com/OpenResilienceInitiative/ORISO-Admin/blob/dev/src/api/fetchData.ts) |
+| The shape of a backend endpoint | the OpenAPI contract in that service's `api/` folder, then the controller |
+| Who may call an endpoint | the service's security configuration — see [authentication and Keycloak](./authentication-and-keycloak.md) |
+| Which tenant a request belongs to | the tenant resolvers — [`TenantResolverService`](https://github.com/OpenResilienceInitiative/ORISO-TenantService/blob/dev/src/main/java/com/vi/tenantservice/api/tenant/TenantResolverService.java#L23-L30) |
+| A table or a column | the owning service, never another service's schema — see [database and data model](./database-and-data-model.md) |
+| Routing, hostnames, secrets, resources | the chart — [`ORISO-Helm`](https://github.com/OpenResilienceInitiative/ORISO-Helm), see [Kubernetes deployment](./kubernetes-deployment.md) |
+
+## Rules that survive refactors
+
+- **Service ownership is absolute.** Never write another service's schema directly, even
+  when the connection string would work. Cross-service identifiers exist without
+  database-level foreign keys precisely because the boundary is meant to be the API.
+- **Contract before code.** The OpenAPI file in `api/` is the first source for an
+  endpoint's shape; the controller tells you the behaviour behind it.
+- **A Keycloak role is necessary, not sufficient.** Tenant resolution and per-service
+  authorisation rules run on top of the role in the token.
+- **Environment files in a UI repository are not production truth.** The chart values are.
+- **One domain, path-based routing.** Everything is served from a single host with path
+  rules; Matrix is the one deliberate exception. See
+  [ADR-011](/decisions/adr-011) and [ADR-005](/decisions/adr-005).
+
+## Related
+
+- [Install and run locally](./install-and-run-locally.md)
+- [Backend services](./backend-services.md)
 - [Authentication and Keycloak](./authentication-and-keycloak.md)
 - [Database and data model](./database-and-data-model.md)
 - [Kubernetes deployment](./kubernetes-deployment.md)
-- [Frontend/Admin overview](./frontend-admin-overview.md)
-- [Backend services](./backend-services.md)
-- [Tenant lifecycle](./tenant-lifecycle.md)
-- [User management flow](./user-management-flow.md)
-- [Local development](./local-development.md)
-- [Onboarding guide](./onboarding-guide.md)
-- [Troubleshooting](./troubleshooting.md)
-- [Graph validation report](./graph-validation-report.md)
-- [Diagrams](./diagrams.md)
-
-Diagram: [service-architecture.mmd](./diagrams/service-architecture.mmd)
-
-## Runtime Shape
-
-Browser apps authenticate with Keycloak, call API host routes exposed by Kubernetes ingress, and receive data from service-owned Spring backends. Backends validate tokens, resolve tenant context where applicable, call peer services through generated contracts/configured clients, and persist data in service-owned databases.
-
-## Layer Summary
-
-- UI: ORISO-Frontend and ORISO-Admin.
-- IAM: ORISO-Keycloak online-beratung realm.
-- Backend services: TenantService, UserService, AgencyService, ConsultingTypeService.
-- Data: MariaDB service schemas, MongoDB consulting/application documents, Matrix PostgreSQL, Redis, RabbitMQ.
-- Runtime: ORISO-Kubernetes Helm charts and ingress manifests.
-
-## Concrete Source References
-
-Frontend app and routes:
-
-- src/components/Page/index.tsx
-- src/components/Switch/index.tsx
-- src/components/app/AuthenticatedApp.tsx
-- src/components/app/NonPlainRoutesWrapper.tsx
-- src/components/app/NonPlainRoutesWrapper.tsx.backup
-- src/components/app/RouterConfig.tsx
-- src/components/app/app.tsx
-- src/components/card/index.tsx
-- src/components/message/VideoChatDetails/index.tsx
-- src/components/profile/BrowserNotifications/NotificationDenied/index.tsx
-- src/components/profile/BrowserNotifications/index.tsx
-- src/components/profile/Documentation/index.tsx
-- src/components/profile/EmailNotifications/EmailToggle/index.tsx
-- src/components/profile/EmailNotifications/NoEmailSet/index.tsx
-- src/components/profile/EmailNotifications/SetEmailModal/index.tsx
-- src/components/profile/EmailNotifications/index.tsx
-- src/components/profile/OverviewMobile/Bookings/index.tsx
-- src/components/profile/OverviewMobile/Sessions/index.tsx
-- src/components/profile/profile.routes.ts
-- src/components/profile/profileHelp.routes.ts
-
-Admin app and routes:
-
-- src/App.tsx
-- src/components/Box/index.tsx
-- src/components/Card/index.tsx
-- src/components/CardEditable/components/UnsavedChanges/index.tsx
-- src/components/CardEditable/index.tsx
-- src/components/CopyToClipboard/index.tsx
-- src/components/FeatureEnabled/index.tsx
-- src/components/FormBaseInputField/index.tsx
-- src/components/FormColorSelectorField/index.tsx
-- src/components/FormFileUploaderField/index.tsx
-- src/components/FormInputField/index.tsx
-- src/components/FormInputNumberField/index.tsx
-- src/components/FormInputPasswordField/index.tsx
-- src/components/FormPasswordField/index.tsx
-- src/components/FormRadioGroupField/index.tsx
-- src/components/FormSwitchField/index.tsx
-- src/components/FormTextAreaField/index.tsx
-- src/components/Modal/index.tsx
-- src/components/ModalSuccess/index.tsx
-- src/components/Page/index.tsx
-
-Backend OpenAPI contracts:
-
-- ORISO-UserService/api/appointmentservice.yaml
-- ORISO-UserService/api/conversationservice.yaml
-- ORISO-UserService/api/useradminservice.yaml
-- ORISO-UserService/api/userservice.yaml
-- ORISO-UserService/api/userstatisticsservice.yaml
-- ORISO-AgencyService/api/agencyadminservice.yaml
-- ORISO-AgencyService/api/agencyservice.yaml
-- ORISO-ConsultingTypeService/api/applicationsettingsservice.yml
-- ORISO-ConsultingTypeService/api/consultingtypeadminservice.yml
-- ORISO-ConsultingTypeService/api/consultingtypeservice.yml
-- ORISO-ConsultingTypeService/api/topicservice.yml
-- ORISO-TenantService/api/tenantservice.yaml
-
-Kubernetes ingress:
-
-- ingress/00-keycloak-auth-domain-ingress.yaml: auth.oriso-dev.site -> oriso-platform-keycloak
-- ingress/01-keycloak-ingress.yaml: api.oriso-dev.site -> oriso-platform-keycloak
-- ingress/02-userservice-ingress.yaml: api.oriso-dev.site -> oriso-platform-userservice
-- ingress/03-agencyservice-ingress.yaml: api.oriso-dev.site -> oriso-platform-agencyservice
-- ingress/04-consultingtypeservice-ingress.yaml: api.oriso-dev.site -> oriso-platform-consultingtypeservice
-- ingress/05-tenantservice-ingress.yaml: api.oriso-dev.site -> oriso-platform-tenantservice
-- ingress/06-matrix-ingress.yaml: api.oriso-dev.site -> oriso-platform-matrix-synapse
-- ingress/08-uploadservice-ingress.yaml: api.oriso-dev.site -> oriso-platform-uploadservice
-- ingress/10-health-ingress.yaml: api.oriso-dev.site -> oriso-platform-health-dashboard
-- ingress/11-rocketchat-ingress.yaml: api.oriso-dev.site -> rocketchat
-- ingress/12-matrix-domain-ingress.yaml: matrix.oriso-dev.site -> oriso-platform-matrix-synapse
-- ingress/13-frontend-ingress.yaml: app.oriso-dev.site -> oriso-platform-frontend
-- ingress/14-admin-ingress.yaml: admin.oriso-dev.site -> oriso-platform-admin
-- ingress/15-health-dashboard-ingress.yaml: health.oriso-dev.site -> oriso-platform-health-dashboard
-- ingress/16-element-ingress.yaml: element.oriso-dev.site -> oriso-platform-element
-- ingress/17-element-call-ingress.yaml: call.oriso-dev.site -> oriso-platform-element-call
-- ingress/18-livekit-ingress.yaml: livekit.oriso-dev.site -> oriso-platform-livekit-token-service, oriso-platform-livekit
-- ingress/19-redis-commander-ingress.yaml: redis.oriso-dev.site -> oriso-platform-redis-commander
-- ingress/20-signoz-ingress.yaml: signoz.oriso-dev.site -> oriso-platform-signoz
-- ingress/21-status-page-ingress.yaml: status.oriso-dev.site -> oriso-platform-status-page
-- ingress/22-storybook-ingress.yaml: storybook.oriso-dev.site -> oriso-platform-storybook
-- ingress/ingress-values.yaml: - -> -
-
-## Important Architecture Rules
-
-- Do not bypass service ownership by writing another service's schema directly.
-- Do not treat frontend/admin environment files as production truth; verify Kubernetes/runtime config.
-- Do not assume a Keycloak role is sufficient for tenant access; tenant resolvers and service authorization rules also matter.
-- Use OpenAPI files as the first source for backend endpoint shape, then inspect controllers/services for behavior.
-
-## Needs Verification
-
-- Active API gateway prefixes in staging/production.
-- Whether Rocket.Chat references are still active or compatibility-only after Matrix migration.
