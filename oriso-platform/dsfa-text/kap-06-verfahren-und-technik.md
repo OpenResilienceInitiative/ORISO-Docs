@@ -492,8 +492,19 @@ durchgängige Delegationskaskade bis auf die Ebene einzelner Beratungsstellen be
 beiden Funktionen **nicht**; sie darf für sie nicht behauptet werden.
 
 **(6) Supervision — Abgrenzung.** Die Supervision ist ein hiervon getrenntes drittes Werkzeug: Sie
-ist als begleitender Lesezugriff ausgestaltet und verfügt über ein eigenes Widerspruchsverfahren
-(Opt-out) für die ratsuchende Person. Zu Supervisionsvorgängen können Freitext-Notizen erfasst
+ist als begleitender Lesezugriff ausgestaltet. Die stehende Supervision ist **dauerhaft aktiv und
+für die ratsuchende Person nicht abschaltbar** (Entscheidung vom 05.09.2026, ADR-008-Addendum): Sie
+ist Teil der fachlichen Arbeitsweise der Beratungsstelle; die supervidierende Person gehört
+derselben Beratungsstelle an, liest ausschließlich mit, schreibt nicht in den Beratungsraum und ist
+für die ratsuchende Person nicht sichtbar. An die Stelle eines Widerspruchsverfahrens tritt die
+aktive Aufklärung: Die ratsuchende Person wird in den Datenschutzhinweisen der Beratungsstelle beim
+Einstieg in den Chat informiert und soll zusätzlich eine Systemnachricht im eigenen Beratungsraum
+erhalten, sobald eine Berater:in die Anfrage angenommen hat — also in dem Moment, in dem die
+stehende Supervision angehängt wird. Diese Systemnachricht ist entschieden, aber **noch nicht
+implementiert** (Stand 05.09.2026; ORISO-Frontend#1315). Ein technisch weiterhin vorhandener
+Opt-out-Endpunkt wird in der Anwendung nicht angeboten; sein Rückbau ist offen. Die Fallübergabe
+behält ihr eigenes Widerspruchsverfahren, davon unberührt. Zu Supervisionsvorgängen können
+Freitext-Notizen erfasst
 werden; sie können besondere Kategorien personenbezogener Daten über die ratsuchende Person
 enthalten (§ 11 KDG, Art. 9 DSGVO). Vorgesehen ist eine Aufbewahrung von **Fallende + 90 Tagen**
 (Startzeitpunkt: Abschluss bzw. Archivierung der Beratungssitzung, hilfsweise Aufhebung der

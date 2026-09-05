@@ -665,6 +665,19 @@ entries:
         lines: "42-46,80-83"
         expect: ["SessionSupervisorRepository", "deleteAllByConsultantId"]
 
+  - slug: supervision-always-on-system-message
+    chapter: "6.13"
+    claim: "Die stehende Supervision ist dauerhaft aktiv und für die ratsuchende Person nicht abschaltbar (Entscheidung vom 05.09.2026). Die Aufklärung soll über eine Systemnachricht im Beratungsraum erfolgen, sobald eine Berater:in die Anfrage annimmt; diese Systemnachricht ist entschieden, aber noch nicht implementiert (ORISO-Frontend#1315). Der vorhandene Opt-out-Endpunkt wird in der Anwendung nicht angeboten."
+    status: not-deployed
+    decision: oriso-platform/decisions/ADR-008-supervision-role-and-side-channel-confidentiality.md
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/facade/assignsession/AssignEnquiryFacade.java
+        expect: ["attachStandingSupervisorIfAssigned"]
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/service/matrix/MatrixSessionSystemMessageService.java
+        absent: ["SUPERVISION_ACTIVE"]
+
   # ---------------------------------------------------------------- Kapitel 6.14
   - slug: notification-preview-mode-none
     chapter: "6.14"
