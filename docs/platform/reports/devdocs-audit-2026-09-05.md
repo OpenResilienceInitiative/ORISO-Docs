@@ -181,3 +181,10 @@ In den neuen Seiten wird deshalb nicht in diese beiden Repos hinein verlinkt.
   Understand-Anything-Seite nennt nur das öffentliche Dashboard, keine Hosts, Pfade oder
   Pipelines.
 - Keine `CodeRef`-Komponente (Abschnitt 3 begründet, warum sie schädlich wäre).
+- **Kein Matrix-Räume/Verschlüsselungs-Diagramm.** Es gibt dafür im Repository keine
+  belastbare, öffentlich zitierbare Quelle: `ORISO-Frontend/MATRIX-INTEGRATION-GUIDE.md`
+  ist ein Arbeitszettel („What we have done“, „Ready to test“), die Wahrheit steckt
+  verteilt in ADR-002/004/005/017/019 und den Synapse-Templates des Charts. Ein Diagramm
+  daraus wäre teilweise geraten, und geraten ist bei E2EE die falsche Fehlerklasse.
+  Vorschlag: eigene Seite `matrix-and-realtime` als abgegrenzter nächster Schritt, mit
+  einer Quelle, die jemand aus dem Team bestätigt.
