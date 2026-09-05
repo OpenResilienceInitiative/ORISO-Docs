@@ -46,7 +46,7 @@ class ResponsibilityMarkerTest(unittest.TestCase):
         out = MODULE.render(":::organisatorisch Bearbeitung im Administrationsbereich folgt")
 
         self.assertIn('class="scope scope--org"', out)
-        self.assertIn("Organisatorischer Teil — vom Träger zu ergänzen", out)
+        self.assertIn("Organisatorischer Teil — vom Plattformbetreiber gepflegt (Vertragsunterlagen)", out)
         self.assertIn(
             '<span class="scope-note">Bearbeitung im Administrationsbereich folgt</span>', out
         )

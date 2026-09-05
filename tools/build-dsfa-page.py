@@ -57,13 +57,14 @@ def inline(text: str) -> str:
 
 # ---------------------------------------------------------------- Zustaendigkeit
 
-# Sichtbare Trennung der beiden Verantwortungen. Quelle ist eine Markerzeile in den
+# Sichtbare Trennung der beiden Verantwortungen: technisch = aus dem Code belegt; organisatorisch =
+# Vertragsunterlagen, die der Plattformbetreiber (nicht der einzelne Träger) einpflegt. Quelle ist eine Markerzeile in den
 # Kapiteltexten:  ":::technisch"  bzw.  ":::organisatorisch <kurzer Zusatz>".
 SCOPE_MARKER = re.compile(r"^:::(technisch|organisatorisch)(?:\s+(.*))?$")
 
 SCOPE_LABELS = {
     "technisch": ("memory", "tech", "Technischer Teil — von ORISO gepflegt"),
-    "organisatorisch": ("groups", "org", "Organisatorischer Teil — vom Träger zu ergänzen"),
+    "organisatorisch": ("groups", "org", "Organisatorischer Teil — vom Plattformbetreiber gepflegt (Vertragsunterlagen)"),
 }
 
 # Standardzusatz der organisatorischen Abschnitte. Die Bearbeitung im Administrationsbereich

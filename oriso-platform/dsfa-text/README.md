@@ -139,4 +139,6 @@ Text als Entscheidung, Zielarchitektur oder offener Punkt kenntlich gemacht werd
 beschlossene ADR ist ein Beleg für die Entscheidung, nie für den Ist-Zustand.
 Organisatorische Anteile einer neuen Funktion (Fristen, Zuständigkeiten, Ermessensausübung des
 Trägers) gehören nicht in die Kapiteltexte, sondern nach `vorlagen-betreiber.md`, und werden im
-Kapitel mit der Marke `:::organisatorisch` sichtbar abgesetzt.
+Kapitel mit der Marke `:::organisatorisch` sichtbar abgesetzt. Diese organisatorischen Teile sind
+Vertragsunterlagen und werden vom Plattformbetreiber eingepflegt — nicht vom einzelnen Träger; die
+Bearbeitung im Administrationsbereich ist zurückgestellt.

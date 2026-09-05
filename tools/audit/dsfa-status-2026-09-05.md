@@ -35,7 +35,7 @@ angekommen; der Worktree ist sauber. Er kann abgeräumt werden.
 
 ## 2 Kapitelliste — Status, Zuständigkeit, Belege
 
-Zuständigkeit: **T** = technisch, von ORISO gepflegt · **O** = organisatorisch, vom Träger zu
+Zuständigkeit: **T** = technisch, von ORISO gepflegt · **O** = organisatorisch, vom Plattformbetreiber als Teil der Vertragsunterlagen einzupflegen (nicht vom einzelnen Träger), zu
 ergänzen (Bearbeitung im Administrationsbereich ist zurückgestellt).
 
 | Kap. | Titel | Status | Zust. | Belege |
