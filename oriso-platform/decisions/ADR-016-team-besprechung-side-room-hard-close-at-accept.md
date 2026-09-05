@@ -29,3 +29,18 @@ Counsellor teams want to coordinate on an incoming enquiry ("who takes this, wha
 ## Consequences
 
 **Positive:** reuses a shipped, leak-guarded primitive; no new permission model; clean lifecycle boundary matching the existing mechanism taxonomy. **Cost:** room provisioning at enquiry time (pre-assignment operator handling — today's facade assumes an assigned consultant); notification recipient fan-out must be built (current message producers hardcode user+consultant); archived-room re-access UI.
+
+---
+
+## Addendum 2026-09-05: §3 was wrong — there is no archive auto-deletion; a dedicated purge job is decided
+
+Code archaeology on `origin/dev` (2026-09-05) checked the retention claim in decision 3 above and found it does not hold. **The "existing archive auto-deletion" this ADR relies on does not exist anywhere in the platform.** `TeamDiscussionFacade.archiveDiscussion` only sets a status and drops the Matrix power levels so the room becomes read-only; the `team_discussion` repository has no delete operation at all, and nothing time-based ever touches the table or the room. An archived Team-Besprechung — and the plain-text discussion about the advice seeker inside its Matrix room — therefore lives forever today. Changeset `0070_team_discussion` carries no foreign key to `session` either, so a session deletion leaves the row and the room orphaned rather than removing them (tracked separately as the bug below).
+
+**Decisions:**
+
+1. **§3 of this ADR is corrected.** The sentence "retention rides the existing archive auto-deletion — no new TTL mechanism" is void. A **new, dedicated deletion run is required**, and is hereby decided. The rest of §3 (archive re-access is read-only; access rules stay loose for now) is unchanged.
+2. **Period: 90 days from archiving**, measured from `archive_date`. A discussion that was never archived and is still `OPEN` is measured from `create_date` and falls under the same period, so an abandoned discussion cannot outlive an archived one.
+3. **Full purge, not anonymisation.** Unlike the case-handover audit log — where the row is kept and only its free text is cleared, because the handover history has an audit purpose — a Team-Besprechung has no audit purpose that survives the case. The Matrix room is purged via the Synapse admin API (`MatrixSynapseService.purgeRoom`, already in production use), and the `team_discussion` row plus its participant records are deleted.
+4. **Configurable, with an environment override.** `team-discussion.archive.retention.days` (default 90), following the existing `team-discussion.*` property prefix and the platform's `<prefix>.retention.<x>.days` / `.cron` / `.claim.duration` convention, wired through Helm. A value of `0` or less disables the run. **90 days is a default pending the data protection officer's sign-off** — there is no statutory figure for team coordination rooms; the value follows the Caritas professional position that process data should not outlive the client relationship, and the DPIA lists it as planned but not yet implemented. It is configurable precisely so the number can be corrected without a release.
+
+**Tickets:** ORISO-UserService#1116 (the deletion run and its configuration, sub-issue of the KDG retention epic #1010) and ORISO-UserService#1118 (bug: session deletion leaves the `team_discussion` row and its Matrix room behind — pulled forward, independent of the retention work).
