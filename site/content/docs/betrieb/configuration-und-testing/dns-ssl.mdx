@@ -2,9 +2,6 @@
 title: "DNS & SSL Configuration"
 description: "Configure DNS records and automatic TLS certificates via cert-manager"
 ---
-
-# DNS & SSL Configuration
-
 Configure DNS records and automatic TLS certificate management for ORISO Platform. TLS certificates are automatically managed by cert-manager with Let's Encrypt.
 
 <Callout>
@@ -72,7 +69,7 @@ kubectl describe clusterissuer letsencrypt-prod
 </Callout>
 
 <Callout>
-If ClusterIssuer is not configured, see [Setup Kubernetes](/oriso-platform/setup-kubernetes).
+If ClusterIssuer is not configured, see [Setup Kubernetes](/betrieb/getting-started/setup-kubernetes).
 </Callout>
 
 </Step>
@@ -239,6 +236,6 @@ kubectl logs -n ingress-nginx -l app.kubernetes.io/component=controller | grep t
 
 ## Next Steps
 
-- [Post-Deployment](/oriso-platform/post-deployment) - Verify complete deployment
-- [Verification Testing](/oriso-platform/verification-testing) - Test HTTPS endpoints
-- [Security Hardening](/oriso-platform/security-hardening) - Additional security measures
+- [Post-Deployment](/betrieb/configuration-und-testing/post-deployment) - Verify complete deployment
+- [Verification Testing](/betrieb/configuration-und-testing/verification-testing) - Test HTTPS endpoints
+- [Security Hardening](/betrieb/operations/security-hardening) - Additional security measures

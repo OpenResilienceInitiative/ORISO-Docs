@@ -2,9 +2,6 @@
 title: "Install Required Software"
 description: "Install k3s Kubernetes, kubectl, Helm 3.x, Docker (for building images), Nginx Ingress Controller, and Cert-Manager"
 ---
-
-# Install Required Software
-
 Install all required software tools needed for ORISO Platform v3.0.0 deployment. The platform uses Kubernetes (k3s) with Helm charts for deployment.
 
 <Steps>
@@ -183,7 +180,7 @@ Verify cert-manager is running: `kubectl get pods -n cert-manager` should show c
 </Callout>
 
 <Callout>
-After cert-manager is installed, you'll create a ClusterIssuer in the [Kubernetes Setup](/oriso-platform/setup-kubernetes) step.
+After cert-manager is installed, you'll create a ClusterIssuer in the [Kubernetes Setup](/betrieb/getting-started/setup-kubernetes) step.
 </Callout>
 
 </Step>
@@ -286,6 +283,6 @@ newgrp docker
 
 ## Next Steps
 
-- [Clone ORISO Repositories](/oriso-platform/clone-repositories) - Transfer repositories to server
-- [Setup Kubernetes](/oriso-platform/setup-kubernetes) - Verify k3s and create namespace
+- [Clone ORISO Repositories](/betrieb/getting-started/clone-repositories) - Transfer repositories to server
+- [Setup Kubernetes](/betrieb/getting-started/setup-kubernetes) - Verify k3s and create namespace
 

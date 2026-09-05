@@ -7,54 +7,7 @@ description: ORISO frontend applications architecture with React, Vite, and Matr
 
 ORISO Platform includes 2 main frontend applications built with React and Vite, deployed on Kubernetes via Helm charts.
 
-```mermaid
-%%{init: { 'theme': 'base', 'themeVariables': { 'fontSize': '18px', 'lineColor': '#3B82F6' } }}%%
-
-flowchart TB
-
-  subgraph K8s["Kubernetes Namespace: caritas"]
-    direction TB
-    
-    subgraph Frontend["Frontend Applications"]
-      F1[("ORISO-Frontend\nUser Portal\ncaritas-frontend:latest")]:::frontend
-      F2[("ORISO-Admin\nAdmin Panel\ncaritas-admin:latest")]:::frontend
-    end
-    
-    subgraph Backend["Backend Services"]
-      B1[("UserService\n:8082")]:::backend
-      B2[("AgencyService\n:8084")]:::backend
-      B3[("TenantService\n:8081")]:::backend
-    end
-    
-    subgraph Auth["Authentication"]
-      A1[("Keycloak\n:8080")]:::auth
-    end
-    
-    subgraph Matrix["Communication"]
-      M1[("Matrix Synapse\n:8008")]:::matrix
-      M2[("LiveKit\nWebRTC")]:::webrtc
-    end
-  end
-
-  %% Frontend connections
-  F1 -->|REST API| B1
-  F1 -->|REST API| B2
-  F1 -->|REST API| B3
-  F1 -->|OAuth2/OIDC| A1
-  F1 -->|Matrix SDK| M1
-  F1 -->|WebRTC| M2
-  
-  F2 -->|REST API| B1
-  F2 -->|REST API| B2
-  F2 -->|OAuth2/OIDC| A1
-
-  %% Styling
-  classDef frontend fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#0d47a1,font-weight:bold
-  classDef backend fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#4a148c
-  classDef auth fill:#ffebee,stroke:#d32f2f,stroke-width:2px,color:#b71c1c
-  classDef matrix fill:#fff8e1,stroke:#ff8f00,stroke-width:2px,color:#e65100
-  classDef webrtc fill:#e0f2f1,stroke:#00695c,stroke-width:2px,color:#004d40
-```
+<Mermaid chart={"%%{init: { 'theme': 'base', 'themeVariables': { 'fontSize': '18px', 'lineColor': '#3B82F6' } }}%%\n\nflowchart TB\n\n  subgraph K8s[\"Kubernetes Namespace: caritas\"]\n    direction TB\n    \n    subgraph Frontend[\"Frontend Applications\"]\n      F1[(\"ORISO-Frontend\\nUser Portal\\ncaritas-frontend:latest\")]:::frontend\n      F2[(\"ORISO-Admin\\nAdmin Panel\\ncaritas-admin:latest\")]:::frontend\n    end\n    \n    subgraph Backend[\"Backend Services\"]\n      B1[(\"UserService\\n:8082\")]:::backend\n      B2[(\"AgencyService\\n:8084\")]:::backend\n      B3[(\"TenantService\\n:8081\")]:::backend\n    end\n    \n    subgraph Auth[\"Authentication\"]\n      A1[(\"Keycloak\\n:8080\")]:::auth\n    end\n    \n    subgraph Matrix[\"Communication\"]\n      M1[(\"Matrix Synapse\\n:8008\")]:::matrix\n      M2[(\"LiveKit\\nWebRTC\")]:::webrtc\n    end\n  end\n\n  %% Frontend connections\n  F1 -->|REST API| B1\n  F1 -->|REST API| B2\n  F1 -->|REST API| B3\n  F1 -->|OAuth2/OIDC| A1\n  F1 -->|Matrix SDK| M1\n  F1 -->|WebRTC| M2\n  \n  F2 -->|REST API| B1\n  F2 -->|REST API| B2\n  F2 -->|OAuth2/OIDC| A1\n\n  %% Styling\n  classDef frontend fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#0d47a1,font-weight:bold\n  classDef backend fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#4a148c\n  classDef auth fill:#ffebee,stroke:#d32f2f,stroke-width:2px,color:#b71c1c\n  classDef matrix fill:#fff8e1,stroke:#ff8f00,stroke-width:2px,color:#e65100\n  classDef webrtc fill:#e0f2f1,stroke:#00695c,stroke-width:2px,color:#004d40"} />
 
 ## Frontend Applications
 

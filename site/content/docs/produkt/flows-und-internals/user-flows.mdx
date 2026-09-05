@@ -11,25 +11,7 @@ Each flow is written as **(a) what the user does** and **(b) what the system doe
 
 **Actor**: Platform Admin. **Goal**: bring up a new ORISO deployment to a state where tenants can be onboarded.
 
-```mermaid
-sequenceDiagram
-  participant PA as Platform Admin
-  participant FE as ORISO-Admin
-  participant US as UserService
-  participant TS as TenantService
-  participant KC as Keycloak
-  PA->>KC: Log in (MFA)
-  KC-->>PA: Token (role user-admin)
-  PA->>FE: Open Settings → Legal Templates
-  PA->>TS: PUT Imprint, Data Policy, GDPR templates
-  TS-->>FE: Saved (and stamped with version)
-  PA->>FE: Open Tenants → Create Tenant
-  PA->>TS: POST /tenants {name, region, ...}
-  TS->>KC: Create tenant-admin user, assign realm role tenant-admin (or single-tenant-admin)
-  KC-->>TS: User id
-  TS->>US: Send magic invite (24h, signed)
-  TS-->>PA: Tenant created, invite sent
-```
+<Mermaid chart={"sequenceDiagram\n  participant PA as Platform Admin\n  participant FE as ORISO-Admin\n  participant US as UserService\n  participant TS as TenantService\n  participant KC as Keycloak\n  PA->>KC: Log in (MFA)\n  KC-->>PA: Token (role user-admin)\n  PA->>FE: Open Settings → Legal Templates\n  PA->>TS: PUT Imprint, Data Policy, GDPR templates\n  TS-->>FE: Saved (and stamped with version)\n  PA->>FE: Open Tenants → Create Tenant\n  PA->>TS: POST /tenants {name, region, ...}\n  TS->>KC: Create tenant-admin user, assign realm role tenant-admin (or single-tenant-admin)\n  KC-->>TS: User id\n  TS->>US: Send magic invite (24h, signed)\n  TS-->>PA: Tenant created, invite sent"} />
 
 **Steps (user view)**
 
@@ -79,24 +61,7 @@ The brief uses the word "Supervisor", but in ORISO terminology the closest equiv
 
 **Actor**: Counselor Admin (or Tenant Admin in shortcut mode). **Goal**: have a counselor able to handle live-chat tickets.
 
-```mermaid
-sequenceDiagram
-  participant CA as Counselor Admin
-  participant FE as ORISO-Admin
-  participant US as UserService
-  participant KC as Keycloak
-  participant Co as Counselor
-
-  CA->>FE: Counselors → Invite
-  CA->>US: POST /consultants/invite {email, agency, topics, supervisor?}
-  US->>KC: Create user (disabled), role consultant
-  US-->>FE: Invite link sent
-  Co-->>FE: Click invite link
-  Co->>KC: Set password + MFA (recommended)
-  Co->>FE: First login → Profile setup
-  Co->>FE: Toggle Live Chat ON
-  Co->>FE: Ready to receive tickets
-```
+<Mermaid chart={"sequenceDiagram\n  participant CA as Counselor Admin\n  participant FE as ORISO-Admin\n  participant US as UserService\n  participant KC as Keycloak\n  participant Co as Counselor\n\n  CA->>FE: Counselors → Invite\n  CA->>US: POST /consultants/invite {email, agency, topics, supervisor?}\n  US->>KC: Create user (disabled), role consultant\n  US-->>FE: Invite link sent\n  Co-->>FE: Click invite link\n  Co->>KC: Set password + MFA (recommended)\n  Co->>FE: First login → Profile setup\n  Co->>FE: Toggle Live Chat ON\n  Co->>FE: Ready to receive tickets"} />
 
 **Steps (Counselor Admin)**
 
@@ -122,27 +87,7 @@ sequenceDiagram
 
 **Actor**: anonymous Client. **Goal**: enter the waiting room and reach a counselor.
 
-```mermaid
-sequenceDiagram
-  participant Cl as Client
-  participant FE as ORISO-Frontend
-  participant AS as AgencyService
-  participant US as UserService
-  participant KC as Keycloak
-
-  Cl->>FE: Open live-chat link (?topic=debt)
-  FE->>AS: Resolve agency + topic
-  AS-->>FE: agency_id, topics, live-chat enabled?
-  alt enabled
-    FE->>US: POST /live-chat/anonymous
-    US->>KC: Create anonymous user
-    KC-->>US: pseudonym + token
-    US-->>FE: cookie + ticket
-    FE-->>Cl: Waiting Room (queue, GDPR popup #1, breathing-game)
-  else disabled
-    FE-->>Cl: "currently unavailable" + enquiry option
-  end
-```
+<Mermaid chart={"sequenceDiagram\n  participant Cl as Client\n  participant FE as ORISO-Frontend\n  participant AS as AgencyService\n  participant US as UserService\n  participant KC as Keycloak\n\n  Cl->>FE: Open live-chat link (?topic=debt)\n  FE->>AS: Resolve agency + topic\n  AS-->>FE: agency_id, topics, live-chat enabled?\n  alt enabled\n    FE->>US: POST /live-chat/anonymous\n    US->>KC: Create anonymous user\n    KC-->>US: pseudonym + token\n    US-->>FE: cookie + ticket\n    FE-->>Cl: Waiting Room (queue, GDPR popup #1, breathing-game)\n  else disabled\n    FE-->>Cl: \"currently unavailable\" + enquiry option\n  end"} />
 
 **Steps**
 
@@ -151,7 +96,7 @@ sequenceDiagram
 3. Sees an animated "we're matching you" screen.
 4. Sees a **GDPR popup #1** (platform default) — "Bestätigen" (Confirm).
 5. Lands in the waiting room with: queue position, animated breathing-game distraction, and a banner saying "messages are end-to-end encrypted and auto-deleted after 48 h".
-6. Optionally types a zip code and topic to refine matching (Path B, see [Pincode Chat](/product/features/pincode-chat)).
+6. Optionally types a zip code and topic to refine matching (Path B, see [Pincode Chat](/produkt/core-features/pincode-chat)).
 7. Once a counselor accepts, sees **GDPR popup #2** (counseling-center text).
 8. On confirm, chat opens.
 
@@ -192,7 +137,7 @@ sequenceDiagram
 ## 5.6 Note / Transcript Generation
 
 <Callout type="warn">
-**Reality check** (also see [4.1](/product/features/transcription)): there is **no AI-driven transcript pipeline** in production today. This flow describes (a) the chat-history flow that exists today via Matrix, and (b) the planned AI-assisted case-note feature.
+**Reality check** (also see [4.1](/produkt/core-features/transcription)): there is **no AI-driven transcript pipeline** in production today. This flow describes (a) the chat-history flow that exists today via Matrix, and (b) the planned AI-assisted case-note feature.
 </Callout>
 
 ### 5.6.1 Today (chat history only)
@@ -211,18 +156,4 @@ sequenceDiagram
 6. Counselor edits and saves.
 7. The note is stored against the counselor, encrypted at rest, with only an opaque session_id linking it.
 
-```mermaid
-flowchart LR
-  S[Session ends]:::end --> Op{Counselor opts in?}
-  Op -->|no| Hand[Manual note]:::manual
-  Op -->|yes| Dec[Decrypt locally]:::ai
-  Dec --> Scrub[PII scrub locally]:::ai
-  Scrub --> AI[Self-hosted summarizer]:::ai
-  AI --> Edit[Counselor edits]:::ai
-  Edit --> Save[Save case note<br/>opaque session_id]:::save
-
-  classDef end fill:#ffebee,stroke:#c62828
-  classDef manual fill:#eeeeee,stroke:#616161
-  classDef ai fill:#e8f5e8,stroke:#2e7d32
-  classDef save fill:#e3f2fd,stroke:#1565c0
-```
+<Mermaid chart={"flowchart LR\n  S[Session ends]:::end --> Op{Counselor opts in?}\n  Op -->|no| Hand[Manual note]:::manual\n  Op -->|yes| Dec[Decrypt locally]:::ai\n  Dec --> Scrub[PII scrub locally]:::ai\n  Scrub --> AI[Self-hosted summarizer]:::ai\n  AI --> Edit[Counselor edits]:::ai\n  Edit --> Save[Save case note<br/>opaque session_id]:::save\n\n  classDef end fill:#ffebee,stroke:#c62828\n  classDef manual fill:#eeeeee,stroke:#616161\n  classDef ai fill:#e8f5e8,stroke:#2e7d32\n  classDef save fill:#e3f2fd,stroke:#1565c0"} />

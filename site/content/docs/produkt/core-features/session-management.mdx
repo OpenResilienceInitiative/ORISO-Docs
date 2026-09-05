@@ -24,24 +24,7 @@ Sessions are not "user history". They are ephemeral conversation containers.
 
 A session is **always** created from a ticket:
 
-```mermaid
-flowchart TB
-  T1[Ticket created<br/>POST /live-chat/anonymous]:::t
-  T2{Counselor accepts}:::t
-  T3[Session created<br/>UserService DB row]:::s
-  T4[Matrix room provisioned<br/>both invited]:::s
-  T5{Client GDPR consent}:::g
-  T6[Session active]:::s
-
-  T1 --> T2 -->|yes| T3 --> T4 --> T5 -->|granted| T6
-  T2 -->|timeout, returned to queue| T1
-  T5 -->|declined| Wipe[Session aborted, wipe]:::w
-
-  classDef t fill:#fff3e0,stroke:#ef6c00
-  classDef s fill:#e3f2fd,stroke:#1565c0
-  classDef g fill:#e8f5e8,stroke:#2e7d32
-  classDef w fill:#ffebee,stroke:#c62828
-```
+<Mermaid chart={"flowchart TB\n  T1[Ticket created<br/>POST /live-chat/anonymous]:::t\n  T2{Counselor accepts}:::t\n  T3[Session created<br/>UserService DB row]:::s\n  T4[Matrix room provisioned<br/>both invited]:::s\n  T5{Client GDPR consent}:::g\n  T6[Session active]:::s\n\n  T1 --> T2 -->|yes| T3 --> T4 --> T5 -->|granted| T6\n  T2 -->|timeout, returned to queue| T1\n  T5 -->|declined| Wipe[Session aborted, wipe]:::w\n\n  classDef t fill:#fff3e0,stroke:#ef6c00\n  classDef s fill:#e3f2fd,stroke:#1565c0\n  classDef g fill:#e8f5e8,stroke:#2e7d32\n  classDef w fill:#ffebee,stroke:#c62828"} />
 
 Trigger sequence:
 
@@ -66,22 +49,7 @@ A client cannot rejoin a previous session — sessions are one-shot conversation
 
 ## 4.4.4 Session State Machine
 
-```mermaid
-stateDiagram-v2
-  [*] --> Waiting: ticket created
-  Waiting --> Accepted: counselor.accept
-  Accepted --> Consented: client.gdpr_ok
-  Consented --> Active: both joined room
-  Active --> Paused: idle / heartbeat lost
-  Paused --> Active: heartbeat resumes
-  Paused --> Ended: timeout
-  Active --> Ended: user.end / counselor.end
-  Waiting --> Abandoned: client.close / timeout
-  Accepted --> Abandoned: counselor.timeout / client.close
-  Ended --> Purged: 48h auto-cleanup
-  Abandoned --> Purged: immediate cleanup
-  Purged --> [*]
-```
+<Mermaid chart={"stateDiagram-v2\n  [*] --> Waiting: ticket created\n  Waiting --> Accepted: counselor.accept\n  Accepted --> Consented: client.gdpr_ok\n  Consented --> Active: both joined room\n  Active --> Paused: idle / heartbeat lost\n  Paused --> Active: heartbeat resumes\n  Paused --> Ended: timeout\n  Active --> Ended: user.end / counselor.end\n  Waiting --> Abandoned: client.close / timeout\n  Accepted --> Abandoned: counselor.timeout / client.close\n  Ended --> Purged: 48h auto-cleanup\n  Abandoned --> Purged: immediate cleanup\n  Purged --> [*]"} />
 
 ### State definitions
 
@@ -169,7 +137,7 @@ The client can close at any time (top-right ✕). The counselor can end with "En
 
 ## 4.4.10 Related
 
-- [Live Chat (4.2)](/product/features/live-chat)
-- [Pincode-Based Chat (4.3)](/product/features/pincode-chat)
-- [Data Model](/product/data-model)
-- [Edge Cases](/product/edge-cases)
+- [Live Chat (4.2)](/produkt/core-features/live-chat)
+- [Pincode-Based Chat (4.3)](/produkt/core-features/pincode-chat)
+- [Data Model](/produkt/flows-und-internals/data-model)
+- [Edge Cases](/produkt/design-und-quality/edge-cases)

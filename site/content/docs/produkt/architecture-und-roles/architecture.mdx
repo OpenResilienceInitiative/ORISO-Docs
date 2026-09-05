@@ -4,7 +4,7 @@ description: "How ORISO's frontends, backend microservices, identity provider, c
 ---
 
 <Callout>
-This page is the **product-level** architecture view. For deep infrastructure details (Helm chart, Kubernetes services, ingress) see [Architecture: Backend](/oriso-platform/architecture/backend) and [Architecture: Infra](/oriso-platform/architecture/infra).
+This page is the **product-level** architecture view. For deep infrastructure details (Helm chart, Kubernetes services, ingress) see [Architecture: Backend](/betrieb/architecture/backend) and [Architecture: Infra](/betrieb/architecture/infra).
 </Callout>
 
 ## 2.1 The Big Picture
@@ -17,81 +17,7 @@ ORISO is built as a **microservice platform** running on Kubernetes (k3s) with a
 4. **Communication layer** — Matrix Synapse for chat rooms; LiveKit for video.
 5. **Data & infrastructure layer** — MariaDB, MongoDB, PostgreSQL, Redis, RabbitMQ.
 
-```mermaid
-%%{init: { 'theme': 'base', 'themeVariables': { 'fontSize': '15px', 'lineColor': '#3B82F6' } }}%%
-flowchart TB
-  subgraph Clients["Browsers / Devices"]
-    C1[Client - Anonymous]:::client
-    C2[Counselor / Admin]:::staff
-  end
-
-  subgraph FE["Frontend Layer"]
-    FA[ORISO-Frontend - Client portal]:::fe
-    FB[ORISO-Admin - Staff console]:::fe
-    FC[ORISO-Element - Chat UI]:::fe
-  end
-
-  subgraph Edge["Edge"]
-    NG[Nginx Ingress - TLS]:::edge
-  end
-
-  subgraph Auth["Identity"]
-    KC[Keycloak OIDC/OAuth2]:::auth
-  end
-
-  subgraph BE["Backend Microservices"]
-    TS[TenantService :8081]:::svc
-    US[UserService :8082]:::svc
-    CTS[ConsultingTypeService :8083]:::svc
-    AS[AgencyService :8084]:::svc
-  end
-
-  subgraph Comms["Communication"]
-    MX[Matrix Synapse]:::matrix
-    LK[LiveKit WebRTC]:::matrix
-  end
-
-  subgraph Data["Data Stores"]
-    MA[(MariaDB)]:::db
-    MO[(MongoDB)]:::db
-    PG[(PostgreSQL - Synapse)]:::db
-    RD[(Redis)]:::db
-    RQ[(RabbitMQ)]:::db
-  end
-
-  Clients --> NG
-  NG --> FA & FB & FC
-  FA --> KC
-  FB --> KC
-  FA --> US
-  FB --> AS
-  FB --> TS
-  FB --> CTS
-  US --> KC
-  AS --> KC
-  TS --> KC
-  CTS --> KC
-  US <--> MX
-  FC --> MX
-  US --> LK
-  US --> MA
-  TS --> MA
-  AS --> MA
-  CTS --> MA
-  CTS --> MO
-  US & AS & TS & CTS --> RD
-  US & TS --> RQ
-  MX --> PG
-
-  classDef client fill:#fde7f3,stroke:#c2185b
-  classDef staff fill:#e3f2fd,stroke:#1565c0
-  classDef fe fill:#fff3e0,stroke:#ef6c00
-  classDef edge fill:#eeeeee,stroke:#616161
-  classDef auth fill:#ffebee,stroke:#c62828
-  classDef svc fill:#f3e5f5,stroke:#6a1b9a
-  classDef matrix fill:#fff8e1,stroke:#f9a825
-  classDef db fill:#e8f5e8,stroke:#2e7d32
-```
+<Mermaid chart={"%%{init: { 'theme': 'base', 'themeVariables': { 'fontSize': '15px', 'lineColor': '#3B82F6' } }}%%\nflowchart TB\n  subgraph Clients[\"Browsers / Devices\"]\n    C1[Client - Anonymous]:::client\n    C2[Counselor / Admin]:::staff\n  end\n\n  subgraph FE[\"Frontend Layer\"]\n    FA[ORISO-Frontend - Client portal]:::fe\n    FB[ORISO-Admin - Staff console]:::fe\n    FC[ORISO-Element - Chat UI]:::fe\n  end\n\n  subgraph Edge[\"Edge\"]\n    NG[Nginx Ingress - TLS]:::edge\n  end\n\n  subgraph Auth[\"Identity\"]\n    KC[Keycloak OIDC/OAuth2]:::auth\n  end\n\n  subgraph BE[\"Backend Microservices\"]\n    TS[TenantService :8081]:::svc\n    US[UserService :8082]:::svc\n    CTS[ConsultingTypeService :8083]:::svc\n    AS[AgencyService :8084]:::svc\n  end\n\n  subgraph Comms[\"Communication\"]\n    MX[Matrix Synapse]:::matrix\n    LK[LiveKit WebRTC]:::matrix\n  end\n\n  subgraph Data[\"Data Stores\"]\n    MA[(MariaDB)]:::db\n    MO[(MongoDB)]:::db\n    PG[(PostgreSQL - Synapse)]:::db\n    RD[(Redis)]:::db\n    RQ[(RabbitMQ)]:::db\n  end\n\n  Clients --> NG\n  NG --> FA & FB & FC\n  FA --> KC\n  FB --> KC\n  FA --> US\n  FB --> AS\n  FB --> TS\n  FB --> CTS\n  US --> KC\n  AS --> KC\n  TS --> KC\n  CTS --> KC\n  US <--> MX\n  FC --> MX\n  US --> LK\n  US --> MA\n  TS --> MA\n  AS --> MA\n  CTS --> MA\n  CTS --> MO\n  US & AS & TS & CTS --> RD\n  US & TS --> RQ\n  MX --> PG\n\n  classDef client fill:#fde7f3,stroke:#c2185b\n  classDef staff fill:#e3f2fd,stroke:#1565c0\n  classDef fe fill:#fff3e0,stroke:#ef6c00\n  classDef edge fill:#eeeeee,stroke:#616161\n  classDef auth fill:#ffebee,stroke:#c62828\n  classDef svc fill:#f3e5f5,stroke:#6a1b9a\n  classDef matrix fill:#fff8e1,stroke:#f9a825\n  classDef db fill:#e8f5e8,stroke:#2e7d32"} />
 
 ## 2.2 Key Components
 
@@ -120,7 +46,7 @@ restricted-consultant-admin, supervisor-consultant,
 topic-admin, notifications-technical
 ```
 
-The 4-tier business hierarchy (Frank's huddle definition) maps onto these realm roles — see [Roles & Permissions](/product/roles-permissions) for the full map.
+The 4-tier business hierarchy (Frank's huddle definition) maps onto these realm roles — see [Roles & Permissions](/produkt/architecture-und-roles/roles-permissions) for the full map.
 
 ### Backend service layer
 
@@ -150,50 +76,14 @@ All services are Spring Boot 2.7.14 (Java 17), share a single MariaDB instance w
 - **RabbitMQ** — async tasks (e.g., notifications, scheduled cleanup of stale anonymous users).
 
 <Callout>
-**Liquibase is disabled** in all backend services. Schemas are managed centrally in `ORISO-Database`. See [Data Layer](/oriso-platform/architecture/data).
+**Liquibase is disabled** in all backend services. Schemas are managed centrally in `ORISO-Database`. See [Data Layer](/betrieb/architecture/data).
 </Callout>
 
 ## 2.3 End-to-End Data Flow: A Live-Chat Inquiry
 
 The most important flow in the product. Read this once and you understand 80% of how ORISO works.
 
-```mermaid
-sequenceDiagram
-  autonumber
-  participant Cl as Client (browser)
-  participant FE as ORISO-Frontend
-  participant US as UserService
-  participant KC as Keycloak
-  participant AS as AgencyService
-  participant MX as Matrix Synapse
-  participant Co as Counselor (browser)
-
-  Cl->>FE: Open live-chat link (?topic=debt)
-  FE->>US: Issue anonymous user
-  US->>KC: Create user with role anonymous
-  KC-->>US: Token + pseudonym (random animal name)
-  US-->>FE: Cookie session, ticket queued
-  FE-->>Cl: Show Waiting Room (queue position, GDPR popup #1 = platform default)
-
-  Note over US,AS: While client waits, ticket is visible to all counselors of matching agency/topic
-
-  Co->>FE: Open Live Chat tab on Admin
-  FE->>US: GET /live-chat/tickets
-  US-->>FE: 3 tickets (oldest first)
-  Co->>FE: Pick the oldest client
-  FE->>US: POST /live-chat/accept (ticketId)
-  US->>MX: Create encrypted room, invite both
-  US->>FE: Push consent prompt to client (GDPR of counseling center)
-  Cl->>FE: Click "Bestätigen" (Confirm)
-  FE->>US: POST /live-chat/consent
-  US-->>Co: Ticket promoted to active session
-  Cl<<->>MX: Encrypted chat (E2EE via Element/ORISO-Element)
-  Co<<->>MX: Encrypted chat
-  Cl->>FE: Close chat / leave
-  FE->>US: DELETE /live-chat/session
-  US->>KC: Wipe anonymous user
-  US->>MX: Tombstone room, schedule purge
-```
+<Mermaid chart={"sequenceDiagram\n  autonumber\n  participant Cl as Client (browser)\n  participant FE as ORISO-Frontend\n  participant US as UserService\n  participant KC as Keycloak\n  participant AS as AgencyService\n  participant MX as Matrix Synapse\n  participant Co as Counselor (browser)\n\n  Cl->>FE: Open live-chat link (?topic=debt)\n  FE->>US: Issue anonymous user\n  US->>KC: Create user with role anonymous\n  KC-->>US: Token + pseudonym (random animal name)\n  US-->>FE: Cookie session, ticket queued\n  FE-->>Cl: Show Waiting Room (queue position, GDPR popup #1 = platform default)\n\n  Note over US,AS: While client waits, ticket is visible to all counselors of matching agency/topic\n\n  Co->>FE: Open Live Chat tab on Admin\n  FE->>US: GET /live-chat/tickets\n  US-->>FE: 3 tickets (oldest first)\n  Co->>FE: Pick the oldest client\n  FE->>US: POST /live-chat/accept (ticketId)\n  US->>MX: Create encrypted room, invite both\n  US->>FE: Push consent prompt to client (GDPR of counseling center)\n  Cl->>FE: Click \"Bestätigen\" (Confirm)\n  FE->>US: POST /live-chat/consent\n  US-->>Co: Ticket promoted to active session\n  Cl<<->>MX: Encrypted chat (E2EE via Element/ORISO-Element)\n  Co<<->>MX: Encrypted chat\n  Cl->>FE: Close chat / leave\n  FE->>US: DELETE /live-chat/session\n  US->>KC: Wipe anonymous user\n  US->>MX: Tombstone room, schedule purge"} />
 
 The four critical guarantees in this flow:
 

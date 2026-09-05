@@ -11,27 +11,7 @@ The May-2026 Figma introduces an explicit **Handover** flow with a fixed reason 
 
 Sometimes the assigned counselor cannot continue: vacation, illness, emergency, departure from the agency, or a hard policy/legal trigger. Handover is the controlled flow that **transfers a single case** to a new counselor at the **same agency** — without breaking E2EE, GDPR consent, or audit trails.
 
-```mermaid
-flowchart LR
-  Co1[Counselor A<br/>going off]:::a --> M[Handover modal]:::m
-  M --> R[Pick reason]:::m
-  R --> P[Pick replacement]:::m
-  P --> C{Consent rule<br/>for this reason}:::c
-  C -->|client consent needed| Cl[Ask client]:::cl
-  C -->|counselor consent needed| Co2[Ask Counselor B]:::a
-  C -->|supervisor approval needed| Sv[Ask Supervisor]:::a
-  C -->|automatic| Auto[Proceed]:::ok
-  Cl --> Auto
-  Co2 --> Auto
-  Sv --> Auto
-  Auto --> Done[Room rotated<br/>system msg posted<br/>audit row written]:::ok
-
-  classDef a fill:#e3f2fd,stroke:#1565c0
-  classDef m fill:#fff3e0,stroke:#ef6c00
-  classDef c fill:#fce4ec,stroke:#ad1457
-  classDef cl fill:#f3e5f5,stroke:#6a1b9a
-  classDef ok fill:#e8f5e8,stroke:#2e7d32
-```
+<Mermaid chart={"flowchart LR\n  Co1[Counselor A<br/>going off]:::a --> M[Handover modal]:::m\n  M --> R[Pick reason]:::m\n  R --> P[Pick replacement]:::m\n  P --> C{Consent rule<br/>for this reason}:::c\n  C -->|client consent needed| Cl[Ask client]:::cl\n  C -->|counselor consent needed| Co2[Ask Counselor B]:::a\n  C -->|supervisor approval needed| Sv[Ask Supervisor]:::a\n  C -->|automatic| Auto[Proceed]:::ok\n  Cl --> Auto\n  Co2 --> Auto\n  Sv --> Auto\n  Auto --> Done[Room rotated<br/>system msg posted<br/>audit row written]:::ok\n\n  classDef a fill:#e3f2fd,stroke:#1565c0\n  classDef m fill:#fff3e0,stroke:#ef6c00\n  classDef c fill:#fce4ec,stroke:#ad1457\n  classDef cl fill:#f3e5f5,stroke:#6a1b9a\n  classDef ok fill:#e8f5e8,stroke:#2e7d32"} />
 
 ## 4.7.2 Reason Taxonomy
 
@@ -47,7 +27,7 @@ Confirmed in Figma:
 | `custom` | Custom Explanation | Counselor + Client consent | Standard |
 
 <Callout>
-Each tenant can override the default consent rules in the **Berechtigungen** matrix (see [Roles & Permissions §3.7](/product/roles-permissions#3-7-per-chat-type-permissions-matrix)).
+Each tenant can override the default consent rules in the **Berechtigungen** matrix (see [Roles & Permissions §3.7](/produkt/architecture-und-roles/roles-permissions#37-per-chat-type-permissions-matrix)).
 </Callout>
 
 ## 4.7.3 Consent Matrix
@@ -65,40 +45,7 @@ The system enforces these rules **server-side** before the room is rotated.
 
 ## 4.7.4 Detailed Sequence
 
-```mermaid
-sequenceDiagram
-  autonumber
-  participant Co1 as Counselor A
-  participant Co2 as Counselor B
-  participant FE as ORISO-Admin
-  participant US as UserService
-  participant MX as Matrix
-  participant Cl as Client
-
-  Co1->>FE: Chatraum Einstellungen → Handover Case
-  FE->>Co1: Modal with reason + replacement picker
-  Co1->>FE: Pick reason (e.g. "Sickness") + Counselor B
-  FE->>US: POST /handover { sessionId, from, to, reason, customText? }
-  US->>US: load consent rule for reason
-
-  alt requires Counselor B consent
-    US->>Co2: Notification "Übernahme angefragt"
-    Co2-->>US: accept
-  end
-  alt requires Supervisor approval
-    US->>SU: Notification with locked context
-    SU-->>US: approve
-  end
-  alt requires Client consent
-    US->>Cl: Push consent prompt in chat
-    Cl-->>US: accept
-  end
-
-  US->>MX: invite Co2; remove Co1
-  US->>Cl: System message ("Deine Beratung wurde an Gudrun übergeben: Grund …")
-  US->>US: write audit row { from, to, reason, consents, started_at, completed_at }
-  US-->>FE: 200 OK
-```
+<Mermaid chart={"sequenceDiagram\n  autonumber\n  participant Co1 as Counselor A\n  participant Co2 as Counselor B\n  participant FE as ORISO-Admin\n  participant US as UserService\n  participant MX as Matrix\n  participant Cl as Client\n\n  Co1->>FE: Chatraum Einstellungen → Handover Case\n  FE->>Co1: Modal with reason + replacement picker\n  Co1->>FE: Pick reason (e.g. \"Sickness\") + Counselor B\n  FE->>US: POST /handover { sessionId, from, to, reason, customText? }\n  US->>US: load consent rule for reason\n\n  alt requires Counselor B consent\n    US->>Co2: Notification \"Übernahme angefragt\"\n    Co2-->>US: accept\n  end\n  alt requires Supervisor approval\n    US->>SU: Notification with locked context\n    SU-->>US: approve\n  end\n  alt requires Client consent\n    US->>Cl: Push consent prompt in chat\n    Cl-->>US: accept\n  end\n\n  US->>MX: invite Co2; remove Co1\n  US->>Cl: System message (\"Deine Beratung wurde an Gudrun übergeben: Grund …\")\n  US->>US: write audit row { from, to, reason, consents, started_at, completed_at }\n  US-->>FE: 200 OK"} />
 
 ## 4.7.5 What Happens to the Room
 
@@ -110,7 +57,7 @@ sequenceDiagram
 
 ## 4.7.6 Constraints
 
-- **Cross-agency handover is forbidden** — replacements must be from the same agency. If the agency has no other counselor, a tenant-level escalation path is required (planned, see [Figma analysis §4.6](/product/figma-analysis-2026-05#4-6-handover-reasons-consent)).
+- **Cross-agency handover is forbidden** — replacements must be from the same agency. If the agency has no other counselor, a tenant-level escalation path is required (planned, see [Figma analysis §4.6](/produkt/design-und-quality/figma-analysis-2026-05#46-handover-reasons--consent)).
 - **Cross-tenant handover is forbidden** — period.
 - **Handover during an active video call** — the call is gracefully ended, then handover proceeds.
 - **Handover during the GDPR-#2-pending state** — handover is denied; ticket is returned to the queue instead.
@@ -136,7 +83,7 @@ Buttons (depending on consent rule):
 
 ## 4.7.9 Edge Cases
 
-See [Edge Cases §9.10](/product/edge-cases) for the full set. Top ones:
+See [Edge Cases §9.10](/produkt/design-und-quality/edge-cases) for the full set. Top ones:
 
 - **Counselor B refuses** → ticket returns to the agency pool with a "needs handover" flag.
 - **Client refuses** → session ends with a "no handover possible" message; client is wiped.
@@ -145,7 +92,7 @@ See [Edge Cases §9.10](/product/edge-cases) for the full set. Top ones:
 
 ## 4.7.10 Related
 
-- [Roles & Permissions](/product/roles-permissions) — handover permissions per role.
-- [Data Model](/product/data-model) — `HandoverEvent` entity.
-- [Edge Cases](/product/edge-cases#9-10-handover-edge-cases).
-- [Figma Analysis](/product/figma-analysis-2026-05).
+- [Roles & Permissions](/produkt/architecture-und-roles/roles-permissions) — handover permissions per role.
+- [Data Model](/produkt/flows-und-internals/data-model) — `HandoverEvent` entity.
+- [Edge Cases](/produkt/design-und-quality/edge-cases#910-handover-edge-cases).
+- [Figma Analysis](/produkt/design-und-quality/figma-analysis-2026-05).

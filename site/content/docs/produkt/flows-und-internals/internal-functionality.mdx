@@ -4,28 +4,14 @@ description: "How the inside of ORISO actually works: the chat / video pipeline,
 ---
 
 <Callout>
-This page is the developer's deep-dive. Cross-references back to the architecture page ([Section 2](/product/architecture)) and the data model ([Section 7](/product/data-model)) are heavy on purpose — they are the same system seen from different angles.
+This page is the developer's deep-dive. Cross-references back to the architecture page ([Section 2](/produkt/architecture-und-roles/architecture)) and the data model ([Section 7](/produkt/flows-und-internals/data-model)) are heavy on purpose — they are the same system seen from different angles.
 </Callout>
 
 ## 6.1 The Chat / Transcription Pipeline
 
 ORISO's "chat pipeline" is shorter than most chat platforms because the platform deliberately **does not see message contents**. The pipeline is:
 
-```mermaid
-flowchart LR
-  C[Client browser]:::c -->|TLS| FE[ORISO-Frontend]:::fe
-  FE -->|REST + JWT| US[UserService]:::svc
-  US -->|Admin API| MX[Matrix Synapse]:::mx
-  MX -.->|Megolm-encrypted| C
-  MX -.->|Megolm-encrypted| Co[Counselor browser]:::c
-  Co -->|REST + JWT| FE2[ORISO-Admin / ORISO-Element]:::fe
-  C <-->|Olm/Megolm key exchange| Co
-
-  classDef c fill:#fce4ec,stroke:#ad1457
-  classDef fe fill:#fff3e0,stroke:#ef6c00
-  classDef svc fill:#f3e5f5,stroke:#6a1b9a
-  classDef mx fill:#fff8e1,stroke:#f9a825
-```
+<Mermaid chart={"flowchart LR\n  C[Client browser]:::c -->|TLS| FE[ORISO-Frontend]:::fe\n  FE -->|REST + JWT| US[UserService]:::svc\n  US -->|Admin API| MX[Matrix Synapse]:::mx\n  MX -.->|Megolm-encrypted| C\n  MX -.->|Megolm-encrypted| Co[Counselor browser]:::c\n  Co -->|REST + JWT| FE2[ORISO-Admin / ORISO-Element]:::fe\n  C <-->|Olm/Megolm key exchange| Co\n\n  classDef c fill:#fce4ec,stroke:#ad1457\n  classDef fe fill:#fff3e0,stroke:#ef6c00\n  classDef svc fill:#f3e5f5,stroke:#6a1b9a\n  classDef mx fill:#fff8e1,stroke:#f9a825"} />
 
 What each leg does:
 
@@ -95,16 +81,7 @@ Two real-time channels run in parallel:
 
 WebSocket / SSE channel for ticket-state updates, queue position, "your counselor is connecting" prompts. Implemented as either WebSocket or long-poll fallback.
 
-```mermaid
-sequenceDiagram
-  participant FE as Frontend
-  participant US as UserService
-  participant Q as Redis pub/sub
-  Co->>US: POST /live-chat/accept
-  US->>Q: publish("ticket:{id}", "accepted")
-  Q-->>US: subscribers (heartbeat connections of the client)
-  US-->>FE: WS push "your counselor is connecting"
-```
+<Mermaid chart={"sequenceDiagram\n  participant FE as Frontend\n  participant US as UserService\n  participant Q as Redis pub/sub\n  Co->>US: POST /live-chat/accept\n  US->>Q: publish(\"ticket:{id}\", \"accepted\")\n  Q-->>US: subscribers (heartbeat connections of the client)\n  US-->>FE: WS push \"your counselor is connecting\""} />
 
 Redis Pub/Sub fans out events to multiple UserService pods, so a client connected to pod A still gets the event when a counselor on pod B accepts the ticket.
 

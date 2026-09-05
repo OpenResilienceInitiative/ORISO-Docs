@@ -4,7 +4,7 @@ description: "Group conversations (peer-support, team consult, family, internal 
 ---
 
 <Callout>
-The May-2026 Figma confirms that ORISO is **not 1-1 only**. Group chats are first-class — with their own type taxonomy, permission profile, and counselor-only collaboration tools. See the [Figma Analysis](/product/figma-analysis-2026-05) for the underlying screens.
+The May-2026 Figma confirms that ORISO is **not 1-1 only**. Group chats are first-class — with their own type taxonomy, permission profile, and counselor-only collaboration tools. See the [Figma Analysis](/produkt/design-und-quality/figma-analysis-2026-05) for the underlying screens.
 </Callout>
 
 ## 4.5.1 What Group Chats Are
@@ -27,19 +27,7 @@ Two paths:
 1. **Promotion of an existing 1-1** — a counselor in an active room clicks **Invite more people** (`⇧I`) in the Chatraum-Einstellungen menu. Anyone the admin policy permits can be invited. The room becomes a group; the client receives a system message and (per tenant policy) may be asked for re-consent.
 2. **Direct creation** — `Erstelle Chat` opens the participant picker (`Add` → search → multi-select). The creator chooses chat-type label, optional supervision flag, optional schedule (`live Mo 9.Sep 2026 um 18:00 Uhr`).
 
-```mermaid
-flowchart LR
-  A[Counselor clicks Erstelle Chat]:::a --> B[Pick participants]:::b
-  B --> C[Choose chat-type label]:::b
-  C --> D[Optional Supervision On]:::b
-  D --> E[Optional schedule]:::b
-  E --> F[Group room created<br/>(Matrix encrypted)]:::c
-  F --> G[Members invited<br/>+ system message]:::c
-
-  classDef a fill:#fff3e0,stroke:#ef6c00
-  classDef b fill:#e3f2fd,stroke:#1565c0
-  classDef c fill:#e8f5e8,stroke:#2e7d32
-```
+<Mermaid chart={"flowchart LR\n  A[Counselor clicks Erstelle Chat]:::a --> B[Pick participants]:::b\n  B --> C[Choose chat-type label]:::b\n  C --> D[Optional Supervision On]:::b\n  D --> E[Optional schedule]:::b\n  E --> F[Group room created<br/>(Matrix encrypted)]:::c\n  F --> G[Members invited<br/>+ system message]:::c\n\n  classDef a fill:#fff3e0,stroke:#ef6c00\n  classDef b fill:#e3f2fd,stroke:#1565c0\n  classDef c fill:#e8f5e8,stroke:#2e7d32"} />
 
 ## 4.5.3 Member Roles Inside a Group
 
@@ -79,24 +67,9 @@ The picker shows:
 
 Matrix has no native "visible only to N members" message-level restriction, so we propose a **server-side relay** ("Carimat-relay" service account):
 
-```mermaid
-sequenceDiagram
-  participant Co as Counselor
-  participant FE as ORISO-Element
-  participant Bot as Carimat-Relay (service account)
-  participant MX as Matrix
-  Co->>FE: Pick "3 Moderators" → Send
-  FE->>Bot: encrypted_payload + recipient_set
-  alt Per-recipient Megolm
-    Bot->>MX: send N encrypted events, one per recipient (parent_event_id linked)
-  else Sub-thread fan-out
-    Bot->>MX: open hidden 1-to-N sub-room, post message there
-  end
-  Bot-->>FE: ack with sub-event-ids
-  FE-->>Co: Pill "visible only to: 3 Moderators"
-```
+<Mermaid chart={"sequenceDiagram\n  participant Co as Counselor\n  participant FE as ORISO-Element\n  participant Bot as Carimat-Relay (service account)\n  participant MX as Matrix\n  Co->>FE: Pick \"3 Moderators\" → Send\n  FE->>Bot: encrypted_payload + recipient_set\n  alt Per-recipient Megolm\n    Bot->>MX: send N encrypted events, one per recipient (parent_event_id linked)\n  else Sub-thread fan-out\n    Bot->>MX: open hidden 1-to-N sub-room, post message there\n  end\n  Bot-->>FE: ack with sub-event-ids\n  FE-->>Co: Pill \"visible only to: 3 Moderators\""} />
 
-Decision pending — see [Figma analysis §4.3](/product/figma-analysis-2026-05#4-3-multi-recipient-send-server-side-enforcement).
+Decision pending — see [Figma analysis §4.3](/produkt/design-und-quality/figma-analysis-2026-05#43-multi-recipient-send--server-side-enforcement).
 
 ### Status pills
 
@@ -138,10 +111,10 @@ UX rule: *"Important. When I click again in text field, clicking now on send wil
 |---|---|---|
 | **Archiviere Chat** | `⇧A` | Archive; the chat goes inactive and is auto-deleted in **12 months** (per Figma copy: *"Archivierte Benachrichtigungen sind inaktiv. Der Chat wird in 12 Monaten gelöscht."*) |
 | **Stummschalten** | `⇧Ö` | Mute notifications for this chat only. |
-| **Hilfe Anfragen** | `⇧Ä` | Internal/external escalation — see [Notifications & Help Requests](/product/features/notifications). |
+| **Hilfe Anfragen** | `⇧Ä` | Internal/external escalation — see [Notifications & Help Requests](/produkt/core-features/notifications). |
 | **Weitere Personen einladen** | `⇧I` | Invite more participants. Constrained by admin policy. |
 | **Supervision On / Off** | `⇧I` (figma) | Toggle supervisor visibility; system message broadcast. |
-| **Chat Zusammenfassen** | `⇧Ü` | AI summary — see [AI Tools](/product/features/ai-tools). |
+| **Chat Zusammenfassen** | `⇧Ü` | AI summary — see [AI Tools](/produkt/core-features/ai-tools). |
 
 ## 4.5.9 Filters, Phases & List Views
 
@@ -174,17 +147,17 @@ Each list row shows the phase the chat is in:
 
 ## 4.5.11 Edge Cases (Group-Chat Specific)
 
-For the full catalogue see [Edge Cases](/product/edge-cases). Key group-chat ones:
+For the full catalogue see [Edge Cases](/produkt/design-und-quality/edge-cases). Key group-chat ones:
 
-- **Client deletes themselves mid-group-chat** → see [9.1.8](/product/edge-cases#9-1-8-client-deletes-self-from-group-chat).
+- **Client deletes themselves mid-group-chat** → see [9.1.8](/produkt/design-und-quality/edge-cases#918-client-deletes-self-from-group-chat).
 - **Multi-recipient send with offline recipient** → message is delivered as soon as the recipient's Megolm session is back online; never visible to non-recipients.
 - **Counselor invites a non-permitted user** → API returns 403 with the admin-policy reason.
 - **Admin disables Group Chats globally** → existing groups become read-only; no new groups can be created; no data loss.
 
 ## 4.5.12 Related
 
-- [Live Chat (4.2)](/product/features/live-chat) — the 1-1 entry point most groups grow out of.
-- [AI Tools (4.6)](/product/features/ai-tools) — Summary, Mark/Blur.
-- [Notifications & Help Requests (4.7)](/product/features/notifications).
-- [Roles & Permissions](/product/roles-permissions) — per-chat-type permission matrix.
-- [Figma Analysis](/product/figma-analysis-2026-05) — the source for everything on this page.
+- [Live Chat (4.2)](/produkt/core-features/live-chat) — the 1-1 entry point most groups grow out of.
+- [AI Tools (4.6)](/produkt/core-features/ai-tools) — Summary, Mark/Blur.
+- [Notifications & Help Requests (4.7)](/produkt/core-features/notifications).
+- [Roles & Permissions](/produkt/architecture-und-roles/roles-permissions) — per-chat-type permission matrix.
+- [Figma Analysis](/produkt/design-und-quality/figma-analysis-2026-05) — the source for everything on this page.

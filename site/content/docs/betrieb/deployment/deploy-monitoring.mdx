@@ -2,9 +2,6 @@
 title: "Deploy Monitoring"
 description: "Deploy SignOZ observability platform, Health Dashboard, and Status Page via Helm"
 ---
-
-# Deploy Monitoring
-
 Deploy monitoring and observability services for ORISO Platform. Monitoring components are deployed via Helm as part of the `oriso-platform` umbrella chart.
 
 <Callout>
@@ -206,5 +203,5 @@ kubectl exec -n caritas deployment/oriso-platform-userservice -- env | grep OTEL
 
 ## Next Steps
 
-- [Post-Deployment](/oriso-platform/post-deployment) - Verify complete deployment
-- [Verification Testing](/oriso-platform/verification-testing) - Test monitoring functionality
+- [Post-Deployment](/betrieb/configuration-und-testing/post-deployment) - Verify complete deployment
+- [Verification Testing](/betrieb/configuration-und-testing/verification-testing) - Test monitoring functionality

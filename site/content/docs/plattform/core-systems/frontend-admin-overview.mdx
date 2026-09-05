@@ -1,0 +1,73 @@
+---
+title: Frontend and Admin
+description: The two React applications — how they are wired, where routes and API clients live, and how to work on them without a backend.
+---
+Two React applications, no persistence of their own. Both obtain a Keycloak token, attach
+it to every call, and render what the services return.
+
+| | [ORISO-Frontend](https://github.com/OpenResilienceInitiative/ORISO-Frontend) | [ORISO-Admin](https://github.com/OpenResilienceInitiative/ORISO-Admin) |
+| --- | --- | --- |
+| Purpose | the public counselling app | the operational admin panel |
+| Build | CRA-style scripts plus Vite tooling | Vite |
+| Dev server | `npm run dev` | `npm start` (port 9000, path `/admin`) |
+| Node | 22.12.0 | 22.12.0 |
+| Route table | [`src/components/app/RouterConfig.tsx`](https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/dev/src/components/app/RouterConfig.tsx) | [`src/App.tsx`](https://github.com/OpenResilienceInitiative/ORISO-Admin/blob/dev/src/App.tsx) |
+| API layer | [`src/api/`](https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/dev/src/api/fetchData.ts) | [`src/api/`](https://github.com/OpenResilienceInitiative/ORISO-Admin/blob/dev/src/api/fetchData.ts) |
+| Route guard | in the router configuration | [`src/router/ProtectedRoute.tsx`](https://github.com/OpenResilienceInitiative/ORISO-Admin/blob/dev/src/router/ProtectedRoute.tsx#L19-L40) |
+| Runtime config | [`.env.example`](https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/dev/.env.example) | [`.env.example`](https://github.com/OpenResilienceInitiative/ORISO-Admin/blob/dev/.env.example) plus a generated file, see below |
+| Calls out to | User, Agency, Tenant, ConsultingType, Matrix, LiveKit | User, Agency, Tenant, ConsultingType |
+
+## How a request leaves the browser
+
+<Mermaid chart={"flowchart LR\n  C[\"component\"] --> H[\"api client<br/>one file per endpoint in src/api/\"]\n  H --> F[\"fetchData wrapper<br/>adds Authorization, handles 401\"]\n  F --> T[\"token helpers<br/>read / refresh\"]\n  F --> I[\"ingress path prefix<br/>/service/…\"]\n  I --> S[\"backend service\"]"} />
+
+Every call goes through one wrapper. That wrapper is where the bearer token is attached
+and where a 401 is handled, which makes it the single place to look when "some requests
+are unauthorised". The API-client modules above it are thin: one file per endpoint, named
+after the operation.
+
+The path prefix matters. Because everything is served from one host with path-based
+routing ([ADR-011](/decisions/adr-011)), the API base URL is a path, not a separate
+origin — which is also why there are no CORS problems to debug.
+
+## Admin: the generated runtime configuration
+
+`npm start` runs a `prestart` step that writes a runtime configuration file:
+[`scripts/generate-runtime-env.js`](https://github.com/OpenResilienceInitiative/ORISO-Admin/blob/dev/scripts/generate-runtime-env.js).
+The application reads that file at boot, **and it overrides `.env`**. If a setting seems
+to be ignored, this is almost always why. Dev-server and proxy behaviour is in
+[`vite.config.ts`](https://github.com/OpenResilienceInitiative/ORISO-Admin/blob/dev/vite.config.ts).
+
+## Working without a backend
+
+Both repositories run Storybook, and their stories are executed as component tests in CI.
+For anything visual this is the fast loop — no services, no database, no login:
+
+```bash
+npm run storybook        # http://localhost:6006
+npm run test:storybook   # the same stories, as tests
+npm run test:unit        # frontend
+npm run test             # admin
+npm run lint
+```
+
+Because a story is also a test, adding a story for a new component is not extra work on
+top of testing it — it is the testing.
+
+## Tenant-aware rendering
+
+Both apps change appearance and available features per tenant: theming, legal texts,
+visible topics and enabled features all arrive from TenantService and
+ConsultingTypeService at runtime. Two rules follow:
+
+- **Do not hard-code a tenant assumption in a component.** Read it from the loaded
+  settings.
+- **A feature that is off for a tenant must be disabled, not hidden**, unless the design
+  explicitly says otherwise — consistency of the interface beats tidiness.
+
+## Related
+
+- [Install and run locally](/plattform/start-here/install-and-run-locally)
+- [Authentication and Keycloak](/plattform/core-systems/authentication-and-keycloak)
+- [Backend services](/plattform/core-systems/backend-services) — the APIs behind the clients
+- [Architecture](/plattform/start-here/architecture)

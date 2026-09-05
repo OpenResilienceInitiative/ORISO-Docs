@@ -47,7 +47,7 @@ Each notification row contains:
 
 - **In-app** (always).
 - **Email** (only if the client provided one — never visible to counselors).
-- **Push** (planned via Matrix Push Gateway — see [Figma analysis §4.7](/product/figma-analysis-2026-05#4-7-notification-channels)).
+- **Push** (planned via Matrix Push Gateway — see [Figma analysis §4.7](/produkt/design-und-quality/figma-analysis-2026-05#47-notification-channels)).
 
 ### Persistence & retention
 
@@ -65,22 +65,7 @@ Triggered from **Chatraum Einstellungen → Hilfe Anfragen (`⇧Ä`)** with the 
 
 ### Flow
 
-```mermaid
-sequenceDiagram
-  autonumber
-  participant Co as Counselor
-  participant FE as ORISO-Admin
-  participant US as UserService
-  participant Sup as Supervisor / Peer counselor
-
-  Co->>FE: Click Hilfe Anfragen (⇧Ä)
-  FE->>Co: Modal: pick mode (Intern / Extern), pick recipient
-  Co->>FE: Submit
-  FE->>US: POST /escalation { sessionId, recipient, mode, note }
-  US->>Sup: Notification + read-only Matrix invite
-  Sup-->>FE: Open chat, review, reply (in-thread or new note)
-  FE->>US: POST /escalation/{id}/resolve
-```
+<Mermaid chart={"sequenceDiagram\n  autonumber\n  participant Co as Counselor\n  participant FE as ORISO-Admin\n  participant US as UserService\n  participant Sup as Supervisor / Peer counselor\n\n  Co->>FE: Click Hilfe Anfragen (⇧Ä)\n  FE->>Co: Modal: pick mode (Intern / Extern), pick recipient\n  Co->>FE: Submit\n  FE->>US: POST /escalation { sessionId, recipient, mode, note }\n  US->>Sup: Notification + read-only Matrix invite\n  Sup-->>FE: Open chat, review, reply (in-thread or new note)\n  FE->>US: POST /escalation/{id}/resolve"} />
 
 ### Modes
 
@@ -128,7 +113,7 @@ Status: **[NEW FEATURE]** — name confirmed in Figma; behaviour proposed.
 
 ## 4.8.6 Permissions & Settings
 
-Per-chat-type controls (see [Roles & Permissions §3.7](/product/roles-permissions#3-7-per-chat-type-permissions-matrix)):
+Per-chat-type controls (see [Roles & Permissions §3.7](/produkt/architecture-und-roles/roles-permissions#37-per-chat-type-permissions-matrix)):
 
 - Notifications can be muted per chat (`Stummschalten ⇧Ö`).
 - A tenant admin can disable Help-Requests for a chat type entirely.
@@ -143,7 +128,7 @@ Per-chat-type controls (see [Roles & Permissions §3.7](/product/roles-permissio
 
 ## 4.8.8 Related
 
-- [Group Chats](/product/features/group-chats) — Help Requests live in chat-room settings.
-- [Handover](/product/features/handover) — pairs with system messages and notifications.
-- [Roles & Permissions](/product/roles-permissions).
-- [Figma Analysis](/product/figma-analysis-2026-05).
+- [Group Chats](/produkt/core-features/group-chats) — Help Requests live in chat-room settings.
+- [Handover](/produkt/core-features/handover) — pairs with system messages and notifications.
+- [Roles & Permissions](/produkt/architecture-und-roles/roles-permissions).
+- [Figma Analysis](/produkt/design-und-quality/figma-analysis-2026-05).

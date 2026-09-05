@@ -6,58 +6,43 @@ description: "The eight feature pillars of ORISO — covering live chat, group c
 ORISO's product surface grew with the May-2026 Figma drop. There are now eight feature pillars; everything else (admin panel, settings, deployments) supports them.
 
 <Cards>
-<Card title="4.2 Live Chat" href="/product/features/live-chat">
+<Card title="4.2 Live Chat" href="/produkt/core-features/live-chat">
 The flagship feature. Anonymous waiting room, counselor pickup, GDPR-gated entry, encrypted Matrix room.
 </Card>
 
-<Card title="4.5 Group Chats & Multi-Recipient Send" href="/product/features/group-chats">
+<Card title="4.5 Group Chats & Multi-Recipient Send" href="/produkt/core-features/group-chats">
 **[NEW]** Team / family / peer-support / internal rounds. Multi-recipient send, reply-in-thread, file upload, group lifecycle.
 </Card>
 
-<Card title="4.6 AI Tools" href="/product/features/ai-tools">
+<Card title="4.6 AI Tools" href="/produkt/core-features/ai-tools">
 **[NEW]** Chat Summary (`⇧Ü`), Mark Text, PII Blur. Counselor-side, browser-decrypted, self-hosted AI.
 </Card>
 
-<Card title="4.7 Case Handover" href="/product/features/handover">
+<Card title="4.7 Case Handover" href="/produkt/core-features/handover">
 **[NEW]** Transfer cases between counselors with reason taxonomy and consent rules.
 </Card>
 
-<Card title="4.8 Notifications & Help Requests" href="/product/features/notifications">
+<Card title="4.8 Notifications & Help Requests" href="/produkt/core-features/notifications">
 **[NEW]** Notifications inbox, system messages, internal/external escalation, Carimat scripted bot.
 </Card>
 
-<Card title="4.3 Pincode-Based Chat & Access" href="/product/features/pincode-chat">
+<Card title="4.3 Pincode-Based Chat & Access" href="/produkt/core-features/pincode-chat">
 How clients reach a counselor via a public live-chat link with a topic and (optionally) a zip code.
 </Card>
 
-<Card title="4.4 Session Management" href="/product/features/session-management">
+<Card title="4.4 Session Management" href="/produkt/core-features/session-management">
 The lifecycle of a counseling session — creation, joining, state transitions, wipe-on-disconnect.
 </Card>
 
-<Card title="4.1 Transcripts (legacy)" href="/product/features/transcription">
-The original transcripts page; superseded by [AI Tools](/product/features/ai-tools) — kept for historical context.
+<Card title="4.1 Transcripts (legacy)" href="/produkt/core-features/transcription">
+The original transcripts page; superseded by [AI Tools](/produkt/core-features/ai-tools) — kept for historical context.
 </Card>
 </Cards>
 
 <Callout>
-For the full background on what's new in May 2026, see [Figma Analysis (May 2026)](/product/figma-analysis-2026-05).
+For the full background on what's new in May 2026, see [Figma Analysis (May 2026)](/produkt/design-und-quality/figma-analysis-2026-05).
 </Callout>
 
 ## How they fit together
 
-```mermaid
-%%{init: { 'theme':'base', 'themeVariables':{ 'fontSize':'14px' } }}%%
-flowchart LR
-  L[Live-Chat Link<br/>topic + agency]:::link --> WR[Waiting Room]:::flow
-  WR --> Pick[Counselor picks ticket]:::flow
-  Pick --> Consent[GDPR consent #2]:::flow
-  Consent --> Sess[Session active<br/>Matrix room]:::flow
-  Sess --> End[End / disconnect]:::flow
-  End --> Wipe[Wipe + tombstone]:::flow
-
-  Sess -.->|optional, planned| Tx[Transcript / AI notes]:::aux
-
-  classDef link fill:#fff3e0,stroke:#ef6c00
-  classDef flow fill:#e3f2fd,stroke:#1565c0
-  classDef aux fill:#f3e5f5,stroke:#6a1b9a
-```
+<Mermaid chart={"%%{init: { 'theme':'base', 'themeVariables':{ 'fontSize':'14px' } }}%%\nflowchart LR\n  L[Live-Chat Link<br/>topic + agency]:::link --> WR[Waiting Room]:::flow\n  WR --> Pick[Counselor picks ticket]:::flow\n  Pick --> Consent[GDPR consent #2]:::flow\n  Consent --> Sess[Session active<br/>Matrix room]:::flow\n  Sess --> End[End / disconnect]:::flow\n  End --> Wipe[Wipe + tombstone]:::flow\n\n  Sess -.->|optional, planned| Tx[Transcript / AI notes]:::aux\n\n  classDef link fill:#fff3e0,stroke:#ef6c00\n  classDef flow fill:#e3f2fd,stroke:#1565c0\n  classDef aux fill:#f3e5f5,stroke:#6a1b9a"} />
