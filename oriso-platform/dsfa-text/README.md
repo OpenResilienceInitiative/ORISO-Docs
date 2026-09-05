@@ -119,3 +119,24 @@ das Dokument freigegeben wird:
 4. **Statistikereignisse mit Quasi-Identifikator-Set** (Abschnitt 6.15): Die Bewertung „im
    Auslieferungsstand abgeschaltet, daher nicht Ist-Zustand" ist technisch korrekt; ob das
    ausreicht oder ob der Code-Pfad zu entfernen ist, ist eine juristische Bewertung.
+
+## Belegkette — wie eine neue Funktion in die DSFA kommt
+
+Jede neue Funktion wird an genau drei Stellen der DSFA verankert: Verarbeitungstätigkeit
+(Kapitel 6), Zugriffskontrolle bzw. Rechtsgrundlage (Kapitel 6/7) und Betroffenenrechte
+(Kapitel 8) — fehlt eine davon, ist die Funktion nicht beschrieben, sondern nur erwähnt.
+Der Kapitelabsatz endet mit einem Block **Belegkette**, der drei Linktypen in dieser Reihenfolge
+nennt: die öffentliche Funktionsseite (`https://docs.oriso.org/<pfad>`), die
+Architekturentscheidung als Datei (`oriso-platform/decisions/ADR-0xx-….md`, nie über die Nummer
+allein zitiert) und den Code auf GitHub
+(`https://github.com/OpenResilienceInitiative/<Repo>/blob/dev/<pfad>#L<von>-L<bis>`).
+Parallel bekommt jede code-gestützte Aussage einen Eintrag in `evidence-map.yaml` mit stabilem
+`slug`, `chapter`, `claim`, `status` und den erwarteten Bezeichnern unter `expect` — daraus
+speisen sich der Verfall-Detektor und die ⓘ-Belegdialoge der HTML-Fassung.
+Der `status` entscheidet über die Formulierung: nur `live` darf im Präsens als vorhanden
+beschrieben werden, `not-deployed`, `disabled-by-default` und `needs-live-verification` müssen im
+Text als Entscheidung, Zielarchitektur oder offener Punkt kenntlich gemacht werden — eine
+beschlossene ADR ist ein Beleg für die Entscheidung, nie für den Ist-Zustand.
+Organisatorische Anteile einer neuen Funktion (Fristen, Zuständigkeiten, Ermessensausübung des
+Trägers) gehören nicht in die Kapiteltexte, sondern nach `vorlagen-betreiber.md`, und werden im
+Kapitel mit der Marke `:::organisatorisch` sichtbar abgesetzt.
