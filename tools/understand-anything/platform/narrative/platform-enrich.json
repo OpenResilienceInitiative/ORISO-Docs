@@ -1,0 +1,342 @@
+{
+  "meta": {
+    "generatedAt": "2026-09-04T00:00:00.000Z",
+    "generatedBy": "claude-opus-platform-narrative-2026-09"
+  },
+  "serviceSummaries": {
+    "service:ORISO-UserService": "The central backend: it owns people (askers, consultants, admins), counselling cases (sessions, enquiries, group chats) and the rules about who may see what, while chat content lives on Matrix and identities live in Keycloak. The graph attributes {{stats.services.ORISO-UserService.endpointsOwn}} served endpoints to this repo (from its own api/*.yaml plus Spring @RestController recovery) and {{stats.services.ORISO-UserService.endpointsConsumed}} internal sibling-service contracts it bundles and `consumes` (plus a share of the {{stats.endpointsExternal}} external contracts this graph has no owning repo for, e.g. appointmentservice, conversationservice); the served families are /users, /useradmin, /conversations, /appointments and /matrix. It is the busiest callee on the platform: {{stats.services.ORISO-UserService.callsIn}} incoming `calls` edges from ORISO-Frontend and ORISO-Admin combined. It owns {{stats.services.ORISO-UserService.tables}} table/index nodes (userservice core tables plus event_notification, account_invite, case_handover_request, team_discussion, user_do_not_disturb, consultant_message_stat and others), and is governed by ADR-001, ADR-002, ADR-003, ADR-004, ADR-005, ADR-006, ADR-007, ADR-008, ADR-012, ADR-013, ADR-018 (Erstantwort), ADR-020, ADR-022 and the Frontend ADR-018 Element Call record.",
+    "service:ORISO-AgencyService": "Owns counselling agencies, their departments, catchment areas and the department-level legal texts (imprint, data-protection page). Of its endpoints, {{stats.services.ORISO-AgencyService.endpointsOwn}} are served from its own specs — the public api/agencyservice.yaml (/agencies, /agencies/by-tenant, /agencies/topics, /agencies/{agencyId}/topics/{topicId}/legal and friends) and the api/agencyadminservice.yaml admin surface (/agencyadmin), including endpoints recovered from Spring annotations; a further {{stats.services.ORISO-AgencyService.endpointsConsumed}} are `consumes`-only sibling-service contracts under services/, including the appointment-service contract. It receives {{stats.services.ORISO-AgencyService.callsIn}} incoming `calls` edges from ORISO-Frontend and ORISO-Admin combined. It owns {{stats.services.ORISO-AgencyService.tables}} table nodes (agency, agency_topic, legal_text, legal_text_version, agency_id_reservation and the admin-control tables) and is governed by ADR-001, ADR-003, ADR-006, ADR-009 and ADR-014.",
+    "service:ORISO-TenantService": "Owns the Träger (tenant) — the carrier organisation that runs its own counselling offering on the shared platform — together with its theming, translations, DPA signatures, DPIA master data and permission policies. {{stats.services.ORISO-TenantService.endpointsOwn}} endpoints are served from api/tenantservice.yaml plus Spring-recovered ones; {{stats.services.ORISO-TenantService.endpointsConsumed}} more are `consumes`-only sibling contracts. Its most-used families are /tenantadmin (the whole Admin configuration surface) and the public /tenant read path used by the Frontend for theming. It receives {{stats.services.ORISO-TenantService.callsIn}} incoming `calls` edges from ORISO-Admin and ORISO-Frontend combined. It owns {{stats.services.ORISO-TenantService.tables}} table nodes (tenantservice core, tenant_admin_controls, tenant DPA signature/version tables, platform_dpia_master_data, tenant_permission_policy) and is governed by ADR-001, ADR-002, ADR-003, ADR-006, ADR-009, ADR-010, ADR-012, ADR-020 and ADR-021.",
+    "service:ORISO-ConsultingTypeService": "Owns the configuration side of counselling: which consulting types exist, which topics and topic groups a help seeker can pick, and the global application settings. {{stats.services.ORISO-ConsultingTypeService.endpointsOwn}} endpoints are served from its own specs (consultingtypeservice.yml, topicservice.yml, consultingtypeadminservice.yml, applicationsettingsservice.yml) plus any recovered from Spring annotations; {{stats.services.ORISO-ConsultingTypeService.endpointsConsumed}} are the consumed tenant-service contract. It receives {{stats.services.ORISO-ConsultingTypeService.callsIn}} incoming `calls` edges from Frontend and Admin combined (GET /topic/public, GET /topic-groups, GET /settings, POST /consultingtypes among them). It owns {{stats.services.ORISO-ConsultingTypeService.tables}} table nodes (consultingtypeservice, topic, topic_group, topic_group_x_topic) and is governed by ADR-001 and ADR-009.",
+    "service:ORISO-Frontend": "The browser application for both audiences — askers who register, consent and chat, and consultants who work an inbox of enquiries and sessions. In this graph it is a pure caller: it exposes no endpoint nodes and owns no tables. It produces {{stats.services.ORISO-Frontend.callsOut}} `calls` edges spread over the backends it reaches (UserService, AgencyService, ConsultingTypeService, TenantService), rolled up into `depends_on` weights that now also fold in `consumes`-based service-to-service dependencies. More ADRs govern it than any other service — 19 of them: ADR-001, 002, 004, 005, 006, 008, 009, 010, 011, 012, 013, 014, 015, 016, 018, 020, 021, 022 and the UserService-local ADR Security-02 — because nearly every platform decision has a user-facing surface here.",
+    "service:ORISO-Admin": "The administration SPA used by platform, tenant (Träger) and agency admins to configure tenants and agencies, manage consultants and admin accounts, issue invites, maintain legal texts, the DPA and the DPIA, and set permission policies. Like the Frontend it exposes nothing and owns nothing; it contributes {{stats.services.ORISO-Admin.callsOut}} `calls` edges, landing mostly on UserService, TenantService and AgencyService. Its traffic lands almost entirely in the *admin endpoint families (/useradmin, /tenantadmin, /agencyadmin, /topicadmin). Only ADR-011 (Helm-only deployment, single-domain path routing) governs it in the graph.",
+    "service:ORISO-Keycloak": "The identity provider. The graph knows it only through its vendored otp-config SPI: {{stats.services.ORISO-Keycloak.endpointsOwn}} endpoint nodes under /otp-config (fetch-otp-setup-info, setup-otp, delete-otp, send-verification-mail, setup-otp-mail), {{stats.services.ORISO-Keycloak.endpointsOwnUncalled}} of them uncalled by any parsed Frontend or Admin caller — the Frontend's own /protocol/openid-connect/logout call is classified external and deliberately out of scope. It owns no tables here. ADR-011 (single-domain path routing) and ADR-013 (2FA via the vendored otp-config SPI, not stock-Keycloak AIA) and ADR-020 govern it.",
+    "service:ORISO-Database": "The schema-of-record side of the platform as captured from the ORISO-Helm MariaDB schema dumps. It exposes no endpoints and has no callers, but it owns 48 table nodes — the agency, topic, tenant and userservice schemas as they are actually seeded, including the DATABASECHANGELOG/DATABASECHANGELOGLOCK pairs that show Liquibase is the schema-evolution mechanism. No ADR in this graph carries a governs edge to it.",
+    "service:ORISO-Helm": "The deployment repository. It is the only service with deploys edges: 6 of them, to ORISO-Admin, ORISO-AgencyService, ORISO-ConsultingTypeService, ORISO-ElementCall, ORISO-Livekit and ORISO-TenantService. The matrix and media-scanner Deployments in the same chart have no deploys edge because no repo in the 17-repo list owns them 1:1. It exposes no endpoints and owns no tables; ADR-011 (Helm-only deployment) and ADR-018 (Erstantwort, configured per Träger) govern it.",
+    "service:ORISO-Docs": "The platform's written memory: the ADR set under oriso-platform/decisions plus the Fumadocs site. It is the source of 23 of the 26 ADR document nodes and all 48 fumadocs page nodes in the Decisions & Docs layer, which between them carry 61 governs and 142 documents edges into the other services. By construction an ADR never governs its own repo, so ORISO-Docs itself has no incoming governs edge. It exposes no endpoints and owns no tables.",
+    "service:ORISO-ElementCall": "The embedded video-call surface. The graph shows it as a deploy target of ORISO-Helm and as the subject of four decisions — ADR-004 (keep the custom chat UI, adopt matrix-js-sdk Megolm), ADR-011, ADR-012 (self-help group chat), ADR-020 (scheduled calls) and the Frontend-local ADR-018 (embed Element Call via the Matrix Widget API). It exposes no endpoint nodes, owns no tables and has no calls edges in this graph; everything the platform does with it goes through the Frontend and Matrix, which this graph does not trace.",
+    "service:ORISO-Livekit": "The SFU behind the calls. In this graph it appears only as a deploy target of ORISO-Helm and as a service governed by the Frontend-local ADR-018 (Embed Element Call via the Matrix Widget API). No endpoints, no tables, no calls edges — the media path is outside what this graph extracts.",
+    "service:ORISO-Infra": "Listed as one of the 17 platform services, but the graph carries no endpoints, tables, callers, deploys or governs edges for it. Its presence in the Services layer records that the repo exists; nothing further about it can be read out of this graph.",
+    "service:ORISO-E2E": "The end-to-end test repository. It is present as a service node in the Services layer and nothing else — no endpoints, no tables, no calls edges, no governing ADR. This graph parses only Frontend and Admin src/**/*.ts(x) callers, so E2E's own HTTP traffic is not represented.",
+    "service:ORISO-SigNoz": "The observability stack. The graph carries the service node only: no endpoints, no owned tables, no deploys edge and no governing ADR. Nothing about how it is wired can be grounded in this graph.",
+    "service:ORISO-Status": "The status page. As with SigNoz and Infra, the graph carries only the service node — no endpoints, tables, callers or decisions attached to it.",
+    "service:ORISO-HealthDashboard": "The health dashboard. Present in the Services layer as a bare service node with no endpoints, tables, calls, deploys or governs edges in this graph."
+  },
+  "layerDescriptions": {
+    "Services": "The 17 ORISO repositories treated as deployable services. Only 5 of them expose endpoints (UserService, AgencyService, TenantService, ConsultingTypeService, Keycloak), 2 are pure callers (Frontend, Admin), 5 own tables (the four Spring services plus Database), and 1 deploys others (Helm). The remaining repos (E2E, Infra, SigNoz, Status, HealthDashboard, ElementCall, Livekit, Docs) appear here because they exist, not because the graph knows their runtime wiring.",
+    "API Endpoints": "{{stats.endpointsTotal}} endpoint nodes: {{stats.endpointsOwn}} own (a route the attributed repo actually serves — its own api/*.yaml, or a Spring @RestController/@RequestMapping annotation with no matching spec), {{stats.endpointsExternal}} external contracts (a consumed sibling spec whose owner has no repo in this graph), and the rest are `consumed-spec-only` nodes attributed to the repo that SHOULD serve them but doesn't yet document/implement it (see reports/spec-drift.md, {{stats.specDrift}} rows). Only `exposes` edges mean \"this repo serves this route\" now; a `consumes` edge means \"this repo bundles/depends on that endpoint's OpenAPI contract\" — {{stats.consumes}} of those in total.",
+    "Frontend Callers": "{{stats.frontendCallers}} Frontend source callers represented by this graph. Confirmed method-and-path matches contribute {{stats.services.ORISO-Frontend.callsOut}} calls; inspect individual edges and the unmatched report for parser gaps and uncertain targets.",
+    "Admin Callers": "{{stats.adminCallers}} Admin source callers represented by this graph. Confirmed matches contribute {{stats.services.ORISO-Admin.callsOut}} calls. This is bounded source extraction, not proof that unrepresented calls or endpoints are unused.",
+    "Data": "{{stats.tables}} table/index nodes attributed from their schema sources. Ownership edges describe source declarations, not a runtime database inventory.",
+    "Decisions & Docs": "Declared ADR authority contributes {{stats.governs}} governs edges; {{stats.mentions}} mentions are discovery only. Fumadocs contributes {{stats.documents}} documents links. Read the actual source lifecycle, owner, scope and supersession before treating a document as policy."
+  },
+  "concepts": [
+    {
+      "id": "concept:platform-five-backends-through-origin-variables",
+      "name": "The Frontend reaches five backends through origin variables",
+      "summary": "ORISO-Frontend builds every backend URL from one of five origin variables in src/resources/scripts/endpoints.ts (userServiceOrigin, agencyServiceOrigin, tenantServiceOrigin, consultingTypeServiceOrigin, keycloakOrigin), plus a sixth ambiguous apiUrl proxy origin that only resolves through a path-prefix fallback table. ORISO-Admin does the same job with differently named constants in src/appConfig.ts and has no direct Keycloak URL constant at all. The depends_on weights that fall out of this are Frontend to UserService 73, AgencyService 9, ConsultingTypeService 5, TenantService 4. Calls built from apiUrl that the prefix table does not know are reported as proxy-unresolved (5 for the Frontend, all of them budibaseTools).",
+      "tags": [
+        "platform"
+      ],
+      "related": [
+        "service:ORISO-Frontend",
+        "service:ORISO-UserService",
+        "service:ORISO-AgencyService",
+        "service:ORISO-TenantService",
+        "service:ORISO-ConsultingTypeService",
+        "service:ORISO-Keycloak",
+        "service:ORISO-Admin"
+      ]
+    },
+    {
+      "id": "concept:platform-admin-drives-the-admin-families",
+      "name": "Admin drives the *admin endpoint families",
+      "summary": "Almost all 88 ORISO-Admin calls land in the administration families rather than the public ones: /useradmin on UserService (account invites, consultants, agency admins, invite links), /tenantadmin on TenantService (DPA, DPIA master data, permission policies, translations, theming media), /agencyadmin on AgencyService (agency and department CRUD, imprint and data-protection texts), /topicadmin on the topic surface. This is what the depends_on weights show — Admin to UserService 45, TenantService 26, AgencyService 13, ConsultingTypeService 4 — and it is why TenantService is reached almost exclusively from Admin and barely from the Frontend.",
+      "tags": [
+        "platform"
+      ],
+      "related": [
+        "service:ORISO-Admin",
+        "service:ORISO-UserService",
+        "service:ORISO-TenantService",
+        "service:ORISO-AgencyService",
+        "ORISO-UserService::endpoint:spring:AccountInviteController#createInvite:POST /useradmin/account-invites",
+        "ORISO-AgencyService::endpoint:api/agencyadminservice.yaml:GET /agencyadmin/agencies",
+        "ORISO-TenantService::endpoint:api/tenantservice.yaml:GET /tenantadmin"
+      ]
+    },
+    {
+      "id": "concept:platform-endpoint-nodes-include-consumed-contracts",
+      "name": "Consumed sibling specs are modelled as consumes, not exposes",
+      "summary": "A repo's checkout can contain endpoint nodes it does not itself serve — a bundled sibling-service OpenAPI spec under services/*.yaml, kept for a generated client. The owner of a consumed spec is resolved by basename (spec/tenantadminservice.yaml -> ORISO-TenantService) ONLY when that candidate owner's OWN endpoints from the same-named spec cover >= 50% of the consumed set (wildcard-aware) — basename alone is not enough: ORISO-UserService's own api/appointmentservice.yaml (7 real, unrelated /appointments/* endpoints) and the retired Cal.com services/appointmentService.yaml (23 /consultants/* endpoints, no repo in this graph) collide on the same lowercased basename with 0% overlap, so that group is `consumed-external`, not owner-attributed — this used to produce a UserService->UserService `depends_on` self-loop and 40 false spec-drift rows; both are now impossible (`depends_on`/`consumes` self-edges are asserted against in the tests). Once an owner clears the overlap bar: if it already exposes the same METHOD+path, the duplicate node is dropped and a `consumes` edge points straight at the owner's own endpoint; if it has no such route, one deduped node is kept — attributed to the OWNER, tagged metadata.source \"consumed-spec-only\" — and logged as spec drift ({{stats.specDrift}} rows in reports/spec-drift.md); if no repo in this graph owns the spec at all (appointmentservice, conversationservice, mailservice, …), or the overlap bar isn't cleared, the node stays under the consumer, tagged metadata.external. Only `exposes` edges (own endpoints: {{stats.endpointsOwn}} of them) mean \"this repo serves this route\"; `consumes` edges ({{stats.consumes}} of them) mean \"this repo depends on that contract\", and `depends_on` weights now fold in both calls-based AND consumes-based evidence.",
+      "tags": [
+        "platform"
+      ],
+      "related": [
+        "service:ORISO-UserService",
+        "service:ORISO-AgencyService",
+        "service:ORISO-TenantService",
+        "service:ORISO-ConsultingTypeService"
+      ]
+    },
+    {
+      "id": "concept:platform-uncalled-endpoints",
+      "name": "{{stats.endpointsOwnUncalled}} of {{stats.endpointsOwn}} own endpoints have no caller",
+      "summary": "reports/uncalled-endpoints.md lists every OWN endpoint (an endpoint the attributed repo actually `exposes`) with zero incoming `calls` edges — {{stats.endpointsOwnUncalled}} of {{stats.endpointsOwn}} platform-wide. Unlike before Problem A's own/consumed/external split, this count is no longer inflated by duplicated consumed sibling contracts — every endpoint counted here is a route its repo genuinely serves. The biggest uncalled families are still the administration surfaces (/useradmin consultants, agencyadmins, tenantadmins, reports; /tenantadmin; /agencyadmin), the appointment routes, the /conversations consultant enquiry and archive routes, and the whole Keycloak /otp-config SPI. What still inflates it: Admin's partial parse coverage, and the fact that only Frontend and Admin callers are parsed at all — no service-to-service Java client is traced.",
+      "tags": [
+        "platform"
+      ],
+      "related": [
+        "service:ORISO-UserService",
+        "service:ORISO-AgencyService",
+        "service:ORISO-TenantService",
+        "service:ORISO-ConsultingTypeService",
+        "service:ORISO-Keycloak",
+        "ORISO-Keycloak::endpoint:keycloak-image/otp-config-spi/api/keycloakextension.yaml:PUT /otp-config/setup-otp/{username}"
+      ]
+    },
+    {
+      "id": "concept:platform-dead-frontend-calls",
+      "name": "{{stats.deadCalls}} frontend/admin calls hit routes no controller serves",
+      "summary": "reports/dead-frontend-calls.md lists {{stats.deadCalls}} deduped no-such-endpoint entries, grouped by suspected cause: legacy pre-Matrix messaging (/service/messages/*, sendAliasMessage, updateMessage), an appointment/caldav surface (appointmentServiceCalDav, appointmentServiceCalDavAccount) that does not exist in AgencyService at all, and an 'other' group. \"Dead\" now requires BOTH a spec/annotation check (no OWN endpoint — OpenAPI api/*.yaml or Spring annotation — covers the full path, wildcard-aware, method ignored) AND the git-grep evidence to agree; git grep on `*.java` alone cannot prove a route absent (a controller can `implement` an OpenAPI-generated interface with no `@…Mapping` of its own). consultantEnquiriesBase, chatRoom and sessionBase were refuted this way (own endpoints for /conversations/consultants/enquiries/*, /users/chat/room/{chatId} and /users/sessions/* all exist) and moved to the report's separate 'Refuted' section instead of being counted dead. This count is computed straight from the same classification data the report is built from, not by re-parsing the markdown.",
+      "tags": [
+        "platform"
+      ],
+      "related": [
+        "service:ORISO-Frontend",
+        "service:ORISO-Admin",
+        "service:ORISO-UserService",
+        "service:ORISO-AgencyService",
+        "ORISO-UserService::endpoint:spring:AccountInviteController#getInvite:GET /users/account-invites/{token}"
+      ]
+    },
+    {
+      "id": "concept:platform-adr-numbering-drift",
+      "name": "ADR numbers are not unique across repos",
+      "summary": "reports/adr-number-drift.md records three collisions. ADR-002 is 'Silent room membership and access-control curtain' in ORISO-Docs but 'ADR Security-02: Unified Cryptographic Boundary' in ORISO-UserService. ADR-018 is 'Erstantwort as one persisted event' in ORISO-Docs but 'Embed Element Call via the Matrix Widget API' in ORISO-Frontend. ADR-019 is 'Media scanning via matrix-content-scanner' in ORISO-Docs but 'Set the key backup up silently' in ORISO-Frontend. Every governs edge in this graph is therefore built from a name or content mention, never from the number — and so should every reference in a ticket or a code comment.",
+      "tags": [
+        "platform"
+      ],
+      "related": [
+        "document:adr:ORISO-Docs:ADR-002-silent-room-membership-and-access-control-curtain.md",
+        "document:adr:ORISO-UserService:ADR-SECURITY-02-unified-crypto-boundary.md",
+        "document:adr:ORISO-Docs:ADR-018-erstantwort-as-one-persisted-event-rendered-as-carimat-bubbles.md",
+        "document:adr:ORISO-Frontend:adr-018-element-call-matryoshka.md",
+        "document:adr:ORISO-Docs:ADR-019-media-scanning-via-matrix-content-scanner-fail-closed.md",
+        "document:adr:ORISO-Frontend:adr-019-silent-key-backup-setup.md"
+      ]
+    },
+    {
+      "id": "concept:platform-tenant-context-everywhere",
+      "name": "Tenant context runs through every backend",
+      "summary": "The Träger is not a TenantService-only concern. Every backend carries /tenant and /tenantadmin endpoint families (UserService 22 + 36 nodes, AgencyService 10 + 16, TenantService 14 + 26, ConsultingTypeService 10 + 16), TenantService owns the tenant_admin_controls, tenant_permission_policy and platform_dpia_master_data tables, and the Frontend's very first read is GET /tenant for theming. ADR-003 (department = unique Agency x Topic), ADR-009 (global topic ownership) and ADR-010 (platform-controlled per-Träger appearance allowlist) all bind TenantService together with at least one other service.",
+      "tags": [
+        "platform"
+      ],
+      "related": [
+        "service:ORISO-TenantService",
+        "service:ORISO-Frontend",
+        "service:ORISO-Admin",
+        "ORISO-TenantService::endpoint:api/tenantservice.yaml:GET /tenant",
+        "document:adr:ORISO-Docs:ADR-003-department-as-unique-agency-topic-with-imprint-dpp.md",
+        "document:adr:ORISO-Docs:ADR-010-platform-controlled-per-tenant-appearance-allowlist.md",
+        "document:adr:ORISO-Docs:ADR-009-global-topic-category-ownership-and-ai-assisted-translation.md"
+      ]
+    },
+    {
+      "id": "concept:platform-legal-text-hierarchy",
+      "name": "The legal-text hierarchy binds Agency, Tenant and Frontend",
+      "summary": "Three ADRs describe one chain. ADR-014 (shared legal-text objects, multi-topic agencies, topic-before-consent) governs AgencyService and Frontend; ADR-021 (legal-text hierarchy, generic versioning, consent text as a field of the DPP) governs TenantService and Frontend; ADR-022 (two consent gates, consent state as a session pointer, re-consent on change) governs UserService and Frontend. The graph shows the matching surfaces: AgencyService serves GET /agencies/{agencyId}/topics/{topicId}/legal, which the Frontend calls from normalizeDepartmentLegalResponse, and its legal_text / legal_text_version tables sit behind it. Admin's own legal-versions call against /service/tenantadmin/{*}/legal-versions is one of the {{stats.deadCalls}} unmatched source calls.",
+      "tags": [
+        "platform"
+      ],
+      "related": [
+        "document:adr:ORISO-Docs:ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent.md",
+        "document:adr:ORISO-Docs:ADR-021-legal-text-hierarchy-versioning-and-consent-text.md",
+        "document:adr:ORISO-Docs:ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
+        "service:ORISO-AgencyService",
+        "service:ORISO-TenantService",
+        "service:ORISO-Frontend",
+        "ORISO-AgencyService::endpoint:api/agencyservice.yaml:GET /agencies/{agencyId}/topics/{topicId}/legal"
+      ]
+    },
+    {
+      "id": "concept:platform-wildcard-matches-are-weaker-evidence",
+      "name": "{{stats.callsWildcard}} of {{stats.callsUnconfirmed}} calls_unconfirmed edges rest on a wildcard match",
+      "summary": "Every call match carries metadata.matchQuality, but only a full literal (or param-to-param) match with a known method is trusted enough to become a `calls` edge ({{stats.callsTotal}} of them) — everything weaker is kept as a separate `calls_unconfirmed` edge instead, same metadata, never dropped, but never counted toward depends_on weight, coverage, or 'this endpoint has a caller'. {{stats.callsWildcard}} of the {{stats.callsUnconfirmed}} `calls_unconfirmed` edges are wildcard matches, meaning a backend {param} segment was lined up against a literal segment on the caller side — most of them collapse onto GET /users/{username}, where the event-notification, user-draft, group-chat-settings, group-chat-roles and chat-occurrence callers are really hitting routes that neither the OpenAPI yaml nor a Spring annotation exposes under their own path (a real merge-time bug: a Spring-annotation candidate like GET /users/event-notifications used to be wildcard-absorbed into GET /users/{username} before it ever became its own node — fixed by requiring an EXACT match to treat a candidate as already documented). Treat a `calls_unconfirmed` edge as 'this call goes to UserService', not as 'this call reaches that specific operation'. A further set of candidate wildcard matches were deliberately rejected by the literal-sibling rule and reported as no-such-endpoint instead (see coverage.md's wildcard-match-precision section).",
+      "tags": [
+        "platform"
+      ],
+      "related": [
+        "service:ORISO-Frontend",
+        "service:ORISO-Admin",
+        "service:ORISO-UserService",
+        "ORISO-UserService::endpoint:api/userservice.yaml:GET /users/{username}"
+      ]
+    },
+    {
+      "id": "concept:platform-method-confidence-path-only",
+      "name": "{{stats.callsPathOnly}} of {{stats.callsUnconfirmed}} calls_unconfirmed edges know the path but not the HTTP method",
+      "summary": "metadata.methodConfidence is 'exact' for every `calls` edge by construction now — a `path-only` match (the scanner could recover the URL but not the verb, so the candidate points at whichever endpoint shares that path regardless of method) is always demoted to `calls_unconfirmed`, {{stats.callsPathOnly}} of the {{stats.callsUnconfirmed}} such edges. A path-only match without method filtering was measured at only 1/10 correct in a real review sample — that is exactly why it never counts as a confirmed `calls` edge. The direction of the arrow is still informative; the verb printed on the target node is not trustworthy for these.",
+      "tags": [
+        "platform"
+      ],
+      "related": [
+        "service:ORISO-Frontend",
+        "service:ORISO-UserService",
+        "ORISO-UserService::endpoint:spring:DoNotDisturbController#get:GET /users/notifications/do-not-disturb",
+        "ORISO-UserService::endpoint:spring:TutorialProgressController#getOwnProgress:GET /users/tutorials/progress",
+        "ORISO-UserService::endpoint:spring:ConsultantLiveAvailabilityController#setLiveChatAvailability:PUT /conversations/consultants/availability"
+      ]
+    }
+  ],
+  "tour": [
+    {
+      "order": 1,
+      "title": "The service map",
+      "description": "Start with the 17 repositories in the Services layer. Only four Spring services and Keycloak expose endpoints; ORISO-Frontend and ORISO-Admin are pure callers; ORISO-Helm deploys; the rest are present because the repo exists, not because this graph knows their wiring. The {{stats.dependsOn}} depends_on edges summarize confirmed source matches and consumed contracts; they are not a complete runtime call map.",
+      "nodeIds": [
+        "service:ORISO-Frontend",
+        "service:ORISO-Admin",
+        "service:ORISO-UserService",
+        "service:ORISO-AgencyService",
+        "service:ORISO-TenantService",
+        "service:ORISO-ConsultingTypeService",
+        "service:ORISO-Keycloak",
+        "service:ORISO-Helm"
+      ]
+    },
+    {
+      "order": 2,
+      "title": "Frontend to UserService: the heaviest edge",
+      "description": "73 of the Frontend's 91 calls go to UserService. The shape is one exported function per file under src/api/, each building a URL from userServiceOrigin. Follow apiGetUserData to GET /users/data, apiGetAskerSessionList to GET /users/sessions/askers and apiGetConsultantSessionList to GET /users/sessions/consultants — those three carry the entire inbox. Note that the consultant-session-list edge is path-only: the scanner recovered the URL but not the verb.",
+      "nodeIds": [
+        "ORISO-Frontend::function:src/api/apiGetUserData.ts:apiGetUserData",
+        "ORISO-UserService::endpoint:api/userservice.yaml:GET /users/data",
+        "ORISO-Frontend::function:src/api/apiGetAskerSessionList.ts:apiGetAskerSessionList",
+        "ORISO-UserService::endpoint:api/userservice.yaml:GET /users/sessions/askers",
+        "ORISO-Frontend::function:src/api/apiGetConsultantSessionList.ts:apiGetConsultantSessionList",
+        "ORISO-UserService::endpoint:api/userservice.yaml:GET /users/sessions/consultants"
+      ]
+    },
+    {
+      "order": 3,
+      "title": "Endpoints that no spec documents",
+      "description": "74 endpoint nodes exist only because a Spring @RestController annotation was read out of the Java source — case handover, tutorial progress, do-not-disturb, magic-link login and password reset all have live Frontend callers but no line in any OpenAPI yaml. If you look for these routes in api/*.yaml you will not find them, and a client generated from the specs alone will not have them.",
+      "nodeIds": [
+        "ORISO-Frontend::function:src/api/apiCaseHandover.ts:apiGetCaseHandoverReasons",
+        "ORISO-UserService::endpoint:spring:CaseHandoverController#listReasons:GET /users/case-handover/reasons",
+        "ORISO-Frontend::function:src/api/apiRequestMagicLinkLogin.ts:apiRequestMagicLinkLogin",
+        "ORISO-UserService::endpoint:spring:UserController#requestMagicLink:POST /users/magic-link/request",
+        "ORISO-Frontend::function:src/api/apiTutorialProgress.ts:apiGetTutorialProgress",
+        "ORISO-UserService::endpoint:spring:TutorialProgressController#getOwnProgress:GET /users/tutorials/progress"
+      ]
+    },
+    {
+      "order": 4,
+      "title": "Admin and the *admin families",
+      "description": "Admin's 88 calls land in the administration surfaces: /useradmin on UserService, /tenantadmin on TenantService, /agencyadmin on AgencyService. Watch how many distinct Admin functions collapse onto a single endpoint node — every DPA, DPIA, permission-policy and translation reader in src/api/tenant/ resolves to GET /tenantadmin, because the endpoint constant is a base URL that the caller extends at runtime.",
+      "nodeIds": [
+        "ORISO-Admin::function:src/api/accountInvites/accountInvites.ts:createAccountInvite",
+        "ORISO-UserService::endpoint:spring:AccountInviteController#createInvite:POST /useradmin/account-invites",
+        "ORISO-Admin::function:src/api/tenant/getDpaStatus.ts:getDpaStatus",
+        "ORISO-TenantService::endpoint:api/tenantservice.yaml:GET /tenantadmin",
+        "ORISO-Admin::function:src/api/agency/updateAgencyData.ts:updateAgencyData",
+        "ORISO-AgencyService::endpoint:api/agencyadminservice.yaml:GET /agencyadmin/agencies"
+      ]
+    },
+    {
+      "order": 5,
+      "title": "Who owns which data",
+      "description": "126 table and index nodes, and no shared schema: UserService owns 54 (sessions, chats, account invites, case handover, event notifications), TenantService 12 (admin controls, DPA signatures, DPIA master data, permission policies), AgencyService 7 (agency, agency_topic, legal texts), ConsultingTypeService 5 (topics and topic groups). ORISO-Database owns a further 48 nodes read out of the Helm MariaDB schema dumps — the same schemas seen from the deployment side.",
+      "nodeIds": [
+        "service:ORISO-UserService",
+        "service:ORISO-TenantService",
+        "service:ORISO-AgencyService",
+        "service:ORISO-ConsultingTypeService",
+        "service:ORISO-Database",
+        "ORISO-UserService::table:src/main/resources/db/changelog/changeset/0057_case_handover_request/case-handover-request.sql:case_handover_request",
+        "ORISO-TenantService::table:src/main/resources/db/changelog/changeset/0030_tenant_permission_policies/createTenantPermissionPolicies.sql:tenant_permission_policy"
+      ]
+    },
+    {
+      "order": 6,
+      "title": "Identity: Keycloak and the vendored OTP SPI",
+      "description": "Identities live in Keycloak, not in any Spring service. The only Keycloak endpoints this graph knows are the five /otp-config routes of the vendored SPI described in ADR-013, and none of them has a parsed caller — the Frontend's 2FA callers go through UserService's /users/2fa/* routes instead, and its logout call to /protocol/openid-connect/logout is classified external and left unmatched on purpose.",
+      "nodeIds": [
+        "service:ORISO-Keycloak",
+        "ORISO-Keycloak::endpoint:keycloak-image/otp-config-spi/api/keycloakextension.yaml:PUT /otp-config/setup-otp/{username}",
+        "document:adr:ORISO-Docs:ADR-013-2fa-via-vendored-otp-config-spi.md",
+        "ORISO-Frontend::function:src/api/apiTwoFactorAuth.ts:apiPutTwoFactorAuthApp",
+        "ORISO-UserService::endpoint:api/userservice.yaml:PUT /users/2fa/app"
+      ]
+    },
+    {
+      "order": 7,
+      "title": "Matrix and calls, as far as the graph reaches",
+      "description": "Chat content is not in any relational table — it lives on Matrix, and the backend only brokers access to it. UserService serves a small /matrix family (token, send, sync, upload, media download, sync registration) recovered entirely from Spring annotations, and the Frontend calls two of them: getMatrixAccessToken and apiRegisterMatrixRoomForSync. Everything past that boundary — the homeserver, Element Call, LiveKit — is described only by ADR-004, ADR-005 and the Frontend-local ADR-018; this graph traces no traffic into it.",
+      "nodeIds": [
+        "ORISO-Frontend::function:src/components/sessionCookie/getMatrixAccessToken.ts:getMatrixAccessToken",
+        "ORISO-UserService::endpoint:spring:MatrixMessageController#getCurrentUserMatrixToken:GET /matrix/me/token",
+        "ORISO-Frontend::function:src/api/apiMatrixSyncRegister.ts:apiRegisterMatrixRoomForSync",
+        "ORISO-UserService::endpoint:spring:MatrixSyncController#registerRoomForSync:POST /matrix/sync/register/{sessionId}",
+        "document:adr:ORISO-Docs:ADR-004-chat-keep-custom-ui-adopt-matrix-sdk-megolm.md",
+        "document:adr:ORISO-Docs:ADR-005-matrix-federation-off-dns-server-name.md",
+        "service:ORISO-ElementCall",
+        "service:ORISO-Livekit"
+      ]
+    },
+    {
+      "order": 8,
+      "title": "Decisions: legal texts and consent",
+      "description": "The densest ADR cluster is the legal one. ADR-014 puts shared legal-text objects on multi-topic agencies and demands topic-before-consent; ADR-021 defines the hierarchy, the generic versioning and the consent text as a field of the data-protection page; ADR-022 fixes exactly two consent gates with consent state as a session pointer. Together they govern AgencyService, TenantService, UserService and Frontend, and the endpoint that carries them is GET /agencies/{agencyId}/topics/{topicId}/legal.",
+      "nodeIds": [
+        "document:adr:ORISO-Docs:ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent.md",
+        "document:adr:ORISO-Docs:ADR-021-legal-text-hierarchy-versioning-and-consent-text.md",
+        "document:adr:ORISO-Docs:ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
+        "ORISO-AgencyService::endpoint:api/agencyservice.yaml:GET /agencies/{agencyId}/topics/{topicId}/legal",
+        "ORISO-Frontend::function:src/api/apiGetDepartmentLegal.ts:normalizeDepartmentLegalResponse",
+        "service:ORISO-AgencyService",
+        "service:ORISO-TenantService"
+      ]
+    },
+    {
+      "order": 9,
+      "title": "Decisions: deployment and operations",
+      "description": "ADR-011 makes Helm the only deployment path and replaces per-service subdomains with single-domain path-based routing — which is why every Frontend and Admin URL starts with a /service/... prefix that an ingress rule strips before the controller sees it. ORISO-Helm's six deploys edges are the same story from the chart side, and the two Deployments it ships without a matching repo (matrix, media-scanner) are deliberately left without an edge rather than guessed at.",
+      "nodeIds": [
+        "document:adr:ORISO-Docs:ADR-011-helm-only-deployment-single-domain-path-routing.md",
+        "service:ORISO-Helm",
+        "service:ORISO-Admin",
+        "service:ORISO-ElementCall",
+        "service:ORISO-TenantService",
+        "service:ORISO-AgencyService"
+      ]
+    },
+    {
+      "order": 10,
+      "title": "Where the evidence is weak",
+      "description": "Only an exact-method + exact-path match becomes a `calls` edge ({{stats.callsTotal}} of them); {{stats.callsUnconfirmed}} weaker matches are kept as `calls_unconfirmed` instead — never dropped, never counted as evidence. {{stats.callsWildcard}} of those are wildcard matches, most of them collapsing onto GET /users/{username}: they prove the call reaches UserService, not that it reaches that operation. Another {{stats.callsPathOnly}} are path-only, so the verb on the target node is not the verb the caller sends. Read any `calls_unconfirmed` arrow that touches these two nodes as a direction, not as a contract.",
+      "nodeIds": [
+        "ORISO-UserService::endpoint:api/userservice.yaml:GET /users/{username}",
+        "ORISO-Frontend::function:src/api/apiUserDrafts.ts:apiGetUserDrafts",
+        "ORISO-Frontend::function:src/api/apiGroupChatRoles.ts:apiRemoveGroupChatParticipant",
+        "ORISO-Frontend::function:src/api/apiGroupChatSettings.ts:apiCreateGroupChat",
+        "ORISO-UserService::endpoint:spring:DoNotDisturbController#get:GET /users/notifications/do-not-disturb"
+      ]
+    },
+    {
+      "order": 11,
+      "title": "The honest last stop: gaps",
+      "description": "{{stats.endpointsOwnUncalled}} of {{stats.endpointsOwn}} own endpoints have no CONFIRMED caller here — and unlike before Problem A's own/consumed/external split, that is no longer inflated by duplicated consumed sibling contracts; what remains is Admin's partial parse coverage, the {{stats.callsUnconfirmed}} weaker `calls_unconfirmed` matches that deliberately don't count toward this, and the fact that no service-to-service Java client is traced at all. What is a genuine gap, not an artefact: {{stats.deadCalls}} frontend/admin calls hit routes no controller serves (own OpenAPI/Spring check AND git-grep both agree), split into legacy pre-Matrix messaging, an appointment/caldav surface that AgencyService never implemented, and an 'other' group. Fix the dead calls before trusting the uncalled list.",
+      "nodeIds": [
+        "service:ORISO-Frontend",
+        "service:ORISO-Admin",
+        "service:ORISO-UserService",
+        "service:ORISO-AgencyService",
+        "service:ORISO-Keycloak",
+        "ORISO-UserService::endpoint:spring:AccountInviteController#getInvite:GET /users/account-invites/{token}"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+node_modules/
+__pycache__/
+*.pyc
+out/
+
+# Real generated graph inputs belong in verification artifacts, never in source.
+platform/fixtures/

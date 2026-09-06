@@ -1,0 +1,88 @@
+{
+  "tour": [
+    {
+      "order": 1,
+      "title": "Where the application starts",
+      "description": "`src/index.tsx` mounts the app and `src/App.tsx` sets up providers and the router. `src/AdminApp.tsx` is the authenticated shell, and `src/pages/lazyPages.ts` is the single registry of code-split routes. Read these first: every route you will later touch is referenced here.",
+      "nodeIds": ["file:src/index.tsx", "file:src/App.tsx", "file:src/AdminApp.tsx", "file:src/pages/lazyPages.ts"]
+    },
+    {
+      "order": 2,
+      "title": "Configuration and environment",
+      "description": "`src/appConfig.ts` resolves the backend base URLs and a few endpoint switches; `.env.example` lists the runtime variables (Keycloak URL, realm and client id, API and app URL, cookie domain and secure flag). `vite.config.ts` wires the dev server. Knowing these prevents most local-setup confusion.",
+      "nodeIds": ["file:src/appConfig.ts", "file:.env.example", "file:vite.config.ts"]
+    },
+    {
+      "order": 3,
+      "title": "How a request reaches the backend",
+      "description": "All HTTP traffic goes through `src/api/fetchData.ts`, which builds the URL, attaches auth and CSRF, and throws `FetchErrorWithOptions`. `src/utils/extractApiErrorMessage.ts` turns those errors into user-facing text and `src/utils/parseHalResponse.ts` unwraps HAL payloads. Learn this trio before writing any new API function.",
+      "nodeIds": ["file:src/api/fetchData.ts", "file:src/utils/extractApiErrorMessage.ts", "file:src/utils/parseHalResponse.ts"]
+    },
+    {
+      "order": 4,
+      "title": "Login, tokens and the auth BFF",
+      "description": "`src/api/auth/auth.ts` bootstraps the session and keeps refresh timers running. Tokens live in cookies, local storage or memory depending on configuration. The cookies themselves are set by a small Node backend-for-frontend, `scripts/auth-bff-handlers.mjs`, which talks to Keycloak; `vite.authBffPlugin.ts` mounts it during development.",
+      "nodeIds": ["file:src/api/auth/auth.ts", "file:src/api/auth/authBffClient.ts", "file:scripts/auth-bff-handlers.mjs", "file:vite.authBffPlugin.ts"]
+    },
+    {
+      "order": 5,
+      "title": "Roles become UI permissions",
+      "description": "`src/constants/userRolesToPermissions.ts` maps Keycloak roles to permissions, merges them and applies the restricted-agency-admin ceiling. `src/hooks/useUserPermission.ts` is what components ask, and `src/utils/adminPortalAccess.ts` decides who may enter the portal at all. Nearly every 'why is this hidden?' question ends here.",
+      "nodeIds": ["file:src/constants/userRolesToPermissions.ts", "file:src/hooks/useUserPermission.ts", "file:src/utils/adminPortalAccess.ts"]
+    },
+    {
+      "order": 6,
+      "title": "The page shell and navigation",
+      "description": "`src/components/Layout/Initialization.tsx` loads the user, tenant and feature data once after login. `ProtectedPageLayoutWrapper.tsx` renders the authenticated frame, `adminNavItems.ts` defines the sidebar entries and `AdminMobileNav.tsx` is the mobile counterpart. Adding a page means touching the nav items too.",
+      "nodeIds": ["file:src/components/Layout/Initialization.tsx", "file:src/components/Layout/ProtectedPageLayoutWrapper.tsx", "file:src/components/Layout/adminNavItems.ts", "file:src/components/AdminMobileNav/AdminMobileNav.tsx"]
+    },
+    {
+      "order": 7,
+      "title": "Tenant administration, the largest domain",
+      "description": "`src/pages/Tenants/Edit/index.tsx` is a tab host; the real content lives in `src/components/Tenants`. Start with GeneralSettings (name, logo, colours) and the ThemeBuilder, which writes the tenant's Material 3 scheme. This is the pattern the other tenant tabs follow.",
+      "nodeIds": ["file:src/pages/Tenants/Edit/index.tsx", "file:src/components/Tenants/GeneralSettings/index.tsx", "file:src/components/Tenants/GeneralSettings/components/ThemeBuilder/index.tsx", "file:src/hooks/useTenantDataMutation.hook.ts"]
+    },
+    {
+      "order": 8,
+      "title": "Agency and department editing",
+      "description": "`src/pages/Agency/Edit/index.tsx` composes GeneralInformation, RegistrationSettings (with post-code ranges) and DepartmentDetails. `src/api/agency/updateAgencyData.ts` and `departmentDetails.ts` are the write paths, and `agencySort.ts` shows how the list is ordered — a good example of pure logic extracted from a page.",
+      "nodeIds": ["file:src/pages/Agency/Edit/index.tsx", "file:src/pages/Agency/Edit/components/RegistrationSettings/index.tsx", "file:src/api/agency/updateAgencyData.ts", "file:src/pages/Agency/List/agencySort.ts"]
+    },
+    {
+      "order": 9,
+      "title": "One table for every kind of user",
+      "description": "Consultants, agency admins, tenant admins and platform admins share `UserManagementTable.tsx`; the visible columns come from `useUserTableColumns.tsx` and the per-cohort configuration from `userTableConfigs.ts`. `src/pages/users/Edit/index.tsx` is the corresponding editor. Read the configs before adding a column.",
+      "nodeIds": ["file:src/pages/users/management/UserManagementTable.tsx", "file:src/pages/users/management/useUserTableColumns.tsx", "file:src/pages/users/management/userTableConfigs.ts", "file:src/pages/users/Edit/index.tsx"]
+    },
+    {
+      "order": 10,
+      "title": "Invites: composer, CSV import, progress board",
+      "description": "`src/api/accountInvites/accountInvites.ts` exposes the whole invite lifecycle (create, send, resend, revoke, email templates). The UI is the composer, a CSV bulk path (`parseInviteCsv.ts`) and a progress board whose phase model is the pure `derivePhases.ts` — the best-tested logic file in the repo.",
+      "nodeIds": ["file:src/api/accountInvites/accountInvites.ts", "file:src/pages/Links/InviteComposer.tsx", "file:src/pages/Links/csv/parseInviteCsv.ts", "file:src/pages/Links/inviteProgress/derivePhases.ts"]
+    },
+    {
+      "order": 11,
+      "title": "The DPA gate: why the UI can be blocked",
+      "description": "Before a tenant's data processing agreement is signed, `DpaBlockerGate.tsx` blocks the admin area based on `getDpaGate.ts` and the predicate in `dpaBlockerGate.ts`. The admin can sign in place or forward the signing to an authorised person through `dpaForward.ts`, which also enforces a forward budget.",
+      "nodeIds": ["file:src/components/DpaBlocker/DpaBlockerGate.tsx", "file:src/api/tenant/getDpaGate.ts", "file:src/utils/dpaBlockerGate.ts", "file:src/api/tenantOnboarding/dpaForward.ts"]
+    },
+    {
+      "order": 12,
+      "title": "Legal texts, consent and DPIA",
+      "description": "`LegalSettings/index.tsx` edits tenant and agency legal texts with drafts, version selection and consent-placeholder validation; publishing may trigger machine translation via `src/api/tenant/translation.ts`. The DPIA lives next door in `DpiaSettings` with its own sections and text gateway.",
+      "nodeIds": ["file:src/components/Tenants/LegalSettings/index.tsx", "file:src/components/Tenants/LegalSettings/utils/consentTextValidation.ts", "file:src/api/tenant/translation.ts", "file:src/components/Tenants/DpiaSettings/utils/dpiaSections.ts"]
+    },
+    {
+      "order": 13,
+      "title": "Statistics as pure data shaping",
+      "description": "`src/pages/Statistic.tsx` is thin on purpose: `statisticDashboardData.ts` builds week starts, topic series and target statistics from the raw response of `getDashboardStatistics.ts`, and `statisticPreferences.ts` remembers the filters. Change the maths in the data module, not in the page.",
+      "nodeIds": ["file:src/pages/Statistic.tsx", "file:src/pages/Statistic/statisticDashboardData.ts", "file:src/api/statistic/getDashboardStatistics.ts", "file:src/pages/Statistic/statisticPreferences.ts"]
+    },
+    {
+      "order": 14,
+      "title": "Design system, MUI migration and tests",
+      "description": "New form controls come from `src/components/mui/MuiFormField`; `docs/admin-mui9-antd-inventory.md` records what is still AntD. Theming flows from `themeSeeds.ts` through `useAdminTheme.hook.ts`. Tests run on Vitest with the setup in `src/test/setup.ts`, which is why AntD notices need explicit cleanup.",
+      "nodeIds": ["file:src/components/mui/MuiFormField/index.tsx", "document:docs/admin-mui9-antd-inventory.md", "file:src/utils/themeSeeds.ts", "file:src/test/setup.ts"]
+    }
+  ]
+}

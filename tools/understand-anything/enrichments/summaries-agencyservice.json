@@ -1,0 +1,1366 @@
+{
+ "meta": {
+  "generatedAt": "2026-09-04T14:25:28Z",
+  "generatedBy": "claude-sonnet-file-summaries-2026-09",
+  "repo": "ORISO-AgencyService",
+  "filesSelected": 104,
+  "filesSummarized": 104,
+  "functionsSummarized": 121,
+  "filtered": {
+   "kept": 225,
+   "dropped": 0
+  }
+ },
+ "nodeSummaries": {
+  "file:src/main/java/de/caritas/cob/agencyservice/api/service/AgencyService.java": {
+   "summary": "Core agency read/search service: filters by postcode/consulting type/topic, adds white-spot fallback, provisions/decrypts Matrix service-account credentials. Collaborators: AgencyRepository, MatrixProvisioningService, TenantService. Pers...",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/service/AgencyService.java:getAgencies": {
+   "summary": "Finds agencies by postcode/consulting type/topic, shuffles results, adds white-spot fallback when empty.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/service/AgencyService.java:provisionMatrixCredentials": {
+   "summary": "Ensures a Matrix service account exists for the agency, encrypts and stores the password.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/service/AgencyService.java:getMatrixCredentials": {
+   "summary": "Loads an agency and decrypts its stored Matrix credentials.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/service/AgencyService.java:getAgenciesTopics": {
+   "summary": "Returns all topic ids used across the current tenant's agencies.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/service/AgencyService.java:setAgencyOffline": {
+   "summary": "Marks an agency offline.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/controller/AgencyAdminController.java": {
+   "summary": "REST controller implementing AgencyadminApi: CRUD, search, postcode ranges, agency-ID allocation, department legal texts (DPP/imprint), admin controls. Delegates to AgencyAdminService, AgencyAdminSearchService, legal services.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/controller/AgencyAdminController.java:getAgency": {
+   "summary": "Returns one agency's full admin view.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/controller/AgencyAdminController.java:searchAgencies": {
+   "summary": "Paginated/sorted agency search for the admin panel.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/controller/AgencyAdminController.java:createAgency": {
+   "summary": "Validates and creates a new agency.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/controller/AgencyAdminController.java:updateAgency": {
+   "summary": "Validates and updates an existing agency.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/controller/AgencyAdminController.java:reserveAgencyId": {
+   "summary": "Reserves an agency ID (AUTO or manual) for an open invite (TEN-INV-U2).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyAdminService.java": {
+   "summary": "Admin-facing agency CRUD: create/update/delete, tenant assignment, cross-tenant platform-admin lookup, agency-ID reservation guard, provisions Matrix + syncs AppointmentService on create.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyAdminService.java:findAgency": {
+   "summary": "Loads an agency and builds its full admin response, enriching topics/settings.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyAdminService.java:findAgencyById": {
+   "summary": "Loads the raw Agency entity, bypassing the tenant filter for cross-tenant admin contexts.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyAdminService.java:createAgency": {
+   "summary": "Builds an Agency from AgencyDTO inside a reservation-guarded transaction, provisions Matrix.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyAdminService.java:updateAgency": {
+   "summary": "Applies an UpdateAgencyDTO to an existing agency.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyAdminService.java:deleteAgency": {
+   "summary": "Validates and soft-deletes an agency.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/LegalTextAdminService.java": {
+   "summary": "ADR-014 shared legal-text library CRUD (tenant-scoped, full-admin only): list/create/update legal texts, assign to a department slot, sanitises via LegalContentSanitizer, records ADR-021 version history.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/LegalTextAdminService.java:listLegalTexts": {
+   "summary": "Lists the tenant's legal texts of one kind with department usage counts.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/LegalTextAdminService.java:createLegalText": {
+   "summary": "Creates a tenant-owned legal text, sanitised, optionally published.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/LegalTextAdminService.java:updateLegalText": {
+   "summary": "Updates label/content/publication of a tenant-owned legal text, preserving consent on unpublish.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/LegalTextAdminService.java:assignDepartmentLegalText": {
+   "summary": "Assigns or clears a shared legal text on a department's DPP/imprint slot.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/SearchResultLinkBuilder.java": {
+   "summary": "HAL link builder for the agency admin search result: builds self/next/previous/search pagination links via AgencyadminApi.searchAgencies.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/SearchResultLinkBuilder.java:buildSearchResultLinks": {
+   "summary": "Assembles self/next/previous/search HAL links from page/perPage/totalResults/keyword.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/service/CentralDataProtectionTemplateService.java": {
+   "summary": "Renders the tenant's Freemarker privacy-policy template for an agency, resolving officer/responsible contact placeholders, falling back to the main tenant when single-tenant override is disallowed. Collaborators: TenantService, TemplateR...",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/service/CentralDataProtectionTemplateService.java:renderPrivacyTemplateWithRenderedPlaceholderValues": {
+   "summary": "Renders the governing tenant's privacy template with the agency's data-protection contacts substituted.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearchService.java": {
+   "summary": "JPA Criteria-API search for the admin agency list: keyword match on name/postcode/city, tenant/agency-admin scoping predicates, sorting and pagination. Base class; tenant-aware subclass overrides predicates.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearchService.java:searchAgencies": {
+   "summary": "Runs keyword or unfiltered search with pagination, builds HAL result DTO.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearchService.java:searchAgenciesByKeyword": {
+   "summary": "Criteria query filtered by keyword and admin scope.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearchService.java:searchAgenciesWithoutKeywordFilter": {
+   "summary": "Criteria query filtered only by admin scope.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/service/legal/LegalTextInheritanceResolver.java": {
+   "summary": "ADR-021 legal-text resolution ladder: department -> agency -> Träger -> platform operator, one canonical place replacing duplicated client-side fallback logic. Calls TenantService; degrades gracefully on outage.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/service/legal/LegalTextInheritanceResolver.java:resolveDpp": {
+   "summary": "Resolves the data protection policy in force for a department across all four levels.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/service/legal/LegalTextInheritanceResolver.java:resolveImprint": {
+   "summary": "Resolves the imprint in force for a department (never consent-bearing).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/service/matrix/MatrixProvisioningService.java": {
+   "summary": "Talks to Matrix Synapse admin API to register/reset agency service accounts (nonce+HMAC registration, password rotation on conflict). Gotcha: parses nonce/mac manually, swallows failures returning empty.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/service/matrix/MatrixProvisioningService.java:ensureAgencyAccount": {
+   "summary": "Registers (or resets password of) a Matrix service account for an agency, returns credentials.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/tenant/TenantResolverService.java": {
+   "summary": "Orchestrates the chain of TenantResolver strategies (header, subdomain, technical-user, access-token) differently for authenticated vs anonymous requests, cross-validating claim vs header/subdomain.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/tenant/TenantResolverService.java:resolve": {
+   "summary": "Resolves the current request's tenant id via the appropriate resolver chain.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/allocation/AgencyIdAllocationService.java": {
+   "summary": "TEN-INV-U2 agency-ID allocation contract: FREE/RESERVED/ASSIGNED states, DB-arbitrated reservation (insert-before-check), AUTO/manual reserve, release, and creation guard against open reservations.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/allocation/AgencyIdAllocationService.java:checkAvailability": {
+   "summary": "Returns FREE/RESERVED/ASSIGNED for a given agency id.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/allocation/AgencyIdAllocationService.java:nextFreeId": {
+   "summary": "Finds the next free id above/below a given id, skipping assigned and reserved.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/allocation/AgencyIdAllocationService.java:reserve": {
+   "summary": "Reserves a specific or auto-picked smallest free agency id, validating tenant.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/allocation/AgencyIdAllocationService.java:release": {
+   "summary": "Releases an open reservation.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/allocation/AgencyIdAllocationService.java:guardAssignmentAgainstOpenReservations": {
+   "summary": "DB-level guard run inside agency creation to prevent double-issuing a reserved id.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyTopicMergeService.java": {
+   "summary": "Merges requested topic ids into an agency's AgencyTopic list for create/update, distinguishing omitted vs explicitly-cleared topic fields to avoid silently wiping links.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyTopicMergeService.java:getMergedTopics": {
+   "summary": "Builds the AgencyTopic list to persist on agency creation from requested topic ids.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyTopicMergeService.java:getMergedTopicsForUpdate": {
+   "summary": "Builds the AgencyTopic list to persist on update, respecting null-vs-empty semantics.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminFullResponseDTOBuilder.java": {
+   "summary": "Builds AgencyAdminFullResponseDTO from an Agency entity: fields, HAL links, legal content maps, demographics, and per-department publication-state markers (ORISO-Admin#583).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminFullResponseDTOBuilder.java:fromAgency": {
+   "summary": "Builds the full admin response DTO with embedded agency and HAL links.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/AgencyPostcodeRangeResponseDTOBuilder.java": {
+   "summary": "Builds AgencyPostcodeRangeResponseDTO with HAL self/update/delete links from a set of AgencyPostcodeRange entities.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/AgencyPostcodeRangeResponseDTOBuilder.java:build": {
+   "summary": "Assembles the postcode-range response DTO with embedded ranges and HAL links.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/controller/AgencyController.java": {
+   "summary": "Public/internal REST controller implementing AgenciesApi: agency search by postcode/consulting-type/topic, per-agency-id lookup, department legal text read, Matrix credential endpoints. Delegates to AgencyService, DepartmentLegalService.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/controller/AgencyController.java:getAgencies": {
+   "summary": "Public agency search filtered by consultingType/postcode/topic/age/gender/counsellingRelation.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/controller/AgencyController.java:getDepartmentLegal": {
+   "summary": "Returns the department's published DPP and imprint for end users.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/controller/AgencyController.java:getAgenciesByIds": {
+   "summary": "Returns agencies for a list of ids.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/controller/AgencyController.java:provisionAgencyMatrixCredentials": {
+   "summary": "Triggers Matrix credential provisioning for an agency.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/PostcodeRangeValidator.java": {
+   "summary": "Validates postcode range format (5 digits, from<=to) and rejects overlaps against an agency's existing ranges.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/PostcodeRangeValidator.java:validatePostcodeRanges": {
+   "summary": "Checks digit format and from<=to ordering, throws InvalidPostcodeException.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/PostcodeRangeValidator.java:validatePostcodeRangeForIntersection": {
+   "summary": "Checks new ranges don't overlap existing stored ranges.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/LegalContentSanitizer.java": {
+   "summary": "Canonical sanitisation path for admin-authored legal HTML: OWASP-sanitises per translation, validates __meta-suffixed keys as strict JSON schema instead of HTML-sanitising them. Gotcha: sanitizer breaks {{token}} which LegalTextTokens mu...",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/LegalContentSanitizer.java:sanitizeToJson": {
+   "summary": "Sanitises a language->HTML content map and serialises it to stored JSON.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/AgencyLinksBuilder.java": {
+   "summary": "HAL link builder for a single agency: self/delete/update/postcodeRanges links via AgencyadminApi.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/hallink/AgencyLinksBuilder.java:buildAgencyLinks": {
+   "summary": "Assembles self/delete/update/postcodeRanges HAL links for an agency.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyTopicEnrichmentService.java": {
+   "summary": "Enriches an Agency's AgencyTopic list with topic metadata (name/description/status) fetched from TopicService; feature-toggled.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyTopicEnrichmentService.java:enrichAgencyWithTopics": {
+   "summary": "Fills each AgencyTopic's transient topicData from the TopicService topic list.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/AgencyPostcodeRangeAdminService.java": {
+   "summary": "Admin CRUD for an agency's postcode ranges: find, delete-all, create/update with validation and diffing against existing ranges. Collaborators: AgencyPostcodeRangeRepository, AgencyAdminService.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/AgencyPostcodeRangeAdminService.java:findPostcodeRangesForAgency": {
+   "summary": "Loads and builds the response DTO for an agency's postcode ranges.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/AgencyPostcodeRangeAdminService.java:createPostcodeRanges": {
+   "summary": "Validates and saves new postcode ranges for an agency.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/AgencyPostcodeRangeAdminService.java:updatePostcodeRange": {
+   "summary": "Validates and replaces an agency's postcode ranges.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/ConsentTextService.java": {
+   "summary": "Sanitises/validates the DPP consent sentence (ADR-021 decision 4): enforces mandatory {{legal_links}} token on publish, 'absent keeps' semantics for updates, since a Träger's text replaces the platform's.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/ConsentTextService.java:sanitizeAndValidate": {
+   "summary": "Sanitises consent text and enforces the mandatory token when publishing.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/ConsentTextService.java:resolveForUpdate": {
+   "summary": "Resolves consent text for an update, preserving stored value when the field is absent.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/DepartmentDataProtectionService.java": {
+   "summary": "Publishes/reads a department's own DPP (agency x topic): sanitises, IDOR + cross-tenant guards, drops shared-text reference on publish (ADR-014), records ADR-021 version history.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/DepartmentDataProtectionService.java:publishDepartmentDataPrivacy": {
+   "summary": "Sanitises and stores a department's DPP + consent text, publish or draft.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/DepartmentDataProtectionService.java:getDepartmentDataPrivacy": {
+   "summary": "Reads the department's stored or referenced DPP for the editor.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/DepartmentImprintService.java": {
+   "summary": "Publishes/reads a department's own imprint (Impressum), mirroring DepartmentDataProtectionService but never consent-bearing; independent draft/published lifecycle.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/DepartmentImprintService.java:publishDepartmentImprint": {
+   "summary": "Sanitises and stores a department's imprint, publish or draft.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/DepartmentImprintService.java:getDepartmentImprint": {
+   "summary": "Reads the department's stored or referenced imprint for the editor.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/LegalAdminAccessGuard.java": {
+   "summary": "Shared authorisation checks for legal-text admin endpoints: restricted-admin agency ownership, full-agency-admin-only library guard, cross-tenant match — extracted so version endpoints cannot drift from publish endpoints.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/LegalAdminAccessGuard.java:assertRestrictedAdminOwnsAgency": {
+   "summary": "Rejects a restricted admin acting on an agency they don't administer.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/LegalAdminAccessGuard.java:assertFullAgencyAdmin": {
+   "summary": "Rejects restricted admins from tenant-wide legal-text library access.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/LegalAdminAccessGuard.java:assertCallerTenantMatches": {
+   "summary": "Rejects a full admin acting on another tenant's agency.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/LegalTextTokens.java": {
+   "summary": "Closed set of {{key}} placeholders (legal_links/Beratungsstelle/Thema) for Träger-authored legal text: literal substitution (never Freemarker), plus repair of OWASP sanitizer's comment-injection on known tokens.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/LegalTextTokens.java:restoreKnownTokens": {
+   "summary": "Un-breaks the OWASP sanitizer's {<!-- -->{ split for the three known tokens only.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/LegalTextTokens.java:substitute": {
+   "summary": "Literal token->value replacement, no expression language.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/repository/agencytopic/AgencyTopic.java": {
+   "summary": "JPA entity for a department (agency x topic): own DPP/imprint content + publication status, ADR-014 shared-text references, opening-hours/phone/floor overrides; validates reference kind/tenant on persist.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/service/matrix/AgencyMatrixPasswordCipher.java": {
+   "summary": "AES/ECB encrypts/decrypts agency Matrix service-account passwords at rest with an 'enc:' prefix convention shared with ORISO UserService.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/service/matrix/AgencyMatrixPasswordCipher.java:encrypt": {
+   "summary": "AES-encrypts a plaintext password, prefixing 'enc:'.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/service/matrix/AgencyMatrixPasswordCipher.java:decrypt": {
+   "summary": "Decrypts an 'enc:'-prefixed stored password.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/tenant/TenantContext.java": {
+   "summary": "ThreadLocal holder for the current request's tenant id, set by HttpTenantFilter and read throughout the tenant-aware repository/service layer.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/tenant/TenantContext.java:getCurrentTenant": {
+   "summary": "Returns the thread-local current tenant id.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/tenant/TenantContext.java:setCurrentTenant": {
+   "summary": "Sets the thread-local current tenant id.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/config/apiclient/TenantServiceApiClient.java": {
+   "summary": "Extends the generated TenantService ApiClient to flatten a 'filter' object query param into individual non-null key/value pairs via bean introspection.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearchTenantSupportService.java": {
+   "summary": "Primary tenant-aware override of AgencyAdminSearchService, adding a tenant-scoping predicate (or IS NOT NULL for the technical/super tenant 0).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/PostcodeRangeTransformer.java": {
+   "summary": "Converts a semicolon-separated postcode-range string (e.g. 79100-79112;80437) to/from AgencyPostcodeRange entities.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/PostcodeRangeTransformer.java:extractPostcodeRanges": {
+   "summary": "Parses a postcode-range string into AgencyPostcodeRange entities.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/PostcodeRangeTransformer.java:buildPostcodeRange": {
+   "summary": "Serialises AgencyPostcodeRange entities back into the range string.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/LegalTextVersionService.java": {
+   "summary": "ADR-021 publication history writer: snapshots a published wording (deduplicated), supersedes the previous version, or closes the current version on unpublish. No authorisation of its own.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/LegalTextVersionService.java:recordPublication": {
+   "summary": "Records a new immutable version unless byte-identical to the current one.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/LegalTextVersionService.java:supersedeCurrent": {
+   "summary": "Closes the currently-in-force version without opening a new one.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/validation/AgencyValidator.java": {
+   "summary": "Validator registry: runs all Spring-registered ConcreteAgencyValidator beans annotated for create/update against a ValidateAgencyDTO built from AgencyDTO/UpdateAgencyDTO.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/validation/AgencyValidator.java:validate": {
+   "summary": "Runs all @CreateAgencyValidator beans against a new AgencyDTO.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/repository/agencyidreservation/AgencyIdReservation.java": {
+   "summary": "JPA entity for one open agency-ID reservation; agencyId is the primary key so the DB itself prevents double reservation. Implements Persistable to force INSERT semantics.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/service/TenantHibernateInterceptor.java": {
+   "summary": "Hibernate Interceptor that stamps tenantId onto TenantAware entities on flush when multitenancy is enabled and no tenant is set yet.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/service/legal/PublicLegalTextRenderer.java": {
+   "summary": "Substitutes server-owned placeholders (Beratungsstelle/Thema names) into resolved public legal text, leaving {{legal_links}} for the client. Never uses Freemarker; escapes values before insertion.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/service/legal/PublicLegalTextRenderer.java:render": {
+   "summary": "Substitutes server-owned tokens into a resolved legal text's content and consent text.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/service/securityheader/SecurityHeaderSupplier.java": {
+   "summary": "Builds outgoing HTTP headers for internal service calls: Keycloak bearer token plus a generated CSRF cookie/header pair.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/service/securityheader/SecurityHeaderSupplier.java:getKeycloakAndCsrfHttpHeaders": {
+   "summary": "Builds headers with both Keycloak bearer token and CSRF cookie/header.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/service/securityheader/SecurityHeaderSupplier.java:getCsrfHttpHeaders": {
+   "summary": "Builds headers with only a generated CSRF cookie/header pair.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/config/security/JwtAuthConverter.java": {
+   "summary": "Converts a Spring Security JWT into a JwtAuthenticationToken, merging default JWT authorities with realm roles resolved via AuthorisationService.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/config/security/JwtAuthConverter.java:convert": {
+   "summary": "Builds a JwtAuthenticationToken with merged granted authorities.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/SearchResult.java": {
+   "summary": "Simple generic holder pairing a result list with its total size, used by the Criteria-API agency search.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencyadmincontrol/AgencyAdminControlsFacade.java": {
+   "summary": "Super-admin-only facade over AgencyAdminControlsService: gates get/update of platform-wide agency admin controls.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencyadmincontrol/AgencyAdminControlsFacade.java:getAgencyAdminControls": {
+   "summary": "Returns platform agency admin controls after a super-admin check.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencyadmincontrol/AgencyAdminControlsFacade.java:updateAgencyAdminControls": {
+   "summary": "Updates platform agency admin controls after a super-admin check.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/service/AppointmentService.java": {
+   "summary": "Syncs agency master data to and deletes agencies from ORISO-AppointmentService via its generated API client, feature-toggled.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/service/AppointmentService.java:syncAgencyDataToAppointmentService": {
+   "summary": "Pushes an agency's id/name to AppointmentService.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/service/AppointmentService.java:deleteAgency": {
+   "summary": "Notifies AppointmentService that an agency was deleted.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/service/DepartmentLegalService.java": {
+   "summary": "Public unauthenticated read side of a department's legal texts: delegates resolution to LegalTextInheritanceResolver, then substitutes via PublicLegalTextRenderer; rejects deleted agencies.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/service/DepartmentLegalService.java:getPublishedDepartmentLegal": {
+   "summary": "Loads and renders a department's in-force DPP and imprint.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/service/DepartmentLegalService.java:hasResolvableDpp": {
+   "summary": "Whether a DPP is in force anywhere on the inheritance chain.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/service/TopicEnrichmentService.java": {
+   "summary": "Enriches raw topic ids with names fetched from TopicService for the agencies-topics endpoint; feature-toggled.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/service/TopicEnrichmentService.java:enrichTopicIdsWithTopicData": {
+   "summary": "Maps topic ids to AgencyTopicsDTO with resolved names.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/service/legal/DepartmentLegalPublicationState.java": {
+   "summary": "Admin-only predicate: whether a department has left the inherited legal text (published one of its own). Deliberately distinct from the public 'is anything in force' question.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/service/legal/DepartmentLegalPublicationState.java:hasPublishedDpp": {
+   "summary": "True when the department has a published DPP of its own (referenced or inline).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/service/legal/DepartmentLegalPublicationState.java:hasPublishedImprint": {
+   "summary": "True when the department has a published imprint of its own.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/validation/InputSanitizer.java": {
+   "summary": "OWASP HtmlPolicyBuilder-backed sanitizer for user-authored legal HTML; mirrors ORISO-TenantService's sanitizer, restricting heading anchor ids to a safe charset.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/validation/InputSanitizer.java:sanitizeAllowingFormattingAndLinks": {
+   "summary": "Sanitises HTML allowing formatting, links, images and safe anchor ids.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/validation/DeleteAgencyValidator.java": {
+   "summary": "Pre-deletion validator: blocks deleting an agency that still has assigned consultants (queried from UserAdminService); fails open (allows deletion) if UserAdminService is unreachable.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/validation/DeleteAgencyValidator.java:validate": {
+   "summary": "Checks the agency has no assigned consultants before allowing deletion.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/repository/agency/Agency.java": {
+   "summary": "JPA entity for the Beratungsstelle: contact/geo/opening-hours fields, Matrix credentials, agency-wide DPP/imprint/consent text, Hibernate tenant filter, postcode-range and topic associations.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/repository/agencypostcoderange/AgencyPostcodeRange.java": {
+   "summary": "JPA entity for one postcode-from/to range belonging to an agency; equals/hashCode by range bounds, Hibernate tenant filter.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/repository/legaltext/LegalText.java": {
+   "summary": "JPA entity for an ADR-014 shared legal text owned by a tenant: kind/label/content/consentText/publicationStatus, referenced by multiple departments.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/service/ConsultingTypeService.java": {
+   "summary": "Fetches and caches extended consulting-type data from ORISO-ConsultingTypeService.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/service/ConsultingTypeService.java:getExtendedConsultingTypeResponseDTO": {
+   "summary": "Cached lookup of a consulting type's extended settings.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/service/TenantHeaderSupplier.java": {
+   "summary": "Adds/reads the 'tenantId' HTTP header used to propagate tenant context to and from downstream service calls.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/service/TenantHeaderSupplier.java:addTenantHeader": {
+   "summary": "Adds the current tenant id as a header when multitenancy is enabled.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/service/TenantHeaderSupplier.java:getTenantFromHeader": {
+   "summary": "Reads the tenantId header from the current request.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/service/matrix/MatrixConfig.java": {
+   "summary": "Configuration properties (matrix.*) for the Matrix Synapse admin API: URL, registration shared secret, server name, admin credentials.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/workflow/DeleteAgencyService.java": {
+   "summary": "Batch job body: purges every agency marked for deletion, each in its own transaction via AgencyPurgeTransaction so one failure doesn't roll back the whole batch.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/workflow/DeleteAgencyService.java:deleteAgenciesMarkedForDeletion": {
+   "summary": "Finds all soft-deleted agencies and purges each individually, logging failures.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/config/resttemplate/RestTemplateConfig.java": {
+   "summary": "Configures the primary RestTemplate (2s connect/5s read timeout) and a separate matrixRestTemplate (10s read) with a shared CustomResponseErrorHandler.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/filter/SubdomainExtractor.java": {
+   "summary": "Extracts the current request's subdomain from the server name using Guava InternetDomainName, used by SubdomainTenantResolver.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/filter/SubdomainExtractor.java:getCurrentSubdomain": {
+   "summary": "Extracts the subdomain from the current HTTP request's server name.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/AgencyServiceApplication.java": {
+   "summary": "Spring Boot application entry point with @EnableScheduling for the agency-deletion cron job.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyPostcodeValidator.java": {
+   "summary": "Validates postcode is a 5-digit string on agency create/update, registered via @CreateAgencyValidator/@UpdateAgencyValidator.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyPostcodeValidator.java:validate": {
+   "summary": "Rejects a non-5-digit postcode.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/tenant/TenantAspect.java": {
+   "summary": "AOP aspect enabling Hibernate's tenantFilter before repository method execution, unless the repository is @TenantUnaware or the caller is the technical tenant.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/tenant/TenantAspect.java:beforeQueryAspect": {
+   "summary": "Enables and parameterises the Hibernate tenant filter before a repository call.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/workflow/AgencyPurgeTransaction.java": {
+   "summary": "Purges one agency in its own REQUIRES_NEW transaction (deletes postcode ranges explicitly; topics cascade via JPA) so a failure is attributable and confined per-agency.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/workflow/AgencyPurgeTransaction.java:purge": {
+   "summary": "Deletes an agency's postcode ranges then the agency itself in a fresh transaction.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/workflow/DeleteAgenciesMarkedForDeletionScheduler.java": {
+   "summary": "Cron-scheduled entry point (agency.deleteworkflow.cron) that sets the technical tenant context and runs DeleteAgencyService.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/workflow/DeleteAgenciesMarkedForDeletionScheduler.java:performDeletionWorkflow": {
+   "summary": "Sets technical tenant context and triggers the deletion workflow.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/config/apiclient/ConsultingTypeServiceApiControllerFactory.java": {
+   "summary": "Factory building a configured ConsultingTypeControllerApi client bound to the configured base URL and shared RestTemplate.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/filter/HttpTenantFilter.java": {
+   "summary": "Servlet filter that resolves and sets TenantContext for the request lifecycle (skipping actuator/swagger/favicon paths), clearing it afterward. Active only when multitenancy.enabled.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/filter/HttpTenantFilter.java:doFilterInternal": {
+   "summary": "Resolves and sets the tenant for whitelisted-excluded requests, clears after the chain.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/allocation/AgencyIdStatus.java": {
+   "summary": "Enum: FREE/RESERVED/ASSIGNED state of an agency ID in the TEN-INV-U2 allocation contract.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/ConcreteAgencyValidator.java": {
+   "summary": "Marker interface implemented by pluggable agency-field validators, discovered via Spring's ApplicationContext by AgencyValidator.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/authorization/Authority.java": {
+   "summary": "Enum mapping Keycloak realm roles (agency-admin, tenant-admin, restricted-agency-admin, user, technical) to Spring Security authority strings.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/manager/consultingtype/whiteSpot/WhiteSpot.java": {
+   "summary": "Simple settings holder: whether a white-spot fallback agency is assigned for a consulting type and its id.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/model/AgencyMatrixCredentialsDTO.java": {
+   "summary": "Immutable DTO carrying an agency's decrypted Matrix user id and password, returned by internal credential endpoints.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/repository/TenantAware.java": {
+   "summary": "Marker interface for JPA entities that carry a tenantId, implemented by Agency and AgencyPostcodeRange for the tenant-stamping interceptor.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/repository/agency/AgencyRepository.java": {
+   "summary": "Base repository for Agency with native postcode/topic/consulting-type search queries, reachable-topics query, and Matrix credential update; extended by tenant-aware/unaware variants.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/repository/agency/AgencyTenantAwareRepository.java": {
+   "summary": "Primary Agency repository when multitenancy is enabled: adds a tenant_id filter to every native search/lookup query.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/repository/agency/AgencyTenantUnawareRepository.java": {
+   "summary": "@TenantUnaware Agency repository bypassing the Hibernate tenant filter, used for cross-tenant platform-admin lookups and tenant resolution.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/repository/agencyadmincontrol/AgencyAdminControlEntity.java": {
+   "summary": "JPA entity holding the single platform-wide agency-admin-controls JSON blob and its update date.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/repository/agencyidreservation/AgencyIdReservationRepository.java": {
+   "summary": "Native-SQL queries for the TEN-INV-U2 allocation contract: smallest/next free id above/below a candidate, and a tenant-filter-bypassing assigned-row count.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/repository/agencypostcoderange/AgencyPostcodeRangeRepository.java": {
+   "summary": "CRUD repository for AgencyPostcodeRange: find/count/delete all by agency id.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/repository/agencytopic/AgencyTopicRepository.java": {
+   "summary": "Repository for department (agency x topic) rows: find by agency+topic, all by agency, and shared-text usage counts (ADR-014 'used by N').",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/repository/agencytopic/PublicationStatus.java": {
+   "summary": "Enum DRAFT/PUBLISHED for a department's legal-text publication state.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/repository/legaltext/LegalTextKind.java": {
+   "summary": "Enum DPP/IMPRINT: the two kinds of department legal texts a Träger can author (ADR-014).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/repository/legaltext/LegalTextLevel.java": {
+   "summary": "Enum DEPARTMENT/AGENCY/SHARED: which level of the ADR-021 ladder a stored legal text belongs to.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/repository/legaltext/LegalTextVersion.java": {
+   "summary": "JPA entity: one immutable, append-only snapshot of a published legal text, keyed by surrogate id (never publishedAt) with supersededAt marking history.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/service/AgencySearch.java": {
+   "summary": "Simple search-parameter holder (postcode/consultingType/topic/age/gender/counsellingRelation as Optionals) for public agency search.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/service/legal/LegalTextSourceLevel.java": {
+   "summary": "Enum DEPARTMENT/AGENCY/TENANT/PLATFORM/NONE: which rung of the ADR-021 ladder a resolved legal text came from.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/service/legal/ResolvedLegalText.java": {
+   "summary": "Record carrying a resolved legal text's content, consent text, source level and version id (the identifier ORISO-UserService pins a recorded consent to).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/service/LogService.java": {
+   "summary": "Static logging helper wrapping SLF4J with stack-trace formatting for database/bad-request/generic errors.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencyadmincontrol/AgencyAdminControlsService.java": {
+   "summary": "Reads/writes the single platform-wide AgencyAdminControlEntity JSON blob, converting to/from AgencyAdminControls DTO, defaulting on blank/unparseable content.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencyadmincontrol/AgencyAdminControlsService.java:getControls": {
+   "summary": "Loads and converts the stored agency admin controls, defaulting if absent.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencyadmincontrol/AgencyAdminControlsService.java:updateControls": {
+   "summary": "Converts and persists new agency admin controls.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/department/DepartmentDetailsService.java": {
+   "summary": "Stores/reads department-level contact-detail overrides (opening hours, phone extension, floor/location) that fall back to the agency's own values when null (ORISO-Admin#197).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/department/DepartmentDetailsService.java:updateDepartmentDetails": {
+   "summary": "Stores normalized override values for a department.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/department/DepartmentDetailsService.java:getDepartmentDetails": {
+   "summary": "Reads a department's raw overrides for the admin form.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyDataProtectionValidationService.java": {
+   "summary": "Validates the data-protection responsible-entity contact is complete for the selected type (officer/agency/alternative), relaxed via a dev-mode flag for testing profiles.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyDataProtectionValidationService.java:validate": {
+   "summary": "Runs all data-protection-responsible-entity completeness checks.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/config/AuthenticatedUserConfig.java": {
+   "summary": "Request-scoped bean producing AuthenticatedUser from the JWT claims (userId, username, tenantId, realm roles), decoding Base32-encoded usernames.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/config/AuthenticatedUserConfig.java:getAuthenticatedUser": {
+   "summary": "Builds the request-scoped AuthenticatedUser from JWT claims.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/LegalTextVersionAdminService.java": {
+   "summary": "Read side of the ADR-021 publication history for the admin panel: lists department/agency version history and fetches one version, re-deriving and re-checking the owner for every id.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/LegalTextVersionAdminService.java:listDepartmentVersions": {
+   "summary": "Lists a department's DPP/imprint publication history.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/LegalTextVersionAdminService.java:getVersion": {
+   "summary": "Fetches one archived version, authorising against its re-derived owner.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/UserAdminService.java": {
+   "summary": "Client wrapper over ORISO-UserAdminService: agency-type change propagation to consultants, admin-user lookup, and consultants-of-agency listing.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/UserAdminService.java:adaptRelatedConsultantsForChange": {
+   "summary": "Notifies UserAdminService of an agency type change.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/UserAdminService.java:getAdminUserAgencyIds": {
+   "summary": "Returns the agency ids a restricted admin administers.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/UserAdminService.java:getConsultantsOfAgency": {
+   "summary": "Lists consultants assigned to an agency.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/service/TenantService.java": {
+   "summary": "Client wrapper over ORISO-TenantService: cached lookups by subdomain/tenantId/single-tenant, plus main-tenant resolution for single-domain multitenancy.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/service/TenantService.java:getRestrictedTenantDataByTenantId": {
+   "summary": "Cached tenant data lookup by id.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/service/TenantService.java:getRestrictedTenantDataBySubdomain": {
+   "summary": "Cached tenant data lookup by subdomain.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/service/TenantService.java:getMainTenant": {
+   "summary": "Resolves the platform's main tenant under single-domain multitenancy.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/tenant/AccessTokenTenantResolver.java": {
+   "summary": "Resolves tenant id from the JWT 'tenantId' claim (via SecurityContext or a manually-parsed Authorization header for pre-auth contexts).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/tenant/AccessTokenTenantResolver.java:resolve": {
+   "summary": "Extracts tenantId from JWT claims.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/tenant/MultitenancyWithSingleDomainTenantResolver.java": {
+   "summary": "Resolves tenant for single-domain multitenancy: prefers an agencyId header lookup, else resolves the main tenant subdomain via ApplicationSettingsService/TenantService, falling back to tenant 0.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/tenant/MultitenancyWithSingleDomainTenantResolver.java:resolve": {
+   "summary": "Resolves tenant id for single-domain multitenancy requests.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/config/apiclient/ApplicationSettingsApiClient.java": {
+   "summary": "Extends the generated ApplicationSettingsService ApiClient to flatten a 'filter' query param via bean introspection, mirroring TenantServiceApiClient.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/config/apiclient/TopicServiceApiClient.java": {
+   "summary": "Extends the generated TopicService ApiClient to flatten a 'filter' query param via bean introspection, mirroring TenantServiceApiClient.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/config/apiclient/UserAdminApiClient.java": {
+   "summary": "Extends the generated UserAdminService ApiClient to flatten a 'filter' query param via bean introspection, mirroring TenantServiceApiClient.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/config/security/AuthorisationService.java": {
+   "summary": "Extracts realm roles from the current JWT and maps them to Spring Security GrantedAuthority via RoleAuthorizationAuthorityMapper.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/config/security/AuthorisationService.java:extractRealmAuthorities": {
+   "summary": "Maps a JWT's realm_access roles to GrantedAuthority set.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencySettingsService.java": {
+   "summary": "Converts an agency's stored settings JSON to/from the Settings DTO, tolerating unknown legacy keys and translating the retired featureAttachmentUploadDisabled flag (ADR-015).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencySettingsService.java:toSettings": {
+   "summary": "Parses stored settings JSON to Settings, applying legacy-flag translation.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencySettingsService.java:toSettingsJson": {
+   "summary": "Serialises Settings to JSON, stripping agencyAdminControls.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/controller/VersionController.java": {
+   "summary": "Exposes /version and /version/info reporting Java/Spring/Spring Boot version info loaded from a classpath properties file with hardcoded defaults.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/controller/VersionController.java:getVersion": {
+   "summary": "Returns basic version info map.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/controller/VersionController.java:getVersionInfo": {
+   "summary": "Returns structured java/spring/application version info.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/tenant/SubdomainTenantResolver.java": {
+   "summary": "Resolves tenant id by looking up the current request's subdomain via TenantService.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/tenant/SubdomainTenantResolver.java:resolve": {
+   "summary": "Resolves tenant id from the request's subdomain.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/tenant/TechnicalUserTenantResolver.java": {
+   "summary": "Resolves tenant id to 0 (technical tenant) when the JWT carries the 'technical' realm role.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/tenant/TechnicalUserTenantResolver.java:resolve": {
+   "summary": "Returns tenant 0 for technical-user JWTs, else empty.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/service/ApplicationSettingsService.java": {
+   "summary": "Cached client wrapper over ORISO-ApplicationSettingsService's getApplicationSettings endpoint.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/service/ApplicationSettingsService.java:getApplicationSettings": {
+   "summary": "Cached fetch of platform application settings.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/api/service/TopicService.java": {
+   "summary": "Cached client wrapper over ORISO-TopicService's getAllTopics endpoint, using the caller's own bearer token.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/api/service/TopicService.java:getAllTopics": {
+   "summary": "Cached fetch of all topics.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/config/CacheManagerConfig.java": {
+   "summary": "Caffeine-backed Spring CacheManager configuration for consultingType/tenant/topics/applicationSettings caches, replacing the ehcache2 bridge removed in Spring Boot 4.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/config/CacheManagerConfig.java:cacheManager": {
+   "summary": "Registers the four named Caffeine caches with their configured TTL/size.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/agencyservice/config/SecurityConfig.java": {
+   "summary": "Spring Security filter chain: disables default CSRF (custom StatelessCsrfFilter instead), stateless sessions, per-path authority rules (search/admin/tenant-admin/technical), JWT->authorities via JwtAuthConverter.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/agencyservice/config/SecurityConfig.java:filterChain": {
+   "summary": "Configures the full HTTP security filter chain and per-path authorization rules.",
+   "tags": [
+    "described"
+   ]
+  }
+ }
+}

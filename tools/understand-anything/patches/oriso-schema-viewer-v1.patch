@@ -1,0 +1,1027 @@
+diff --git a/understand-anything-plugin/packages/core/src/schema.ts b/understand-anything-plugin/packages/core/src/schema.ts
+index a4c308a..5789a73 100644
+--- a/understand-anything-plugin/packages/core/src/schema.ts
++++ b/understand-anything-plugin/packages/core/src/schema.ts
+@@ -2,6 +2,7 @@ import { z } from "zod";
+ 
+ // Edge types (38 values across 9 categories)
+ export const EdgeTypeSchema = z.enum([
++  "exposes", "consumes", "owns", "governs", "calls_unconfirmed", "mentions", "proposes_for", "on_error", "compensates", // ORISO v1
+   "imports", "exports", "contains", "inherits", "implements",  // Structural
+   "calls", "subscribes", "publishes", "middleware",             // Behavioral
+   "reads_from", "writes_to", "transforms", "validates",        // Data flow
+@@ -446,7 +447,7 @@ export const GraphEdgeSchema = z.object({
+   direction: z.enum(["forward", "backward", "bidirectional"]),
+   description: z.string().optional(),
+   weight: z.number().min(0).max(1),
+-});
++}).passthrough();
+ 
+ export const LayerSchema = z.object({
+   id: z.string(),
+@@ -469,18 +470,21 @@ export const ProjectMetaSchema = z.object({
+   frameworks: z.array(z.string()),
+   description: z.string(),
+   analyzedAt: z.string(),
+-  gitCommitHash: z.string(),
+-});
++  gitCommitHash: z.string().nullable(),
++  sourceCommits: z.record(z.string(), z.string().regex(/^[0-9a-f]{40}$/)).optional(),
++}).passthrough();
+ 
+ export const KnowledgeGraphSchema = z.object({
++  schemaVersion: z.string().optional(),
++  generationId: z.string().optional(),
+   version: z.string(),
+-  kind: z.enum(["codebase", "knowledge", "design"]).optional(),
++  kind: z.enum(["codebase", "knowledge", "design", "oriso-platform", "oriso-super-graph"]).optional(),
+   project: ProjectMetaSchema,
+   nodes: z.array(GraphNodeSchema),
+   edges: z.array(GraphEdgeSchema),
+   layers: z.array(LayerSchema),
+   tour: z.array(TourStepSchema),
+-});
++}).passthrough();
+ 
+ export interface GraphIssue {
+   level: "auto-corrected" | "dropped" | "fatal";
+@@ -567,6 +571,23 @@ export function validateGraph(data: unknown): ValidationResult {
+     return { success: false, issues: [], fatal, errors: buildErrors([], fatal) };
+   }
+ 
++  // ORISO generations are machine-produced: a lossy repair would falsely certify
++  // missing dependencies. Preserve the exact schema extension or reject the graph.
++  if ((data as Record<string, unknown>).schemaVersion === "oriso.ua.graph/v1") {
++    const parsed = KnowledgeGraphSchema.safeParse(data);
++    const reject = (fatal: string): ValidationResult => ({ success: false, issues: [], fatal, errors: [fatal] });
++    if (!parsed.success) return reject(parsed.error.message);
++    const graph = parsed.data;
++    const ids = new Set(graph.nodes.map(n => n.id));
++    if (!ids.size || ids.size !== graph.nodes.length) return reject("Empty graph or duplicate node identities");
++    if (graph.project.gitCommitHash === null && !Object.keys(graph.project.sourceCommits ?? {}).length)
++      return reject("Aggregate graph requires an exact source commit vector");
++    if (graph.edges.some(e => !ids.has(e.source) || !ids.has(e.target)) ||
++        [...graph.layers, ...graph.tour].some(item => item.nodeIds.some(id => !ids.has(id))))
++      return reject("Dangling graph, layer or tour reference");
++    return {success: true, data: graph, issues: []};
++  }
++
+   const raw = data as Record<string, unknown>;
+ 
+   // Tier 1: Sanitize
+diff --git a/understand-anything-plugin/packages/core/src/types.ts b/understand-anything-plugin/packages/core/src/types.ts
+index 28cadca..281f18f 100644
+--- a/understand-anything-plugin/packages/core/src/types.ts
++++ b/understand-anything-plugin/packages/core/src/types.ts
+@@ -9,6 +9,7 @@ export type NodeType =
+ 
+ // Edge types (38 total in 9 categories: Structural, Behavioral, Data flow, Dependencies, Semantic, Infrastructure/Schema, Domain, Knowledge, Design)
+ export type EdgeType =
++  | "exposes" | "consumes" | "owns" | "governs" | "calls_unconfirmed" | "mentions" | "proposes_for" | "on_error" | "compensates"
+   | "imports" | "exports" | "contains" | "inherits" | "implements"  // Structural
+   | "calls" | "subscribes" | "publishes" | "middleware"              // Behavioral
+   | "reads_from" | "writes_to" | "transforms" | "validates"         // Data flow
+@@ -100,13 +101,16 @@ export interface ProjectMeta {
+   frameworks: string[];
+   description: string;
+   analyzedAt: string;
+-  gitCommitHash: string;
++  gitCommitHash: string | null;
++  sourceCommits?: Record<string, string>;
+ }
+ 
+ // Root KnowledgeGraph
+ export interface KnowledgeGraph {
+   version: string;
+-  kind?: "codebase" | "knowledge" | "design";
++  kind?: "codebase" | "knowledge" | "design" | "oriso-platform" | "oriso-super-graph";
++  schemaVersion?: string;
++  generationId?: string;
+   project: ProjectMeta;
+   nodes: GraphNode[];
+   edges: GraphEdge[];
+diff --git a/understand-anything-plugin/packages/dashboard/src/App.tsx b/understand-anything-plugin/packages/dashboard/src/App.tsx
+index 887477b..193ca3d 100644
+--- a/understand-anything-plugin/packages/dashboard/src/App.tsx
++++ b/understand-anything-plugin/packages/dashboard/src/App.tsx
+@@ -1,3 +1,4 @@
++import OrisoEvidenceStatus from "./components/OrisoEvidenceStatus";
+ import { useEffect, useState, useMemo, useCallback, lazy, Suspense } from "react";
+ import { validateGraph } from "@understand-anything/core/schema";
+ import type { GraphIssue } from "@understand-anything/core/schema";
+@@ -497,6 +498,7 @@ function DashboardContent({
+ 
+   return (
+     <div className="h-screen w-screen flex flex-col bg-root text-text-primary noise-overlay">
++      <OrisoEvidenceStatus />
+       {/* Header */}
+       <header className="flex items-center px-3 sm:px-5 py-3 bg-surface border-b border-border-subtle shrink-0 gap-2 sm:gap-4">
+         {/* Left — fixed */}
+@@ -677,7 +679,7 @@ function DashboardContent({
+       <SearchBar />
+ 
+       {/* Graph freshness warning banner */}
+-      {!loadError && <StalenessBanner freshness={graphFreshness} />}
++      {!loadError && graph?.schemaVersion !== 'oriso.ua.graph/v1' && <StalenessBanner freshness={graphFreshness} />}
+ 
+       {/* Validation warning banner */}
+       {allIssues.length > 0 && !loadError && (
+diff --git a/understand-anything-plugin/packages/dashboard/src/__tests__/edgeCategories.test.ts b/understand-anything-plugin/packages/dashboard/src/__tests__/edgeCategories.test.ts
+index eea6ef6..7f4a4e3 100644
+--- a/understand-anything-plugin/packages/dashboard/src/__tests__/edgeCategories.test.ts
++++ b/understand-anything-plugin/packages/dashboard/src/__tests__/edgeCategories.test.ts
+@@ -18,6 +18,7 @@ import type { EdgeType as CoreEdgeType } from "@understand-anything/core/types";
+  */
+ const EXPECTED_EDGE_TYPES = {
+   // structural (5)
++  exposes: true, consumes: true, owns: true, governs: true, calls_unconfirmed: true, mentions: true, proposes_for: true, on_error: true, compensates: true,
+   imports: true, exports: true, contains: true, inherits: true, implements: true,
+   // behavioral (4)
+   calls: true, subscribes: true, publishes: true, middleware: true,
+diff --git a/understand-anything-plugin/packages/dashboard/src/components/ContainerNode.tsx b/understand-anything-plugin/packages/dashboard/src/components/ContainerNode.tsx
+index e0d4f1c..af514fb 100644
+--- a/understand-anything-plugin/packages/dashboard/src/components/ContainerNode.tsx
++++ b/understand-anything-plugin/packages/dashboard/src/components/ContainerNode.tsx
+@@ -1,4 +1,5 @@
+ import { memo } from "react";
++import { Handle, Position } from "@xyflow/react";
+ import type { NodeProps, Node } from "@xyflow/react";
+ import { getLayerColor } from "./LayerLegend";
+ 
+@@ -18,7 +19,7 @@ export interface ContainerNodeData extends Record<string, unknown> {
+ 
+ export type ContainerFlowNode = Node<ContainerNodeData, "container">;
+ 
+-function ContainerNodeComponent({ data, width, height }: NodeProps<ContainerFlowNode>) {
++export function ContainerNodeComponent({ data, width, height }: NodeProps<ContainerFlowNode>) {
+   const color = getLayerColor(data.colorIndex);
+ 
+   const borderColor = data.isDiffAffected
+@@ -58,6 +59,9 @@ function ContainerNodeComponent({ data, width, height }: NodeProps<ContainerFlow
+         }
+       }}
+     >
++      {/* Portal and collapsed-atom edges stay attached to this container even
++          while its children are expanded. Keep both ports mounted in both states. */}
++      <Handle type="target" position={Position.Top} className="!bg-text-muted !w-2 !h-2" />
+       <div
+         className="flex items-center justify-between font-heading"
+         style={{
+@@ -91,6 +95,7 @@ function ContainerNodeComponent({ data, width, height }: NodeProps<ContainerFlow
+         </span>
+         <span style={{ color: "#a39787", fontSize: 11 }}>{data.childCount}</span>
+       </div>
++      <Handle type="source" position={Position.Bottom} className="!bg-text-muted !w-2 !h-2" />
+     </div>
+   );
+ }
+diff --git a/understand-anything-plugin/packages/dashboard/src/components/GraphView.tsx b/understand-anything-plugin/packages/dashboard/src/components/GraphView.tsx
+index ef2ffe8..7081d5c 100644
+--- a/understand-anything-plugin/packages/dashboard/src/components/GraphView.tsx
++++ b/understand-anything-plugin/packages/dashboard/src/components/GraphView.tsx
+@@ -298,7 +298,8 @@ function useOverviewGraph() {
+       id: `le-${i}`,
+       source: agg.sourceLayerId,
+       target: agg.targetLayerId,
+-      label: `${agg.count}`,
++      label: agg.edgeTypes.some(type => ["calls_unconfirmed", "mentions", "proposes_for"].includes(type)) ? `${agg.count} · hints` : `${agg.count}`,
++      ariaLabel: `Summary of ${agg.count} relationships: ${agg.edgeTypes.join(", ")}. Expand for direction and evidence.`,
+       style: {
+         stroke: "rgba(212,165,116,0.4)",
+         strokeWidth: Math.min(1 + Math.log2(agg.count + 1), 5),
+@@ -597,7 +598,8 @@ function useLayerDetailTopology(): LayerDetailTopology & {
+         id: `agg-${i}`,
+         source: agg.sourceContainerId,
+         target: agg.targetContainerId,
+-        label: String(agg.count),
++        label: agg.edgeTypes.some(type => ["calls_unconfirmed", "mentions", "proposes_for"].includes(type)) ? `${agg.count} · hints` : String(agg.count),
++        ariaLabel: `Summary of ${agg.count} relationships: ${agg.edgeTypes.join(", ")}. Expand for direction and evidence.`,
+         style: baseStyle,
+         labelStyle: {
+           fill: diffMode ? "rgba(163,151,135,0.3)" : "#a39787",
+@@ -1249,7 +1251,7 @@ function useLayerDetailGraph() {
+           source: realSrc,
+           target: realTgt,
+           label: m.type,
+-          style: { stroke: "rgba(212,165,116,0.5)", strokeWidth: 1.5 },
++          style: { stroke: "rgba(212,165,116,0.5)", strokeWidth: 1.5, strokeDasharray: ["calls_unconfirmed", "proposes_for", "mentions"].includes(m.type) ? "6 4" : undefined },
+           labelStyle: { fill: "#a39787", fontSize: 10 },
+         });
+       }
+@@ -1267,7 +1269,7 @@ function useLayerDetailGraph() {
+         source: e.source,
+         target: e.target,
+         label: e.type,
+-        style: { stroke: "rgba(212,165,116,0.5)", strokeWidth: 1.5 },
++        style: { stroke: "rgba(212,165,116,0.5)", strokeWidth: 1.5, strokeDasharray: ["calls_unconfirmed", "proposes_for", "mentions"].includes(e.type) ? "6 4" : undefined },
+         labelStyle: { fill: "#a39787", fontSize: 10 },
+       });
+     }
+diff --git a/understand-anything-plugin/packages/dashboard/src/components/MobileLayout.tsx b/understand-anything-plugin/packages/dashboard/src/components/MobileLayout.tsx
+index e292bcc..f327ee4 100644
+--- a/understand-anything-plugin/packages/dashboard/src/components/MobileLayout.tsx
++++ b/understand-anything-plugin/packages/dashboard/src/components/MobileLayout.tsx
+@@ -1,3 +1,4 @@
++import OrisoEvidenceStatus from "./OrisoEvidenceStatus";
+ import { lazy, Suspense, useEffect, useState } from "react";
+ import type { GraphIssue } from "@understand-anything/core/schema";
+ import { useDashboardStore } from "../store";
+@@ -82,6 +83,7 @@ export default function MobileLayout({
+ 
+   return (
+     <div className="h-screen w-screen flex flex-col bg-root text-text-primary noise-overlay">
++      <OrisoEvidenceStatus />
+       {/* Top bar */}
+       <header className="flex items-center gap-2 px-3 h-12 shrink-0 bg-surface border-b border-border-subtle">
+         <button
+@@ -136,7 +138,7 @@ export default function MobileLayout({
+       {searchOpen && <SearchBar />}
+ 
+       {/* Graph freshness warning */}
+-      {!loadError && <StalenessBanner freshness={graphFreshness} />}
++      {!loadError && graph?.schemaVersion !== 'oriso.ua.graph/v1' && <StalenessBanner freshness={graphFreshness} />}
+ 
+       {/* Validation warnings */}
+       {allIssues.length > 0 && !loadError && <WarningBanner issues={allIssues} />}
+diff --git a/understand-anything-plugin/packages/dashboard/src/components/NodeInfo.tsx b/understand-anything-plugin/packages/dashboard/src/components/NodeInfo.tsx
+index a92ad73..ebbd6bc 100644
+--- a/understand-anything-plugin/packages/dashboard/src/components/NodeInfo.tsx
++++ b/understand-anything-plugin/packages/dashboard/src/components/NodeInfo.tsx
+@@ -1,4 +1,6 @@
+ import { useState } from "react";
++import OrisoNodeEvidence from "./OrisoNodeEvidence";
++import { isOriso, sourceAtRevision } from "./orisoEvidenceModel";
+ import { useDashboardStore } from "../store";
+ import { useI18n } from "../contexts/I18nContext";
+ import type { NodeType, EdgeType, KnowledgeGraph, GraphNode } from "@understand-anything/core/types";
+@@ -219,7 +221,7 @@ function DomainNodeDetails({ node, graph }: { node: GraphNode; graph: KnowledgeG
+     );
+   }
+ 
+-  if (node.type === "flow") {
++  if (node.type === "flow" && !isOriso(graph)) {
+     const steps = graph.edges
+       .filter((e) => e.type === "flow_step" && e.source === node.id)
+       .sort((a, b) => a.weight - b.weight)
+@@ -308,6 +310,8 @@ export default function NodeInfo() {
+     );
+   }
+ 
++  const oriso = activeGraph ? isOriso(activeGraph) : false;
++  const revisionSource = activeGraph ? sourceAtRevision(node, activeGraph) : null;
+   const allEdges = activeGraph?.edges ?? [];
+   const connections = allEdges.filter(
+     (e) => e.source === node.id || e.target === node.id,
+@@ -419,17 +423,19 @@ export default function NodeInfo() {
+                 )}
+               </div>
+             </div>
+-            <button
++            {oriso ? (revisionSource ? <a href={revisionSource.href} target="_blank" rel="noopener noreferrer" className="shrink-0 text-[10px] font-semibold px-2.5 py-1 rounded border border-accent/30 text-accent">Source at revision</a> : <span className="text-[10px] text-text-muted">Source link unavailable</span>) : <button
+               type="button"
+               onClick={() => openCodeViewer(node.id)}
+               className="shrink-0 text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded border border-accent/30 text-accent hover:text-accent-bright hover:border-accent/60 transition-colors"
+             >
+               {t.common.openCode}
+-            </button>
++            </button>}
+           </div>
+         </div>
+       )}
+ 
++      {activeGraph && <OrisoNodeEvidence node={node} graph={activeGraph} onSelect={navigateToNode} />}
++
+       {node.languageNotes && (
+         <div className="mb-4">
+           <button
+diff --git a/understand-anything-plugin/packages/dashboard/src/components/OrisoEvidenceStatus.tsx b/understand-anything-plugin/packages/dashboard/src/components/OrisoEvidenceStatus.tsx
+new file mode 100644
+index 0000000..b3f71d1
+--- /dev/null
++++ b/understand-anything-plugin/packages/dashboard/src/components/OrisoEvidenceStatus.tsx
+@@ -0,0 +1,32 @@
++import { useDashboardStore } from '../store';
++
++declare const __ORISO_UA_STATUS__: {
++  generationId?: string;
++  verificationScope?: string;
++  channel?: string;
++  structuralAnalyzedAt?: string;
++  semanticReviewedAt?: string | null;
++  semanticCoverage?: Record<string, number | boolean>;
++  deliveredAt?: string;
++} | null;
++
++export default function OrisoEvidenceStatus() {
++  const graph = useDashboardStore(state => state.graph);
++  if (graph?.schemaVersion !== 'oriso.ua.graph/v1') return null;
++  const status = typeof __ORISO_UA_STATUS__ !== 'undefined' ? __ORISO_UA_STATUS__ : null;
++  const sameGeneration = status?.generationId === graph.generationId;
++  return <details className="max-h-[45vh] overflow-y-auto shrink-0 border-b border-border-subtle bg-surface px-3 py-2 text-xs text-text-secondary">
++    <summary className="cursor-pointer" aria-label="Graph source and delivery evidence">
++      Source evidence · Generation {graph.generationId?.slice(0, 8) ?? 'unsealed'} · Details
++    </summary>
++    <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-1 mt-2 break-words">
++      <dt>Channel</dt><dd>{sameGeneration ? status?.channel : 'Not provided by the verified launcher'}</dd>
++      <dt>Structure</dt><dd>{graph.project.analyzedAt}</dd>
++      <dt>Latest claim review</dt><dd>{sameGeneration && status?.semanticReviewedAt ? status.semanticReviewedAt : 'No reviewed claims; inspect each claim'}</dd>
++      <dt>Claims</dt><dd>{sameGeneration && status?.semanticCoverage ? JSON.stringify(status.semanticCoverage) : 'Claim-specific source status; no runtime acceptance implied'}</dd>
++      <dt>Last delivery</dt><dd>{sameGeneration ? status?.deliveredAt ?? 'Unknown' : 'Unknown for this generation'}</dd>
++      <dt>Source revisions</dt><dd className="break-all">{Object.entries(graph.project.sourceCommits ?? {[graph.project.name]: graph.project.gitCommitHash}).map(([repo,sha]) => <div key={repo}>{repo}: {sha ?? 'Unknown'}</div>)}</dd>
++    </dl>
++    <p className="mt-2">{sameGeneration && status?.verificationScope === "current-source" ? "Source freshness was checked when this viewer launched. Run ua-pull --verify again after source changes. " : "Source freshness is not verified for this viewer session. Use the installed ua-dashboard launcher. "}Read individual relation labels for certainty. Overview connections summarize relations and may include hints; expand them for direction and source evidence. Test references identify source files, not passing runtime tests.</p>
++  </details>;
++}
+diff --git a/understand-anything-plugin/packages/dashboard/src/components/OrisoNodeEvidence.tsx b/understand-anything-plugin/packages/dashboard/src/components/OrisoNodeEvidence.tsx
+new file mode 100644
+index 0000000..d3ef12c
+--- /dev/null
++++ b/understand-anything-plugin/packages/dashboard/src/components/OrisoNodeEvidence.tsx
+@@ -0,0 +1,181 @@
++import type {
++  GraphNode,
++  KnowledgeGraph,
++} from "@understand-anything/core/types";
++import {
++  evidenceRows,
++  isOriso,
++  metadata,
++  object,
++  orderedFlowSteps,
++  sourceAtRevision,
++  text,
++} from "./orisoEvidenceModel";
++export default function OrisoNodeEvidence({
++  node,
++  graph,
++  onSelect,
++}: {
++  node: GraphNode;
++  graph: KnowledgeGraph;
++  onSelect: (id: string) => void;
++}) {
++  if (!isOriso(graph)) return null;
++  const meta = metadata(node),
++    claim = object(meta.semanticClaim),
++    authority = object(meta.authority);
++  const source = sourceAtRevision(node, graph),
++    evidence = evidenceRows(node, graph),
++    steps = orderedFlowSteps(node, graph);
++  const branches = graph.edges.filter(
++    (e) =>
++      e.source === node.id &&
++      ["on_error", "compensates", "tested_by"].includes(e.type),
++  );
++  const hasClaim = Object.keys(claim).length > 0;
++  return (
++    <section
++      aria-label="Node source and claim evidence"
++      className="mb-4 rounded-lg border border-border-subtle bg-elevated/60 p-3 text-xs text-text-secondary space-y-2 break-words"
++    >
++      <h3 className="font-semibold text-accent">Source and claim evidence</h3>
++      {hasClaim ? (
++        <dl className="space-y-1">
++          <div>
++            <dt className="inline font-medium">Claim status: </dt>
++            <dd className="inline">{text(claim.status) ?? "unbound"}</dd>
++          </div>
++          <div>
++            <dt className="inline font-medium">Confidence: </dt>
++            <dd className="inline">
++              {text(claim.confidence) ?? "not reviewed"}
++            </dd>
++          </div>
++          <div>
++            <dt className="inline font-medium">Reviewed: </dt>
++            <dd className="inline">
++              {text(claim.reviewedAt) ?? "No review date recorded"}
++            </dd>
++          </div>
++          {text(claim.sourceCommit) && (
++            <div>
++              <dt>Claim source revision</dt>
++              <dd className="font-mono break-all">
++                {text(claim.sourceCommit)}
++              </dd>
++            </div>
++          )}
++          {text(claim.reason) && (
++            <div>
++              <dt className="sr-only">Assessment</dt>
++              <dd>{text(claim.reason)}</dd>
++            </div>
++          )}
++        </dl>
++      ) : (
++        <p>No source-bound semantic review recorded for this node.</p>
++      )}
++      {source && (
++        <p className="font-mono break-all">
++          {source.repository} · {source.commit}
++        </p>
++      )}
++      {text(meta.source) && <p>Extraction source: {text(meta.source)}</p>}
++      {Object.keys(authority).length > 0 && (
++        <p>
++          Document status: {text(authority.status) ?? "unknown"} · Owner:{" "}
++          {text(authority.owner) ?? "not declared"}. Authority depends on
++          explicit scope and supersession.
++        </p>
++      )}
++      <p>
++        Source evidence only. Test links identify test definitions; they do not
++        establish a passing execution or runtime acceptance.
++      </p>
++      {evidence.length > 0 && (
++        <details open>
++          <summary className="cursor-pointer">
++            Claim evidence ({evidence.length})
++          </summary>
++          <ul className="mt-2 space-y-2 max-h-64 overflow-y-auto">
++            {evidence.map((e, i) => (
++              <li key={`${e.id}:${i}`}>
++                {e.source ? (
++                  <>
++                    <a
++                      href={e.source.href}
++                      target="_blank"
++                      rel="noopener noreferrer"
++                      className="text-accent underline break-all"
++                    >
++                      {e.kind}: {e.source.filePath}
++                      {e.source.range
++                        ? ` · L${e.source.range[0]}–L${e.source.range[1]}`
++                        : ""}
++                    </a>
++                    <div className="font-mono text-[10px] break-all">
++                      {e.source.commit}
++                    </div>
++                  </>
++                ) : (
++                  <span>
++                    {e.kind}: {e.id} · source link unavailable
++                  </span>
++                )}
++              </li>
++            ))}
++          </ul>
++        </details>
++      )}
++      {steps.length > 0 && (
++        <div>
++          <h4 className="font-medium">Ordered source steps</h4>
++          <ol className="mt-1 space-y-1">
++            {steps.map((s) => (
++              <li key={s.node.id}>
++                <button
++                  type="button"
++                  className="text-left text-accent underline"
++                  onClick={() => onSelect(s.node.id)}
++                >
++                  {s.order}. {s.node.name}
++                </button>
++              </li>
++            ))}
++          </ol>
++        </div>
++      )}
++      {branches.length > 0 && (
++        <div className="space-y-2">
++          {branches.map((edge, i) => {
++            const target = graph.nodes.find((n) => n.id === edge.target);
++            return (
++              <div key={`${edge.target}:${i}`}>
++                <button
++                  type="button"
++                  className="text-left text-accent underline"
++                  onClick={() => onSelect(edge.target)}
++                >
++                  {edge.type === "tested_by"
++                    ? "Test source"
++                    : edge.type === "on_error"
++                      ? "On error"
++                      : "Compensation"}
++                  : {target?.name ?? edge.target}
++                </button>
++                {edge.type !== "tested_by" && target && <p>{target.summary}</p>}
++                <p className="text-[10px]">
++                  {text(metadata(edge).evidenceKind) ??
++                    "Unspecified confidence"}
++                  {edge.type === "tested_by"
++                    ? ` · Execution: ${text(metadata(edge).testExecution) ?? "not recorded"}`
++                    : ""}
++                </p>
++              </div>
++            );
++          })}
++        </div>
++      )}
++    </section>
++  );
++}
+diff --git a/understand-anything-plugin/packages/dashboard/src/components/__tests__/ContainerNodeHandles.test.ts b/understand-anything-plugin/packages/dashboard/src/components/__tests__/ContainerNodeHandles.test.ts
+new file mode 100644
+index 0000000..27cd0f5
+--- /dev/null
++++ b/understand-anything-plugin/packages/dashboard/src/components/__tests__/ContainerNodeHandles.test.ts
+@@ -0,0 +1,76 @@
++import { Children, isValidElement } from 'react';
++import { createRequire } from 'node:module';
++import type { ReactNode, ReactElement } from 'react';
++import { Handle, Position } from '@xyflow/react';
++import type { NodeProps } from '@xyflow/react';
++import { describe, expect, it } from 'vitest';
++import { ContainerNodeComponent } from '../ContainerNode';
++import type { ContainerFlowNode } from '../ContainerNode';
++
++// Exercise the exact edge-position algorithm used by the installed React Flow.
++const require = createRequire(import.meta.url);
++const xyflowRequire = createRequire(require.resolve('@xyflow/react'));
++const { getEdgePosition, ConnectionMode } = xyflowRequire('@xyflow/system');
++
++interface PortProps {
++  type?: 'source' | 'target';
++  position?: Position;
++  id?: string;
++  children?: ReactNode;
++}
++
++function ports(tree: ReactNode): ReactElement<PortProps>[] {
++  return Children.toArray(tree).flatMap(child => {
++    if (!isValidElement<PortProps>(child)) return [];
++    return child.type === Handle ? [child] : ports(child.props.children);
++  });
++}
++
++describe('container connections', () => {
++  for (const isExpanded of [false, true]) {
++    it(`retains anonymous source and target ports while ${isExpanded ? 'expanded' : 'collapsed'}`, () => {
++      const props: NodeProps<ContainerFlowNode> = {
++        id: 'container:api', type: 'container', width: 600, height: 400,
++        data: {
++          containerId: 'container:api', name: 'API', childCount: 3,
++          strategy: 'folder', colorIndex: 0, isExpanded, hasSearchHits: false,
++          isDiffAffected: false, isFocusedViaChild: false, onToggle: () => {},
++        },
++        dragging: false, draggable: false, selectable: false, deletable: false,
++        selected: false, isConnectable: false, zIndex: 0,
++        positionAbsoluteX: 0, positionAbsoluteY: 0,
++      };
++      // Inspect the actual rendered component tree. Portal and collapsed-atom
++      // edges omit sourceHandle/targetHandle, so named-only ports are insufficient.
++      const handles = ports(ContainerNodeComponent(props));
++      expect(handles.map(h => [h.props.type, h.props.position, h.props.id])).toEqual([
++        ['target', Position.Top, undefined],
++        ['source', Position.Bottom, undefined],
++      ]);
++      const measuredNode = (id: string, renderedPorts: ReactElement<PortProps>[]) => ({
++        id, measured: { width: 600, height: 400 },
++        internals: {
++          positionAbsolute: { x: 0, y: 0 },
++          handleBounds: Object.fromEntries(['source', 'target'].map(type => [type,
++            renderedPorts.filter(h => h.props.type === type).map(h => ({
++              id: null, type, nodeId: id, position: h.props.position,
++              x: 296, y: type === 'source' ? 396 : -4, width: 8, height: 8,
++            })),
++          ])),
++        },
++      });
++      const errors: string[] = [];
++      const edge = (renderedPorts: ReactElement<PortProps>[]) => getEdgePosition({
++        id: 'e-0', sourceNode: measuredNode('container:api', renderedPorts),
++        targetNode: measuredNode('container:other', handles),
++        sourceHandle: null, targetHandle: null, connectionMode: ConnectionMode.Strict,
++        onError: (code: string) => errors.push(code),
++      });
++      expect(edge([])).toBeNull();
++      expect(errors).toEqual(['008']);
++      errors.length = 0;
++      expect(edge(handles)).not.toBeNull();
++      expect(errors).toEqual([]);
++    });
++  }
++});
+diff --git a/understand-anything-plugin/packages/dashboard/src/components/__tests__/OrisoNodeEvidence.test.ts b/understand-anything-plugin/packages/dashboard/src/components/__tests__/OrisoNodeEvidence.test.ts
+new file mode 100644
+index 0000000..16fc9a1
+--- /dev/null
++++ b/understand-anything-plugin/packages/dashboard/src/components/__tests__/OrisoNodeEvidence.test.ts
+@@ -0,0 +1,238 @@
++import { readFileSync } from "node:fs";
++import { createElement } from "react";
++import { renderToStaticMarkup } from "react-dom/server";
++import OrisoNodeEvidence from "../OrisoNodeEvidence";
++import { describe, expect, it } from "vitest";
++import type {
++  KnowledgeGraph,
++  GraphNode,
++} from "@understand-anything/core/types";
++import {
++  sourceAtRevision,
++  evidenceRows,
++  orderedFlowSteps,
++} from "../orisoEvidenceModel";
++const sha = "a".repeat(40);
++const file = (extra: Record<string, unknown> = {}): GraphNode => ({
++  id: "ORISO-Test::file:src/a.ts",
++  type: "file",
++  name: "a.ts",
++  summary: "source",
++  tags: [],
++  complexity: "simple",
++  filePath: "src/a.ts",
++  lineRange: [2, 4],
++  ...{ sourceRepo: "ORISO-Test", metadata: { sourceCommit: sha } },
++  ...extra,
++});
++const graph = (): KnowledgeGraph => ({
++  version: "1.0.0",
++  schemaVersion: "oriso.ua.graph/v1",
++  project: {
++    name: "ORISO-Platform",
++    languages: [],
++    frameworks: [],
++    description: "",
++    analyzedAt: "",
++    gitCommitHash: null,
++    sourceCommits: { "ORISO-Test": sha },
++  },
++  nodes: [file()],
++  edges: [],
++  layers: [],
++  tour: [],
++});
++describe("ORISO exact revision evidence", () => {
++  it("pins the observed repository, full SHA, encoded relative file and exact range", () => {
++    const g = graph(),
++      n = file({ filePath: "docs/a #?.md" });
++    expect(sourceAtRevision(n, g)?.href).toBe(
++      `https://github.com/OpenResilienceInitiative/ORISO-Test/blob/${sha}/docs/a%20%23%3F.md#L2-L4`,
++    );
++  });
++  it("rejects unobserved repos, non-SHAs, traversal, URL/control paths and malformed ranges", () => {
++    for (const extra of [
++      { sourceRepo: "evil" },
++      { sourceRepo: "ORISO-Other" },
++      { metadata: { sourceCommit: "main" } },
++      ...[
++        "../a",
++        "/a",
++        "src/../a",
++        "src//a",
++        "src\\a",
++        "https://evil/a",
++        "src/%2e%2e/a",
++        "src/\na",
++      ].map((filePath) => ({ filePath })),
++      { lineRange: [0, 3] },
++      { lineRange: [4, 2] },
++    ])
++      expect(sourceAtRevision(file(extra), graph())).toBeNull();
++  });
++  it("does not give generic graphs an ORISO link and supports repository-only graphs", () => {
++    const g = graph();
++    delete g.schemaVersion;
++    expect(sourceAtRevision(file(), g)).toBeNull();
++    g.schemaVersion = "oriso.ua.graph/v1";
++    g.project.name = "ORISO-Test";
++    g.project.gitCommitHash = sha;
++    delete g.project.sourceCommits;
++    expect(
++      sourceAtRevision(file({ sourceRepo: undefined }), g)?.repository,
++    ).toBe("ORISO-Test");
++  });
++  it("resolves namespaced claim evidence and keeps a stale review pinned to its reviewed SHA", () => {
++    const g = graph(),
++      review = "b".repeat(40),
++      n = file({
++        id: "ORISO-Test::flow:reviewed",
++        type: "flow",
++        metadata: {
++          semanticClaim: {
++            sourceCommit: review,
++            evidence: [
++              {
++                nodeId: "file:src/a.ts",
++                sourceCommit: review,
++                sourceRange: [2, 4],
++                kind: "test-source",
++              },
++            ],
++          },
++        },
++      });
++    const rows = evidenceRows(n, g);
++    expect(rows).toHaveLength(1);
++    expect(rows[0].kind).toBe("test-source");
++    expect(rows[0].source?.href).toContain(`/blob/${review}/`);
++    expect(
++      evidenceRows(
++        file({
++          metadata: {
++            semanticClaim: {
++              evidence: [
++                { nodeId: "missing", sourceCommit: sha, kind: "source" },
++              ],
++            },
++          },
++        }),
++        g,
++      )[0].source,
++    ).toBeNull();
++  });
++  it("uses contains_flow order rather than edge weight and refuses duplicate orders", () => {
++    const g = graph(),
++      root = file({ id: "flow:r", type: "flow" }),
++      one = file({ id: "flow:1", name: "first" }),
++      two = file({ id: "flow:2", name: "second" });
++    g.nodes = [root, one, two];
++    g.edges = [
++      {
++        source: root.id,
++        target: two.id,
++        type: "contains_flow",
++        direction: "forward",
++        weight: 0.1,
++        ...{ metadata: { order: 2 } },
++      },
++      {
++        source: root.id,
++        target: one.id,
++        type: "contains_flow",
++        direction: "forward",
++        weight: 0.9,
++        ...{ metadata: { order: 1 } },
++      },
++    ];
++    expect(orderedFlowSteps(root, g).map((s) => s.node.name)).toEqual([
++      "first",
++      "second",
++    ]);
++    g.edges.push({ ...g.edges[0], target: one.id });
++    expect(orderedFlowSteps(root, g)).toEqual([]);
++  });
++});
++
++it("renders useful claim evidence without interpreting raw URLs or claiming passing tests", () => {
++  const g = graph(),
++    n = file({
++      metadata: {
++        semanticClaim: {
++          status: "stale",
++          confidence: "inferred",
++          reviewedAt: "2026-09-06T22:58:21Z",
++          sourceCommit: sha,
++          evidence: [
++            {
++              nodeId: "file:src/a.ts",
++              sourceCommit: sha,
++              sourceRange: [2, 4],
++              kind: "test-source",
++              href: "javascript:alert(1)",
++            },
++          ],
++        },
++      },
++    });
++  const html = renderToStaticMarkup(
++    createElement(OrisoNodeEvidence, { node: n, graph: g, onSelect: () => {} }),
++  );
++  expect(html).toContain("stale");
++  expect(html).toContain("inferred");
++  expect(html).toContain("test-source");
++  expect(html).toContain("do not establish a passing execution");
++  expect(html).toContain(`/blob/${sha}/src/a.ts#L2-L4`);
++  expect(html).not.toContain("javascript:");
++  delete g.schemaVersion;
++  expect(
++    renderToStaticMarkup(
++      createElement(OrisoNodeEvidence, {
++        node: n,
++        graph: g,
++        onSelect: () => {},
++      }),
++    ),
++  ).toBe("");
++});
++it.skipIf(!process.env.UA_REAL_PLATFORM_GRAPH)(
++  "all four actual platform walkthroughs show ordered steps and pinned source/test evidence",
++  () => {
++    const g: KnowledgeGraph = JSON.parse(
++      readFileSync(process.env.UA_REAL_PLATFORM_GRAPH!, "utf8"),
++    );
++    const roots = g.nodes.filter(
++      (n) =>
++        n.tags.includes("source-walkthrough") &&
++        g.edges.some((e) => e.source === n.id && e.type === "contains_flow"),
++    );
++    expect(roots).toHaveLength(4);
++    for (const root of roots) {
++      const steps = orderedFlowSteps(root, g);
++      expect(steps.length).toBeGreaterThan(1);
++      expect(steps.map((s) => s.order)).toEqual(steps.map((_, i) => i + 1));
++      const evidence = evidenceRows(root, g);
++      expect(evidence.length).toBeGreaterThan(0);
++      expect(evidence.every((e) => e.source !== null)).toBe(true);
++      expect(evidence.some((e) => e.kind === "test-source")).toBe(true);
++      const html = renderToStaticMarkup(
++        createElement(OrisoNodeEvidence, {
++          node: root,
++          graph: g,
++          onSelect: () => {},
++        }),
++      );
++      expect(html).toContain("Ordered source steps");
++      expect(html).toContain("source-current");
++      for (const step of steps)
++        expect(html).toContain(
++          step.node.name
++            .replace(/&/g, "&amp;")
++            .replace(/>/g, "&gt;")
++            .replace(/</g, "&lt;")
++            .replace(/"/g, "&quot;")
++            .replace(/'/g, "&#x27;"),
++        );
++    }
++  },
++);
+diff --git a/understand-anything-plugin/packages/dashboard/src/components/orisoEvidenceModel.ts b/understand-anything-plugin/packages/dashboard/src/components/orisoEvidenceModel.ts
+new file mode 100644
+index 0000000..d3f6144
+--- /dev/null
++++ b/understand-anything-plugin/packages/dashboard/src/components/orisoEvidenceModel.ts
+@@ -0,0 +1,143 @@
++import type {
++  GraphNode,
++  KnowledgeGraph,
++} from "@understand-anything/core/types";
++export const object = (value: unknown): Record<string, unknown> =>
++  value !== null && typeof value === "object" && !Array.isArray(value)
++    ? (value as Record<string, unknown>)
++    : {};
++export const metadata = (value: unknown) => object(object(value).metadata);
++export const text = (value: unknown) =>
++  typeof value === "string" ? value : null;
++export const isOriso = (graph: KnowledgeGraph) =>
++  graph.schemaVersion === "oriso.ua.graph/v1";
++const fullSHA = (value: unknown): value is string =>
++  typeof value === "string" && /^[a-f0-9]{40}$/i.test(value);
++const rangeOf = (value: unknown): [number, number] | null =>
++  Array.isArray(value) &&
++  value.length === 2 &&
++  value.every(Number.isSafeInteger) &&
++  value[0] >= 1 &&
++  value[1] >= value[0]
++    ? [value[0], value[1]]
++    : null;
++export function repositoryOf(
++  node: GraphNode,
++  graph: KnowledgeGraph,
++): string | null {
++  const declared = object(node).sourceRepo;
++  const repo =
++    declared !== undefined
++      ? declared
++      : node.id.includes("::")
++        ? node.id.split("::")[0]
++        : graph.project.name;
++  if (
++    typeof repo !== "string" ||
++    !/^ORISO-[A-Za-z0-9][A-Za-z0-9-]*$/.test(repo)
++  )
++    return null;
++  const observed = graph.project.sourceCommits;
++  return observed
++    ? Object.prototype.hasOwnProperty.call(observed, repo) &&
++      fullSHA(observed[repo])
++      ? repo
++      : null
++    : graph.project.name === repo && fullSHA(graph.project.gitCommitHash)
++      ? repo
++      : null;
++}
++export interface RevisionSource {
++  href: string;
++  repository: string;
++  commit: string;
++  filePath: string;
++  range: [number, number] | null;
++}
++// Never accept a URL from graph metadata. All links have this fixed origin and
++// organization; repository membership, full revision and each path segment are checked.
++export function sourceAtRevision(
++  node: GraphNode,
++  graph: KnowledgeGraph,
++  evidence?: Record<string, unknown>,
++): RevisionSource | null {
++  if (!isOriso(graph)) return null;
++  const repository = repositoryOf(node, graph);
++  const commit = evidence
++    ? evidence.sourceCommit
++    : (metadata(node).sourceCommit ??
++      graph.project.sourceCommits?.[repository ?? ""] ??
++      graph.project.gitCommitHash);
++  const filePath = node.filePath;
++  if (
++    !repository ||
++    !fullSHA(commit) ||
++    typeof filePath !== "string" ||
++    !filePath ||
++    /[\\:%\u0000-\u001f\u007f]/.test(filePath)
++  )
++    return null;
++  const segments = filePath.split("/");
++  if (segments.some((part) => !part || part === "." || part === ".."))
++    return null;
++  const rawRange = evidence ? evidence.sourceRange : node.lineRange;
++  const range = rangeOf(rawRange);
++  if (rawRange !== undefined && !range) return null;
++  let encoded: string;
++  try {
++    encoded = segments.map(encodeURIComponent).join("/");
++  } catch {
++    return null;
++  }
++  return {
++    repository,
++    commit,
++    filePath,
++    range,
++    href: `https://github.com/OpenResilienceInitiative/${repository}/blob/${commit}/${encoded}${range ? `#L${range[0]}-L${range[1]}` : ""}`,
++  };
++}
++export function evidenceRows(node: GraphNode, graph: KnowledgeGraph) {
++  const claim = object(metadata(node).semanticClaim);
++  const evidence = Array.isArray(claim.evidence) ? claim.evidence : [];
++  const repository = repositoryOf(node, graph);
++  return evidence.map((raw) => {
++    const item = object(raw),
++      id = text(item.nodeId);
++    const candidates = id
++      ? graph.nodes.filter(
++          (n) => n.id === id || (repository && n.id === `${repository}::${id}`),
++        )
++      : [];
++    const target = candidates.length === 1 ? candidates[0] : null;
++    const source =
++      target && repositoryOf(target, graph) === repository
++        ? sourceAtRevision(target, graph, item)
++        : null;
++    return {
++      id: id ?? "Unresolved evidence",
++      kind: text(item.kind) ?? "Unspecified evidence",
++      source,
++    };
++  });
++}
++export function orderedFlowSteps(node: GraphNode, graph: KnowledgeGraph) {
++  if (!isOriso(graph)) return [];
++  const edges = graph.edges.filter(
++    (e) => e.source === node.id && e.type === "contains_flow",
++  );
++  const rows = edges.map((e) => ({
++    order: metadata(e).order,
++    node: graph.nodes.find((n) => n.id === e.target),
++  }));
++  if (
++    rows.some(
++      (r) => !Number.isSafeInteger(r.order) || Number(r.order) < 1 || !r.node,
++    ) ||
++    new Set(rows.map((r) => r.order)).size !== rows.length
++  )
++    return [];
++  return rows
++    .map((r) => ({ order: Number(r.order), node: r.node! }))
++    .sort((a, b) => a.order - b.order);
++}
+diff --git a/understand-anything-plugin/packages/dashboard/src/store.ts b/understand-anything-plugin/packages/dashboard/src/store.ts
+index 884f428..7224ea6 100644
+--- a/understand-anything-plugin/packages/dashboard/src/store.ts
++++ b/understand-anything-plugin/packages/dashboard/src/store.ts
+@@ -29,11 +29,11 @@ export const ALL_COMPLEXITIES: Complexity[] = ["simple", "moderate", "complex"];
+ export const ALL_EDGE_CATEGORIES: EdgeCategory[] = ["structural", "behavioral", "data-flow", "dependencies", "semantic", "infrastructure", "domain", "knowledge", "design"];
+ 
+ export const EDGE_CATEGORY_MAP: Record<EdgeCategory, string[]> = {
+-  structural: ["imports", "exports", "contains", "inherits", "implements"],
+-  behavioral: ["calls", "subscribes", "publishes", "middleware"],
++  structural: ["owns", "imports", "exports", "contains", "inherits", "implements"],
++  behavioral: ["calls_unconfirmed", "exposes", "consumes", "on_error", "compensates", "calls", "subscribes", "publishes", "middleware"],
+   "data-flow": ["reads_from", "writes_to", "transforms", "validates"],
+   dependencies: ["depends_on", "tested_by", "configures"],
+-  semantic: ["related", "similar_to"],
++  semantic: ["governs", "mentions", "proposes_for", "related", "similar_to"],
+   infrastructure: ["deploys", "serves", "provisions", "triggers", "migrates", "documents", "routes", "defines_schema"],
+   domain: ["contains_flow", "flow_step", "cross_domain"],
+   knowledge: ["cites", "contradicts", "builds_on", "exemplifies", "categorized_under", "authored_by"],
+diff --git a/understand-anything-plugin/packages/dashboard/vite.config.ts b/understand-anything-plugin/packages/dashboard/vite.config.ts
+index 22391bc..8cf8684 100644
+--- a/understand-anything-plugin/packages/dashboard/vite.config.ts
++++ b/understand-anything-plugin/packages/dashboard/vite.config.ts
+@@ -290,6 +290,7 @@ type DashboardViteConfig = UserConfig & {
+ };
+ 
+ const config: DashboardViteConfig = {
++  define: { __ORISO_UA_STATUS__: JSON.stringify(JSON.parse(process.env.ORISO_UA_STATUS_JSON || "null")) },
+   test: {
+     environment: "node",
+     include: ["src/**/__tests__/**/*.test.ts"],
