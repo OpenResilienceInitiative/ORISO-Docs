@@ -49,7 +49,7 @@ def safe_diagnostic(text):
     # Relative request targets can still contain access tokens or signed queries.
     text = re.sub(r"([?&][^\s=?#&]+\s*=\s*)[^\s&#\"']*", r"\1[REDACTED]", text)
     text = re.sub(
-        r"(?im)(\b[\w-]*(?:token|password|secret|api[_-]?key|auth)[\w-]*\s*[:=]\s*)[^\r\n]+",
+        r"(?im)(\b[\w-]*(?:token|password|secret|api[_-]?key|auth)[\w-]*[\"']?\s*[:=]\s*)[^\r\n]+",
         r"\1[REDACTED]",
         text,
     )

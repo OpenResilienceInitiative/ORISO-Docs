@@ -124,6 +124,8 @@ class ReviewRegressions(unittest.TestCase):
 
     def test_command_stderr_credentials_are_redacted_before_tail_and_cli_output(self):
         samples = [
+            ('{"access_token": "SYNTHETIC_TOKEN"}', ["SYNTHETIC_TOKEN"]),
+            ('{"password":"SYNTHETIC_PASSWORD"}', ["SYNTHETIC_PASSWORD"]),
             (
                 "fatal: https://synthetic-user:URLSECRET@host.invalid/private?access_token=QUERYSECRET#FRAGMENTSECRET\n",
                 ["synthetic-user", "URLSECRET", "QUERYSECRET", "FRAGMENTSECRET"],
