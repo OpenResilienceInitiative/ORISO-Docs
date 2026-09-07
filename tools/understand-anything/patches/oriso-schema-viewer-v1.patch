@@ -174,7 +174,7 @@ index 28cadca..281f18f 100644
    nodes: GraphNode[];
    edges: GraphEdge[];
 diff --git a/understand-anything-plugin/packages/dashboard/src/App.tsx b/understand-anything-plugin/packages/dashboard/src/App.tsx
-index 887477b..193ca3d 100644
+index 887477b..4284ad1 100644
 --- a/understand-anything-plugin/packages/dashboard/src/App.tsx
 +++ b/understand-anything-plugin/packages/dashboard/src/App.tsx
 @@ -1,3 +1,4 @@
@@ -182,14 +182,17 @@ index 887477b..193ca3d 100644
  import { useEffect, useState, useMemo, useCallback, lazy, Suspense } from "react";
  import { validateGraph } from "@understand-anything/core/schema";
  import type { GraphIssue } from "@understand-anything/core/schema";
-@@ -497,6 +498,7 @@ function DashboardContent({
+@@ -497,8 +498,9 @@ function DashboardContent({
  
    return (
      <div className="h-screen w-screen flex flex-col bg-root text-text-primary noise-overlay">
 +      <OrisoEvidenceStatus />
        {/* Header */}
-       <header className="flex items-center px-3 sm:px-5 py-3 bg-surface border-b border-border-subtle shrink-0 gap-2 sm:gap-4">
+-      <header className="flex items-center px-3 sm:px-5 py-3 bg-surface border-b border-border-subtle shrink-0 gap-2 sm:gap-4">
++      <header className="flex flex-wrap items-center px-3 sm:px-5 py-3 bg-surface border-b border-border-subtle shrink-0 gap-2 sm:gap-4">
          {/* Left — fixed */}
+         <div className="flex items-center gap-3 sm:gap-5 shrink-0 min-w-0">
+           <h1 className="font-heading text-base sm:text-lg text-text-primary tracking-wide truncate max-w-[160px] sm:max-w-[220px] lg:max-w-none">
 @@ -677,7 +679,7 @@ function DashboardContent({
        <SearchBar />
  
