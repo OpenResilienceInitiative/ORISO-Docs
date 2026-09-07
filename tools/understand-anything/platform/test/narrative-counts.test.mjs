@@ -113,3 +113,72 @@ test(
     );
   },
 );
+
+test("authored ADR references use exact repository and full document path identities", () => {
+  const refs = [
+    ...narrative.concepts.flatMap((c) => c.related ?? []),
+    ...narrative.tour.flatMap((t) => t.nodeIds ?? []),
+  ].filter((id) => id.startsWith("document:adr:"));
+  assert.equal(new Set(refs).size, 16);
+  for (const id of refs)
+    assert.match(id, /^document:adr:ORISO-[^:]+:[^:]+\/[^/]+\.md$/);
+});
+test(
+  "actual ADR links survive narrative merge without changing source documents or reviewed flows",
+  { skip: !process.env.UA_REAL_PLATFORM_GRAPH },
+  () => {
+    const graph = JSON.parse(
+      readFileSync(process.env.UA_REAL_PLATFORM_GRAPH, "utf8"),
+    );
+    const sourceNodes = graph.nodes.filter(
+      (n) =>
+        n.id.startsWith("document:adr:") ||
+        n.tags?.includes("source-walkthrough"),
+    );
+    const sourceIds = new Set(sourceNodes.map((n) => n.id));
+    const flowEdges = graph.edges.filter(
+      (e) =>
+        sourceIds.has(e.source) &&
+        [
+          "flow_step",
+          "contains_flow",
+          "on_error",
+          "compensates",
+          "tested_by",
+        ].includes(e.type),
+    );
+    render(graph, (output, report) => {
+      assert.deepEqual(report.droppedRefs, []);
+      for (const node of sourceNodes)
+        assert.deepEqual(
+          output.nodes.find((n) => n.id === node.id),
+          node,
+        );
+      for (const edge of flowEdges)
+        assert.ok(
+          output.edges.some((e) => JSON.stringify(e) === JSON.stringify(edge)),
+        );
+      for (const concept of narrative.concepts)
+        for (const target of concept.related ?? [])
+          if (target.startsWith("document:adr:"))
+            assert.ok(
+              output.edges.some(
+                (e) =>
+                  e.source === concept.id &&
+                  e.target === target &&
+                  e.type === "related",
+              ),
+              target,
+            );
+      for (const step of narrative.tour)
+        for (const target of step.nodeIds ?? [])
+          if (target.startsWith("document:adr:"))
+            assert.ok(
+              output.tour.some(
+                (t) => t.title === step.title && t.nodeIds.includes(target),
+              ),
+              target,
+            );
+    });
+  },
+);

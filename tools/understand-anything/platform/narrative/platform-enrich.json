@@ -118,12 +118,12 @@
         "platform"
       ],
       "related": [
-        "document:adr:ORISO-Docs:ADR-002-silent-room-membership-and-access-control-curtain.md",
-        "document:adr:ORISO-UserService:ADR-SECURITY-02-unified-crypto-boundary.md",
-        "document:adr:ORISO-Docs:ADR-018-erstantwort-as-one-persisted-event-rendered-as-carimat-bubbles.md",
-        "document:adr:ORISO-Frontend:adr-018-element-call-matryoshka.md",
-        "document:adr:ORISO-Docs:ADR-019-media-scanning-via-matrix-content-scanner-fail-closed.md",
-        "document:adr:ORISO-Frontend:adr-019-silent-key-backup-setup.md"
+        "document:adr:ORISO-Docs:oriso-platform/decisions/ADR-002-silent-room-membership-and-access-control-curtain.md",
+        "document:adr:ORISO-UserService:documentation/ADR-SECURITY-02-unified-crypto-boundary.md",
+        "document:adr:ORISO-Docs:oriso-platform/decisions/ADR-018-erstantwort-as-one-persisted-event-rendered-as-carimat-bubbles.md",
+        "document:adr:ORISO-Frontend:docs/architecture/adr-018-element-call-matryoshka.md",
+        "document:adr:ORISO-Docs:oriso-platform/decisions/ADR-019-media-scanning-via-matrix-content-scanner-fail-closed.md",
+        "document:adr:ORISO-Frontend:docs/architecture/adr-019-silent-key-backup-setup.md"
       ]
     },
     {
@@ -138,9 +138,9 @@
         "service:ORISO-Frontend",
         "service:ORISO-Admin",
         "ORISO-TenantService::endpoint:api/tenantservice.yaml:GET /tenant",
-        "document:adr:ORISO-Docs:ADR-003-department-as-unique-agency-topic-with-imprint-dpp.md",
-        "document:adr:ORISO-Docs:ADR-010-platform-controlled-per-tenant-appearance-allowlist.md",
-        "document:adr:ORISO-Docs:ADR-009-global-topic-category-ownership-and-ai-assisted-translation.md"
+        "document:adr:ORISO-Docs:oriso-platform/decisions/ADR-003-department-as-unique-agency-topic-with-imprint-dpp.md",
+        "document:adr:ORISO-Docs:oriso-platform/decisions/ADR-010-platform-controlled-per-tenant-appearance-allowlist.md",
+        "document:adr:ORISO-Docs:oriso-platform/decisions/ADR-009-global-topic-category-ownership-and-ai-assisted-translation.md"
       ]
     },
     {
@@ -151,9 +151,9 @@
         "platform"
       ],
       "related": [
-        "document:adr:ORISO-Docs:ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent.md",
-        "document:adr:ORISO-Docs:ADR-021-legal-text-hierarchy-versioning-and-consent-text.md",
-        "document:adr:ORISO-Docs:ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
+        "document:adr:ORISO-Docs:oriso-platform/decisions/ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent.md",
+        "document:adr:ORISO-Docs:oriso-platform/decisions/ADR-021-legal-text-hierarchy-versioning-and-consent-text.md",
+        "document:adr:ORISO-Docs:oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
         "service:ORISO-AgencyService",
         "service:ORISO-TenantService",
         "service:ORISO-Frontend",
@@ -266,7 +266,7 @@
       "nodeIds": [
         "service:ORISO-Keycloak",
         "ORISO-Keycloak::endpoint:keycloak-image/otp-config-spi/api/keycloakextension.yaml:PUT /otp-config/setup-otp/{username}",
-        "document:adr:ORISO-Docs:ADR-013-2fa-via-vendored-otp-config-spi.md",
+        "document:adr:ORISO-Docs:oriso-platform/decisions/ADR-013-2fa-via-vendored-otp-config-spi.md",
         "ORISO-Frontend::function:src/api/apiTwoFactorAuth.ts:apiPutTwoFactorAuthApp",
         "ORISO-UserService::endpoint:api/userservice.yaml:PUT /users/2fa/app"
       ]
@@ -280,8 +280,8 @@
         "ORISO-UserService::endpoint:spring:MatrixMessageController#getCurrentUserMatrixToken:GET /matrix/me/token",
         "ORISO-Frontend::function:src/api/apiMatrixSyncRegister.ts:apiRegisterMatrixRoomForSync",
         "ORISO-UserService::endpoint:spring:MatrixSyncController#registerRoomForSync:POST /matrix/sync/register/{sessionId}",
-        "document:adr:ORISO-Docs:ADR-004-chat-keep-custom-ui-adopt-matrix-sdk-megolm.md",
-        "document:adr:ORISO-Docs:ADR-005-matrix-federation-off-dns-server-name.md",
+        "document:adr:ORISO-Docs:oriso-platform/decisions/ADR-004-chat-keep-custom-ui-adopt-matrix-sdk-megolm.md",
+        "document:adr:ORISO-Docs:oriso-platform/decisions/ADR-005-matrix-federation-off-dns-server-name.md",
         "service:ORISO-ElementCall",
         "service:ORISO-Livekit"
       ]
@@ -291,9 +291,9 @@
       "title": "Decisions: legal texts and consent",
       "description": "The densest ADR cluster is the legal one. ADR-014 puts shared legal-text objects on multi-topic agencies and demands topic-before-consent; ADR-021 defines the hierarchy, the generic versioning and the consent text as a field of the data-protection page; ADR-022 fixes exactly two consent gates with consent state as a session pointer. Together they govern AgencyService, TenantService, UserService and Frontend, and the endpoint that carries them is GET /agencies/{agencyId}/topics/{topicId}/legal.",
       "nodeIds": [
-        "document:adr:ORISO-Docs:ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent.md",
-        "document:adr:ORISO-Docs:ADR-021-legal-text-hierarchy-versioning-and-consent-text.md",
-        "document:adr:ORISO-Docs:ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
+        "document:adr:ORISO-Docs:oriso-platform/decisions/ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent.md",
+        "document:adr:ORISO-Docs:oriso-platform/decisions/ADR-021-legal-text-hierarchy-versioning-and-consent-text.md",
+        "document:adr:ORISO-Docs:oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
         "ORISO-AgencyService::endpoint:api/agencyservice.yaml:GET /agencies/{agencyId}/topics/{topicId}/legal",
         "ORISO-Frontend::function:src/api/apiGetDepartmentLegal.ts:normalizeDepartmentLegalResponse",
         "service:ORISO-AgencyService",
@@ -305,7 +305,7 @@
       "title": "Decisions: deployment and operations",
       "description": "ADR-011 makes Helm the only deployment path and replaces per-service subdomains with single-domain path-based routing — which is why every Frontend and Admin URL starts with a /service/... prefix that an ingress rule strips before the controller sees it. ORISO-Helm's source-derived deploys edges are the same story from the chart side, and Deployments without a matching source repository (matrix, media-scanner) are deliberately left without an edge rather than guessed at.",
       "nodeIds": [
-        "document:adr:ORISO-Docs:ADR-011-helm-only-deployment-single-domain-path-routing.md",
+        "document:adr:ORISO-Docs:oriso-platform/decisions/ADR-011-helm-only-deployment-single-domain-path-routing.md",
         "service:ORISO-Helm",
         "service:ORISO-Admin",
         "service:ORISO-ElementCall",

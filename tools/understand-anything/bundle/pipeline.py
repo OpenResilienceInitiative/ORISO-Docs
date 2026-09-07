@@ -3,6 +3,7 @@
 from __future__ import annotations
 import collections
 import datetime as dt
+import json
 import os
 import re
 from pathlib import Path
@@ -71,6 +72,29 @@ def run(command, *, cwd=None, env=None, timeout=900):
             f"command failed ({result.returncode}): {Path(str(command[0])).name}; {safe_diagnostic(result.stderr)[-1800:]}"
         )
     return result.stdout.strip()
+
+
+def validate_narrative_report(output):
+    def unique_fields(pairs):
+        fields = {}
+        for key, value in pairs:
+            require(key not in fields, "duplicate narrative report field")
+            fields[key] = value
+        return fields
+
+    try:
+        report = json.loads(
+            output,
+            object_pairs_hook=unique_fields,
+            parse_constant=lambda value: require(False, "invalid JSON constant"),
+        )
+    except ValueError as error:
+        raise ContractError("missing or malformed platform narrative report") from error
+    require(isinstance(report, dict), "platform narrative report must be an object")
+    for field in ("droppedRefs", "missingStats"):
+        require(
+            report.get(field) == [], f"platform narrative {field} must be an empty list"
+        )
 
 
 def fetch_source(repository, ref):
@@ -277,7 +301,7 @@ def refresh(base, tools, publish_root, specs=None):
                 cwd=tools,
                 env=env,
             )
-            run(
+            narrative_output = run(
                 [
                     str(runner),
                     str(tools / "platform/narrative/apply-platform-enrich.mjs"),
@@ -287,6 +311,7 @@ def refresh(base, tools, publish_root, specs=None):
                 cwd=tools,
                 env=env,
             )
+            validate_narrative_report(narrative_output)
             manifest = seal(stage, sources, expected_refs=expected)
             run(
                 [str(runner), str(tools / "ua-validate-consumer.mjs"), str(stage)],

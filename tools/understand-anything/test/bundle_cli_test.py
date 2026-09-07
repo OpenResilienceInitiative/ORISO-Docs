@@ -236,7 +236,8 @@ if script=='ua-validate-consumer.mjs':sys.exit(0)
 if script=='apply-platform-enrich.mjs':
  graph_path,enrichment_path=map(pathlib.Path,sys.argv[2:]);g=json.loads(graph_path.read_text());enrichment=json.loads(enrichment_path.read_text())
  assert 'generationId' not in g,'Narrative must run before seal'
- g['tour']=enrichment['tour'];g['metadata']['narrative']=enrichment['meta'];graph_path.write_text(json.dumps(g));sys.exit(0)
+ g['tour']=enrichment['tour'];g['metadata']['narrative']=enrichment['meta'];graph_path.write_text(json.dumps(g))
+ print(os.environ.get('NARRATIVE_REPORT',json.dumps({'droppedRefs':[],'missingStats':[]})));sys.exit(0)
 if script=='ua-generate.mjs':
  source,name,out=sys.argv[2:];sha=subprocess.check_output(['git','-C',source,'rev-parse','HEAD'],text=True).strip()
 else:
@@ -326,6 +327,40 @@ if sha is None:g['project']['sourceCommits']={'ORISO-Test':json.loads((pathlib.P
         )
         self.assertEqual(graph["tour"][0]["description"], "Staged narrative")
         self.assertEqual(graph["generationId"], manifest["generationId"])
+
+    def test_invalid_narrative_reports_retain_complete_previous_generation(self):
+        first = self.refresh()
+        self.assertEqual(first.returncode, 0, first.stderr)
+        old = (self.output / "current").resolve()
+        original_manifest = (old / "manifest.json").read_bytes()
+        reports = [
+            '{"droppedRefs":["authored-adr"],"missingStats":[]}',
+            '{"droppedRefs":[],"missingStats":["services.test.tables"]}',
+            "",
+            "{malformed",
+            "null",
+            "[]",
+            "{}",
+            '{"droppedRefs":[]}',
+            '{"missingStats":[]}',
+            '{"droppedRefs":null,"missingStats":[]}',
+            '{"droppedRefs":[],"missingStats":{}}',
+            '{"droppedRefs":["lost"],"droppedRefs":[],"missingStats":[]}',
+            '{"droppedRefs":[],"missingStats":[],"count":NaN}',
+        ]
+        for report in reports:
+            with self.subTest(report=report):
+                env = os.environ.copy()
+                env["NARRATIVE_REPORT"] = report
+                result = self.refresh(env)
+                self.assertNotEqual(result.returncode, 0, result.stdout)
+                self.assertNotIn("PUBLISHED", result.stdout)
+                self.assertIn("narrative", result.stderr)
+                self.assertEqual((self.output / "current").resolve(), old)
+                self.assertEqual(
+                    (old / "manifest.json").read_bytes(), original_manifest
+                )
+                validate(old)
 
     def test_versioned_analysis_policy_overrides_unversioned_checkout_policy(self):
         policy = self.worker / "analysis-config/ORISO-Test.understandignore"
