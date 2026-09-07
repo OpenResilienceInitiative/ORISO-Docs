@@ -34,7 +34,7 @@ Local dev, against the checked-in fixtures:
 ```bash
 node ua-platform-graph.mjs \
   --graphs-dir fixtures \
-  --repos-dir  /Users/frankgerhardt/ORISO \
+  --repos-dir  ~/ORISO \
   --out        out
 ```
 

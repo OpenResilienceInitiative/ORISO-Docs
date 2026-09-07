@@ -38,3 +38,21 @@ The external review completed with 32 findings. Each was checked against the cur
 | 32 | minor | `tools/understand-anything/lib/semantic-flows.mjs` | Fixed with regressions: identical logical relations deduplicate; conflicting metadata rejects before commit. |
 
 Additional real-browser defects found independently were corrected in the pinned viewer patch: missing ContainerNode edge handles; cache-local Open code routing; missing claim/ordered-flow details; and an incompatible single-repository freshness warning on aggregate graphs. Their tests and final browser readback are separate from this external review.
+
+## Second completed review — nine findings
+
+The separate committed-source review in `coderabbit-final-review.log` completed with nine findings. Numbering below follows that log and does not replace the first review above. “Resolved” describes the inspected source/test change, not final installation or browser acceptance. Final delivery gates remain in [final verification record](../../../oriso-platform/reviews/ua-remediation-110.md).
+
+| # | Initial severity | File | Disposition and evidence |
+| --- | --- | --- | --- |
+| 1 | major | `provenance/activation.md` | **Resolved:** activation records file SHA-256/mode or literal symlink target. Rollback preflights the complete route/pointer set and rejects changes before restoration. Exact doc blocks passed isolated valid controls and seven changed-route/backup probes. |
+| 2 | minor | `test/supergraph.test.mjs` | **Resolved in source:** graph/meta disagreement now asserts both failure and absence of `out/knowledge-graph.json`. Final suite readback remains pending. |
+| 3 | major | `bundle/contract.py` | **Resolved with a stricter disposition:** select latest review by parsed UTC instant, retaining its authored representation. Invalid, timezone-less, non-string or future supplied dates fail before stamping instead of being silently discarded. Offset and invalid-date regressions passed; null/absent reviews remain unknown. |
+| 4 | minor | `platform/README.md` | **Resolved in source:** the example uses `~/ORISO`, preserving its other arguments; the personal machine path is removed. |
+| 5 | minor | `patches/oriso-schema-viewer-v1.patch` | **Declined:** the published generation contract requires canonical lowercase Git SHAs and exact source-vector equality; the core schema matches it. More permissive source-link readers are not the publication contract. No candidate requires uppercase serialization. |
+| 6 | major | `platform/lib/source-reader.mjs` | **Resolved in source:** recursive `ls-tree -z` inventory splits NUL-delimited paths. A new real-Git regression covers tabs, newlines, quotes and non-ASCII filenames. Final suite readback remains pending. |
+| 7 | minor | `platform/narrative/platform-enrich.json` | **Resolved in source:** table/per-service and global relation counts use existing graph-stat placeholders; unsupported per-pair/document/deployment totals are removed. The owner reports real narrative CLI `missingStats: []`; changing-count and real-graph regressions are present. Final fresh generation/tour readback remains pending. |
+| 8 | minor | `patches/oriso-schema-viewer-v1.patch` | **Resolved; owner-verified:** malformed status still fails closed, with a contextual error naming `ORISO_UA_STATUS_JSON` and no raw contents. Actual-config regression went red→green; five config tests, seven existing staleness tests and TypeScript passed. |
+| 9 | minor | `platform/test/matcher.test.mjs` | **Resolved; owner-verified:** positive `/service/messages/` coverage against `/messages` is added and the negative case remains. All 23 matcher tests passed. |
+
+A separate browser integration finding after this review exposed that the producer omitted platform narrative enrichment. `bundle/pipeline.py` now invokes the real narrative program on staged output before seal and exact consumer validation. Regressions prove invocation before stamping and preservation of the previous generation on narrative failure. The latest bundle checkpoint passes 54 executions; the final installed/browser result is still pending.

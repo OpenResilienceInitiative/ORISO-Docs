@@ -277,6 +277,16 @@ def refresh(base, tools, publish_root, specs=None):
                 cwd=tools,
                 env=env,
             )
+            run(
+                [
+                    str(runner),
+                    str(tools / "platform/narrative/apply-platform-enrich.mjs"),
+                    str(platform_dir / "knowledge-graph.json"),
+                    str(tools / "platform/narrative/platform-enrich.json"),
+                ],
+                cwd=tools,
+                env=env,
+            )
             manifest = seal(stage, sources, expected_refs=expected)
             run(
                 [str(runner), str(tools / "ua-validate-consumer.mjs"), str(stage)],

@@ -63,3 +63,24 @@ test("existing unreadable Git blob remains a fatal source failure", () =>
     rmSync(path.join(repo, ".git", "objects", blob.slice(0, 2), blob.slice(2)));
     assert.throws(() => readSource(repo, "src/source.txt"));
   }));
+
+test("source inventory round-trips tabs, newlines, quotes and non-ASCII filenames", () =>
+  fixture(({ repo, git }) => {
+    const files = [
+      "src/with\ttab.txt",
+      "src/with\nnewline.txt",
+      'src/"quoted".txt',
+      "src/Grüße.txt",
+    ];
+    for (const file of files) writeFileSync(path.join(repo, file), file);
+    git("add", ".");
+    git("commit", "-m", "unusual filenames");
+    bindSourceRevisions([
+      { repo: "ORISO-Test", gitCommitHash: git("rev-parse", "HEAD") },
+    ]);
+    assert.deepEqual(
+      listSourceFiles(repo).sort(),
+      [...files, "src/source.txt"].sort(),
+    );
+    for (const file of files) assert.equal(readSource(repo, file), file);
+  }));

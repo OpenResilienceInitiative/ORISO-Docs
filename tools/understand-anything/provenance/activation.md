@@ -74,15 +74,27 @@ new = json.loads((base/'toolchain/current/installed.json').read_text())
 assert old['contentSHA256'] == new['contentSHA256'], 'Tooling source changed'
 assert old['toolchain'] == new['toolchain'], 'Pinned toolchain changed'
 print('Accepted tooling content:', new['contentSHA256'])
+backup = Path(os.environ['UA_BACKUP'])
+owned = {}
+for name in json.loads((backup/'prior-links.json').read_text()):
+    route = Path(name)
+    if route.exists() and not route.is_symlink():
+        raise SystemExit(f'Unexpected non-symlink: {route}')
+    owned[name] = {'type': 'symlink', 'target': str(route.readlink())} if route.is_symlink() else {'type': 'missing'}
+(backup/'activated-links.json').write_text(json.dumps(owned, indent=2)+'\n')
 PY
 python3 - <<'PY'
-import os, uuid
+import json, os, uuid
 from pathlib import Path
 base = Path(os.environ['UA_BASE'])
 target = base/'ua-remediation-110/published'
 assert (target/'current/manifest.json').is_file(), 'Accepted generation is missing'
 temp = base/('.published-'+uuid.uuid4().hex)
 temp.symlink_to(target)
+record = Path(os.environ['UA_BACKUP'])/'activated-links.json'
+owned = json.loads(record.read_text())
+owned[str(base/'published')] = {'type': 'symlink', 'target': str(target)}
+record.write_text(json.dumps(owned, indent=2)+'\n')
 os.replace(temp, base/'published')
 PY
 cat > "$UA_BASE/_rebuild/ua-refresh.sh.activation-new" <<'SH'
@@ -96,6 +108,24 @@ exec flock -n /tmp/ua-refresh.lock bash "$TOOLING/ua-refresh.sh" \
 SH
 chmod 755 "$UA_BASE/_rebuild/ua-refresh.sh.activation-new"
 bash -n "$UA_BASE/_rebuild/ua-refresh.sh.activation-new"
+python3 - <<'PY'
+import json, os
+from pathlib import Path
+def identity(path):
+    import hashlib, stat
+    if path.is_symlink():
+        return {'type': 'symlink', 'target': str(path.readlink())}
+    if not path.exists():
+        return {'type': 'missing'}
+    info = path.stat()
+    if path.is_file():
+        return {'type': 'file', 'sha256': hashlib.sha256(path.read_bytes()).hexdigest(), 'mode': stat.S_IMODE(info.st_mode)}
+    return {'type': 'directory', 'device': info.st_dev, 'inode': info.st_ino}
+base = Path(os.environ['UA_BASE'])
+backup = Path(os.environ['UA_BACKUP'])
+record = {'path': str(base/'_rebuild/ua-refresh.sh'), 'activated': identity(base/'_rebuild/ua-refresh.sh.activation-new'), 'prior': identity(backup/'ua-refresh.sh')}
+(backup/'shim-ownership.json').write_text(json.dumps(record, indent=2)+'\n')
+PY
 mv -f "$UA_BASE/_rebuild/ua-refresh.sh.activation-new" "$UA_BASE/_rebuild/ua-refresh.sh"
 flock -u 9
 exec 9>&-
@@ -142,15 +172,33 @@ new = json.loads((Path(os.environ['UA_RUNTIME'])/'current/installed.json').read_
 assert old['contentSHA256'] == new['contentSHA256'], 'Tooling source changed'
 assert old['toolchain'] == new['toolchain'], 'Pinned toolchain changed'
 print('Accepted tooling content:', new['contentSHA256'])
+backup = Path(os.environ['UA_BACKUP'])
+owned = {}
+for name in json.loads((backup/'prior-links.json').read_text()):
+    route = Path(name)
+    if route.exists() and not route.is_symlink():
+        raise SystemExit(f'Unexpected non-symlink: {route}')
+    owned[name] = {'type': 'symlink', 'target': str(route.readlink())} if route.is_symlink() else {'type': 'missing'}
+(backup/'activated-links.json').write_text(json.dumps(owned, indent=2)+'\n')
 PY
 ```
 
-Back up the exact old user routes before replacing them. The following writes a rollback manifest incrementally, moves previous files/directories intact into the timestamped backup, and installs only the listed ORISO routes. If interrupted, restore the recorded entries before retrying. The ordinary command wrappers are intentional: copying them does not detach the Python package or follow a destination symlink into immutable tooling.
+Back up the exact old user routes before replacing them. The following writes a rollback manifest incrementally, moves previous files/directories intact into the timestamped backup, and installs only the listed ORISO routes. If interrupted, run the guarded rollback before retrying; an ambiguous partial activation stops for reconciliation instead of guessing route ownership. The ordinary command wrappers are intentional: copying them does not detach the Python package or follow a destination symlink into immutable tooling.
 
 ```bash
 python3 - <<'PY'
 import json, os, uuid
 from pathlib import Path
+def identity(path):
+    import hashlib, stat
+    if path.is_symlink():
+        return {'type': 'symlink', 'target': str(path.readlink())}
+    if not path.exists():
+        return {'type': 'missing'}
+    info = path.stat()
+    if path.is_file():
+        return {'type': 'file', 'sha256': hashlib.sha256(path.read_bytes()).hexdigest(), 'mode': stat.S_IMODE(info.st_mode)}
+    return {'type': 'directory', 'device': info.st_dev, 'inode': info.st_ino}
 root = Path(os.environ['PROJECT_ORISO_ROOT'])
 backup = Path(os.environ['UA_BACKUP'])
 runtime = Path(os.environ['UA_RUNTIME'])
@@ -171,10 +219,7 @@ for i, (destination, kind, target) in enumerate(routes):
     destination.parent.mkdir(parents=True, exist_ok=True)
     saved = backup/f'route-{i}'
     existed = destination.exists() or destination.is_symlink()
-    state.append({'path': str(destination), 'saved': str(saved) if existed else None})
-    manifest.write_text(json.dumps(state, indent=2)+'\n')
-    if existed:
-        destination.rename(saved)
+    prior = identity(destination)
     temp = destination.with_name(destination.name+'.activation-'+uuid.uuid4().hex)
     if kind == 'link':
         temp.symlink_to(target)
@@ -182,6 +227,15 @@ for i, (destination, kind, target) in enumerate(routes):
         temp.write_text('#!/usr/bin/env bash\nset -euo pipefail\n'
                        f'exec "$HOME/.local/share/oriso-understand/profile/bin/{target}" "$@"\n')
         temp.chmod(0o755)
+    state.append({'path': str(destination), 'saved': str(saved) if existed else None,
+                  'prior': prior, 'activated': identity(temp)})
+    pending = manifest.with_suffix('.new')
+    pending.write_text(json.dumps(state, indent=2)+'\n')
+    os.replace(pending, manifest)
+    if identity(destination) != prior:
+        raise SystemExit(f'STOP: route changed during activation: {destination}')
+    if existed:
+        destination.rename(saved)
     os.replace(temp, destination)
 print('Route backup:', manifest)
 PY
@@ -217,7 +271,7 @@ This is **not** approval to use the entire old installer for activation. That in
 
 ## Rollback
 
-Stop activation on any failed source, generation, exact-consumer or route check. A route rollback restores the saved entrypoints and leaves all installed releases and generation bytes available. It does not claim old graphs are current or undo user source changes. Restore only paths still owned by this activation; if someone changed them afterward, stop and reconcile that specific route rather than overwrite their work.
+Stop activation on any failed source, generation, exact-consumer or route check. A route rollback restores the saved entrypoints and leaves all installed releases and generation bytes available. It does not claim old graphs are current or undo user source changes. The examples machine-check recorded entry type, file SHA-256 and mode, or literal symlink target before restoration. They preflight the complete local route or pointer set before any changes, and stop on a mismatch. Do not replace recorded expected identities with current contents to bypass a rejection. Older backups without ownership records, interrupted activations, and already partially restored sets stop for reconciliation against the reviewed payload and original readback evidence.
 
 For PreDev, use the recorded root backup directory and the legacy lock. Restore the saved script with a same-directory temporary file and atomic rename. The cron was never changed; compare it rather than blindly reinstalling the whole crontab.
 
@@ -225,6 +279,27 @@ For PreDev, use the recorded root backup directory and the legacy lock. Restore 
 # Set UA_BACKUP to the recorded PreDev activation-backup directory first.
 exec 9>/tmp/ua-refresh.lock
 flock -n 9
+export UA_BACKUP
+python3 - <<'PY'
+import json, os
+from pathlib import Path
+def identity(path):
+    import hashlib, stat
+    if path.is_symlink():
+        return {'type': 'symlink', 'target': str(path.readlink())}
+    if not path.exists():
+        return {'type': 'missing'}
+    info = path.stat()
+    if path.is_file():
+        return {'type': 'file', 'sha256': hashlib.sha256(path.read_bytes()).hexdigest(), 'mode': stat.S_IMODE(info.st_mode)}
+    return {'type': 'directory', 'device': info.st_dev, 'inode': info.st_ino}
+backup = Path(os.environ['UA_BACKUP'])
+record = json.loads((backup/'shim-ownership.json').read_text())
+if identity(Path(record['path'])) != record['activated']:
+    raise SystemExit('STOP: refresh route changed after activation; nothing restored')
+if identity(backup/'ua-refresh.sh') != record['prior']:
+    raise SystemExit('STOP: saved refresh script changed; nothing restored')
+PY
 cp -a "$UA_BACKUP/ua-refresh.sh" /opt/oriso-understand/_rebuild/ua-refresh.sh.rollback-new
 mv -f /opt/oriso-understand/_rebuild/ua-refresh.sh.rollback-new /opt/oriso-understand/_rebuild/ua-refresh.sh
 ```
@@ -236,17 +311,32 @@ export UA_BACKUP
 python3 - <<'PY'
 import json, os
 from pathlib import Path
+def identity(path):
+    import hashlib, stat
+    if path.is_symlink():
+        return {'type': 'symlink', 'target': str(path.readlink())}
+    if not path.exists():
+        return {'type': 'missing'}
+    info = path.stat()
+    if path.is_file():
+        return {'type': 'file', 'sha256': hashlib.sha256(path.read_bytes()).hexdigest(), 'mode': stat.S_IMODE(info.st_mode)}
+    return {'type': 'directory', 'device': info.st_dev, 'inode': info.st_ino}
 backup = Path(os.environ['UA_BACKUP'])
-for entry in reversed(json.loads((backup/'user-routes.json').read_text())):
+entries = list(reversed(json.loads((backup/'user-routes.json').read_text())))
+# Preflight the COMPLETE set before changing even the first route.
+for entry in entries:
     destination = Path(entry['path'])
-    saved = Path(entry['saved']) if entry['saved'] else None
-    if saved is not None and not (saved.exists() or saved.is_symlink()):
-        continue  # Interruption before the original route was moved, or already restored.
-    if destination.exists() or destination.is_symlink():
-        assert not destination.is_dir() or destination.is_symlink(), f'Unexpected changed directory: {destination}'
-        destination.unlink()
-    if saved is not None:
-        saved.rename(destination)
+    if identity(destination) != entry['activated']:
+        raise SystemExit(f'STOP: changed route or interrupted activation: {destination}; no routes restored')
+    if entry['saved'] and identity(Path(entry['saved'])) != entry['prior']:
+        raise SystemExit(f'STOP: changed or missing backup: {entry["saved"]}; no routes restored')
+for entry in entries:
+    destination = Path(entry['path'])
+    if identity(destination) != entry['activated']:
+        raise SystemExit(f'STOP: route changed during rollback: {destination}')
+    destination.unlink()
+    if entry['saved']:
+        Path(entry['saved']).rename(destination)
 PY
 ```
 
@@ -258,9 +348,21 @@ python3 - <<'PY'
 import json, os, uuid
 from pathlib import Path
 backup = Path(os.environ['UA_BACKUP'])
-for name, target in json.loads((backup/'prior-links.json').read_text()).items():
+prior = json.loads((backup/'prior-links.json').read_text())
+owned = json.loads((backup/'activated-links.json').read_text())
+if set(prior) != set(owned):
+    raise SystemExit('STOP: incomplete pointer ownership record')
+def identity(path):
+    if path.is_symlink():
+        return {'type': 'symlink', 'target': str(path.readlink())}
+    return {'type': 'other'} if path.exists() else {'type': 'missing'}
+for name in prior:
+    if identity(Path(name)) != owned[name]:
+        raise SystemExit(f'STOP: changed pointer: {name}; no pointers restored')
+for name, target in prior.items():
     destination = Path(name)
-    assert not destination.exists() or destination.is_symlink(), f'Unexpected non-symlink: {destination}'
+    if identity(destination) != owned[name]:
+        raise SystemExit(f'STOP: pointer changed during rollback: {name}')
     if target is None:
         destination.unlink(missing_ok=True)
     else:

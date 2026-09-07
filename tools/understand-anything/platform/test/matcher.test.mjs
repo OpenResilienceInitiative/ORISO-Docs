@@ -224,6 +224,13 @@ test('ownEndpointCoversPath: genuinely nothing under this path -> not covered', 
 	assert.deepEqual(result.exactMethods, []);
 });
 
+test('ownEndpointCoversPath: a raw service path with a trailing slash covers the normalized own endpoint', () => {
+	const own = [{ method: 'GET', path: '/messages' }];
+	const result = ownEndpointCoversPath('/service/messages/', own);
+	assert.equal(result.covered, true);
+	assert.deepEqual(result.exactMethods, ['GET']);
+});
+
 test('ownEndpointCoversPath: method is ignored for the coverage decision itself (only exactMethods communicates method info)', () => {
 	const own = [{ method: 'DELETE', path: '/users/chat/room/{}' }];
 	const result = ownEndpointCoversPath('/users/chat/room', own);

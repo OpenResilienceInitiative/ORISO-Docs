@@ -31,7 +31,8 @@ jobs:
       - name: Test patched viewer evidence, relation categories and container connections
         run: |
           cd /tmp/oriso-ua-runtime/current/upstream
-          npm exec --yes --package=pnpm@10.6.2 -- pnpm --filter @understand-anything/dashboard exec vitest run src/__tests__/edgeCategories.test.ts src/components/__tests__/ContainerNodeHandles.test.ts src/components/__tests__/OrisoNodeEvidence.test.ts
+          npm exec --yes --package=pnpm@10.6.2 -- pnpm --filter @understand-anything/core exec vitest run src/__tests__/search.test.ts src/__tests__/embedding-search.test.ts
+          npm exec --yes --package=pnpm@10.6.2 -- pnpm --filter @understand-anything/dashboard exec vitest run src/__tests__/edgeCategories.test.ts src/__tests__/oriso-status-config.test.ts src/components/__tests__/ContainerNodeHandles.test.ts src/components/__tests__/OrisoNodeEvidence.test.ts
       - name: Test publication, failed transfers and real Git worktrees
         run: |
           cd /tmp/oriso-ua-runtime/current/tooling

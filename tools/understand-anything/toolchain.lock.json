@@ -8,7 +8,7 @@
   "patches": [
     {
       "path": "patches/oriso-schema-viewer-v1.patch",
-      "sha256": "21dfe310ebd732d8f212a8cd698f2c02a184d577fd5d4377414f5407bffa5319"
+      "sha256": "7a1a4661d68b13e5c45a2ccf98f383d26951e510780785c2cb49d77d585a9a97"
     }
   ],
   "nodeImage": "node@sha256:8a34c4ab3ea2c5cd194f07e317b2a8f09461d3c8b05c4e34c8ccd56d56024c4d",

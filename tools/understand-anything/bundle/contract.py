@@ -525,6 +525,20 @@ def preflight_tree(root):
         relative(path.relative_to(root).as_posix())
 
 
+def latest_claim_review(graph, now):
+    dates = []
+    for node in graph["nodes"]:
+        claim = node.get("metadata", {}).get("semanticClaim")
+        if not isinstance(claim, dict) or claim.get("reviewedAt") is None:
+            continue
+        value = claim["reviewedAt"]
+        instant = timestamp(value)
+        require(instant <= now, "semantic review timestamp is in the future")
+        dates.append((instant, value))
+    # Preserve the authored representation, but order by the actual UTC instant.
+    return max(dates, key=lambda entry: entry[0])[1] if dates else None
+
+
 def seal(root, sources, generation_id=None, now=None, expected_refs=None):
     root = Path(root)
     preflight_tree(root)
@@ -539,11 +553,13 @@ def seal(root, sources, generation_id=None, now=None, expected_refs=None):
         ]
     ]
     graphs = []
+    latest_reviews = {}
     # Preflight every output before stamping anything; malformed/old output is not repaired.
     for name, kind, inputs in specs:
         directory = root / name / ".understand-anything"
         graph = read_json(directory / "knowledge-graph.json")
         graph_check(graph)
+        latest_reviews[name] = latest_claim_review(graph, now)
         if kind != "repository":
             inputs = aggregate_inputs(graph, source_map)
         else:
@@ -620,11 +636,6 @@ def seal(root, sources, generation_id=None, now=None, expected_refs=None):
         semantic_counts = dict(
             collections.Counter(claim.get("status", "unbound") for claim in claims)
         )
-        review_dates = [
-            claim["reviewedAt"]
-            for claim in claims
-            if isinstance(claim.get("reviewedAt"), str)
-        ]
         write_json(directory / "knowledge-graph.json", graph)
         meta = (
             read_json(directory / "meta.json")
@@ -661,7 +672,7 @@ def seal(root, sources, generation_id=None, now=None, expected_refs=None):
                 "generationId": generation_id,
                 "sourceRepositories": graph["sourceRepositories"],
                 "semanticCoverage": semantic_counts,
-                "semanticReviewedAt": max(review_dates) if review_dates else None,
+                "semanticReviewedAt": latest_reviews[spec["repository"]],
                 "note": "Inspect claim-level source/review provenance; generation time is structural freshness only.",
             },
         )

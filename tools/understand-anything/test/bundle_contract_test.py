@@ -140,6 +140,48 @@ class ContractTests(unittest.TestCase):
             "verified-source",
         )
 
+    def test_latest_semantic_review_compares_instants_across_offsets(self):
+        directory = self.root / "ORISO-Test/.understand-anything"
+        path = directory / "knowledge-graph.json"
+        graph = json.loads(path.read_text())
+        # The lexically larger timestamp is an hour and a half EARLIER.
+        dates = ["2026-09-06T23:00:00+02:00", "2026-09-06T22:30:00Z"]
+        for node, reviewed in zip(graph["nodes"], dates):
+            node["metadata"] = {
+                "semanticClaim": {"status": "source-current", "reviewedAt": reviewed}
+            }
+        write(path, graph)
+        seal(self.root, self.sources, now=NOW)
+        depth = json.loads((directory / "depth.json").read_text())
+        self.assertEqual(depth["semanticReviewedAt"], dates[1])
+
+    def test_invalid_semantic_review_dates_fail_before_stamping(self):
+        path = self.root / "ORISO-Test/.understand-anything/knowledge-graph.json"
+        for reviewed in [
+            "not-a-date",
+            "2026-09-06T22:30:00",
+            123,
+            "2026-09-07T00:00:01Z",
+        ]:
+            with self.subTest(reviewed=reviewed):
+                graph = json.loads(path.read_text())
+                graph["nodes"][0]["metadata"] = {
+                    "semanticClaim": {
+                        "status": "source-current",
+                        "reviewedAt": reviewed,
+                    }
+                }
+                write(path, graph)
+                before = {
+                    p: p.read_bytes() for p in self.root.rglob("*") if p.is_file()
+                }
+                with self.assertRaises(ContractError):
+                    seal(self.root, self.sources, now=NOW)
+                self.assertEqual(
+                    {p: p.read_bytes() for p in self.root.rglob("*") if p.is_file()},
+                    before,
+                )
+
     def test_malformed_or_structurally_wrong_graphs_are_fatal(self):
         path = self.root / "ORISO-Test/.understand-anything/knowledge-graph.json"
         pristine = json.loads(path.read_text())

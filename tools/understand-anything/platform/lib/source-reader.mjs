@@ -44,13 +44,13 @@ export function listSourceFiles(repoDir) {
   if (!ref) throw new Error(`Source not in platform provenance: ${repoDir}`);
   return execFileSync(
     "git",
-    ["-C", repoDir, "ls-tree", "-r", "--name-only", ref],
+    ["-C", repoDir, "ls-tree", "-r", "-z", "--name-only", ref],
     {
       encoding: "utf8",
       maxBuffer: 64 * 1024 * 1024,
       stdio: ["ignore", "pipe", "pipe"],
     },
   )
-    .split("\n")
+    .split("\0")
     .filter(Boolean);
 }

@@ -233,6 +233,10 @@ import json,os,pathlib,subprocess,sys,datetime
 script=pathlib.Path(sys.argv[1]).name
 if os.environ.get('FAULT_STAGE')==script:sys.exit(9)
 if script=='ua-validate-consumer.mjs':sys.exit(0)
+if script=='apply-platform-enrich.mjs':
+ graph_path,enrichment_path=map(pathlib.Path,sys.argv[2:]);g=json.loads(graph_path.read_text());enrichment=json.loads(enrichment_path.read_text())
+ assert 'generationId' not in g,'Narrative must run before seal'
+ g['tour']=enrichment['tour'];g['metadata']['narrative']=enrichment['meta'];graph_path.write_text(json.dumps(g));sys.exit(0)
 if script=='ua-generate.mjs':
  source,name,out=sys.argv[2:];sha=subprocess.check_output(['git','-C',source,'rev-parse','HEAD'],text=True).strip()
 else:
@@ -244,6 +248,23 @@ if sha is None:g['project']['sourceCommits']={'ORISO-Test':json.loads((pathlib.P
 """
         (self.worker / "ua-node").write_text(worker)
         (self.worker / "ua-node").chmod(0o755)
+        narrative = self.worker / "platform/narrative/platform-enrich.json"
+        narrative.parent.mkdir(parents=True)
+        narrative.write_text(
+            json.dumps(
+                {
+                    "meta": {"title": "Reviewed platform orientation"},
+                    "tour": [
+                        {
+                            "order": 1,
+                            "title": "Start here",
+                            "description": "Staged narrative",
+                            "nodeIds": ["a"],
+                        }
+                    ],
+                }
+            )
+        )
         self.output = self.root / "pipeline-published"
 
     def refresh(self, env=None):
@@ -274,6 +295,7 @@ if sha is None:g['project']['sourceCommits']={'ORISO-Test':json.loads((pathlib.P
             "ua-generate.mjs",
             "ua-build-supergraph.mjs",
             "ua-platform-graph.mjs",
+            "apply-platform-enrich.mjs",
             "ua-validate-consumer.mjs",
         ]:
             with self.subTest(stage=stage):
@@ -288,6 +310,22 @@ if sha is None:g['project']['sourceCommits']={'ORISO-Test':json.loads((pathlib.P
         self.assertEqual(
             (self.repo / "README.md").read_text(), "uncommitted developer work"
         )
+
+    def test_platform_narrative_is_applied_before_seal_and_publication(self):
+        result = self.refresh()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        manifest = validate(self.output / "current")
+        graph_path = (
+            self.output
+            / "current/ORISO-Platform/.understand-anything/knowledge-graph.json"
+        )
+        graph = json.loads(graph_path.read_text())
+        self.assertEqual(
+            graph["metadata"].get("narrative"),
+            {"title": "Reviewed platform orientation"},
+        )
+        self.assertEqual(graph["tour"][0]["description"], "Staged narrative")
+        self.assertEqual(graph["generationId"], manifest["generationId"])
 
     def test_versioned_analysis_policy_overrides_unversioned_checkout_policy(self):
         policy = self.worker / "analysis-config/ORISO-Test.understandignore"

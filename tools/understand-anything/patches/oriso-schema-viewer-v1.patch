@@ -1,3 +1,40 @@
+diff --git a/understand-anything-plugin/packages/core/src/__tests__/search.test.ts b/understand-anything-plugin/packages/core/src/__tests__/search.test.ts
+index 56f4363..7c66f2c 100644
+--- a/understand-anything-plugin/packages/core/src/__tests__/search.test.ts
++++ b/understand-anything-plugin/packages/core/src/__tests__/search.test.ts
+@@ -156,3 +156,32 @@ describe("SearchEngine", () => {
+     expect(results.length).toBe(1);
+   });
+ });
++
++
++describe("exact business-flow navigation", () => {
++  const name = "Anonymous chat: enquiry creation entry";
++  const competing = ["Anonymous", "chat", "enquiry", "creation", "entry", "chat entry"].map((token, i) => makeNode({id:`caller-${i}`,name:token,type:"function",tags:[token],summary:token}));
++  const flow = makeNode({id:"flow:anonymous",name,type:"flow",summary:"Ordered source walkthrough"});
++  it("puts a complete node name before competing OR-token matches within the five-result dropdown", () => {
++    const engine=new SearchEngine([...competing,flow]);
++    const results=engine.search(name,{limit:5});
++    expect(results[0]).toEqual({nodeId:flow.id,score:0});
++    expect(results).toHaveLength(5);
++    expect(results.filter(r=>r.nodeId===flow.id)).toHaveLength(1);
++    expect(results.some(r=>r.nodeId.startsWith("caller-"))).toBe(true);
++  });
++  it("respects type exclusions, zero limits and case-insensitive exact matching", () => {
++    const engine=new SearchEngine([...competing,flow]);
++    expect(engine.search(`  ${name.toUpperCase()}  `,{limit:1})).toEqual([{nodeId:flow.id,score:0}]);
++    expect(engine.search(name,{types:["function"],limit:5}).every(r=>r.nodeId!==flow.id)).toBe(true);
++    expect(engine.search(name,{types:["flow"],limit:1})).toEqual([{nodeId:flow.id,score:0}]);
++    expect(engine.search(name,{limit:0})).toEqual([]);
++  });
++  it("keeps separate same-name nodes and uses the updated node inventory", () => {
++    const other=makeNode({...flow,id:"flow:other"});
++    const engine=new SearchEngine([flow,other,...competing]);
++    expect(engine.search(name,{limit:2})).toEqual([{nodeId:flow.id,score:0},{nodeId:other.id,score:0}]);
++    engine.updateNodes(competing);
++    expect(engine.search(name).every(r=>!r.nodeId.startsWith("flow:"))).toBe(true);
++  });
++});
 diff --git a/understand-anything-plugin/packages/core/src/schema.ts b/understand-anything-plugin/packages/core/src/schema.ts
 index a4c308a..5789a73 100644
 --- a/understand-anything-plugin/packages/core/src/schema.ts
@@ -69,6 +106,42 @@ index a4c308a..5789a73 100644
    const raw = data as Record<string, unknown>;
  
    // Tier 1: Sanitize
+diff --git a/understand-anything-plugin/packages/core/src/search.ts b/understand-anything-plugin/packages/core/src/search.ts
+index a4ba545..48c269f 100644
+--- a/understand-anything-plugin/packages/core/src/search.ts
++++ b/understand-anything-plugin/packages/core/src/search.ts
+@@ -46,16 +46,21 @@ export class SearchEngine {
+     const extendedQuery = trimmed.split(/\s+/).join(" | ");
+     const rawResults = this.fuse.search(extendedQuery);
+ 
+-    let filtered = rawResults;
+-    if (options?.types && options.types.length > 0) {
+-      const allowedTypes = new Set(options.types);
+-      filtered = filtered.filter((r) => allowedTypes.has(r.item.type));
+-    }
+-
+-    return filtered.slice(0, limit).map((r) => ({
+-      nodeId: r.item.id,
+-      score: r.score ?? 0,
+-    }));
++    const allowedTypes = options?.types?.length ? new Set(options.types) : null;
++    const allowed = (node: GraphNode) => !allowedTypes || allowedTypes.has(node.type);
++    // A complete displayed name is a direct navigation request. Keep it ahead
++    // of OR-token/fuzzy hits, which can otherwise hide a flow below short names.
++    const exact = this.nodes.filter((node) =>
++      allowed(node) && node.name.toLowerCase() === trimmed.toLowerCase(),
++    );
++    const exactIds = new Set(exact.map((node) => node.id));
++    const fallback = rawResults.filter((result) =>
++      allowed(result.item) && !exactIds.has(result.item.id),
++    );
++    return [
++      ...exact.map((node) => ({ nodeId: node.id, score: 0 })),
++      ...fallback.map((result) => ({ nodeId: result.item.id, score: result.score ?? 0 })),
++    ].slice(0, limit);
+   }
+ 
+   updateNodes(nodes: GraphNode[]): void {
 diff --git a/understand-anything-plugin/packages/core/src/types.ts b/understand-anything-plugin/packages/core/src/types.ts
 index 28cadca..281f18f 100644
 --- a/understand-anything-plugin/packages/core/src/types.ts
@@ -138,6 +211,43 @@ index eea6ef6..7f4a4e3 100644
    imports: true, exports: true, contains: true, inherits: true, implements: true,
    // behavioral (4)
    calls: true, subscribes: true, publishes: true, middleware: true,
+diff --git a/understand-anything-plugin/packages/dashboard/src/__tests__/oriso-status-config.test.ts b/understand-anything-plugin/packages/dashboard/src/__tests__/oriso-status-config.test.ts
+new file mode 100644
+index 0000000..7c309d6
+--- /dev/null
++++ b/understand-anything-plugin/packages/dashboard/src/__tests__/oriso-status-config.test.ts
+@@ -0,0 +1,31 @@
++import { afterEach, expect, it, vi } from "vitest";
++
++const previousStatus = process.env.ORISO_UA_STATUS_JSON;
++
++afterEach(() => {
++  if (previousStatus === undefined) delete process.env.ORISO_UA_STATUS_JSON;
++  else process.env.ORISO_UA_STATUS_JSON = previousStatus;
++  vi.resetModules();
++});
++
++async function loadStatus(raw: string | undefined) {
++  if (raw === undefined) delete process.env.ORISO_UA_STATUS_JSON;
++  else process.env.ORISO_UA_STATUS_JSON = raw;
++  vi.resetModules();
++  const { default: config } = await import("../../vite.config");
++  return config.define?.__ORISO_UA_STATUS__;
++}
++
++it.each([undefined, "", "null"])("keeps absent or null status as null (%s)", async (raw) => {
++  expect(await loadStatus(raw)).toBe("null");
++});
++
++it("preserves valid status JSON in the actual Vite definition", async () => {
++  const status = { generationId: "fixture-generation", verification: { status: "verified" } };
++  expect(await loadStatus(JSON.stringify(status))).toBe(JSON.stringify(status));
++});
++
++it("names malformed status configuration without echoing its contents", async () => {
++  await expect(loadStatus("synthetic-private-status-invalid-json"))
++    .rejects.toThrow(/^ORISO_UA_STATUS_JSON is not valid JSON$/);
++});
 diff --git a/understand-anything-plugin/packages/dashboard/src/components/ContainerNode.tsx b/understand-anything-plugin/packages/dashboard/src/components/ContainerNode.tsx
 index e0d4f1c..af514fb 100644
 --- a/understand-anything-plugin/packages/dashboard/src/components/ContainerNode.tsx
@@ -1014,14 +1124,23 @@ index 884f428..7224ea6 100644
    domain: ["contains_flow", "flow_step", "cross_domain"],
    knowledge: ["cites", "contradicts", "builds_on", "exemplifies", "categorized_under", "authored_by"],
 diff --git a/understand-anything-plugin/packages/dashboard/vite.config.ts b/understand-anything-plugin/packages/dashboard/vite.config.ts
-index 22391bc..8cf8684 100644
+index 22391bc..91271ff 100644
 --- a/understand-anything-plugin/packages/dashboard/vite.config.ts
 +++ b/understand-anything-plugin/packages/dashboard/vite.config.ts
-@@ -290,6 +290,7 @@ type DashboardViteConfig = UserConfig & {
+@@ -290,6 +290,16 @@ type DashboardViteConfig = UserConfig & {
  };
  
  const config: DashboardViteConfig = {
-+  define: { __ORISO_UA_STATUS__: JSON.stringify(JSON.parse(process.env.ORISO_UA_STATUS_JSON || "null")) },
++  define: {
++    __ORISO_UA_STATUS__: JSON.stringify((() => {
++      try {
++        return JSON.parse(process.env.ORISO_UA_STATUS_JSON || "null");
++      } catch {
++        // JSON.parse errors can quote configuration contents; keep the diagnostic safe.
++        throw new Error("ORISO_UA_STATUS_JSON is not valid JSON");
++      }
++    })()),
++  },
    test: {
      environment: "node",
      include: ["src/**/__tests__/**/*.test.ts"],

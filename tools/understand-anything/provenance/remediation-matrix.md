@@ -1,6 +1,6 @@
 # UA remediation acceptance matrix
 
-Developers must be able to identify the source behind a graph, distinguish reviewed statements from hints, and detect an incomplete refresh before using it to plan a change. This remediation addresses all twelve findings in the September 6 holistic audit's `04-understand-anything.md`. Local implementation and automated evidence are available; **the final installed PreDev candidate, complete fresh generation, and browser acceptance remain pending at this document's freeze**. Passing tests below does not mean that the remediation is deployed or that the represented application journeys work at runtime.
+Developers must be able to identify the source behind a graph, distinguish reviewed statements from hints, and detect an incomplete refresh before using it to plan a change. This remediation addresses all twelve findings in the September 6 holistic audit's `04-understand-anything.md`. This matrix defines the implementation and acceptance gates. The separately maintained [release verification record](../../../oriso-platform/reviews/ua-remediation-110.md) records the concrete installed source, full generation, browser, activation and GitHub outcomes. Passing tests alone does not establish represented application journeys at runtime.
 
 Delivery belongs to [ORISO-Docs issue 110](https://github.com/OpenResilienceInitiative/ORISO-Docs/issues/110). [PR 107](https://github.com/OpenResilienceInitiative/ORISO-Docs/pull/107) is a separate feature and is excluded from this acceptance scope. This matrix neither accepts its behavior nor requests that it be merged. Priorities retain the audit's proposals: UA-01/02 P1, UA-03–11 P2, UA-12 P3.
 
@@ -16,7 +16,7 @@ The producer fetches every required source and analyzes detached snapshots. It p
 
 All paths in this table are relative to `tools/understand-anything/`. Test names identify reproducible automated checks, not manual assertions.
 
-| Finding and required outcome | Implemented ownership | Automated proof available | Remaining acceptance for final candidate |
+| Finding and required outcome | Implemented ownership | Automated proof available | Final candidate acceptance gate (outcome in release record) |
 | --- | --- | --- | --- |
 | **UA-01 — Reject invalid or stale content.** A fresh file timestamp cannot make old or wrong-source content trustworthy. | `bundle/contract.py`, `bundle/schema.json`, `bundle/cli.py`, `ua-pull.sh`, `ua-verify.py`. Full source SHAs, content timestamps, generation identity, checksums, required structure, and fetched refs are checked. Different checkouts need explicit acceptance. | `test/bundle_contract_test.py`: malformed graphs, exact timestamp boundary, graph/meta/generation mismatch, same-prefix wrong full SHA, future/old content, missing aggregates, and same-count checksum corruption. `test/bundle_cli_test.py`: failed Git fetch cannot reuse a cached ref; stale generation rejected after source ref advances; different checkout requires opt-in. | Run installed `ua-pull --verify` against the newly published generation and freshly fetched expected refs. Record exact source vector and separate `VALID-DIFFERENT-CHECKOUT` behavior. |
 | **UA-02 — Failed transfers must fail visibly and retain a complete cache.** | `bundle/storage.py`, `bundle/cli.py`, `ua-pull.sh`. Download one named immutable generation, validate staging, then publish one pointer; record delivery after confirmed publication. | `test_total_partial_interrupted_or_corrupt_transfer_retains_previous`, `test_remote_current_change_cannot_mix_generation`, and `test_success_and_failed_fetch_never_report_pulled`. Independent CLI outage/enrichment probes retain current and return failure. Post-replace fsync faults report durability uncertainty and changed-pointer state rather than falsely claiming retention. | Pull the actual candidate through the intended PreDev transport and read back its generation, checksums, delivery receipt, and previous pointer. Local fault probes do not establish live SSH/HTTPS credentials. |
@@ -47,11 +47,11 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s test -p '*_test.py' -v
 
 Independent review evidence is retained in the task artifact area at repository-relative `artifacts/2026-09-07-ua-remediation/`: `astra-semantic-review.md`, `astra-semantic-verification.json`, `astra-bundle-review.md`, and `astra-bundle-incorporation-probes.json`. Their incorporation outcomes supersede the preserved original failure sections; original red captures remain intact. The actual local extraction/merge/platform logs are in the separate local artifact layer under the same dated artifact name. The platform integration combines three fresh generated repositories with frozen audit graphs for the remaining inputs; it is explicitly **not** the complete fresh release candidate.
 
-## Final acceptance still required
+## Final acceptance procedure
 
 1. Freeze the final tooling source, install that release on PreDev, and record its source identity, patch checksum, image digest, profile routes, and build outcome.
 2. Fetch all declared refs successfully, create the complete fresh generation, pass Python and exact pinned-consumer validation, promote once, and read back all 18 source SHAs, the platform's exact subset, graph identities, coverage, semantic dispositions, current and previous pointers.
 3. Pull that named generation through the installed client. Verify source freshness and cache status, then open the installed viewer and record the UA-03/04/06/07/12 navigation, source-link, uncertainty, tour, and banner checks, including a mobile viewport.
 4. Record outcomes against the concrete candidate. Keep application runtime acceptance, GitHub review/CI, merge, and deployment as separate evidence states; none is inferred from this matrix.
 
-Document freeze: 2026-09-07. Source and automated-proof mapping only; final candidate and browser gates remain pending.
+Matrix date: 2026-09-07. This is the source and acceptance mapping; read the linked release record for actual gate outcomes. Historical checkpoint totals above are preserved and superseded by that record.
