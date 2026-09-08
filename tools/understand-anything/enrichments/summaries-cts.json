@@ -1,0 +1,1174 @@
+{
+ "meta": {
+  "generatedAt": "2026-09-04T14:25:10.992261Z",
+  "generatedBy": "claude-sonnet-file-summaries-2026-09",
+  "repo": "ORISO-ConsultingTypeService",
+  "filesSelected": 69,
+  "filesSummarized": 69,
+  "functionsSummarized": 131,
+  "filtered": {
+   "kept": 193,
+   "dropped": 1
+  }
+ },
+ "nodeSummaries": {
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/ConsultingTypeMapper.java": {
+   "summary": "Shared protected mapping helpers turning schema ConsultingType sub-objects (registration, urls, roles, notifications, welcome screen) into their DTO equivalents; base class for Basic/Extended/Full mappers.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/ConsultingTypeMapper.java:mapRegistration": {
+   "summary": "Maps Registration schema object to RegistrationDTO including notes and mandatory fields.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/ConsultingTypeMapper.java:mapWhiteSpot": {
+   "summary": "Maps WhiteSpot data, null-safely reading the agency id.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/ConsultingTypeMapper.java:mapWelcomeMessage": {
+   "summary": "Maps WelcomeMessage, defaulting sendWelcomeMessage to false when null.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/ConsultingTypeMapper.java:mapNotifications": {
+   "summary": "Maps Notifications or supplies a default team-sessions notification block.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/ConsultingTypeMapper.java:mapConsultingType": {
+   "summary": "Generic static entry point applying a given mapper Function to a ConsultingType.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoTenantAwareRepositoryService.java": {
+   "summary": "Primary MongoDB repository for ConsultingType when multitenancy is enabled; scopes reads/writes by TenantContext except for the technical tenant (id 0). Gotcha: slug uniqueness check assumes non-null tenantId.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoTenantAwareRepositoryService.java:getListOfConsultingTypes": {
+   "summary": "Returns all consulting types for the technical tenant, else only those of the current tenant.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoTenantAwareRepositoryService.java:getConsultingTypeById": {
+   "summary": "Looks up by id scoped to tenant, throwing NotFoundException if absent.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoTenantAwareRepositoryService.java:getConsultingTypeBySlug": {
+   "summary": "Looks up by slug scoped to tenant, throwing NotFoundException if absent.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoTenantAwareRepositoryService.java:addConsultingType": {
+   "summary": "Persists a new consulting type after checking id/slug uniqueness within the tenant.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoTenantAwareRepositoryService.java:getNextId": {
+   "summary": "Computes the next numeric id from the highest existing id.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/ConsultingTypeService.java": {
+   "summary": "Core business service for consulting type CRUD/read; delegates persistence to ConsultingTypeRepositoryService and maps results via Basic/Extended/Full mappers; enforces limited-patch authority restrictions.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/ConsultingTypeService.java:fetchBasicConsultingTypesList": {
+   "summary": "Returns all consulting types mapped to basic response DTOs.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/ConsultingTypeService.java:fetchFullConsultingTypeSettingsById": {
+   "summary": "Fetches one consulting type by id and maps to the full response DTO.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/ConsultingTypeService.java:createConsultingType": {
+   "summary": "Converts input DTO, assigns next id, persists, and returns full DTO or throws on failure.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/ConsultingTypeService.java:updateConsultingType": {
+   "summary": "Applies a patch DTO after checking limited-patch users cannot change restricted fields (language, video call).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/ConsultingTypeService.java:assertChangesAreAllowedForUsersWithLimitedPatchPermission": {
+   "summary": "Rejects patch attempts to protected fields for users holding only the limited-patch authority.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoRepositoryService.java": {
+   "summary": "MongoDB repository for ConsultingType used in single-tenant/single-domain mode ('tenantUnaware' bean); no tenant scoping, optional slug-uniqueness skip in single-domain mode.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoRepositoryService.java:getListOfConsultingTypes": {
+   "summary": "Returns all consulting types unscoped by tenant.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoRepositoryService.java:getConsultingTypeById": {
+   "summary": "Finds by id, throwing NotFoundException if absent.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoRepositoryService.java:getConsultingTypeBySlug": {
+   "summary": "Finds by slug, throwing NotFoundException if absent.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoRepositoryService.java:getConsultingTypeByTenantId": {
+   "summary": "Used by super-admins in single-domain mode to fetch by tenant id.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoRepositoryService.java:addConsultingType": {
+   "summary": "Persists a new consulting type after id/slug uniqueness checks (slug check skipped in single-domain mode).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/converter/TopicConverter.java": {
+   "summary": "Converts between TopicEntity (relational, PostgreSQL) and TopicDTO/TopicMultilingualDTO; resolves per-language strings via TranslationService and JSON-encodes multilingual maps for storage.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/converter/TopicConverter.java:toDTO": {
+   "summary": "Maps a TopicEntity to a language-resolved TopicDTO for a given or current language.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/converter/TopicConverter.java:toMultilingualDTO": {
+   "summary": "Maps a TopicEntity to a TopicMultilingualDTO exposing all language maps as JSON.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/converter/TopicConverter.java:toMultilingualDTOList": {
+   "summary": "Maps a collection of entities to multilingual DTOs.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/converter/TopicConverter.java:toDTOList": {
+   "summary": "Maps a collection of entities to language-resolved DTOs for the current request language.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ConsultingTypeController.java": {
+   "summary": "REST controller implementing ConsultingtypesApi; serves GET basic/extended/full consulting type lookups by id/slug/tenantId, consulting type groups, and authenticated create/patch endpoints.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ConsultingTypeController.java:getBasicConsultingTypeList": {
+   "summary": "GET all consulting types (basic shape); 204 if empty.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ConsultingTypeController.java:getFullConsultingTypeById": {
+   "summary": "GET a single consulting type (full shape) by id.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ConsultingTypeController.java:getFullConsultingTypeBySlug": {
+   "summary": "GET a single consulting type (full shape) by slug.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ConsultingTypeController.java:createConsultingType": {
+   "summary": "POST create a consulting type; requires AUTHORIZATION_CREATE_CONSULTING_TYPE.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ConsultingTypeController.java:patchConsultingType": {
+   "summary": "PATCH update a consulting type; requires patch or limited-patch authority.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/DpaSigningEmailService.java": {
+   "summary": "Builds/sends the DPA (AVV) signing email via global SMTP settings; validates sign-link origin against the app base URL to block open-redirect abuse. Gotcha: throws IllegalStateException, not a typed error, if SMTP is disabled/incomplete.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/DpaSigningEmailService.java:send": {
+   "summary": "Validates command fields and sign-link origin, loads/decrypts SMTP settings, and dispatches the DPA signing email; never reports success without a confirmed SMTP handover.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/DpaSigningEmailService.java:toMailSettings": {
+   "summary": "Extracts and validates global SMTP settings from ApplicationSettingsEntity, decrypting the password.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/config/SecurityConfig.java": {
+   "summary": "Spring Security filter chain config: stateless JWT resource server, CSRF via StatelessCsrfFilter, conditional tenant filter, per-path authorization rules (topic/settings/admin endpoints), and Keycloak realm-role-to-authority mapping.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/config/SecurityConfig.java:filterChain": {
+   "summary": "Builds the HttpSecurity filter chain: disables default CSRF, wires stateless CSRF and tenant filters, sets per-path authorization, and OAuth2 resource server JWT handling.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/config/SecurityConfig.java:jwtAuthenticationConverter": {
+   "summary": "Builds a Converter turning a Jwt into a JwtAuthenticationToken with mapped granted authorities.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/config/SecurityConfig.java:grantedAuthorities": {
+   "summary": "Combines default JWT authorities with Keycloak realm/resource roles mapped via RoleAuthorizationAuthorityMapper.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/ApplicationSettingsServiceFacade.java": {
+   "summary": "Facade over ApplicationSettingsService adding DTO conversion and SMTP credential encryption/decryption; treats masked/blank credential values on patch as 'unchanged' so the write-only SMTP password is never overwritten with a placeholder.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/ApplicationSettingsServiceFacade.java:getApplicationSettings": {
+   "summary": "Returns the current application settings as a DTO, if present.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/ApplicationSettingsServiceFacade.java:patchApplicationSettings": {
+   "summary": "Applies a partial patch to the single ApplicationSettingsEntity and persists it.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/ApplicationSettingsServiceFacade.java:getGlobalSmtpCredentials": {
+   "summary": "Returns decrypted global SMTP username/password for super-admins.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/ApplicationSettingsServiceFacade.java:isRealCredentialValue": {
+   "summary": "Detects placeholder/masked values (blank or all mask characters) so they are not written back.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicServiceFacade.java": {
+   "summary": "Facade coordinating TopicService (persistence), TopicConverter, TopicValidationService and TopicInputSanitizer for topic CRUD used by both public and admin topic controllers.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicServiceFacade.java:getAllTopics": {
+   "summary": "Returns all topics as language-resolved DTOs.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicServiceFacade.java:createTopic": {
+   "summary": "Validates, sanitizes and persists a new multilingual topic.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicServiceFacade.java:updateTopic": {
+   "summary": "Validates, sanitizes and persists an update to an existing topic, throwing TopicNotFoundException if missing.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicServiceFacade.java:getAllTopicsMultilingual": {
+   "summary": "Returns all topics as multilingual DTOs (all languages).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicServiceFacade.java:getTopicMultilingualById": {
+   "summary": "Returns a single topic's multilingual DTO by id.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeLoader.java": {
+   "summary": "Startup loader (@PostConstruct) that reads consulting-type JSON config files from a filesystem directory, validates each against a JSON schema, and seeds them into the repository under the technical tenant.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeLoader.java:init": {
+   "summary": "Iterates configuration files found in consulting.types.json.path and initializes each into the repository.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeLoader.java:obtainInitializedConsultingType": {
+   "summary": "Validates a config file against the schema and deserializes it to a ConsultingType before adding it.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/SmtpPasswordEncryptionService.java:encrypt": {
+   "summary": "Encrypts plaintext with a random IV and AES-GCM, prefixing the result with 'ENC:'.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/SmtpPasswordEncryptionService.java:decrypt": {
+   "summary": "Decrypts an 'ENC:'-prefixed value back to plaintext, passing through non-encrypted values.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/SmtpPasswordEncryptionService.java:isEncrypted": {
+   "summary": "Checks whether a stored value carries the ENC: prefix.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/SmtpPasswordEncryptionService.java:deriveKey": {
+   "summary": "Derives the AES secret key from the configured secret, via base64 decode or SHA-256 fallback.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicFeatureAuthorisationService.java": {
+   "summary": "Determines whether the topic feature is enabled for the current tenant (multitenancy) or the main tenant subdomain (single-domain mode) by calling TenantService; throws TopicAccessDeniedException when disabled.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicFeatureAuthorisationService.java:assertTopicFeatureIsEnabled": {
+   "summary": "Throws TopicAccessDeniedException unless the topic feature is enabled for the current context.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicFeatureAuthorisationService.java:determineIfTopicIsEnabled": {
+   "summary": "Branches to multitenancy or single-domain resolution, else defaults to disabled.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicFeatureAuthorisationService.java:isTopicFeatureEnabledForMultitenancy": {
+   "summary": "Fetches tenant settings for the current TenantContext tenant and checks featureTopicsEnabled.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicService.java": {
+   "summary": "Transactional persistence service for topics (relational, PostgreSQL via JPA); switches between tenant-scoped and unscoped repository queries based on the multitenancy flag, stamping create/update timestamps.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicService.java:getAllTopics": {
+   "summary": "Returns all topics, tenant-scoped when multitenancy is enabled.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicService.java:getAllActiveTopics": {
+   "summary": "Returns only ACTIVE-status topics, tenant-scoped when multitenancy is enabled.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicService.java:findTopicById": {
+   "summary": "Finds a topic by id, tenant-scoped when multitenancy is enabled.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicService.java:createTopic": {
+   "summary": "Stamps createDate (UTC) and persists a new TopicEntity.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicService.java:updateTopic": {
+   "summary": "Stamps updateDate (UTC) and persists changes to an existing TopicEntity.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/validation/TopicValidationService.java": {
+   "summary": "Validates a TopicMultilingualDTO: status must be a valid TopicStatus enum value, and translation map keys must be valid ISO language codes.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/validation/TopicValidationService.java:validate": {
+   "summary": "Runs status and translation-key validation, throwing BadRequestException/TopicValidationException on failure.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/config/apiclient/TenantServiceApiClient.java": {
+   "summary": "Extends the generated TenantService OpenAPI RestTemplate ApiClient to special-case the 'filter' query param, expanding its bean properties into individual non-null query params.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/config/apiclient/TenantServiceApiClient.java:parameterToMultiValueMap": {
+   "summary": "Overrides default parameter serialization to expand the 'filter' object's properties into query params.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ApplicationSettingsController.java": {
+   "summary": "REST controller implementing SettingsApi and SettingsadminApi; serves GET/PATCH of global application settings and super-admin-only GET of global SMTP credentials.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ApplicationSettingsController.java:getApplicationSettings": {
+   "summary": "GET current application settings, or 204 if none exist.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ApplicationSettingsController.java:patchApplicationSettings": {
+   "summary": "PATCH application settings; requires patch authority or tenant-admin role.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ApplicationSettingsController.java:getGlobalSmtpCredentials": {
+   "summary": "GET decrypted global SMTP credentials; restricted to super-admins via @authorisationService.isSuperAdmin().",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicAdminController.java": {
+   "summary": "REST controller implementing TopicadminApi for authenticated topic-admin operations (create/update/list/get-with-translation); each endpoint gated by a specific AUTHORIZATION_* authority.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicAdminController.java:createTopic": {
+   "summary": "POST create a topic; requires AUTHORIZATION_CREATE_TOPIC.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicAdminController.java:updateTopic": {
+   "summary": "PUT update a topic by id; requires AUTHORIZATION_UPDATE_TOPIC.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicAdminController.java:getAllTopicsAsAdmin": {
+   "summary": "GET all topics (admin view); requires AUTHORIZATION_GET_ALL_TOPICS.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicAdminController.java:getTopicWithTranslationById": {
+   "summary": "GET one topic with full multilingual translations by id.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/converter/TopicGroupConverter.java": {
+   "summary": "Converts TopicGroupEntity collections (relational, with a topic_group_x_topic join table) into TopicGroupsDTO, resolving each group's name to the current request language and listing member topic ids.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/converter/TopicGroupConverter.java:toTopicGroupsDTO": {
+   "summary": "Wraps mapped topic group items into the TopicGroupsDTO/TopicGroupsDTOData envelope.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/converter/TopicGroupConverter.java:itemsOf": {
+   "summary": "Maps each TopicGroupEntity to a DTO item with id, localized name and topic ids.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/model/ApplicationSettingsEntity.java": {
+   "summary": "MongoDB document (collection application_settings) extending the generated ApplicationSettings schema class; adds a Mongo @Id and a releaseToggles catch-all map for unknown/extra settings fields via @JsonAnySetter.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TenantHibernateInterceptor.java": {
+   "summary": "Hibernate Interceptor that auto-populates tenantId on TenantAware entities before flush, using TenantContext, when multitenancy is enabled (resolved once from env var or application-local.properties and cached statically).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TenantHibernateInterceptor.java:preFlush": {
+   "summary": "For each flushed entity implementing TenantAware with a null tenantId, sets it from the current TenantContext (skipped for the technical tenant).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TenantHibernateInterceptor.java:resolveMultiTenancy": {
+   "summary": "Resolves the multitenancy.enabled flag from an env var, falling back to a properties file.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/tenant/TenantContext.java": {
+   "summary": "Static ThreadLocal<Long> holder for the current request's tenant id; set by HttpTenantFilter/ConsultingTypeLoader and read throughout the tenant-aware repository and interceptor layers.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/tenant/TenantContext.java:getCurrentTenant": {
+   "summary": "Returns the tenant id bound to the current thread.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/tenant/TenantContext.java:setCurrentTenant": {
+   "summary": "Binds a tenant id to the current thread.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/tenant/TenantContext.java:clear": {
+   "summary": "Removes the thread-bound tenant id (called at end of request).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/tenant/TenantResolver.java": {
+   "summary": "Resolves the tenant id for an HTTP request from the subdomain (authoritative) and/or an internal 'tenantId' header; rejects requests where a header contradicts the subdomain-derived tenant as a spoofing attempt.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/tenant/TenantResolver.java:resolve": {
+   "summary": "Public entry point resolving the tenant id or throwing AccessDeniedException if unresolvable.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/tenant/TenantResolver.java:resolveTenantFromHttpRequest": {
+   "summary": "Cross-checks subdomain- and header-derived tenant ids, rejecting mismatches; falls back to header alone for internal calls.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/tenant/TenantResolver.java:getTenantIdBySubdomain": {
+   "summary": "Looks up the tenant id for a subdomain via TenantService.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/util/JsonConverter.java": {
+   "summary": "Static Jackson-based helpers to serialize objects to JSON strings and deserialize JSON strings to Map<String,String>, used for storing multilingual topic fields as JSON text columns.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/util/JsonConverter.java:convertToJson": {
+   "summary": "Serializes an object to a JSON string.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/util/JsonConverter.java:convertMapFromJson": {
+   "summary": "Deserializes a JSON string into a Map<String,String>, tolerant of unknown properties and control chars.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/config/KeycloakConfig.java": {
+   "summary": "Request-scoped bean building AuthenticatedUser from the current JWT (username, userId, token, realm roles, authorities); decodes Base32 'enc.'-prefixed usernames. Gotcha: wraps extraction errors in KeycloakException.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/config/KeycloakConfig.java:authenticatedUser": {
+   "summary": "Builds an AuthenticatedUser bean from the current request's JWT principal, decoding username and extracting roles/authorities.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/config/KeycloakConfig.java:extractRealmRoles": {
+   "summary": "Reads realm_access.roles from the JWT claims into a Set<String>.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/config/KeycloakConfig.java:decodeUsername": {
+   "summary": "Decodes a Base32-encoded, 'enc.'-prefixed username claim back to plain text.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/auth/AuthorisationService.java": {
+   "summary": "Reads the tenantId claim from the current JWT security context; exposes isSuperAdmin() (tenantId == 0) used by @PreAuthorize expressions such as on the global SMTP credentials endpoint.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/auth/AuthorisationService.java:findTenantIdInAccessToken": {
+   "summary": "Extracts the tenantId claim from the current Authentication's JWT.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/auth/AuthorisationService.java:isSuperAdmin": {
+   "summary": "True if the resolved tenant id equals 0 (the technical/super-admin tenant).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/auth/RoleAuthorizationAuthorityMapper.java": {
+   "summary": "Spring Security GrantedAuthoritiesMapper implementation mapping normalized Keycloak role names to application-level AUTHORIZATION_* authorities via the Authority enum.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/auth/RoleAuthorizationAuthorityMapper.java:mapAuthorities": {
+   "summary": "Normalizes incoming role names and maps each to its granted authorities via the Authority enum.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/auth/RoleAuthorizationAuthorityMapper.java:normalizeRoleName": {
+   "summary": "Lowercases a role name and strips a leading 'role_' prefix.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/ApplicationSettingsService.java": {
+   "summary": "MongoDB persistence for the single ApplicationSettingsEntity document; asserts exactly one document exists and replaces-on-save (deleteAll then save) to keep it a singleton.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/ApplicationSettingsService.java:getApplicationSettings": {
+   "summary": "Returns the sole application settings document, asserting uniqueness.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/ApplicationSettingsService.java:saveApplicationSettings": {
+   "summary": "Deletes all existing documents and saves the given entity, enforcing singleton storage.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeValidator.java": {
+   "summary": "Validates consulting-type JSON configuration files at startup against a bundled JSON Schema (draft-v7, everit-json-schema library); used by ConsultingTypeLoader before seeding entries.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeValidator.java:validateConsultingTypeConfigurationJsonFile": {
+   "summary": "Parses and validates a config file against the JSON schema, throwing UnexpectedErrorException on violation/parse failure.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeValidator.java:buildSchema": {
+   "summary": "Loads and compiles the bundled JSON schema resource.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicController.java": {
+   "summary": "REST controller implementing TopicApi; public read endpoints for all topics and all active topics.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicController.java:getAllTopics": {
+   "summary": "GET all topics as basic DTOs; 204 if empty.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicController.java:getAllActiveTopics": {
+   "summary": "GET only ACTIVE-status topics; 204 if empty.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/exception/TopicValidationException.java": {
+   "summary": "RuntimeException mapped to HTTP 400 via @ResponseStatus, thrown by TopicValidationService for invalid translation language keys.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/exception/UnexpectedErrorException.java": {
+   "summary": "Generic RuntimeException used across consulting-type loading/validation code paths to signal an unrecoverable startup or IO error.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/DefaultApplicationSettingsInitializer.java": {
+   "summary": "Startup (@PostConstruct) initializer that seeds a default ApplicationSettingsEntity document into MongoDB when none exists yet, wiring feature flags from multitenancy configuration properties.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/DefaultApplicationSettingsInitializer.java:init": {
+   "summary": "Creates and saves default application settings if the repository is empty.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/DefaultApplicationSettingsInitializer.java:createDefaultApplicationSettings": {
+   "summary": "Builds a fully-populated default ApplicationSettingsEntity including multitenancy and SMTP defaults.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/JakartaDpaMailTransport.java": {
+   "summary": "jakarta.mail DpaMailTransport implementation sending the DPA signing email over SMTP; enforces mandatory STARTTLS and hostname verification. Gotcha: parses the recipient first so a bad address is 400, not a 502 SMTP failure.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/JakartaDpaMailTransport.java:send": {
+   "summary": "Parses the recipient, opens an authenticated SMTP session per configured security mode, and sends the HTML email, wrapping failures in SmtpSendException.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/JakartaDpaMailTransport.java:buildSessionProperties": {
+   "summary": "Builds jakarta.mail session Properties enforcing STARTTLS-required or implicit TLS plus hostname verification.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TranslationService.java": {
+   "summary": "Reads the current request's 'lang' cookie to determine the active language context, defaulting to German ('de') when absent.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TranslationService.java:getCurrentLanguageContext": {
+   "summary": "Returns the language code from the request's lang cookie, or the default 'de'.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/util/TranslationUtils.java": {
+   "summary": "Static helper resolving a language-keyed translation from a JSON-encoded map string, falling back to German then to an empty string with a warning log.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/util/TranslationUtils.java:getTranslatedStringFromMap": {
+   "summary": "Parses the JSON translation map and returns the value for the requested language, with a 'de' fallback.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/validation/InputSanitizer.java": {
+   "summary": "OWASP HtmlPolicyBuilder-based sanitizer stripping HTML from strings and (recursively) from language-keyed string maps used by TopicInputSanitizer.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/validation/InputSanitizer.java:sanitize": {
+   "summary": "Sanitizes a single string, or every value of a language-keyed map, via an OWASP HTML policy.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/validation/TopicInputSanitizer.java": {
+   "summary": "Sanitizes user-editable fields (name, status, description, internalIdentifier) of a TopicMultilingualDTO via InputSanitizer while passing through non-sanitized fields (id, dates, titles, slug) unchanged.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/validation/TopicInputSanitizer.java:sanitize": {
+   "summary": "Copies unsanitized fields then sanitizes name/status/description/internalIdentifier.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/filter/SubdomainExtractor.java": {
+   "summary": "Extracts the leftmost subdomain label from the current request's server name using Guava InternetDomainName; used by TenantResolver to derive tenant identity from the request host.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/filter/SubdomainExtractor.java:getCurrentSubdomain": {
+   "summary": "Reads the current request's server name and extracts its subdomain.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/filter/SubdomainExtractor.java:getSubdomain": {
+   "summary": "Parses a hostname and returns its leftmost label if it has a parent domain.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/ConsultingTypeServiceApplication.java": {
+   "summary": "Spring Boot application entry point (@SpringBootApplication) bootstrapping the ConsultingTypeService process; all wiring happens via component scanning and the config/ package.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/ConsultingTypeServiceApplication.java:main": {
+   "summary": "Launches the Spring Boot application context.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/controller/TopicFeatureAssertionAspect.java": {
+   "summary": "AspectJ @Before advice on all TopicAdminController methods asserting the topic feature is enabled before the request proceeds, via TopicFeatureAuthorisationService.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/controller/TopicFeatureAssertionAspect.java:beforeQueryAspect": {
+   "summary": "Asserts the topic feature is enabled before any TopicAdminController method executes.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/DpaSigningEmailController.java": {
+   "summary": "REST controller at POST /settingsadmin/dpa-signing-emails sending a DPA signing email; gated by AUTHORIZATION_PATCH_APPLICATION_SETTINGS. Gotcha: undocumented in OpenAPI specs (deliberate, tracked drift per code comment).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/DpaSigningEmailController.java:send": {
+   "summary": "Validates the request DTO and delegates to DpaSigningEmailService, returning a SENT status response.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicGroupsController.java": {
+   "summary": "REST controller implementing TopicGroupsApi; returns all topic groups with their member topics via TopicGroupConverter/TopicGroupService.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicGroupsController.java:getAllTopicGroups": {
+   "summary": "GET all topic groups mapped to TopicGroupsDTO, within a transaction (lazy entity access).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/exception/SmtpSendException.java": {
+   "summary": "RuntimeException signaling an SMTP handover failure; the DPA mail send path must never report success when this is thrown.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/exception/TopicAccessDeniedException.java": {
+   "summary": "AccessDeniedException subtype mapped to HTTP 403 with reason 'feature topic disabled', thrown when the topic feature is not enabled for the tenant.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/BasicConsultingTypeMapper.java": {
+   "summary": "Maps a schema ConsultingType to the 'basic' response shape (id, description, registration, group chat, video-call flag) used by the public consulting-type list endpoint.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/BasicConsultingTypeMapper.java:mapConsultingType": {
+   "summary": "Builds a BasicConsultingTypeResponseDTO from a ConsultingType using shared ConsultingTypeMapper helpers.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/FullConsultingTypeMapper.java": {
+   "summary": "Maps a schema ConsultingType to the 'full' response shape including roles, notifications, welcome screen/message, session data initialization and required components.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/FullConsultingTypeMapper.java:mapConsultingType": {
+   "summary": "Builds a FullConsultingTypeResponseDTO from a ConsultingType with all fields populated.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/tenant/TenantAspect.java": {
+   "summary": "AspectJ @Before advice enabling a Hibernate row-level 'tenantFilter' (tenant_id = :tenantId) before any api.port.* method executes, skipped for the technical tenant.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/tenant/TenantAspect.java:beforeQueryAspect": {
+   "summary": "Enables and parameterizes the Hibernate tenantFilter session filter for the current tenant before port-layer queries.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/config/StrictRequestBodyConfig.java": {
+   "summary": "Per-type-opt-in Jackson handler making unknown JSON fields a hard error only for specific request bodies (ApplicationSettingsPatchDTO), avoiding the global fail-on-unknown-properties trap breaking the TenantService client.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/filter/HttpTenantFilter.java": {
+   "summary": "Servlet filter setting TenantContext for the current thread from TenantResolver on every request not matching a whitelist (health, swagger, settings paths), clearing it after the chain completes.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/filter/HttpTenantFilter.java:doFilterInternal": {
+   "summary": "Resolves and sets the tenant id in TenantContext for non-whitelisted requests, clearing it after downstream processing.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/auth/Authority.java": {
+   "summary": "Enum mapping UserRole values (TENANT_ADMIN, SINGLE_TENANT_ADMIN, TOPIC_ADMIN) to lists of AUTHORIZATION_* authority string constants consumed by RoleAuthorizationAuthorityMapper and @PreAuthorize checks.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeRepositoryService.java": {
+   "summary": "Interface abstracting ConsultingType persistence, implemented by the tenant-aware and tenant-unaware Mongo repository services selected via @ConditionalOnExpression on multitenancy.enabled.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/model/ConsultingTypeEntity.java": {
+   "summary": "MongoDB document (collection consulting_types) extending the generated ConsultingType schema class; effectively a marker class adding @Document persistence to the schema type.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/model/TopicEntity.java": {
+   "summary": "JPA entity (table topic, relational/PostgreSQL) for a topic, tenant-aware via Hibernate row filter (tenant_id = :tenantId); holds multilingual title/name/description fields as raw JSON-string columns and a many-to-many link to topic groups.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/model/TopicGroupEntity.java": {
+   "summary": "JPA entity (table topic_group) representing a named grouping of topics via the topic_group_x_topic join table; not tenant-scoped.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/model/TopicStatus.java": {
+   "summary": "Simple enum of topic lifecycle states: ACTIVE, INACTIVE.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/repository/ApplicationSettingsRepository.java": {
+   "summary": "Spring Data MongoRepository for the single ApplicationSettingsEntity document (MongoDB persistence).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/repository/TopicGroupRepository.java": {
+   "summary": "Spring Data JpaRepository for TopicGroupEntity (relational persistence), no custom queries.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/repository/TopicRepository.java": {
+   "summary": "Spring Data JpaRepository for TopicEntity (relational) with tenant-scoped and active-status query methods used by TopicService depending on the multitenancy flag.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/DpaMailSettings.java": {
+   "summary": "Immutable @Value carrier for resolved SMTP connection settings (host, port, secure, username, plaintext password, from) passed to DpaMailTransport implementations.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/DpaMailTransport.java": {
+   "summary": "Strict SMTP send contract interface: implementations must either return a DpaMailSendReceipt after acceptance or throw SmtpSendException; silent success is disallowed by contract.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/LogService.java": {
+   "summary": "Static SLF4J logging helper centralizing warning/error/internal-server-error log formatting, including a dedicated JSON-schema ValidationException logger listing all causing violations.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/LogService.java:logWarning": {
+   "summary": "Logs a warning message or exception with a standard service prefix.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/LogService.java:logError": {
+   "summary": "Logs an error, optionally with a contextual message, including the stack trace.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TenantService.java": {
+   "summary": "Calls the generated TenantService OpenAPI client for tenant data by subdomain or id; caches results in an Ehcache-backed CacheManager (TENANT_CACHE), with 'NoCache' variants for freshness-critical callers.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TenantService.java:getRestrictedTenantDataBySubdomain": {
+   "summary": "Cached lookup of restricted tenant data by subdomain.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TenantService.java:getRestrictedTenantDataBySubdomainNoCache": {
+   "summary": "Uncached lookup by subdomain, used where staleness is unacceptable (e.g. tenant resolution).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TenantService.java:getRestrictedTenantData": {
+   "summary": "Cached lookup of restricted tenant data by tenant id.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TenantService.java:getRestrictedTenantDataNoCache": {
+   "summary": "Uncached lookup by tenant id.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/service/ConsultingTypeAdminService.java": {
+   "summary": "Admin service paginating the full, sorted list of extended consulting-type response DTOs using Spring's PagedListHolder, and building HAL pagination links.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/service/ConsultingTypeAdminService.java:findConsultingTypes": {
+   "summary": "Returns a page of extended consulting types plus HAL pagination links and total count.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/service/ConsultingTypeAdminService.java:fullSortedExtendedConsultingTypeResponseList": {
+   "summary": "Builds the full slug-sorted list of extended consulting type DTOs from the repository.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/config/CacheManagerConfig.java": {
+   "summary": "Configures an Ehcache-backed Spring CacheManager with two named caches (tenantCache, consultingTypeGroupsCache) with configurable size/TTL; includes a hand-written adapter bridging Ehcache 2.x to Spring's Cache SPI.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/config/CacheManagerConfig.java:cacheManager": {
+   "summary": "Exposes the Spring CacheManager bean wrapping the underlying Ehcache manager.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/config/CacheManagerConfig.java:ehCacheManager": {
+   "summary": "Builds the underlying net.sf.ehcache.CacheManager with tenant and consulting-type-groups cache configs.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/controller/ConsultingTypeAdminController.java": {
+   "summary": "REST controller implementing ConsultingtypeadminApi; serves a HAL root navigation entity and a paginated list of consulting types for admin tooling.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/controller/ConsultingTypeAdminController.java:getRoot": {
+   "summary": "Returns HAL navigation links for the admin API root.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/controller/ConsultingTypeAdminController.java:getConsultingTypes": {
+   "summary": "Returns a paginated list of consulting types for the given page/perPage.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/ConsultingTypeGroupService.java": {
+   "summary": "Builds consulting-type group response DTOs by grouping consulting types via ConsultingTypeGroupRepository and mapping each group entry through ConsultingTypeGroupMapper/ConsultingTypeGroupResponseMapper.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/api/service/ConsultingTypeGroupService.java:fetchConsultingTypeGroupList": {
+   "summary": "Returns all consulting type groups with their assigned consulting types as response DTOs.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/config/CorsConfig.java": {
+   "summary": "Conditionally-enabled (consulting.type.cors.enabled=true) CORS filter registration with explicit allowed origins/paths; rejects wildcard '*' origins since credentials are allowed.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/config/CorsConfig.java:corsFilterRegistrationBean": {
+   "summary": "Builds and registers a CorsFilter with configured allowed origins/methods/headers and credentials support.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/config/CorsConfig.java:validateAllowedOrigins": {
+   "summary": "Fails fast if allowed origins contains a wildcard, which is invalid when credentials are allowed.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/de/caritas/cob/consultingtypeservice/filter/StatelessCsrfFilter.java": {
+   "summary": "Custom stateless double-submit-cookie CSRF filter comparing a header token against a cookie value for state-changing requests, whitelisting safe methods and swagger/topic/consultingtypes/settingsadmin paths.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/de/caritas/cob/consultingtypeservice/filter/StatelessCsrfFilter.java:doFilterInternal": {
+   "summary": "Rejects requests with a 403 when the CSRF header token does not match the CSRF cookie value for protected requests.",
+   "tags": [
+    "described"
+   ]
+  }
+ }
+}

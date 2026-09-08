@@ -1,0 +1,162 @@
+{
+  "tour": [
+    {
+      "order": 1,
+      "title": "Start here: the application and its four manager ports",
+      "description": "UserServiceApplication is the Spring Boot entry point. Next to it sit four deliberately small facades — AccountManager, IdentityManager, Messenger and Organizer — which implement the inbound ports in api/port/in and give the rest of the codebase a narrow vocabulary for accounts, identities, messaging and organisational structure. Read these first to see what the service claims to be responsible for before diving into the 40+ controllers.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/userservice/api/UserServiceApplication.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/AccountManager.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/IdentityManager.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/Messenger.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/Organizer.java"
+      ]
+    },
+    {
+      "order": 2,
+      "title": "The two principals: User (asker) and Consultant",
+      "description": "Almost every flow in this repo is about one of these two entities. User is the advice seeker — registered or anonymous — and Consultant is the counsellor, connected to one or more agencies via ConsultantAgency. Note that both entities carry a Matrix user id and a Matrix password field, because each account exists three times: in MariaDB, in Keycloak and on the Matrix homeserver.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/userservice/api/model/User.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/model/Consultant.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/model/ConsultantAgency.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/model/UserAgency.java"
+      ]
+    },
+    {
+      "order": 3,
+      "title": "The central aggregate: Session",
+      "description": "Session is the counselling case: it binds an asker to a consultant, an agency, a consulting type and a set of topics, and carries the Matrix room id, the consent flag and the archive state. SessionService is the largest single service in the repo and owns the state transitions; SessionData and SessionTopic hold the registration answers and the topic assignment.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/userservice/api/model/Session.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/service/session/SessionService.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/model/SessionData.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/port/out/SessionRepository.java"
+      ]
+    },
+    {
+      "order": 4,
+      "title": "How a request gets its tenant",
+      "description": "ORISO is multi-tenant, and nothing may be read before the tenant is known. HttpTenantFilter runs early in the filter chain and asks TenantResolverService, which tries subdomain, access-token claim, custom header and technical-admin resolvers in order. The answer is parked in the thread-local TenantContext and enforced on every query by TenantHibernateInterceptor — this is the single most important cross-cutting rule in the codebase.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/interceptor/HttpTenantFilter.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/tenant/TenantResolverService.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/tenant/TenantContext.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/service/TenantHibernateInterceptor.java"
+      ]
+    },
+    {
+      "order": 5,
+      "title": "The controller surface and its delegate pattern",
+      "description": "UserController is generated-interface-wide and would be unmanageable on its own, so it forwards to focused delegates: registration, sessions, chat, consultants, account, two-factor and support. UserAdminController does the same for the /useradmin surface. When you look for an endpoint, start at the controller, then follow the delegate, then the facade.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/UserController.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/UserRegistrationControllerDelegate.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/UserSessionControllerDelegate.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/UserAdminController.java"
+      ]
+    },
+    {
+      "order": 6,
+      "title": "Registration and the first enquiry",
+      "description": "CreateUserFacade builds the Keycloak account and the User row, CreateSessionFacade persists the Session, and CreateEnquiryMessageFacade turns it into a live case by creating the Matrix room and posting the first message. Because three systems are touched, RollbackFacade exists to undo a half-finished registration — read it to understand the compensating-transaction style used throughout this repo.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/userservice/api/facade/CreateUserFacade.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/facade/CreateSessionFacade.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/facade/CreateEnquiryMessageFacade.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/facade/rollback/RollbackFacade.java"
+      ]
+    },
+    {
+      "order": 7,
+      "title": "Assigning an enquiry to a consultant",
+      "description": "AssignEnquiryFacade is where authorisation, business rules and Matrix membership meet. SessionToConsultantVerifier decides whether this consultant may take this case, UnauthorizedMembersProvider computes who has to be evicted from the room afterwards, and AssignSessionFacade handles the reassignment of an already-running session.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/userservice/api/facade/assignsession/AssignEnquiryFacade.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/facade/assignsession/SessionToConsultantVerifier.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/facade/assignsession/UnauthorizedMembersProvider.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/facade/assignsession/AssignSessionFacade.java"
+      ]
+    },
+    {
+      "order": 8,
+      "title": "The Matrix bridge, outbound and inbound",
+      "description": "MatrixSynapseService and MatrixRoomClient are the only places that speak HTTP to the homeserver; everything else goes through the ports SessionRoomGateway and MatrixUserClient. In the other direction, MatrixSyncController receives room events and hands them to MatrixEventListenerService, which is what turns a chat message into notifications and statistics.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/userservice/api/adapters/matrix/MatrixSynapseService.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/adapters/matrix/MatrixRoomClient.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/service/matrix/MatrixEventListenerService.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/MatrixSyncController.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/port/out/SessionRoomGateway.java"
+      ]
+    },
+    {
+      "order": 9,
+      "title": "Keycloak as the identity provider",
+      "description": "KeycloakService is a large adapter that is deliberately hidden behind a fan of tiny ports in api/port/out — IdentityClient, IdentityRoleUpdater, IdentitySecondFactor and friends. This keeps the rest of the code free of Keycloak types and is checked by the module-boundary CI test. KeycloakIdentitySessionExchange is what lets the service mint a login session for a user it has just verified out-of-band.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakService.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakIdentitySessionExchange.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/port/out/IdentityClient.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/port/out/IdentitySecondFactor.java"
+      ]
+    },
+    {
+      "order": 10,
+      "title": "Passwordless entry: magic links and password reset",
+      "description": "MagicLinkLoginService and PasswordResetService both issue single-use tokens that live in Redis via RedisOneTimeTokenStore rather than in MariaDB, so they expire on their own and leave no trace after use. Both end by handing the user to Keycloak. This is the newest authentication surface in the repo and worth reading before touching anything under api/service/auth.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/userservice/api/service/auth/MagicLinkLoginService.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/service/auth/PasswordResetService.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/service/auth/RedisOneTimeTokenStore.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/service/auth/OneTimeTokenStore.java"
+      ]
+    },
+    {
+      "order": 11,
+      "title": "Case handover between consultants",
+      "description": "A running case can be transferred. CaseHandoverService validates the stated reason against CaseHandoverReasonPolicy, persists a CaseHandoverRequest and rewires the Matrix room; CaseHandoverLogsService exposes the resulting audit trail. This is a good example of a feature that is fully owned by this repo, from table to endpoint.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/userservice/api/service/CaseHandoverService.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/model/CaseHandoverRequest.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/model/CaseHandoverReasonPolicy.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/CaseHandoverController.java"
+      ]
+    },
+    {
+      "order": 12,
+      "title": "Invitations: agency links and staff account invites",
+      "description": "Two mechanisms that are easy to confuse. AgencyInviteLinkService produces shareable links that route an asker into an agency or topic. AccountInviteService invites staff by e-mail, and the onboarding services then walk the invitee through e-mail verification, two-factor setup and DPA signature before the account is provisioned. INVITE_LINKS_API.md documents the first of the two.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/userservice/api/service/agencyinvitelink/AgencyInviteLinkService.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/service/accountinvite/AccountInviteService.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/service/accountinvite/onboarding/CounsellorOnboardingService.java",
+        "document:INVITE_LINKS_API.md"
+      ]
+    },
+    {
+      "order": 13,
+      "title": "Scheduled workflows: deletion, deactivation, reminders",
+      "description": "A large part of the behaviour is not request-driven. Schedulers under api/workflow pick up flagged accounts, stale anonymous users, unanswered enquiries and inactive accounts. DeleteUserAccountService runs an ordered chain of ActionCommands across database, Matrix and Keycloak, and ScheduledTaskClaimService makes sure only one replica executes a given run — read documentation/USER_SERVICE_REPLICA_SAFETY.md alongside this.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/userservice/api/workflow/delete/service/DeleteUserAccountService.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/workflow/delete/service/DeletionLifecycleService.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/workflow/scheduling/ScheduledTaskClaimService.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/workflow/enquirynotification/service/EnquiryNotificationService.java",
+        "document:documentation/USER_SERVICE_REPLICA_SAFETY.md"
+      ]
+    },
+    {
+      "order": 14,
+      "title": "Where the schema and the outside world are defined",
+      "description": "The MariaDB schema is owned by Liquibase, applied by LiquibaseConfig and guarded at boot by SchemaMigrationGuard; docs/schema-migrations.md states the rules for adding a changeset. The outbound side of the platform is declared in api/config/apiclient, whose factories name every other ORISO service this backend calls: agency, consulting type, topic, tenant, appointment, application settings and mail.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/userservice/api/config/LiquibaseConfig.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/config/SchemaMigrationGuard.java",
+        "document:docs/schema-migrations.md",
+        "file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/AgencyServiceApiControllerFactory.java",
+        "file:src/main/java/de/caritas/cob/userservice/api/config/apiclient/TenantServiceApiControllerFactory.java"
+      ]
+    }
+  ]
+}

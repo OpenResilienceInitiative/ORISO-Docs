@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Run the exact locked Node image; native mode is explicit for local development.
+set -euo pipefail
+TOOLING="$(python3 -c 'from pathlib import Path; import sys; print(Path(sys.argv[1]).resolve().parent)' "$0")"
+RUNTIME="$(dirname "$TOOLING")"
+export UA_CORE="${UA_CORE:-$RUNTIME/upstream/understand-anything-plugin/packages/core/dist/index.js}"
+if [ "${UA_NATIVE_NODE:-0}" = 1 ]; then exec node "$@"; fi
+IMAGE="$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["nodeImage"])' "$TOOLING/toolchain.lock.json")"
+BASE="${UA_MOUNT_ROOT:-/opt/oriso-understand}"
+exec docker run --rm -v "$BASE:$BASE" -v "$RUNTIME:$RUNTIME" -w "$PWD" \
+  -e UA_CORE -e UA_BASE -e UA_REPOSITORIES -e UA_SOURCE_ROOT -e UA_GENERATION_ID -e NODE_OPTIONS \
+  "$IMAGE" node "$@"

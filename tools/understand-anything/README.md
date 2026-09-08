@@ -1,86 +1,156 @@
-# Understand-Anything Tooling
+# Understand Anything: reliable source evidence
 
-Deterministic pipeline that builds and maintains the ORISO code-knowledge graphs
-served by `understand.oriso.org` (server `oriso-understand-dev-1`,
-`/opt/oriso-understand/`). Committed here so the tooling can never be lost again
-(the original June 2026 generators were machine-local and disappeared —
-see ORISO-Docs#61).
+Developers need a graph that tells them which revision it describes, keeps uncertain
+relationships visibly uncertain, and fails when an update is incomplete. This directory
+owns the ORISO graph producer, delivery client, semantic models, platform builder and
+compatibility patch. It replaces machine-local scripts with a reproducible release.
+Delivery is tracked in [ORISO-Docs#110](https://github.com/OpenResilienceInitiative/ORISO-Docs/issues/110).
 
-## Components
+A current graph is source evidence. It does not establish that a deployed application,
+encrypted conversation, deletion or notification works for a real user. Ordered flows link
+to source and test definitions; only separately recorded executions establish runtime results.
 
-| Script | Purpose |
-|---|---|
-| `ua-nightly-full.sh` | **The nightly driver (02:00 cron).** Full deterministic rebuild: advances every repo clone to its origin tip, regenerates all 12 per-repo graphs (generate + enrich), installs them, and rebuilds the super-graph. ~90 s total. Replaces the overlay/baseline approach, which could silently freeze on a stale base. |
-| `ua-generate.mjs` | Per-repo deterministic graph generator. Walks tracked files, runs the understand-anything-plugin core (tree-sitter for code, built-in parsers for yaml/md/sql/sh/…), builds nodes/edges (contains/imports/calls), heuristic layers + tour, fingerprints, meta. ~3s per repo, no LLM. |
-| `ua-enrich-merge.mjs` | Merges a coarse enrichment JSON (concept/flow nodes + related-edges, authored per repo) into a staging graph; adds a "Domain Concepts" layer; validates (unresolved refs are reported and must be fixed). |
-| `enrichments/*.json` | The per-repo enrichment content (concepts/flows grounded in READMEs + class inventories). 12 repos covered since 2026-08-05 (added helm, e2e, infra, database). |
-| `ua-build-supergraph.mjs` | Builds the cross-repo super-graph: prefixes node ids (`<Repo>::<id>`), adds `repo:*` root nodes + containment edges, per-repo layers, an overview tour, and **deterministic cross-repo `depends_on` edges** (service-keyword evidence, count ≥ 2). `--install` deploys into `ORISO-Docs/.understand-anything/` and writes a `meta.json` for freshness checks. |
-| `refresh-understand-ultralite-local.sh` | RETIRED 2026-08-05 (kept for reference). The old nightly overlay refresh; superseded by `ua-nightly-full.sh`. |
+## One generation, one source vector
 
-## Indexed repos & branches
-
-Since 2026-08-05 the board tracks the **pre-dev integration branches** where they
-exist, and 13 dashboards run on ports 5173–5185:
-
-| Repo | Branch | Dashboard |
-|---|---|---|
-| ORISO-Frontend, ORISO-Admin, ORISO-UserService, ORISO-AgencyService, ORISO-ConsultingTypeService, ORISO-TenantService | `pre-dev` | per-service |
-| ORISO-Database, ORISO-Kubernetes (legacy, analysis only) | `dev` | per-repo |
-| ORISO-Keycloak | `feature/understand-anything-graph` | per-repo |
-| ORISO-Helm, ORISO-E2E, ORISO-Infra | `main` | per-repo (added 2026-08-05) |
-| ORISO-Docs | `main` | hosts the super-graph (`/docs/`) |
-
-Note (2026-08-14 rebuild): the committed snapshot artifacts in this repo were
-rebuilt from `pre-dev` for **ORISO-E2E** (its `main` is ~75 commits behind) and
-**ORISO-Keycloak** (instead of the stale `feature/understand-anything-graph`).
-The server clones still track the branches in the table above — switching them
-(`git checkout pre-dev` in `/opt/oriso-understand/ORISO-E2E` and `…/ORISO-Keycloak`)
-is a pending server-side follow-up. The `.mjs` scripts now honor `UA_CORE` /
-`UA_BASE` env overrides so the pipeline can also run off-server (defaults unchanged).
-
-## Nightly operation (server)
-
-```
-0 2 * * *   ua-nightly-full.sh          # full rebuild of everything
-30 2 * * *  prune daily .bak-* > 7 days
-35 2 * * *  prune .bak-prerebuild-* > 30 days
+```mermaid
+flowchart LR
+  R[Fetch every declared source ref] --> S[Immutable source snapshots]
+  S --> X[Extract identities and dependencies]
+  X --> E[Assess semantic claims and ordered flows]
+  E --> A[Build platform and supergraph]
+  A --> V[Validate schema, identities, coverage and checksums]
+  V --> P[Atomic current pointer]
+  P --> D[Download named immutable generation]
+  D --> C[Validate then atomically publish local cache]
+  C --> U[Same source for Codex, Claude and viewer]
 ```
 
-Dashboards read the graph JSON from disk per request — no container restarts
-are needed after a rebuild.
+`bundle/` owns the generation contract, publication, transport and rollback. A manifest
+binds full source SHAs and refs, successful fetch timestamps, graph files, checksums,
+coverage and the generation identifier. Graphs and metadata are sealed together. A failed
+required source, build, validation or transfer leaves the last complete generation intact.
+`current` is a symlink to an immutable generation; readers resolve it once and fetch that
+specific generation. `previous` preserves a complete rollback package.
 
-## Manual rebuild (server)
+The producer tracks `dev` for all listed repositories except ORISO-E2E, ORISO-Infra and
+ORISO-SigNoz, which use `main` because they have no Dev branch. The exact inventory is in
+`bundle/pipeline.py`; archived repositories still have to fetch successfully. No cached ref
+is silently substituted after a failed fetch. Source checkout files are never reset by the
+producer: analysis runs in detached snapshots.
+
+## Install a producer and consumer together
+
+`toolchain.lock.json` pins the upstream repository commit, ORISO patch checksum, Node image
+digest, package manager and TypeScript version. `package-lock.json` pins the ORISO dependency
+tree. The upstream MIT license remains in the installed upstream checkout. The ORISO patch
+is maintained beside its tests; upstream caches are not edited during development.
 
 ```bash
-/opt/oriso-understand/_rebuild/ua-nightly-full.sh
+# Linux / PreDev: builds inside the exact locked Node container.
+python3 install.py --runtime-root /opt/oriso-understand/toolchain --docker \
+  --profile /opt/oriso-understand/agent-profile
+
+# macOS / local: use a supported Node runtime; dependency versions remain pinned.
+python3 install.py --runtime-root /path/to/oriso-ua-runtime \
+  --profile /path/to/agent-profile
 ```
 
-Or a single repo:
+Choose explicit absolute directories. Installation creates a content-addressed release,
+then updates `current` after successful dependency installation and core/dashboard builds.
+It preserves `previous`. A profile exposes the same reviewed `oriso-graph` skill to `.agents`
+(Codex) and `.claude`, and supplies `bin/ua-pull` and `bin/ua-dashboard`. Put that `bin` on
+PATH. Existing non-symlink skill/launcher files are refused rather than overwritten.
+Older personal plugin caches can remain installed as historical tools; the ORISO entrypoints
+must use this release. Do not point ORISO workflows at a generic unpatched prebuilt viewer.
+
+## Build and verify on PreDev
 
 ```bash
-cd /opt/oriso-understand/_rebuild
-node ua-generate.mjs /opt/oriso-understand/<Repo> <Repo> ./<Repo>   # deterministic base
-node ua-enrich-merge.mjs ./<Repo> enrich-<repo>.json                # coarse semantics
-cp ./<Repo>/{knowledge-graph.json,meta.json,fingerprints.json} /opt/oriso-understand/<Repo>/.understand-anything/
-node ua-build-supergraph.mjs --install                              # refresh super-graph
+TOOLING=/opt/oriso-understand/toolchain/current/tooling
+bash "$TOOLING/ua-refresh.sh" refresh --base /opt/oriso-understand \
+  --tools "$TOOLING" --publish-root /opt/oriso-understand/published
+bash "$TOOLING/ua-refresh.sh" verify --base /opt/oriso-understand \
+  --publish-root /opt/oriso-understand/published
 ```
 
-The nightly pipeline writes daily `.bak-<timestamp>` copies (pruned after
-7 days). `.bak-prerebuild-*` files are manual rollback snapshots taken before
-risky rebuilds (e.g. the 2026-08-05 pre-dev switch); the 02:35 cron prunes
-them after 30 days.
+`ua-node` runs the locked image; `UA_NATIVE_NODE=1` is an explicit local-development option.
+`UA_CORE` can select a test core, while installed releases derive the pinned core path.
+`UA_MOUNT_ROOT` controls the Docker filesystem mount; `UA_BASE` is the graph input root and
+must not be confused with the mount root. Aggregate tools write only to explicit staging
+outputs. The retired overlay command fails with migration instructions. The old nightly
+entrypoint delegates to the same atomic producer.
 
-## Notes
+The observed PreDev schedule is **17 minutes past every second hour** (`17 */2 * * *`),
+plus manually requested runs. The former “on-demand/no cron” description was wrong.
+`understand.oriso.org` is a separate historical nightly dashboard channel; its status does
+not prove the PreDev delivery channel is current. A root workspace graph dated May 2026 is
+historical orientation, even if a remote generation was built successfully today.
 
-- The plugin core lives at
-  `/opt/oriso-understand/understand-anything-plugin/understand-anything-plugin/packages/core/dist/`
-  (v2.7.x). All scripts import its public API — no LLM calls anywhere in this pipeline.
-- Server access: key-auth only (`ssh oriso-understand-root`); private repos
-  (E2E, Infra) are fetched via the same credential-store pattern as the pre-dev
-  deploy server.
-- Enrichment `related` refs must point at files the generator parses into nodes
-  (code, yaml, md, sql, sh). Lock files, dotfiles, `.ftl`/`.properties`, `.txt`,
-  and anything under `.github/` do not resolve.
-- ORISO-Kubernetes is archived upstream (Neusta-owned): analysis only, never push.
-- Full context: rebuild EPIC ORISO-Docs#61 and the plan in the workspace
-  (`0 - Docs/plans/2026-07-15-understand-anything-semantic-rebuild.md`).
+## Pull and use the graph
+
+Run inside the relevant Git checkout:
+
+```bash
+ua-pull
+ua-pull --verify
+ua-pull --path
+ua-pull --platform-only --path
+ua-dashboard --platform-only
+```
+
+The default SSH channel is `predev:/opt/oriso-understand/published`; override it with
+`ORISO_UA_SSH_ALIAS` and `ORISO_UA_REMOTE_ROOT`. HTTPS uses `--via-https <base>` and optional
+`ORISO_UA_AUTH` from the environment; credentials are never written to manifests or logs.
+`--from <store>` is the offline transport used by integration tests.
+
+The cache is outside the checkout under the platform cache directory. The client does not
+overwrite tracked graphs or introduce skip-worktree flags. `--migrate-legacy` (also `--unlock`)
+backs up existing graph files, clears old hiding flags, and records a cache pointer using
+Git's resolved `info/exclude` path, so linked worktrees work too. Historical graph files are
+kept intact. A different checkout must be accepted deliberately with
+`--allow-different-checkout`; its status is `VALID-DIFFERENT-CHECKOUT`, never “fresh Dev”.
+
+`--verify` fetches the expected source ref and checks the full SHA; an unavailable origin is
+a failed verification. `--path` resolves an already validated cached generation for consumers;
+it is not proof of a newly fetched source ref. Validate freshness before making a current-code
+claim. Structural age, semantic review state and delivery time are different facts.
+
+## What relationships mean
+
+- Java overloads use declaring types and signatures; ambiguous legacy identities are retained
+  in the migration map rather than collapsed into one method.
+- TypeScript dependencies use project resolution and symbol binding. Unresolved, external or
+  unsupported imports/calls remain visible in coverage, not fabricated as confirmed calls.
+- `calls_unconfirmed` is a hint. `mentions` and `proposes_for` convey discovery/proposal.
+  These relationships stay separately typed; individual detailed edges are dashed.
+  Overview connections summarize multiple relations and must be expanded before interpreting them.
+- `governs` requires accepted status, explicit scope, accountable owner and a checked
+  supersession state. A textual repository mention does not create authority.
+- Semantic claims carry source revisions, ranges/fingerprints, dates and evidence. Changed
+  source invalidates claims. Legacy prose remains explicitly dated orientation. The initial
+  four ordered walkthroughs cover asker deletion, anonymous enquiry creation, account
+  invitations and request.new timeline notifications; they do not certify whole journeys.
+
+## Validation and rollback
+
+```bash
+# Set UA_CORE to the installed core's absolute dist/index.js path.
+npm test
+python3 -m unittest discover -s test -p '*_test.py'
+```
+
+Regression tests exercise malformed/old/future content, source mismatch, duplicate identities,
+partial transfers, process interruption/concurrency, linked worktrees, semantic invalidation,
+ADR authority, actual Java grammar and TypeScript resolution. The consumer patch rejects
+invalid ORISO graphs instead of silently dropping relationships. Both the producer and the
+consumer enforce the same generation contract before moving their pointers.
+
+Use `ua-pull --rollback` for the local cache, then reverify the older source explicitly.
+For a producer rollback, use the bundle storage rollback function under its publication
+lock; never copy individual files from an earlier run. Toolchain rollback is a separate
+atomic pointer change to the previous content-addressed release. Keep graph generations and
+compatible toolchain releases together for diagnosis. Do not delete the previous generation
+while a reader may still be using it.
+
+See `provenance/imported-sources.json` for the preserved PreDev input hashes, and
+`provenance/remediation-matrix.md` for the acceptance and verification record.
