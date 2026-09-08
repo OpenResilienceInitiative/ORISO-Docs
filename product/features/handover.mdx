@@ -47,7 +47,14 @@ Confirmed in Figma:
 | `custom` | Custom Explanation | Counselor + Client consent | Standard |
 
 <Note>
-Each tenant can override the default consent rules in the **Berechtigungen** matrix (see [Roles & Permissions §3.7](/product/roles-permissions#3-7-per-chat-type-permissions-matrix)).
+**Corrected 2026-09-08 (ORISO-Docs#73).** This used to say that each tenant can override the
+default consent rules in the **Berechtigungen** matrix. It cannot, and never could:
+`case_handover_reason_policy` is platform-global and carries no `tenant_id` column, so a
+per-tenant rule is **not representable** (ADR-002) — the Admin card's own header comment says the
+same. Read the table above as the platform-wide taxonomy, not as tenant configuration; its
+"Default consent rule" column is itself superseded, see §4.7.3 and §4.7.5. Role-level permissions
+in [Roles & Permissions §3.7](/product/roles-permissions#3-7-per-chat-type-permissions-matrix) are
+a different axis and are unaffected.
 </Note>
 
 ## 4.7.3 Consent Model
