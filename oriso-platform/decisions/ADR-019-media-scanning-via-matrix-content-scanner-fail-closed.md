@@ -1,7 +1,11 @@
-# ADR-014 — Media scanning via matrix-content-scanner, fail-closed, pluggable AI check
+# ADR-019 — Media scanning via matrix-content-scanner, fail-closed, pluggable AI check
 
 **Status:** Accepted · **Date:** 2026-07-18
 **Context docs:** `PLAN-media-upload-security-2026-07-18.md`
+**Renumbered 2026-09-08 (ORISO-Docs#73):** this ADR was filed as **ADR-014** and collided with
+`ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent.md` (2026-07-16). It
+is the younger of the two and had no inbound references, so it moved to 019; the legal-text ADR
+keeps 014. Older external citations of "ADR-014 (media scanning)" mean this file.
 
 ## Context
 
