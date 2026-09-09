@@ -46,22 +46,23 @@ tree. The upstream MIT license remains in the installed upstream checkout. The O
 is maintained beside its tests; upstream caches are not edited during development.
 
 ```bash
-# Linux / PreDev: builds inside the exact locked Node container.
-python3 install.py --runtime-root /opt/oriso-understand/toolchain --docker \
-  --profile /opt/oriso-understand/agent-profile
+# Hosted producer: builds inside the exact locked Node container.
+# Agent profile installation is deliberately excluded from this deployment.
+python3 install.py --runtime-root /opt/oriso-understand/toolchain --docker
 
-# macOS / local: use a supported Node runtime; dependency versions remain pinned.
+# macOS / local: optionally expose the installed tools to an agent profile.
 python3 install.py --runtime-root /path/to/oriso-ua-runtime \
   --profile /path/to/agent-profile
 ```
 
 Choose explicit absolute directories. Installation creates a content-addressed release,
 then updates `current` after successful dependency installation and core/dashboard builds.
-It preserves `previous`. A profile exposes the same reviewed `oriso-graph` skill to `.agents`
+It preserves `previous`. The optional `--profile` flag exposes the same reviewed `oriso-graph` skill to `.agents`
 (Codex) and `.claude`, and supplies `bin/ua-pull` and `bin/ua-dashboard`. Put that `bin` on
 PATH. Existing non-symlink skill/launcher files are refused rather than overwritten.
 Older personal plugin caches can remain installed as historical tools; the ORISO entrypoints
-must use this release. Do not point ORISO workflows at a generic unpatched prebuilt viewer.
+must use this release. Hosted deployment must omit `--profile`; it installs runtime tooling only.
+Do not point ORISO workflows at a generic unpatched prebuilt viewer.
 
 ## Build and verify on PreDev
 
