@@ -131,7 +131,7 @@ function syncAdrs() {
     const slug = `adr-${num}`;
     const meta = {
       title: title ?? f.replace(/\.md$/, ''),
-      description: [status && `Status: ${status}`, date && `Datum: ${date}`].filter(Boolean).join(' · ') || undefined,
+      description: [status && `Status: ${status}`, date && `Date: ${date}`].filter(Boolean).join(' · ') || undefined,
       source: `oriso-platform/decisions/${f}`,
     };
     // ADRs stay plain Markdown (they contain angle brackets and braces in prose and code).
@@ -154,9 +154,9 @@ function syncAdrs() {
   const index =
     frontmatter({
       title: 'Architekturentscheidungen (ADR)',
-      description: `Plattformweite Architecture Decision Records — ${files.length} Entscheidungen, aus dem Repository ORISO-Docs.`,
+      description: `Platform-wide Architecture Decision Records — ${files.length} decisions, maintained in the ORISO-Docs repository.`,
     }) +
-    `Diese Reihe ist die kanonische Sammlung der plattformweiten Entscheidungen. Die DSFA-Kapitel verweisen auf sie; jeder Verweis der Form \`ADR-0NN\` in den Kapiteltexten ist auf die jeweilige Seite verlinkt.\n\n` +
+    `This is the canonical collection of platform-wide decisions. The DPIA chapters refer to it; each \`ADR-0NN\` reference in those chapters links to the corresponding page.\n\n` +
     `| Nr. | Entscheidung | Status |\n|---|---|---|\n` +
     files
       .map((f) => {
@@ -173,7 +173,7 @@ function syncAdrs() {
   writeFileSync(join(OUT_ADR, 'index.md'), index);
   writeFileSync(
     join(OUT_ADR, 'meta.json'),
-    JSON.stringify({ title: 'Entscheidungen (ADR)', root: true, pages: ['index', ...pages] }, null, 2) + '\n',
+    JSON.stringify({ title: 'Decisions (ADR)', root: true, pages: ['index', ...pages] }, null, 2) + '\n',
   );
   return known;
 }
@@ -504,9 +504,9 @@ function syncProductDocs() {
   const tabs = cfg.navigation?.tabs ?? [];
   // Tab-Titel -> Ordnername und Anzeigename in der Seitenleiste
   const TAB_DIRS = {
-    'Product': ['produkt', 'Produkt'],
-    'ORISO Platform Architecture': ['plattform', 'Plattform-Architektur'],
-    'ORISO Platform Setup': ['betrieb', 'Betrieb & Einrichtung'],
+    'Product': ['produkt', 'Product'],
+    'ORISO Platform Architecture': ['plattform', 'Platform Architecture'],
+    'ORISO Platform Setup': ['betrieb', 'Setup & Operations'],
   };
   const groupDir = (name) =>
     name.toLowerCase().replace(/&/g, 'und').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');

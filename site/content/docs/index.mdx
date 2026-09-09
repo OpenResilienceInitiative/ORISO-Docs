@@ -1,33 +1,33 @@
 ---
-title: ORISO Dokumentation
-description: Produkt-, Architektur- und Betriebsdokumentation der ORISO-Plattform, dazu die Architekturentscheidungen. Der Quellcode erklärt sich daneben im Code-Graphen.
+title: ORISO Documentation
+description: Product, architecture and operations documentation for the ORISO platform, including its architecture decisions and code graphs.
 ---
 
 <Cards>
-  <Card title="Produkt" href="/produkt/overview/overview">
-    Was die Plattform kann: Beratungsformen, Rollen, Abläufe, Datenmodell, Grenzfälle.
+  <Card title="Product" href="/produkt/overview/overview">
+    What the platform does: counselling modes, roles, workflows, the data model and edge cases.
   </Card>
-  <Card title="Lokal starten" href="/plattform/start-here/install-and-run-locally">
-    Der Einstieg für Entwickler:innen: Voraussetzungen, Repositories, erster laufender Dienst.
+  <Card title="Run locally" href="/plattform/start-here/install-and-run-locally">
+    The developer entry point: prerequisites, repositories and the first running service.
   </Card>
-  <Card title="Plattform-Architektur" href="/plattform/start-here/overview">
-    Wie sie gebaut ist: Dienste, Authentifizierung, Datenhaltung, Deployment, Repository-Karte.
+  <Card title="Platform architecture" href="/plattform/start-here/overview">
+    How ORISO is built: services, authentication, storage, deployment and repository ownership.
   </Card>
-  <Card title="Betrieb & Einrichtung" href="/betrieb/getting-started/clone-repositories">
-    Wie man sie aufsetzt und betreibt: Runbooks von der Serverinstallation bis zur Abnahme.
+  <Card title="Setup & operations" href="/betrieb/getting-started/clone-repositories">
+    How to install and operate ORISO: runbooks from server setup to acceptance.
   </Card>
-  <Card title="Architekturentscheidungen" href="/decisions">
-    ADR-001 bis ADR-023 — warum es so gebaut ist und was dabei verworfen wurde.
+  <Card title="Architecture decisions" href="/decisions">
+    ADR-001 through ADR-023 — why the platform is built this way and which alternatives were rejected.
   </Card>
 </Cards>
 
-## Die drei Wahrheiten nebeneinander
+## Three complementary sources
 
-| Wo | Was dort steht | Wie es entsteht |
+| Source | What it contains | How it is produced |
 |---|---|---|
-| **Diese Seite** | Erklärung: Produkt, Architektur, Betrieb, Entscheidungen | von Hand geschrieben, im Repository `ORISO-Docs` versioniert |
-| [Code-Graph](https://understand.oriso.org/) | der Quellcode selbst: Dateien, Funktionen, Aufrufwege je Repository | nächtlich erzeugt, deterministisch und ohne Sprachmodell |
-| [Rechtliches](https://understand.oriso.org/legal/dsfa/) | Datenschutz-Folgenabschätzung mit Belegen aus dem Code | aus Kapiteltexten erzeugt, Belege gegen den Graphen geprüft |
+| **This site** | Product, architecture, operations and decisions | Written by people and versioned in `ORISO-Docs` |
+| [Code graph](https://understand.oriso.org/) | Source structure: files, functions and call paths per repository | Generated nightly, deterministically and without a language model |
+| [Legal documentation](https://understand.oriso.org/legal/dsfa/) | The DPIA with evidence from the code | Built from maintained chapters, with evidence checked against the graph |
 
-Widersprechen sich Seite und Graph, gilt der Graph — er wird aus dem Code gebaut, dieser Text von
-Menschen gepflegt.
+When this site and the graph disagree about code structure, use the graph as the lead: it is
+generated from source while these explanations are maintained by people.
