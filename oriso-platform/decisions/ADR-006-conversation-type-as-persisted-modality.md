@@ -57,3 +57,23 @@ Verification (5-agent workflow, 2026-06-28) established two facts that shape the
 
 - **Step 1 built locally (additive, green):** a pure `getModality(item): Modality` selector + `Modality` enum (`AGENCY_COUNSELLING · LIVE_CHAT · INTERNAL_GROUP · SELF_HELP`) in `src/components/session/getModality.ts`, with the verified fallback order and an explicit-`conversationType`-wins path, 8 vitest cases (red→green), `tsc --noEmit` clean. Worktree `feature/adr006-getmodality-selector` off `origin/dev`, **not pushed**.
 - The ~90-site sweep (routing existing call sites through the selector) is **intentionally deferred** — it collides with open PRs #126/#275 on the hot files. Only the selector + tests landed; Steps 2–3 (the `conversation_type` column, manual ALTER-before-deploy) remain backend work for the post-collision window.
+
+## Addendum 2026-09-04: `teamSession` is a visibility flag, not a modality
+
+Prompted by UserService#1111 / Frontend#1299: a counsellor in a **team** advice centre accepts an ordinary 1:1 case and the server stores it as `INTERNAL_GROUP`. The frontend then shows the "Interna" label, renders the client's first structured reply as raw JSON, and Case Handover treats the case as a team session.
+
+**Where this ADR was wrong.** The body above treats `teamSession` as sufficient evidence of a group chat: the Step-1 fallback order reads "else `teamSession` → `INTERNAL_GROUP`", and Step 3 applies the same rule when stamping at `SessionService.saveSession`. The Context section reasoned that an Internal Group Chat's `Session` "differs from Agency Counselling **only by the `teamSession` flag**", and concluded the flag must therefore be evaluated first. The premise was right and the conclusion was not — the flag carries two unrelated meanings:
+
+1. **An internal group chat**, written by `CreateChatFacade.createSimplifiedGroupChat`, which writes both a `Session` and a `Chat` row (as this ADR describes).
+2. **A "Team-Beratungsstelle" 1:1 case** — ordinary counselling in an agency where every counsellor of that agency may see the case. Nothing about it is a group chat.
+
+Only the first is a modality. The second is visibility.
+
+**Decision.** `teamSession` is never sufficient to derive a modality.
+
+1. **`SessionService.saveSession` no longer derives `INTERNAL_GROUP`.** Its default is registration type alone: `ANONYMOUS → LIVE_CHAT`, otherwise `AGENCY_COUNSELLING`. This is safe because `CreateChatFacade` is the only producer of `INTERNAL_GROUP`/`SELF_HELP` sessions and stamps the modality explicitly before saving; anything reaching the default is a 1:1 case.
+2. **Liquibase changeset `0091` re-stamps the rows the old rule mislabelled**, by registration type, exactly as `saveSession` now defaults them. Real group chats are recognised by what only the group-chat path produces, and any one of three signals is enough to exclude a row: a `group_chat_participant` row for the session (that column is named `chat_id` for historical reasons but stores the **session** id — see the entity javadoc); a `chat` row sharing the session's Matrix room id; or the tenant system user `group-chat-system[-<tenant>]` as the session's user. All three exclusions fail **safe** — an ambiguous row keeps its old label rather than risking a real group chat being relabelled. `SELF_HELP` rows are never touched. The migration is data-only and idempotent, and its rollback is deliberately a no-op because the previous `INTERNAL_GROUP` label was the defect: there is nothing correct to restore.
+
+**Consequence for the selector.** `getModality()` resolves an explicit backend `conversationType` first, so it is correct for every stamped row. Its null-fallback is not: it keeps this ADR's original `teamSession → INTERNAL_GROUP` branch (`getModality.ts`), and `getModality.test.ts` pins that as intended behaviour ("classifies a team session as INTERNAL_GROUP even when registered"). After `0091` the fallback should be unreachable for existing rows, but the wrong rule is still encoded in both the selector and its test.
+
+**Not yet done:** correct the `teamSession` branch in `getModality()` and the test that pins it — or delete the heuristic fallback entirely once `conversation_type` is confirmed non-null everywhere, which step 5 of the rollout runbook above already calls for.
