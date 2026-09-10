@@ -59,6 +59,35 @@ function topDir(f) {
   return i === -1 ? "root" : f.slice(0, i);
 }
 
+// --- OpenAPI endpoint extraction (indentation-scanning, no YAML dependency) ---
+// Handles OpenAPI 3 and Swagger 2 YAML: finds the top-level `paths:` block,
+// records `/route:` keys and their HTTP-method children. Method-level nodes:
+// the builder derives node ids from `path`, so method+route go in together.
+const HTTP_METHODS = new Set(["get", "post", "put", "delete", "patch", "head", "options", "trace"]);
+function extractOpenApiEndpoints(content) {
+  if (!/^\s*(openapi|swagger)\s*:/m.test(content) || !/^paths\s*:/m.test(content)) return null;
+  const out = [];
+  const lines = content.split("\n");
+  let inPaths = false, curRoute = null, routeIndent = -1;
+  for (let i = 0; i < lines.length; i++) {
+    const raw = lines[i];
+    if (!raw.trim() || /^\s*#/.test(raw)) continue;
+    const m = raw.match(/^( *)([^\s:#][^:]*):(\s|$)/);
+    if (!m) continue;
+    const indent = m[1].length;
+    const key = m[2].trim().replace(/^["']|["']$/g, "");
+    if (indent === 0) { inPaths = key === "paths"; curRoute = null; continue; }
+    if (!inPaths) continue;
+    if (key.startsWith("/")) { curRoute = key; routeIndent = indent; continue; }
+    if (curRoute && indent > routeIndent && HTTP_METHODS.has(key.toLowerCase())) {
+      // encode the method into `path` so each method gets its own node id
+      out.push({ method: "", path: `${key.toUpperCase()} ${curRoute}`, lineRange: [i + 1, i + 1] });
+    }
+  }
+  return out;
+}
+let openApiEndpointCount = 0;
+
 let analyzed = 0, skipped = 0, codeCount = 0;
 const codeFiles = [];
 const fileSet = new Set(files);
@@ -136,14 +165,21 @@ for (const f of files) {
   } else if (analysis) {
     const nodeType = nonCodeNodeType(f);
     const secs = (analysis.sections ?? []).length;
+    // The generic YAML parser claims OpenAPI specs but yields no endpoints —
+    // extract them here so every service's REST surface becomes graph nodes.
+    const oaEndpoints = /\.(ya?ml|json)$/i.test(f) ? extractOpenApiEndpoints(content) : null;
+    if (oaEndpoints?.length) openApiEndpointCount += oaEndpoints.length;
     try {
       builder.addNonCodeFileWithAnalysis(f, {
-        summary: `${nodeType} file${secs ? ` with ${secs} sections` : ""} (${lines} lines).`,
-        tags: [nodeType, topDir(f)],
+        summary: oaEndpoints?.length
+          ? `OpenAPI specification: ${oaEndpoints.length} endpoints (${lines} lines).`
+          : `${nodeType} file${secs ? ` with ${secs} sections` : ""} (${lines} lines).`,
+        tags: oaEndpoints?.length ? ["openapi", "api", topDir(f)] : [nodeType, topDir(f)],
         complexity: complexityFor(lines),
         nodeType,
         definitions: analysis.definitions, services: analysis.services,
-        endpoints: analysis.endpoints, steps: analysis.steps,
+        endpoints: (analysis.endpoints?.length ? analysis.endpoints : oaEndpoints) ?? undefined,
+        steps: analysis.steps,
         resources: analysis.resources, sections: analysis.sections,
       });
       analyzed++;
@@ -165,6 +201,30 @@ let graph = builder.build();
 
 // layers + heuristic tour
 try { const layers = c.detectLayers(graph); if (Array.isArray(layers) && layers.length) graph.layers = layers; } catch (e) { console.error("detectLayers ERR:", e.message); }
+
+// dedicated API Endpoints layer (extracted OpenAPI operations)
+try {
+  const epIds = (graph.nodes ?? []).filter(n => n.type === "endpoint").map(n => n.id);
+  if (epIds.length) {
+    graph.layers ??= [];
+    graph.layers.push({
+      id: "layer:api-endpoints", name: "API Endpoints",
+      description: "REST operations extracted from the OpenAPI specification (method + route).",
+      nodeIds: epIds,
+    });
+  }
+} catch (e) { console.error("endpoint layer ERR:", e.message); }
+
+// stable architecture-first layer order (readability; enrich-merge re-sorts after
+// adding Domain Concepts, so keep LAYER_ORDER in sync with ua-enrich-merge.mjs)
+const LAYER_ORDER = [
+  "Domain Concepts", "API Endpoints", "API Layer", "Service Layer", "Data Layer",
+  "Middleware Layer", "External Services", "Background Tasks", "UI Layer",
+  "Core", "Utility Layer", "Configuration Layer", "Test Layer",
+];
+function layerRank(name) { const i = LAYER_ORDER.indexOf(name); return i === -1 ? LAYER_ORDER.length : i; }
+if (Array.isArray(graph.layers)) graph.layers.sort((a, b) => layerRank(a.name) - layerRank(b.name));
+
 try { const tour = c.generateHeuristicTour(graph); if (tour) graph.tour = tour; } catch (e) { console.error("tour ERR:", e.message); }
 
 // validate / sanitize
@@ -195,7 +255,7 @@ const edgeCounts = {};
 for (const e of graph.edges ?? []) edgeCounts[e.type] = (edgeCounts[e.type] ?? 0) + 1;
 console.log(JSON.stringify({
   project: projectName, gitHash: gitHash.slice(0, 8),
-  filesConsidered: files.length, analyzed, skipped, codeCount, callEdges,
+  filesConsidered: files.length, analyzed, skipped, codeCount, callEdges, openApiEndpoints: openApiEndpointCount,
   nodes: (graph.nodes ?? []).length, edges: (graph.edges ?? []).length,
   layers: (graph.layers ?? []).length,
   tourSteps: Array.isArray(graph.tour) ? graph.tour.length : graph.tour?.steps?.length ?? 0,
