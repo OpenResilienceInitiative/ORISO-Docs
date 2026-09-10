@@ -34,6 +34,7 @@
               "product/features/live-chat",
               "product/features/group-chats",
               "product/features/ai-tools",
+              "product/features/case-handover",
               "product/features/handover",
               "product/features/notifications",
               "product/features/pincode-chat",
