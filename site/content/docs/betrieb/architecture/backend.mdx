@@ -7,53 +7,7 @@ description: ORISO backend services architecture deployed on Kubernetes with Hel
 
 ORISO Platform includes 4 core backend microservices, all deployed via Helm charts in the Kubernetes `caritas` namespace.
 
-```mermaid
-%%{init: { 'theme': 'base', 'themeVariables': { 'fontSize': '18px', 'lineColor': '#3B82F6' } }}%%
-
-flowchart TB
-
-  subgraph K8s["Kubernetes Namespace: caritas"]
-    direction TB
-    
-    subgraph Backend["Backend Microservices"]
-      B1[("TenantService\n:8081")]:::backend
-      B2[("UserService\n:8082")]:::backend
-      B3[("ConsultingTypeService\n:8083")]:::backend
-      B4[("AgencyService\n:8084")]:::backend
-    end
-    
-    subgraph DB["Databases"]
-      D1[("MariaDB ClusterIP\n:3306")]:::database
-      D2[("MongoDB ClusterIP\n:27017")]:::database
-    end
-    
-    subgraph Auth["Authentication"]
-      A1[("Keycloak\n:8080")]:::auth
-    end
-  end
-
-  %% Service connections
-  B1 -->|JDBC| D1
-  B2 -->|JDBC| D1
-  B3 -->|JDBC| D1
-  B4 -->|JDBC| D1
-  B3 -->|MongoDB| D2
-  
-  B1 -->|OAuth2| A1
-  B2 -->|OAuth2| A1
-  B3 -->|OAuth2| A1
-  B4 -->|OAuth2| A1
-  
-  %% Inter-service communication
-  B4 -->|REST| B3
-  B4 -->|REST| B2
-  B2 -->|REST| B1
-
-  %% Styling
-  classDef backend fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#4a148c,font-weight:bold
-  classDef database fill:#e8f5e8,stroke:#388e3c,stroke-width:2px,color:#1b5e20,font-weight:bold
-  classDef auth fill:#ffebee,stroke:#d32f2f,stroke-width:2px,color:#b71c1c,font-weight:bold
-```
+<Mermaid chart={"%%{init: { 'theme': 'base', 'themeVariables': { 'fontSize': '18px', 'lineColor': '#3B82F6' } }}%%\n\nflowchart TB\n\n  subgraph K8s[\"Kubernetes Namespace: caritas\"]\n    direction TB\n    \n    subgraph Backend[\"Backend Microservices\"]\n      B1[(\"TenantService\\n:8081\")]:::backend\n      B2[(\"UserService\\n:8082\")]:::backend\n      B3[(\"ConsultingTypeService\\n:8083\")]:::backend\n      B4[(\"AgencyService\\n:8084\")]:::backend\n    end\n    \n    subgraph DB[\"Databases\"]\n      D1[(\"MariaDB ClusterIP\\n:3306\")]:::database\n      D2[(\"MongoDB ClusterIP\\n:27017\")]:::database\n    end\n    \n    subgraph Auth[\"Authentication\"]\n      A1[(\"Keycloak\\n:8080\")]:::auth\n    end\n  end\n\n  %% Service connections\n  B1 -->|JDBC| D1\n  B2 -->|JDBC| D1\n  B3 -->|JDBC| D1\n  B4 -->|JDBC| D1\n  B3 -->|MongoDB| D2\n  \n  B1 -->|OAuth2| A1\n  B2 -->|OAuth2| A1\n  B3 -->|OAuth2| A1\n  B4 -->|OAuth2| A1\n  \n  %% Inter-service communication\n  B4 -->|REST| B3\n  B4 -->|REST| B2\n  B2 -->|REST| B1\n\n  %% Styling\n  classDef backend fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#4a148c,font-weight:bold\n  classDef database fill:#e8f5e8,stroke:#388e3c,stroke-width:2px,color:#1b5e20,font-weight:bold\n  classDef auth fill:#ffebee,stroke:#d32f2f,stroke-width:2px,color:#b71c1c,font-weight:bold"} />
 
 ## Service Details
 

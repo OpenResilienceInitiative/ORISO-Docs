@@ -7,76 +7,7 @@ description: ORISO data architecture with centralized schema management and mult
 
 ORISO Platform uses multiple database types, all managed centrally through the ORISO-Database repository. **Liquibase is DISABLED in all services** - schemas are managed separately.
 
-```mermaid
-%%{init: { 'theme': 'base', 'themeVariables': { 'fontSize': '18px', 'lineColor': '#3B82F6' } }}%%
-
-flowchart TB
-
-  subgraph K8s["Kubernetes Namespace: caritas"]
-    direction TB
-    
-    subgraph MariaDB["MariaDB ClusterIP"]
-      M1[("tenantservice DB")]:::mariadb
-      M2[("userservice DB")]:::mariadb
-      M3[("consultingtypeservice DB")]:::mariadb
-      M4[("agencyservice DB")]:::mariadb
-      M5[("Other DBs...")]:::mariadb
-    end
-    
-    subgraph MongoDB["MongoDB ClusterIP"]
-      MO1[("consulting_types\nCollection")]:::mongodb
-    end
-    
-    subgraph PostgreSQL["PostgreSQL ClusterIP"]
-      P1[("Matrix Synapse DB")]:::postgres
-    end
-    
-    subgraph Redis["Redis ClusterIP"]
-      R1[("Cache & Sessions")]:::redis
-    end
-    
-    subgraph RabbitMQ["RabbitMQ ClusterIP"]
-      Q1[("Message Queue")]:::rabbitmq
-    end
-    
-    subgraph Services["Backend Services"]
-      S1[TenantService]:::svc
-      S2[UserService]:::svc
-      S3[ConsultingTypeService]:::svc
-      S4[AgencyService]:::svc
-    end
-    
-    subgraph Matrix["Matrix Synapse"]
-      MX1[Synapse]:::matrix
-    end
-  end
-
-  %% Service connections
-  S1 -->|JDBC| M1
-  S2 -->|JDBC| M2
-  S3 -->|JDBC| M3
-  S3 -->|MongoDB| MO1
-  S4 -->|JDBC| M4
-  
-  S1 -->|Cache| R1
-  S2 -->|Cache| R1
-  S3 -->|Cache| R1
-  S4 -->|Cache| R1
-  
-  S1 -->|Queue| Q1
-  S2 -->|Queue| Q1
-  
-  MX1 -->|JDBC| P1
-
-  %% Styling
-  classDef mariadb fill:#e8f5e8,stroke:#388e3c,stroke-width:2px,color:#1b5e20,font-weight:bold
-  classDef mongodb fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#0d47a1,font-weight:bold
-  classDef postgres fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#e65100,font-weight:bold
-  classDef redis fill:#ffebee,stroke:#d32f2f,stroke-width:2px,color:#b71c1c,font-weight:bold
-  classDef rabbitmq fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#4a148c,font-weight:bold
-  classDef svc fill:#eceff1,stroke:#607d8b,stroke-width:1.5px,color:#37474f
-  classDef matrix fill:#fff8e1,stroke:#ff8f00,stroke-width:2px,color:#e65100
-```
+<Mermaid chart={"%%{init: { 'theme': 'base', 'themeVariables': { 'fontSize': '18px', 'lineColor': '#3B82F6' } }}%%\n\nflowchart TB\n\n  subgraph K8s[\"Kubernetes Namespace: caritas\"]\n    direction TB\n    \n    subgraph MariaDB[\"MariaDB ClusterIP\"]\n      M1[(\"tenantservice DB\")]:::mariadb\n      M2[(\"userservice DB\")]:::mariadb\n      M3[(\"consultingtypeservice DB\")]:::mariadb\n      M4[(\"agencyservice DB\")]:::mariadb\n      M5[(\"Other DBs...\")]:::mariadb\n    end\n    \n    subgraph MongoDB[\"MongoDB ClusterIP\"]\n      MO1[(\"consulting_types\\nCollection\")]:::mongodb\n    end\n    \n    subgraph PostgreSQL[\"PostgreSQL ClusterIP\"]\n      P1[(\"Matrix Synapse DB\")]:::postgres\n    end\n    \n    subgraph Redis[\"Redis ClusterIP\"]\n      R1[(\"Cache & Sessions\")]:::redis\n    end\n    \n    subgraph RabbitMQ[\"RabbitMQ ClusterIP\"]\n      Q1[(\"Message Queue\")]:::rabbitmq\n    end\n    \n    subgraph Services[\"Backend Services\"]\n      S1[TenantService]:::svc\n      S2[UserService]:::svc\n      S3[ConsultingTypeService]:::svc\n      S4[AgencyService]:::svc\n    end\n    \n    subgraph Matrix[\"Matrix Synapse\"]\n      MX1[Synapse]:::matrix\n    end\n  end\n\n  %% Service connections\n  S1 -->|JDBC| M1\n  S2 -->|JDBC| M2\n  S3 -->|JDBC| M3\n  S3 -->|MongoDB| MO1\n  S4 -->|JDBC| M4\n  \n  S1 -->|Cache| R1\n  S2 -->|Cache| R1\n  S3 -->|Cache| R1\n  S4 -->|Cache| R1\n  \n  S1 -->|Queue| Q1\n  S2 -->|Queue| Q1\n  \n  MX1 -->|JDBC| P1\n\n  %% Styling\n  classDef mariadb fill:#e8f5e8,stroke:#388e3c,stroke-width:2px,color:#1b5e20,font-weight:bold\n  classDef mongodb fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#0d47a1,font-weight:bold\n  classDef postgres fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#e65100,font-weight:bold\n  classDef redis fill:#ffebee,stroke:#d32f2f,stroke-width:2px,color:#b71c1c,font-weight:bold\n  classDef rabbitmq fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#4a148c,font-weight:bold\n  classDef svc fill:#eceff1,stroke:#607d8b,stroke-width:1.5px,color:#37474f\n  classDef matrix fill:#fff8e1,stroke:#ff8f00,stroke-width:2px,color:#e65100"} />
 
 ## Database Types
 

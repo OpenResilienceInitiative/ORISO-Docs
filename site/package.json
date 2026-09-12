@@ -18,6 +18,7 @@
     "fumadocs-mdx": "15.2.3",
     "fumadocs-ui": "npm:@fumadocs/base-ui@16.14.4",
     "lucide-react": "^1.31.0",
+    "mermaid": "^11.17.2",
     "next": "16.3.1",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",

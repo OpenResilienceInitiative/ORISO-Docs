@@ -1,0 +1,120 @@
+---
+title: Authentication and Keycloak
+description: How a token is obtained in the browser, attached to a request, validated by a service, and turned into roles and a tenant — with the file for each step.
+---
+Every request in ORISO carries a Keycloak-issued JWT. The interesting part is what
+happens on either side of it: how the browser keeps the token fresh, and how each Spring
+service turns the token into authorities and a tenant.
+
+## The flow
+
+<Mermaid chart={"sequenceDiagram\n  autonumber\n  participant B as Browser (Frontend / Admin)\n  participant K as Keycloak<br/>realm online-beratung\n  participant S as Spring service\n  participant P as Peer service\n\n  B->>K: credentials, client \"app\"\n  K-->>B: access token + refresh token\n  Note over B: stored via the session-cookie helpers,<br/>read by the fetch wrapper\n  B->>S: request + Authorization: Bearer <token>\n  S->>K: fetch JWKS (cached)\n  S->>S: validate signature and claims\n  S->>S: JwtAuthConverter -> GrantedAuthorities\n  S->>S: TenantResolverService -> tenant id\n  S->>S: authorizeHttpRequests / @PreAuthorize\n  S->>P: service call with a technical-user token\n  S-->>B: 200, or 401 / 403\n  Note over B: on 401 the app refreshes<br/>the token and retries once"} />
+
+## The realm
+
+The realm is `online-beratung`, exported at
+[`ORISO-Keycloak/realm.json`](https://github.com/OpenResilienceInitiative/ORISO-Keycloak/blob/dev/realm.json)
+and shipped with the chart at
+[`ORISO-Helm/charts/keycloak/keycloak-resources/realm.json`](https://github.com/OpenResilienceInitiative/ORISO-Helm/blob/dev/charts/keycloak/keycloak-resources/realm.json).
+SSL is required for external requests; no identity providers and no groups are
+configured, so single sign-on is internal to Keycloak.
+
+### Clients
+
+| Client | Public | Standard flow | Direct grant | Used by |
+| --- | --- | --- | --- | --- |
+| `app` | yes | yes | yes | Frontend and Admin |
+| `admin-cli` | yes | no | yes | operational scripts |
+| `account`, `account-console` | yes | yes | no | Keycloak's own account UI |
+| `security-admin-console` | yes | yes | no | Keycloak admin console |
+| `broker`, `realm-management` | no | yes | no | built-in |
+
+### Realm roles
+
+`user`, `consultant`, `agency-admin`, `tenant-admin`, `single-tenant-admin`,
+`topic-admin`, `user-admin`, `USER_ADMIN`, `technical`, `TECHNICAL_DEFAULT`, plus
+Keycloak's own `default-roles-online-beratung`, `offline_access` and `uma_authorization`.
+
+Roles are only half the authorisation story — see [tenant resolution](#tenant-resolution)
+below and the application-level roles in [roles and permissions](/produkt/architecture-und-roles/roles-permissions).
+
+## In the browser
+
+Both applications do the same three things: obtain a token, keep it fresh, and attach it
+to every call.
+
+| Step | Frontend | Admin |
+| --- | --- | --- |
+| Login and token handling | [`src/components/auth/auth.ts`](https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/dev/src/components/auth/auth.ts) | [`src/api/auth/refreshKeycloakAccessToken.ts`](https://github.com/OpenResilienceInitiative/ORISO-Admin/blob/dev/src/api/auth/refreshKeycloakAccessToken.ts) |
+| Refresh | [`src/components/sessionCookie/refreshKeycloakAccessToken.ts`](https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/dev/src/components/sessionCookie/refreshKeycloakAccessToken.ts#L5-L12) | same file as above |
+| Attaching the bearer token | [`src/api/fetchData.ts`](https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/dev/src/api/fetchData.ts) | [`src/api/fetchData.ts`](https://github.com/OpenResilienceInitiative/ORISO-Admin/blob/dev/src/api/fetchData.ts) |
+| Route guard | [`src/components/app/RouterConfig.tsx`](https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/dev/src/components/app/RouterConfig.tsx) | [`src/router/ProtectedRoute.tsx`](https://github.com/OpenResilienceInitiative/ORISO-Admin/blob/dev/src/router/ProtectedRoute.tsx#L19-L40) |
+| Logout | [`src/api/apiLogoutKeycloak.ts`](https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/dev/src/api/apiLogoutKeycloak.ts) | [`src/api/auth/apiLogoutKeycloak.ts`](https://github.com/OpenResilienceInitiative/ORISO-Admin/blob/dev/src/api/auth/apiLogoutKeycloak.ts) |
+
+A 401 in the admin panel forces a logout rather than a silent retry, so an expired token
+looks like "I got thrown out" rather than "the request failed" — worth knowing before you
+debug it as an API problem.
+
+## In a service
+
+Each service is an OAuth2 resource server. Three pieces do the work, and they are the
+three files to read when authorisation behaves unexpectedly.
+
+**1. The filter chain** decides which paths are public and wires in the JWT converter.
+TenantService is the shortest example, and the pattern is the same everywhere:
+
+| Service | Filter chain |
+| --- | --- |
+| TenantService | [`WebSecurityConfig#L30-L56`](https://github.com/OpenResilienceInitiative/ORISO-TenantService/blob/dev/src/main/java/com/vi/tenantservice/config/security/WebSecurityConfig.java#L30-L56) |
+| UserService | [`SecurityConfig#L98-L112`](https://github.com/OpenResilienceInitiative/ORISO-UserService/blob/dev/src/main/java/de/caritas/cob/userservice/api/config/auth/SecurityConfig.java#L98-L112) |
+| AgencyService | [`SecurityConfig`](https://github.com/OpenResilienceInitiative/ORISO-AgencyService/blob/dev/src/main/java/de/caritas/cob/agencyservice/config/SecurityConfig.java) |
+| ConsultingTypeService | [`SecurityConfig`](https://github.com/OpenResilienceInitiative/ORISO-ConsultingTypeService/blob/dev/src/main/java/de/caritas/cob/consultingtypeservice/config/SecurityConfig.java) |
+
+Sessions are stateless everywhere; `/tenant/public/**` and the API-doc paths are the
+deliberate public surface in TenantService.
+
+**2. The JWT converter** turns realm roles in the token into Spring authorities:
+
+- [`TenantService JwtAuthConverter#L34-L51`](https://github.com/OpenResilienceInitiative/ORISO-TenantService/blob/dev/src/main/java/com/vi/tenantservice/config/security/JwtAuthConverter.java#L34-L51)
+- [`AgencyService JwtAuthConverter`](https://github.com/OpenResilienceInitiative/ORISO-AgencyService/blob/dev/src/main/java/de/caritas/cob/agencyservice/config/security/JwtAuthConverter.java)
+- [`UserService RoleAuthorizationAuthorityMapper`](https://github.com/OpenResilienceInitiative/ORISO-UserService/blob/dev/src/main/java/de/caritas/cob/userservice/api/config/auth/RoleAuthorizationAuthorityMapper.java)
+
+**3. The endpoint rules** then apply, either in the filter chain's
+`authorizeHttpRequests` block or as method annotations.
+
+## Tenant resolution
+
+A role says *what* a caller may do; the tenant says *where*. Resolution is a fallback
+chain, and it differs between authenticated and anonymous callers:
+
+<Mermaid chart={"flowchart LR\n  R[\"incoming request\"] --> A{\"authenticated?\"}\n  A -- yes --> T1[\"access token claim\"]\n  A -- no --> T2[\"tenant cookie\"]\n  T2 -- empty --> T3[\"subdomain\"]\n  T1 --> C[\"tenant context for this request\"]\n  T2 --> C\n  T3 --> C"} />
+
+The canonical implementation is
+[`TenantResolverService#L23-L49`](https://github.com/OpenResilienceInitiative/ORISO-TenantService/blob/dev/src/main/java/com/vi/tenantservice/api/tenant/TenantResolverService.java#L23-L49),
+built from
+[`AccessTokenTenantResolver`](https://github.com/OpenResilienceInitiative/ORISO-TenantService/blob/dev/src/main/java/com/vi/tenantservice/api/tenant/AccessTokenTenantResolver.java),
+`CookieTenantResolver` and
+[`SubdomainTenantResolver`](https://github.com/OpenResilienceInitiative/ORISO-TenantService/blob/dev/src/main/java/com/vi/tenantservice/api/tenant/SubdomainTenantResolver.java).
+UserService and AgencyService carry their own equivalents under `api/tenant/`, including
+resolvers for technical and super-admin callers.
+
+Since routing moved to a single domain with path prefixes ([ADR-011](/decisions/adr-011)),
+the subdomain branch is the least likely one to fire in a current environment — check the
+token claim first.
+
+## When it goes wrong
+
+| Symptom | Look at |
+| --- | --- |
+| 401 on every call, including public ones | issuer/JWKS URL in the service configuration; it must match the browser-visible Keycloak host |
+| 403 with a valid token | the realm roles in the token, then the endpoint rule in the filter chain |
+| Right data, wrong tenant | the resolver chain above; a missing token claim silently falls through |
+| Login works, refresh does not | cookie name and domain in the UI environment file |
+| Works locally, fails in the cluster | the chart's Keycloak URL values, not the UI `.env` |
+
+## Related
+
+- [Architecture](/plattform/start-here/architecture)
+- [Backend services](/plattform/core-systems/backend-services)
+- [Tenant lifecycle](/plattform/flows-und-reference/tenant-lifecycle)
+- [ADR-013 — 2FA via a vendored OTP config SPI](/decisions/adr-013)

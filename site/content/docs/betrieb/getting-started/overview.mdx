@@ -15,30 +15,30 @@ description: "Complete overview of ORISO Platform server requirements, hardware 
 **Status**: Production Ready
 </Callout>
 
-This guide provides comprehensive instructions for deploying ORISO Platform v3.0.0 on Kubernetes using Helm charts. The platform consists of 21 services deployed via a single umbrella Helm chart. Follow the documentation in order, starting with [Initial Server Setup](/oriso-platform/initial-setup).
+This guide provides comprehensive instructions for deploying ORISO Platform v3.0.0 on Kubernetes using Helm charts. The platform consists of 21 services deployed via a single umbrella Helm chart. Follow the documentation in order, starting with [Initial Server Setup](/betrieb/getting-started/initial-setup).
 
 <Cards>
-<Card title="Initial Setup" href="/oriso-platform/initial-setup">
+<Card title="Initial Setup" href="/betrieb/getting-started/initial-setup">
 Connect to server, update system, configure hostname and timezone
 </Card>
 
-<Card title="Network & Firewall" href="/oriso-platform/network-firewall">
+<Card title="Network & Firewall" href="/betrieb/getting-started/network-firewall">
 Configure network, UFW firewall, and system limits
 </Card>
 
-<Card title="Install Software" href="/oriso-platform/install-software">
+<Card title="Install Software" href="/betrieb/getting-started/install-software">
 Install Docker, k3s Kubernetes, kubectl, and additional tools
 </Card>
 
-<Card title="Clone Repositories" href="/oriso-platform/clone-repositories">
+<Card title="Clone Repositories" href="/betrieb/getting-started/clone-repositories">
 Transfer and clone ORISO repositories to the server
 </Card>
 
-<Card title="Setup Kubernetes" href="/oriso-platform/setup-kubernetes">
+<Card title="Setup Kubernetes" href="/betrieb/getting-started/setup-kubernetes">
 Verify k3s installation and create namespace
 </Card>
 
-<Card title="Deploy Infrastructure" href="/oriso-platform/deploy-infrastructure">
+<Card title="Deploy Infrastructure" href="/betrieb/deployment/deploy-infrastructure">
 Deploy entire platform via Helm umbrella chart (21 services)
 </Card>
 </Cards>
@@ -114,7 +114,7 @@ All services are accessible internally via Kubernetes DNS. External access is vi
 | SignOZ | 3001 | `signoz-frontend.platform.svc.cluster.local:3301` |
 
 <Callout type="warn">
-Ensure all required ports are open in your firewall configuration. See [Network & Firewall Configuration](/oriso-platform/network-firewall) for details.
+Ensure all required ports are open in your firewall configuration. See [Network & Firewall Configuration](/betrieb/getting-started/network-firewall) for details.
 </Callout>
 
 ## Quick Start Guide
@@ -123,7 +123,7 @@ If you're ready to begin, start with these essential steps:
 
 1. **Verify Requirements** - Ensure your server meets the minimum hardware and software requirements
 2. **Connect to Server** - SSH into your Ubuntu server with root or sudo access
-3. **Follow Setup Guide** - Proceed to [Initial Server Setup](/oriso-platform/initial-setup)
+3. **Follow Setup Guide** - Proceed to [Initial Server Setup](/betrieb/getting-started/initial-setup)
 
 <Callout type="success">
 Once you've completed all setup steps, you'll have a fully functional ORISO platform with:
@@ -152,14 +152,14 @@ Once you've completed all setup steps, you'll have a fully functional ORISO plat
 
 ### Getting Help
 If you encounter issues:
-1. Check [Troubleshooting Guide](/oriso-platform/troubleshooting)
-2. Review [Quick Reference](/oriso-platform/quick-reference)
+1. Check [Troubleshooting Guide](/betrieb/operations/troubleshooting)
+2. Review [Quick Reference](/betrieb/operations/quick-reference)
 3. Check service logs: `kubectl logs <pod> -n caritas`
 4. Check events: `kubectl get events -n caritas`
 5. Review individual service README files
 
 ## Next Steps
 
-- [Initial Server Setup](/oriso-platform/initial-setup) - Begin with server configuration
-- [Install Required Software](/oriso-platform/install-software) - Set up Docker and Kubernetes
-- [Quick Reference](/oriso-platform/quick-reference) - Essential commands cheat sheet
+- [Initial Server Setup](/betrieb/getting-started/initial-setup) - Begin with server configuration
+- [Install Required Software](/betrieb/getting-started/install-software) - Set up Docker and Kubernetes
+- [Quick Reference](/betrieb/operations/quick-reference) - Essential commands cheat sheet

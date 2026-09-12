@@ -1,0 +1,25 @@
+{
+  "title": "Archive",
+  "pages": [
+    "local-development",
+    "onboarding-guide",
+    "user-management-flow",
+    "super-graph-index",
+    "super-graph-explorer",
+    "super-graph-detailed",
+    "understand-anything-inventory",
+    "graph-validation-report",
+    "ORISO-Frontend",
+    "ORISO-Admin",
+    "ORISO-UserService",
+    "ORISO-AgencyService",
+    "ORISO-ConsultingTypeService",
+    "ORISO-TenantService",
+    "ORISO-Database",
+    "ORISO-Keycloak",
+    "ORISO-Kubernetes",
+    "ORISO-Helm",
+    "ORISO-E2E",
+    "ORISO-Infra"
+  ]
+}

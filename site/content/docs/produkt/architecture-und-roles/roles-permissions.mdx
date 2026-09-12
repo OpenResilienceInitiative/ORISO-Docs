@@ -9,34 +9,7 @@ The product describes **four staff tiers** (Platform / Tenant / Counselor Admin 
 
 ## 3.1 The Hierarchy at a Glance
 
-```mermaid
-%%{init: { 'theme':'base', 'themeVariables':{ 'fontSize':'15px' } }}%%
-flowchart TD
-  PA[Platform Admin<br/>MFA must]:::pa
-  TA[Tenant Admin<br/>MFA must]:::ta
-  CA[Counselor Admin]:::ca
-  CO[Counselor<br/>function: Supervisor]:::co
-  CC[Counseling Center<br/>aka Agency]:::cc
-  CL((Client / Anonymous)):::cl
-
-  PA -->|creates| TA
-  PA -.->|signs Data Policy with| TA
-  TA -->|creates| CC
-  TA -->|creates| CA
-  TA -->|or directly creates| CO
-  CA -->|creates / invites| CO
-  CC -->|attaches| CA
-  CC -->|attaches| CO
-  CL -->|enters waiting room| CO
-  CL -.->|never registers, just gets a pseudonym| CL
-
-  classDef pa fill:#ffebee,stroke:#c62828,color:#000
-  classDef ta fill:#fff3e0,stroke:#ef6c00,color:#000
-  classDef ca fill:#e8f5e8,stroke:#2e7d32,color:#000
-  classDef co fill:#e3f2fd,stroke:#1565c0,color:#000
-  classDef cc fill:#f3e5f5,stroke:#6a1b9a,color:#000
-  classDef cl fill:#fce4ec,stroke:#ad1457,color:#000
-```
+<Mermaid chart={"%%{init: { 'theme':'base', 'themeVariables':{ 'fontSize':'15px' } }}%%\nflowchart TD\n  PA[Platform Admin<br/>MFA must]:::pa\n  TA[Tenant Admin<br/>MFA must]:::ta\n  CA[Counselor Admin]:::ca\n  CO[Counselor<br/>function: Supervisor]:::co\n  CC[Counseling Center<br/>aka Agency]:::cc\n  CL((Client / Anonymous)):::cl\n\n  PA -->|creates| TA\n  PA -.->|signs Data Policy with| TA\n  TA -->|creates| CC\n  TA -->|creates| CA\n  TA -->|or directly creates| CO\n  CA -->|creates / invites| CO\n  CC -->|attaches| CA\n  CC -->|attaches| CO\n  CL -->|enters waiting room| CO\n  CL -.->|never registers, just gets a pseudonym| CL\n\n  classDef pa fill:#ffebee,stroke:#c62828,color:#000\n  classDef ta fill:#fff3e0,stroke:#ef6c00,color:#000\n  classDef ca fill:#e8f5e8,stroke:#2e7d32,color:#000\n  classDef co fill:#e3f2fd,stroke:#1565c0,color:#000\n  classDef cc fill:#f3e5f5,stroke:#6a1b9a,color:#000\n  classDef cl fill:#fce4ec,stroke:#ad1457,color:#000"} />
 
 **Two unbreakable rules**:
 
@@ -247,21 +220,7 @@ Everything else — IPs, device IDs, real names — must **never** be persisted 
 
 ## 3.5 Inheritance of Legal Text
 
-```mermaid
-flowchart LR
-  P[Platform<br/>Imprint / Data Policy / GDPR<br/>defaults]:::p
-  T[Tenant overrides<br/>or inherits]:::t
-  C[Counseling Center overrides<br/>or inherits]:::c
-  CL((Client sees<br/>the most-specific version))
-
-  P -->|inherit| T --> |inherit| C --> CL
-  P -.->|fallback| CL
-  T -.->|fallback| CL
-
-  classDef p fill:#ffebee,stroke:#c62828
-  classDef t fill:#fff3e0,stroke:#ef6c00
-  classDef c fill:#e8f5e8,stroke:#2e7d32
-```
+<Mermaid chart={"flowchart LR\n  P[Platform<br/>Imprint / Data Policy / GDPR<br/>defaults]:::p\n  T[Tenant overrides<br/>or inherits]:::t\n  C[Counseling Center overrides<br/>or inherits]:::c\n  CL((Client sees<br/>the most-specific version))\n\n  P -->|inherit| T --> |inherit| C --> CL\n  P -.->|fallback| CL\n  T -.->|fallback| CL\n\n  classDef p fill:#ffebee,stroke:#c62828\n  classDef t fill:#fff3e0,stroke:#ef6c00\n  classDef c fill:#e8f5e8,stroke:#2e7d32"} />
 
 **Why inheritance matters**: ORISO must always be able to display *some* legal text to a client. If a Counseling Center forgot to set their Imprint, the client must still see the Tenant's; if the Tenant didn't set one, the Platform's must show. This is what the huddle calls "the dumb but safe fallback layer".
 
@@ -280,13 +239,13 @@ The May-2026 Figma confirms a dedicated **Berechtigungen** admin page — a 2-D 
 | **Threads erlauben** (Reply in Thread) | ✅ | ✅ | ✅ | ✅ |
 | **Sprachnachrichten erlauben** | ✅ | ✅ | ✅ | ✅ |
 | **Supervision erlauben** | – | ✅ | ✅ | ✅ |
-| **Multi-Recipient Send** ([4.5.4](/product/features/group-chats#4-5-4-multi-recipient-send-w%C3%A4hle-wer-diese-nachricht-sehen-soll)) | – | – | ✅ | ✅ |
-| **Mark Text + PII Blur** ([4.6](/product/features/ai-tools)) | ✅ counselors only | ✅ counselors only | ✅ counselors only | ✅ counselors only |
-| **AI Chat Summary** ([4.6.2](/product/features/ai-tools#4-6-2-chat-summary)) | ✅ counselors only | ✅ counselors only | ✅ counselors only | ✅ counselors only |
-| **Help Requests / Escalation** ([4.8.3](/product/features/notifications#4-8-3-help-requests-internal-escalation)) | ✅ counselors only | ✅ counselors only | ✅ counselors only | ✅ counselors only |
+| **Multi-Recipient Send** ([4.5.4](/produkt/core-features/group-chats#454-multi-recipient-send-wähle-wer-diese-nachricht-sehen-soll)) | – | – | ✅ | ✅ |
+| **Mark Text + PII Blur** ([4.6](/produkt/core-features/ai-tools)) | ✅ counselors only | ✅ counselors only | ✅ counselors only | ✅ counselors only |
+| **AI Chat Summary** ([4.6.2](/produkt/core-features/ai-tools#462-chat-summary)) | ✅ counselors only | ✅ counselors only | ✅ counselors only | ✅ counselors only |
+| **Help Requests / Escalation** ([4.8.3](/produkt/core-features/notifications#483-help-requests--internal-escalation)) | ✅ counselors only | ✅ counselors only | ✅ counselors only | ✅ counselors only |
 | **Forward / Delete message** | ✅ counselors only | ✅ counselors only | ✅ counselors only | ✅ counselors only |
-| **File upload** ([4.5.7](/product/features/group-chats#4-5-7-file-upload)) | configurable | configurable | configurable | configurable |
-| **Tags** ([4.5.9](/product/features/group-chats#4-5-9-filters-phases-list-views)) | configurable | configurable | configurable | configurable |
+| **File upload** ([4.5.7](/produkt/core-features/group-chats#457-file-upload)) | configurable | configurable | configurable | configurable |
+| **Tags** ([4.5.9](/produkt/core-features/group-chats#459-filters-phases--list-views)) | configurable | configurable | configurable | configurable |
 
 ✅ = on by default · – = not applicable · "configurable" = admin can switch on or off.
 
@@ -294,15 +253,7 @@ The May-2026 Figma confirms a dedicated **Berechtigungen** admin page — a 2-D 
 
 Permissions cascade from **Platform → Tenant → Agency → Chat-Type**:
 
-```mermaid
-flowchart LR
-  P[Platform Default<br/>(Berechtigungen)]:::p --> T[Tenant Override]:::t --> A[Agency Override]:::a --> R[Effective per Chat-Type]:::r
-
-  classDef p fill:#ffebee,stroke:#c62828
-  classDef t fill:#fff3e0,stroke:#ef6c00
-  classDef a fill:#e8f5e8,stroke:#2e7d32
-  classDef r fill:#e3f2fd,stroke:#1565c0
-```
+<Mermaid chart={"flowchart LR\n  P[Platform Default<br/>(Berechtigungen)]:::p --> T[Tenant Override]:::t --> A[Agency Override]:::a --> R[Effective per Chat-Type]:::r\n\n  classDef p fill:#ffebee,stroke:#c62828\n  classDef t fill:#fff3e0,stroke:#ef6c00\n  classDef a fill:#e8f5e8,stroke:#2e7d32\n  classDef r fill:#e3f2fd,stroke:#1565c0"} />
 
 - The effective permission is the **AND** of every level above it: a parent disabling a feature beats a child enabling it.
 - A tenant cannot **enable** a feature its platform has disabled.

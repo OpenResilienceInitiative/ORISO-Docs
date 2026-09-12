@@ -23,24 +23,7 @@ A common bug observed in earlier development was confusing **live-chat links** w
 
 There are three ways a client can land in the live-chat waiting room:
 
-```mermaid
-flowchart LR
-  subgraph Entry
-    A[Public live-chat link<br/>agency + topic]:::a
-    B[Public landing page<br/>type a zip code]:::b
-    C[Counselor-shared deep link<br/>ad-hoc]:::c
-  end
-
-  A --> WR[Waiting Room]
-  B --> Match{Match agency<br/>by zip + topic}
-  Match -->|matched| WR
-  Match -->|no match| Fallback[Show nearest agency / generic queue]
-  C --> WR
-
-  classDef a fill:#fff3e0,stroke:#ef6c00
-  classDef b fill:#e8f5e8,stroke:#2e7d32
-  classDef c fill:#e3f2fd,stroke:#1565c0
-```
+<Mermaid chart={"flowchart LR\n  subgraph Entry\n    A[Public live-chat link<br/>agency + topic]:::a\n    B[Public landing page<br/>type a zip code]:::b\n    C[Counselor-shared deep link<br/>ad-hoc]:::c\n  end\n\n  A --> WR[Waiting Room]\n  B --> Match{Match agency<br/>by zip + topic}\n  Match -->|matched| WR\n  Match -->|no match| Fallback[Show nearest agency / generic queue]\n  C --> WR\n\n  classDef a fill:#fff3e0,stroke:#ef6c00\n  classDef b fill:#e8f5e8,stroke:#2e7d32\n  classDef c fill:#e3f2fd,stroke:#1565c0"} />
 
 ### Path A — Direct Live-Chat Link (preferred today)
 
@@ -62,7 +45,7 @@ The link is **idempotent** — it can be shared on the agency's public website, 
 
 A client visits the public portal, types `12345` (their PLZ), and the system surfaces all agencies whose postcode-range covers that PLZ. They pick one and land in its waiting room.
 
-This path is the **historical** flow. Frank flagged in the huddle that it's "inflexible" and the team plans to merge it into Path A by attaching zip code as an additional URL parameter (`?topic=debt&plz=12345`) — see [Assumptions](/product/assumptions).
+This path is the **historical** flow. Frank flagged in the huddle that it's "inflexible" and the team plans to merge it into Path A by attaching zip code as an additional URL parameter (`?topic=debt&plz=12345`) — see [Assumptions](/produkt/design-und-quality/assumptions).
 
 ### Path C — Counselor-shared deep link (ad-hoc)
 
@@ -143,6 +126,6 @@ A **separate** mechanism. A platform admin or tenant admin invites a counselor; 
 
 ## 4.3.8 Related
 
-- [Live Chat (4.2)](/product/features/live-chat)
-- [Session Management (4.4)](/product/features/session-management)
-- [Assumptions & Open Questions](/product/assumptions)
+- [Live Chat (4.2)](/produkt/core-features/live-chat)
+- [Session Management (4.4)](/produkt/core-features/session-management)
+- [Assumptions & Open Questions](/produkt/design-und-quality/assumptions)

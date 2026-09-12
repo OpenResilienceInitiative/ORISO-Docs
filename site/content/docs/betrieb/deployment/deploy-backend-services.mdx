@@ -2,9 +2,6 @@
 title: "Deploy Backend Services"
 description: "Backend services are deployed via Helm. This guide covers verification and configuration."
 ---
-
-# Deploy Backend Services
-
 Backend services are automatically deployed via the `oriso-platform` Helm umbrella chart. This guide covers verification and post-deployment configuration.
 
 <Callout>
@@ -13,7 +10,7 @@ All backend services are deployed via Helm in a single command:
 helm install oriso-platform ./oriso-platform --namespace caritas -f values.yaml
 ```
 
-This guide assumes services are already deployed. If not, see [Deploy Infrastructure](/oriso-platform/deploy-infrastructure).
+This guide assumes services are already deployed. If not, see [Deploy Infrastructure](/betrieb/deployment/deploy-infrastructure).
 </Callout>
 
 <Steps>
@@ -207,6 +204,6 @@ kubectl logs -n caritas deployment/oriso-platform-userservice | grep -i error
 
 ## Next Steps
 
-- [Deploy Frontend](/oriso-platform/deploy-frontend) - Deploy frontend applications
-- [Post-Deployment](/oriso-platform/post-deployment) - Complete post-deployment steps
-- [Verification Testing](/oriso-platform/verification-testing) - Test all services
+- [Deploy Frontend](/betrieb/deployment/deploy-frontend) - Deploy frontend applications
+- [Post-Deployment](/betrieb/configuration-und-testing/post-deployment) - Complete post-deployment steps
+- [Verification Testing](/betrieb/configuration-und-testing/verification-testing) - Test all services

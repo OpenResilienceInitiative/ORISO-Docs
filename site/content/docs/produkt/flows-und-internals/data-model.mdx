@@ -9,29 +9,7 @@ This is the **conceptual** data model — the product entities and their relatio
 
 ## 7.1 Entity-Relationship Map
 
-```mermaid
-erDiagram
-  TENANT ||--o{ AGENCY : owns
-  TENANT ||--|| LEGAL_TEMPLATE : has
-  AGENCY ||--o{ AGENCY_LIVE_CHAT_LINK : "publishes via"
-  AGENCY ||--o{ AGENCY_POSTCODE_RANGE : covers
-  AGENCY ||--o{ CONSULTANT_AGENCY : binds
-  AGENCY ||--o{ AGENCY_TOPIC : offers
-  AGENCY ||--|| LEGAL_TEMPLATE : "may override"
-  TOPIC ||--o{ AGENCY_TOPIC : "is offered as"
-  TOPIC ||--o{ AGENCY_LIVE_CHAT_LINK : "scopes"
-  USER ||--o{ CONSULTANT_AGENCY : "is consultant in"
-  USER ||--o{ SESSION : "as consultant"
-  USER ||--o{ MAGIC_LINK : "issued"
-  USER ||--o{ ROLE_ASSIGNMENT : has
-  ROLE ||--o{ ROLE_ASSIGNMENT : grants
-  TICKET ||--|| SESSION : "promoted to"
-  CLIENT_PSEUDONYM ||--|| TICKET : "owns"
-  CLIENT_PSEUDONYM ||--o| SESSION : "joins"
-  SESSION ||--|| MATRIX_ROOM : "anchored by"
-  SESSION ||--o{ CASE_NOTE : "has (counselor-owned)"
-  SESSION ||--o{ AUDIT_LOG : produces
-```
+<Mermaid chart={"erDiagram\n  TENANT ||--o{ AGENCY : owns\n  TENANT ||--|| LEGAL_TEMPLATE : has\n  AGENCY ||--o{ AGENCY_LIVE_CHAT_LINK : \"publishes via\"\n  AGENCY ||--o{ AGENCY_POSTCODE_RANGE : covers\n  AGENCY ||--o{ CONSULTANT_AGENCY : binds\n  AGENCY ||--o{ AGENCY_TOPIC : offers\n  AGENCY ||--|| LEGAL_TEMPLATE : \"may override\"\n  TOPIC ||--o{ AGENCY_TOPIC : \"is offered as\"\n  TOPIC ||--o{ AGENCY_LIVE_CHAT_LINK : \"scopes\"\n  USER ||--o{ CONSULTANT_AGENCY : \"is consultant in\"\n  USER ||--o{ SESSION : \"as consultant\"\n  USER ||--o{ MAGIC_LINK : \"issued\"\n  USER ||--o{ ROLE_ASSIGNMENT : has\n  ROLE ||--o{ ROLE_ASSIGNMENT : grants\n  TICKET ||--|| SESSION : \"promoted to\"\n  CLIENT_PSEUDONYM ||--|| TICKET : \"owns\"\n  CLIENT_PSEUDONYM ||--o| SESSION : \"joins\"\n  SESSION ||--|| MATRIX_ROOM : \"anchored by\"\n  SESSION ||--o{ CASE_NOTE : \"has (counselor-owned)\"\n  SESSION ||--o{ AUDIT_LOG : produces"} />
 
 ## 7.2 Entities
 
@@ -345,7 +323,7 @@ Owned by **UserService** (logged) + **Matrix** (delivered).
 | visibility_label | string | The pill text shown ("3 Moderators", etc.) |
 | restricted_send_strategy | enum | `relay_bot`, `per_recipient_megolm` |
 
-This is the data layer behind [Multi-Recipient Send](/product/features/group-chats#4-5-4-multi-recipient-send-w%C3%A4hle-wer-diese-nachricht-sehen-soll).
+This is the data layer behind [Multi-Recipient Send](/produkt/core-features/group-chats#454-multi-recipient-send-wähle-wer-diese-nachricht-sehen-soll).
 
 ### 7.5.4 MarkAnnotation / BlurAnnotation
 
