@@ -51,15 +51,91 @@ description: "Frontend and backend coding standards, project structure, i18n rul
 
 ## Git
 
-- **No force push** to `main`
+- **No force push** to `main`, `dev` or `pre-dev`
 - **Keep hooks** (no `--no-verify`)
 - **Commit only** when explicitly asked
+- **Branch off `dev`** — never implement on `dev` itself
+- **PRs target the integration branch `dev`** — never `pre-dev`, never `main`
+
+`main` is the release branch. `pre-dev` stopped being an integration branch on 2026-08-31;
+an open PR still pointing at it should be retargeted to `dev`. (ORISO-E2E is the one
+exception: it has no `dev` branch and integrates on `pre-dev`.)
+
+## The Dev flow
+
+1. Finish and test the change locally, then open a PR against `dev`.
+2. Request 2–3 reviewers in the same step that opens the PR, excluding the author. A PR
+   without requested reviewers is not open for review.
+3. After review, the developers decide which PRs get merged and when.
+4. Once merged and deployed to Dev, **test it on Dev** and comment on the issue that you
+   did. If something breaks, the team decides between a rollback and a quick fix.
+5. When all tickets on Dev are signed off, a release to Stage can be cut. Its tickets then
+   move to "QA external / Stage" — the person doing the release moves them.
+6. Small, frequent releases are the goal.
+
+Work the issues planned for the current release; nothing else gets merged, because it breaks
+QA and testing. Do not move an issue into a release on your own — check with Björn, Frank or
+Christoph first.
+
+Log your work in the issue: assign it to yourself while you work on it, comment when you have
+finished a review and merged the PR, comment again once you have tested it on Dev, and keep
+the board status current.
+
+## Environments
+
+| Environment | URL | What it is |
+| --- | --- | --- |
+| local | — | Where you develop and test first. |
+| Dev | `dev.oriso.org` | Integration, built from `dev`. Where merged changes are verified and where QA looks. May be briefly unstable — Stage is the stable one. |
+| Stage | — | The stable environment for demos and external QA, cut as a release. |
+| Pre-Dev | `predev.oriso.org` | Outside the developer process since 2026-08-31. Frank's environment. |
+
+Developers test locally and on Dev. Nobody else deploys to Pre-Dev, changes its
+configuration, or mutates its data.
+
+## AI agent delivery rules
+
+These apply to every AI coding agent working in ORISO repositories (Claude Code, Codex,
+Cursor and any successor). They exist because an agent can produce and verify code faster
+than the team can review it, and the tempting shortcuts all lead to the same place:
+unreviewed code and an environment nobody can trust.
+
+- **An agent never merges a pull request.** Not when CI is green, not when the user says
+  "finish it", not for chores or test-only changes. Merging is the human reviewer's act. The
+  agent's delivery ends at: verified → PR open with evidence and a reviewer test plan →
+  reviewers requested → issue set to `In review`. Merge only on an explicit, per-PR
+  instruction naming that PR.
+- **Reviewers are requested in the same step that opens the PR.** A PR without requested
+  reviewers is not open for review. Pick them from the repository's reviewer routing,
+  excluding the PR author.
+- **Pre-Dev needs a named instruction.** It is Frank's environment. An agent deploys there,
+  swaps an image, or mutates its configuration or data only on an explicit, per-task
+  instruction from Frank naming Pre-Dev. Otherwise: reproduce locally and on Dev, and report.
+- **Restore the environment you borrowed.** When such a deployment *is* authorised, record
+  the previous image reference and its `imagePullPolicy` first; put both back before
+  reporting the work done, and say in the report what was swapped and restored. Leftover
+  images with `imagePullPolicy: Never` silently freeze the cluster on stale code for
+  everyone else.
+- **Report where it was verified.** Every PR body states the environment and image the
+  change was exercised on, or says plainly that it was only tested locally. A reviewer must
+  never have to guess how much verification already happened.
+- **Never manufacture review evidence.** An agent may hold credentials that can approve a PR
+  or dismiss a review. Using them to clear a gate fabricates the very human validation the
+  gate exists for. Report which PRs need an approval and from whom, and let a person click.
+- **Check the ticket against the knowledge graph and the ADRs before writing code.** The
+  per-repo and cross-service graphs are pulled by `ua-pull`; a merge commit reachable from
+  `dev` is not proof that the artefact is on `dev`.
 
 ## Testing
 
 - **Frontend**: Cypress
 - **Backend**: JUnit + MockMvc
 - **Always test in a real browser**
+- **Component props come from Storybook**, never from guessing. The Storybook MCP servers
+  for ORISO-Frontend and ORISO-Admin answer `docs-list`, `docs-show`, `docs-show-story`,
+  `stories-find-by-component`, `stories-changed` and `stories-preview`. A property that is
+  not documented there does not exist. Put the `stories-preview` URL in the PR for any UI
+  change.
 
 ## Deployment
 
