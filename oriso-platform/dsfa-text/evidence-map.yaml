@@ -18,6 +18,10 @@ repo_root: /Users/frankgerhardt/ORISO
 #             nicht als vorhanden beschrieben werden.
 #   lines     Zeilenbereiche zum Stand der Inventare (2026-08-14); Drift ist erwartbar,
 #             maßgeblich für den Detektor sind die Bezeichner unter `expect`.
+#   doc       optional: öffentliche Funktionsseite auf docs.oriso.org
+#   decision  optional: Architekturentscheidung als Dateipfad — nie über die ADR-Nummer allein
+#             zitieren (014 ist doppelt vergeben). Eine ADR belegt die Entscheidung, nie den
+#             Ist-Zustand; dafür ist `status` zuständig.
 
 entries:
   # ---------------------------------------------------------------- Kapitel 6.3 / 6.4
@@ -511,6 +515,19 @@ entries:
         lines: "44,273-302"
         expect: ["ARCHIVED", "events_default"]
 
+  - slug: team-discussion-archive-retention
+    chapter: "6.13"
+    claim: "Für Teambesprechungs-Archive ist eine Aufbewahrung von 90 Tagen ab Archivierung entschieden (Stand 05.09.2026), aber noch nicht implementiert; ADR-016 setzt auf die Archiv-Auto-Löschung, im Löschworkflow wird `TeamDiscussion` jedoch an keiner Stelle angefasst."
+    status: not-deployed
+    decision: oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/workflow/delete/action/asker/DeleteRoomsAndSessionAction.java
+        absent: ["TeamDiscussion", "teamDiscussion"]
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/workflow/delete/action/asker/DeleteSingleRoomAndSessionAction.java
+        absent: ["TeamDiscussion", "teamDiscussion"]
+
   - slug: case-handover-consent-policy
     chapter: "6.13"
     claim: "Je Übergabegrund ist festgelegt, ob die Zustimmung der ratsuchenden Person erforderlich ist; sie entscheidet selbst in der Anwendung."
@@ -560,6 +577,107 @@ entries:
         path: src/types/PermissionToggleVisibility.ts
         absent: ["teamDiscussion", "caseHandover"]
 
+  - slug: case-handover-endpoints
+    chapter: "6.13"
+    claim: "Die Fallübergabe läuft ausschließlich über benannte Endpunkte: Gründe, Richtlinien, Status, Kandidatensuche, Antrag, Zustimmungsentscheidung und Protokollsicht."
+    status: live
+    doc: https://docs.oriso.org/produkt/core-features/case-handover
+    decision: oriso-platform/decisions/ADR-002-silent-room-membership-and-access-control-curtain.md
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/CaseHandoverController.java
+        lines: "39-131"
+        expect:
+          - "case-handover/reasons"
+          - "case-handover/candidates"
+          - "case-handover/client-consent"
+          - "case-handover/logs"
+
+  - slug: case-handover-reason-catalogue-health-reference
+    chapter: "6.13"
+    claim: "Der ausgelieferte Grundkatalog enthält den Grund „Fachkraft erkrankt\" — ein Gesundheitsdatum über die beratende Person, das bis in den Raum der ratsuchenden Person getragen wird."
+    status: live
+    decision: oriso-platform/decisions/ADR-002-silent-room-membership-and-access-control-curtain.md
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/resources/db/changelog/changeset/0057_case_handover_request/case-handover-request.sql
+        lines: "52-100"
+        expect: ["COUNSELLOR_IS_ILL", "COUNSELLOR_ON_HOLIDAY", "OTHER_EMERGENCY", "COUNSELLOR_LEFT"]
+
+  - slug: case-handover-neutral-reasons-decided
+    chapter: "6.13"
+    claim: "Die Umstellung auf anlassneutrale Gründe (PLANNED_ABSENCE, UNPLANNED_ABSENCE, ASSIGNMENT_ENDED, ADVICE_REQUESTED) ist am 05.09.2026 entschieden, aber nicht ausgeliefert."
+    status: not-deployed
+    decision: oriso-platform/decisions/ADR-002-silent-room-membership-and-access-control-curtain.md
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/resources/db/changelog/changeset/0057_case_handover_request/case-handover-request.sql
+        absent: ["PLANNED_ABSENCE", "UNPLANNED_ABSENCE", "ASSIGNMENT_ENDED", "ADVICE_REQUESTED"]
+
+  - slug: case-handover-push-direction-decided
+    chapter: "6.13"
+    claim: "Die zweite Übergaberichtung („Fall abgeben\") ist entschieden — Angebot, Annahme durch die Empfängerin, danach derselbe Freigabepfad; die Annahme ist keine dritte Einwilligungsschwelle. Ausgeliefert ist sie nicht."
+    status: not-deployed
+    doc: https://docs.oriso.org/produkt/core-features/case-handover
+    decision: oriso-platform/decisions/ADR-002-silent-room-membership-and-access-control-curtain.md
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/service/CaseHandoverService.java
+        absent: ["PENDING_RECIPIENT_ACCEPT", "RECIPIENT_DECLINED"]
+
+  - slug: case-handover-log-no-retention
+    chapter: "6.13"
+    claim: "Für die Übergabeprotokolle besteht keine Aufbewahrungsfrist; gelöscht wird nur anlassbezogen mit dem Konto der beratenden Person."
+    status: live
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/resources/application.properties
+        absent: ["case.handover.retention"]
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/workflow/delete/action/consultant/DeleteCaseHandoverRequestsForConsultantAction.java
+        expect: ["DeleteCaseHandoverRequestsForConsultantAction"]
+
+  - slug: case-handover-log-retention
+    chapter: "6.13"
+    claim: "Für Fallübergabe-Protokolle ist eine Aufbewahrung von 12 Monaten ab Entstehung des Protokolleintrags entschieden (Stand 05.09.2026), aber noch nicht implementiert; es existiert weder ein Konfigurationsschlüssel noch ein Löschlauf."
+    status: not-deployed
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/resources/application.properties
+        absent: ["case.handover.audit-retention-months", "CASE_HANDOVER_AUDIT_RETENTION_MONTHS"]
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/service/handshake/HandshakeService.java
+        lines: "63-64"
+        expect: ["handshake.audit-retention-months", "12"]
+
+  - slug: supervision-notes-retention
+    chapter: "6.13"
+    claim: "Für Supervisions-Nebenräume ist eine Aufbewahrung von Fallende + 90 Tagen entschieden (Stand 05.09.2026), aber noch nicht implementiert; beim Löschen von Sitzung oder Beratendem wird heute nur die Datenbankzeile `session_supervisor` entfernt, der Matrix-Nebenraum bleibt unbefristet bestehen."
+    status: not-deployed
+    decision: oriso-platform/decisions/ADR-008-supervision-role-and-side-channel-confidentiality.md
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/workflow/delete/action/asker/DeleteRoomsAndSessionAction.java
+        lines: "62-72,113"
+        expect: ["deleteSessionSupervisors", "sessionSupervisorRepository"]
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/workflow/delete/action/consultant/DeleteDatabaseConsultantAction.java
+        lines: "42-46,80-83"
+        expect: ["SessionSupervisorRepository", "deleteAllByConsultantId"]
+
+  - slug: supervision-always-on-system-message
+    chapter: "6.13"
+    claim: "Die stehende Supervision ist dauerhaft aktiv und für die ratsuchende Person nicht abschaltbar (Entscheidung vom 05.09.2026). Die Aufklärung soll über eine Systemnachricht im Beratungsraum erfolgen, sobald eine Berater:in die Anfrage annimmt; diese Systemnachricht ist entschieden, aber noch nicht implementiert (ORISO-Frontend#1315). Der vorhandene Opt-out-Endpunkt wird in der Anwendung nicht angeboten."
+    status: not-deployed
+    decision: oriso-platform/decisions/ADR-008-supervision-role-and-side-channel-confidentiality.md
+    evidence:
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/facade/assignsession/AssignEnquiryFacade.java
+        expect: ["attachStandingSupervisorIfAssigned"]
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/service/matrix/MatrixSessionSystemMessageService.java
+        absent: ["SUPERVISION_ACTIVE"]
+
   # ---------------------------------------------------------------- Kapitel 6.14
   - slug: notification-preview-mode-none
     chapter: "6.14"
@@ -579,20 +697,27 @@ entries:
         lines: "41-46"
         expect: ["canIncludePlaintextPreview", "messagePreview"]
 
+  # Nachgeführt 2026-09-05: Der frühere Befund "keine Aufbewahrungsfrist, keine Löschung mit dem
+  # Konto" ist überholt — beides wurde mit KDG-Epic #1010 gebaut. Slug bleibt bestehen.
   - slug: event-notification-no-retention
     chapter: "6.14"
-    claim: "Für Benachrichtigungen besteht keine Aufbewahrungsfrist; der Konto-Löschworkflow erfasst sie nicht."
+    claim: "Gelesene Benachrichtigungen werden nach 90 Tagen, alle übrigen spätestens nach 365 Tagen gelöscht; ein nächtlicher Lauf setzt das durch und der Konto-Löschworkflow entfernt die Datensätze mit."
     status: live
     evidence:
       - repo: ORISO-UserService
-        path: src/main/java/de/caritas/cob/userservice/api/port/out/EventNotificationRepository.java
-        lines: "9-24"
-        expect: ["deleteByRecipientUserId"]
-        absent: ["deleteByCreateDateBefore"]
+        path: src/main/resources/application.properties
+        lines: "94-102"
+        expect:
+          - "event.notification.retention.read.days"
+          - "event.notification.retention.absolute.days"
+          - "event.notification.retention.cron"
+      - repo: ORISO-UserService
+        path: src/main/java/de/caritas/cob/userservice/api/workflow/notificationretention/service/EventNotificationRetentionService.java
+        expect: ["EventNotificationRetentionService"]
       - repo: ORISO-UserService
         path: src/main/java/de/caritas/cob/userservice/api/workflow/delete/service/DeleteUserAccountService.java
-        lines: "47-106"
-        absent: ["EventNotification"]
+        lines: "80-115"
+        expect: ["DeleteAskerEventNotificationsAction", "DeleteConsultantEventNotificationsAction"]
 
   - slug: event-notification-read-timestamp
     chapter: "6.14"

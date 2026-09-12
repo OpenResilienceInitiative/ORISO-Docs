@@ -1,5 +1,7 @@
 # 6 Verfahren und Technik
 
+:::technisch
+
 ## 6.1 Zweck
 
 Zweck der Verarbeitung ist die Bereitstellung und der technische Betrieb einer
@@ -431,9 +433,20 @@ Empfängerkreise ausgestaltet.
 > **Ehrliche Grenzbenennung.** In der Team-Besprechung wird **über** eine ratsuchende Person
 > gesprochen, ohne dass diese davon Kenntnis erlangt; das Archiv bleibt dauerhaft lesbar. Damit
 > entsteht ein Datenbestand über die betroffene Person außerhalb ihres Beratungsraums, der beim
-> Auskunftsrecht zu berücksichtigen ist (Abschnitt 8.4) und für den eine Aufbewahrungsfrist
-> festzulegen ist. Protokolliert werden derzeit ausschließlich Anlage und Teilnahme, nicht
-> Lese- oder Archivzugriffe.
+> Auskunftsrecht zu berücksichtigen ist (Abschnitt 8.4). Vorgesehen ist eine Aufbewahrung von
+> **90 Tagen ab Archivierung**, spätestens jedoch bis zur Löschung der zugehörigen
+> Beratungssitzung. Der Löschlauf ist entschieden, aber noch nicht implementiert
+> (Stand 05.09.2026); einen Löschpfad für dieses Archiv gibt es im Auslieferungsstand nicht. Der
+> Wert ist als Konfigurationsparameter vorgesehen und kann vom Plattformbetreiber ohne
+> Codeänderung angepasst werden. Begründung: Der Zweck des Archivs — Kontextbrücke für eine neu
+> übernehmende Fachkraft — ist mit der Fallannahme im Kern erfüllt; danach verbleibt reiner
+> Prozessdaten-Fließtext über die ratsuchende Person, dessen unbefristete Aufbewahrung sich
+> gegenüber der Speicherbegrenzung (§ 7 Abs. 1 lit. e KDG) nicht rechtfertigen lässt
+> (Caritas-Fachposition: Prozessdaten werden nach Beendigung des Klientenverhältnisses gelöscht).
+> Der Wert
+> ist eine Konvention, kein Normwert, und steht unter dem Vorbehalt der Freigabe durch den
+> betrieblichen Datenschutzbeauftragten. Protokolliert werden derzeit ausschließlich Anlage und
+> Teilnahme, nicht Lese- oder Archivzugriffe.
 
 **(2) Fallübergabe.** Der Zugriff einer weiteren Beraterin oder eines weiteren Beraters auf einen
 bestehenden Beratungsfall — etwa bei Vertretung im Krankheitsfall, Urlaubsvertretung, kollegialer
@@ -479,9 +492,79 @@ durchgängige Delegationskaskade bis auf die Ebene einzelner Beratungsstellen be
 beiden Funktionen **nicht**; sie darf für sie nicht behauptet werden.
 
 **(6) Supervision — Abgrenzung.** Die Supervision ist ein hiervon getrenntes drittes Werkzeug: Sie
-ist als begleitender Lesezugriff ausgestaltet und verfügt über ein eigenes Widerspruchsverfahren
-(Opt-out) für die ratsuchende Person. Zu Supervisionsvorgängen können Freitext-Notizen erfasst
-werden; für diese ist eine Aufbewahrungsfrist festzulegen.
+ist als begleitender Lesezugriff ausgestaltet. Die stehende Supervision ist **dauerhaft aktiv und
+für die ratsuchende Person nicht abschaltbar** (Entscheidung vom 05.09.2026, ADR-008-Addendum): Sie
+ist Teil der fachlichen Arbeitsweise der Beratungsstelle; die supervidierende Person gehört
+derselben Beratungsstelle an, liest ausschließlich mit, schreibt nicht in den Beratungsraum und ist
+für die ratsuchende Person nicht sichtbar. An die Stelle eines Widerspruchsverfahrens tritt die
+aktive Aufklärung: Die ratsuchende Person wird in den Datenschutzhinweisen der Beratungsstelle beim
+Einstieg in den Chat informiert und soll zusätzlich eine Systemnachricht im eigenen Beratungsraum
+erhalten, sobald eine Berater:in die Anfrage angenommen hat — also in dem Moment, in dem die
+stehende Supervision angehängt wird. Diese Systemnachricht ist entschieden, aber **noch nicht
+implementiert** (Stand 05.09.2026; ORISO-Frontend#1315). Ein technisch weiterhin vorhandener
+Opt-out-Endpunkt wird in der Anwendung nicht angeboten; sein Rückbau ist offen. Die Fallübergabe
+behält ihr eigenes Widerspruchsverfahren, davon unberührt. Zu Supervisionsvorgängen können
+Freitext-Notizen erfasst
+werden; sie können besondere Kategorien personenbezogener Daten über die ratsuchende Person
+enthalten (§ 11 KDG, Art. 9 DSGVO). Vorgesehen ist eine Aufbewahrung von **Fallende + 90 Tagen**
+(Startzeitpunkt: Abschluss bzw. Archivierung der Beratungssitzung, hilfsweise Aufhebung der
+Supervisionsbeziehung — was zuerst eintritt). Der Löschlauf ist entschieden, aber noch nicht
+implementiert (Stand 05.09.2026); heute wird beim Löschen von Sitzung oder Beratendem nur die
+Datenbankzeile entfernt, der Matrix-Nebenraum bleibt unbefristet bestehen. Der Wert ist als
+Konfigurationsparameter vorgesehen und kann vom Plattformbetreiber ohne Codeänderung angepasst
+werden. Begründung: Mit dem Fallende entfällt der Zweck der Fachaufsicht; es verbleibt reiner
+Prozessdaten-Fließtext über die ratsuchende Person, der nach der Caritas-Fachposition „nach
+Beendigung des Klientenverhältnisses gelöscht" werden soll. Der Wert ist eine Konvention, kein
+Normwert, und steht unter dem Vorbehalt der Freigabe durch den betrieblichen
+Datenschutzbeauftragten.
+
+**(7) Grundkatalog und besondere Kategorien — Ist-Stand und Beschlusslage.** Der ausgelieferte
+Grundkatalog enthält die Gründe `COUNSELLOR_ASKED_FOR_ADVICE`, `COUNSELLOR_ON_HOLIDAY`,
+`OTHER_EMERGENCY`, `COUNSELLOR_IS_ILL` und `COUNSELLOR_LEFT`. Der Grund „Fachkraft erkrankt"
+(`COUNSELLOR_IS_ILL`) ist ein Gesundheitsdatum über die **beratende** Person
+§ 11 KDG (Art. 9 DSGVO); er wird in den Übergabedatensatz, in das Verwaltungsprotokoll, in die
+Benachrichtigungsparameter und — als abgeleiteter Anzeigetext — in den Beratungsraum der
+ratsuchenden Person geschrieben. Am 05.09.2026 ist entschieden worden, den Katalog auf die
+anlassneutralen Gründe `PLANNED_ABSENCE`, `UNPLANNED_ABSENCE`, `ASSIGNMENT_ENDED` und
+`ADVICE_REQUESTED` umzustellen und den Text an die ratsuchende Person weder Ursache noch Dauer
+nennen zu lassen (Addendum zu `ADR-002-silent-room-membership-and-access-control-curtain.md`).
+Ebenfalls entschieden, aber noch nicht ausgeliefert, ist die zweite Übergaberichtung
+(„Fall abgeben": Angebot, Annahme durch die Empfängerin, danach derselbe Freigabepfad; die Annahme
+ist ausdrücklich **keine** dritte Einwilligungsschwelle im Sinne von ADR-022). Beides ist im
+Auslieferungsstand **nicht** vorhanden und darf bis zur Umsetzung nicht als Ist-Zustand
+beschrieben werden; bereits gesendete Raum-Ereignisse sind unveränderlich und können nicht
+nachträglich anlassneutral gemacht werden.
+
+**(8) Belegkette.** Funktionsbeschreibung:
+[Case Handover](https://docs.oriso.org/produkt/core-features/case-handover).
+Architekturentscheidungen (nach Dateinamen zitiert, nicht nach Nummer):
+`ADR-002-silent-room-membership-and-access-control-curtain.md` — stille Raum-Mitgliedschaft,
+Vorhang aus Zugriffskontrolle, Addendum vom 05.09.2026;
+`ADR-016-team-besprechung-side-room-hard-close-at-accept.md` — harter Abschluss des
+Besprechungsraums; `ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md` — genau zwei
+Einwilligungsschwellen. Code:
+[Endpunkte](https://github.com/OpenResilienceInitiative/ORISO-UserService/blob/dev/src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/CaseHandoverController.java#L39-L131),
+[Zustimmungserfordernis je Grund](https://github.com/OpenResilienceInitiative/ORISO-UserService/blob/dev/src/main/java/de/caritas/cob/userservice/api/model/CaseHandoverReasonPolicy.java#L33-L34),
+[mandanten- und beratungsstellenscharfe Protokollsicht](https://github.com/OpenResilienceInitiative/ORISO-UserService/blob/dev/src/main/java/de/caritas/cob/userservice/api/service/CaseHandoverLogsService.java#L33-L109),
+[ausgelieferter Grundkatalog](https://github.com/OpenResilienceInitiative/ORISO-UserService/blob/dev/src/main/resources/db/changelog/changeset/0057_case_handover_request/case-handover-request.sql#L52-L100).
+Die maschinenlesbare Fassung dieser Belege steht unter den Kennungen `case-handover-*` in
+`evidence-map.yaml`.
+
+> **Offener Punkt.** Für die Übergabeprotokolle besteht **keine** Aufbewahrungsfrist: Die
+> Konfiguration des Dienstes kennt Fristen für Benachrichtigungen (90 Tage nach Kenntnisnahme,
+> 365 Tage absolut) und für die Protokolle des Break-Glass-Zugriffs (12 Monate), nicht aber für
+> `case_handover_request`. Gelöscht wird dort nur anlassbezogen mit dem Konto der beratenden
+> Person. Vorgesehen ist eine Aufbewahrung von **12 Monaten ab Entstehung des
+> Protokolleintrags**, mit täglichem Löschlauf. Der Löschlauf ist entschieden, aber noch nicht
+> implementiert (Stand 05.09.2026). Der Wert ist als Konfigurationsparameter vorgesehen und kann
+> vom Plattformbetreiber ohne Codeänderung angepasst werden. Begründung: Das Log enthält keine
+> Gesprächsinhalte und dient allein der Nachprüfbarkeit, wer wann mit welchem Grund Zugriff auf
+> einen Fall erhalten hat; die verbindliche Untergrenze von sechs Monaten (§ 6 lit. f Satz 2
+> KDG-DVO, Eingabekontrolle) wird nicht unterschritten, und der Wert folgt dem bereits
+> ausgelieferten Break-Glass-Audit (zwölf Monate). Die Frist ist im Löschkonzept (Anlage 2)
+> endgültig festzulegen; sie ist eine Entscheidung des Verantwortlichen, keine technische
+> Ableitung, und steht unter dem Vorbehalt der Freigabe durch den betrieblichen
+> Datenschutzbeauftragten.
 
 ## 6.14 In-App-Benachrichtigungen und E-Mail-Benachrichtigungen
 
@@ -506,14 +589,22 @@ und ermöglicht ein Nutzungs- und Anwesenheitsprofil.
 
 Der Zugriff ist strikt auf den jeweiligen Empfänger beschränkt; ein administrativer Lesezugriff
 über die Schnittstelle besteht nicht. Betroffene können ihren Benachrichtigungsverlauf jederzeit
-selbst vollständig löschen. **Eine automatische Aufbewahrungsfrist besteht derzeit nicht; die
-Datensätze werden beim Löschen des Kontos nicht mitgelöscht.**
+selbst vollständig löschen. Seit dem Auslieferungsstand vom 14.08.2026 bestehen zwei
+Regelfristen: gelesene Benachrichtigungen werden **90 Tage** nach der Kenntnisnahme gelöscht,
+alle übrigen spätestens **365 Tage** nach ihrer Entstehung; ein nächtlicher Löschlauf (03:15 Uhr)
+setzt beide durch, beide Werte sind je Umgebung konfigurierbar
+(`EVENT_NOTIFICATION_RETENTION_READ_DAYS`, `EVENT_NOTIFICATION_RETENTION_ABSOLUTE_DAYS`; der Wert
+`0` schaltet die jeweilige Frist ab). Der Konto-Löschworkflow entfernt die Datensätze seither
+mit; er führt für Ratsuchende und für Beratende je einen eigenen Löschschritt aus.
+
+> **Vorbehalt.** Die beiden Fristen sind der Vorschlag dieser DSFA und noch nicht durch die
+> Datenschutzbeauftragung des Verantwortlichen bestätigt; sie stehen so auch als Kommentar in der
+> Konfiguration des Dienstes.
 
 *Geplante Abhilfemaßnahmen:* (1) Abschluss der laufenden Umstellung auf rein clientseitig
 gerenderte Benachrichtigungstexte, wodurch die serverseitigen Klartext-Anzeigetexte einschließlich
-des Fallübergabe-Freitexts vollständig entfallen; (2) Einführung einer Regel-Aufbewahrungsfrist
-mit automatischem Löschlauf und Anbindung an den Konto-Löschworkflow; (3) Reduktion des
-Lesezeitstempels auf ein Gelesen-Kennzeichen; (4) Entfernung des Vorschaumodus aus dem Quellcode,
+des Fallübergabe-Freitexts vollständig entfallen; (2) Reduktion des
+Lesezeitstempels auf ein Gelesen-Kennzeichen; (3) Entfernung des Vorschaumodus aus dem Quellcode,
 damit eine bloße Konfigurationsänderung die Tabelle nicht in einen Inhaltsspeicher verwandeln kann.
 
 **E-Mail-Benachrichtigungen.** Benachrichtigungen per E-Mail verlassen die Domäne der

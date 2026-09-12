@@ -1,5 +1,7 @@
 # 10 Ergebnis der Datenschutz-Folgenabschätzung
 
+:::technisch
+
 Die Verarbeitungstätigkeit „Bereitstellung und technischer Betrieb der Online-Beratungsplattform"
 kann in der in Kapitel 6 beschriebenen Ausgestaltung umgesetzt werden — **unter Beachtung der
 Maßnahmen aus der Risikoanalyse (Anlage 1) und der Fristen des Löschkonzepts (Anlage 2)**. Ohne
