@@ -1,0 +1,9 @@
+{
+  "name": "@oriso/understand-anything-tooling",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {"node": ">=22.0.0"},
+  "scripts": {"test": "node --test test/*.test.mjs platform/test/*.test.mjs"},
+  "dependencies": {"typescript": "5.9.3"}
+}

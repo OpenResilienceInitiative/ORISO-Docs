@@ -1,359 +1,380 @@
 {
+  "meta": {
+    "generatedAt": "2026-09-04T12:40:00Z",
+    "generatedBy": "claude-opus-deep-run-2026-09",
+    "repo": "ORISO-UserService"
+  },
   "concepts": [
     {
       "id": "concept:session-lifecycle",
       "name": "Consultation Session Lifecycle",
-      "summary": "UserService owns the consultation lifecycle: registration of new users/askers, handling and creation of enquiries, creation of sessions with their encrypted Matrix rooms, and assignment of consultants with the matching room memberships. The former monolithic UserController is split into focused delegates (registration, sessions, chats, consultants, account, support, 2FA).",
-      "tags": [
-        "domain",
-        "core"
-      ],
+      "summary": "A Session is the durable record of one counselling case between an asker (User) and one or more consultants; it is created at registration or enquiry time, assigned to a consultant, archived, dearchived and finally deleted. The state machine lives in api/service/session/SessionService.java with the facades api/facade/CreateSessionFacade.java, api/facade/CreateEnquiryMessageFacade.java and api/service/archive/SessionArchiveService.java. Sessions carry topics, consulting type, agency, consent and an optional SessionSupervisor row managed via api/facade/SessionSupervisorFacade.java.",
+      "tags": ["session", "domain", "lifecycle", "counselling"],
       "related": [
-        "UserController.java",
-        "UserSessionControllerDelegate.java",
-        "UserRegistrationControllerDelegate.java",
-        "ConversationController.java",
-        "SessionSupervisorController.java",
-        "README.md"
+        "src/main/java/de/caritas/cob/userservice/api/model/Session.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/session/SessionService.java",
+        "src/main/java/de/caritas/cob/userservice/api/facade/CreateSessionFacade.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/archive/SessionArchiveService.java",
+        "src/main/java/de/caritas/cob/userservice/api/port/out/SessionRepository.java",
+        "src/main/java/de/caritas/cob/userservice/api/facade/SessionSupervisorFacade.java"
       ]
     },
     {
       "id": "concept:consultation-modes",
-      "name": "Consultation Modes",
-      "summary": "Four kinds of consultations are handled: single/direct 1:1 counseling, team counseling, group chat counseling, and anonymous counseling (no registration required). Anonymous enquiries enforce server-side data-privacy confirmation on the assign path.",
-      "tags": [
-        "domain"
-      ],
+      "name": "Consultation Modes (registered, anonymous, team, group chat)",
+      "summary": "The service supports several counselling modes on top of the same Session/Chat model: registered one-to-one sessions, anonymous live conversations, team sessions shared inside an agency, and moderated group chats. Anonymous conversations are created and finished by api/conversation/facade/CreateAnonymousEnquiryFacade.java and api/conversation/facade/FinishAnonymousConversationFacade.java, while group chats live in api/model/Chat.java plus api/facade/CreateChatFacade.java and api/service/chat. Which list a consultant sees is resolved by the provider registry in api/conversation/registry/ConversationListProviderRegistry.java.",
+      "tags": ["conversation", "anonymous", "group-chat", "team-session"],
       "related": [
-        "ConversationController.java",
-        "AnonymousConversationCreatorService.java",
-        "README.md"
+        "src/main/java/de/caritas/cob/userservice/api/conversation/facade/CreateAnonymousEnquiryFacade.java",
+        "src/main/java/de/caritas/cob/userservice/api/conversation/registry/ConversationListProviderRegistry.java",
+        "src/main/java/de/caritas/cob/userservice/api/model/Chat.java",
+        "src/main/java/de/caritas/cob/userservice/api/facade/CreateChatFacade.java",
+        "src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/ConversationController.java"
       ]
     },
     {
       "id": "concept:matrix-messaging",
-      "name": "Matrix-only Messaging",
-      "summary": "Messaging is Matrix-only: the Rocket.Chat adapter, its API contracts, and the rocketChat* database columns were removed (migrations 0073-0075), with contract tests asserting the adapter stays gone. MatrixMessageController sends/fetches session messages, MatrixSyncController keeps read models in sync, MatrixSynapseService plus room/user clients manage Synapse accounts and rooms, and RedisMessageMirrorService mirrors messages for fast session-list previews.",
-      "tags": [
-        "messaging",
-        "matrix",
-        "core"
-      ],
+      "name": "Matrix-backed Messaging Bridge",
+      "summary": "All chat traffic is stored in a Matrix/Synapse homeserver, not in this service; UserService only owns the room ids, the Matrix user ids and the membership rules. The outbound side is api/adapters/matrix/MatrixSynapseService.java and api/adapters/matrix/MatrixRoomClient.java behind the ports api/port/out/MatrixUserClient.java and api/port/out/SessionRoomGateway.java; the inbound side is api/service/matrix/MatrixEventListenerService.java. System messages and membership changes are pushed through api/service/matrix/MatrixSessionSystemMessageService.java and api/service/matrix/GroupChatMembershipService.java.",
+      "tags": ["matrix", "messaging", "integration", "rooms"],
       "related": [
-        "MatrixMessageController.java",
-        "MatrixSyncController.java",
-        "MatrixSynapseService.java",
-        "RedisMessageMirrorService.java",
-        "MatrixEventListenerService.java",
-        "DraftMessageController.java",
-        "RocketChatAdapterRemovedContractTest.java"
+        "src/main/java/de/caritas/cob/userservice/api/adapters/matrix/MatrixSynapseService.java",
+        "src/main/java/de/caritas/cob/userservice/api/adapters/matrix/MatrixRoomClient.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/matrix/MatrixEventListenerService.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/matrix/MatrixSessionSystemMessageService.java",
+        "src/main/java/de/caritas/cob/userservice/api/port/out/SessionRoomGateway.java",
+        "src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/MatrixMessageController.java"
       ]
     },
     {
-      "id": "concept:media-upload",
-      "name": "Session Media Upload & Download Proxy",
-      "summary": "File sharing in counselling sessions goes through UserService as a proxy to the Matrix media repository: POST /matrix/sessions/{sessionId}/upload uploads the file, posts the matching m.room.message file event, and GET /matrix/media/download/{serverName}/{mediaId} proxies authenticated downloads. Content scanning (ADR-014/015 fail-closed scanner) is a platform-level concern and not yet enforced inside this repo.",
-      "tags": [
-        "media",
-        "matrix"
-      ],
+      "id": "concept:asker-consultant-identity",
+      "name": "Asker vs. Consultant Identity",
+      "summary": "The two principal account types are api/model/User.java (asker / advice seeker, possibly anonymous) and api/model/Consultant.java (counsellor, linked to agencies through api/model/ConsultantAgency.java). Both are mirrored into Keycloak and into Matrix, and both carry a Matrix password column added by the addMatrixPasswordToUser.sql / addMatrixPasswordToConsultant.sql changesets. Anonymous askers get generated display names from api/conversation/service/user/anonymous/AnonymousUsernameRegistry.java, and usernames are Base32-transcoded by api/helper/UsernameTranscoder.java so that the readable name never has to be stored in clear text.",
+      "tags": ["identity", "asker", "consultant", "anonymity"],
       "related": [
-        "MatrixMediaClient.java",
-        "MatrixMessageController.java",
-        "MatrixConfig.java"
+        "src/main/java/de/caritas/cob/userservice/api/model/User.java",
+        "src/main/java/de/caritas/cob/userservice/api/model/Consultant.java",
+        "src/main/java/de/caritas/cob/userservice/api/model/ConsultantAgency.java",
+        "src/main/java/de/caritas/cob/userservice/api/conversation/service/user/anonymous/AnonymousUsernameRegistry.java",
+        "src/main/java/de/caritas/cob/userservice/api/helper/UsernameTranscoder.java"
+      ]
+    },
+    {
+      "id": "concept:identity-authentication-2fa",
+      "name": "Keycloak Identity, 2FA and Passwordless Entry",
+      "summary": "Keycloak is the identity provider; every account operation goes through api/adapters/keycloak/KeycloakService.java, which is hidden behind the fine-grained ports in api/port/out (IdentityClient, IdentityRoleUpdater, IdentitySecondFactor, IdentitySessionExchange). Second factor setup — app TOTP and e-mail OTP — is exposed on /otp-config/* and /users/2fa/* and reaches Keycloak through api/port/out/IdentitySecondFactor.java. Passwordless entry paths are api/service/auth/MagicLinkLoginService.java and api/service/auth/PasswordResetService.java, both backed by the Redis one-time token store api/service/auth/RedisOneTimeTokenStore.java.",
+      "tags": ["keycloak", "authentication", "2fa", "otp", "magic-link"],
+      "related": [
+        "src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakService.java",
+        "src/main/java/de/caritas/cob/userservice/api/port/out/IdentitySecondFactor.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/auth/MagicLinkLoginService.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/auth/PasswordResetService.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/auth/RedisOneTimeTokenStore.java",
+        "src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/UserTwoFactorAuthControllerDelegate.java"
+      ]
+    },
+    {
+      "id": "concept:multitenancy-tenant-context",
+      "name": "Multitenancy and Tenant Context",
+      "summary": "Every request is bound to a tenant before business code runs. api/adapters/web/controller/interceptor/HttpTenantFilter.java calls api/tenant/TenantResolverService.java, which tries subdomain, access-token claim, custom header and technical/super-admin resolvers in order and stores the result in the thread-local api/tenant/TenantContext.java. Persistence is filtered by api/service/TenantHibernateInterceptor.java and the tenant_id column introduced by the tenant_id.sql changeset, so entities marked api/model/TenantAware.java are never read across tenants.",
+      "tags": ["multitenancy", "tenant", "security", "filter"],
+      "related": [
+        "src/main/java/de/caritas/cob/userservice/api/tenant/TenantResolverService.java",
+        "src/main/java/de/caritas/cob/userservice/api/tenant/TenantContext.java",
+        "src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/interceptor/HttpTenantFilter.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/TenantHibernateInterceptor.java",
+        "src/main/java/de/caritas/cob/userservice/api/model/TenantAware.java"
       ]
     },
     {
       "id": "concept:user-administration",
-      "name": "User & Consultant Administration",
-      "summary": "Admin-facing account management: UserAdminController with ConsultantAdminFacade and AskerUserAdminFacade cover consultant/asker administration, agency assignment, and account state; consultant lifecycle is hardened (status transitions, pre-deletion validation) and counsellors can also be provisioned from accepted account invites.",
-      "tags": [
-        "admin"
-      ],
+      "name": "User, Consultant and Admin Administration",
+      "summary": "The /useradmin and /agencyadmin surfaces let tenant admins, agency admins and support admins manage consultants, askers, admins and agency relations. api/adapters/web/controller/UserAdminController.java delegates to api/admin/facade/ConsultantAdminFacade.java, api/admin/facade/AdminUserFacade.java and api/admin/facade/AskerUserAdminFacade.java, which in turn drive the saga api/admin/service/consultant/create/CreateConsultantSaga.java and the filter/search services under api/admin/service. A separate rule engine under api/admin/report produces consistency violation reports for /useradmin/report.",
+      "tags": ["admin", "useradmin", "consultant-management", "agency"],
       "related": [
-        "UserAdminController.java",
-        "ConsultantAdminFacade.java",
-        "AskerUserAdminFacade.java",
-        "AdminUserFacade.java",
-        "SupportAdminController.java"
-      ]
-    },
-    {
-      "id": "concept:identity-ports",
-      "name": "Identity Ports & Second Factor (2FA/OTP)",
-      "summary": "Keycloak access is split behind narrow hexagonal Identity* ports (IdentityLogin, IdentitySecondFactor, IdentityProfileUpdater, IdentityEmailAddressUpdater, ...) implemented by KeycloakService, so callers depend on capabilities instead of the Keycloak client. Second-factor auth (email OTP and app TOTP via the Keycloak extension) runs through IdentitySecondFactor with per-role identity.otp-allowed-* flags; account invites can pre-provision a pending TOTP secret so 2FA is active on first login.",
-      "tags": [
-        "identity",
-        "security",
-        "2fa"
-      ],
-      "related": [
-        "IdentityClient.java",
-        "IdentityLogin.java",
-        "IdentitySecondFactor.java",
-        "KeycloakService.java",
-        "UserTwoFactorAuthControllerDelegate.java",
-        "IdentityOtpCredential.java",
-        "keycloakextension.yaml"
+        "src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/UserAdminController.java",
+        "src/main/java/de/caritas/cob/userservice/api/admin/facade/ConsultantAdminFacade.java",
+        "src/main/java/de/caritas/cob/userservice/api/admin/facade/AdminUserFacade.java",
+        "src/main/java/de/caritas/cob/userservice/api/admin/service/consultant/create/CreateConsultantSaga.java",
+        "src/main/java/de/caritas/cob/userservice/api/admin/report/service/ViolationReportGenerator.java"
       ]
     },
     {
       "id": "concept:case-handover",
       "name": "Case Handover",
-      "summary": "CaseHandoverController implements transferring cases between consultants/agencies: persisted CaseHandoverRequest entities governed by per-tenant CaseHandoverReasonPolicy records, audit logging via CaseHandoverLogsService, and notification templates (migration 0069) for the parties involved.",
-      "tags": [
-        "workflow"
-      ],
+      "summary": "A consultant can hand a running case to a colleague; the request, its reason and its acceptance are persisted in api/model/CaseHandoverRequest.java against the case_handover_request table, with allowed reasons governed by api/model/CaseHandoverReasonPolicy.java. api/service/CaseHandoverService.java performs the transfer, rewires Matrix room membership and writes an audit trail read back through api/service/CaseHandoverLogsService.java. The HTTP surface is api/adapters/web/controller/CaseHandoverController.java.",
+      "tags": ["handover", "case-transfer", "audit", "consultant"],
       "related": [
-        "CaseHandoverController.java",
-        "CaseHandoverService.java",
-        "CaseHandoverRequest.java",
-        "CaseHandoverReasonPolicy.java",
-        "CaseHandoverLogsService.java"
+        "src/main/java/de/caritas/cob/userservice/api/service/CaseHandoverService.java",
+        "src/main/java/de/caritas/cob/userservice/api/model/CaseHandoverRequest.java",
+        "src/main/java/de/caritas/cob/userservice/api/model/CaseHandoverReasonPolicy.java",
+        "src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/CaseHandoverController.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/CaseHandoverLogsService.java"
       ]
     },
     {
       "id": "concept:invite-links",
-      "name": "Invite Links, Account Invites & Provisioning",
-      "summary": "Invitation-based onboarding: agency invite links plus account invites with reservation tokens, tracked invite-email templates and delivery status, and a compensating ProvisioningWorkflow that creates the Keycloak, Matrix, and database resources for a counsellor when an invite is accepted (rolling back partial resources on failure). DpaForwardEmailController lets a candidate forward the data-processing agreement before accepting.",
-      "tags": [
-        "onboarding"
-      ],
+      "name": "Invite Links and Account Invitations",
+      "summary": "Two distinct invitation mechanisms coexist. api/model/AgencyInviteLink.java plus api/service/agencyinvitelink/AgencyInviteLinkService.java produce shareable links that drop an asker straight into an agency or topic with a chosen anonymity and chat type. api/model/AccountInvite.java plus api/service/accountinvite/AccountInviteService.java invite staff — counsellors, agency admins, tenant admins — by e-mail, tracked through invite_email_template and invite_email_delivery and provisioned by api/service/accountinvite/CounsellorInviteProvisioningService.java.",
+      "tags": ["invite", "onboarding", "provisioning", "email"],
       "related": [
-        "AgencyInviteLinkController.java",
-        "AccountInviteController.java",
-        "AccountInviteService.java",
-        "CounsellorInviteProvisioningService.java",
-        "ProvisioningWorkflow.java",
-        "ProvisioningCompensator.java",
-        "InviteEmailTemplateService.java",
-        "DpaForwardEmailController.java"
+        "src/main/java/de/caritas/cob/userservice/api/service/agencyinvitelink/AgencyInviteLinkService.java",
+        "src/main/java/de/caritas/cob/userservice/api/model/AgencyInviteLink.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/accountinvite/AccountInviteService.java",
+        "src/main/java/de/caritas/cob/userservice/api/model/AccountInvite.java",
+        "src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/AccountInviteController.java",
+        "INVITE_LINKS_API.md"
       ]
     },
     {
       "id": "concept:availability-and-live-events",
-      "name": "Live Availability & Presence",
-      "summary": "ConsultantLiveAvailabilityController and TopicConsultantAvailabilityController expose consultant availability backed by a Redis-based ConsultantActivityRegistry and Matrix presence. The LiveService proxy is retired: DeprecatedLiveProxyController remains only as a compatibility shim and the liveservice/messageservice outbound contracts were deleted.",
-      "tags": [
-        "realtime"
-      ],
+      "name": "Live Availability and Event Notifications",
+      "summary": "Consultant presence is tracked in memory by api/service/availability/ConsultantActivityRegistry.java, fed by api/config/ConsultantActivityInterceptor.java and exposed on /users/consultants live-availability endpoints via api/adapters/web/controller/ConsultantLiveAvailabilityController.java. In-app events are persisted as api/model/EventNotification.java rows written by api/service/notification/EventNotificationService.java, deduplicated by api/service/notification/EventNotificationDeduplicationWriter.java and pruned by the retention scheduler in api/workflow/notificationretention.",
+      "tags": ["availability", "presence", "notifications", "events"],
       "related": [
-        "ConsultantLiveAvailabilityController.java",
-        "TopicConsultantAvailabilityController.java",
-        "DeprecatedLiveProxyController.java",
-        "ConsultantActivityRegistry.java"
+        "src/main/java/de/caritas/cob/userservice/api/service/availability/ConsultantActivityRegistry.java",
+        "src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/ConsultantLiveAvailabilityController.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/notification/EventNotificationService.java",
+        "src/main/java/de/caritas/cob/userservice/api/model/EventNotification.java",
+        "src/main/java/de/caritas/cob/userservice/api/workflow/notificationretention/service/EventNotificationRetentionService.java"
       ]
     },
     {
-      "id": "concept:notification-center",
-      "name": "Event Notification Center (Timeline Backend)",
-      "summary": "Persisted EventNotification records back the frontend notification center/timeline: message events arrive on a dual path (REST message-events endpoint and the Matrix timeline listener) and are deduplicated via a bounded dedup key and correlated by Matrix event id, ordered with millisecond precision (migrations 0063/0080). Active-conversation-view heartbeats with TTL expiry suppress notifications for rooms the user is looking at; PrivacyEnvelope, per-room NotificationRoomLevel, and Do-Not-Disturb windows control content and delivery.",
-      "tags": [
-        "notifications",
-        "realtime"
-      ],
+      "id": "concept:notification-and-branded-email",
+      "name": "Notifications and Branded E-Mail",
+      "summary": "Outgoing mail is assembled locally rather than delegated wholesale: api/service/emailsupplier holds one EmailSupplier per occasion (new enquiry, assignment, reassignment) and api/service/email/layout/BrandedEmailLayoutRenderer.java wraps the body in the tenant's branding resolved by api/service/email/layout/EmailBrandingResolver.java. api/facade/EmailNotificationFacade.java is the orchestration point, api/service/helper/MailService.java the transport to the ORISO MailService, and api/service/mobilepushmessage/MobilePushNotificationService.java the Firebase push path.",
+      "tags": ["email", "notifications", "branding", "push"],
       "related": [
-        "EventNotificationController.java",
-        "EventNotificationService.java",
-        "EventNotificationDeduplicationWriter.java",
-        "EventNotification.java",
-        "PrivacyEnvelope.java",
-        "NotificationRoomLevel.java",
-        "DoNotDisturbService.java"
+        "src/main/java/de/caritas/cob/userservice/api/facade/EmailNotificationFacade.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/email/layout/BrandedEmailLayoutRenderer.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/emailsupplier/NewEnquiryEmailSupplier.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/helper/MailService.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/mobilepushmessage/MobilePushNotificationService.java",
+        "documentation/BRANDED_EMAIL_LAYOUT.md"
       ]
     },
     {
-      "id": "concept:erstantwort",
-      "name": "Erstantwort (First Response, ADR-018)",
-      "summary": "When an enquiry lands on the Matrix path, the service produces a FIRST_RESPONSE and posts exactly one persisted [SYSTEM_NOTIFICATION] event that carries the whole Erstantwort: ErstantwortPayloadBuilder resolves each Baustein against the session's configuration and freezes the resulting wording into the payload so later template edits cannot retroactively change what an advice seeker was told. It deliberately stores no completion state and creates no Matrix bot account (Carimat is a rendering identity only).",
-      "tags": [
-        "workflow",
-        "adr-018"
-      ],
+      "id": "concept:appointments-booking",
+      "name": "Appointments and Booking",
+      "summary": "api/model/Appointment.java stores counselling appointments with an optional external booking id (migrate-add-booking-id-to-appointment.sql), and api/service/appointment/AppointmentService.java plus api/adapters/web/controller/AppointmentController.java expose /appointments including the enquiry-creating POST /appointments/sessions/{sessionId}/enquiry/new. The AppointmentService REST client factories in api/config/apiclient (AppointmentAgencyServiceApiControllerFactory and siblings) show that event types, slots and bookings live in a separate ORISO appointment service that this repo only calls out to.",
+      "tags": ["appointments", "booking", "integration", "calendar"],
       "related": [
-        "ErstantwortPayloadBuilder.java",
-        "ErstantwortContext.java",
-        "ErstantwortModality.java",
-        "MatrixSessionSystemMessageService.java",
-        "CreateEnquiryMessageFacade.java"
+        "src/main/java/de/caritas/cob/userservice/api/model/Appointment.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/appointment/AppointmentService.java",
+        "src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/AppointmentController.java",
+        "src/main/java/de/caritas/cob/userservice/api/config/apiclient/AppointmentConsultantServiceApiControllerFactory.java",
+        "src/main/java/de/caritas/cob/userservice/api/port/out/AppointmentRepository.java"
+      ]
+    },
+    {
+      "id": "concept:account-deletion-lifecycle",
+      "name": "Account Deletion and Deactivation Lifecycle",
+      "summary": "Deletion is a scheduled, multi-step workflow rather than a single DELETE. api/workflow/delete/service/DeleteUserAccountService.java runs an ordered chain of ActionCommands under api/workflow/delete/action/asker and .../consultant that remove database rows, Keycloak accounts and Matrix users, recording failures via api/workflow/delete/service/WorkflowErrorLogService.java. api/workflow/delete/service/DeletionLifecycleService.java tracks the DeletionLifecycleState and read-only-until window from alterDeletionLifecycle.sql, and api/workflow/delete/service/IdentityTombstoneService.java keeps an identity_tombstone so a freed username is not silently reused.",
+      "tags": ["deletion", "gdpr", "workflow", "scheduler"],
+      "related": [
+        "src/main/java/de/caritas/cob/userservice/api/workflow/delete/service/DeleteUserAccountService.java",
+        "src/main/java/de/caritas/cob/userservice/api/workflow/delete/service/DeletionLifecycleService.java",
+        "src/main/java/de/caritas/cob/userservice/api/workflow/delete/service/IdentityTombstoneService.java",
+        "src/main/java/de/caritas/cob/userservice/api/workflow/delete/action/asker/DeleteDatabaseAskerAction.java",
+        "src/main/java/de/caritas/cob/userservice/api/model/IdentityTombstone.java",
+        "src/main/java/de/caritas/cob/userservice/api/workflow/delete/scheduler/DeleteUserAccountScheduler.java"
       ]
     },
     {
       "id": "concept:statistics-and-audit",
-      "name": "Statistics & Audit Logs",
-      "summary": "Three statistics surfaces: AdminStatisticsController feeds the admin dashboard, ConsultantStatisticsController exposes consultant metrics including messages-sent counted from Matrix events into ConsultantMessageStat rows keyed by an HMAC-hashed consultant identity (statistics.message-count.hmac-secret) with small-cell suppression, and UserStatisticsController serves session statistics. Domain statistics events (registration, assignment, video calls, archive/delete) are emitted to the statistics exchange; InactiveAccountAuditLogsController and SupervisorLogsController provide audit trails.",
-      "tags": [
-        "reporting",
-        "privacy"
-      ],
+      "name": "Statistics and Audit Logs",
+      "summary": "Business events are emitted as typed StatisticsEvent objects (RegistrationStatisticsEvent, AssignSessionStatisticsEvent, Start/StopVideoCallStatisticsEvent) through api/service/statistics/StatisticsService.java to the separate ORISO statistics service. Read models for the admin dashboard are computed in-repo by api/service/statistics/AdminDashboardStatisticsService.java and api/service/statistics/ConsultantStatisticsService.java, with per-consultant message counts pre-aggregated into consultant_message_stat and consultant identities hashed by api/service/statistics/ConsultantIdentityHasher.java. Separate audit trails exist for supervisors, case handovers and inactive-account notifications.",
+      "tags": ["statistics", "audit", "reporting", "privacy"],
       "related": [
-        "AdminStatisticsController.java",
-        "ConsultantStatisticsController.java",
-        "ConsultantMessageStatService.java",
-        "ConsultantIdentityHasher.java",
-        "UserStatisticsController.java",
-        "StatisticsService.java",
-        "InactiveAccountAuditLogsController.java",
-        "SupervisorLogsController.java"
+        "src/main/java/de/caritas/cob/userservice/api/service/statistics/StatisticsService.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/statistics/AdminDashboardStatisticsService.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/statistics/ConsultantIdentityHasher.java",
+        "src/main/java/de/caritas/cob/userservice/api/model/ConsultantMessageStat.java",
+        "src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/ConsultantStatisticsController.java"
       ]
     },
     {
-      "id": "concept:matrixrtc-call-policy",
-      "name": "MatrixRTC Call Policy",
-      "summary": "Authorization backend for MatrixRTC/Element Call: MatrixRtcCallPolicyController verifies a signed policy token, resolves the policy in the technical tenant context, and answers whether media may flow for a room, with typed denial reasons and HMAC-keyed correlation ids so raw Matrix identifiers never appear in denial logs.",
-      "tags": [
-        "calls",
-        "matrix",
-        "security"
-      ],
+      "id": "concept:persistence-liquibase",
+      "name": "Persistence, JPA Ports and Liquibase Migrations",
+      "summary": "The schema is owned by Liquibase changesets under src/main/resources/db/changelog (from initTables.sql through the tenant, appointment, invite, case-handover, handshake and support-room migrations) and applied by api/config/LiquibaseConfig.java and api/config/BeanAwareSpringLiquibase.java, guarded at boot by api/config/SchemaMigrationGuard.java. Application code never talks to Hibernate directly: every entity in api/model is reached through a Spring Data interface in api/port/out, which is what keeps the hexagonal boundary enforceable by the module-boundary CI test.",
+      "tags": ["persistence", "liquibase", "jpa", "hexagonal", "mariadb"],
       "related": [
-        "MatrixRtcCallPolicyController.java",
-        "MatrixRtcCallPolicyService.java",
-        "MatrixRtcPolicyTokenVerifier.java",
-        "CallPolicyDenialReason.java",
-        "CallMediaPolicy.java"
-      ]
-    },
-    {
-      "id": "concept:group-chats",
-      "name": "Group Chats & Team Discussions",
-      "summary": "Group chat counseling on Matrix rooms, extended with self-help group series (recurring chats, occurrence exceptions, per-series participant roles, author content; migrations 0060-0064), membership managed by GroupChatMembershipService, plus reminder and lifecycle notifications. Internal team chats open immediately on creation instead of parking in the waiting area, and TeamDiscussion side-rooms let a department discuss an enquiry before acceptance.",
-      "tags": [
-        "domain",
-        "matrix"
-      ],
-      "related": [
-        "ChatService.java",
-        "GroupChatMembershipService.java",
-        "GroupChatParticipant.java",
-        "ChatOccurrenceException.java",
-        "GroupChatReminderService.java",
-        "TeamDiscussionController.java",
-        "TeamDiscussionFacade.java"
-      ]
-    },
-    {
-      "id": "concept:support-and-handshake",
-      "name": "Support Rooms & Live Handshake",
-      "summary": "HandshakeController implements audited, purpose-bound handshake sessions (HandshakeSession + HandshakeAuditEvent, migration 0078) used to grant scoped access, e.g. for support; SupportRoomController manages dedicated support rooms (migration 0079, with a schema self-repair changeset 0081) where platform support can assist users without entering counselling rooms.",
-      "tags": [
-        "support",
-        "security"
-      ],
-      "related": [
-        "HandshakeController.java",
-        "HandshakeService.java",
-        "HandshakeSession.java",
-        "HandshakeAuditEvent.java",
-        "SupportRoomController.java",
-        "SupportRoomService.java",
-        "SupportRoom.java"
-      ]
-    },
-    {
-      "id": "concept:scheduled-workflows",
-      "name": "Scheduled Workflows & Task Claim Leases",
-      "summary": "Cron-driven workflows (account deletion, registered-only deletion, anonymous deactivation/deletion, enquiry notifications, inactive-account notifications) now acquire a database lease via ScheduledTaskClaim (migration 0082) before running, so only one replica executes each task and reruns are safe. Deletion supports a read-only window and pause period before data is removed.",
-      "tags": [
-        "workflow",
-        "operations"
-      ],
-      "related": [
-        "ScheduledTaskClaimService.java",
-        "ScheduledTaskClaimWriter.java",
-        "ScheduledTaskClaim.java",
-        "DeleteUserAccountScheduler.java",
-        "DeleteUsersRegisteredOnlyScheduler.java",
-        "DeactivateAnonymousUserScheduler.java"
-      ]
-    },
-    {
-      "id": "concept:appointments-remnant",
-      "name": "Appointments (Legacy Remnant)",
-      "summary": "The appointment subsystem (AppointmentController, appointmentservice.yaml, Appointment entity, delete-job cron) is a remnant of the upstream Calcom-style booking integration; feature.appointment.enabled defaults to false and the code has only been touched by cross-cutting refactors since July. ADR-020 scheduled calls are not implemented here.",
-      "tags": [
-        "legacy"
-      ],
-      "related": [
-        "AppointmentController.java",
-        "AppointmentService.java",
-        "Appointment.java",
-        "appointmentservice.yaml"
+        "src/main/java/de/caritas/cob/userservice/api/config/LiquibaseConfig.java",
+        "src/main/java/de/caritas/cob/userservice/api/config/SchemaMigrationGuard.java",
+        "src/main/java/de/caritas/cob/userservice/api/port/out/UserRepository.java",
+        "src/main/java/de/caritas/cob/userservice/api/port/out/ConsultantRepository.java",
+        "docs/schema-migrations.md"
       ]
     }
   ],
   "flows": [
     {
       "id": "flow:enquiry-to-session",
-      "name": "Enquiry → Session → Consultant Assignment",
-      "summary": "An asker registers → creates an enquiry (Matrix-only; encrypted enquiries are finalized as encrypted Matrix events and plaintext bodies are rejected when encryption is expected) → a session with its Matrix room is created; for department sessions the consultants join the holding room before the asker → a consultant (or team) is assigned and room memberships are updated.",
+      "name": "Asker registers and submits enquiry → Session with Matrix room",
+      "summary": "POST /users/askers/new reaches api/adapters/web/controller/UserRegistrationControllerDelegate.java → api/facade/CreateUserFacade.java, which creates the Keycloak account via api/adapters/keycloak/KeycloakService.java and the User row, then api/facade/CreateSessionFacade.java persists a Session. The asker then calls POST /users/sessions/{sessionId}/enquiry/new, handled by api/facade/CreateEnquiryMessageFacade.java: it creates the Matrix room through api/adapters/matrix/MatrixSynapseService.java, writes the first message, updates the Session to NEW and triggers the new-enquiry mail via api/service/emailsupplier/NewEnquiryEmailSupplier.java. Any partial failure is undone by api/facade/rollback/RollbackFacade.java.",
+      "tags": ["registration", "enquiry", "session", "matrix"],
       "related": [
-        "UserController.java",
-        "ConversationController.java",
-        "CreateEnquiryMessageFacade.java",
-        "DirectSessionMatrixRoomService.java",
-        "AgencyPreAssignmentRoomService.java"
+        "src/main/java/de/caritas/cob/userservice/api/facade/CreateUserFacade.java",
+        "src/main/java/de/caritas/cob/userservice/api/facade/CreateSessionFacade.java",
+        "src/main/java/de/caritas/cob/userservice/api/facade/CreateEnquiryMessageFacade.java",
+        "src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/UserRegistrationControllerDelegate.java",
+        "src/main/java/de/caritas/cob/userservice/api/facade/rollback/RollbackFacade.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/emailsupplier/NewEnquiryEmailSupplier.java"
+      ]
+    },
+    {
+      "id": "flow:consultant-accepts-enquiry",
+      "name": "Consultant accepts enquiry → Session assigned",
+      "summary": "The consultant lists open enquiries via GET /conversations/consultants/enquiries/registered on api/adapters/web/controller/ConversationController.java, served by api/conversation/provider/RegisteredEnquiryConversationListProvider.java. Assignment goes through PUT /users/sessions/{sessionId}/consultant/{consultantId} into api/facade/assignsession/AssignEnquiryFacade.java, which validates eligibility with api/facade/assignsession/SessionToConsultantVerifier.java, removes non-entitled Matrix members computed by api/facade/assignsession/UnauthorizedMembersProvider.java, flips the Session to IN_PROGRESS through api/service/session/SessionService.java and emits an AssignSessionStatisticsEvent.",
+      "tags": ["assignment", "enquiry", "consultant", "matrix"],
+      "related": [
+        "src/main/java/de/caritas/cob/userservice/api/facade/assignsession/AssignEnquiryFacade.java",
+        "src/main/java/de/caritas/cob/userservice/api/facade/assignsession/SessionToConsultantVerifier.java",
+        "src/main/java/de/caritas/cob/userservice/api/facade/assignsession/UnauthorizedMembersProvider.java",
+        "src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/ConversationController.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/statistics/event/AssignSessionStatisticsEvent.java"
+      ]
+    },
+    {
+      "id": "flow:anonymous-conversation",
+      "name": "Anonymous asker starts and finishes a live conversation",
+      "summary": "POST /conversations/askers/anonymous/new hits api/adapters/web/controller/ConversationController.java → api/conversation/facade/CreateAnonymousEnquiryFacade.java, which mints a throwaway identity in api/conversation/service/user/anonymous/AnonymousUserCreatorService.java using a name reserved by api/conversation/service/user/anonymous/AnonymousUsernameRegistry.java and creates the session and Matrix room via api/conversation/service/AnonymousConversationCreatorService.java. A consultant claims it with PUT /conversations/askers/anonymous/{sessionId}/accept; PUT /conversations/anonymous/{sessionId}/finish runs api/conversation/facade/FinishAnonymousConversationFacade.java, and abandoned anonymous accounts are reaped later by api/workflow/deactivate/scheduler/DeactivateAnonymousUserScheduler.java.",
+      "tags": ["anonymous", "live-chat", "conversation", "cleanup"],
+      "related": [
+        "src/main/java/de/caritas/cob/userservice/api/conversation/facade/CreateAnonymousEnquiryFacade.java",
+        "src/main/java/de/caritas/cob/userservice/api/conversation/service/AnonymousConversationCreatorService.java",
+        "src/main/java/de/caritas/cob/userservice/api/conversation/facade/FinishAnonymousConversationFacade.java",
+        "src/main/java/de/caritas/cob/userservice/api/conversation/service/user/anonymous/AnonymousUserCreatorService.java",
+        "src/main/java/de/caritas/cob/userservice/api/workflow/deactivate/scheduler/DeactivateAnonymousUserScheduler.java"
       ]
     },
     {
       "id": "flow:matrix-message-roundtrip",
-      "name": "Matrix Message Roundtrip",
-      "summary": "Client sends via MatrixMessageController → the message lands in the session's Matrix room via Synapse → RedisMessageMirrorService mirrors it for session-list previews and MatrixSyncController keeps read models in sync; file attachments take the upload proxy through MatrixMediaClient.",
+      "name": "Message travels Matrix → UserService → notification",
+      "summary": "Synapse pushes room events to api/adapters/web/controller/MatrixSyncController.java, which forwards them to api/service/matrix/MatrixEventListenerService.java. That service resolves the session or chat behind the room id via api/service/session/SessionService.java, updates message bookkeeping such as api/service/statistics/ConsultantMessageStatService.java, and decides who must be told. Recipients are notified by e-mail through api/facade/EmailNotificationFacade.java, in-app through api/service/notification/EventNotificationService.java and on mobile through api/service/mobilepushmessage/MobilePushNotificationService.java, respecting api/service/donotdisturb/DoNotDisturbService.java.",
+      "tags": ["matrix", "messaging", "notification", "webhook"],
       "related": [
-        "MatrixMessageController.java",
-        "MatrixSynapseService.java",
-        "RedisMessageMirrorService.java",
-        "MatrixSyncController.java",
-        "MatrixMediaClient.java"
+        "src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/MatrixSyncController.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/matrix/MatrixEventListenerService.java",
+        "src/main/java/de/caritas/cob/userservice/api/facade/EmailNotificationFacade.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/notification/EventNotificationService.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/mobilepushmessage/MobilePushNotificationService.java",
+        "documentation/MATRIX_SYNC_OBSERVABILITY.md"
       ]
     },
     {
-      "id": "flow:erstantwort-first-response",
-      "name": "Erstantwort First Response (ADR-018)",
-      "summary": "An enquiry arrives on the Matrix path → the service emits FIRST_RESPONSE and posts one persisted [SYSTEM_NOTIFICATION] event whose payload freezes the resolved Erstantwort Bausteine (greeting, actions, legal texts) for this session → the frontend renders it via the Carimat identity; completion of action items is always read live, never stored in the event.",
+      "id": "flow:case-handover-request",
+      "name": "Consultant hands a case to a colleague",
+      "summary": "The requesting consultant posts to api/adapters/web/controller/CaseHandoverController.java, which calls api/service/CaseHandoverService.java. The service checks the reason against api/model/CaseHandoverReasonPolicy.java, persists a CaseHandoverRequest through api/port/out/CaseHandoverRequestRepository.java and notifies the target. On acceptance the session's consultant is swapped via api/service/session/SessionService.java, Matrix room membership is rewritten through api/adapters/matrix/MatrixSessionAssignmentGateway.java, and the whole exchange is retrievable as an audit trail from api/service/CaseHandoverLogsService.java.",
+      "tags": ["handover", "consultant", "matrix", "audit"],
       "related": [
-        "ErstantwortPayloadBuilder.java",
-        "ErstantwortContext.java",
-        "MatrixSessionSystemMessageService.java",
-        "CreateEnquiryMessageFacade.java"
+        "src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/CaseHandoverController.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/CaseHandoverService.java",
+        "src/main/java/de/caritas/cob/userservice/api/port/out/CaseHandoverRequestRepository.java",
+        "src/main/java/de/caritas/cob/userservice/api/adapters/matrix/MatrixSessionAssignmentGateway.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/CaseHandoverLogsService.java"
       ]
     },
     {
-      "id": "flow:notification-timeline",
-      "name": "Notification Center Event Flow",
-      "summary": "A message or session event arrives via REST (/users/event-notifications/message-events) or the Matrix timeline listener → EventNotificationDeduplicationWriter collapses the dual paths with a bounded dedup key and the Matrix event id → the EventNotification is persisted with millisecond ordering and content metadata → clients poll the feed; fresh active-view heartbeats suppress notifications for the room currently on screen, and stale views expire by TTL.",
+      "id": "flow:admin-creates-consultant",
+      "name": "Admin creates a consultant → Keycloak, Matrix and agency relations",
+      "summary": "POST /useradmin/consultants enters api/adapters/web/controller/UserAdminController.java → api/admin/facade/ConsultantAdminFacade.java → api/admin/service/consultant/create/CreateConsultantSaga.java. The saga validates the input with api/admin/service/consultant/validation/UserAccountInputValidator.java, creates the Keycloak account and roles, provisions the Matrix user, and stores the Consultant row; agency links are then added by api/admin/service/consultant/create/agencyrelation/ConsultantAgencyRelationCreatorService.java, which also joins the consultant into the agency's existing session rooms. Failing steps are rolled back by the compensator in api/service/provisioning/ProvisioningCompensator.java.",
+      "tags": ["admin", "consultant", "saga", "provisioning"],
       "related": [
-        "EventNotificationController.java",
-        "EventNotificationService.java",
-        "EventNotificationDeduplicationWriter.java",
-        "EventNotification.java",
-        "MatrixEventListenerService.java"
+        "src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/UserAdminController.java",
+        "src/main/java/de/caritas/cob/userservice/api/admin/facade/ConsultantAdminFacade.java",
+        "src/main/java/de/caritas/cob/userservice/api/admin/service/consultant/create/CreateConsultantSaga.java",
+        "src/main/java/de/caritas/cob/userservice/api/admin/service/consultant/create/agencyrelation/ConsultantAgencyRelationCreatorService.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/provisioning/ProvisioningCompensator.java"
       ]
     },
     {
-      "id": "flow:counsellor-invite-provisioning",
-      "name": "Counsellor Invite → Provisioning",
-      "summary": "An admin creates an account invite (reservation token, optional pending TOTP secret) → the invite email is rendered from tracked templates and its delivery status recorded → on acceptance the ProvisioningWorkflow creates the Keycloak account, Matrix user, and consultant records step by step, compensating already-created resources if a later step fails.",
+      "id": "flow:account-invite-onboarding",
+      "name": "Staff member is invited by e-mail → onboarded account",
+      "summary": "An admin creates an invitation on api/adapters/web/controller/AccountInviteController.java → api/service/accountinvite/AccountInviteService.java, which renders the template from api/service/accountinvite/InviteEmailTemplateService.java, builds the accept URL with api/service/accountinvite/InviteAcceptUrlBuilder.java and sends it via api/service/accountinvite/mail/InviteMailDispatchService.java, recording success or failure in invite_email_delivery. When the invitee follows the link, api/service/accountinvite/onboarding/CounsellorOnboardingService.java (or api/service/accountinvite/onboarding/TenantAdminOnboardingService.java for tenant admins) walks the gates — e-mail verification, two-factor, DPA signature — before api/service/accountinvite/CounsellorInviteProvisioningService.java creates the real account.",
+      "tags": ["invite", "onboarding", "email", "dpa"],
       "related": [
-        "AccountInviteController.java",
-        "AccountInviteService.java",
-        "CounsellorInviteProvisioningService.java",
-        "ProvisioningWorkflow.java",
-        "ProvisioningCompensator.java",
-        "InviteEmailTemplateService.java"
+        "src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/AccountInviteController.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/accountinvite/AccountInviteService.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/accountinvite/mail/InviteMailDispatchService.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/accountinvite/onboarding/CounsellorOnboardingService.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/accountinvite/CounsellorInviteProvisioningService.java"
       ]
     },
     {
-      "id": "flow:case-handover",
-      "name": "Case Handover Flow",
-      "summary": "A consultant requests a case handover citing a tenant-configured reason policy → the CaseHandoverRequest is persisted and the receiving side is notified via handover notification templates → on acceptance the session, Matrix room memberships, and responsibilities transfer, with the trail recorded by CaseHandoverLogsService.",
+      "id": "flow:magic-link-login",
+      "name": "User logs in without a password via magic link",
+      "summary": "api/adapters/web/dto/MagicLinkRequestDTO.java carries the request into api/service/auth/MagicLinkLoginService.java, which mints a single-use token stored in Redis by api/service/auth/RedisOneTimeTokenStore.java and mails the link through api/service/email/OrisoEmailDispatcher.java. Consuming the link (api/adapters/web/dto/MagicLinkConsumeDTO.java) makes the service burn the token and exchange it for a Keycloak session through api/port/out/IdentitySessionExchange.java, implemented by api/adapters/keycloak/KeycloakIdentitySessionExchange.java. The same token store backs api/service/auth/PasswordResetService.java.",
+      "tags": ["authentication", "magic-link", "redis", "keycloak"],
       "related": [
-        "CaseHandoverController.java",
-        "CaseHandoverService.java",
-        "CaseHandoverRequest.java",
-        "CaseHandoverReasonPolicy.java",
-        "CaseHandoverLogsService.java"
+        "src/main/java/de/caritas/cob/userservice/api/service/auth/MagicLinkLoginService.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/auth/RedisOneTimeTokenStore.java",
+        "src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakIdentitySessionExchange.java",
+        "src/main/java/de/caritas/cob/userservice/api/port/out/IdentitySessionExchange.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/auth/PasswordResetService.java"
+      ]
+    },
+    {
+      "id": "flow:group-chat-lifecycle",
+      "name": "Consultant creates, starts, joins and stops a group chat",
+      "summary": "POST /users/chat/v2/new goes through api/adapters/web/controller/UserChatControllerDelegate.java to api/facade/CreateChatFacade.java, which persists a Chat plus its ChatAgency links and creates the Matrix room. PUT /users/chat/{chatId}/start and .../stop run api/facade/StartChatFacade.java and api/facade/StopChatFacade.java, the latter delegating to api/actions/chat/StopChatActionCommand.java and api/actions/chat/ChatReCreator.java so a repeating chat gets a fresh room for the next occurrence. Membership is enforced by api/service/chat/GroupChatPermissionService.java and reconciled against Matrix by api/service/chat/GroupChatParticipantReconciliationService.java; occurrences and reminders are handled by api/service/chat/ChatOccurrenceCommandService.java and api/workflow/groupchatreminder/scheduler/GroupChatReminderScheduler.java.",
+      "tags": ["group-chat", "matrix", "scheduling", "moderation"],
+      "related": [
+        "src/main/java/de/caritas/cob/userservice/api/facade/CreateChatFacade.java",
+        "src/main/java/de/caritas/cob/userservice/api/facade/StopChatFacade.java",
+        "src/main/java/de/caritas/cob/userservice/api/actions/chat/ChatReCreator.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/chat/GroupChatParticipantReconciliationService.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/chat/ChatOccurrenceCommandService.java",
+        "src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/UserChatControllerDelegate.java"
+      ]
+    },
+    {
+      "id": "flow:account-deletion",
+      "name": "Account is deleted → scheduled cascade across DB, Keycloak and Matrix",
+      "summary": "DELETE /users/account on api/adapters/web/controller/UserAccountControllerDelegate.java does not erase anything immediately; it marks the account through api/workflow/delete/service/DeletionLifecycleService.java. api/workflow/delete/scheduler/DeleteUserAccountScheduler.java later picks up flagged accounts — claiming the run via api/workflow/scheduling/ScheduledTaskClaimService.java so replicas do not collide — and api/workflow/delete/service/DeleteUserAccountService.java executes the ordered actions: sessions and rooms (DeleteAskerRoomsAndSessionsAction), database rows (DeleteDatabaseAskerAction), Matrix user (DeleteMatrixUserAction) and Keycloak user (DeleteKeycloakUserAction). Residual errors are mailed by api/workflow/delete/service/WorkflowErrorMailService.java.",
+      "tags": ["deletion", "scheduler", "gdpr", "replica-safety"],
+      "related": [
+        "src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/UserAccountControllerDelegate.java",
+        "src/main/java/de/caritas/cob/userservice/api/workflow/delete/service/DeleteUserAccountService.java",
+        "src/main/java/de/caritas/cob/userservice/api/workflow/delete/action/DeleteKeycloakUserAction.java",
+        "src/main/java/de/caritas/cob/userservice/api/workflow/delete/action/DeleteMatrixUserAction.java",
+        "src/main/java/de/caritas/cob/userservice/api/workflow/scheduling/ScheduledTaskClaimService.java",
+        "documentation/USER_SERVICE_REPLICA_SAFETY.md"
+      ]
+    },
+    {
+      "id": "flow:tenant-resolution-per-request",
+      "name": "Request arrives → tenant resolved and pinned for the transaction",
+      "summary": "api/adapters/web/controller/interceptor/HttpTenantFilter.java runs early in the chain, extracts the subdomain with api/adapters/web/controller/interceptor/SubdomainExtractor.java and asks api/tenant/TenantResolverService.java, which walks api/tenant/SubdomainTenantResolver.java, api/tenant/AccessTokenTenantResolver.java, api/tenant/CustomHeaderTenantResolver.java and api/tenant/TechnicalOrSuperAdminUserTenantResolver.java in order. The winner is written to api/tenant/TenantContext.java, from where api/service/TenantHibernateInterceptor.java scopes every JPA read and write, and api/service/httpheader/TenantHeaderSupplier.java forwards the tenant on outbound calls to the other ORISO services.",
+      "tags": ["multitenancy", "request-lifecycle", "security", "filter"],
+      "related": [
+        "src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/interceptor/HttpTenantFilter.java",
+        "src/main/java/de/caritas/cob/userservice/api/tenant/TenantResolverService.java",
+        "src/main/java/de/caritas/cob/userservice/api/tenant/AccessTokenTenantResolver.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/TenantHibernateInterceptor.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/httpheader/TenantHeaderSupplier.java"
+      ]
+    },
+    {
+      "id": "flow:appointment-to-enquiry",
+      "name": "Booked appointment turns into a counselling session",
+      "summary": "Appointments are read and written on api/adapters/web/controller/AppointmentController.java, backed by api/service/appointment/AppointmentService.java and api/port/out/AppointmentRepository.java, with GET /appointments/booking/{id} resolving the external booking id stored by migrate-add-booking-id-to-appointment.sql. POST /appointments/sessions/{sessionId}/enquiry/new converts a booking into a real counselling thread by delegating into the same api/facade/CreateEnquiryMessageFacade.java path used by ordinary enquiries, so the resulting Matrix room and notifications are identical. Stale appointments are removed by the replica-safe cleanup described in documentation/APPOINTMENT_CLEANUP_REPLICA_SAFETY.md.",
+      "tags": ["appointments", "enquiry", "booking", "session"],
+      "related": [
+        "src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/AppointmentController.java",
+        "src/main/java/de/caritas/cob/userservice/api/service/appointment/AppointmentService.java",
+        "src/main/java/de/caritas/cob/userservice/api/facade/CreateEnquiryMessageFacade.java",
+        "src/main/java/de/caritas/cob/userservice/api/port/out/AppointmentRepository.java",
+        "documentation/APPOINTMENT_CLEANUP_REPLICA_SAFETY.md"
       ]
     }
-  ]
+  ],
+  "layerDescriptions": {
+    "Domain Concepts": "The coarse business vocabulary of ORISO counselling as this backend implements it — session and enquiry lifecycle, consultation modes, case handover, invitations, identity and the deletion lifecycle.",
+    "API Endpoints": "The 255 REST operations declared in the OpenAPI specifications this service generates its interfaces from, spanning /users, /conversations, /useradmin, /agencyadmin, /tenantadmin, /appointments, /statistics and /otp-config.",
+    "API Layer": "Spring MVC controllers and their delegates under api/adapters/web/controller, the servlet filters that resolve tenant, correlation id and CSRF, the request/response DTOs and mappers, and the facades and services those controllers orchestrate.",
+    "Data Layer": "JPA entities in api/model reached exclusively through the Spring Data interfaces in api/port/out, over a MariaDB schema owned by the Liquibase changesets under src/main/resources/db/changelog.",
+    "Core": "Application bootstrap and cross-cutting wiring — UserServiceApplication, the manager/port facades AccountManager, IdentityManager, Messenger and Organizer, and the configuration under api/config for security, caching, Liquibase and outbound API clients.",
+    "Test Layer": "The Python CI contract checks under tests/ci and tests/contracts (module boundaries, replica safety, OpenAPI gate, suite inventory) plus the load-test harnesses under tests/load."
+  }
 }

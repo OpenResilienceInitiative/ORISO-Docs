@@ -1,0 +1,7 @@
+# predev addition: ua-generate.mjs upstream has no ignore-file support at
+# all (see INVENTORY.md). This file is read by the small patch added to the
+# predev copy of ua-generate.mjs (isIgnored()). Glob-lite: `*` = any chars.
+site/out-*
+node_modules/*
+.git/*
+oriso-platform/dsfa-text/*
