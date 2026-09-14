@@ -11,6 +11,14 @@ not its `_artifacts/` subfolder). The series was re-synchronised on 2026-08-17 f
   the unified Contact Calendar, and the Future Timeline.
 - `ADR-021`, `ADR-022`, `ADR-023` — accepted 2026-08-16 (legal-text hierarchy and versioning,
   consent gates and re-consent, Platform Services Agreement and Träger governance).
+- `ADR-024`, `ADR-025`, `ADR-026` — accepted 2026-09-15; the transactional e-mail set
+  (notification matrix as two lists, replacing the upstream MailService path, tenant branding
+  contract for e-mail). They belong to EPIC `ORISO-Frontend#828`.
+
+  Note for readers of the delivered code: it cites `ADR-019`, `ADR-020` and `ADR-021` for these
+  three decisions. Those numbers were already taken by media scanning, scheduled calls and the
+  legal-text hierarchy; the e-mail decisions are 024–026 and the code references are being
+  corrected.
 
 New decisions in this section are repository-owned records and are not part of the unchanged
 19-file import described above.
