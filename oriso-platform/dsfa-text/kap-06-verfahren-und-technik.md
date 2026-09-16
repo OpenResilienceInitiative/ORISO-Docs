@@ -685,3 +685,51 @@ bestehen folgende Verfahren:
 > Lücken geschlossen sind; bis dahin sind sie als Maßnahmen im Löschkonzept aufzunehmen. Diese
 > Offenlegung ist bewusst gewählt: Eine DSFA, die eine unvollständige Löschung als vollständig
 > beschreibt, verlöre ihren Zweck.
+
+
+### 6.18.1 Eigenständiger Kontenlebenszyklus bei Inaktivität
+
+**Umsetzungsstand: in Entwicklung; Betriebsnachweis ausstehend.** Dieser Punkt ist
+unabhängig von den drei bestehenden Aufbewahrungsfristen zu behandeln. Die nachstehende
+Festlegung beschreibt das freigegebene Soll; sie ist noch kein Nachweis einer aktiven Automatik.
+
+Unter Plattform-Admin → Globale Einstellungen → Inaktive Konten sind drei positive ganze
+Monatswerte vorgesehen. Nur Plattform-Administratoren dürfen diese Werte ändern; diese
+Berechtigung ist auch serverseitig zu prüfen. Der Startwert beträgt jeweils 24 Monate. Bei Ratsuchenden wird die
+endgültige Löschung fällig; bei Beratern und sonstigen Personen einschließlich Admins und
+Support erfolgt eine reversible Suspendierung. Bei mehreren Rollen derselben Identität hat
+die Suspendierung Vorrang. Die aktuelle Rolle bestimmt die Aktion, nicht die bei Anlage
+verwendete Personengruppe.
+
+Die bei Anlage gültige Frist wird mit der Person dauerhaft gespeichert. Spätere Änderungen
+der globalen Einstellung oder der Rolle verändern diese persönliche Frist nicht. Am Formular
+steht: „Änderungen gelten nur für neu angelegte Personen. Bestehende Personen behalten ihre
+bisherige Frist.“ Bestandsidentitäten erhalten einmalig 24 Monate. Ausschließlich belegbare
+persönliche Aktivität darf als historischer Ausgangspunkt übernommen werden. Fehlt ein
+belastbarer Zeitpunkt, beginnt die Beobachtung mit der Einführung. Alte Profiländerungen
+begründen keine sofortige Löschung.
+
+Erfolgreicher Login und bewusste Nutzung erneuern den persönlichen Aktivitätszeitpunkt.
+Hintergrundabfragen, Token-Erneuerung und Änderungen durch andere Personen zählen nicht.
+Die Berechnung erfolgt in Kalendermonaten und UTC; am Monatsende gilt der letzte vorhandene
+Tag des Zielmonats. Ein täglicher mandantenübergreifender Lauf prüft Aktivität und aktuelle
+Rollen unmittelbar vor der Aktion erneut. Wiederholungen und parallele Läufe müssen dieselbe
+Aktion ohne doppelte Folgen abschließen können.
+
+Die Ratsuchendenlöschung verwendet den vorhandenen Löschablauf einschließlich angebundener
+Systeme. Notwendige Vorwarnungen und Schutzfenster liegen vor dem Fälligkeitstag; nach diesem
+Tag darf kein zusätzliches 48-Stunden-Fenster beginnen. Fehlgeschlagene Einzelschritte müssen
+dauerhaft nachvollziehbar und wiederholbar bleiben. Eine Suspendierung erhält die Daten,
+sperrt Zugänge einschließlich bereits geöffneter Sitzungen und lässt eine berechtigte
+administrative Reaktivierung zu.
+
+Vor Aktivierung wird ein Kandidatenbericht ohne Aktionen geprüft. Der Betriebsnachweis muss
+mindestens enthalten: geprüfte Versionen und Konfiguration, Bestandsmigration, geänderte
+Neuanlagefristen, Login und bewusste Nutzung gegenüber Hintergrundverkehr, Monatsgrenzen,
+mehrere Mandanten, gleichzeitigen Login, wiederholte Läufe, Löschung in allen angebundenen
+Systemen sowie Suspendierung und Reaktivierung mit bereits geöffneten Sitzungen. Prüfungen
+auf Pre-Dev und anschließende Fehlerüberwachung sind gesondert zu dokumentieren.
+
+Umsetzung und Evidenz: [Kontenlebenszyklus #1172](https://github.com/OpenResilienceInitiative/ORISO-UserService/issues/1172).
+Eine Quellcodeprüfung, ein erfolgreicher Testlauf, eine Freigabe und ein Betriebsnachweis
+sind unterschiedliche Nachweisstufen; keine davon ersetzt die jeweils nächste.
