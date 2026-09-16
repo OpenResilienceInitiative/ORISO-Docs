@@ -723,6 +723,14 @@ dauerhaft nachvollziehbar und wiederholbar bleiben. Eine Suspendierung erhält d
 sperrt Zugänge einschließlich bereits geöffneter Sitzungen und lässt eine berechtigte
 administrative Reaktivierung zu.
 
+Nach bestätigter endgültiger Löschung werden auch die zur Wiederholung gespeicherten
+Matrix-Kennungen und Zugangszustände entfernt. Die Medienvermittlung entfernt ihre
+Personenzuordnungen ebenfalls; bei anderweitig gelöschten Konten erfolgt dies nach einer
+bestätigten Rückmeldung des Kontendienstes. Gegen verspätete Verbindungsversuche bleiben
+ausschließlich gehashte Raum-/Teilnehmerkennungen für 24 Stunden gespeichert. Dafür müssen
+die Verbindungszeitgrenzen kürzer sein als diese Schutzfrist. Auch diese Bereinigung und
+das Beenden bereits bestehender Medienverbindungen benötigen einen Betriebsnachweis.
+
 Vor Aktivierung wird ein Kandidatenbericht ohne Aktionen geprüft. Der Betriebsnachweis muss
 mindestens enthalten: geprüfte Versionen und Konfiguration, Bestandsmigration, geänderte
 Neuanlagefristen, Login und bewusste Nutzung gegenüber Hintergrundverkehr, Monatsgrenzen,
