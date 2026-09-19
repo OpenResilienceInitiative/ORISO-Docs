@@ -194,6 +194,16 @@ def main() -> int:
         action="store_true",
         help="decide and pack, but publish nothing",
     )
+    parser.add_argument(
+        "--upload-only",
+        action="store_true",
+        help=(
+            "upload assets a previous --dry-run already packed. Splitting the "
+            "run lets build provenance be attested for the exact bytes between "
+            "packing and publishing; re-packing here would attest one archive "
+            "and publish another."
+        ),
+    )
     args = parser.parse_args()
 
     token = os.environ.get("GITHUB_TOKEN")
@@ -213,9 +223,22 @@ def main() -> int:
         print("::error::No publishable graph in this generation.")
         return 1
 
-    packed = pack(args.generation, args.out, allowed)
-    total = sum(os.path.getsize(p) for p in packed)
-    print(f"PACKED {len(packed)} assets, {total / 1024 / 1024:.1f} MiB")
+    if args.upload_only:
+        # Re-derive `allowed` above rather than trusting the directory: a file
+        # that appeared in out/ between the two calls must not be published
+        # just because it is there.
+        packed = [
+            os.path.join(args.out, f"{name}.tar.gz")
+            for name in allowed
+            if os.path.isfile(os.path.join(args.out, f"{name}.tar.gz"))
+        ]
+        if not packed:
+            print("::error::--upload-only found no packed asset to publish.")
+            return 1
+    else:
+        packed = pack(args.generation, args.out, allowed)
+        total = sum(os.path.getsize(p) for p in packed)
+        print(f"PACKED {len(packed)} assets, {total / 1024 / 1024:.1f} MiB")
 
     if args.dry_run:
         print("::notice::Dry run: nothing was published.")

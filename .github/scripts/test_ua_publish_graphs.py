@@ -97,6 +97,34 @@ class PublishBoundary(unittest.TestCase):
                 publisher.publishable(tmp, "OpenResilienceInitiative", "t")
 
 
+class UploadOnly(unittest.TestCase):
+    """Packing and uploading are separate so provenance can be attested between
+    them. The split must not become a way past the privacy filter."""
+
+    def test_upload_only_ignores_a_file_the_filter_did_not_allow(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            generation(tmp, ["ORISO-Frontend", "ORISO-Infra"],
+                       ["ORISO-Frontend", "ORISO-Infra"])
+            out = os.path.join(tmp, "assets")
+            os.makedirs(out)
+            for name in ("ORISO-Frontend", "ORISO-Infra"):
+                with open(os.path.join(out, f"{name}.tar.gz"), "wb") as handle:
+                    handle.write(b"x")
+
+            with mock.patch.object(
+                publisher, "public_repositories", return_value={"ORISO-Frontend"}
+            ):
+                allowed, _, _ = publisher.publishable(
+                    tmp, "OpenResilienceInitiative", "t"
+                )
+            candidates = [
+                name
+                for name in allowed
+                if os.path.isfile(os.path.join(out, f"{name}.tar.gz"))
+            ]
+            self.assertEqual(candidates, ["ORISO-Frontend"])
+
+
 class VisibilityLookup(unittest.TestCase):
     def test_only_explicitly_public_counts(self):
         answers = {

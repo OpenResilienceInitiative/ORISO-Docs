@@ -34,6 +34,8 @@ on:
 
 permissions:
   contents: write # replaces the rolling release assets
+  id-token: write # build provenance for the published archives
+  attestations: write
 
 concurrency:
   # Never two producers at once: the bundle takes a publication lock, and a
@@ -124,6 +126,29 @@ jobs:
           python3 .github/scripts/ua_coverage_summary.py \
             --generation "${UA_WORK}/published/current" | tee -a "$GITHUB_STEP_SUMMARY"
 
+      # Packing, attesting and uploading are three steps on purpose. A
+      # consumer of this channel runs it through an AI reviewer that holds a
+      # write-capable token, so it has to be able to prove the archive was
+      # built here rather than merely served from this URL — a rolling tag
+      # gives no such guarantee. Attesting between packing and uploading is
+      # what makes the attested bytes and the published bytes the same bytes.
+      - name: Pack the publishable graphs
+        if: github.event_name != 'workflow_dispatch' || inputs.publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          python3 .github/scripts/ua_publish_graphs.py \
+            --generation "${UA_WORK}/published/current" \
+            --out "${UA_WORK}/assets" \
+            --dry-run
+
+      - name: Attest the archives
+        if: github.event_name != 'workflow_dispatch' || inputs.publish
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: ${{ env.UA_WORK }}/assets/*.tar.gz
+
       - name: Publish to the consumer channel
         if: github.event_name != 'workflow_dispatch' || inputs.publish
         env:
@@ -132,7 +157,8 @@ jobs:
           set -euo pipefail
           python3 .github/scripts/ua_publish_graphs.py \
             --generation "${UA_WORK}/published/current" \
-            --out "${UA_WORK}/assets"
+            --out "${UA_WORK}/assets" \
+            --upload-only
 
       - name: Pack without publishing
         if: github.event_name == 'workflow_dispatch' && !inputs.publish

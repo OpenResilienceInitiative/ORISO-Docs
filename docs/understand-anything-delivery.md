@@ -62,6 +62,36 @@ Consumers fetch over plain HTTPS, no credential:
 https://github.com/OpenResilienceInitiative/ORISO-Docs/releases/download/ua-graph-latest/<repository>.tar.gz
 ```
 
+## Why the archive is attested
+
+The consumer is an AI reviewer holding a write-capable token. HTTPS proves who
+served the bytes, not that they are a graph this organisation built, and the tag
+is rolling — so a compromised publisher or release could feed attacker-chosen
+content into a session that can push.
+
+The workflow therefore packs, attests and uploads as three separate steps:
+`actions/attest-build-provenance` runs between packing and uploading, so the
+attested bytes and the published bytes are the same bytes. Consumers verify
+before unpacking:
+
+```bash
+gh attestation verify graph.tar.gz \
+  --repo OpenResilienceInitiative/ORISO-Docs \
+  --signer-workflow OpenResilienceInitiative/ORISO-Docs/.github/workflows/ua-graph-refresh.yml
+```
+
+A failed verification is not fatal: the consumer falls back to the committed
+copy and says so. Refusing to review because a download could not be verified
+would be worse than reviewing against a graph whose age is stated.
+
+## Why the committed copy is replaced only after validation
+
+The consumer stages the archive, checks that all three generated files are
+present and non-empty and that `meta.json` carries a 40-character commit hash,
+and only then moves them into place one by one. A truncated archive must leave
+the committed graph untouched rather than mix two generations — which reads as
+a successful refresh and is much harder to notice than a missing one.
+
 ## Why release assets rather than commits
 
 The producer emits about 50 MB of JSON for UserService alone, roughly 250 MB
