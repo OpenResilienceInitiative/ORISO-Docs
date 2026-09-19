@@ -1,0 +1,155 @@
+name: Understand Anything graph refresh
+
+# Rebuilds the platform knowledge graph and publishes it where CI can reach it.
+#
+# Background. The producer used to run only as a root cron on the PreDev host
+# (`17 */2 * * *`), publishing into `/opt/oriso-understand/published`. Consumers
+# fetched it with `ua-pull` over SSH into a cache *outside* the checkout, and the
+# tooling README is explicit that the client "does not overwrite tracked graphs".
+# The AI reviewer, however, runs on a GitHub runner with no SSH access to that
+# host and reads `.understand-anything/` straight from the checkout. Producer and
+# consumer sat on two different channels, so the reviewer only ever saw the
+# graphs a human had last committed by hand. This workflow puts both on the same
+# channel and removes the dependency on a host that is being decommissioned.
+#
+# What it deliberately does NOT do: commit the graphs. The producer emits ~50 MB
+# of JSON for UserService alone. Committing that per run would add hundreds of
+# megabytes of history per month to repositories developers clone daily. The
+# generation compresses to ~12 MB and is served as a release asset instead; see
+# .github/scripts/ua_publish_graphs.py, which also enforces that no graph of a
+# private repository reaches this public channel.
+
+on:
+  schedule:
+    # Daily. The reviewer runs per PR, so a graph at most one day old is the
+    # useful target; the old two-hourly cadence made sense when the output fed a
+    # live dashboard rather than a per-PR consumer.
+    - cron: "40 2 * * *"
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: "Publish the generation to the release channel"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write # replaces the rolling release assets
+
+concurrency:
+  # Never two producers at once: the bundle takes a publication lock, and a
+  # second run would either block on it or race the asset replacement.
+  group: ua-graph-refresh
+  cancel-in-progress: false
+
+env:
+  # `ua-node` runs Node inside the locked Docker image unless told otherwise.
+  # This job already *is* that image (see `container:`), so use the native
+  # binary rather than Docker-in-Docker.
+  UA_NATIVE_NODE: "1"
+  UA_WORK: /tmp/ua
+
+jobs:
+  refresh:
+    name: Rebuild and publish the graph generation
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    # Pinned in tools/understand-anything/toolchain.lock.json as `nodeImage`.
+    # Keep the two in step: the producer's output is only reproducible on the
+    # Node version its toolchain was locked against.
+    container: node@sha256:8a34c4ab3ea2c5cd194f07e317b2a8f09461d3c8b05c4e34c8ccd56d56024c4d
+
+    steps:
+      - name: Check out the tooling
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install the pinned producer toolchain
+        run: |
+          set -euo pipefail
+          python3 tools/understand-anything/install.py \
+            --runtime-root "${UA_WORK}/runtime" \
+            --profile "${UA_WORK}/profile"
+          echo "UA_TOOLING=${UA_WORK}/runtime/current/tooling" >> "$GITHUB_ENV"
+          echo "UA_CORE=${UA_WORK}/runtime/current/upstream/understand-anything-plugin/packages/core/dist/index.js" >> "$GITHUB_ENV"
+
+      - name: Resolve and clone the inputs
+        env:
+          # Optional. Without it the two private inputs (ORISO-E2E, ORISO-Infra)
+          # are skipped and the run covers the public repositories, which is all
+          # the public channel may carry anyway.
+          UA_GRAPH_TOKEN: ${{ secrets.UA_GRAPH_TOKEN }}
+        run: |
+          set -euo pipefail
+          python3 .github/scripts/ua_sources.py \
+            --tooling "${UA_TOOLING}" \
+            --base "${UA_WORK}/base" \
+            --inventory "${UA_WORK}/inventory.json" \
+            --repo-args "${UA_WORK}/repo-args.txt"
+
+      - name: Build one complete generation
+        run: |
+          set -euo pipefail
+          mkdir -p "${UA_WORK}/published"
+          mapfile -t REPO_ARGS < "${UA_WORK}/repo-args.txt"
+          cd "${UA_TOOLING}"
+          PYTHONPATH="${UA_TOOLING}" PYTHONDONTWRITEBYTECODE=1 \
+            python3 -m bundle refresh \
+              --base "${UA_WORK}/base" \
+              --publish-root "${UA_WORK}/published" \
+              "${REPO_ARGS[@]}"
+
+      - name: Verify the generation against live sources
+        # `refresh verify` re-fetches every source ref and checks the full SHA
+        # recorded in the manifest. It is the difference between "a generation
+        # exists" and "this generation is the code that is on dev right now".
+        run: |
+          set -euo pipefail
+          mapfile -t REPO_ARGS < "${UA_WORK}/repo-args.txt"
+          cd "${UA_TOOLING}"
+          PYTHONPATH="${UA_TOOLING}" PYTHONDONTWRITEBYTECODE=1 \
+            python3 -m bundle refresh verify \
+              --base "${UA_WORK}/base" \
+              --publish-root "${UA_WORK}/published" \
+              "${REPO_ARGS[@]}"
+
+      - name: Report structural and semantic coverage
+        # Structural coverage regenerates wholesale and is current after every
+        # run. Semantic coverage does not: a hand-written claim counts as
+        # `source-current` only while it carries a reviewed source binding, and
+        # a changed source turns it `stale`. Printing both keeps the difference
+        # visible instead of letting a green run imply the prose is current too.
+        run: |
+          set -euo pipefail
+          python3 .github/scripts/ua_coverage_summary.py \
+            --generation "${UA_WORK}/published/current" | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Publish to the consumer channel
+        if: github.event_name != 'workflow_dispatch' || inputs.publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          python3 .github/scripts/ua_publish_graphs.py \
+            --generation "${UA_WORK}/published/current" \
+            --out "${UA_WORK}/assets"
+
+      - name: Pack without publishing
+        if: github.event_name == 'workflow_dispatch' && !inputs.publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          python3 .github/scripts/ua_publish_graphs.py \
+            --generation "${UA_WORK}/published/current" \
+            --out "${UA_WORK}/assets" \
+            --dry-run
+
+      - name: Keep the manifest for diagnosis
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ua-generation-manifest
+          path: ${{ env.UA_WORK }}/published/current/manifest.json
+          if-no-files-found: warn
+          retention-days: 30
