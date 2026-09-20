@@ -1,0 +1,38 @@
+name: Understand Anything CI scripts
+
+# Kept separate from ua-tooling.yml on purpose. That workflow installs the whole
+# pinned producer toolchain (several minutes, a locked container) to exercise the
+# generator's own contract. These are fast unit tests for the thin CI layer
+# around it, and the privacy filter among them decides what reaches a public
+# release — so it must be cheap enough to run on every PR that touches it.
+
+on:
+  pull_request:
+    paths:
+      - ".github/scripts/**"
+      - ".github/workflows/ua-scripts.yml"
+  push:
+    branches: [dev, main]
+    paths:
+      - ".github/scripts/**"
+      - ".github/workflows/ua-scripts.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ua-scripts-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Run the CI script tests
+        run: python3 -m unittest discover -s .github/scripts -p 'test_*.py' -v
