@@ -4,10 +4,6 @@ description: Practical troubleshooting paths from enriched source/config inspect
 ---
 
 # ORISO Troubleshooting
-
-## Platform Navigation
-
-- [Overview](./overview.md)
 - [Repository map](./repository-map.md)
 - [Architecture](./architecture.md)
 - [Authentication and Keycloak](./authentication-and-keycloak.md)

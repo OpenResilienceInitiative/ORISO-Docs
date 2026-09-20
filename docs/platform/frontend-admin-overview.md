@@ -1,184 +1,83 @@
 ---
-title: Frontend and Admin Overview
-description: Enriched ORISO browser application architecture and backend dependency map.
+title: Frontend and Admin
+description: The two React applications — how they are wired, where routes and API clients live, and how to work on them without a backend.
 ---
 
-# Frontend and Admin Overview
+# Frontend and Admin
 
-## Platform Navigation
+Two React applications, no persistence of their own. Both obtain a Keycloak token, attach
+it to every call, and render what the services return.
 
-- [Overview](./overview.md)
-- [Repository map](./repository-map.md)
-- [Architecture](./architecture.md)
+| | [ORISO-Frontend](https://github.com/OpenResilienceInitiative/ORISO-Frontend) | [ORISO-Admin](https://github.com/OpenResilienceInitiative/ORISO-Admin) |
+| --- | --- | --- |
+| Purpose | the public counselling app | the operational admin panel |
+| Build | CRA-style scripts plus Vite tooling | Vite |
+| Dev server | `npm run dev` | `npm start` (port 9000, path `/admin`) |
+| Node | 22.12.0 | 22.12.0 |
+| Route table | [`src/components/app/RouterConfig.tsx`](https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/dev/src/components/app/RouterConfig.tsx) | [`src/App.tsx`](https://github.com/OpenResilienceInitiative/ORISO-Admin/blob/dev/src/App.tsx) |
+| API layer | [`src/api/`](https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/dev/src/api/fetchData.ts) | [`src/api/`](https://github.com/OpenResilienceInitiative/ORISO-Admin/blob/dev/src/api/fetchData.ts) |
+| Route guard | in the router configuration | [`src/router/ProtectedRoute.tsx`](https://github.com/OpenResilienceInitiative/ORISO-Admin/blob/dev/src/router/ProtectedRoute.tsx#L19-L40) |
+| Runtime config | [`.env.example`](https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/dev/.env.example) | [`.env.example`](https://github.com/OpenResilienceInitiative/ORISO-Admin/blob/dev/.env.example) plus a generated file, see below |
+| Calls out to | User, Agency, Tenant, ConsultingType, Matrix, LiveKit | User, Agency, Tenant, ConsultingType |
+
+## How a request leaves the browser
+
+```mermaid
+flowchart LR
+  C["component"] --> H["api client<br/>one file per endpoint in src/api/"]
+  H --> F["fetchData wrapper<br/>adds Authorization, handles 401"]
+  F --> T["token helpers<br/>read / refresh"]
+  F --> I["ingress path prefix<br/>/service/…"]
+  I --> S["backend service"]
+```
+
+Every call goes through one wrapper. That wrapper is where the bearer token is attached
+and where a 401 is handled, which makes it the single place to look when "some requests
+are unauthorised". The API-client modules above it are thin: one file per endpoint, named
+after the operation.
+
+The path prefix matters. Because everything is served from one host with path-based
+routing ([ADR-011](/decisions/adr-011)), the API base URL is a path, not a separate
+origin — which is also why there are no CORS problems to debug.
+
+## Admin: the generated runtime configuration
+
+`npm start` runs a `prestart` step that writes a runtime configuration file:
+[`scripts/generate-runtime-env.js`](https://github.com/OpenResilienceInitiative/ORISO-Admin/blob/dev/scripts/generate-runtime-env.js).
+The application reads that file at boot, **and it overrides `.env`**. If a setting seems
+to be ignored, this is almost always why. Dev-server and proxy behaviour is in
+[`vite.config.ts`](https://github.com/OpenResilienceInitiative/ORISO-Admin/blob/dev/vite.config.ts).
+
+## Working without a backend
+
+Both repositories run Storybook, and their stories are executed as component tests in CI.
+For anything visual this is the fast loop — no services, no database, no login:
+
+```bash
+npm run storybook        # http://localhost:6006
+npm run test:storybook   # the same stories, as tests
+npm run test:unit        # frontend
+npm run test             # admin
+npm run lint
+```
+
+Because a story is also a test, adding a story for a new component is not extra work on
+top of testing it — it is the testing.
+
+## Tenant-aware rendering
+
+Both apps change appearance and available features per tenant: theming, legal texts,
+visible topics and enabled features all arrive from TenantService and
+ConsultingTypeService at runtime. Two rules follow:
+
+- **Do not hard-code a tenant assumption in a component.** Read it from the loaded
+  settings.
+- **A feature that is off for a tenant must be disabled, not hidden**, unless the design
+  explicitly says otherwise — consistency of the interface beats tidiness.
+
+## Related
+
+- [Install and run locally](./install-and-run-locally.md)
 - [Authentication and Keycloak](./authentication-and-keycloak.md)
-- [Database and data model](./database-and-data-model.md)
-- [Kubernetes deployment](./kubernetes-deployment.md)
-- [Frontend/Admin overview](./frontend-admin-overview.md)
-- [Backend services](./backend-services.md)
-- [Tenant lifecycle](./tenant-lifecycle.md)
-- [User management flow](./user-management-flow.md)
-- [Local development](./local-development.md)
-- [Onboarding guide](./onboarding-guide.md)
-- [Troubleshooting](./troubleshooting.md)
-- [Graph validation report](./graph-validation-report.md)
-- [Diagrams](./diagrams.md)
-
-## ORISO-Frontend
-
-Purpose: Public counseling frontend for registration, login, tenant-aware onboarding, bookings, messaging, profile, Matrix chat, and LiveKit/Element Call entry points.
-
-Routes discovered:
-
-- /booking
-- /booking/cancellation
-- /booking/reschedule
-- /booking/events
-- /tools
-- /overview
-- /sessions/user/view
-- /notifications
-- /drafts
-- /profile
-- /sessions/user/view/write/:sessionId?
-- /sessions/user/view/:rcGroupId?/:sessionId?
-- /sessions/user/view/session/:sessionId
-- /sessions/user/view/:rcGroupId/:sessionId
-- /sessions/user/view/
-- /sessions/consultant/sessionPreview
-- /sessions/consultant/sessionView
-- /termine
-- /sessions/consultant/sessionPreview/:rcGroupId?/:sessionId?
-- /sessions/consultant/sessionView/:rcGroupId?/:sessionId?
-- /sessions/consultant/sessionPreview/session/:sessionId
-- /sessions/consultant/sessionView/session/:sessionId
-- /sessions/consultant/sessionPreview/:rcGroupId/:sessionId
-- /sessions/consultant/sessionView/:rcGroupId/:sessionId/
-- /sessions/consultant/sessionPreview/
-- /sessions/consultant/sessionView/
-- /sessions/consultant/sessionView/createGroupChat/
-- /sessions/consultant/sessionView/:rcGroupId/:sessionId/editGroupChat
-- /sessions/consultant/sessionPreview/session/:sessionId/userProfile
-- /sessions/consultant/sessionView/session/:sessionId/userProfile
-- /sessions/consultant/sessionPreview/:rcGroupId/:sessionId/userProfile
-- /sessions/consultant/sessionView/:rcGroupId/:sessionId/userProfile
-- /sessions/consultant/sessionView/:rcGroupId/:sessionId/groupChatInfo
-- /themen
-
-Important API/auth files:
-
-- src/api/apiGetAgenciesByTenant.ts
-- src/api/apiGetTenantAgenciesTopics.ts
-- src/api/apiGetTenantTheming.ts
-- src/api/apiLogoutKeycloak.ts
-- src/api/apiTwoFactorAuth.ts
-- src/components/app/AuthenticatedApp.tsx
-- src/components/app/TenantThemingLoader.tsx
-- src/components/app/authenticatedApp.styles.scss
-- src/components/auth/auth.ts
-- src/components/sessionCookie/accessSessionCookie.ts
-- src/components/sessionCookie/accessSessionCookie.ts.backup
-- src/components/sessionCookie/accessSessionLocalStorage.ts
-- src/components/sessionCookie/cache-bust.ts
-- src/components/sessionCookie/getBudibaseAccessToken.ts
-- src/components/sessionCookie/getKeycloakAccessToken.ts
-- src/components/sessionCookie/getKeycloakAccessToken.ts.backup
-- src/components/sessionCookie/getMatrixAccessToken.ts
-- src/components/sessionCookie/getRocketchatAccessToken.ts
-- src/components/sessionCookie/refreshKeycloakAccessToken.ts
-- src/components/twoFactorAuth/TwoFactorAuth.tsx
-- src/api/apiAddSessionSupervisor.ts
-- src/api/apiAgencyLanguages.ts
-- src/api/apiAgencySelection.ts
-- src/api/apiAppointmentServiceSet.ts
-- src/api/apiConsumeMagicLinkLogin.ts
-- src/api/apiDeleteAskerAccount.ts
-- src/api/apiDeleteEmail.ts
-- src/api/apiDeleteMessage.ts
-- src/api/apiDeleteRemove.ts
-- src/api/apiDeleteSessionAndUser.ts
-- src/api/apiDeleteUserFromRoom.ts
-- src/api/apiDraftMessages.ts
-- src/api/apiEnquiryAcceptance.ts
-- src/api/apiEventNotifications.ts
-- src/api/apiFrontendSettings.ts
-- src/api/apiGetAgencyConsultantList.ts
-- src/api/apiGetAgencyId.ts
-- src/api/apiGetAnonymousEnquiryDetails.ts
-- src/api/apiGetApiAppointmentServiceEventTypes.ts
-- src/api/apiGetAppointmentServiceTeam.ts
-- src/api/apiGetAppointmentsServiceBookingEventsByUserId.ts
-- src/api/apiGetAskerSessionList.ts
-- src/api/apiGetAskerSessionList.ts.backup
-- src/api/apiGetCalDavAccount.ts
-- src/api/apiGetChatRoomById.ts
-- src/api/apiGetConsultant.ts
-- src/api/apiGetConsultantAppointments.ts
-- src/api/apiGetConsultantSessionList.ts
-- src/api/apiGetConsultantStatistics.ts
-
-## ORISO-Admin
-
-Purpose: Administrative React dashboard for tenant, agency, counselor, topic, invite link, settings, logs, statistics, and user administration workflows.
-
-Routes discovered:
-
-- /admin
-- /admin/login
-- /admin/theme-settings
-- /admin/global-settings
-- /admin/users
-- /admin/users/consultants
-- /admin/agency
-- /admin/topics
-- /admin/statistic
-- /admin/logs
-- /admin/tenants
-- /admin/invite-links
-
-Important API/auth files:
-
-- src/api/agency/getAgencyByTenantData.ts
-- src/api/auth/accessSessionCookie.ts
-- src/api/auth/accessSessionLocalStorage.ts
-- src/api/auth/apiLogoutKeycloak.ts
-- src/api/auth/auth.ts
-- src/api/auth/getAccessToken.ts
-- src/api/auth/logout.ts
-- src/api/auth/refreshKeycloakAccessToken.ts
-- src/api/consultingtype/getConsultingType4Tenant.ts
-- src/api/tenant/addTenantData.ts
-- src/api/tenant/deleteTenantData.ts
-- src/api/tenant/editFAKETenantData.ts
-- src/api/tenant/editTenantData.ts
-- src/api/tenant/getFAKETenantData.ts
-- src/api/tenant/getFakeMultipleTenants.ts
-- src/api/tenant/getPublicTenantData.ts
-- src/api/tenant/getSingleTenantData.ts
-- src/api/tenant/getTenantData.ts
-- src/api/tenant/searchTenantData.ts
-- src/api/topic/getTopicByTenantData.ts
-- src/api/admins/addAgencyAdminData.ts
-- src/api/admins/deleteAgencyAdminData.ts
-- src/api/admins/ediAgencytAdminData.ts
-- src/api/agency/addAgencyData.ts
-- src/api/agency/deleteAgencyData.ts
-- src/api/agency/deleteAgencyEventType.ts
-- src/api/agency/getAgencyByCounselorData.ts
-- src/api/agency/getAgencyById.ts
-- src/api/agency/getAgencyConsultants.ts
-- src/api/agency/getAgencyData.ts
-- src/api/agency/getAgencyEventTypeById.ts
-- src/api/agency/getAgencyEventTypes.ts
-- src/api/agency/getAgencyPostCodeRange.ts
-- src/api/agency/getDiocesesData.ts
-- src/api/agency/postConsultantForAgencyEventTypes.ts
-- src/api/agency/putAgenciesForAdmin.ts
-- src/api/agency/putAgenciesForCounselor.ts
-- src/api/agency/putConsultantForAgencyEventTypes.ts
-- src/api/agency/updateAgencyData.ts
-- src/api/agency/updateAgencyPostCodeRange.ts
-- src/api/agency/updateAgencyType.ts
-
-## Shared Pattern
-
-Both apps are API consumers. Neither owns persistence. Both rely on Keycloak token flow, runtime API host configuration, tenant-aware behavior, and backend service APIs exposed through Kubernetes/API ingress.
+- [Backend services](./backend-services.md) — the APIs behind the clients
+- [Architecture](./architecture.md)

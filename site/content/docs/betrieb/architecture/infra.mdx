@@ -7,65 +7,7 @@ description: Kubernetes infrastructure, Helm charts, Ingress, Cert-Manager, and 
 
 ORISO Platform v3.0.0 is deployed on Kubernetes using Helm charts with automated TLS via cert-manager and Ingress-based routing.
 
-```mermaid
-%%{init: { 'theme': 'base', 'themeVariables': { 'fontSize': '18px', 'lineColor': '#3B82F6' } }}%%
-
-flowchart TB
-
-  subgraph K8s["Kubernetes Cluster (k3s)"]
-    direction TB
-    
-    subgraph Ingress["Ingress Layer"]
-      I1[("Nginx Ingress Controller\nPort 80/443")]:::ingress
-      I2[("Cert-Manager\nTLS Automation")]:::cert
-    end
-    
-    subgraph Namespace["Namespace: caritas"]
-      direction TB
-      
-      subgraph Helm["Helm Umbrella Chart: oriso-platform"]
-        H1[("21 Services\nDeployed via Helm")]:::helm
-      end
-      
-      subgraph Auth["Authentication"]
-        A1[("Keycloak\n:8080")]:::auth
-      end
-      
-      subgraph Services["Services"]
-        S1[Backend Services]:::svc
-        S2[Frontend Apps]:::svc
-        S3[Databases]:::svc
-        S4[Matrix]:::svc
-        S5[Monitoring]:::svc
-      end
-    end
-    
-    subgraph DNS["Kubernetes DNS"]
-      D1[(".svc.cluster.local\nService Discovery")]:::dns
-    end
-  end
-
-  %% External access
-  Internet[Internet] -->|HTTPS| I1
-  I1 -->|Routes| H1
-  I2 -->|TLS Certs| I1
-  
-  %% Internal communication
-  H1 -->|DNS| D1
-  S1 -->|DNS| D1
-  S2 -->|DNS| D1
-  S3 -->|DNS| D1
-  S4 -->|DNS| D1
-  S5 -->|DNS| D1
-
-  %% Styling
-  classDef ingress fill:#e0f2f1,stroke:#00695c,stroke-width:2px,color:#004d40,font-weight:bold
-  classDef cert fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#e65100,font-weight:bold
-  classDef helm fill:#ede7f6,stroke:#512da8,stroke-width:2px,color:#311b92,font-weight:bold
-  classDef auth fill:#ffebee,stroke:#d32f2f,stroke-width:2px,color:#b71c1c,font-weight:bold
-  classDef svc fill:#eceff1,stroke:#607d8b,stroke-width:1.5px,color:#37474f
-  classDef dns fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#0d47a1
-```
+<Mermaid chart={"%%{init: { 'theme': 'base', 'themeVariables': { 'fontSize': '18px', 'lineColor': '#3B82F6' } }}%%\n\nflowchart TB\n\n  subgraph K8s[\"Kubernetes Cluster (k3s)\"]\n    direction TB\n    \n    subgraph Ingress[\"Ingress Layer\"]\n      I1[(\"Nginx Ingress Controller\\nPort 80/443\")]:::ingress\n      I2[(\"Cert-Manager\\nTLS Automation\")]:::cert\n    end\n    \n    subgraph Namespace[\"Namespace: caritas\"]\n      direction TB\n      \n      subgraph Helm[\"Helm Umbrella Chart: oriso-platform\"]\n        H1[(\"21 Services\\nDeployed via Helm\")]:::helm\n      end\n      \n      subgraph Auth[\"Authentication\"]\n        A1[(\"Keycloak\\n:8080\")]:::auth\n      end\n      \n      subgraph Services[\"Services\"]\n        S1[Backend Services]:::svc\n        S2[Frontend Apps]:::svc\n        S3[Databases]:::svc\n        S4[Matrix]:::svc\n        S5[Monitoring]:::svc\n      end\n    end\n    \n    subgraph DNS[\"Kubernetes DNS\"]\n      D1[(\".svc.cluster.local\\nService Discovery\")]:::dns\n    end\n  end\n\n  %% External access\n  Internet[Internet] -->|HTTPS| I1\n  I1 -->|Routes| H1\n  I2 -->|TLS Certs| I1\n  \n  %% Internal communication\n  H1 -->|DNS| D1\n  S1 -->|DNS| D1\n  S2 -->|DNS| D1\n  S3 -->|DNS| D1\n  S4 -->|DNS| D1\n  S5 -->|DNS| D1\n\n  %% Styling\n  classDef ingress fill:#e0f2f1,stroke:#00695c,stroke-width:2px,color:#004d40,font-weight:bold\n  classDef cert fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#e65100,font-weight:bold\n  classDef helm fill:#ede7f6,stroke:#512da8,stroke-width:2px,color:#311b92,font-weight:bold\n  classDef auth fill:#ffebee,stroke:#d32f2f,stroke-width:2px,color:#b71c1c,font-weight:bold\n  classDef svc fill:#eceff1,stroke:#607d8b,stroke-width:1.5px,color:#37474f\n  classDef dns fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#0d47a1"} />
 
 ## Kubernetes Platform
 

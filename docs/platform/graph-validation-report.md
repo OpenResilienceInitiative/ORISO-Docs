@@ -5,6 +5,8 @@ description: Artifact-only validation report for the detailed ORISO super graph 
 
 # ORISO Graph Validation Report
 
+> **Outdated — archived.** A snapshot of the graph merge of May 2026. The current mechanism, and the numbers that go with it, are described in [How we keep the docs honest](./understand-anything.md); the live graphs are at [understand.oriso.org](https://understand.oriso.org/).
+
 This report validates the existing .understand-anything graph artifacts used by the detailed ORISO super graph merge. No sibling source code was re-analyzed for this merge.
 
 ## Merge Summary

@@ -2,9 +2,6 @@
 title: "Troubleshooting"
 description: "Comprehensive troubleshooting guide for pods, network, databases, Keycloak, backend services, and frontend issues"
 ---
-
-# Troubleshooting
-
 Common issues and solutions for ORISO Platform v3.0.0 deployed on Kubernetes with Helm charts.
 
 <Accordions type="single">
@@ -180,7 +177,7 @@ kubectl exec -n caritas $KEYCLOAK_POD -- \
   /opt/keycloak/bin/kcadm.sh update realms/master -s sslRequired=NONE
 ```
 
-See [Configure Keycloak](/oriso-platform/configure-keycloak) for detailed instructions.
+See [Configure Keycloak](/betrieb/deployment/configure-keycloak) for detailed instructions.
 
 ### Cannot Login to Keycloak
 
@@ -435,7 +432,7 @@ kubectl run test-pod --rm -it --image=busybox -n caritas -- \
 
 ## Related Documentation
 
-- [Quick Reference](/oriso-platform/quick-reference) - Essential commands
-- [Post-Deployment Configuration](/oriso-platform/post-deployment) - Verification steps
-- [Configure Keycloak](/oriso-platform/configure-keycloak) - Keycloak configuration
+- [Quick Reference](/betrieb/operations/quick-reference) - Essential commands
+- [Post-Deployment Configuration](/betrieb/configuration-und-testing/post-deployment) - Verification steps
+- [Configure Keycloak](/betrieb/deployment/configure-keycloak) - Keycloak configuration
 

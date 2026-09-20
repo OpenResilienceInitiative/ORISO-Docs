@@ -8,7 +8,7 @@ description: "What ORISO does with chat content today, the planned AI-assisted n
 </Callout>
 
 <Callout>
-**Superseded by [AI Tools (4.6)](/product/features/ai-tools)** as of May 2026. The Figma drop confirmed an active design for Chat Summary (`⇧Ü`), Mark Text, and PII Blur. Read this page for the historical context, then continue at [AI Tools](/product/features/ai-tools).
+**Superseded by [AI Tools (4.6)](/produkt/core-features/ai-tools)** as of May 2026. The Figma drop confirmed an active design for Chat Summary (`⇧Ü`), Mark Text, and PII Blur. Read this page for the historical context, then continue at [AI Tools](/produkt/core-features/ai-tools).
 </Callout>
 
 ## 4.1.1 Purpose
@@ -52,24 +52,7 @@ These needs must coexist with two non-negotiable guarantees:
 
 The product roadmap mentions AI-assisted **counselor case notes**. The shape of the feature, as currently understood:
 
-```mermaid
-sequenceDiagram
-  autonumber
-  participant Co as Counselor (browser)
-  participant FE as Element / ORISO-Element
-  participant AI as AI Notes Service (planned)
-  participant US as UserService
-
-  Co->>FE: Click "Generate case note"
-  Note over FE: Decryption keys live only in the browser
-  FE->>FE: Decrypt last N messages locally
-  FE->>AI: POST /summarize { ciphertext: false, scrubbed_text }
-  Note over FE,AI: Personally-identifying tokens scrubbed in-browser before send
-  AI-->>FE: Bullet-point summary
-  FE->>Co: Show summary; let counselor edit & save
-  Co->>FE: Save note
-  FE->>US: PUT /sessions/{id}/case-note  (encrypted at rest)
-```
+<Mermaid chart={"sequenceDiagram\n  autonumber\n  participant Co as Counselor (browser)\n  participant FE as Element / ORISO-Element\n  participant AI as AI Notes Service (planned)\n  participant US as UserService\n\n  Co->>FE: Click \"Generate case note\"\n  Note over FE: Decryption keys live only in the browser\n  FE->>FE: Decrypt last N messages locally\n  FE->>AI: POST /summarize { ciphertext: false, scrubbed_text }\n  Note over FE,AI: Personally-identifying tokens scrubbed in-browser before send\n  AI-->>FE: Bullet-point summary\n  FE->>Co: Show summary; let counselor edit & save\n  Co->>FE: Save note\n  FE->>US: PUT /sessions/{id}/case-note  (encrypted at rest)"} />
 
 Design constraints (lifted directly from Frank's stated principles):
 
@@ -85,7 +68,7 @@ Status: not built; `Plan only`. Use this page as the design starting point.
 
 ### Capturing chat
 
-1. Counselor accepts a ticket (see [Live Chat](/product/features/live-chat)).
+1. Counselor accepts a ticket (see [Live Chat](/produkt/core-features/live-chat)).
 2. UserService asks Matrix Synapse to create a fresh, encrypted room and invites both members.
 3. Element/ORISO-Element negotiates Megolm keys peer-to-peer.
 4. Every message thereafter is encrypted client-side and stored as ciphertext on Synapse.
@@ -125,7 +108,7 @@ Status: not built; `Plan only`. Use this page as the design starting point.
 
 ## 4.1.7 Related Links
 
-- [Live Chat feature](/product/features/live-chat)
-- [Session Management](/product/features/session-management)
-- [Edge Cases](/product/edge-cases)
-- [Internal Functionality / Encryption](/product/internal-functionality)
+- [Live Chat feature](/produkt/core-features/live-chat)
+- [Session Management](/produkt/core-features/session-management)
+- [Edge Cases](/produkt/design-und-quality/edge-cases)
+- [Internal Functionality / Encryption](/produkt/flows-und-internals/internal-functionality)

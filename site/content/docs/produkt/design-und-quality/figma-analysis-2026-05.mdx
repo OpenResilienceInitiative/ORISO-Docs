@@ -4,7 +4,7 @@ description: "Structured analysis of the May-2026 Figma extraction — every scr
 ---
 
 <Callout>
-This page is the **single source of truth** for what changed in the product after the May-2026 Figma drop. It feeds the new pages in [Core Features](/product/features) and the targeted updates to [Roles & Permissions](/product/roles-permissions), [Data Model](/product/data-model), [UI/UX](/product/ui-ux), and [Edge Cases](/product/edge-cases).
+This page is the **single source of truth** for what changed in the product after the May-2026 Figma drop. It feeds the new pages in [Core Features](https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/dev/product/features) and the targeted updates to [Roles & Permissions](/produkt/architecture-und-roles/roles-permissions), [Data Model](/produkt/flows-und-internals/data-model), [UI/UX](/produkt/design-und-quality/ui-ux), and [Edge Cases](/produkt/design-und-quality/edge-cases).
 </Callout>
 
 ## 1. Image Analysis Summary
@@ -40,7 +40,7 @@ The Figma file contains roughly twelve distinct screen families. We group them b
 | **Purpose** | Embed a live LiveKit call into the existing chat thread; anyone in the room can join. |
 | **Key UI** | "Currently Active Call" pill, "Join Video Call" CTA. |
 | **System behaviour** | UserService issues a short-lived LiveKit JWT per joiner; WebRTC handshake direct to LiveKit. |
-| **Open product question** | *"What happens when a user deletes himself during a video call (if he's the initiator)? What happens if a client deletes himself from a group chat?"* — see [Edge Cases](/product/edge-cases#9-1-7-client-deletes-self-during-active-video-call) for the resolution we propose. |
+| **Open product question** | *"What happens when a user deletes himself during a video call (if he's the initiator)? What happens if a client deletes himself from a group chat?"* — see [Edge Cases](/produkt/design-und-quality/edge-cases#917-client-deletes-self-during-active-video-call) for the resolution we propose. |
 
 ### 1.4 Inquiry Acknowledgement / "So geht es weiter"
 
@@ -114,7 +114,7 @@ The Figma file contains roughly twelve distinct screen families. We group them b
 | **Copy** | *"Spare Zeit, mit Hilfe unseres vollends Datenschutzkonformen KI Workflows."* |
 | **Purpose** | Counselor-side automatic summarization of an existing chat into a case note. |
 | **System behaviour** | Decryption + scrubbing in browser (per existing privacy rules), summary returned, counselor edits, save. |
-| **Status** | **[NEW FEATURE]** — confirms the previously-planned AI tools track ([4.1 Transcripts](/product/features/transcription) → now [AI Tools](/product/features/ai-tools)). |
+| **Status** | **[NEW FEATURE]** — confirms the previously-planned AI tools track ([4.1 Transcripts](/produkt/core-features/transcription) → now [AI Tools](/produkt/core-features/ai-tools)). |
 
 ### 1.11 Help Requests / Internal Escalation
 
@@ -182,7 +182,7 @@ The Figma file contains roughly twelve distinct screen families. We group them b
 | F1 | **Group Chats** (Team / Family / Addiction / Peer-support / Internal) | 1.1, 1.2, 1.6 | **[NEW FEATURE]** |
 | F2 | **Multi-Recipient Send** (`Wähle wer diese Nachricht sehen soll`) | 1.7 | **[NEW FEATURE]** |
 | F3 | **Mark-Text + PII Blur** | 1.8 | **[NEW FEATURE]** |
-| F4 | **AI Chat Summarisation** | 1.10 | **[NEW FEATURE]** (replaces planned-only status of [4.1](/product/features/transcription)) |
+| F4 | **AI Chat Summarisation** | 1.10 | **[NEW FEATURE]** (replaces planned-only status of [4.1](/produkt/core-features/transcription)) |
 | F5 | **Reply in Thread / Reply Directly / Forward / Delete** | 1.1, 1.7 | **[NEW FEATURE]** |
 | F6 | **Help Requests / Internal Escalation** | 1.11 | **[NEW FEATURE]** |
 | F7 | **Case Handover** with reason taxonomy | 1.12 | **[NEW FEATURE]** |
@@ -231,14 +231,14 @@ The Figma exposes several gaps where backend or product behaviour is not yet def
 > *"What happens when a user deletes himself during a video call (if he's the initiator)?"*
 
 - **[MISSING FLOW]** — there is no UI for "promote initiator" or "end-call-on-initiator-leave" decision.
-- **Proposed**: see [Edge Cases §9.1.7](/product/edge-cases#9-1-7-client-deletes-self-during-active-video-call). When a client deletes themselves mid-call, the LiveKit room continues for remaining counselors. The originator role transfers to the next counselor by `joined_at` ASC; if no counselor remains, the room ends.
+- **Proposed**: see [Edge Cases §9.1.7](/produkt/design-und-quality/edge-cases#917-client-deletes-self-during-active-video-call). When a client deletes themselves mid-call, the LiveKit room continues for remaining counselors. The originator role transfers to the next counselor by `joined_at` ASC; if no counselor remains, the room ends.
 
 ### 4.2 Group-Chat Self-Delete (Figma question)
 
 > *"What happens if a client deletes himself from a group chat?"*
 
 - **[MISSING FLOW]** — group chats so far were assumed to be all-counselor.
-- **Proposed**: see [Edge Cases §9.1.8](/product/edge-cases#9-1-8-client-deletes-self-from-group-chat). Client's pseudonym is wiped immediately; their messages stay (E2EE bodies are not personal data) but their authorship label becomes *"Ehemaliger Teilnehmer"*. If the client was the only advice-seeker, the group is auto-archived.
+- **Proposed**: see [Edge Cases §9.1.8](/produkt/design-und-quality/edge-cases#918-client-deletes-self-from-group-chat). Client's pseudonym is wiped immediately; their messages stay (E2EE bodies are not personal data) but their authorship label becomes *"Ehemaliger Teilnehmer"*. If the client was the only advice-seeker, the group is auto-archived.
 
 ### 4.3 Multi-Recipient Send — server-side enforcement
 
@@ -278,141 +278,31 @@ The Figma exposes several gaps where backend or product behaviour is not yet def
 
 ### 5.1 Client Joins via Link → Optional Email + 2FA
 
-```mermaid
-sequenceDiagram
-  autonumber
-  participant Cl as Client
-  participant FE as ORISO-Frontend
-  participant US as UserService
-  participant KC as Keycloak
-  Cl->>FE: Open live-chat link
-  FE->>US: POST /live-chat/anonymous
-  US->>KC: create anonymous user
-  KC-->>FE: cookie + pseudonym
-  FE-->>Cl: Waiting Room + GDPR popup #1
-  Cl->>FE: Confirm consent
-  Note over Cl,FE: After session ends, before final wipe:
-  FE-->>Cl: "So geht es weiter" — capture optional email?
-  alt opted-in
-    Cl->>FE: Provide email
-    FE->>US: PUT /me/email (privileged-only field)
-    Cl->>FE: Enrol 2FA (App or email-magic)
-    FE->>KC: required-action: configure TOTP / Magic
-  end
-  alt account deletion
-    Cl->>FE: Click "Konto löschen"
-    FE->>US: DELETE /me
-    US->>KC: full wipe
-  end
-```
+<Mermaid chart={"sequenceDiagram\n  autonumber\n  participant Cl as Client\n  participant FE as ORISO-Frontend\n  participant US as UserService\n  participant KC as Keycloak\n  Cl->>FE: Open live-chat link\n  FE->>US: POST /live-chat/anonymous\n  US->>KC: create anonymous user\n  KC-->>FE: cookie + pseudonym\n  FE-->>Cl: Waiting Room + GDPR popup #1\n  Cl->>FE: Confirm consent\n  Note over Cl,FE: After session ends, before final wipe:\n  FE-->>Cl: \"So geht es weiter\" — capture optional email?\n  alt opted-in\n    Cl->>FE: Provide email\n    FE->>US: PUT /me/email (privileged-only field)\n    Cl->>FE: Enrol 2FA (App or email-magic)\n    FE->>KC: required-action: configure TOTP / Magic\n  end\n  alt account deletion\n    Cl->>FE: Click \"Konto löschen\"\n    FE->>US: DELETE /me\n    US->>KC: full wipe\n  end"} />
 
 ### 5.2 Counselor Picks a Live-Chat Ticket → Optional Group Promotion
 
-```mermaid
-sequenceDiagram
-  participant Co as Counselor
-  participant FE as ORISO-Admin
-  participant US as UserService
-  participant MX as Matrix
-  Co->>FE: Pick ticket from Inbox (Anfragephase)
-  FE->>US: POST /live-chat/accept
-  US->>MX: create encrypted room
-  Note over Co,FE: Active 1-1 chat ongoing
-  Co->>FE: "Invite more people" (⇧I)
-  FE->>US: POST /rooms/{id}/invite
-  US->>MX: invite peers → room becomes group
-  Note over Co,FE: Client sees "Counsellor invited X" system msg + may consent again
-```
+<Mermaid chart={"sequenceDiagram\n  participant Co as Counselor\n  participant FE as ORISO-Admin\n  participant US as UserService\n  participant MX as Matrix\n  Co->>FE: Pick ticket from Inbox (Anfragephase)\n  FE->>US: POST /live-chat/accept\n  US->>MX: create encrypted room\n  Note over Co,FE: Active 1-1 chat ongoing\n  Co->>FE: \"Invite more people\" (⇧I)\n  FE->>US: POST /rooms/{id}/invite\n  US->>MX: invite peers → room becomes group\n  Note over Co,FE: Client sees \"Counsellor invited X\" system msg + may consent again"} />
 
 ### 5.3 Counselor Sends Restricted Message ("visible only to: Moderators")
 
-```mermaid
-sequenceDiagram
-  participant Co as Counselor
-  participant FE as ORISO-Element
-  participant Bot as Carimat-Relay (server)
-  participant MX as Matrix
-  Co->>FE: Compose msg → Adressaten wählen
-  FE->>FE: Lock send unless ≥1 recipient selected
-  Co->>FE: Pick "3 Moderators" + send
-  FE->>Bot: encrypted_payload + recipient_set
-  Bot->>MX: For each recipient, send 1-to-1 sub-thread (or per-recipient Megolm)
-  Bot-->>FE: ack with sub-event-ids
-  FE-->>Co: chip "visible only to: 3 Moderators"
-```
+<Mermaid chart={"sequenceDiagram\n  participant Co as Counselor\n  participant FE as ORISO-Element\n  participant Bot as Carimat-Relay (server)\n  participant MX as Matrix\n  Co->>FE: Compose msg → Adressaten wählen\n  FE->>FE: Lock send unless ≥1 recipient selected\n  Co->>FE: Pick \"3 Moderators\" + send\n  FE->>Bot: encrypted_payload + recipient_set\n  Bot->>MX: For each recipient, send 1-to-1 sub-thread (or per-recipient Megolm)\n  Bot-->>FE: ack with sub-event-ids\n  FE-->>Co: chip \"visible only to: 3 Moderators\""} />
 
 ### 5.4 Counselor Marks & Blurs PII, Then Sends to Editor
 
-```mermaid
-sequenceDiagram
-  participant Co as Counselor
-  participant FE as ORISO-Element
-  participant US as UserService
-  Co->>FE: Highlight client text
-  FE->>FE: Apply color (Tiptap mark)
-  Co->>FE: Toggle "blur" eye → 80% white overlay
-  Co->>FE: Click "send all marked → editor"
-  FE->>FE: Decrypt locally, scrub, package as case-note draft
-  FE->>US: POST /case-notes (encrypted at rest)
-  US-->>FE: 201 Created
-```
+<Mermaid chart={"sequenceDiagram\n  participant Co as Counselor\n  participant FE as ORISO-Element\n  participant US as UserService\n  Co->>FE: Highlight client text\n  FE->>FE: Apply color (Tiptap mark)\n  Co->>FE: Toggle \"blur\" eye → 80% white overlay\n  Co->>FE: Click \"send all marked → editor\"\n  FE->>FE: Decrypt locally, scrub, package as case-note draft\n  FE->>US: POST /case-notes (encrypted at rest)\n  US-->>FE: 201 Created"} />
 
 ### 5.5 Case Handover Flow
 
-```mermaid
-sequenceDiagram
-  autonumber
-  participant Co1 as Counselor A (going off)
-  participant Co2 as Counselor B (taking over)
-  participant FE as ORISO-Admin
-  participant US as UserService
-  participant Cl as Client
-  Co1->>FE: Open Handover modal
-  Co1->>FE: Pick reason (Sickness)
-  Co1->>FE: Select Co2 from same agency
-  FE->>US: POST /handover { from, to, reason }
-  US->>US: check consent rules for reason
-  US->>Co2: invite to room
-  US->>Cl: System msg "Deine vorherige Beraterin ist leider krank…"
-  alt reason needs client consent
-    US->>Cl: ask consent
-    Cl-->>US: accept / reject
-  end
-  Co2->>FE: accept
-  US->>MX: rotate room ownership; remove Co1
-```
+<Mermaid chart={"sequenceDiagram\n  autonumber\n  participant Co1 as Counselor A (going off)\n  participant Co2 as Counselor B (taking over)\n  participant FE as ORISO-Admin\n  participant US as UserService\n  participant Cl as Client\n  Co1->>FE: Open Handover modal\n  Co1->>FE: Pick reason (Sickness)\n  Co1->>FE: Select Co2 from same agency\n  FE->>US: POST /handover { from, to, reason }\n  US->>US: check consent rules for reason\n  US->>Co2: invite to room\n  US->>Cl: System msg \"Deine vorherige Beraterin ist leider krank…\"\n  alt reason needs client consent\n    US->>Cl: ask consent\n    Cl-->>US: accept / reject\n  end\n  Co2->>FE: accept\n  US->>MX: rotate room ownership; remove Co1"} />
 
 ### 5.6 Help Request / Internal Escalation
 
-```mermaid
-sequenceDiagram
-  participant Co as Counselor
-  participant FE as ORISO-Admin
-  participant US as UserService
-  participant Sup as Supervisor
-  Co->>FE: Chatraum Einstellungen → Help requests (⇧Ä)
-  FE->>US: POST /escalation { chatId, recipient, mode: internal|external }
-  US->>Sup: notification + read-only Matrix invite
-  Sup-->>FE: review and respond (in-thread)
-```
+<Mermaid chart={"sequenceDiagram\n  participant Co as Counselor\n  participant FE as ORISO-Admin\n  participant US as UserService\n  participant Sup as Supervisor\n  Co->>FE: Chatraum Einstellungen → Help requests (⇧Ä)\n  FE->>US: POST /escalation { chatId, recipient, mode: internal|external }\n  US->>Sup: notification + read-only Matrix invite\n  Sup-->>FE: review and respond (in-thread)"} />
 
 ### 5.7 AI Summary
 
-```mermaid
-sequenceDiagram
-  participant Co as Counselor
-  participant FE as ORISO-Element
-  participant AI as AI Workflow (self-hosted)
-  participant US as UserService
-  Co->>FE: Click "Chat Zusammenfassen" (⇧Ü)
-  FE->>FE: Decrypt last N events locally
-  FE->>FE: Strip PII tokens
-  FE->>AI: POST /summarize (scrubbed text)
-  AI-->>FE: bullet-summary
-  FE->>Co: editable summary panel
-  Co->>FE: Save
-  FE->>US: PUT /case-notes/{id}
-```
+<Mermaid chart={"sequenceDiagram\n  participant Co as Counselor\n  participant FE as ORISO-Element\n  participant AI as AI Workflow (self-hosted)\n  participant US as UserService\n  Co->>FE: Click \"Chat Zusammenfassen\" (⇧Ü)\n  FE->>FE: Decrypt last N events locally\n  FE->>FE: Strip PII tokens\n  FE->>AI: POST /summarize (scrubbed text)\n  AI-->>FE: bullet-summary\n  FE->>Co: editable summary panel\n  Co->>FE: Save\n  FE->>US: PUT /case-notes/{id}"} />
 
 ## 6. Role-Based Insights
 

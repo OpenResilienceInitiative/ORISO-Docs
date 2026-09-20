@@ -4,7 +4,7 @@ description: "Counselor-side AI and annotation tools: Chat Summarisation, Mark-T
 ---
 
 <Callout>
-The May-2026 Figma upgrades the AI track from "planned" to **active design**: a dedicated **Chat Zusammenfassen** button (`⇧Ü`) appears in the room settings, paired with a **Mark Text + PII Blur** toolbar in the message context menu. This page replaces the previously planned-only [4.1 Transcripts](/product/features/transcription).
+The May-2026 Figma upgrades the AI track from "planned" to **active design**: a dedicated **Chat Zusammenfassen** button (`⇧Ü`) appears in the room settings, paired with a **Mark Text + PII Blur** toolbar in the message context menu. This page replaces the previously planned-only [4.1 Transcripts](/produkt/core-features/transcription).
 </Callout>
 
 ## 4.6.1 The Three Tools, in One Sentence Each
@@ -29,23 +29,7 @@ Click → side panel with a generated summary, editable, savable as a counselor-
 
 ### How it actually works
 
-```mermaid
-sequenceDiagram
-  autonumber
-  participant Co as Counselor
-  participant FE as ORISO-Element
-  participant AI as Self-hosted AI Workflow
-  participant US as UserService
-  Co->>FE: Click Chat Zusammenfassen (⇧Ü)
-  FE->>FE: Decrypt last N events locally (Megolm)
-  FE->>FE: PII-scrub (names, emails, account numbers, phone)
-  FE->>AI: POST /summarize { scrubbed_text, language }
-  AI-->>FE: Bullet-point summary
-  FE->>Co: Show in editable side panel
-  Co->>FE: Edit, Save
-  FE->>US: PUT /case-notes/{id} { encrypted_at_rest, owner=counselor }
-  US-->>FE: 200 OK (opaque session_id link only)
-```
+<Mermaid chart={"sequenceDiagram\n  autonumber\n  participant Co as Counselor\n  participant FE as ORISO-Element\n  participant AI as Self-hosted AI Workflow\n  participant US as UserService\n  Co->>FE: Click Chat Zusammenfassen (⇧Ü)\n  FE->>FE: Decrypt last N events locally (Megolm)\n  FE->>FE: PII-scrub (names, emails, account numbers, phone)\n  FE->>AI: POST /summarize { scrubbed_text, language }\n  AI-->>FE: Bullet-point summary\n  FE->>Co: Show in editable side panel\n  Co->>FE: Edit, Save\n  FE->>US: PUT /case-notes/{id} { encrypted_at_rest, owner=counselor }\n  US-->>FE: 200 OK (opaque session_id link only)"} />
 
 ### Hard rules
 
@@ -133,15 +117,15 @@ The blur metadata is part of the same annotation event as Mark Text, with `blur:
 
 - **Blur on a message that gets deleted** → annotation is orphaned; client garbage-collects.
 - **Blur on a thread that gets archived** → annotation persists with the chat; deleted with the chat.
-- **Receiver has older client without blur support** → fallback: render the body in plain text but show a banner *"This message contains content the counselor wished to blur — please disregard."* (Decision needed — see [Figma analysis §4.4](/product/figma-analysis-2026-05#4-4-pii-blur-durability-of-marks).)
+- **Receiver has older client without blur support** → fallback: render the body in plain text but show a banner *"This message contains content the counselor wished to blur — please disregard."* (Decision needed — see [Figma analysis §4.4](/produkt/design-und-quality/figma-analysis-2026-05#44-pii-blur--durability-of-marks).)
 
 ## 4.6.5 Per-User Visibility — *"Message Visible to..."*
 
-Both Mark and Blur can be combined with the **Multi-Recipient Send** (see [Group Chats §4.5.4](/product/features/group-chats#4-5-4-multi-recipient-send-w%C3%A4hle-wer-diese-nachricht-sehen-soll)) so that a marked, blurred excerpt is visible only to the moderators while the original message remains visible to all.
+Both Mark and Blur can be combined with the **Multi-Recipient Send** (see [Group Chats §4.5.4](/produkt/core-features/group-chats#454-multi-recipient-send-wähle-wer-diese-nachricht-sehen-soll)) so that a marked, blurred excerpt is visible only to the moderators while the original message remains visible to all.
 
 ## 4.6.6 Permissions
 
-These tools are **counselor-only** by default and can be globally toggled by admins. The Permissions Matrix (see [Roles & Permissions](/product/roles-permissions#3-7-per-chat-type-permissions-matrix)) controls them per chat-type.
+These tools are **counselor-only** by default and can be globally toggled by admins. The Permissions Matrix (see [Roles & Permissions](/produkt/architecture-und-roles/roles-permissions#37-per-chat-type-permissions-matrix)) controls them per chat-type.
 
 | Tool | Anonymous | 1-zu-1 | Group | Supervision |
 |---|---|---|---|---|
@@ -162,7 +146,7 @@ Admins (Tenant / Agency) can disable any of these per chat type to satisfy stric
 
 ## 4.6.8 Related
 
-- [Group Chats (4.5)](/product/features/group-chats) — multi-recipient send pairs with these tools.
-- [Roles & Permissions](/product/roles-permissions) — per-chat-type matrix.
-- [Edge Cases](/product/edge-cases) — failure modes for AI, blur, marks.
-- [Figma Analysis](/product/figma-analysis-2026-05) — source screens.
+- [Group Chats (4.5)](/produkt/core-features/group-chats) — multi-recipient send pairs with these tools.
+- [Roles & Permissions](/produkt/architecture-und-roles/roles-permissions) — per-chat-type matrix.
+- [Edge Cases](/produkt/design-und-quality/edge-cases) — failure modes for AI, blur, marks.
+- [Figma Analysis](/produkt/design-und-quality/figma-analysis-2026-05) — source screens.

@@ -53,6 +53,41 @@ function firstParagraph(body) {
   return undefined;
 }
 
+/**
+ * Überschriften-Anker so bilden wie der Renderer (github-slugger): Satzzeichen fallen weg,
+ * Leerzeichen werden zu Bindestrichen, Umlaute bleiben. `## 4.5.4 Multi-Recipient Send`
+ * ergibt also `454-multi-recipient-send`.
+ */
+const SLUG_STRIP = /[ -⁯⸀-⹿\\'!"#$%&()*+,./:;<=>?@[\]^`{|}~]/g;
+
+function headingSlug(text) {
+  return text
+    .replace(/`/g, '')
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .trim()
+    .toLowerCase()
+    .replace(SLUG_STRIP, '')
+    .replace(/ /g, '-');
+}
+
+/** All heading slugs of a markdown body, code fences excluded. */
+function headingSlugs(md) {
+  const out = [];
+  const seen = new Map();
+  let inFence = false;
+  for (const line of md.split('\n')) {
+    if (/^\s*```/.test(line)) { inFence = !inFence; continue; }
+    if (inFence) continue;
+    const m = line.match(/^#{1,6}\s+(.+?)\s*#*\s*$/);
+    if (!m) continue;
+    const base = headingSlug(m[1]);
+    const n = seen.get(base) ?? 0;
+    seen.set(base, n + 1);
+    out.push(n ? `${base}-${n}` : base);
+  }
+  return out;
+}
+
 /** Turn bare `ADR-0NN` mentions into links — but not inside inline code, links or headings. */
 function linkAdrMentions(md, known) {
   const lines = md.split('\n');
@@ -96,7 +131,7 @@ function syncAdrs() {
     const slug = `adr-${num}`;
     const meta = {
       title: title ?? f.replace(/\.md$/, ''),
-      description: [status && `Status: ${status}`, date && `Datum: ${date}`].filter(Boolean).join(' · ') || undefined,
+      description: [status && `Status: ${status}`, date && `Date: ${date}`].filter(Boolean).join(' · ') || undefined,
       source: `oriso-platform/decisions/${f}`,
     };
     // ADRs stay plain Markdown (they contain angle brackets and braces in prose and code).
@@ -119,9 +154,9 @@ function syncAdrs() {
   const index =
     frontmatter({
       title: 'Architekturentscheidungen (ADR)',
-      description: `Plattformweite Architecture Decision Records — ${files.length} Entscheidungen, aus dem Repository ORISO-Docs.`,
+      description: `Platform-wide Architecture Decision Records — ${files.length} decisions, maintained in the ORISO-Docs repository.`,
     }) +
-    `Diese Reihe ist die kanonische Sammlung der plattformweiten Entscheidungen. Die DSFA-Kapitel verweisen auf sie; jeder Verweis der Form \`ADR-0NN\` in den Kapiteltexten ist auf die jeweilige Seite verlinkt.\n\n` +
+    `This is the canonical collection of platform-wide decisions. The DPIA chapters refer to it; each \`ADR-0NN\` reference in those chapters links to the corresponding page.\n\n` +
     `| Nr. | Entscheidung | Status |\n|---|---|---|\n` +
     files
       .map((f) => {
@@ -138,7 +173,7 @@ function syncAdrs() {
   writeFileSync(join(OUT_ADR, 'index.md'), index);
   writeFileSync(
     join(OUT_ADR, 'meta.json'),
-    JSON.stringify({ title: 'Entscheidungen (ADR)', root: true, pages: ['index', ...pages] }, null, 2) + '\n',
+    JSON.stringify({ title: 'Decisions (ADR)', root: true, pages: ['index', ...pages] }, null, 2) + '\n',
   );
   return known;
 }
@@ -335,6 +370,23 @@ function migrateMdx(raw) {
   return out;
 }
 
+/**
+ * ```mermaid-Blöcke in `<Mermaid chart={…} />` überführen.
+ *
+ * In den Quelldateien bleibt der Zaun stehen — GitHub rendert ihn von sich aus, und der
+ * Diagrammtext bleibt diffbar. Auf der Site zeichnet die Komponente ihn im Browser. Der
+ * Diagrammtext geht als JSON-String in das Attribut, damit Anführungszeichen, Klammern und
+ * Zeilenumbrüche MDX nicht durcheinanderbringen.
+ */
+function convertMermaid(text) {
+  let found = 0;
+  const out = text.replace(/^```mermaid\n([\s\S]*?)^```[ \t]*$/gm, (_whole, body) => {
+    found++;
+    return `<Mermaid chart={${JSON.stringify(body.replace(/\n$/, ''))}} />`;
+  });
+  return { text: out, found };
+}
+
 /** Bilder der Alt-Doku unter public/ bereitstellen — die Seiten verweisen absolut darauf. */
 function copyDocsAssets() {
   let n = 0;
@@ -354,6 +406,97 @@ function copyDocsAssets() {
   return n;
 }
 
+// ------------------------------------------------------------------ Links umschreiben
+
+const GITHUB_BLOB = 'https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/dev';
+
+/**
+ * Die Seiten stammen aus einer Mintlify-Navigation und verlinken einander auf zwei Arten,
+ * von denen im Fumadocs-Baum keine mehr stimmt:
+ *
+ *   `/oriso-platform/troubleshooting`  — Mintlify-Seiten-ID, hier gibt es diesen Pfad nicht
+ *   `./backend-services.md`            — Repository-Nachbardatei, liegt hier in einer anderen Gruppe
+ *
+ * Beides wird auf die tatsächliche Seiten-URL abgebildet (`/plattform/kernsysteme/backend-services`).
+ * Verweise auf Repository-Dateien, die keine Seite sind (`./diagrams/auth-flow.mmd`,
+ * `services-local-setup/run-oriso-local.sh`), zeigen auf GitHub — dort sind sie lesbar,
+ * und externe Links öffnet die Site ohnehin in einem neuen Tab.
+ */
+function makeLinkRewriter(urlByPage, assetExists, anchorsByPage) {
+  const unresolved = [];
+
+  /**
+   * Die Alt-Doku schreibt Anker wie `#4-5-4-multi-recipient-send` — der Renderer bildet
+   * `4.5.4` aber auf `454` ab. Anker deshalb gegen die echten Überschriften der Zielseite
+   * auflösen: Vergleich über Buchstaben und Ziffern, Trennzeichen ignoriert.
+   */
+  function fixAnchor(pageStem, hash) {
+    const want = decodeURIComponent(hash).toLowerCase().replace(/[^\p{L}\p{N}]/gu, '');
+    const candidates = anchorsByPage.get(pageStem) ?? [];
+    if (candidates.includes(decodeURIComponent(hash).toLowerCase())) return decodeURIComponent(hash).toLowerCase();
+    return candidates.find((slug) => slug.replace(/[^\p{L}\p{N}]/gu, '') === want) ?? null;
+  }
+
+  function resolveTarget(href, pageDir) {
+    const [pathPart, hash] = href.split('#');
+    if (!pathPart) return null; // reiner Seitenanker
+    const clean = pathPart.replace(/\/$/, '');
+    const repoPath = clean.startsWith('/')
+      ? clean.slice(1)
+      : join(pageDir, clean).replace(/\\/g, '/').replace(/^\.\//, '');
+    const stem = repoPath.replace(/\.mdx?$/, '');
+    const url = urlByPage.get(stem);
+    if (url) {
+      if (!hash) return url;
+      const fixed = fixAnchor(stem, hash);
+      if (!fixed) unresolved.push(href);
+      return url + '#' + (fixed ?? hash);
+    }
+    if (assetExists(repoPath)) return null; // Bild/Asset unter public/ — bleibt wie es ist
+    if (existsSync(join(repo, repoPath))) return `${GITHUB_BLOB}/${repoPath}${hash ? '#' + hash : ''}`;
+    // Seiten, die dieses Skript selbst erzeugt (ADR-Reihe), werden absolut verlinkt.
+    if (/^\/(decisions|legal)(\/|$)/.test(clean)) return null;
+    unresolved.push(href);
+    return null;
+  }
+
+  function rewrite(text, pageDir) {
+    return outsideCode(text, (part) =>
+      part
+        .replace(/(\]\(\s*)([^)\s]+)(\s*\))/g, (whole, open, href, close) => {
+          if (/^(https?:|mailto:|tel:|#)/.test(href)) return whole;
+          const to = resolveTarget(href, pageDir);
+          return to ? `${open}${to}${close}` : whole;
+        })
+        .replace(/(href=")([^"]+)(")/g, (whole, open, href, close) => {
+          if (/^(https?:|mailto:|tel:|#)/.test(href)) return whole;
+          const to = resolveTarget(href, pageDir);
+          return to ? `${open}${to}${close}` : whole;
+        }),
+    );
+  }
+
+  return { rewrite, unresolved };
+}
+
+/**
+ * Die Site setzt die Überschrift aus dem Frontmatter-Titel. Steht im Text noch einmal
+ * dieselbe H1 — so schreiben es die aus dem Graphen erzeugten Seiten —, erscheint sie
+ * doppelt. Also entfernen, aber nur wenn sie wirklich dem Titel entspricht.
+ */
+function dropDuplicateH1(raw) {
+  const fm = raw.match(/^---\n([\s\S]*?)\n---\n/);
+  if (!fm) return raw;
+  const title = fm[1].match(/^title:\s*(.+)$/m)?.[1].trim().replace(/^["']|["']$/g, '');
+  if (!title) return raw;
+  const rest = raw.slice(fm[0].length);
+  const h1 = rest.match(/^\n*# (.+)\n/);
+  if (!h1) return raw;
+  const norm = (s) => s.toLowerCase().replace(/[^\p{L}\p{N}]/gu, '');
+  if (norm(h1[1]) !== norm(title)) return raw;
+  return fm[0] + rest.slice(h1[0].length).replace(/^\n+/, '');
+}
+
 function syncProductDocs() {
   const cfgPath = join(repo, 'docs.json');
   if (!existsSync(cfgPath)) return [];
@@ -361,10 +504,34 @@ function syncProductDocs() {
   const tabs = cfg.navigation?.tabs ?? [];
   // Tab-Titel -> Ordnername und Anzeigename in der Seitenleiste
   const TAB_DIRS = {
-    'Product': ['produkt', 'Produkt'],
-    'ORISO Platform Architecture': ['plattform', 'Plattform-Architektur'],
-    'ORISO Platform Setup': ['betrieb', 'Betrieb & Einrichtung'],
+    'Product': ['produkt', 'Product'],
+    'ORISO Platform Architecture': ['plattform', 'Platform Architecture'],
+    'ORISO Platform Setup': ['betrieb', 'Setup & Operations'],
   };
+  const groupDir = (name) =>
+    name.toLowerCase().replace(/&/g, 'und').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+  // Erster Durchgang: Seiten-ID (Repository-Pfad ohne Endung) -> Ziel-URL und Überschriften-Anker.
+  const urlByPage = new Map();
+  const anchorsByPage = new Map();
+  for (const tab of tabs) {
+    const [dir] = TAB_DIRS[tab.tab] ?? [tab.tab.toLowerCase().replace(/\W+/g, '-')];
+    for (const group of tab.groups ?? []) {
+      for (const page of group.pages ?? []) {
+        const name = page.split('/').pop();
+        urlByPage.set(page, `/${dir}/${groupDir(group.group)}/${name}`.replace(/\/index$/, ''));
+        const src = [page + '.mdx', page + '.md'].map((c) => join(repo, c)).find(existsSync);
+        if (src) anchorsByPage.set(page, headingSlugs(readUtf8(src)));
+      }
+    }
+  }
+  const assetExists = (p) => existsSync(join(site, 'public', p)) || existsSync(join(repo, p));
+  const linker = makeLinkRewriter(
+    urlByPage,
+    (p) => /^(oriso-platform\/assets|product\/assets|logo)\//.test(p) && assetExists(p),
+    anchorsByPage,
+  );
+
   const roots = [];
   let pages = 0;
   const missing = [];
@@ -377,7 +544,7 @@ function syncProductDocs() {
     const groupDirs = [];
 
     for (const group of tab.groups ?? []) {
-      const gdir = group.group.toLowerCase().replace(/&/g, 'und').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      const gdir = groupDir(group.group);
       const gPath = join(outRoot, gdir);
       mkdirSync(gPath, { recursive: true });
       const gPages = [];
@@ -387,11 +554,16 @@ function syncProductDocs() {
         const src = [page + '.mdx', page + '.md'].map((c) => join(repo, c)).find(existsSync);
         if (!src) { missing.push(page); continue; }
         const name = page.split('/').pop();
+        const pageDir = dirname(page);
         // .md-Quellen bleiben .md — sie enthalten keine Komponenten und dürfen nicht
         // versehentlich als JSX geparst werden (spitze Klammern in Beispielen).
-        const isMdx = src.endsWith('.mdx');
+        const raw = dropDuplicateH1(readUtf8(src));
+        const body = src.endsWith('.mdx') ? migrateMdx(raw) : raw;
+        // Eine Markdown-Seite mit Mermaid-Zaun braucht MDX, damit die Komponente greift.
+        const mermaid = convertMermaid(body);
+        const isMdx = src.endsWith('.mdx') || mermaid.found > 0;
         writeFileSync(join(gPath, name + (isMdx ? '.mdx' : '.md')),
-                      isMdx ? migrateMdx(readUtf8(src)) : readUtf8(src));
+                      linker.rewrite(mermaid.text, pageDir));
         gPages.push(name);
         pages++;
       }
@@ -406,7 +578,10 @@ function syncProductDocs() {
     roots.push(dir);
   }
   console.log(`[sync-content] ${pages} Produkt-/Plattformseiten übernommen` +
-              (missing.length ? `, ${missing.length} fehlen: ${missing.slice(0, 4).join(', ')}` : ''));
+              (missing.length ? `, ${missing.length} fehlen: ${missing.slice(0, 4).join(', ')}` : '') +
+              (linker.unresolved.length
+                ? `, ${linker.unresolved.length} Links ohne Ziel: ${[...new Set(linker.unresolved)].slice(0, 4).join(', ')}`
+                : ''));
   return roots;
 }
 
