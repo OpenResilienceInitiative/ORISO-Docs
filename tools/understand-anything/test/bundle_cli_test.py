@@ -45,7 +45,7 @@ class PublicCliTests(unittest.TestCase):
         assert command(["git", "clone", self.origin, self.repo]).returncode == 0
         git(self.repo, "config", "user.email", "test@example.invalid")
         git(self.repo, "config", "user.name", "Synthetic Test")
-        git(self.repo, "checkout", "-b", "dev")
+        git(self.repo, "checkout", "-B", "main")
         (self.repo / "README.md").write_text("source one\n")
         (self.repo / ".understand-anything").mkdir()
         (self.repo / ".understand-anything/knowledge-graph.json").write_text(
@@ -53,7 +53,7 @@ class PublicCliTests(unittest.TestCase):
         )
         git(self.repo, "add", ".")
         git(self.repo, "commit", "-m", "source")
-        git(self.repo, "push", "origin", "dev")
+        git(self.repo, "push", "origin", "main")
         self.sha = git(self.repo, "rev-parse", "HEAD")
         self.remote = self.root / "published"
         self.cache = self.root / "cache"
@@ -180,7 +180,7 @@ class PublicCliTests(unittest.TestCase):
         (self.repo / "README.md").write_text("source two")
         git(self.repo, "add", ".")
         git(self.repo, "commit", "-m", "second")
-        git(self.repo, "push", "origin", "dev")
+        git(self.repo, "push", "origin", "main")
         failed = self.pull()
         self.assertNotEqual(failed.returncode, 0)
         self.assertIn("NOT-CURRENT-SOURCE", failed.stderr)
@@ -280,7 +280,7 @@ if sha is None:g['project']['sourceCommits']={'ORISO-Test':json.loads((pathlib.P
                 "--publish-root",
                 self.output,
                 "--repo",
-                "ORISO-Test:dev",
+                "ORISO-Test:main",
             ],
             self.repo,
             env,

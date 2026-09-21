@@ -8,6 +8,7 @@ import shutil
 import tempfile
 import uuid
 from .contract import (
+    MAX_AGE,
     ContractError,
     asset,
     envelope,
@@ -117,7 +118,7 @@ def pull(fetch, root, now=None, expected_refs=None, check=None, channel=None):
         try:
             fetch("current/manifest.json", stage / "manifest.json")
             manifest = read_json(stage / "manifest.json")
-            envelope(manifest, now, 86400, expected_refs)
+            envelope(manifest, now, MAX_AGE, expected_refs)
             files = manifest.get("files")
             require(isinstance(files, list) and files, "manifest files required")
             seen = set()

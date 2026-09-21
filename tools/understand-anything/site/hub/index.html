@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="de" data-lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ORISO Understand</title>
+<meta name="description" content="Wie ORISO gebaut ist: Feature-Erklärungen, Code-Wissensgraphen je Repository, Doku und Rechtliches. — How ORISO is built: feature explanations, code knowledge graphs per repository, documentation and legal.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/hub.css">
+<script src="/assets/lang.js"></script>
+<script src="/assets/status.js" defer></script>
+</head>
+<body>
+
+<div class="appbar">
+  <div class="appbar-in">
+    <span class="brandname"><a href="/">ORISO Understand</a></span>
+    <span class="sub">understand.oriso.org</span>
+    <span class="sp"></span>
+    <span class="badge ok" data-ua="badge"><span lang="de">Graph vom <span data-ua="date-de">…</span></span><span lang="en">Graph of <span data-ua="date-en">…</span></span></span>
+    <span class="badge"><span lang="de">Branch main</span><span lang="en">Branch main</span></span>
+    <span class="badge"><span lang="de">täglich neu gebaut</span><span lang="en">rebuilt daily</span></span>
+    <span class="langswitch" role="group" aria-label="Sprache / Language">
+      <button type="button" data-lang="de" aria-pressed="true">DE</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </span>
+  </div>
+</div>
+
+<header class="band">
+  <div class="band-in">
+    <div class="headcard">
+      <div class="eyebrow"><span lang="de">Wissensbasis der ORISO-Plattform</span><span lang="en">Knowledge base of the ORISO platform</span></div>
+      <h1><span lang="de">Verstehen, wie ORISO gebaut ist</span><span lang="en">Understand how ORISO is built</span></h1>
+      <p class="lead">
+        <span lang="de">Einmal am Tag wird der ausgelieferte Quelltext (Branch main) aller öffentlichen Repositorien neu gelesen und als Wissensgraph
+          abgelegt: Dateien, Funktionen, Endpunkte, Architekturentscheidungen und ihre Verbindungen.
+          Diese Seite führt zu den Graphen, zu den Feature-Erklärungen darüber und zu Doku und Rechtsdokumenten.</span>
+        <span lang="en">Once a day the released source (branch main) of every public repository is read again and stored as a knowledge
+          graph: files, functions, endpoints, architecture decisions and how they connect. This page leads
+          to those graphs, to the feature explanations built on top of them, and to documentation and legal texts.</span>
+      </p>
+      <div class="chips">
+        <span class="chip"><span class="dot"></span><span lang="de">Features: wie eine Funktion arbeitet</span><span lang="en">Features: how a function works</span></span>
+        <span class="chip"><span class="dot"></span><span lang="de">Code: was welche Datei tut</span><span lang="en">Code: what each file does</span></span>
+        <span class="chip"><span class="dot"></span><span lang="de">Stand immer sichtbar</span><span lang="en">Freshness always visible</span></span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<nav class="chipnav" aria-label="Bereiche / Sections">
+  <div class="chipnav-in">
+    <a href="#features"><span class="no">1</span><span lang="de">Features</span><span lang="en">Features</span></a>
+    <a href="#code"><span class="no">2</span><span lang="de">Code</span><span lang="en">Code</span></a>
+    <a href="#doku"><span class="no">3</span><span lang="de">Doku &amp; Rechtliches</span><span lang="en">Docs &amp; legal</span></a>
+    <a href="#frische"><span class="no">4</span><span lang="de">Frische</span><span lang="en">Freshness</span></a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <div class="meta">
+    <div><div class="vlabel"><span lang="de">Letzter Lauf</span><span lang="en">Last run</span></div><div class="vvalue" data-ua="built">…</div></div>
+    <div><div class="vlabel"><span lang="de">Quelle</span><span lang="en">Source</span></div><div class="vvalue"><span lang="de">Branch</span><span lang="en">Branch</span> <span class="mono">main</span></div></div>
+    <div><div class="vlabel"><span lang="de">Repositorien</span><span lang="en">Repositories</span></div><div class="vvalue" data-ua="repositories">…</div></div>
+    <div><div class="vlabel"><span lang="de">Knoten insgesamt</span><span lang="en">Nodes in total</span></div><div class="vvalue" data-ua="nodes">…</div></div>
+    <div><div class="vlabel"><span lang="de">Feature-Seiten</span><span lang="en">Feature pages</span></div><div class="vvalue">1</div></div>
+    <div><div class="vlabel"><span lang="de">Zustand</span><span lang="en">State</span></div><div class="vvalue"><span class="status plan" data-ua="state"><span lang="de">wird geladen</span><span lang="en">loading</span></span></div></div>
+  </div>
+
+  <section id="features">
+    <div class="ch"><span class="chapter-no">1</span><h2><span lang="de">Features</span><span lang="en">Features</span></h2>
+      <span class="sub2"><span lang="de">Wie eine Funktion arbeitet — für Produkt, Qualitätssicherung und Entwicklung</span><span lang="en">How a function works — for product, quality assurance and engineering</span></span></div>
+    <div class="prose">
+      <p>
+        <span lang="de">Die Graphen beantworten „was tut diese Datei". Sie beantworten nicht „wie funktioniert die
+          Fallübergabe". Dafür gibt es Feature-Seiten: eine Seite je Funktion, geschrieben aus dem Graphen,
+          den Architekturentscheidungen und dem Quelltext — mit dem Stand der Entwicklung an jeder Stelle.</span>
+        <span lang="en">The graphs answer "what does this file do". They do not answer "how does case handover
+          work". That is what the feature pages are for: one page per function, written from the graph, the
+          architecture decisions and the source — with the state of development marked at every step.</span>
+      </p>
+    </div>
+    <div class="fcards">
+      <a class="fcard" href="/features/case-handover.html" style="--sc:var(--brand)">
+        <div class="eb"><span><span lang="de">Fallübergabe</span><span lang="en">Case handover</span></span><span class="status warn"><span lang="de">teilweise gebaut</span><span lang="en">partly built</span></span></div>
+        <h3><span lang="de">Wie Case Handover funktioniert</span><span lang="en">How case handover works</span></h3>
+        <p class="q"><span lang="de">„Eine Kollegin ist abwesend — wie kommt ihr Fall zu jemand anderem?"</span><span lang="en">"A colleague is away — how does her case reach somebody else?"</span></p>
+        <p class="d">
+          <span lang="de">Fall holen, Zustimmung der ratsuchenden Person, Mitlesen oder Übernahme,
+            beteiligte Dienste und Entscheidungen. Das Abgeben durch die bisherige Beraterin wird gerade entwickelt.</span>
+          <span lang="en">Taking a case, consent of the person seeking advice, reading along or taking over,
+            the services and decisions involved. Handing a case over is currently being developed.</span>
+        </p>
+      </a>
+      <div class="fcard" style="--sc:var(--ink-3)">
+        <div class="eb"><span><span lang="de">Weitere Seiten</span><span lang="en">More pages</span></span><span class="status plan"><span lang="de">geplant</span><span lang="en">planned</span></span></div>
+        <h3><span lang="de">Was als Nächstes beschrieben wird</span><span lang="en">What gets described next</span></h3>
+        <p class="d">
+          <span lang="de">Supervision, Team-Besprechung, Erstantwort, Einwilligungen, Registrierung und
+            Termine — in derselben Form: Ablauf, Rollen, Regeln, Technik, Stand.</span>
+          <span lang="en">Supervision, team discussion, first response, consent, registration and
+            appointments — in the same form: flow, roles, rules, technology, state.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="code">
+    <div class="ch"><span class="chapter-no">2</span><h2><span lang="de">Code</span><span lang="en">Code</span></h2>
+      <span class="sub2"><span lang="de">Supergraph für den Überblick, einzelne Repository-Graphen für die Details</span><span lang="en">Supergraph for the overview, individual repository graphs for the details</span></span></div>
+
+    <h3 id="supergraph"><span lang="de">Plattformüberblick: Supergraph</span><span lang="en">Platform overview: Supergraph</span></h3>
+    <div class="cards">
+      <a class="card" href="/docs/?token=oriso-docs-dashboard">
+        <div class="t"><span><span lang="de">Supergraph — gesamte ORISO-Plattform</span><span lang="en">Supergraph — the entire ORISO platform</span></span></div>
+        <div class="d"><span lang="de">Der gemeinsame Graph über alle eingebundenen Repositories: Dienste, API-Endpunkte, Architektur-Ebenen und Verbindungen zwischen den Projekten. Hier starten, wenn noch nicht klar ist, welches Repository zuständig ist; anschließend im jeweiligen Detailgraphen weitergehen.</span><span lang="en">The combined graph across the included repositories: services, API endpoints, architecture layers and cross-project relationships. Start here to find the responsible repository, then explore its detailed graph.</span></div></a>
+    </div>
+
+    <h3><span lang="de">Anwendung</span><span lang="en">Application</span></h3>
+    <div class="cards">
+      <a class="card" href="/frontend/?token=oriso-frontend-dashboard">
+        <div class="t"><span>Frontend</span><span class="n" data-ua-nodes="ORISO-Frontend">…</span></div>
+        <div class="d"><span lang="de">Die Anwendung für Ratsuchende und Beratende.</span><span lang="en">The application for people seeking advice and for counsellors.</span></div></a>
+      <a class="card" href="/admin-service/?token=oriso-admin-dashboard">
+        <div class="t"><span><span lang="de">Administrationsbereich</span><span lang="en">Administration</span></span><span class="n" data-ua-nodes="ORISO-Admin">…</span></div>
+        <div class="d"><span lang="de">Verwaltung von Trägern, Beratungsstellen, Konten und Rechtstexten.</span><span lang="en">Managing organisations, counselling centres, accounts and legal texts.</span></div></a>
+    </div>
+
+    <h3><span lang="de">Fachliche Dienste</span><span lang="en">Domain services</span></h3>
+    <div class="cards">
+      <a class="card" href="/user-service/?token=oriso-userservice-dashboard">
+        <div class="t"><span>UserService</span><span class="n" data-ua-nodes="ORISO-UserService">…</span></div>
+        <div class="d"><span lang="de">Konten, Beratungen, Nachrichten, Fallübergabe, Supervision.</span><span lang="en">Accounts, counselling sessions, messages, case handover, supervision.</span></div></a>
+      <a class="card" href="/agency-service/?token=oriso-agency-dashboard">
+        <div class="t"><span>AgencyService</span><span class="n" data-ua-nodes="ORISO-AgencyService">…</span></div>
+        <div class="d"><span lang="de">Beratungsstellen, Postleitzahlbereiche, Zuordnungen.</span><span lang="en">Counselling centres, postcode areas, assignments.</span></div></a>
+      <a class="card" href="/tenant-service/?token=oriso-tenant-dashboard">
+        <div class="t"><span>TenantService</span><span class="n" data-ua-nodes="ORISO-TenantService">…</span></div>
+        <div class="d"><span lang="de">Träger, Einstellungen, Erscheinungsbild, Rechtstexte.</span><span lang="en">Organisations, settings, appearance, legal texts.</span></div></a>
+      <a class="card" href="/consulting-type-service/?token=oriso-consulting-type-dashboard">
+        <div class="t"><span>ConsultingTypeService</span><span class="n" data-ua-nodes="ORISO-ConsultingTypeService">…</span></div>
+        <div class="d"><span lang="de">Beratungsarten und ihre Konfiguration.</span><span lang="en">Counselling types and their configuration.</span></div></a>
+      <a class="card" href="/database/?token=oriso-database-dashboard">
+        <div class="t"><span>Database</span><span class="n" data-ua-nodes="ORISO-Database">…</span></div>
+        <div class="d"><span lang="de">Schema-Skripte und Ausgangsdaten.</span><span lang="en">Schema scripts and seed data.</span></div></a>
+    </div>
+
+    <h3><span lang="de">Plattform und Betrieb</span><span lang="en">Platform and operations</span></h3>
+    <div class="cards">
+      <a class="card" href="/keycloak/?token=oriso-keycloak-dashboard">
+        <div class="t"><span>Keycloak</span><span class="n" data-ua-nodes="ORISO-Keycloak">…</span></div>
+        <div class="d"><span lang="de">Anmeldung, Rollen, Zwei-Faktor-Verfahren.</span><span lang="en">Sign-in, roles, two-factor authentication.</span></div></a>
+      <a class="card" href="/helm/?token=oriso-helm-dashboard">
+        <div class="t"><span>Helm</span><span class="n" data-ua-nodes="ORISO-Helm">…</span></div>
+        <div class="d"><span lang="de">Auslieferung: Charts, Werte, Ingress.</span><span lang="en">Delivery: charts, values, ingress.</span></div></a>
+      <a class="card" href="/element-call/?token=oriso-elementcall-dashboard">
+        <div class="t"><span>ElementCall</span><span class="n" data-ua-nodes="ORISO-ElementCall">…</span></div>
+        <div class="d"><span lang="de">Video- und Sprachgespräche.</span><span lang="en">Video and voice calls.</span></div></a>
+      <a class="card" href="/livekit/?token=oriso-livekit-dashboard">
+        <div class="t"><span>LiveKit</span><span class="n" data-ua-nodes="ORISO-Livekit">…</span></div>
+        <div class="d"><span lang="de">Medienserver für Gespräche.</span><span lang="en">Media server for calls.</span></div></a>
+      <a class="card" href="/health-dashboard/?token=oriso-healthdashboard-dashboard">
+        <div class="t"><span>HealthDashboard</span><span class="n" data-ua-nodes="ORISO-HealthDashboard">…</span></div>
+        <div class="d"><span lang="de">Betriebsanzeige der Dienste.</span><span lang="en">Service health display.</span></div></a>
+      <a class="card" href="/status/?token=oriso-status-dashboard">
+        <div class="t"><span>Status</span><span class="n" data-ua-nodes="ORISO-Status">…</span></div>
+        <div class="d"><span lang="de">Öffentliche Störungsmeldungen.</span><span lang="en">Public incident notices.</span></div></a>
+      <a class="card" href="/signoz/?token=oriso-signoz-dashboard">
+        <div class="t"><span>SigNoz</span><span class="n" data-ua-nodes="ORISO-SigNoz">…</span></div>
+        <div class="d"><span lang="de">Messwerte und Ablaufverfolgung.</span><span lang="en">Metrics and tracing.</span></div></a>
+    </div>
+    <div class="prose">
+      <p class="sub2">
+        <span lang="de">Zwei weitere Dashboards sind gesperrt: ihre Repositorien sind privat, und der
+          Zugang zu dieser Seite schützt sie nicht. Sie werden freigegeben, sobald ein Zugangsschutz steht.</span>
+        <span lang="en">Two further dashboards are blocked: their repositories are private, and access to this
+          page does not protect them. They will be opened once proper access control is in place.</span>
+      </p>
+    </div>
+  </section>
+
+  <section id="doku">
+    <div class="ch"><span class="chapter-no">3</span><h2><span lang="de">Doku &amp; Rechtliches</span><span lang="en">Docs &amp; legal</span></h2></div>
+    <div class="cards">
+      <a class="card" href="https://docs.oriso.org/">
+        <div class="t"><span><span lang="de">Entwicklerdokumentation</span><span lang="en">Developer documentation</span></span></div>
+        <div class="d"><span lang="de">Einrichten, Architektur, Dienste, Abläufe — docs.oriso.org.</span><span lang="en">Setup, architecture, services, flows — docs.oriso.org.</span></div></a>
+      
+      <a class="card" href="/legal/dsfa/">
+        <div class="t"><span><span lang="de">Datenschutz-Folgenabschätzung</span><span lang="en">Data protection impact assessment</span></span></div>
+        <div class="d"><span lang="de">Was verarbeitet wird, auf welcher Grundlage, mit welchen Belegen.</span><span lang="en">What is processed, on which legal basis, with which evidence.</span></div></a>
+      <a class="card" href="/legal/evidence/">
+        <div class="t"><span><span lang="de">Belegkette</span><span lang="en">Evidence chain</span></span></div>
+        <div class="d"><span lang="de">Zuarbeiten und Nachweise zur Folgenabschätzung.</span><span lang="en">Supporting material and proof for the assessment.</span></div></a>
+    </div>
+  </section>
+
+  <section id="frische">
+    <div class="ch"><span class="chapter-no">4</span><h2><span lang="de">Frische</span><span lang="en">Freshness</span></h2></div>
+    <div class="prose">
+      <p>
+        <span lang="de">Einmal am Tag, nachts, baut GitHub alle Graphen neu — aus dem Branch
+          <span class="mono">main</span>, also aus dem Code, der ausgeliefert und abgenommen ist. Kurz danach holt
+          diese Seite das Ergebnis ab. Was auf <span class="mono">dev</span> liegt und noch nicht veröffentlicht ist,
+          steht folgerichtig noch nicht im Graphen — das ist Absicht. Datum und Zahlen oben kommen direkt aus dem
+          zuletzt abgeholten Graphen.</span>
+        <span lang="en">Once a day, at night, GitHub rebuilds every graph from the branch
+          <span class="mono">main</span> — the code that has been released and accepted. Shortly after, this page
+          picks up the result. Whatever sits on <span class="mono">dev</span> and has not been released yet is
+          consequently not in the graph — by design. The date and numbers above come straight from the graph
+          that was picked up last.</span>
+      </p>
+      <p>
+        <span lang="de">Die Feature-Seiten tragen ihren eigenen Stand: das Datum des Graphen, aus dem sie
+          geschrieben wurden, und den Entwicklungsstand jeder beschriebenen Teilfunktion.</span>
+        <span lang="en">The feature pages carry their own state: the date of the graph they were written from,
+          and the development state of every part they describe.</span>
+      </p>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <span lang="de">ORISO Understand · aus dem Quelltext erzeugt, nächtlich · Fragen an das ORISO-Team ·
+    <a href="https://docs.oriso.org/">Entwicklerdokumentation</a></span>
+  <span lang="en">ORISO Understand · generated from source, nightly · questions to the ORISO team ·
+    <a href="https://docs.oriso.org/">developer documentation</a></span>
+</footer>
+
+</body>
+</html>

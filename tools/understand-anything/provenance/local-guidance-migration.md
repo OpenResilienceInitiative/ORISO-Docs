@@ -1,3 +1,6 @@
+> **Superseded (2026-09-21, ORISO-Docs#129):** graphs now come from the daily `main` build via
+> understand.oriso.org, not from PreDev. Kept as a historical record.
+
 # Local UA guidance migration
 
 Business problem: old prompts direct agents to historical repository-root graphs and confuse ADR mentions with authority. Activation replaces only the UA guidance below. Back up each original file and check its recorded SHA-256 before applying; preserve unrelated rules. This patch records the local, non-Git compatibility changes for reviewer inspection.

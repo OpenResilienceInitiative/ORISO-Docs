@@ -23,6 +23,9 @@ _SCHEMA_DOCUMENT = json.loads(Path(__file__).with_name("schema.json").read_text(
 NODES = set(_SCHEMA_DOCUMENT["$defs"]["node"]["properties"]["type"]["enum"])
 EDGES = set(_SCHEMA_DOCUMENT["$defs"]["edge"]["properties"]["type"]["enum"])
 MAX_FILE = 256 * 1024 * 1024
+# A generation is built once a day (ORISO-Docs#129); 36 hours cover one missed
+# hour-level delay between build and install without accepting a skipped day.
+MAX_AGE = 36 * 3600
 
 
 class ContractError(ValueError):
@@ -543,7 +546,7 @@ def seal(root, sources, generation_id=None, now=None, expected_refs=None):
     root = Path(root)
     preflight_tree(root)
     now = now or now_utc()
-    source_map = source_check(sources, now, 86400, expected_refs)
+    source_map = source_check(sources, now, MAX_AGE, expected_refs)
     generation_id = generation_id or str(uuid.uuid4())
     specs = [(name, "repository", [name]) for name in source_map] + [
         (name, kind, list(source_map))
@@ -584,7 +587,7 @@ def seal(root, sources, generation_id=None, now=None, expected_refs=None):
         )
         if kind == "repository":
             require(graph["project"]["name"] == name, "repository graph name mismatch")
-        check_time(graph["project"]["analyzedAt"], now, 86400)
+        check_time(graph["project"]["analyzedAt"], now, MAX_AGE)
         if kind == "repository":
             require(
                 {"imports", "calls"} <= set(graph["relationCoverage"]),
@@ -604,7 +607,7 @@ def seal(root, sources, generation_id=None, now=None, expected_refs=None):
                 and isinstance(fingerprints.get("files"), dict),
                 "fingerprint/source SHA mismatch or missing file map",
             )
-            check_time(meta.get("lastAnalyzedAt", meta.get("analyzedAt")), now, 86400)
+            check_time(meta.get("lastAnalyzedAt", meta.get("analyzedAt")), now, MAX_AGE)
         else:
             require(
                 graph["project"].get("gitCommitHash") is None,
@@ -701,7 +704,7 @@ def seal(root, sources, generation_id=None, now=None, expected_refs=None):
     return manifest
 
 
-def validate(root, now=None, max_age=86400, expected_refs=None):
+def validate(root, now=None, max_age=MAX_AGE, expected_refs=None):
     root = Path(root).resolve(strict=True)
     now = now or now_utc()
     manifest = read_json(root / "manifest.json")

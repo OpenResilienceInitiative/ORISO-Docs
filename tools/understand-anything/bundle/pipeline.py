@@ -13,25 +13,27 @@ import tempfile
 from .contract import ContractError, now_utc, read_json, require, seal, write_json
 from .storage import locked, _publish
 
+# One input per public repository, always its `main` branch: the published graph
+# describes released code, not whatever reached `dev` that evening (ORISO-Docs#129).
+# ORISO-E2E and ORISO-Infra are private and deliberately absent - their structure
+# must never reach the public website or the public release channel.
 REPOS = [
-    ("ORISO-Admin", "dev", "enrich-admin.json"),
-    ("ORISO-AgencyService", "dev", "enrich-agencyservice.json"),
-    ("ORISO-ConsultingTypeService", "dev", "enrich-cts.json"),
-    ("ORISO-Database", "dev", "enrich-database.json"),
-    ("ORISO-Frontend", "dev", "enrich-frontend.json"),
-    ("ORISO-Keycloak", "dev", "enrich-keycloak.json"),
-    ("ORISO-Kubernetes", "dev", "enrich-kubernetes.json"),
-    ("ORISO-TenantService", "dev", "enrich-tenantservice.json"),
-    ("ORISO-UserService", "dev", "enrich-userservice.json"),
-    ("ORISO-Helm", "dev", "enrich-helm.json"),
-    ("ORISO-E2E", "main", "enrich-e2e.json"),
-    ("ORISO-Infra", "main", "enrich-infra.json"),
-    ("ORISO-ElementCall", "dev", "enrich-elementcall.json"),
-    ("ORISO-Livekit", "dev", "enrich-livekit.json"),
-    ("ORISO-HealthDashboard", "dev", "enrich-healthdashboard.json"),
-    ("ORISO-Status", "dev", "enrich-status.json"),
+    ("ORISO-Admin", "main", "enrich-admin.json"),
+    ("ORISO-AgencyService", "main", "enrich-agencyservice.json"),
+    ("ORISO-ConsultingTypeService", "main", "enrich-cts.json"),
+    ("ORISO-Database", "main", "enrich-database.json"),
+    ("ORISO-Frontend", "main", "enrich-frontend.json"),
+    ("ORISO-Keycloak", "main", "enrich-keycloak.json"),
+    ("ORISO-Kubernetes", "main", "enrich-kubernetes.json"),
+    ("ORISO-TenantService", "main", "enrich-tenantservice.json"),
+    ("ORISO-UserService", "main", "enrich-userservice.json"),
+    ("ORISO-Helm", "main", "enrich-helm.json"),
+    ("ORISO-ElementCall", "main", "enrich-elementcall.json"),
+    ("ORISO-Livekit", "main", "enrich-livekit.json"),
+    ("ORISO-HealthDashboard", "main", "enrich-healthdashboard.json"),
+    ("ORISO-Status", "main", "enrich-status.json"),
     ("ORISO-SigNoz", "main", "enrich-signoz.json"),
-    ("ORISO-Docs", "dev", "enrich-docs.json"),
+    ("ORISO-Docs", "main", "enrich-docs.json"),
 ]
 
 
@@ -92,8 +94,11 @@ def validate_narrative_report(output):
         raise ContractError("missing or malformed platform narrative report") from error
     require(isinstance(report, dict), "platform narrative report must be an object")
     for field in ("droppedRefs", "missingStats"):
+        # Name the offenders: "must be empty" alone sends the next person into a
+        # full rebuild just to learn which narrative entry lost its node.
         require(
-            report.get(field) == [], f"platform narrative {field} must be an empty list"
+            report.get(field) == [],
+            f"platform narrative {field} must be an empty list; got {str(report.get(field))[:500]}",
         )
 
 

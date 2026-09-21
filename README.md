@@ -12,6 +12,16 @@
 
 Step-by-step documentation for deploying ORISO Platform v3.0.0 on Kubernetes using Helm charts. ORISO is an online consultation platform with 21 services deployed via a single Helm umbrella chart.
 
+## 🧭 Understand Anything (code knowledge graphs)
+
+**[understand.oriso.org](https://understand.oriso.org)** shows a knowledge graph per repository,
+feature explanations and the legal pages. The graphs are rebuilt **once a day from `main`**
+(released code) by GitHub Actions and installed on the website the same morning; the page shows
+the date of the graph it is displaying. ORISO-E2E and ORISO-Infra are private and not included.
+
+- How the graph is delivered: [`docs/understand-anything-delivery.md`](docs/understand-anything-delivery.md)
+- Tooling, `ua-pull` and the graph contract: [`tools/understand-anything/README.md`](tools/understand-anything/README.md)
+
 ## 🚀 Quick Start
 
 ### Local Development

@@ -142,5 +142,37 @@ class VisibilityLookup(unittest.TestCase):
         self.assertEqual(public, {"ORISO-Frontend"})
 
 
+class ManifestPublication(unittest.TestCase):
+    """The manifest names every graph of the generation. It may only reach the
+    public channel when every graph did, or it would disclose a withheld one."""
+
+    def run_dry(self, public):
+        with tempfile.TemporaryDirectory() as tmp:
+            generation(tmp, ["ORISO-Frontend", "ORISO-Infra"],
+                       ["ORISO-Frontend", "ORISO-Infra"])
+            out = os.path.join(tmp, "assets")
+            argv = ["ua_publish_graphs.py", "--generation", tmp, "--out", out, "--dry-run"]
+            def fake_pack(_generation, out_dir, names):
+                # GNU tar is not a test dependency; the decision is what is tested.
+                os.makedirs(out_dir, exist_ok=True)
+                paths = [os.path.join(out_dir, f"{name}.tar.gz") for name in names]
+                for path in paths:
+                    open(path, "wb").close()
+                return paths
+
+            with mock.patch.object(publisher, "public_repositories", return_value=set(public)), \
+                    mock.patch.object(publisher, "pack", side_effect=fake_pack), \
+                    mock.patch.object(sys, "argv", argv), \
+                    mock.patch.dict(os.environ, {"GITHUB_TOKEN": "t"}):
+                self.assertEqual(publisher.main(), 0)
+            return sorted(os.listdir(out))
+
+    def test_manifest_published_when_nothing_is_withheld(self):
+        self.assertIn("manifest.json", self.run_dry({"ORISO-Frontend", "ORISO-Infra"}))
+
+    def test_manifest_withheld_when_a_graph_is_withheld(self):
+        self.assertEqual(self.run_dry({"ORISO-Frontend"}), ["ORISO-Frontend.tar.gz"])
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

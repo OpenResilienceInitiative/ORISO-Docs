@@ -4,6 +4,26 @@ This describes the *delivery* of the Understand Anything graph, not how it is
 built. For the producer's internals, the graph contract and the relationship
 semantics, read `tools/understand-anything/README.md`.
 
+## In one paragraph (ORISO-Docs#129)
+
+Once a day GitHub Actions builds one generation from the **`main`** branch of
+every public ORISO repository — released code, not whatever reached `dev` that
+evening — and publishes it on the `ua-graph-latest` release of this repository.
+**understand.oriso.org** downloads that release every morning, shows it in its
+dashboards, and serves the complete generation under `/ua/`. Everything else
+reads from there: `ua-pull` for developers and agents, the AI PR reviewer from
+the release directly. Nothing is built on PreDev or on the website server any
+more, and no repository commits generated graphs.
+
+```
+02:40 UTC  ua-graph-refresh.yml (main)  ->  release ua-graph-latest
+04:15 UTC  understand.oriso.org: site/ua-site-sync.sh
+             -> dashboards, /status.json, /ua/current (ua-pull)
+```
+
+The schedule only fires from the repository's default branch, `main`, so the
+workflow reaches production through the normal release PR `dev -> main`.
+
 ## The problem this replaced
 
 The producer ran as a root cron on the PreDev host:
@@ -41,7 +61,7 @@ established that the scheduled run still produced anything.
 
 ## What runs now
 
-`.github/workflows/ua-graph-refresh.yml`, daily and on demand:
+`.github/workflows/ua-graph-refresh.yml`, daily (from `main`) and on demand:
 
 1. Installs the pinned toolchain from `tools/understand-anything/` inside the
    Node image named in `toolchain.lock.json`.
@@ -50,9 +70,10 @@ established that the scheduled run still produced anything.
 3. Builds one complete generation, then runs `bundle refresh verify`, which
    re-fetches every source ref and checks the full SHA in the manifest. That is
    the difference between "a generation exists" and "this generation is the code
-   that is on `dev` right now".
+   that is on `main` right now".
 4. Publishes each graph as a release asset on the rolling `ua-graph-latest`
-   tag of this repository.
+   tag of this repository, plus the generation's `manifest.json` when no graph
+   was withheld, so the website can reassemble the complete generation.
 
 Measured: a full 16-input generation takes **under three minutes**.
 
@@ -80,17 +101,17 @@ gh attestation verify graph.tar.gz \
   --signer-workflow OpenResilienceInitiative/ORISO-Docs/.github/workflows/ua-graph-refresh.yml
 ```
 
-A failed verification is not fatal: the consumer falls back to the committed
-copy and says so. Refusing to review because a download could not be verified
+A failed verification is not fatal: the review runs without a graph and says so. Refusing to review because a download could not be verified
 would be worse than reviewing against a graph whose age is stated.
 
-## Why the committed copy is replaced only after validation
+## Why a graph is installed only after validation
 
 The consumer stages the archive, checks that all three generated files are
 present and non-empty and that `meta.json` carries a 40-character commit hash,
-and only then moves them into place one by one. A truncated archive must leave
-the committed graph untouched rather than mix two generations — which reads as
-a successful refresh and is much harder to notice than a missing one.
+and only then moves them into place one by one. A truncated archive must never
+be mixed into a working tree — that reads as a successful refresh and is much
+harder to notice than a missing one. The website sync applies the same rule to
+the whole generation: nothing is installed until every archive has passed.
 
 ## Why release assets rather than commits
 
@@ -99,11 +120,11 @@ raw across the platform. Committing that per run would add hundreds of megabytes
 of history per month to repositories developers clone daily. The same generation
 compresses to about 12 MB, and the largest single asset is 3.4 MB.
 
-The committed `.understand-anything/` directories stay as a fallback. The
-consumer step overwrites only the generated files
-(`knowledge-graph.json`, `fingerprints.json`, `meta.json`, `config.json`,
-`depth.json`) and leaves the hand-written prose — `ARCHITECTURE.md`,
-`ONBOARDING.md`, `FINDINGS.md`, `ORISO-ECOSYSTEM.md` — alone.
+Generated graph files are therefore **not committed** in any repository any
+more (ORISO-Docs#129): the old copies were a month behind and read as current.
+Each repository's `.gitignore` excludes them. The hand-written prose in
+`.understand-anything/` — `ARCHITECTURE.md`, `ONBOARDING.md`, `FINDINGS.md`,
+`ORISO-ECOSYSTEM.md` — stays in Git.
 
 ## Why not simply give CI an SSH key to PreDev
 
@@ -126,9 +147,10 @@ manifest rather than trusting its caller, and treats an unproven visibility as
 private so that a transient API error cannot become a disclosure. The decision
 is covered by `.github/scripts/test_ua_publish_graphs.py`.
 
-In practice `ORISO-E2E` and `ORISO-Infra` are private. Without a token they are
-skipped; with one they are analysed but their graphs — and the aggregates built
-from them — are withheld from the public channel.
+`ORISO-E2E` and `ORISO-Infra` are private and are **not in the inventory at
+all**: their structure must never reach the public website. The filter above
+stays as a second guard in case one is ever added back, and the website sync
+refuses to install either name whatever the channel carries.
 
 ## What a refresh does **not** fix
 
@@ -161,9 +183,12 @@ the gap stays visible instead of being implied away by a green tick.
 - **Check what consumers are getting:** the job summary lists every repository
   with its node and edge counts and its semantic split. The manifest is attached
   as an artifact for 30 days.
-- **Private inputs:** set the `UA_GRAPH_TOKEN` secret to a token with read
-  access to `ORISO-E2E` and `ORISO-Infra`. Without it the run covers the public
-  inputs, which is all the public channel may carry anyway.
-- **A consumer could not fetch:** the step is fail-soft and falls back to the
-  committed copy, saying so in the job summary and as a warning annotation. The
-  review still runs.
+- **Website:** `tools/understand-anything/site/ua-site-sync.sh` runs from root's
+  crontab on understand.oriso.org as `/opt/oriso-understand/_site/ua-site-sync.sh`
+  (`15 4 * * *`, log `/var/log/ua-site-sync.log`); after each successful run it
+  replaces itself with the copy from the ORISO-Docs `main` commit it installed. Run it by hand after a manual workflow run. The
+  start page's date and counts come from `/status.json`, which the script writes;
+  the start page itself is `tools/understand-anything/site/hub/` and ships with
+  the ORISO-Docs `main` commit.
+- **A consumer could not fetch:** the step is fail-soft, says so in the job
+  summary and as a warning annotation, and the review runs without a graph.

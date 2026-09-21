@@ -4,7 +4,10 @@ Developers need a graph that tells them which revision it describes, keeps uncer
 relationships visibly uncertain, and fails when an update is incomplete. This directory
 owns the ORISO graph producer, delivery client, semantic models, platform builder and
 compatibility patch. It replaces machine-local scripts with a reproducible release.
-Delivery is tracked in [ORISO-Docs#110](https://github.com/OpenResilienceInitiative/ORISO-Docs/issues/110).
+Delivery is tracked in [ORISO-Docs#110](https://github.com/OpenResilienceInitiative/ORISO-Docs/issues/110)
+and [ORISO-Docs#129](https://github.com/OpenResilienceInitiative/ORISO-Docs/issues/129) (one daily build
+from `main`, published once, shown on understand.oriso.org). How the graph reaches readers is
+described in [`docs/understand-anything-delivery.md`](../../docs/understand-anything-delivery.md).
 
 A current graph is source evidence. It does not establish that a deployed application,
 encrypted conversation, deletion or notification works for a real user. Ordered flows link
@@ -32,8 +35,8 @@ required source, build, validation or transfer leaves the last complete generati
 `current` is a symlink to an immutable generation; readers resolve it once and fetch that
 specific generation. `previous` preserves a complete rollback package.
 
-The producer tracks `dev` for all listed repositories except ORISO-E2E, ORISO-Infra and
-ORISO-SigNoz, which use `main` because they have no Dev branch. The exact inventory is in
+The producer tracks `main` — released code — for every public ORISO repository. ORISO-E2E
+and ORISO-Infra are private and deliberately not inputs. The exact inventory is in
 `bundle/pipeline.py`; archived repositories still have to fetch successfully. No cached ref
 is silently substituted after a failed fetch. Source checkout files are never reset by the
 producer: analysis runs in detached snapshots.
@@ -64,28 +67,29 @@ Older personal plugin caches can remain installed as historical tools; the ORISO
 must use this release. Hosted deployment must omit `--profile`; it installs runtime tooling only.
 Do not point ORISO workflows at a generic unpatched prebuilt viewer.
 
-## Build and verify on PreDev
+## Build: once a day in GitHub Actions
+
+`.github/workflows/ua-graph-refresh.yml` builds one generation at 02:40 UTC from `main`,
+verifies it against the live refs and publishes it on the `ua-graph-latest` release.
+understand.oriso.org installs it at 04:15 UTC with `site/ua-site-sync.sh` — the website builds
+nothing. PreDev no longer runs a producer. To build locally the way CI does:
 
 ```bash
-TOOLING=/opt/oriso-understand/toolchain/current/tooling
-bash "$TOOLING/ua-refresh.sh" refresh --base /opt/oriso-understand \
-  --tools "$TOOLING" --publish-root /opt/oriso-understand/published
-bash "$TOOLING/ua-refresh.sh" verify --base /opt/oriso-understand \
-  --publish-root /opt/oriso-understand/published
+TOOLING=/path/to/oriso-ua-runtime/current/tooling
+bash "$TOOLING/ua-refresh.sh" refresh --base /path/to/sources \
+  --tools "$TOOLING" --publish-root /path/to/published
+bash "$TOOLING/ua-refresh.sh" verify --base /path/to/sources \
+  --publish-root /path/to/published
 ```
 
 `ua-node` runs the locked image; `UA_NATIVE_NODE=1` is an explicit local-development option.
 `UA_CORE` can select a test core, while installed releases derive the pinned core path.
 `UA_MOUNT_ROOT` controls the Docker filesystem mount; `UA_BASE` is the graph input root and
 must not be confused with the mount root. Aggregate tools write only to explicit staging
-outputs. The retired overlay command fails with migration instructions. The old nightly
-entrypoint delegates to the same atomic producer.
+outputs. The retired overlay command fails with migration instructions.
 
-The observed PreDev schedule is **17 minutes past every second hour** (`17 */2 * * *`),
-plus manually requested runs. The former “on-demand/no cron” description was wrong.
-`understand.oriso.org` is a separate historical nightly dashboard channel; its status does
-not prove the PreDev delivery channel is current. A root workspace graph dated May 2026 is
-historical orientation, even if a remote generation was built successfully today.
+A generation is valid for 36 hours (`bundle.contract.MAX_AGE`): one daily build with slack,
+never a skipped day.
 
 ## Pull and use the graph
 
@@ -99,9 +103,10 @@ ua-pull --platform-only --path
 ua-dashboard --platform-only
 ```
 
-The default SSH channel is `predev:/opt/oriso-understand/published`; override it with
-`ORISO_UA_SSH_ALIAS` and `ORISO_UA_REMOTE_ROOT`. HTTPS uses `--via-https <base>` and optional
-`ORISO_UA_AUTH` from the environment; credentials are never written to manifests or logs.
+The default channel is HTTPS `https://understand.oriso.org/ua` — the generation the website
+shows (override with `ORISO_UA_CHANNEL` or `--via-https <base>`; optional `ORISO_UA_AUTH` from
+the environment, never written to manifests or logs). `--via-ssh` remains for a self-hosted
+store and needs `ORISO_UA_SSH_ALIAS` (and `ORISO_UA_REMOTE_ROOT`); there is no default host.
 `--from <store>` is the offline transport used by integration tests.
 
 The cache is outside the checkout under the platform cache directory. The client does not
@@ -109,7 +114,8 @@ overwrite tracked graphs or introduce skip-worktree flags. `--migrate-legacy` (a
 backs up existing graph files, clears old hiding flags, and records a cache pointer using
 Git's resolved `info/exclude` path, so linked worktrees work too. Historical graph files are
 kept intact. A different checkout must be accepted deliberately with
-`--allow-different-checkout`; its status is `VALID-DIFFERENT-CHECKOUT`, never “fresh Dev”.
+`--allow-different-checkout`; its status is `VALID-DIFFERENT-CHECKOUT`, never “fresh”. Working
+on `dev` against a graph of `main` is exactly this case.
 
 `--verify` fetches the expected source ref and checks the full SHA; an unavailable origin is
 a failed verification. `--path` resolves an already validated cached generation for consumers;
