@@ -102,9 +102,7 @@
               "docs/platform/repo-graphs/ORISO-Database",
               "docs/platform/repo-graphs/ORISO-Keycloak",
               "docs/platform/repo-graphs/ORISO-Kubernetes",
-              "docs/platform/repo-graphs/ORISO-Helm",
-              "docs/platform/repo-graphs/ORISO-E2E",
-              "docs/platform/repo-graphs/ORISO-Infra"
+              "docs/platform/repo-graphs/ORISO-Helm"
             ]
           },
           {
