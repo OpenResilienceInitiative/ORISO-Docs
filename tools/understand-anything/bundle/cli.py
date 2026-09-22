@@ -251,9 +251,8 @@ def pull_main(argv):
     )
     transport = parser.add_mutually_exclusive_group()
     transport.add_argument("--via-ssh", action="store_true")
-    transport.add_argument(
-        "--via-https", nargs="?", const="https://predev.oriso.org/ua"
-    )
+    # No default origin: the publisher host changes, so the caller names it.
+    transport.add_argument("--via-https", metavar="BASE_URL")
     transport.add_argument(
         "--from",
         dest="from_dir",

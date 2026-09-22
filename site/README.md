@@ -37,7 +37,10 @@ pnpm build        # sync, then a static export for the /dokumentation path prefi
 pnpm build:root   # the same for a domain root — this is what docs.oriso.org serves
 ```
 
-## Deploying
+## Deploying (ORISO's own docs host only)
+
+This section describes ORISO's own installation of the docs site. The host, IP and paths are
+specific to it and are not defaults for anyone else.
 
 ```bash
 pnpm build:root && rsync -az --delete out/ root@49.13.11.37:/var/www/docs-site/

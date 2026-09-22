@@ -170,7 +170,7 @@ Fix:
 
 ## 8) Environment Notes
 
-- ORISO Kubernetes values currently reference domains under `*.oriso.org`.
+- The ORISO-Helm Dev and production overlays set ORISO's own domains. The chart has no usable default domain: every installation sets `global.domainName` itself.
 - Recovery and security docs flag this domain as sensitive/legacy-risk in parts of the repository.
 - Keep domain ownership/security review aligned with platform/security runbooks.
 
