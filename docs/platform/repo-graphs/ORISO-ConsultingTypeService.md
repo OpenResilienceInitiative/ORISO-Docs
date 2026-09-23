@@ -197,7 +197,7 @@ Application config keys inspected (application.properties at the pinned commit):
 - csrf.header.property / csrf.cookie.property
 - cache.tenant.configuration.* / cache.groups.configuration.* (Ehcache)
 - settings.smtp.password.encryption.secret (AES-256-GCM key for SMTP passwords at rest; warns and disables encryption when unset)
-- dpa.sign.frontend.base-url (${...:https://app.oriso.org} — permitted origin for DPA sign links)
+- dpa.sign.frontend.base-url (`DPA_SIGN_FRONTEND_BASE_URL`, permitted origin for DPA sign links; no host default any more: it falls back to `app.base.url`, and ConsultingTypeService PR #154 makes it required at startup)
 - management.endpoint.health.* / management.endpoints.web.exposure.include / management.info.build.enabled
 - management.opentelemetry.tracing.export.otlp.endpoint / management.tracing.export.otlp.enabled / management.tracing.sampling.probability (pinned 1.0 on Pre-Dev) / management.otlp.metrics.export.url / management.otlp.metrics.export.enabled
 - springfox.docu* (legacy doc metadata) / springdoc paths via CustomSwaggerUIPathWebMvcConfigurer

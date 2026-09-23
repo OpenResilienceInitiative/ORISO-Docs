@@ -77,13 +77,13 @@ kubectl exec -n caritas deployment/oriso-platform-matrix-synapse -- \
   curl -s http://localhost:8008/_matrix/client/versions
 
 # Check Matrix Synapse API (via Ingress)
-curl -s https://matrix.oriso.org/_matrix/client/versions
+curl -s https://matrix.example.org/_matrix/client/versions
 
 # Check Discovery service
-curl -s http://91.99.219.182/.well-known/matrix/server
+curl -s http://YOUR_SERVER_IP/.well-known/matrix/server
 
 # Check Element.io (if deployed)
-curl -I https://element.oriso.org
+curl -I https://element.example.org
 ```
 
 <Check>
@@ -130,18 +130,18 @@ cat .env | grep MATRIX
 
 ### Matrix Synapse
 - **Service:** `oriso-platform-matrix-synapse.caritas.svc.cluster.local:8008`
-- **External:** `https://matrix.oriso.org`
+- **External:** `https://matrix.example.org`
 - **Database:** PostgreSQL (synapse database)
 - **Purpose:** Matrix homeserver for chat
 
 ### Matrix Discovery Service
 - **Service:** `oriso-platform-matrix-discovery`
-- **External:** `http://91.99.219.182/.well-known/matrix/server`
+- **External:** `http://YOUR_SERVER_IP/.well-known/matrix/server`
 - **Purpose:** Federation discovery
 
 ### Element.io (Optional)
 - **Service:** `oriso-platform-element`
-- **External:** `https://element.oriso.org` or `http://91.99.219.182:8087`
+- **External:** `https://element.example.org` or `http://YOUR_SERVER_IP:8087`
 - **Purpose:** Web client for Matrix
 
 ## Integration Details
@@ -190,10 +190,10 @@ kubectl exec -it -n caritas deployment/oriso-platform-postgresql -- \
 kubectl logs -n caritas -l app=matrix-discovery
 
 # Test well-known endpoint
-curl http://91.99.219.182/.well-known/matrix/server
+curl http://YOUR_SERVER_IP/.well-known/matrix/server
 
 # Check federation API
-curl http://91.99.219.182:8009/_matrix/federation/v1/version
+curl http://YOUR_SERVER_IP:8009/_matrix/federation/v1/version
 ```
 
 ## Next Steps
