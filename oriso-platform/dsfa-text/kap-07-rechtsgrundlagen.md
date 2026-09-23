@@ -1,5 +1,7 @@
 # 7 Rechtsgrundlagen
 
+:::technisch
+
 Die Verarbeitung stützt sich je Verarbeitungsschritt auf unterschiedliche Erlaubnistatbestände.
 Die nachstehende Zuordnung nennt jeweils die Norm des Gesetzes über den Kirchlichen Datenschutz
 (nachfolgend „KDG") und in Klammern das Pendant der Datenschutz-Grundverordnung (nachfolgend
