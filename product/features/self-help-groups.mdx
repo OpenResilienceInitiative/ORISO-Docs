@@ -1,0 +1,170 @@
+---
+title: "4.10 Self-Help Groups — Invite Link and Joining"
+description: "How a client joins a self-help group (Gesprächskreis) through its invite link, what happens with and without an account, where counsellors land, and why joining a group opens no counselling enquiry."
+---
+
+A **self-help group** (*Gesprächskreis*) is a scheduled group conversation that a counsellor runs
+for many clients at once: a topic, a date, a start time, a duration, optional repeats, and a
+format (text, audio or video). Clients reach it through an **invite link** that the counsellor
+shares.
+
+This page describes **what happens when someone opens that link**. It is written for counsellors,
+agency administrators and data protection officers. The technical notes for developers are at the
+end.
+
+<Info>
+Status (23.09.2026): the rules on this page are decided. Parts of them are still in review and not
+on any server yet — see [4.10.7 Delivery status](#4107-delivery-status).
+</Info>
+
+## 4.10.1 The invite link
+
+The counsellor copies the link from the dialog that opens after creating the group, or later from
+the group's Chat-Info (also as a QR code). It looks like this:
+
+```text
+https://<host>/login?gcid=<group id>.<invite token>&aid=<Beratungsstelle id>
+```
+
+- `gcid` names the group and carries its secret invite token. The group number alone is guessable,
+  so without the token nobody can join.
+- `aid` names the group's Beratungsstelle. Before someone logs in, the app is not allowed to read
+  the group. Without `aid` a newcomer would have to find the Beratungsstelle through the normal
+  topic and postcode search, where a group's Beratungsstelle is often not listed. With `aid` the
+  registration already knows the Beratungsstelle and its topic.
+- `<host>` is always the server the link was copied on. A link copied on a test server leads back
+  to that test server.
+
+<Warning>
+**Links shared before the `aid` change must be shared again.** Older links carry only `gcid`. A
+newcomer who opens one ends on "Keine Online-Beratungsstelle gefunden". These old links will not
+be repaired. Copy the link again from the group's Chat-Info and share the new one.
+</Warning>
+
+## 4.10.2 Who opens the link, and where they land
+
+| Who opens the link | What they see | Where they end up |
+|---|---|---|
+| **Newcomer, no account** | The entry screen of the group: no steps, no topic or postcode questions. It opens on **"Ohne Konto beitreten"** (screen 0a). **"Konto anlegen"** switches to screen 0b. | The group's waiting room, then the group once a moderator starts it |
+| **Client with an account** | The normal login | The group's waiting room |
+| **Counsellor of the group's Beratungsstelle** | Their own group view with **"Chat starten"**, not the client's waiting room | The group, as moderator |
+| **Counsellor of another Beratungsstelle** | A notice that they are not part of this group | Nowhere — see *knock to join* below |
+
+**Knock to join (in progress).** A counsellor who is not a member will be able to ask to join. The
+group's active moderators then see who is asking and can let them in. This is being built and is
+not available yet.
+
+## 4.10.3 Join without an account, or create an account
+
+The entry screen offers two ways in. Both ask for the data-protection consent, because group
+messages and calls are transmitted and encrypted.
+
+| | **Ohne Konto beitreten** (0a) | **Konto anlegen** (0b) |
+|---|---|---|
+| What the person enters | a name (a pseudonym is suggested) | a name and a password they choose |
+| Password | created for them and never shown | chosen and shown |
+| Coming back later | not possible once the browser session ends | log in again at any time; the group is in their conversation list |
+| Button | "Der Gruppe beitreten" | "Registrieren" |
+
+A person who joins without an account still gets a real account on the server. They simply never
+learn its password. Deleting such accounts automatically after the group is backend work that
+does not exist yet (ORISO-UserService#1001). Until it does, these accounts stay.
+
+**While the registration runs**, the screen shows the group's own three cards (how the group
+takes place, alias only, new dates and links) and "Zur Gruppe". It never promises an answer from
+a counselling centre, because a group join opens no enquiry (see 4.10.4).
+
+## 4.10.4 Joining a group opens no counselling enquiry
+
+**The rule:** registering through a group's invite link makes the person a member of **that
+group** and nothing else. It does **not** open a counselling enquiry (*Beratungsanfrage*) at the
+group's Beratungsstelle.
+
+**Why.** A person who joins a Gesprächskreis has asked for the group, not for one-to-one
+counselling. Until this change, the link used the ordinary registration, and the ordinary
+registration always opens a counselling conversation at the chosen Beratungsstelle. So every
+group join also left an empty counselling conversation behind:
+
+- the client saw a counselling conversation in their list that they never asked for;
+- as soon as the client had given their privacy consent, that conversation could show up in the
+  counsellors' list of open enquiries, where nobody expected it and nobody was meant to answer it.
+
+On the development server, test joins on 22–23.09.2026 left exactly such conversations behind
+(sessions 211 and 213).
+
+**What happens now.** The registration names the group. The server checks that the group is a
+self-help group of that Beratungsstelle, creates the account, and adds the person to the group.
+No counselling conversation is created. A client who later wants one-to-one counselling asks for
+it separately, like any other client.
+
+A group-only client has an account with one group in it and no counselling conversation. Their
+account data loads normally, and the group is what they see after logging in.
+
+## 4.10.5 Privacy statement, Datenschutz and Impressum
+
+**Before the first message: the Beratungsstelle's privacy statement.** Decided by Frank on
+23.09.2026. A client in a group whose agreement is not on record sees the statement of the
+Beratungsstelle that runs the group before they can write. This is the second consent gate of
+[ADR-022](/decisions/adr-022), with the same sentence rules as the live chat. The client answers "Einverstanden" or "Ablehnen". It replaces the conversation
+until the client agrees. The composer stays hidden until then.
+
+- **Who is asked.** Every group client whose agreement is not on record. ADR-022 decides this gate
+  by consent state and forbids guessing anonymity, so the app never asks whether an account is
+  temporary. A registration through the invite link records no agreement. That means both the
+  temporary join (0a) and the full account created through the link (0b) are asked once. A client
+  who already had an account, for example from counselling, has an agreement on record and is not
+  asked again. Counsellors are never asked.
+- **Which text.** The consent sentence of the group's Beratungsstelle for its topic, when it has
+  one. A Beratungsstelle without its own statement shows the fixed warning that no statement is
+  available. When the group's topic cannot be told (the Beratungsstelle has several), the
+  platform's sentence applies.
+- **Where it is recorded.** On the account, as the live chat records it. A group has no counselling
+  conversation to hold a per-room pointer. The known limit: someone who agreed for one
+  Beratungsstelle is not asked again in a group of another one. Closing that gap needs a pointer
+  per group membership (backend).
+
+**Datenschutz and Impressum, like in every chat room.** Everyone in a running group — client or
+counsellor, text or audio/video — finds both in the ⋮ menu of the room. In the client's waiting
+room they sit under the stage on desktop and in a ⋮ menu "Rechtliches" in the top bar on a phone.
+Both open the documents of the Beratungsstelle that runs the group.
+
+## 4.10.6 For developers
+
+- `POST /users/askers/new` accepts an optional `groupChatId`. When it is set, the registration
+  assigns that group (`user_chat`) and creates **no** session. The response is `201` as before.
+- The server answers `400` and creates **no** account when the group does not exist, is not a
+  self-help group (`conversation_type = SELF_HELP`), does not belong to the `agencyId` in the same
+  request, or when `consultantId` is also set (a consultant link opens a one-to-one enquiry).
+- It also needs `groupChatInviteToken`, the secret part of the invite link. Since the security fix
+  for #1237, the link is `/login?gcid=<id>.<token>&aid=<agency>`. A missing or wrong token answers
+  `403` before any account is created. This is the same check that joining by invite link uses.
+- The frontend sends `groupChatId` only when the link carries `aid` and the person registers at
+  exactly that Beratungsstelle. A registration at an agency picked in the steps stays an ordinary
+  counselling registration.
+- If a later step of the registration fails, the group membership is removed again together with
+  the account (provisioning compensation `GROUP_CHAT_MEMBERSHIP`).
+- After registration the app follows the link as before: `PUT /users/chat/<id>/assign` answers
+  `409` because the person is already a member, and the app opens the waiting room.
+- Deploy order: the backend ignores unknown fields and the old frontend never sends
+  `groupChatId`, so either side can go first. The rule takes effect once both are deployed.
+
+## 4.10.7 Delivery status
+
+| Piece | Where | State |
+|---|---|---|
+| Link carries the Beratungsstelle; newcomer entry 0a/0b | ORISO-Frontend#1531 | in review |
+| Counsellors land in their own group view; non-members see a notice | ORISO-Frontend#1534 | in review |
+| Invite token in the link (security fix) | ORISO-UserService#1248, ORISO-Frontend#1554 | in review |
+| Registration through the link opens no enquiry (backend) | ORISO-UserService#1241 (after #1248) | in review |
+| Registration through the link names the group (frontend) | ORISO-Frontend#1547 (after #1554) | in review |
+| Privacy gate before the first group message, legal menu in the waiting room, group words while joining | ORISO-Frontend#1549 (after #1547) | in review |
+| Consent pointer per group membership | — | open |
+| Knock to join for non-member counsellors | ORISO-Frontend#1499, item 14 | in progress |
+| Automatic deletion of join-without-account accounts | ORISO-UserService#1001 | not started |
+
+## 4.10.8 Related
+
+- [Group Chats & Multi-Recipient Send (4.5)](/product/features/group-chats) — the design
+  background for group conversations.
+- [ADR-012](/decisions/adr-012) — self-help group chat: extend, do not rebuild.
+- Main issue: ORISO-Frontend#1499.
