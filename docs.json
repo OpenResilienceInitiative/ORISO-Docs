@@ -33,6 +33,7 @@
               "product/features/index",
               "product/features/live-chat",
               "product/features/group-chats",
+              "product/features/self-help-groups",
               "product/features/ai-tools",
               "product/features/case-handover",
               "product/features/handover",
