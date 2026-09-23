@@ -27,6 +27,7 @@ import argparse
 import json
 import mimetypes
 import os
+import shutil
 import subprocess
 import sys
 import urllib.error
@@ -223,6 +224,12 @@ def main() -> int:
         print("::error::No publishable graph in this generation.")
         return 1
 
+    # The manifest lets understand.oriso.org reassemble the complete generation
+    # and serve it to `ua-pull` (ORISO-Docs#129). It lists every graph of the
+    # generation with its hash, so it is only published when nothing was
+    # withheld: a manifest naming a withheld graph would both leak that graph's
+    # existence and describe a generation no consumer can complete.
+    manifest = os.path.join(args.out, "manifest.json")
     if args.upload_only:
         # Re-derive `allowed` above rather than trusting the directory: a file
         # that appeared in out/ between the two calls must not be published
@@ -235,10 +242,17 @@ def main() -> int:
         if not packed:
             print("::error::--upload-only found no packed asset to publish.")
             return 1
+        if not withheld and os.path.isfile(manifest):
+            packed.append(manifest)
     else:
         packed = pack(args.generation, args.out, allowed)
         total = sum(os.path.getsize(p) for p in packed)
         print(f"PACKED {len(packed)} assets, {total / 1024 / 1024:.1f} MiB")
+        if not withheld:
+            shutil.copyfile(os.path.join(args.generation, "manifest.json"), manifest)
+            packed.append(manifest)
+        else:
+            print("::notice::Manifest not published: the generation is incomplete on this channel.")
 
     if args.dry_run:
         print("::notice::Dry run: nothing was published.")

@@ -1,3 +1,7 @@
+> **Superseded (2026-09-21, ORISO-Docs#129).** PreDev no longer builds or serves graphs. The
+> producer is `.github/workflows/ua-graph-refresh.yml` (daily, from `main`); understand.oriso.org
+> installs it with `site/ua-site-sync.sh`. This page is kept as the record of the #110 activation.
+
 # Activate the pinned ORISO graph toolchain
 
 Installation alone does not redirect existing users or the PreDev schedule. This procedure connects those entrypoints to the accepted release and complete generation store, while retaining the previous files and routing for rollback. It is an activation plan, not evidence that activation has happened.

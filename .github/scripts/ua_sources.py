@@ -12,10 +12,11 @@ in-memory credential helper. A URL of the form https://x-access-token:TOKEN@...
 would appear in `ps`, in `set -x` output, and in any shell script written to
 disk, so it is not used.
 
-Two inputs are private (ORISO-E2E, ORISO-Infra). Without a token that can read
-them the run covers the public repositories only. That is a supported mode, not
-a degraded one: the public consumer channel may not carry graphs of private
-repositories anyway.
+The two private repositories (ORISO-E2E, ORISO-Infra) are no longer part of the
+inventory at all (ORISO-Docs#129): their graphs may never reach the public
+website or release channel. PRIVATE below stays as a second guard in case one is
+ever added back by mistake -- it is still skipped without a token, and the
+publish step withholds it regardless.
 """
 
 from __future__ import annotations

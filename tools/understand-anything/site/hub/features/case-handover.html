@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="de" data-lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wie Case Handover funktioniert — ORISO Understand</title>
+<meta name="description" content="Fallübergabe in ORISO: einen Fall holen, Zustimmung der ratsuchenden Person, Mitlesen oder Übernahme — mit Entwicklungsstand. — Case handover in ORISO: taking a case, consent of the person seeking advice, reading along or taking over — with the state of development.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/hub.css">
+<script src="/assets/lang.js"></script>
+</head>
+<body>
+
+<div class="appbar">
+  <div class="appbar-in">
+    <span class="brandname"><a href="/">ORISO Understand</a></span>
+    <span class="sub">/features/case-handover</span>
+    <span class="sp"></span>
+    <span class="badge solid"><span lang="de">Feature</span><span lang="en">Feature</span></span>
+    <span class="badge">ADR-002 · 008 · 022</span>
+    <span class="badge warn"><span lang="de">teilweise gebaut</span><span lang="en">partly built</span></span>
+    <span class="badge"><span lang="de">Graph 07.09.2026</span><span lang="en">Graph 7 Sept 2026</span></span>
+    <span class="langswitch" role="group" aria-label="Sprache / Language">
+      <button type="button" data-lang="de" aria-pressed="true">DE</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </span>
+  </div>
+</div>
+
+<header class="band">
+  <div class="band-in">
+    <div class="headcard">
+      <div class="eyebrow"><span lang="de">Features · Fallübergabe zwischen Beratenden</span><span lang="en">Features · case handover between counsellors</span></div>
+      <h1><span lang="de">Wie Case Handover funktioniert</span><span lang="en">How case handover works</span></h1>
+      <p class="lead">
+        <span lang="de">Eine Beraterin übernimmt einen bestehenden Fall einer Kollegin — zeitweise zur
+          fachlichen Rücksprache oder dauerhaft bei Abwesenheit. Diese Seite beschreibt den Ablauf aus
+          Sicht der Nutzenden, die Regeln dahinter und die Dienste, die ihn tragen.</span>
+        <span lang="en">A counsellor takes over an existing case from a colleague — temporarily for
+          professional consultation, or permanently in case of absence. This page describes the flow as the
+          users experience it, the rules behind it and the services that carry it.</span>
+      </p>
+      <div class="chips">
+        <span class="chip"><span class="dot"></span><span lang="de">Fall holen: gebaut und in Betrieb</span><span lang="en">Taking a case: built and in operation</span></span>
+        <span class="chip"><span class="dot"></span><span lang="de">Fall abgeben: in Entwicklung</span><span lang="en">Handing a case over: in development</span></span>
+        <span class="chip"><span class="dot"></span><span lang="de">Ratsuchende können der Übergabe zustimmen</span><span lang="en">People seeking advice can consent to the handover</span></span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<nav class="chipnav" aria-label="Kapitel / Chapters">
+  <div class="chipnav-in">
+    <a href="#k1"><span class="no">1</span><span lang="de">Kurzfassung</span><span lang="en">Summary</span></a>
+    <a href="#k2"><span class="no">2</span><span lang="de">Fall holen</span><span lang="en">Taking a case</span></a>
+    <a href="#k3"><span class="no">3</span><span lang="de">Fall abgeben</span><span lang="en">Handing a case over</span></a>
+    <a href="#k4"><span class="no">4</span><span lang="de">Rollen</span><span lang="en">Roles</span></a>
+    <a href="#k5"><span class="no">5</span><span lang="de">Gründe &amp; Regeln</span><span lang="en">Reasons &amp; rules</span></a>
+    <a href="#k6"><span class="no">6</span><span lang="de">Technik</span><span lang="en">Technology</span></a>
+    <a href="#k7"><span class="no">7</span><span lang="de">Entwicklungsstand</span><span lang="en">State of development</span></a>
+    <a href="#k8"><span class="no">8</span><span lang="de">Frische &amp; Quellen</span><span lang="en">Freshness &amp; sources</span></a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <div class="meta">
+    <div><div class="vlabel"><span lang="de">Seite</span><span lang="en">Page</span></div><div class="vvalue">1.0 · 07.09.2026</div></div>
+    <div><div class="vlabel"><span lang="de">Graph-Stand</span><span lang="en">Graph state</span></div><div class="vvalue">07.09.2026 · <span class="mono">dev</span></div></div>
+    <div><div class="vlabel"><span lang="de">Tiefe (Abläufe, Prosa)</span><span lang="en">Depth (flows, prose)</span></div><div class="vvalue">04.09.2026</div></div>
+    <div><div class="vlabel"><span lang="de">Stand der Funktion</span><span lang="en">State of the function</span></div><div class="vvalue"><span class="status warn"><span lang="de">teilweise gebaut</span><span lang="en">partly built</span></span></div></div>
+    <div><div class="vlabel"><span lang="de">Beteiligte Teile</span><span lang="en">Parts involved</span></div><div class="vvalue">UserService · Frontend · Administration</div></div>
+    <div><div class="vlabel"><span lang="de">Nächste Prüfung</span><span lang="en">Next review</span></div><div class="vvalue"><span lang="de">wenn „Fall abgeben" ausgeliefert ist</span><span lang="en">once "handing a case over" has shipped</span></div></div>
+  </div>
+
+  <section id="k1">
+    <div class="ch"><span class="chapter-no">1</span><h2><span lang="de">Kurzfassung</span><span lang="en">Summary</span></h2></div>
+    <div class="kurz">
+      <p>
+        <span lang="de"><strong>Was es ist.</strong> Fallübergabe regelt, wie eine laufende Beratung zu einer anderen
+          Fachkraft derselben Beratungsstelle kommt — bei Abwesenheit, beim Ausscheiden oder wenn eine
+          Kollegin fachlich um Rat gebeten wird.</span>
+        <span lang="en"><strong>What it is.</strong> Case handover governs how an ongoing counselling session reaches
+          another professional at the same counselling centre — in case of absence, when someone leaves, or
+          when a colleague is asked for professional advice.</span>
+      </p>
+      <p>
+        <span lang="de"><strong>Was heute läuft.</strong> Eine Beraterin kann einen Fall <em>holen</em>: sie sucht ihn,
+          gibt einen Grund an und fragt Zugang an. Je nach Grund wird sofort freigegeben, oder die
+          ratsuchende Person stimmt im Chat zu. Danach liest die Kollegin zeitlich begrenzt mit oder
+          übernimmt die Beratung ganz.</span>
+        <span lang="en"><strong>What works today.</strong> A counsellor can <em>take</em> a case: she searches for it,
+          states a reason and requests access. Depending on the reason, access is granted at once, or the
+          person seeking advice consents in the chat. After that the colleague reads along for a limited
+          time, or takes over the counselling session entirely.</span>
+      </p>
+      <p>
+        <span lang="de"><strong>Was gerade entsteht.</strong> Die Gegenrichtung — eine Beraterin <em>gibt</em> ihren Fall
+          vor dem Urlaub aktiv an eine Kollegin <em>ab</em>, die annimmt — ist entwickelt, aber noch nicht
+          ausgeliefert. Ebenso die anlassneutralen Übergabegründe (Kapitel 5).</span>
+        <span lang="en"><strong>What is being built.</strong> The other direction — a counsellor actively <em>hands</em>
+          her case <em>over</em> to a colleague before going on leave, and the colleague accepts — is
+          developed, but not yet shipped. The same applies to the neutral handover reasons (chapter 5).</span>
+      </p>
+    </div>
+  </section>
+
+  <section id="k2">
+    <div class="ch"><span class="chapter-no">2</span><h2><span lang="de">Fall holen</span><span lang="en">Taking a case</span></h2>
+      <span class="status ok"><span lang="de">in Betrieb</span><span lang="en">in operation</span></span></div>
+    <div class="legend"><span lang="de">Wer handelt:</span><span lang="en">Who acts:</span>
+      <span class="who b"><span lang="de">Übernehmende</span><span lang="en">Incoming counsellor</span></span>
+      <span class="who s"><span lang="de">System</span><span lang="en">System</span></span>
+      <span class="who k"><span lang="de">Ratsuchende Person</span><span lang="en">Person seeking advice</span></span>
+      <span class="who"><span lang="de">Chat &amp; Protokoll</span><span lang="en">Chat &amp; audit log</span></span></div>
+    <ol class="steps">
+      <li class="step"><div class="step-no">1</div>
+        <div class="step-body">
+          <div class="step-head"><span class="step-title"><span lang="de">Fall suchen</span><span lang="en">Search for a case</span></span><span class="who b"><span lang="de">Übernehmende</span><span lang="en">Incoming counsellor</span></span></div>
+          <div class="step-text">
+            <span lang="de">Sie sieht die Fälle ihrer eigenen Beratungsstellen — nicht ihre eigenen,
+              auf Wunsch auch abgeschlossene — und kann nach Thema filtern. Einstieg ist die Liste der Beratungen.</span>
+            <span lang="en">She sees the cases of her own counselling centres — not her own cases, and on
+              request closed ones as well — and can filter by topic. The entry point is the list of counselling sessions.</span>
+          </div>
+        </div></li>
+      <li class="step"><div class="step-no">2</div>
+        <div class="step-body">
+          <div class="step-head"><span class="step-title"><span lang="de">Grund wählen</span><span lang="en">Choose a reason</span></span><span class="who b"><span lang="de">Übernehmende</span><span lang="en">Incoming counsellor</span></span></div>
+          <div class="step-text">
+            <span lang="de">Der Grund entscheidet, ob die ratsuchende Person zustimmen muss und ob
+              aus dem Zugang ein Mitlesen oder eine Übernahme wird (Kapitel 5).</span>
+            <span lang="en">The reason decides whether the person seeking advice has to consent, and whether
+              the access becomes reading along or taking over (chapter 5).</span>
+          </div>
+        </div></li>
+      <li class="step"><div class="step-no">3</div>
+        <div class="step-body">
+          <div class="step-head"><span class="step-title"><span lang="de">Zugang anfragen</span><span lang="en">Request access</span></span><span class="who b"><span lang="de">Übernehmende</span><span lang="en">Incoming counsellor</span></span></div>
+          <div class="step-text">
+            <span lang="de">Eine Anfrage kann mehrere Fälle auf einmal umfassen; das Ergebnis meldet
+              je Fall Erfolg oder Ablehnung.</span>
+            <span lang="en">One request can cover several cases at once; the result reports success or
+              refusal for each case.</span>
+          </div>
+        </div></li>
+      <li class="step"><div class="step-no">4</div>
+        <div class="step-body">
+          <div class="step-head"><span class="step-title"><span lang="de">Regelprüfung</span><span lang="en">Rule check</span></span><span class="who s"><span lang="de">System</span><span lang="en">System</span></span></div>
+          <div class="step-text">
+            <span lang="de">Geprüft wird die Berechtigung — dieselbe Beratungsstelle — und die Regel
+              zum gewählten Grund. Daraus folgen zwei Wege:</span>
+            <span lang="en">What is checked is the permission — the same counselling centre — and the rule
+              for the chosen reason. Two paths follow from that:</span>
+          </div>
+          <div class="branch">
+            <div class="bcard ok"><div class="bt"><span lang="de">Sofort frei</span><span lang="en">Granted at once</span></div>
+              <div class="bx"><span lang="de">Die Regel verlangt keine Zustimmung. Der Zugang wird direkt gewährt.</span><span lang="en">The rule requires no consent. Access is granted directly.</span></div></div>
+            <div class="bcard warn"><div class="bt"><span lang="de">Zustimmung nötig</span><span lang="en">Consent required</span></div>
+              <div class="bx"><span lang="de">Die Anfrage wartet. Die ratsuchende Person erhält eine Nachricht im Chat.</span><span lang="en">The request waits. The person seeking advice receives a message in the chat.</span></div></div>
+          </div>
+        </div></li>
+      <li class="step"><div class="step-no">5</div>
+        <div class="step-body">
+          <div class="step-head"><span class="step-title"><span lang="de">Ratsuchende Person entscheidet</span><span lang="en">The person decides</span></span><span class="who k"><span lang="de">Ratsuchende Person</span><span lang="en">Person seeking advice</span></span></div>
+          <div class="step-text">
+            <span lang="de">Zustimmen oder ablehnen, im Chat. Ein Nein setzt sich gegen jede Regel
+              durch und blockiert die Übergabe.</span>
+            <span lang="en">Consent or refuse, in the chat. A no overrides every rule and blocks the handover.</span>
+          </div>
+        </div></li>
+      <li class="step"><div class="step-no">6</div>
+        <div class="step-body">
+          <div class="step-head"><span class="step-title"><span lang="de">Zugang gewährt</span><span lang="en">Access granted</span></span><span class="who s"><span lang="de">System</span><span lang="en">System</span></span></div>
+          <div class="step-text"><span lang="de">Je nach Grund eine von zwei Ausprägungen (Kapitel 4):</span><span lang="en">Depending on the reason, one of two forms (chapter 4):</span></div>
+          <div class="branch">
+            <div class="bcard"><div class="bt"><span lang="de">Mitlesen</span><span lang="en">Reading along</span></div>
+              <div class="bx"><span lang="de">Zeitlich begrenzt, die Zuständigkeit bleibt bei der bisherigen Beraterin.</span><span lang="en">Limited in time; responsibility stays with the current counsellor.</span></div></div>
+            <div class="bcard brand"><div class="bt"><span lang="de">Übernahme</span><span lang="en">Taking over</span></div>
+              <div class="bx">
+                <span lang="de">Die Zuständigkeit wechselt; die bisherige Beraterin wird für die ratsuchende
+                  Person unsichtbar.</span>
+                <span lang="en">Responsibility changes; the previous counsellor becomes invisible to the
+                  person seeking advice.</span>
+              </div></div>
+          </div>
+        </div></li>
+      <li class="step"><div class="step-no">7</div>
+        <div class="step-body">
+          <div class="step-head"><span class="step-title"><span lang="de">Chatraum betreten</span><span lang="en">Enter the chat room</span></span><span class="who"><span lang="de">Chat</span><span lang="en">Chat</span></span></div>
+          <div class="step-text">
+            <span lang="de">Die Übernehmende wird sichtbares Mitglied. Die Vorgängerin bleibt Mitglied —
+              sonst wäre der verschlüsselte Verlauf für sie verloren und ein Zurückholen unmöglich.</span>
+            <span lang="en">The incoming counsellor becomes a visible member. Her predecessor stays a member —
+              otherwise the encrypted history would be lost to her and taking the case back impossible.</span>
+          </div>
+        </div></li>
+      <li class="step"><div class="step-no">8</div>
+        <div class="step-body">
+          <div class="step-head"><span class="step-title"><span lang="de">Protokoll</span><span lang="en">Audit log</span></span><span class="who"><span lang="de">Protokoll</span><span lang="en">Audit log</span></span></div>
+          <div class="step-text"><span lang="de">Jede Anfrage wird protokolliert und ist im Administrationsbereich einsehbar.</span><span lang="en">Every request is logged and can be viewed in the administration area.</span></div>
+        </div></li>
+    </ol>
+  </section>
+
+  <section id="k3">
+    <div class="ch"><span class="chapter-no">3</span><h2><span lang="de">Fall abgeben</span><span lang="en">Handing a case over</span></h2>
+      <span class="status warn"><span lang="de">in Entwicklung</span><span lang="en">in development</span></span></div>
+    <div class="note">
+      <span lang="de"><b>Noch nicht ausgeliefert.</b> Der folgende Ablauf ist entwickelt und getestet,
+        aber noch nicht auf den Servern der Beratungsstellen. Bis dahin führt nur der Weg aus Kapitel 2
+        zu einer Übergabe. Diese Seite wird aktualisiert, sobald die Auslieferung erfolgt ist.</span>
+      <span lang="en"><b>Not yet shipped.</b> The flow below is developed and tested, but not yet on the
+        servers of the counselling centres. Until then, only the path in chapter 2 leads to a handover.
+        This page will be updated once it has shipped.</span>
+    </div>
+    <ol class="steps plan">
+      <li class="step"><div class="step-no">1</div>
+        <div class="step-body">
+          <div class="step-head"><span class="step-title"><span lang="de">Kollegin und Grund wählen</span><span lang="en">Choose colleague and reason</span></span><span class="who b"><span lang="de">Abgebende</span><span lang="en">Outgoing counsellor</span></span></div>
+          <div class="step-text">
+            <span lang="de">Die zuständige Beraterin öffnet ihren eigenen Fall, wählt eine Kollegin
+              derselben Beratungsstelle und den Grund — etwa geplante Abwesenheit.</span>
+            <span lang="en">The responsible counsellor opens her own case, picks a colleague at the same
+              counselling centre and the reason — planned absence, for example.</span>
+          </div>
+        </div></li>
+      <li class="step"><div class="step-no">2</div>
+        <div class="step-body">
+          <div class="step-head"><span class="step-title"><span lang="de">Angebot geht raus</span><span lang="en">The offer goes out</span></span><span class="who s"><span lang="de">System</span><span lang="en">System</span></span></div>
+          <div class="step-text">
+            <span lang="de">Die Kollegin wird benachrichtigt. Ein Fall hat immer nur ein offenes
+              Angebot; wird es nicht beantwortet, verfällt es nach drei Tagen. Der Fall wechselt vorher nie.</span>
+            <span lang="en">The colleague is notified. A case only ever has one open offer; if it goes
+              unanswered, it expires after three days. The case never changes hands before that.</span>
+          </div>
+        </div></li>
+      <li class="step"><div class="step-no">3</div>
+        <div class="step-body">
+          <div class="step-head"><span class="step-title"><span lang="de">Kollegin nimmt an oder lehnt ab</span><span lang="en">The colleague accepts or declines</span></span><span class="who b"><span lang="de">Empfangende</span><span lang="en">Receiving counsellor</span></span></div>
+          <div class="step-text">
+            <span lang="de">Bei Ablehnung bleibt alles beim Alten, die abgebende Person wird
+              benachrichtigt. Die Annahme läuft anschließend durch dieselbe Regelprüfung wie beim Holen —
+              einschließlich der Zustimmung der ratsuchenden Person, wenn der Grund sie verlangt.</span>
+            <span lang="en">If she declines, everything stays as it was and the counsellor handing over is
+              notified. Acceptance then runs through the same rule check as taking a case — including the
+              consent of the person seeking advice, if the reason requires it.</span>
+          </div>
+        </div></li>
+      <li class="step"><div class="step-no">4</div>
+        <div class="step-body">
+          <div class="step-head"><span class="step-title"><span lang="de">Übergabe</span><span lang="en">Handover</span></span><span class="who s"><span lang="de">System</span><span lang="en">System</span></span></div>
+          <div class="step-text">
+            <span lang="de">Ab hier ist der Ablauf identisch mit den Schritten 6 bis 8 aus Kapitel 2:
+              Mitlesen oder Übernahme, Chatraum, Protokoll — ergänzt um die Richtung der Übergabe und die
+              empfangende Person.</span>
+            <span lang="en">From here the flow is identical to steps 6 to 8 in chapter 2: reading along or
+              taking over, chat room, audit log — plus the direction of the handover and the receiving person.</span>
+          </div>
+        </div></li>
+    </ol>
+    <div class="prose">
+      <p>
+        <span lang="de">Wichtig dabei: Die Annahme durch die Kollegin ersetzt <em>nicht</em> die Zustimmung der
+          ratsuchenden Person. Es gibt keine zusätzliche Einwilligungsstufe — es gilt dieselbe Regel je
+          Grund wie beim Holen.</span>
+        <span lang="en">One point matters here: the colleague's acceptance does <em>not</em> replace the
+          consent of the person seeking advice. There is no additional consent step — the same rule per
+          reason applies as when taking a case.</span>
+      </p>
+    </div>
+  </section>
+
+  <section id="k4">
+    <div class="ch"><span class="chapter-no">4</span><h2><span lang="de">Rollen &amp; Sichtbarkeit</span><span lang="en">Roles &amp; visibility</span></h2></div>
+    <div class="prose">
+      <p>
+        <span lang="de">Der Kern der zugrunde liegenden Entscheidung: <strong>Mitgliedschaft ist nicht Sichtbarkeit.</strong>
+          Technisch sind die Beratenden einer Beratungsstelle stille Mitglieder des Chatraums, damit
+          Schlüssel und Verlauf vorhanden sind. Sichtbar und handlungsfähig ist nur, wer freigegeben wurde.
+          Die ratsuchende Person sieht ausschließlich die aktive Beraterin.</span>
+        <span lang="en">The core of the underlying decision: <strong>membership is not visibility.</strong>
+          Technically the counsellors of a counselling centre are silent members of the chat room, so that
+          keys and history are present. Only those who have been granted access are visible and able to act.
+          The person seeking advice sees the active counsellor and nobody else.</span>
+      </p>
+    </div>
+    <div class="table-scroll matrix">
+      <table>
+        <thead><tr>
+          <th><span lang="de">Rolle</span><span lang="en">Role</span></th>
+          <th><span lang="de">Fall sehen</span><span lang="en">See the case</span></th>
+          <th><span lang="de">Schreiben</span><span lang="en">Write</span></th>
+          <th><span lang="de">Übergabe anfragen</span><span lang="en">Request handover</span></th>
+          <th><span lang="de">Entscheiden</span><span lang="en">Decide</span></th>
+          <th><span lang="de">Protokoll</span><span lang="en">Audit log</span></th>
+        </tr></thead>
+        <tbody>
+          <tr><td><span lang="de">Ratsuchende Person</span><span lang="en">Person seeking advice</span></td><td><span class="cell y"><span lang="de">ja</span><span lang="en">yes</span></span></td><td><span class="cell y"><span lang="de">ja</span><span lang="en">yes</span></span></td><td><span class="cell n">—</span></td><td><span class="cell y"><span lang="de">ja<small>Zustimmung</small></span><span lang="en">yes<small>consent</small></span></span></td><td><span class="cell n">—</span></td></tr>
+          <tr><td><span lang="de">Aktive Beraterin</span><span lang="en">Active counsellor</span></td><td><span class="cell y"><span lang="de">ja</span><span lang="en">yes</span></span></td><td><span class="cell y"><span lang="de">ja</span><span lang="en">yes</span></span></td><td><span class="cell p"><span lang="de">beim Abgeben</span><span lang="en">when handing over</span></span></td><td><span class="cell n">—</span></td><td><span class="cell n">—</span></td></tr>
+          <tr><td><span lang="de">Kollegin derselben Beratungsstelle</span><span lang="en">Colleague at the same counselling centre</span></td><td><span class="cell p"><span lang="de">nach Freigabe</span><span lang="en">once granted</span></span></td><td><span class="cell p"><span lang="de">bei Übernahme</span><span lang="en">when taking over</span></span></td><td><span class="cell y"><span lang="de">ja</span><span lang="en">yes</span></span></td><td><span class="cell n">—</span></td><td><span class="cell n">—</span></td></tr>
+          <tr><td><span lang="de">Stilles Mitglied</span><span lang="en">Silent member</span></td><td><span class="cell n"><span lang="de">pseudonym</span><span lang="en">pseudonymous</span></span></td><td><span class="cell n">—</span></td><td><span class="cell y"><span lang="de">ja</span><span lang="en">yes</span></span></td><td><span class="cell n">—</span></td><td><span class="cell n">—</span></td></tr>
+          <tr><td><span lang="de">Verwaltung der Beratungsstelle</span><span lang="en">Counselling centre administration</span></td><td><span class="cell n">—</span></td><td><span class="cell n">—</span></td><td><span class="cell n">—</span></td><td><span class="cell n">—</span></td><td><span class="cell p"><span lang="de">eigene Stellen</span><span lang="en">own centres</span></span></td></tr>
+          <tr><td><span lang="de">Trägerverwaltung</span><span lang="en">Organisation administration</span></td><td><span class="cell n">—</span></td><td><span class="cell n">—</span></td><td><span class="cell n">—</span></td><td><span class="cell p"><span lang="de">Regeln pflegen</span><span lang="en">maintain rules</span></span></td><td><span class="cell y"><span lang="de">ja</span><span lang="en">yes</span></span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3><span lang="de">Zwei Ausprägungen der Freigabe</span><span lang="en">Two forms of access</span></h3>
+    <div class="compare">
+      <div class="ccard a">
+        <h3><span lang="de">Mitlesen</span><span lang="en">Reading along</span></h3>
+        <dl class="kv">
+          <dt><span lang="de">Dauer</span><span lang="en">Duration</span></dt><dd><span lang="de">befristet, endet automatisch</span><span lang="en">limited, ends automatically</span></dd>
+          <dt><span lang="de">Zuständig</span><span lang="en">Responsible</span></dt><dd><span lang="de">bleibt die bisherige Beraterin</span><span lang="en">remains the current counsellor</span></dd>
+          <dt><span lang="de">Sichtbar</span><span lang="en">Visible</span></dt><dd><span lang="de">ratsuchende Person sieht weiterhin nur sie</span><span lang="en">the person still sees only her</span></dd>
+          <dt><span lang="de">Typisch</span><span lang="en">Typical</span></dt><dd><span lang="de">fachliche Rücksprache</span><span lang="en">professional consultation</span></dd>
+        </dl>
+      </div>
+      <div class="ccard b">
+        <h3><span lang="de">Übernahme</span><span lang="en">Taking over</span></h3>
+        <dl class="kv">
+          <dt><span lang="de">Dauer</span><span lang="en">Duration</span></dt><dd><span lang="de">unbefristet</span><span lang="en">open-ended</span></dd>
+          <dt><span lang="de">Zuständig</span><span lang="en">Responsible</span></dt><dd><span lang="de">wechselt zur Übernehmenden</span><span lang="en">moves to the incoming counsellor</span></dd>
+          <dt><span lang="de">Sichtbar</span><span lang="en">Visible</span></dt><dd><span lang="de">ratsuchende Person sieht nur noch sie</span><span lang="en">the person now sees only her</span></dd>
+          <dt><span lang="de">Rückholbar</span><span lang="en">Reversible</span></dt><dd><span lang="de">ja — außer wenn die Zuordnung beendet wurde</span><span lang="en">yes — except when the assignment has ended</span></dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section id="k5">
+    <div class="ch"><span class="chapter-no">5</span><h2><span lang="de">Gründe &amp; Regeln</span><span lang="en">Reasons &amp; rules</span></h2></div>
+    <div class="table-scroll">
+      <table>
+        <thead><tr>
+          <th style="width:24%"><span lang="de">Grund</span><span lang="en">Reason</span></th>
+          <th><span lang="de">Bedeutung</span><span lang="en">Meaning</span></th>
+          <th style="width:16%"><span lang="de">Zustimmung</span><span lang="en">Consent</span></th>
+          <th style="width:18%"><span lang="de">Ergebnis</span><span lang="en">Result</span></th>
+          <th style="width:16%"><span lang="de">Stand</span><span lang="en">State</span></th>
+        </tr></thead>
+        <tbody>
+          <tr><td><span lang="de">Rat erbeten</span><span lang="en">Advice requested</span></td><td><span lang="de">Eine Kollegin wird fachlich hinzugezogen</span><span lang="en">A colleague is brought in for professional advice</span></td><td><span class="cell y"><span lang="de">erforderlich</span><span lang="en">required</span></span></td><td><span lang="de">Mitlesen</span><span lang="en">Reading along</span></td><td><span class="tag ok"><span lang="de">in Betrieb</span><span lang="en">in operation</span></span></td></tr>
+          <tr><td><span lang="de">Geplant abwesend</span><span lang="en">Planned absence</span></td><td><span lang="de">Angekündigte Abwesenheit der zuständigen Person</span><span lang="en">Announced absence of the responsible person</span></td><td><span class="cell p"><span lang="de">nach Regel</span><span lang="en">per rule</span></span></td><td><span lang="de">Übernahme, rückholbar</span><span lang="en">Taking over, reversible</span></td><td><span class="tag warn"><span lang="de">Wortlaut in Arbeit</span><span lang="en">wording in progress</span></span></td></tr>
+          <tr><td><span lang="de">Ungeplant abwesend</span><span lang="en">Unplanned absence</span></td><td><span lang="de">Kurzfristiger Ausfall, ohne Angabe der Ursache</span><span lang="en">Short-notice absence, without stating the cause</span></td><td><span class="cell p"><span lang="de">nach Regel</span><span lang="en">per rule</span></span></td><td><span lang="de">Übernahme, rückholbar</span><span lang="en">Taking over, reversible</span></td><td><span class="tag warn"><span lang="de">ersetzt bisherige Gründe</span><span lang="en">replaces the existing reasons</span></span></td></tr>
+          <tr><td><span lang="de">Zuordnung beendet</span><span lang="en">Assignment ended</span></td><td><span lang="de">Die bisherige Person betreut den Fall dauerhaft nicht mehr</span><span lang="en">The previous counsellor no longer looks after the case at all</span></td><td><span class="cell p"><span lang="de">nach Regel</span><span lang="en">per rule</span></span></td><td><span lang="de">Übernahme, nicht rückholbar</span><span lang="en">Taking over, not reversible</span></td><td><span class="tag warn"><span lang="de">Wortlaut in Arbeit</span><span lang="en">wording in progress</span></span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note">
+      <span lang="de"><b>Warum der Wortlaut sich ändert.</b> Die heute ausgelieferten Gründe benennen
+        unter anderem Krankheit. Damit stünde ein Gesundheitsdatum über eine Beschäftigte in der
+        Datenbank, im Protokoll und in der Nachricht an die ratsuchende Person. Beschlossen ist deshalb
+        ein anlassneutraler Katalog: <em>geplant abwesend</em> und <em>ungeplant abwesend</em> statt
+        Urlaub und Krankheit. Die Umstellung samt Überschreiben der Altdaten ist entwickelt und wartet
+        auf die Auslieferung.</span>
+      <span lang="en"><b>Why the wording is changing.</b> The reasons shipped today name illness, among
+        others. That would put health data about an employee in the database, in the audit log and in the
+        message to the person seeking advice. A neutral catalogue has therefore been decided:
+        <em>planned absence</em> and <em>unplanned absence</em> instead of leave and illness. The change,
+        including overwriting the old data, is developed and waiting to ship.</span>
+    </div>
+    <div class="prose">
+      <h3><span lang="de">Verbindliche Regeln</span><span lang="en">Binding rules</span></h3>
+      <ul>
+        <li>
+          <span lang="de"><strong>Zustimmung:</strong> Widerspricht die ratsuchende Person, ist aktive Zustimmung
+            Pflicht. Je Grund darf die Regel nur strenger sein, nie lockerer.</span>
+          <span lang="en"><strong>Consent:</strong> if the person seeking advice objects, active consent is
+            mandatory. Per reason the rule may only be stricter, never looser.</span>
+        </li>
+        <li>
+          <span lang="de"><strong>Offenlegung des Grundes</strong> gegenüber der ratsuchenden Person ist ein eigener
+            Schalter je Träger.</span>
+          <span lang="en"><strong>Disclosing the reason</strong> to the person seeking advice is a separate
+            switch per organisation.</span>
+        </li>
+        <li>
+          <span lang="de"><strong>Geltungsbereich:</strong> nur Einzelberatungen. Offene Sprechstunden, interne Chats
+            und Gruppenberatungen sind ausgenommen.</span>
+          <span lang="en"><strong>Scope:</strong> individual counselling sessions only. Open consultation
+            hours, internal chats and group sessions are excluded.</span>
+        </li>
+        <li>
+          <span lang="de"><strong>Berechtigung:</strong> nur innerhalb derselben Beratungsstelle; geprüft im Dienst,
+            nicht in der Oberfläche.</span>
+          <span lang="en"><strong>Permission:</strong> only within the same counselling centre; checked in
+            the service, not in the interface.</span>
+        </li>
+        <li>
+          <span lang="de"><strong>Benachrichtigung:</strong> Ratsuchende erhalten die Nachricht in ihrer Sprache.</span>
+          <span lang="en"><strong>Notification:</strong> people seeking advice receive the message in their own language.</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="k6">
+    <div class="ch"><span class="chapter-no">6</span><h2><span lang="de">Technik</span><span lang="en">Technology</span></h2>
+      <span class="sub2"><span lang="de">Endpunkte des UserService</span><span lang="en">Endpoints of the UserService</span></span></div>
+    <div class="endpoints">
+      <div class="epr"><div><span class="verb">GET</span><span class="path">/users/case-handover/candidates</span></div>
+        <div class="desc"><span lang="de">Fälle der eigenen Beratungsstellen suchen</span><span lang="en">Search cases of one's own counselling centres</span></div></div>
+      <div class="epr"><div><span class="verb">GET</span><span class="path">/users/case-handover/reasons</span></div>
+        <div class="desc"><span lang="de">Verfügbare Gründe laden</span><span lang="en">Load the available reasons</span></div></div>
+      <div class="epr"><div><span class="verb post">POST</span><span class="path">/users/case-handover/batch</span></div>
+        <div class="desc"><span lang="de">Zugang für einen oder mehrere Fälle anfragen</span><span lang="en">Request access for one or more cases</span></div></div>
+      <div class="epr"><div><span class="verb">GET</span><span class="path">/users/sessions/{id}/case-handover</span></div>
+        <div class="desc"><span lang="de">Stand der Anfrage zu einem Fall</span><span lang="en">State of the request for a case</span></div></div>
+      <div class="epr"><div><span class="verb post">POST</span><span class="path">/users/sessions/{id}/case-handover/{requestId}/client-consent</span></div>
+        <div class="desc"><span lang="de">Zustimmung oder Ablehnung der ratsuchenden Person</span><span lang="en">Consent or refusal by the person seeking advice</span></div></div>
+      <div class="epr"><div><span class="verb">GET</span><span class="path">/users/case-handover/reason-policies</span></div>
+        <div class="desc"><span lang="de">Regeln je Grund lesen und pflegen (Administration)</span><span lang="en">Read and maintain the rules per reason (administration)</span></div></div>
+      <div class="epr"><div><span class="verb">GET</span><span class="path">/users/case-handover/logs</span></div>
+        <div class="desc"><span lang="de">Protokoll, seitenweise, je Träger (Administration)</span><span lang="en">Audit log, paged, per organisation (administration)</span></div></div>
+    </div>
+    <div class="prose">
+      <p class="sub2">
+        <span lang="de">Für „Fall abgeben" kommen Endpunkte zum Anbieten, Annehmen, Ablehnen und
+          Zurückziehen hinzu sowie eine Liste der auswählbaren Kolleg:innen. Sie sind entwickelt und
+          beschrieben, aber noch nicht ausgeliefert.</span>
+        <span lang="en">For "handing a case over" there are further endpoints for offering, accepting,
+          declining and withdrawing, plus a list of the colleagues who can be picked. They are developed
+          and described, but not yet shipped.</span>
+      </p>
+    </div>
+  </section>
+
+  <section id="k7">
+    <div class="ch"><span class="chapter-no">7</span><h2><span lang="de">Entwicklungsstand</span><span lang="en">State of development</span></h2></div>
+    <div class="table-scroll">
+      <table>
+        <thead><tr>
+          <th style="width:32%"><span lang="de">Teil</span><span lang="en">Part</span></th>
+          <th><span lang="de">Was gilt</span><span lang="en">What applies</span></th>
+          <th style="width:18%"><span lang="de">Stand</span><span lang="en">State</span></th>
+        </tr></thead>
+        <tbody>
+          <tr><td><span lang="de">Fall holen</span><span lang="en">Taking a case</span></td><td><span lang="de">Suche, Grund, Anfrage, Regelprüfung, Zustimmung, Mitlesen oder Übernahme, Protokoll</span><span lang="en">Search, reason, request, rule check, consent, reading along or taking over, audit log</span></td><td><span class="tag ok"><span lang="de">in Betrieb</span><span lang="en">in operation</span></span></td></tr>
+          <tr><td><span lang="de">Fall abgeben</span><span lang="en">Handing a case over</span></td><td><span lang="de">Angebot an eine Kollegin, Annahme oder Ablehnung, Verfall nach drei Tagen</span><span lang="en">Offer to a colleague, acceptance or refusal, expiry after three days</span></td><td><span class="tag warn"><span lang="de">entwickelt, nicht ausgeliefert</span><span lang="en">developed, not yet shipped</span></span></td></tr>
+          <tr><td><span lang="de">Anlassneutrale Gründe</span><span lang="en">Neutral reasons</span></td><td><span lang="de">Geplant und ungeplant abwesend statt Urlaub und Krankheit, samt Umstellung der Altdaten</span><span lang="en">Planned and unplanned absence instead of leave and illness, including the migration of the old data</span></td><td><span class="tag warn"><span lang="de">entwickelt, nicht ausgeliefert</span><span lang="en">developed, not yet shipped</span></span></td></tr>
+          <tr><td><span lang="de">Widerspruchsschalter im Chat</span><span lang="en">Objection switch in the chat</span></td><td><span lang="de">Ratsuchende können künftig dauerhaft widersprechen; dann ist Zustimmung immer Pflicht</span><span lang="en">People seeking advice will be able to object permanently; consent is then always mandatory</span></td><td><span class="tag"><span lang="de">beschlossen, offen</span><span lang="en">decided, open</span></span></td></tr>
+          <tr><td><span lang="de">Geltungsbereich Fachbereich</span><span lang="en">Scope: department</span></td><td><span lang="de">Heute umfasst die Übergabe die ganze Beratungsstelle, nicht einzelne Fachbereiche</span><span lang="en">Today the handover covers the whole counselling centre, not individual departments</span></td><td><span class="tag"><span lang="de">beschlossen, offen</span><span lang="en">decided, open</span></span></td></tr>
+          <tr><td><span lang="de">Aufbewahrung der Protokolle</span><span lang="en">Retention of the audit logs</span></td><td><span lang="de">Vorgesehen sind zwölf Monate; die automatische Löschung fehlt noch</span><span lang="en">Twelve months are intended; automatic deletion is still missing</span></td><td><span class="tag"><span lang="de">beschlossen, offen</span><span lang="en">decided, open</span></span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="k8">
+    <div class="ch"><span class="chapter-no">8</span><h2><span lang="de">Frische &amp; Quellen</span><span lang="en">Freshness &amp; sources</span></h2></div>
+    <div class="src">
+      <div>
+        <span lang="de"><strong>Graph:</strong> nächtlicher Lauf vom 07.09.2026 über den Branch <span class="mono">dev</span>;
+          Endpunkte aus den Diensten, Aufrufer aus der Anwendung.</span>
+        <span lang="en"><strong>Graph:</strong> nightly run of 7 Sept 2026 over the branch <span class="mono">dev</span>;
+          endpoints from the services, callers from the application.</span>
+      </div>
+      <div>
+        <span lang="de"><strong>Tiefe:</strong> Konzepte, Abläufe und Beschreibungen der beteiligten Dateien aus dem
+          Tiefenlauf vom 04.09.2026.</span>
+        <span lang="en"><strong>Depth:</strong> concepts, flows and descriptions of the files involved, from
+          the deep run of 4 Sept 2026.</span>
+      </div>
+      <div>
+        <span lang="de"><strong>Entscheidungen:</strong> ADR-002 (stille Mitgliedschaft und Sichtbarkeitsgrenze),
+          ADR-008 (Supervision und Reichweite), ADR-016 (Team-Besprechung, Abgrenzung),
+          ADR-022 (Einwilligungen) — einsehbar im Dashboard „Entscheidungen im Graph".</span>
+        <span lang="en"><strong>Decisions:</strong> ADR-002 (silent membership and the visibility boundary),
+          ADR-008 (supervision and its reach), ADR-016 (team discussion, delimitation),
+          ADR-022 (consent) — available in the dashboard "Decisions in the graph".</span>
+      </div>
+      <div>
+        <span lang="de"><strong>Stand der Funktion:</strong> geprüft am 07.09.2026 gegen den ausgelieferten Stand und
+          die offenen Entwicklungsstände.</span>
+        <span lang="en"><strong>State of the function:</strong> checked on 7 Sept 2026 against what has
+          shipped and the open states of development.</span>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <span lang="de">ORISO Understand · <a href="/features/">Features</a> · <a href="/">Startseite</a> ·
+    Inhalte aus Wissensgraph, Architekturentscheidungen und Quelltext</span>
+  <span lang="en">ORISO Understand · <a href="/features/">Features</a> · <a href="/">Home</a> ·
+    content from the knowledge graph, architecture decisions and source</span>
+</footer>
+
+</body>
+</html>

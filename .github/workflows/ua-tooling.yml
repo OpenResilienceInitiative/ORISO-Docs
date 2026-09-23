@@ -5,7 +5,7 @@ on:
       - 'tools/understand-anything/**'
       - '.github/workflows/ua-tooling.yml'
   push:
-    branches: [dev, pre-dev]
+    branches: [dev, main]
     paths:
       - 'tools/understand-anything/**'
       - '.github/workflows/ua-tooling.yml'

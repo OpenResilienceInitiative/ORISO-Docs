@@ -22,9 +22,11 @@ Classification: generalizable method (any coding agent); the slash-command form 
 3. **UI only via Storybook.** Props come from the Storybook MCP (`docs-show`,
    `stories-preview`), never from guessing. Rules and hosts: `skills/storybook-routing/SKILL.md`
    and `skills/oriso-frontend-component-discipline/SKILL.md`.
-4. **Freshness is printed, not assumed.** Run `ua-pull --verify` (Dev-Kit). Shallow structure
-   is refreshed from `dev` by the PreDev schedule (`17 */2 * * *`, every two hours
-   at minute 17) and explicit manual runs; semantic depth carries its own review date.
+4. **Freshness is printed, not assumed.** Run `ua-pull --verify` (Dev-Kit). Structure is
+   rebuilt once a day from `main` — released code — by GitHub Actions and served by
+   understand.oriso.org; semantic depth carries its own review date. On a `dev` checkout
+   expect `VALID-DIFFERENT-CHECKOUT`: the graph describes `main`, read the file itself for
+   anything newer.
    Use `ua-pull --verify` to compare a fresh origin ref and the selected graph revision;
    timestamps alone cannot certify freshness. Changed-source prose is stale until reviewed.
    Never edit or commit generated graphs.
@@ -46,10 +48,10 @@ Classification: generalizable method (any coding agent); the slash-command form 
   `deploys` (Helm → service), `depends_on` (service → service; `metadata.evidence` says calls
   and/or bundled spec). Node ids are prefixed `<Repo>::`. Counts live in `metadata.stats`,
   input commits in `metadata.sources` (both top-level keys of the graph, not under `project`).
-- Source of truth for both: the scheduled two-hourly or explicit manual build on PreDev
-  (`ssh predev /opt/oriso-understand/_rebuild/ua-refresh.sh`). `https://understand.oriso.org`
-  is a separate hosted nightly channel. Its publication may be stale and is not evidence
-  that the PreDev cache has the same generation or source revisions.
+- Source of truth for both: the daily build from `main` (`ua-graph-refresh.yml` in
+  ORISO-Docs), installed on `https://understand.oriso.org` and fetched by `ua-pull` from
+  `https://understand.oriso.org/ua`. The website's dashboards and your cache show the same
+  generation. PreDev no longer builds graphs.
 
 ## How to answer a question
 
@@ -75,7 +77,7 @@ Classification: generalizable method (any coding agent); the slash-command form 
 ## Do not
 
 - Do not run the plugin's `/understand` LLM rebuild inside ORISO repos — graphs come from
-  predev; a local rebuild burns tokens and diverges.
+  the daily `main` build; a local rebuild burns tokens and diverges.
 - Do not treat the aggregate `ORISO-Supergraph` or `oriso-super-graph-detailed.json` as input;
   they are dashboard artefacts.
 - Do not put secrets, hostnames with credentials, or tokens into graph files or this skill.

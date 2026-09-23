@@ -21,9 +21,9 @@ name: Understand Anything graph refresh
 
 on:
   schedule:
-    # Daily. The reviewer runs per PR, so a graph at most one day old is the
-    # useful target; the old two-hourly cadence made sense when the output fed a
-    # live dashboard rather than a per-PR consumer.
+    # Daily. Scheduled runs only fire from the default branch (`main`), which is
+    # also what the inventory builds: released code (ORISO-Docs#129).
+    # understand.oriso.org installs the result at 04:15 UTC (site/ua-site-sync.sh).
     - cron: "40 2 * * *"
   workflow_dispatch:
     inputs:
@@ -147,7 +147,9 @@ jobs:
         if: github.event_name != 'workflow_dispatch' || inputs.publish
         uses: actions/attest-build-provenance@v2
         with:
-          subject-path: ${{ env.UA_WORK }}/assets/*.tar.gz
+          subject-path: |
+            ${{ env.UA_WORK }}/assets/*.tar.gz
+            ${{ env.UA_WORK }}/assets/manifest.json
 
       - name: Publish to the consumer channel
         if: github.event_name != 'workflow_dispatch' || inputs.publish

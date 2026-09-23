@@ -17,7 +17,7 @@ test("actual platform CLI output has the complete versioned consumer envelope", 
   try {
     const sourceCommits = {};
     for (const repo of [
-      "ORISO-Admin", "ORISO-AgencyService", "ORISO-ConsultingTypeService", "ORISO-Database", "ORISO-Docs", "ORISO-E2E", "ORISO-ElementCall", "ORISO-Frontend", "ORISO-HealthDashboard", "ORISO-Helm", "ORISO-Infra", "ORISO-Keycloak", "ORISO-Livekit", "ORISO-SigNoz", "ORISO-Status", "ORISO-TenantService", "ORISO-UserService"
+      "ORISO-Admin", "ORISO-AgencyService", "ORISO-ConsultingTypeService", "ORISO-Database", "ORISO-Docs", "ORISO-ElementCall", "ORISO-Frontend", "ORISO-HealthDashboard", "ORISO-Helm", "ORISO-Keycloak", "ORISO-Livekit", "ORISO-SigNoz", "ORISO-Status", "ORISO-TenantService", "ORISO-UserService"
     ]) {
       const sourceDir = join(root, "sources", repo);
       mkdirSync(sourceDir, { recursive: true });

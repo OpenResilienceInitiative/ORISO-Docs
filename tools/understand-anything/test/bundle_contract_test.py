@@ -7,7 +7,7 @@ import tempfile
 import unittest
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
-from bundle.contract import ContractError, seal, validate
+from bundle.contract import MAX_AGE, ContractError, seal, validate
 from bundle.storage import publish, pull, rollback
 
 NOW = dt.datetime(2026, 9, 7, tzinfo=dt.timezone.utc)
@@ -110,7 +110,7 @@ def fixture(root, when=NOW):
     return [
         {
             "repository": "ORISO-Test",
-            "ref": "refs/heads/dev",
+            "ref": "refs/heads/main",
             "sourceSHA": SHA,
             "fetchedAt": timestamp,
             "fetchSuccess": True,
@@ -230,9 +230,9 @@ class ContractTests(unittest.TestCase):
 
     def test_content_timestamp_not_mtime_and_exact_boundary(self):
         seal(self.root, self.sources, now=NOW)
-        validate(self.root, now=NOW + dt.timedelta(seconds=86400))
+        validate(self.root, now=NOW + dt.timedelta(seconds=MAX_AGE))
         with self.assertRaises(ContractError):
-            validate(self.root, now=NOW + dt.timedelta(seconds=86400.01))
+            validate(self.root, now=NOW + dt.timedelta(seconds=MAX_AGE + 0.01))
         with self.assertRaises(ContractError):
             validate(self.root, now=NOW - dt.timedelta(seconds=1))
 
@@ -249,7 +249,7 @@ class ContractTests(unittest.TestCase):
                     self.root,
                     sources,
                     now=NOW,
-                    expected_refs={"ORISO-Test": "refs/heads/dev"},
+                    expected_refs={"ORISO-Test": "refs/heads/main"},
                 )
 
     def test_meta_source_and_graph_generation_mismatch_fail(self):

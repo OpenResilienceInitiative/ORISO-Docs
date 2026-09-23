@@ -12,6 +12,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import ssl
 import urllib.parse
 import urllib.request
 import uuid
@@ -20,6 +21,7 @@ from .pipeline import REPOS, fetch_source, refresh, run
 from .storage import pull, rollback
 
 TOOLS = Path(__file__).resolve().parents[1]
+DEFAULT_CHANNEL = os.environ.get("ORISO_UA_CHANNEL", "https://understand.oriso.org/ua")
 
 
 def repo_context():
@@ -58,8 +60,10 @@ def download(args):
                 copy_bounded(handle, output)
 
         return fetch, str(root)
-    if args.via_https is not None:
-        base = args.via_https.rstrip("/")
+    if args.via_https is not None or not args.via_ssh:
+        # Default channel: the generation understand.oriso.org installed from the
+        # daily `main` build (ORISO-Docs#129). PreDev is no longer a producer.
+        base = (args.via_https or DEFAULT_CHANNEL).rstrip("/")
         require(
             urllib.parse.urlparse(base).scheme == "https",
             "HTTPS transport requires https://",
@@ -85,7 +89,15 @@ def download(args):
                     "HTTPS redirect rejected before sending credentials"
                 )
 
-        opener = urllib.request.build_opener(NoRedirect())
+        # python.org builds on macOS ship without CA roots until "Install
+        # Certificates" is run; fall back to the system bundle rather than fail
+        # (or, worse, tempt someone into disabling verification).
+        context = ssl.create_default_context()
+        if not context.get_ca_certs() and os.path.isfile("/etc/ssl/cert.pem"):
+            context.load_verify_locations("/etc/ssl/cert.pem")
+        opener = urllib.request.build_opener(
+            NoRedirect(), urllib.request.HTTPSHandler(context=context)
+        )
 
         def fetch(name, target):
             request = urllib.request.Request(base + "/" + name)
@@ -104,7 +116,8 @@ def download(args):
                 copy_bounded(response, output)
 
         return fetch, base
-    host = os.environ.get("ORISO_UA_SSH_ALIAS", "predev")
+    host = os.environ.get("ORISO_UA_SSH_ALIAS", "")
+    require(host, "--via-ssh needs ORISO_UA_SSH_ALIAS; the default channel is HTTPS")
     remote = os.environ.get("ORISO_UA_REMOTE_ROOT", "/opt/oriso-understand/published")
     require(
         not host.startswith("-") and not any(c.isspace() for c in host),
@@ -252,7 +265,7 @@ def pull_main(argv):
     transport = parser.add_mutually_exclusive_group()
     transport.add_argument("--via-ssh", action="store_true")
     transport.add_argument(
-        "--via-https", nargs="?", const="https://predev.oriso.org/ua"
+        "--via-https", nargs="?", const=DEFAULT_CHANNEL
     )
     transport.add_argument(
         "--from",
@@ -295,7 +308,7 @@ def pull_main(argv):
         .expanduser()
         .resolve()
     )
-    ref = args.ref or "refs/heads/" + next((b for n, b, _ in REPOS if n == name), "dev")
+    ref = args.ref or "refs/heads/" + next((b for n, b, _ in REPOS if n == name), "main")
     if args.migrate_legacy or args.unlock:
         migrate(repository, cache)
         return 0

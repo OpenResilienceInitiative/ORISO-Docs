@@ -67,19 +67,19 @@ function parseArgs(argv) {
 // Constants
 // ---------------------------------------------------------------------------
 
-// The 17 ORISO repos (ORISO-Kubernetes excluded per spec — deprecated).
+// The public ORISO repos (ORISO-Kubernetes excluded per spec — deprecated).
+// ORISO-E2E and ORISO-Infra are private: not even an empty service node for them
+// may reach the public platform graph (ORISO-Docs#129).
 const ALL_REPOS = [
 	'ORISO-Admin',
 	'ORISO-AgencyService',
 	'ORISO-ConsultingTypeService',
 	'ORISO-Database',
 	'ORISO-Docs',
-	'ORISO-E2E',
 	'ORISO-ElementCall',
 	'ORISO-Frontend',
 	'ORISO-HealthDashboard',
 	'ORISO-Helm',
-	'ORISO-Infra',
 	'ORISO-Keycloak',
 	'ORISO-Livekit',
 	'ORISO-SigNoz',
@@ -154,7 +154,7 @@ function truncate(s, n = MAX_SUMMARY_LEN) {
 	return s.length > n ? s.slice(0, n - 1) + '…' : s;
 }
 
-/** git show origin/<branch>:<path>, trying `dev` then `pre-dev`. Returns null if neither has it. */
+/** git show <bound input revision>:<path> (see lib/source-reader.mjs). Returns null if the path is absent. */
 const gitShow = readSource;
 const gitLsTree = listSourceFiles;
 
