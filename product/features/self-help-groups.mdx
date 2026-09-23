@@ -69,6 +69,10 @@ A person who joins without an account still gets a real account on the server. T
 learn its password. Deleting such accounts automatically after the group is backend work that
 does not exist yet (ORISO-UserService#1001). Until it does, these accounts stay.
 
+**While the registration runs**, the screen shows the group's own three cards (how the group
+takes place, alias only, new dates and links) and "Zur Gruppe". It never promises an answer from
+a counselling centre, because a group join opens no enquiry (see 4.10.4).
+
 ## 4.10.4 Joining a group opens no counselling enquiry
 
 **The rule:** registering through a group's invite link makes the person a member of **that
@@ -95,12 +99,33 @@ it separately, like any other client.
 A group-only client has an account with one group in it and no counselling conversation. Their
 account data loads normally, and the group is what they see after logging in.
 
-## 4.10.5 Consent
+## 4.10.5 Privacy statement, Datenschutz and Impressum
 
-The registration consent is unchanged. The second consent gate of
-[ADR-022](/decisions/adr-022) — the Beratungsstelle's statement, shown before the first message —
-belongs to a counselling conversation. A group-only client has none, so that gate is not shown to
-them. Whether the group room needs a statement of its own is an open product question.
+**Before the first message: the Beratungsstelle's privacy statement.** Decided by Frank on
+23.09.2026. A client in a group whose agreement is not on record sees the statement of the
+Beratungsstelle that runs the group before they can write. This is the second consent gate of
+[ADR-022](/decisions/adr-022), the same dialog as in the live chat. It replaces the conversation
+until the client agrees. The composer stays hidden until then.
+
+- **Who is asked.** Every group client whose agreement is not on record. ADR-022 decides this gate
+  by consent state and forbids guessing anonymity, so the app never asks whether an account is
+  temporary. A registration through the invite link records no agreement. That means both the
+  temporary join (0a) and the full account created through the link (0b) are asked once. A client
+  who already had an account, for example from counselling, has an agreement on record and is not
+  asked again. Counsellors are never asked.
+- **Which text.** The consent sentence of the group's Beratungsstelle for its topic, when it has
+  one. A Beratungsstelle without its own statement shows the fixed warning that no statement is
+  available. When the group's topic cannot be told (the Beratungsstelle has several), the
+  platform's sentence applies.
+- **Where it is recorded.** On the account, as the live chat records it. A group has no counselling
+  conversation to hold a per-room pointer. The known limit: someone who agreed for one
+  Beratungsstelle is not asked again in a group of another one. Closing that gap needs a pointer
+  per group membership (backend).
+
+**Datenschutz and Impressum, like in every chat room.** Everyone in a running group — client or
+counsellor, text or audio/video — finds both in the ⋮ menu of the room. In the client's waiting
+room they sit under the stage on desktop and in a ⋮ menu "Rechtliches" in the top bar on a phone.
+Both open the documents of the Beratungsstelle that runs the group.
 
 ## 4.10.6 For developers
 
@@ -127,6 +152,8 @@ them. Whether the group room needs a statement of its own is an open product que
 | Counsellors land in their own group view; non-members see a notice | ORISO-Frontend#1534 | in review |
 | Registration through the link opens no enquiry (backend) | ORISO-UserService#1241 | in review |
 | Registration through the link names the group (frontend) | ORISO-Frontend#1547 (after #1531) | in review |
+| Privacy gate before the first group message, legal menu in the waiting room, group words while joining | ORISO-Frontend#1549 (after #1547) | in review |
+| Consent pointer per group membership | — | open |
 | Knock to join for non-member counsellors | ORISO-Frontend#1499, item 14 | in progress |
 | Automatic deletion of join-without-account accounts | ORISO-UserService#1001 | not started |
 
