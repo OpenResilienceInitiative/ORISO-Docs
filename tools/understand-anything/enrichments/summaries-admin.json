@@ -1,0 +1,4264 @@
+{
+ "meta": {
+  "generatedAt": "2026-09-04T14:23:24Z",
+  "generatedBy": "claude-sonnet-file-summaries-2026-09",
+  "repo": "ORISO-Admin",
+  "filesSelected": 169,
+  "filesSummarized": 169,
+  "functionsSummarized": 543,
+  "filtered": {
+   "kept": 708,
+   "dropped": 4
+  }
+ },
+ "nodeSummaries": {
+  "file:src/index.tsx": {
+   "summary": "SPA entry: applies antd v5 React-19 patch, starts observability, mounts <AdminApp> via createRoot on #root; configures global antd message toasts (3s, max 3).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/App.tsx": {
+   "summary": "Protected route tree: exports App component defining all /admin/* Routes (tenants, agency, topics, statistic, logs, users, links, settings) gated by permissions/roles; guards with DpaBlockerGate and 2FA setup gate; redi…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/App.tsx:AgencyInitialMeetingRedirect": {
+   "summary": "Redirects legacy /admin/agency/:id/initial-meeting route to the agency's functionalities tab using routePathNames.agenc…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/App.tsx:App": {
+   "summary": "Top-level protected app component: loads tenant/user/permission data, resolves default settings path, renders gated <Ro…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/AdminApp.tsx": {
+   "summary": "Composes providers/routes extracted from index.tsx (QueryClientProvider, UseAppConfigProvider, antd ConfigProvider, Router) for public routes (login, onboarding, password reset) plus wildcard ProtectedRoute wrapping <Ap…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/AdminApp.tsx:AppSettingsWrapper": {
+   "summary": "Blocks children behind <Initialization/> until server cluster settings load via apiServerSettings() when useApiClusterS…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/AdminApp.tsx:LanguageAwareConfigProvider": {
+   "summary": "Wraps children in antd ConfigProvider, tracking i18n language changes and supplying a shared AdminEmpty renderEmpty for…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/AdminApp.tsx:AdminApp": {
+   "summary": "Root component: nests ErrorBoundary, QueryClientProvider, config providers, Router with public routes and wildcard Prot…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/lazyPages.ts": {
+   "summary": "Central registry of React.lazy-loaded page components (LazyAgencyList, LazyTenantsList, LazyUsersList, LazyStatistic, settings/log/link pages, etc.) via lazyNamed helper, used to build App.tsx's route table.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/Layout/ProtectedPageLayoutWrapper.tsx": {
+   "summary": "Layout shell for authenticated admin pages: renders AdminSidebar or AdminMobileNavBar (via buildAdminNavItems), handles token refresh, subdomain-mismatch logout, dev feature-flag toggle, and stuck-overlay cleanup on rou…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Layout/ProtectedPageLayoutWrapper.tsx:ProtectedPageLayoutWrapper": {
+   "summary": "Wraps protected pages with sidebar/mobile nav, refreshes token on mount, logs out on tenant subdomain mismatch, clears…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/fetchData.ts": {
+   "summary": "Core HTTP client wrapper: FETCH_METHODS/FETCH_ERRORS/X_REASON constants, executeFetchData (adds Bearer auth, CSRF token, Accept-Language, aborts after timeout) and fetchData (auto-retries once after refreshing token on…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/fetchData.ts:executeFetchData": {
+   "summary": "Builds and sends the fetch Request (auth header, CSRF token, timeout/AbortController) and maps HTTP status codes to res…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/fetchData.ts:fetchData": {
+   "summary": "Public fetch wrapper: on 401 tries one token refresh+retry, else shows sessionExpired toast and calls logout(true, logi…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/appConfig.ts": {
+   "summary": "Defines mainURL/appURL/tenantServiceURL etc. and dozens of backend *Endpoint constants (agencyEndpointBase, counselorEndpoint, tenantAdminEndpoint, twoFactorAuth, accountInvitesEndpoint, statistics endpoints...) plus de…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/appConfig.ts:agencyDataAgencyId": {
+   "summary": "Builds the AgencyService URL for a single agency: `${agencyServiceURL}/service/agencyadmin/agencies/${agencyId}`.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/appConfig.ts:consultantsHasAgencyEndpoint": {
+   "summary": "Builds UserService URL listing consultants for a given agencyId under /service/useradmin/agencies/{id}/consultants.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/appConfig.ts:grantConsultantIdentityEndpoint": {
+   "summary": "Builds UserService URL to grant a consultant identity to an admin: /service/useradmin/admins/{adminId}/grant-consultant…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/utils/extractApiErrorMessage.ts": {
+   "summary": "Extracts a human-readable error message from a fetch Response/Error: reads X-Reason header or JSON body (reason/xReason/message/error/errors), translates known X_REASON keys via i18next, with a null-safe variant and a s…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/extractApiErrorMessage.ts:extractReasonFromBody": {
+   "summary": "Reads `reason` or `xReason` string field from a parsed JSON error body, else null.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/extractApiErrorMessage.ts:extractApiErrorReason": {
+   "summary": "Gets the X-Reason value from a Response: header first, else falls back to parsing the cloned JSON body.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/extractApiErrorMessage.ts:translateXReason": {
+   "summary": "Translates a raw X_REASON code via i18next `message.error.<reason>` key if it's a known reason and a translation exists.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/extractApiErrorMessage.ts:extractFromBody": {
+   "summary": "Pulls a usable error message from a parsed body: translated reason, then message/error string fields, then first value…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/extractApiErrorMessage.ts:extractApiErrorMessageOrNull": {
+   "summary": "Resolves the best-available error message from a Response or Error, returning null instead of a generic fallback when n…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/extractApiErrorMessage.ts:extractApiErrorMessage": {
+   "summary": "Like extractApiErrorMessageOrNull but falls back to i18next.t(fallbackKey ?? 'message.error.default') when nothing usab…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/extractApiErrorMessage.ts:showApiErrorMessage": {
+   "summary": "Resolves the error message via extractApiErrorMessage and passes it to a caller-supplied notify callback (e.g. antd mes…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/utils/parseHalResponse.ts": {
+   "summary": "Small helper to safely parse a backend HAL+JSON fetch Response, returning null for 204/empty/non-JSON bodies and passing through already-parsed objects.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/parseHalResponse.ts:parseHalResponse": {
+   "summary": "Parses a Response's body as JSON (HAL+JSON aware), returning null on 204, non-JSON content-type, or empty body; passes…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/agency/getAgencyById.ts": {
+   "summary": "Fetches a single agency via appConfig's agencyDataAgencyId endpoint; exports AgencyAccessError (thrown uniformly on 404/403 so foreign agencies can't be inferred) and default getAgencyDataById.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/agency/getAgencyById.ts:getAgencyDataById": {
+   "summary": "GETs agency data by id; maps NO_MATCH/NOT_ALLOWED to AgencyAccessError, otherwise shows a generic X-Reason toast and re…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/Layout/adminNavItems.ts": {
+   "summary": "Pure sidebar-nav builder consumed by ProtectedPageLayoutWrapper: buildAdminNavItems assembles theme/tenants/agency/users/statistics/links/logs entries from permission/role checks, using routePathNames from appConfig; un…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Layout/adminNavItems.ts:resolveUsersPage": {
+   "summary": "Picks the landing route for the Users nav entry: tenant-admins, else agency-admins, else consultants, else own profile,…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Layout/adminNavItems.ts:resolveLogsPage": {
+   "summary": "Picks the landing route for the Logs nav entry among supervisor/case-handover/inactive-account logs based on which the…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Layout/adminNavItems.ts:buildAdminNavItems": {
+   "summary": "Builds the full ordered sidebar item list (theme, tenants, agency, users, statistics, links, logs) filtered by role/per…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/Tenants/List/index.tsx": {
+   "summary": "Exports TenantsList page: paginated/sortable/searchable antd table of tenants (useTenantsData hook) with create/edit/delete actions gated by Resource.Tenant permissions and ReleaseToggle.TENANT_ADMIN_CREATING; uses rout…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Tenants/List/index.tsx:getTenantColumnSortOrder": {
+   "summary": "Maps a table column's dataIndex to antd sortOrder ('ascend'/'descend'/undefined) based on current tableState sort field…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Tenants/List/index.tsx:TenantsList": {
+   "summary": "Renders the tenants management table: search, sort/paginate via useTenantsData, per-row edit/delete (useDeleteTenant),…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/Agency/List/index.tsx": {
+   "summary": "Exports AgencyList page: searchable/sortable antd table of agencies (useAgenciesData) showing topics, online/offline status, tenant name (super-admin), row-expandable topic chips, DPA-gated add button (useDpaGate) and d…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Agency/List/index.tsx:AgencyList": {
+   "summary": "Renders the agency table with search/sort/pagination, topic-chip row expansion, status tags, and permission/DPA-gated c…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/users/List/index.tsx": {
+   "summary": "Exports UsersList page: renders UserSectionPills tab header for hub sections (consultants/agency-admins/tenant-admins/platform-admins) and the shared UserManagementTable keyed by typeOfUsers param.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/users/List/index.tsx:UsersList": {
+   "summary": "Reads typeOfUsers route param, renders section pills for hub sections or a plain title, and the UserManagementTable for…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/Links/index.tsx": {
+   "summary": "Links section shell: tab bar (routePathNames.linksTenants/linksCounsellor/linksExternalInbounds) + Outlet; also re-exports ExternalInboundsTab, CounsellorInvitesTab, TenantInvitesTab; registers mobile nav subsections.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Links/index.tsx:LinksPage": {
+   "summary": "Renders desktop tab row for the 3 link tabs, syncs active tab via pathname, registers mobile nav chips.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Links/index.tsx:LinksIndexRedirect": {
+   "summary": "Redirects /admin/links index route to routePathNames.linksTenants.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/Tenants/Edit/index.tsx": {
+   "summary": "Tenant edit/add page shell: builds tab list (general/theme-settings/legal-settings/app-settings/global-settings) gated by permissions, release toggle, super-admin, and Outlet.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Tenants/Edit/index.tsx:TenantEditOrAdd": {
+   "summary": "Loads tenant via useSingleTenantData, computes visible edit tabs by permission/role/toggle, renders Page.BackWithAction…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/Tenants/GeneralSettings/index.tsx": {
+   "summary": "Renders tenant appearance+master-data CardDeck (logo, languages, ThemeBuilder, appearance-editable toggle, name/slogan, language type); exports GeneralSettingsSection type; uses localStorage fallback key for appearance…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/GeneralSettings/index.tsx:getStoredAppearanceAllowed": {
+   "summary": "Reads bool from localStorage key oriso:tenantAdminControls.allowedPermissionToggles.appearance, undefined on error/miss…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/GeneralSettings/index.tsx:setStoredAppearanceAllowed": {
+   "summary": "Best-effort localStorage write of the appearance-toggle fallback value, swallowing errors.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/GeneralSettings/index.tsx:GeneralSettings": {
+   "summary": "Renders tenant appearance/master-data CardDeck sections, resolves appearance edit permission from settings/data/localSt…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/tenant/getSingleTenantData.ts": {
+   "summary": "Fetches one tenant via GET tenantAdminEndpoint/{id} and HTML-decodes the returned name field.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/tenant/getSingleTenantData.ts:getSingleTenantData": {
+   "summary": "GETs tenantAdminEndpoint/{id}, returns tenant data with name run through decodeHTML.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/hooks/useTenantDataMutation.hook.ts": {
+   "summary": "React Query mutation hook that merges a partial TenantData patch into cached tenant data and calls editTenantData; keyed by TENANT_DATA_KEY.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/hooks/useTenantDataMutation.hook.ts:useTenantDataMutation": {
+   "summary": "useMutation wrapper: lodash.merge's incoming patch onto current tenant data, then calls editTenantData API.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/Tenants/GeneralSettings/components/ThemeBuilder/index.tsx": {
+   "summary": "Tenant theme (accent colors) editor: CardEditable summary + fullscreen modal with live phone-mockup preview (MiniChatPreview) comparing current vs draft seeds; computeOrisoPalette/themeSeeds utils drive tokens; warns if…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/GeneralSettings/components/ThemeBuilder/index.tsx:seedIsTooPale": {
+   "summary": "Returns true if computeOrisoPalette flags the given seed colors as too pale (only checked when accentDark set).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/GeneralSettings/components/ThemeBuilder/index.tsx:getThemeRows": {
+   "summary": "Builds 4 summary rows (accent dark/light, warning, error) pairing computed CSS token color with translated label/descri…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/GeneralSettings/components/ThemeBuilder/index.tsx:ColorSummaryRow": {
+   "summary": "Renders one swatch + label/description row for the theme color summary list.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/GeneralSettings/components/ThemeBuilder/index.tsx:ThemeSummary": {
+   "summary": "Computes palette tokens from seeds and renders the 4 ColorSummaryRow entries.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/GeneralSettings/components/ThemeBuilder/index.tsx:ThemeBuilderForm": {
+   "summary": "Editable/summary switch: shows color pickers (accent dark/light, lock-aware) plus fixed rows and a too-pale warning, or…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/GeneralSettings/components/ThemeBuilder/index.tsx:PhoneThemePreview": {
+   "summary": "Renders an iPhone-frame mockup with MiniChatPreview inside, labelled current/new theme.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/GeneralSettings/components/ThemeBuilder/index.tsx:ThemeEditorModal": {
+   "summary": "Fullscreen antd Modal with color-editing form on one side and scrollable current/new phone previews on the other, with…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/GeneralSettings/components/ThemeBuilder/index.tsx:ThemeBuilder": {
+   "summary": "Top-level component: resolves effective/inherited theme seeds, read-only locks via isReadOnlySetting, renders CardEdita…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/Agency/Edit/index.tsx": {
+   "summary": "Agency (Beratungsstelle) create/edit page: general/legal/functionalities tabbed sections, CardDeck of GeneralInformation/RegistrationSettings/AgencySettings/DepartmentDetails cards, DPA gate for tenant-scoped creation,…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Agency/Edit/index.tsx:hasOnlyDefaultRangeDefined": {
+   "summary": "Checks whether postcode-range data is empty or just the default 00000-99999 full-range entry.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Agency/Edit/index.tsx:getEntityId": {
+   "summary": "Coerces a tenantId value (number/string, or object with .id) to a string id, else empty string.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Agency/Edit/index.tsx:AgencyPageEdit": {
+   "summary": "Main agency edit/add component: loads agency/postcodes/DPA-gate data, builds initialValues, renders general/legal/funct…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/Agency/Edit/components/RegistrationSettings/index.tsx": {
+   "summary": "Agency registration-settings card/fields: consultant assignment select (with inline CreateConsultantModal), online switch, postcode-range radio + PostCodeRanges; warns if agency has no assignable consultants.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Agency/Edit/components/RegistrationSettings/index.tsx:RegistrationSettings": {
+   "summary": "Renders consultant-assignment, online toggle, and postcode-range fields (as raw fields or wrapped in a Card) for the ag…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/agency/updateAgencyData.ts": {
+   "summary": "PUTs agencyEndpointBase/{id} with normalized agency fields (topics, demographics, online/offline, settings via stripAgencyAdminControls); carefully omits absent fields (topicIds/online) to avoid wiping data; separately…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/agency/updateAgencyData.ts:updateAgencyData": {
+   "summary": "Builds and PUTs the agency update payload, conditionally including topicIds/offline/settings only when the form actuall…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/agency/departmentDetails.ts": {
+   "summary": "GET/PUT agencyEndpointBase/{agencyId}/topics/{topicId}/details for a department's (Fachbereich) contact overrides (opening hours, phone extension, floor); null clears an override to inherit from the agency.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/agency/departmentDetails.ts:getDepartmentDetails": {
+   "summary": "GETs a department's stored contact-detail overrides for a given agency+topic pair.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/agency/departmentDetails.ts:updateDepartmentDetails": {
+   "summary": "PUTs a department's contact-detail overrides, normalizing falsy values to null to clear an override.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/Agency/List/agencySort.ts": {
+   "summary": "Sort-state helpers for the agency list table: maps antd column dataIndex to backend sort field names and derives next TableState from pagination/sorter events.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Agency/List/agencySort.ts:getAgencyColumnSortOrder": {
+   "summary": "Returns antd 'ascend'/'descend'/undefined for a column based on current tableState.sortBy/order.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Agency/List/agencySort.ts:getNextAgencyTableState": {
+   "summary": "Derives new TableState (current, pageSize, sortBy, order) from antd pagination+sorter change events, clearing sort if u…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/users/management/UserManagementTable.tsx": {
+   "summary": "Shared table for consultants/agency admins/tenant admins/platform admins/tenants sections (by typeOfUsers param), driven by USER_TABLE_CONFIGS; handles search, sort/pagination, create button, and delete modals (user, te…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/users/management/UserManagementTable.tsx:UserManagementTable": {
+   "summary": "Picks the right data query (consultants/tenantAdmins/platformAdmins/tenants) per section config, wires columns, search,…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/users/Edit/index.tsx": {
+   "summary": "Large consultant/agency-admin/tenant-admin edit-or-add form: identity fields, agency/topic assignment, standing-supervisor picker (ADR-008), public slug, grant-identity/create-agency modals; uses counselorEndpoint via e…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/users/Edit/index.tsx:isAssignableSupervisor": {
+   "summary": "Returns true if a candidate consultant is active and not INACTIVE/IN_DELETION, so eligible as standing supervisor.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/users/Edit/index.tsx:mergeTopicOptions": {
+   "summary": "Merges an incoming Option[] into current, skipping options whose value already exists.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/users/Edit/index.tsx:UserEditOrAdd": {
+   "summary": "Main form component: loads consultant/agencies/topics/supervisor-candidate data, manages standing-supervisor and topic/…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/counselor/editCounselorData.ts": {
+   "summary": "PUTs counselorEndpoint/{id} with a stripped counselor payload (topicIds, supervisor assignment, publicSlug, remarks); omits vs empties fields per backend null/''/undefined contract; also syncs agency assignments via put…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/counselor/editCounselorData.ts:parseTopicIds": {
+   "summary": "Normalizes formData.topicIds/topics (strings, {value}, {id}) into a numeric id array, dropping non-numeric entries.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/counselor/editCounselorData.ts:editCounselorData": {
+   "summary": "Builds the stripped counselor update body (conditionally including supervisor/displayName/salutation/remarks fields), s…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/admins/grantConsultantIdentityData.ts": {
+   "summary": "POST client granting an agency/tenant admin an additional consultant identity via grantConsultantIdentityEndpoint(adminId); exports grantConsultantIdentityData, coerces booleans and defaults arrays.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/utils/canGrantConsultantIdentity.ts": {
+   "summary": "Single predicate canGrantConsultantIdentity gating the 'grant consultant identity' UI for admin edit forms; fails closed when hasOtherIdentity is undefined (backend field not yet live, UserService#490).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/canGrantConsultantIdentity.ts:canGrantConsultantIdentity": {
+   "summary": "True only when editing an AgencyAdmins/TenantAdmins form and editedUser.hasOtherIdentity is explicitly false.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/accountInvites/accountInvites.ts": {
+   "summary": "Full CRUD/lifecycle client for TEN-INV account invites and invite e-mail templates; uses accountInvitesEndpoint/inviteEmailTemplatesEndpoint from appConfig plus routePathNames for accept URLs by role.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/accountInvites/accountInvites.ts:acceptBaseUrlForRole": {
+   "summary": "Picks accept-link base URL by role: tenant onboarding, counsellor wizard, or /account-invite default.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/accountInvites/accountInvites.ts:normalizeAllocatedId": {
+   "summary": "Turns an AUTO/MANUAL allocation mode + id into the id to send: undefined for AUTO, throws if MANUAL lacks an id.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/accountInvites/accountInvites.ts:listAccountInvites": {
+   "summary": "GET paged account invites with page/size/target_role/status/tenant_id query params.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/accountInvites/accountInvites.ts:createAccountInvite": {
+   "summary": "POSTs a new account invite, normalizing tenant/agency ids by allocation mode; surfaces 409/403 with response bodies.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/accountInvites/accountInvites.ts:sendAccountInvite": {
+   "summary": "POST .../{id}/send — first mail delivery of a never-sent (DRAFT) invite.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/accountInvites/accountInvites.ts:resendAccountInvite": {
+   "summary": "POST .../{id}/resend — supersedes an already-mailed invite with a fresh one.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/Links/InviteComposer.tsx": {
+   "summary": "Invite composer form component (create/send account invites, CSV import, bulk resend, template picker); persists send mode per persistKey in localStorage; imports parseInviteCsv, IdAllocationField, TemplateSplitButton.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Links/InviteComposer.tsx:toAllocationMode": {
+   "summary": "Maps UI 'auto'/'manual' toggle value to the API's AllocationMode 'AUTO'/'MANUAL'.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Links/InviteComposer.tsx:sendModeStorageKey": {
+   "summary": "Builds the localStorage key for a tab's persisted send mode: oriso-admin.invite-composer.send-mode.<persistKey>.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Links/InviteComposer.tsx:readFileText": {
+   "summary": "Reads an uploaded File as text via FileReader, returned as a Promise<string> for CSV parsing.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Links/InviteComposer.tsx:readPersistedSendMode": {
+   "summary": "Reads the persisted send mode from localStorage for persistKey, defaulting to 'direct' unless 'createOnly' was stored.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Links/InviteComposer.tsx:InviteComposer": {
+   "summary": "Composer: recipient/name/id fields, template picker, CSV import, bulk-send; submits via onSubmit.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/Links/inviteProgress/derivePhases.ts": {
+   "summary": "Pure derivation of the Links invite stepper: maps AccountInviteDTO status to phase states (done/current/pending/warning/error), bucket counts, search, relative-time.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Links/inviteProgress/derivePhases.ts:phaseLabelKey": {
+   "summary": "Builds the i18n key links.inviteProgress.phase.<key> for a phase's reached-state label.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Links/inviteProgress/derivePhases.ts:phaseAwaitingLabelKey": {
+   "summary": "Builds the i18n key links.inviteProgress.phaseAwaiting.<key> for a phase's 'waiting for' label.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Links/inviteProgress/derivePhases.ts:isDeadInvite": {
+   "summary": "True when inviteStatus is EXPIRED/REVOKED/SUPERSEDED — a terminal, non-progressing state.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Links/inviteProgress/derivePhases.ts:isDraftInvite": {
+   "summary": "True when inviteStatus === 'DRAFT' (never sent, nothing has happened yet).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Links/inviteProgress/derivePhases.ts:derivePhases": {
+   "summary": "Maps one invite's DTO fields to an ordered InvitePhase[] (done/current/pending/warning/error) per role's track.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/Links/csv/parseInviteCsv.ts": {
+   "summary": "Dependency-free RFC4180-ish CSV parser for invite import (#315): auto-detects ,/; delimiter, tokenizes quoted/multiline cells, validates email/id columns, and assigns free batch tenant ids.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Links/csv/parseInviteCsv.ts:stripBom": {
+   "summary": "Strips a leading UTF-8 BOM character from CSV text if present.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Links/csv/parseInviteCsv.ts:detectInviteCsvDelimiter": {
+   "summary": "Counts unquoted commas vs semicolons to auto-detect the CSV delimiter, defaulting to comma on a tie.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Links/csv/parseInviteCsv.ts:tokenize": {
+   "summary": "Minimal RFC4180 tokenizer producing {line, cells}[] records, handling quotes, escaped quotes and CRLF/LF/CR.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Links/csv/parseInviteCsv.ts:parseInviteCsv": {
+   "summary": "Parses invite CSV into valid rows plus rejected rows (invalidEmail/invalidId), auto-skipping a recognised header row.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Links/csv/parseInviteCsv.ts:assignBatchTenantIds": {
+   "summary": "Assigns free consecutive tenant ids to rows lacking an id, skipping ids already taken or used in the batch.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/invitelinks/topicInviteLinks.ts": {
+   "summary": "Client for topic-scoped invite links (list/create) against invitelinksEndpoint (via inviteLinkApiShared); builds public invite URLs and formats chat-type/anonymity labels.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/invitelinks/topicInviteLinks.ts:buildTopicInviteLinkUrl": {
+   "summary": "Builds the public /invite/<token>[/<topicName>] URL from appURL, omitting the name segment for null/'undefined' values.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/invitelinks/topicInviteLinks.ts:listTopicInviteLinks": {
+   "summary": "GETs a paged list of topic invite links with tenant header, normalized via normalizeListResponse.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/invitelinks/topicInviteLinks.ts:createTopicInviteLink": {
+   "summary": "POSTs a new topic-based invite link (topicId, linkKind, chatType, anonymity, optional notes/expiresInDays).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/invitelinks/topicInviteLinks.ts:formatChatTypeLabel": {
+   "summary": "Maps 'LIVE_CHAT' to display label 'Live Chat', passthrough otherwise.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/invitelinks/topicInviteLinks.ts:formatAnonymityLabel": {
+   "summary": "Maps 'FULL' to display label 'Full', passthrough otherwise.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/Tenants/LegalSettings/index.tsx": {
+   "summary": "LegalSettings: CardDeck of tenant legal docs (single-tenant-manage toggle, DPA container, imprint, privacy) via useAppConfigContext/useTenantData/useUserRoles; T&C card commented out.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/index.tsx:LegalSettings": {
+   "summary": "Renders the tenant Legal CardDeck (toggle, DPA, imprint, privacy), modules always visible, edit-disabled by role.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/Tenants/LegalSettings/hooks/useLegalDraft.ts": {
+   "summary": "useLegalDraft hook: device-local draft storage (per tenantId:userId) for a legal document, since tenant legal content has no backend draft state; saveDraft/discardDraft/isStale.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/hooks/useLegalDraft.ts:readState": {
+   "summary": "Reads the LegalDraftState (draft, savedAt, savedBaseVersionId) from localStorage for a given scope key.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/hooks/useLegalDraft.ts:useLegalDraft": {
+   "summary": "Manages a local legal-text draft's read/save/discard lifecycle and staleness vs a base version id.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/Tenants/LegalSettings/utils/consentTextValidation.ts": {
+   "summary": "Client-side mirror of the ADR-021 consent-text publish rule: every authored consent sentence must include the {{legal_links}} placeholder token, mirroring server validation before submit.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/utils/consentTextValidation.ts:hasMandatoryConsentToken": {
+   "summary": "Checks whether the text contains the {{legal_links}} placeholder via listPlaceholders.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/utils/consentTextValidation.ts:isBlankConsentText": {
+   "summary": "True if the consent text is undefined or only whitespace (never-authored, not a violation).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/utils/consentTextValidation.ts:consentPublicationBlockers": {
+   "summary": "Returns the sorted list of languages whose non-blank consent text is missing the mandatory {{legal_links}} token.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/utils/consentTextValidation.ts:canPublishConsentText": {
+   "summary": "True when consentPublicationBlockers returns an empty list — safe to publish.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/legal/getLegalTextVersions.ts": {
+   "summary": "Client for legal-text version history (ADR-021) at tenant/agency/department scope via agencyEndpointBase/tenantAdminEndpoint; 404 (Träger level unbuilt) degrades to empty list.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/legal/getLegalTextVersions.ts:legalTextVersionsUrl": {
+   "summary": "Builds the legal-versions URL per scope level (tenant/agency/department) with ?kind= query.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/legal/getLegalTextVersions.ts:getLegalTextVersions": {
+   "summary": "GETs published legal-text versions for a scope, converting a 404 into an empty array while other errors still reject.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/tenant/translation.ts": {
+   "summary": "Client for tenant translation-provider keys and legal-text machine translation via tenantAdminEndpoint/translation and /translate; defines TranslationApiError carrying backend errorCode/provider.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/tenant/translation.ts:toTranslationApiError": {
+   "summary": "Converts a fetch rejection with a .json() {errorCode,provider,message} body into a TranslationApiError.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/tenant/translation.ts:getTranslationKeys": {
+   "summary": "GETs masked translation API keys per provider (superadmin only) from tenantAdminEndpoint/translation/keys.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/tenant/translation.ts:setTranslationKey": {
+   "summary": "PUTs an API key for one translation provider; rejections are converted to TranslationApiError.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/tenant/translation.ts:translateLegalTexts": {
+   "summary": "POSTs fieldKey->HTML texts to /translate for machine translation into all target languages in one call.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/Tenants/LegalSettings/components/TranslateOnPublishModal/index.tsx": {
+   "summary": "Modal shown when publishing a legal card: lets the admin pick target languages to machine-translate the source text into (or skip translation) before publish.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/components/TranslateOnPublishModal/index.tsx:TranslateOnPublishModal": {
+   "summary": "Renders language checkboxes preselected to targetLanguages, with confirm/skip/cancel actions and inline error display.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/DpaBlocker/DpaBlockerGate.tsx": {
+   "summary": "Global route guard (#572) wrapping the admin tree: resolves tenant DPA status, renders Initialization/DpaBlocker/DpaPendingSignatureDialog/DpaUnlockDialog via useDpaStatus/useDpaVersions.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/DpaBlocker/DpaBlockerGate.tsx:DpaBlockerGate": {
+   "summary": "Resolves DPA gate decision (pending/blocked/inactive/forwarded/unlock) and renders matching gate UI or children.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/tenant/getDpaGate.ts": {
+   "summary": "GET wrapper hitting `${tenantAdminEndpoint}/{id}/dpa/gate`; returns DpaGateStatus. Feeds the non-bypassable DPA blocker gate (TEN-INV-U10 #572).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/tenant/getDpaGate.ts:getDpaGate": {
+   "summary": "Fetches whether a tenant's DPA is published and signed via tenantAdminEndpoint/{id}/dpa/gate.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/utils/dpaBlockerGate.ts": {
+   "summary": "Pure decision logic for the global DPA blocker gate (#572/#724/#JOB8-9): resolves subject scope and derives block/inactive/forwarded/unlock-confirm states. Fail-closed on unreadable tokens.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/dpaBlockerGate.ts:resolveDpaGateSubject": {
+   "summary": "Classifies current account as subject/exempt/indeterminate for the DPA gate from roles, tenantId, token readability.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/dpaBlockerGate.ts:isDpaGateSubject": {
+   "summary": "Boolean convenience wrapper: true if resolveDpaGateSubject returns 'subject'.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/dpaBlockerGate.ts:deriveDpaGateDecision": {
+   "summary": "Derives DpaGateDecision (inactive/blocked/forwarded-pending/unlock-confirm) from subject kind, status, loading/error.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/tenant/signDpaAdmin.ts": {
+   "summary": "POST wrapper for `${tenantAdminEndpoint}/{id}/dpa/sign` (TEN-INV-U9); signs the published DPA as tenant admin and returns the resulting TenantDpaStatusInfo. Errors handled silently by caller.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/tenant/signDpaAdmin.ts:signDpaAdmin": {
+   "summary": "POSTs DpaAdminSignRequest to tenantAdminEndpoint/{id}/dpa/sign, returning updated DPA status for the blocker gate.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/tenantOnboarding/dpaForward.ts": {
+   "summary": "DPA forward-to-signer client (epic #722/#723/#724): typed DpaForwardClient (http+stub), error mapping (400/404/409/429/410), uses appURL, publicAccountInvitesEndpoint; UserService only.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/tenantOnboarding/dpaForward.ts:resolveDpaForwardSignLink": {
+   "summary": "Resolves a possibly-relative signUrl against the configured App origin into an absolute URL.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/tenantOnboarding/dpaForward.ts:isAwaitingForwardedSignature": {
+   "summary": "Checks either status/gate DTO shape for the additive 'forwarded, awaiting signature' boolean flag combination.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/tenantOnboarding/dpaForward.ts:isInviteLinkErrorReason": {
+   "summary": "Type guard: value is one of the known InviteLinkErrorReason strings (CONSUMED/REVOKED/EXPIRED/SUPERSEDED/INVALID).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/tenantOnboarding/dpaForward.ts:toLinkDeath": {
+   "summary": "Maps a 410 response body's reason field to an InviteLinkError, defaulting to INVALID if unparseable.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/tenantOnboarding/dpaForward.ts:isForwardBudgetExhausted": {
+   "summary": "Detects the per-invite forward budget 400 by matching the response message text for 'already forwarded' (#1065).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/tenantOnboarding/dpaForward.ts:toForwardError": {
+   "summary": "Maps a rejected Response by HTTP status (400/404/409/429/410) into typed DpaForwardError or InviteLinkError.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/tenantOnboarding/dpaForward.ts:forwardUrl": {
+   "summary": "Builds the public forward endpoint URL from publicAccountInvitesEndpoint and an encoded invite token.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/tenantOnboarding/dpaForward.ts:createHttpDpaForwardClient": {
+   "summary": "Production DpaForwardClient: POSTs the public forward endpoint, resolves link, flags mailFailed when mailSent!==true.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/tenantOnboarding/dpaForward.ts:wait": {
+   "summary": "Promise-based delay helper used to simulate network latency in the stub client.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/tenantOnboarding/dpaForward.ts:createStubDpaForwardClient": {
+   "summary": "In-memory DpaForwardClient stand-in for tests/Storybook: simulated latency, configurable failures, mail-failed case.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/DpaForwardDialog/DpaForwardDialog.tsx": {
+   "summary": "Shared M3 dialog (#723) forwarding DPA signature to a signer: mints link on demand, optional email send with mail preview, close-guard against losing a forward.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/DpaForwardDialog/DpaForwardDialog.tsx:failureKey": {
+   "summary": "Maps a caught error to its i18n failure message key via FAILURE_MESSAGE lookup, defaulting to TECHNICAL.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/DpaForwardDialog/DpaForwardDialog.tsx:DpaForwardDialog": {
+   "summary": "Dialog: manages link/send state, submits recipient form, renders mail preview/copy-link row, guards close til confirmed.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/Tenants/DpiaSettings/components/DpiaTextEditorContainer/index.tsx": {
+   "summary": "Data-fetching container wiring DpiaTextEditor to a DpiaTextGateway: loads per-tenant DSFA texts, per-tenant save queues/chains to avoid race conditions on tenant switch, retry on load/save failure.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/DpiaSettings/components/DpiaTextEditorContainer/index.tsx:DpiaTextEditorContainer": {
+   "summary": "Loads DPIA text doc for tenantId via gateway, renders editor with seeded defaults, per-tenant save queueing/errors.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/Tenants/DpiaSettings/utils/dpiaSections.ts": {
+   "summary": "Source of truth for DPIA/DSFA free-text chapter slots (governance, accountability, proportionality stages, etc.); exports DPIA_SECTIONS, findDpiaSection, hasDpiaText (treats TipTap empty '<p></p>' as no text).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/DpiaSettings/utils/dpiaSections.ts:findDpiaSection": {
+   "summary": "Looks up a DpiaSection definition by its stable id in DPIA_SECTIONS.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/DpiaSettings/utils/dpiaSections.ts:hasDpiaText": {
+   "summary": "Returns true if HTML string is non-empty and not TipTap's blank '<p></p>' or '<p><br></p>' markup.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/Tenants/DpiaSettings/api/dpiaTextGateway.ts": {
+   "summary": "DpiaTextGateway interface (load/save) for DSFA free-text editor, pending a real `/tenantadmin/{id}/dpia` extension (TenantService PR#187); ships only interface plus in-memory mock gateway.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/DpiaSettings/api/dpiaTextGateway.ts:createMockDpiaTextGateway": {
+   "summary": "In-memory DpiaTextGateway per tenant: publish finalises every section with text, draft demotes only changed sections.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/tenant/updateDpiaMasterData.ts": {
+   "summary": "PUT wrapper for `${tenantAdminEndpoint}/dpia` (superadmin only); replaces platform DPIA operator master data.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/tenant/updateDpiaMasterData.ts:updateDpiaMasterData": {
+   "summary": "PUTs DpiaMasterData body to tenantAdminEndpoint/dpia and returns the updated master data.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/Dpia/DpiaDocumentPage.tsx": {
+   "summary": "Living DSFA document page shell: app bar with KDG/DSGVO preset switch, internal-notes toggle, hero, chapter nav, overview sections; chapters 6-11 not yet ported.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Dpia/DpiaDocumentPage.tsx:cx": {
+   "summary": "Joins truthy class-name fragments into a single className string.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Dpia/DpiaDocumentPage.tsx:Norm": {
+   "summary": "Renders a legal norm citation text selected by the active compliance preset (kdg/dsgvo).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Dpia/DpiaDocumentPage.tsx:MatrixValue": {
+   "summary": "Renders one permission-matrix cell as yes/no/e2ee icon or free text based on cell.kind.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Dpia/DpiaDocumentPage.tsx:DpiaDocumentPage": {
+   "summary": "Main page: manages preset/internal-notes state, measures app-bar/nav heights via ResizeObserver, renders hero/nav/ch3-5.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/constants/userRolesToPermissions.ts": {
+   "summary": "Maps UserRole values to UserPermissions per resource/action, merges multi-role permissions as boolean-OR, and enforces the restricted-agency-admin ceiling to prevent privilege escalation via secondary roles.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/constants/userRolesToPermissions.ts:getEffectivePermissionRoles": {
+   "summary": "Filters a user's roles down to the fixed rolesPriority list used for permission derivation.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/constants/userRolesToPermissions.ts:mergeUserPermissions": {
+   "summary": "Merges multiple UserPermissions sets by boolean-OR per resource/action across all of a user's roles.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/constants/userRolesToPermissions.ts:enforceRestrictedAgencyAdminCeiling": {
+   "summary": "Re-denies AgencyAdminUser/Statistic.read for a restricted-agency-admin lacking an overriding agency/tenant-admin role.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/constants/userRolesToPermissions.ts:useUserRolesToPermission": {
+   "summary": "Hook computing UserPermissions from user roles, tenant data, app-config settings (legal-text delegation, topics flag).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/hooks/useUserPermission.ts": {
+   "summary": "React hook exposing merged UserPermissions plus a `can(action, resource)` checker built on useUserRolesToPermission.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/hooks/useUserPermission.ts:useUserPermissions": {
+   "summary": "Wraps useUserRolesToPermission; returns { permissions, can } where can(action, resource) checks PermissionAction values.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/utils/adminPortalAccess.ts": {
+   "summary": "Determines admin-portal access from a JWT: decodes realm roles via parseJWT and checks membership in ADMIN_PORTAL_ROLES (TenantAdmin, SingleTenantAdmin, UserAdmin, AgencyAdmin, RestrictedAgencyAdmin, TopicAdmin).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/adminPortalAccess.ts:hasAdminPortalRole": {
+   "summary": "Checks whether a list of role strings contains any of the ADMIN_PORTAL_ROLES.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/adminPortalAccess.ts:hasAdminPortalAccess": {
+   "summary": "Decodes access token via parseJwt, checks realm_access.roles for admin-portal eligibility; false on decode failure.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/Tenants/AppSettings/PermissionsSettings/permissionsToggleLogic.ts": {
+   "summary": "Master/child toggle helpers for the tenant PermissionsSettings form: turning off a master field cascades false to its MASTER_TOGGLE_CHILDREN in both the save payload and the antd form state.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/AppSettings/PermissionsSettings/permissionsToggleLogic.ts:buildTogglePayload": {
+   "summary": "Builds a nested settings payload for a toggled field, cascading false to its child fields when disabled.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/AppSettings/PermissionsSettings/permissionsToggleLogic.ts:syncMasterChildTogglesInForm": {
+   "summary": "When a master toggle is turned off, sets its child fields to false directly on the antd FormInstance.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/tenant/tenantPermissionPolicies.ts": {
+   "summary": "API client for a tenant's permission-policy record: GET/PUT against tenantAdminEndpoint/{tenantId}/permission-policies via fetchData.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/tenant/tenantPermissionPolicies.ts:getTenantPermissionPolicies": {
+   "summary": "GETs a tenant's TenantPermissionPolicies from tenantAdminEndpoint/{tenantId}/permission-policies.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/tenant/tenantPermissionPolicies.ts:updateTenantPermissionPolicies": {
+   "summary": "PUTs an updated TenantPermissionPolicies object back to the tenant's permission-policies endpoint.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/auth/auth.ts": {
+   "summary": "Core in-memory auth-session engine: bootstraps/refreshes tokens via the auth BFF, arms renewal timers, drives self-heal on 401 and forced logout at expiry.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/auth.ts:resolveExpiresInSeconds": {
+   "summary": "Computes a token's remaining seconds-to-expiry from a given value or by decoding its JWT exp claim.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/auth.ts:setTokens": {
+   "summary": "Stores access/refresh tokens in session store, writes expiry to localStorage, and syncs them to the auth BFF.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/auth.ts:refreshTokens": {
+   "summary": "Refreshes tokens via the BFF unless the refresh token is already past its renew-before-expiry window, else forces logou…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/auth.ts:tryRefreshAccessToken": {
+   "summary": "Deduplicates concurrent refresh calls into one in-flight promise; resolves true/false without ever forcing logout itsel…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/auth.ts:startTimers": {
+   "summary": "Arms an interval to auto-refresh the access token and a timeout that forces logout when the refresh token expires.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/auth.ts:bootstrapAuthSession": {
+   "summary": "Restores a session from the BFF-held cookie session into the in-memory token store if no tokens are already present.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/auth.ts:handleTokenRefresh": {
+   "summary": "On app load: bootstraps the session, then either logs out, refreshes now, or arms renewal timers based on token expiry.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/auth.ts:getAccessTokenForRequests": {
+   "summary": "Returns the current in-memory access token for outgoing API requests.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/auth.ts:getRefreshTokenForRequests": {
+   "summary": "Returns the current in-memory refresh token for outgoing API requests.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/auth/authBffClient.ts": {
+   "summary": "Fetch wrapper for the auth BFF (set-token/clear-token/session/refresh-token under routePathNames.root/auth) with a 10s abort timeout on every call.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/authBffClient.ts:postJson": {
+   "summary": "POSTs JSON to the BFF with credentials included and a 10s AbortController timeout; throws on non-OK response.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/authBffClient.ts:setAuthTokensViaBff": {
+   "summary": "Sends the current token payload to the BFF's set-token endpoint so it can persist it server-side.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/authBffClient.ts:clearAuthTokensViaBff": {
+   "summary": "Calls the BFF's clear-token endpoint to invalidate the server-held auth session.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/authBffClient.ts:bootstrapAuthSessionViaBff": {
+   "summary": "GETs the BFF session endpoint; returns null on 204/401, otherwise the LoginData session payload.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/authBffClient.ts:refreshAuthTokensViaBff": {
+   "summary": "POSTs to the BFF refresh-token endpoint under a 10s abort timeout that spans the body read, avoiding an endless spinner…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:vite.authBffPlugin.ts": {
+   "summary": "Vite dev-server plugin registering middleware that routes auth-BFF requests (matching AUTH_BFF_ROUTE_PATTERN) to createAuthBffHandler from scripts/auth-bff-handlers.mjs.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:vite.authBffPlugin.ts:authBffDevPlugin": {
+   "summary": "Vite Plugin factory wiring server middleware that dispatches matching auth-BFF URLs to the dev-time BFF handler, 500 on…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/auth/logout.ts": {
+   "summary": "Logout orchestration: calls Keycloak logout, clears local/session storage and cookies via the BFF, then redirects to login after a 100ms delay; guarded against concurrent calls.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/logout.ts:redirectAfterLogout": {
+   "summary": "Redirects the browser to the login route (or a given URL) after a 100ms setTimeout delay.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/logout.ts:invalidateCookies": {
+   "summary": "Invalidates the BFF auth session, removes all cookies and stored token expiry, then optionally redirects.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/logout.ts:logout": {
+   "summary": "Top-level logout: dedupes concurrent calls via a module flag, calls Keycloak logout, clears storage, invalidates cookie…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/TwoFactorSetup/twoFactorSetupFlow.ts": {
+   "summary": "Shared step-machine contract for the 2FA setup wizard (app vs email flow), a 1:1 port of the ORISO-Frontend flow contract kept manually in sync; exports step ordering, OTP validation (6 digits).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/TwoFactorSetup/twoFactorSetupFlow.ts:getStepMethod": {
+   "summary": "Infers whether a given setup step belongs to the App or Email 2FA method, falling back to the selected method for 'deci…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/TwoFactorSetup/twoFactorSetupFlow.ts:getSetupSteps": {
+   "summary": "Returns the ordered step-definition list (APP_SETUP_STEPS or EMAIL_SETUP_STEPS) for the current step/method.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/TwoFactorSetup/twoFactorSetupFlow.ts:getStepIndex": {
+   "summary": "Finds a step's index within its method's step list, defaulting to 0 if not found.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/TwoFactorSetup/twoFactorSetupFlow.ts:getNextSetupStep": {
+   "summary": "Advances to the next wizard step, branching from 'decision' into the app-install or email-select path by chosen method.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/TwoFactorSetup/twoFactorSetupFlow.ts:getPreviousSetupStep": {
+   "summary": "Steps back one position in the current method's flow, or stays at 'decision' if already there.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/TwoFactorSetup/twoFactorSetupFlow.ts:normalizeOtp": {
+   "summary": "Strips non-digit characters from OTP input and truncates to OTP_LENGTH (6).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/TwoFactorSetup/twoFactorSetupFlow.ts:isOtpValid": {
+   "summary": "Validates that a string is exactly 6 digits.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/TwoFactorSetup/twoFactorSetupFlow.ts:hasSetupStep": {
+   "summary": "Type guard checking whether a string is a known TwoFactorSetupStep in FLOW_ORDER.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/user/apiTwoFactorAuth.ts": {
+   "summary": "API calls for 2FA setup/teardown using appConfig endpoints twoFactorAuthApp, twoFactorAuthAppEmail, userDataEndpoint, twoFactorAuth.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/user/apiTwoFactorAuth.ts:apiPutTwoFactorAuthApp": {
+   "summary": "PUTs a TOTP secret+OTP pair to twoFactorAuthApp to enable authenticator-app 2FA.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/user/apiTwoFactorAuth.ts:apiPutTwoFactorAuthEmail": {
+   "summary": "PUTs an email address to twoFactorAuthAppEmail to start email-based 2FA setup.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/user/apiTwoFactorAuth.ts:apiPatchTwoFactorAuthEncourage": {
+   "summary": "PATCHes userDataEndpoint's encourage2fa flag to toggle whether the user is nudged to enable 2FA.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/user/apiTwoFactorAuth.ts:apiPostTwoFactorAuthEmailWithCode": {
+   "summary": "POSTs a verification code to twoFactorAuthAppEmail/validate/{code} to confirm email 2FA setup.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/user/apiTwoFactorAuth.ts:apiDeleteTwoFactorAuth": {
+   "summary": "DELETEs the twoFactorAuth endpoint to disable 2FA for the current user.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/utils/platformAdminTwoFactorGate.ts": {
+   "summary": "Gate deciding if a platform admin must complete 2FA setup before using the admin area; deferral ('later') lets them skip until they revisit.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/platformAdminTwoFactorGate.ts:requiresPlatformAdminTwoFactor": {
+   "summary": "Returns true if a platform admin lacks active 2FA, isn't deferred, and encourage2fa is set on their UserData.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/hooks/useTwoFactorSetupDeferral.hook.ts": {
+   "summary": "Hook tracking whether the current admin deferred the 2FA setup prompt, re-reading storage when the async username changes.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/hooks/useTwoFactorSetupDeferral.hook.ts:useTwoFactorSetupDeferral": {
+   "summary": "Reads/re-reads deferral state for a username and exposes { isDeferred, deferSetup } to mark 2FA setup skipped.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/Profile/MandatoryTwoFactorSetup.tsx": {
+   "summary": "Page component forcing 2FA setup for admins, rendering the TwoFactorSetup wizard (context=\"profile\", required) with an optional skip link/hint.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Profile/MandatoryTwoFactorSetup.tsx:MandatoryTwoFactorSetup": {
+   "summary": "Renders the mandatory-2FA page: alert if unavailable, TwoFactorSetup card, and an optional onSkip link with hint text.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/Statistic.tsx": {
+   "summary": "Large admin statistics dashboard page: scope tabs (platform/tenant/agency), filterable metric cards, case/conversation charts, CSV export; consumes useStatisticDashboardData and appConfig routePathNames.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic.tsx:createConversationSegments": {
+   "summary": "Maps raw 4-tuple conversation counts onto the fixed segment blueprint (Mail/Live/Gesprächskreise/Interna) with colors.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic.tsx:createConversationData": {
+   "summary": "Builds a ConversationPeriodData (total + segments) from a 4-value conversation-count tuple.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic.tsx:getDashboardLocale": {
+   "summary": "Maps an i18n language code to 'de-DE' or 'en-US' for number/date formatting.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic.tsx:translateDashboardKey": {
+   "summary": "Calls the translate function with a defaultValue fallback merged into the options object.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic.tsx:DonutChart": {
+   "summary": "Renders the conversation-type donut chart as SVG arcs, with clickable/keyboard-selectable segments and a localized cent…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic.tsx:Statistic": {
+   "summary": "Main dashboard component: manages scope/filter/period selection state, aggregates filtered statistics, builds CSV expor…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/Statistic/statisticDashboardData.ts": {
+   "summary": "Pure mapping layer turning the UserService admin dashboard-statistics response into FilterTarget/StatisticData shapes; unmapped metrics (video calls, live chat) become null/'Keine Daten'.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic/statisticDashboardData.ts:getWeekStart": {
+   "summary": "Computes the Monday 00:00 local-time start of the week containing a given date.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic/statisticDashboardData.ts:getWeekStartsByPeriod": {
+   "summary": "Returns week-start Dates for thisWeek/lastWeek/twoWeeksAgo/threeWeeksAgo/fourWeeksAgo relative to now.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic/statisticDashboardData.ts:buildCaseChartDateLabels": {
+   "summary": "Builds real localized date labels (e.g. 'Do, 9 Jul') per weekday for every case-chart period.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic/statisticDashboardData.ts:buildTargetStatistics": {
+   "summary": "Maps one AdminDashboardTarget into FilterTargetStatistics, returning all-null suppressed data if the target is small-ce…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic/statisticDashboardData.ts:buildStatisticData": {
+   "summary": "Top-level mapper: groups response targets by scope (platform/tenant/agency) into targetsByScope, fallbackIdsByScope and…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/statistic/getDashboardStatistics.ts": {
+   "summary": "GET client for adminStatisticsDashboardEndpoint returning scoped, KDG-small-cell-suppressed admin dashboard statistics from UserService.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/statistic/getDashboardStatistics.ts:getDashboardStatistics": {
+   "summary": "Fetches AdminDashboardStatisticsResponse from adminStatisticsDashboardEndpoint, scoped to the caller's role.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/Logs/LogsTabsLayout.tsx": {
+   "summary": "Unified 'Logs' layout rendering URL-driven tabs (supervisor/case-handover/inactive) filtered by admin permissions, replacing duplicate nav entries (ORISO-Admin#84); uses routePathNames.logs etc.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Logs/LogsTabsLayout.tsx:LogsTabsLayout": {
+   "summary": "Builds the permitted tab list, computes the active tab by longest-prefix match, registers mobile-nav subsections, rende…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/hooks/useCaseHandoverLogsData.ts": {
+   "summary": "React Query hook fetching paginated case-handover logs via caseHandoverLogsEndpoint (appConfig); GET with page/perPage params, retry and refetchOnWindowFocus disabled.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/hooks/useCaseHandoverLogsData.ts:useCaseHandoverLogsData": {
+   "summary": "useQuery wrapper keyed by [CASE_HANDOVER_LOGS, page, perPage] that GETs caseHandoverLogsEndpoint with pagination.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/mui/MuiFormField/index.tsx": {
+   "summary": "antd Form.Item wrapping a MUI TextField (MuiControl) plus Number/Password/Multiline variants; reads antd validation status/error text, extensive sx theming via CSS vars.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/mui/MuiFormField/index.tsx:MuiControl": {
+   "summary": "Inner MUI TextField bound to antd Form.Item status/errors; renders error icon adornment, autofill/disabled styling via…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/mui/MuiFormField/index.tsx:MuiFormField": {
+   "summary": "antd Form.Item (noStyle) wrapping MuiControl by field name, rules, dependencies and normalize.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/mui/MuiFormField/index.tsx:MuiNumberFormField": {
+   "summary": "MuiFormField variant with type=number and a normalize that coerces submitted value to a Number.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/mui/MuiFormField/index.tsx:MuiPasswordFormField": {
+   "summary": "MuiFormField variant with a show/hide password toggle IconButton as endAdornment.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/mui/MuiFormField/index.tsx:MuiMultilineFormField": {
+   "summary": "MuiFormField variant forcing multiline textarea with configurable minRows (default 3).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/utils/themeSeeds.ts": {
+   "summary": "Maps tenant theming API fields (primaryColor/accent) to/from internal TenantSeeds (accentDark/accentLight) with deprecated primary/accent aliases for API compatibility.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/themeSeeds.ts:getAccentDark": {
+   "summary": "Reads accentDark from TenantSeeds, falling back to deprecated primary alias.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/themeSeeds.ts:getAccentLight": {
+   "summary": "Reads accentLight from TenantSeeds, falling back to deprecated accent alias.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/themeSeeds.ts:readSeeds": {
+   "summary": "Converts API ThemingSeedFields (primaryColor/accent) into a TenantSeeds object with both new and deprecated keys.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/themeSeeds.ts:buildSeedUpdate": {
+   "summary": "Builds a ThemingSeedFields update payload (primaryColor/accent, secondaryColor/signal null) from TenantSeeds.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/hooks/useAdminTheme.hook.ts": {
+   "summary": "Hook applying admin M3 theme tokens from tenant theming seeds via applyAdminTheme; clears inverted theme tokens on unmount/dep change.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/hooks/useAdminTheme.hook.ts:useAdminTheme": {
+   "summary": "useEffect applying applyAdminTheme(theming) when isReady, cleaning up with clearAdminInvertedThemeTokens.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/DataTable/DataTable.tsx": {
+   "summary": "M3 data table primitives: DataTable (table shell w/ loading skeleton, empty/footer slots, sticky header, stackedOnMobile), DataTableRow, DataTableCell.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/DataTable/DataTable.tsx:DataTable": {
+   "summary": "Table shell rendering header/children or a skeleton grid while loading, plus empty and footer slots.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/DataTable/DataTable.tsx:DataTableRow": {
+   "summary": "Table row supporting error tone, visual-only selected state, click/keyboard activation, and an optional expansion row.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/DataTable/DataTable.tsx:DataTableCell": {
+   "summary": "Simple td wrapper supporting left/center/right alignment and colSpan.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/AdminMobileNav/AdminMobileNav.tsx": {
+   "summary": "Mobile sidebar/nav bar: search row + FAB section menu + subsection chips + back button; menu/search close on section change to avoid a stale anchor.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/AdminMobileNav/AdminMobileNav.tsx:AdminMobileNav": {
+   "summary": "Renders mobile search/filter/add row and FAB destination menu with subsections; syncs open state to activeSectionKey ch…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/Login/LoginForm.tsx": {
+   "summary": "Login form (antd+MUI) using useLoginMutation and usePublicTenantData; handles OTP step, distinguishes admin-portal/tenant-access denial vs combined invalid-credentials hint (TEN-INV-U10 #572).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Login/LoginForm.tsx:startIcon": {
+   "summary": "Wraps an icon node in a MUI InputAdornment (position=start).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Login/LoginForm.tsx:LoginForm": {
+   "summary": "Renders username/password/OTP fields; on submit calls login mutation, reveals OTP field on BAD_REQUEST, shows scoped er…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/hooks/useLoginMutation.hook.ts": {
+   "summary": "useMutation for login: gets access token, checks hasAdminPortalAccess, then GETs tenantAccessEndpoint (appConfig) to verify tenant access; stores tokens via setTokens on success.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/hooks/useLoginMutation.hook.ts:useLoginMutation": {
+   "summary": "Login mutation: getAccessToken -> admin-portal check -> tenantAccessEndpoint check; rejects with ADMIN_PORTAL_ACCESS_DE…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/Layout/Initialization.tsx": {
+   "summary": "Trivial centered antd Spin loading indicator shown during app initialization.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Layout/Initialization.tsx:Initialization": {
+   "summary": "Renders an absolutely-centered large antd Spin spinner.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/hooks/useAddOrUpdateTenant.hook.ts": {
+   "summary": "useMutation for create/update tenant via tenantAdminEndpoint (appConfig); auto-generates subdomain if missing, invalidates TENANTS_QUERY_KEY and updates TENANT cache on success.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/hooks/useAddOrUpdateTenant.hook.ts:useAddOrUpdateTenant": {
+   "summary": "POST/PUT tenantAdminEndpoint with merged existing tenant data + form data; builds fallback subdomain; syncs react-query…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/tenant/addTenantData.ts": {
+   "summary": "Creates a tenant via POST tenantEndpoint (appConfig) after stripping form data to backend-accepted fields (buildTenantCreatePayload excludes FE-only 'topic').",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/tenant/addTenantData.ts:buildTenantCreatePayload": {
+   "summary": "Pure function stripping raw tenant form data to the backend create payload, excluding the FE-only 'topic' field.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/tenant/addTenantData.ts:addTenantData": {
+   "summary": "POSTs the stripped tenant payload to tenantEndpoint and returns parsed JSON response.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/tenant/uploadTenantMedia.ts": {
+   "summary": "Uploads an editor image as FormData to `${tenantAdminEndpoint}/media` (WP-3a, TenantService#92); omits JSON content-type so browser sets multipart boundary.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/tenant/uploadTenantMedia.ts:uploadTenantMedia": {
+   "summary": "POSTs a File as multipart FormData to tenantAdminEndpoint/media and returns TenantMediaResponse.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/agency/normalizeTopicIds.ts": {
+   "summary": "Normalizes agency topic field (Option/array/backend-shape/raw id/null) into a string[] of length 0/1 per ADR-003 single-topic-per-agency rule; idempotent, drops non-numeric ids.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/agency/normalizeTopicIds.ts:toArray": {
+   "summary": "Wraps a single TopicLike value (or passes through an array) into a TopicLike[] array.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/agency/normalizeTopicIds.ts:normalizeTopicIds": {
+   "summary": "Extracts value/id from each topic-like item, filters non-numeric/empty, and returns string[] of ids.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/agency/addAgencyData.ts": {
+   "summary": "Creates an agency via POST agencyEndpointBase (appConfig): resolves tenantId (form vs JWT), builds request body (ADR-003 topicIds), then updates postcode range and assigns consultants.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/agency/addAgencyData.ts:buildAgencyDataRequestBody": {
+   "summary": "Builds the agency create JSON body from form data, normalizing topicIds and including optional demographics/counselling…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/agency/addAgencyData.ts:createAgency": {
+   "summary": "POSTs the agency request body to agencyEndpointBase and returns parsed JSON.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/agency/addAgencyData.ts:resolveAgencyTenantId": {
+   "summary": "Picks tenantId: prefers a valid selected form tenantId, else falls back to the JWT token's tenantId.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/agency/addAgencyData.ts:addAgencyData": {
+   "summary": "Orchestrates agency creation: resolves tenant/consultingType, creates agency, updates postcode range, and best-effort a…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/agency/updateAgencyPostCodeRange.ts": {
+   "summary": "POST/DELETE-then-POST helper to set an agency's postcode ranges via agencyPostcodeRangeEndpointBase/{id}; DELETE failure is swallowed before the POST retry.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/agency/updateAgencyPostCodeRange.ts:updateAgencyPostCodeRange": {
+   "summary": "Joins postcode ranges into a semicolon string and POSTs; for non-POST method first DELETEs (ignoring errors) then POSTs.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/agency/assignAgencyToConsultants.ts": {
+   "summary": "Bulk-assigns an agency to selected consultants by reading each counselor's current agencyIds and PUTting the union back via putAgenciesForCounselor.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/agency/assignAgencyToConsultants.ts:normalizeSelectionId": {
+   "summary": "Coerces a consultant selection (string/number/{value}/{id}) into a string id, or '' if unresolvable.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/agency/assignAgencyToConsultants.ts:extractAgencyId": {
+   "summary": "Extracts an agency's id as a string, or '' if null/undefined.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/agency/assignAgencyToConsultants.ts:assignAgencyToConsultants": {
+   "summary": "For each deduped consultant selection, fetches the counselor and PUTs their existing + new agencyIds (adds finalAgencyI…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/hooks/useInviteEmailPreview.hook.ts": {
+   "summary": "React Query hook loading the rendered invite email preview (ORISO-UserService#914) via getInviteEmailPreview; cached 60s, no refetch-on-focus, errors surface to caller.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/hooks/useInviteEmailPreview.hook.ts:useInviteEmailPreview": {
+   "summary": "useQuery wrapper keyed by templateId/kind/tenantId/language that fetches the branded invite email preview; retry disabl…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/Links/inviteProgress/InviteProgressBoard.tsx": {
+   "summary": "Renders the Links page 'Onboarding' tracking board: filterable/sortable/paginated DataTable of AccountInviteDTOs with status chips, phase stepper, resend/copy/revoke actions; purely presentational, data/actions owned by…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Links/inviteProgress/InviteProgressBoard.tsx:matchesFilter": {
+   "summary": "Predicate testing whether an invite matches the active bucket or status filter (or true if no filter).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Links/inviteProgress/InviteProgressBoard.tsx:isActionable": {
+   "summary": "True if an invite is DRAFT or EMAIL_SENT (i.e. still resend/revoke-able, not terminal).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Links/inviteProgress/InviteProgressBoard.tsx:InviteProgressBoard": {
+   "summary": "Main component: filters/sorts/paginates invites, prunes stale selections on filter/search change, renders summary tiles…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/TenantOnboarding/TenantAdminOnboardingPage.tsx": {
+   "summary": "Public route /admin/tenant-onboarding/:token (#571); reads the invite token from the URL and renders TenantAdminOnboarding inside PasswordResetPageLayout variant='longForm' for a tall mobile form.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/TenantOnboarding/TenantAdminOnboardingPage.tsx:TenantAdminOnboardingPage": {
+   "summary": "Reads :token param (already URL-decoded by react-router, no double-decode) and renders TenantAdminOnboarding with it.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/TenantOnboarding/useTenantAdminOnboardingFlow.ts": {
+   "summary": "State machine hook driving the public tenant-admin onboarding wizard (#571/#569/#723): loading/link-error/organisation/account/two-factor/done phases, resume-from-2FA-pending, DPA forward tracking, retryable submit erro…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/TenantOnboarding/useTenantAdminOnboardingFlow.ts:useTenantAdminOnboardingFlow": {
+   "summary": "Resolves the invite via client.getOnboardingInvite, drives phase transitions and exposes submitOrganisationDpa/submitAc…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/tenantOnboarding/tenantOnboarding.ts": {
+   "summary": "Public tenant-admin onboarding API client (TEN-INV U8, #571) against publicAccountInvitesEndpoint; maps HTTP status/body reason to InviteLinkError, includes HTTP and in-memory stub client implementations.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/tenantOnboarding/tenantOnboarding.ts:isInviteLinkErrorReason": {
+   "summary": "Type guard checking a value is one of CONSUMED/REVOKED/EXPIRED/SUPERSEDED/INVALID.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/tenantOnboarding/tenantOnboarding.ts:toOnboardingError": {
+   "summary": "Converts a rejected Response into an InviteLinkError using the JSON body's reason first, then status-code mapping, else…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/tenantOnboarding/tenantOnboarding.ts:onboardingUrl": {
+   "summary": "Builds the public onboarding URL for a token: {publicAccountInvitesEndpoint}/{token}/onboarding{suffix}.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/tenantOnboarding/tenantOnboarding.ts:probeTwoFactorResume": {
+   "summary": "Re-POSTs the public /accept endpoint to check if a CONSUMED link is actually resumable at PENDING_2FA_ACTIVATION; best-…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/tenantOnboarding/tenantOnboarding.ts:createHttpTenantAdminOnboardingClient": {
+   "summary": "Production TenantAdminOnboardingClient: unauthenticated fetchData calls for getOnboardingInvite/registerTenantAdmin/act…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/tenantOnboarding/tenantOnboarding.ts:wait": {
+   "summary": "Promise-based delay helper (setTimeout) used by the stub client to simulate latency.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/tenantOnboarding/tenantOnboarding.ts:createStubTenantAdminOnboardingClient": {
+   "summary": "In-memory TenantAdminOnboardingClient for tests/Storybook simulating single-use links, atomic consumption, reservation-…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/TenantOnboarding/OrganisationDpaStep.tsx": {
+   "summary": "Step 1 of tenant onboarding wizard (#571/#723): organisation master-data fields plus read-only DPA/AVV reader and signer form, or an on-hold 'forwarded' view when signing was delegated via DpaForwardDialog.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/TenantOnboarding/OrganisationDpaStep.tsx:OrganisationDpaStep": {
+   "summary": "antd Form rendering organisation fields + DPA consent (or forwarded on-hold state); validates and calls onSubmit(organi…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/TenantOnboarding/LinkErrorState.tsx": {
+   "summary": "Terminal error view for a dead onboarding invite link (consumed/revoked/expired/superseded/invalid, #571); shows title+description per reason, no form or retry.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/TenantOnboarding/LinkErrorState.tsx:LinkErrorState": {
+   "summary": "Renders the localized title/description/contact hint for the given InviteLinkErrorReason with a data-testid keyed to th…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/hooks/useDpaGate.hook.ts": {
+   "summary": "React Query hook fetching a tenant's DPA gate status via getDpaGate(tenantId); enabled only for a positive finite tenantId, 30s staleTime, no retry.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/hooks/useDpaGate.hook.ts:useDpaGate": {
+   "summary": "useQuery wrapper keyed by [DPA_GATE_KEY, tenantId] calling getDpaGate(tenantId).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/hooks/useLegalTextVersions.hook.ts": {
+   "summary": "React Query hook loading published version history of a legal text (ADR-021) scoped by tenant/agency/department via getLegalTextVersions; rejects and surfaces isError on failure.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/hooks/useLegalTextVersions.hook.ts:legalTextVersionsKey": {
+   "summary": "Builds a stable serialisable query key from a LegalVersionScope (level, kind, tenant/agency id, topic id).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/hooks/useLegalTextVersions.hook.ts:hasUsableIds": {
+   "summary": "Validates a LegalVersionScope has the finite positive ids required for its level (tenant/agency/department).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/hooks/useLegalTextVersions.hook.ts:useLegalTextVersions": {
+   "summary": "useQuery wrapper calling getLegalTextVersions(scope), enabled only when hasUsableIds passes; 60s staleTime, no retry.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/FormPluginEditor/TiptapEditor.tsx": {
+   "summary": "TipTap rich-text editor replacing the old draft-js editor for legal text plugins; HTML in/out, heading-anchor navigation, image upload/drag-drop, placeholder-token insertion, antd-disabled-context aware.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/FormPluginEditor/TiptapEditor.tsx:isEmptyHtml": {
+   "summary": "Returns true if the html string is '' or the empty-paragraph '<p></p>'.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/FormPluginEditor/TiptapEditor.tsx:ToolbarButton": {
+   "summary": "Small antd Button wrapper for toolbar actions with active/disabled/busy/aria-pressed styling, preventing focus loss on…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/FormPluginEditor/TiptapEditor.tsx:Toolbar": {
+   "summary": "Editor toolbar: heading select, bold/italic/underline, lists, link/image insert, and a placeholder-token dropdown.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/FormPluginEditor/TiptapEditor.tsx:TiptapEditor": {
+   "summary": "Default export component: wires useEditor with StarterKit/Underline/Link/Placeholder/anchors, syncs external value chan…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/hooks/useDpiaMasterData.hook.ts": {
+   "summary": "React Query hook loading platform DPIA operator master data (superadmin only) via getDpiaMasterData; caller passes enabled=false to skip the call for non-superadmins.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/hooks/useDpiaMasterData.hook.ts:useDpiaMasterData": {
+   "summary": "useQuery wrapper keyed by DPIA_MASTER_DATA_KEY calling getDpiaMasterData(), 60s staleTime.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/tenant/getDpiaMasterData.ts": {
+   "summary": "Fetches platform DPIA operator master data via GET {tenantAdminEndpoint}/dpia (superadmin only), using fetchData/FETCH_ERRORS.CATCH_ALL.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/tenant/getDpiaMasterData.ts:getDpiaMasterData": {
+   "summary": "GET request to tenantAdminEndpoint + '/dpia', returning a DpiaMasterData promise.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/hooks/useDpiaMasterDataMutation.hook.ts": {
+   "summary": "React Query mutation hook saving platform DPIA operator master data via updateDpiaMasterData; caches server response (not submitted form) since backend sanitizes/nulls fields; shows success notification.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/hooks/useDpiaMasterDataMutation.hook.ts:useDpiaMasterDataMutation": {
+   "summary": "useMutation for saving DPIA master data; on success writes server response into DPIA_MASTER_DATA_KEY cache, shows toast.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/Tenants/AppSettings/PermissionsSettings/index.tsx": {
+   "summary": "Thin router component: renders SuperAdminPermissionsSettings or TenantPermissionsSettings depending on superAdminControlMode prop; no own state or endpoints.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/AppSettings/PermissionsSettings/index.tsx:PermissionsSettings": {
+   "summary": "Picks SuperAdminPermissionsSettings vs TenantPermissionsSettings by superAdminControlMode, forwards props.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/constants/caseHandoverAccess.ts": {
+   "summary": "Access-check predicates for case handover / supervisor-log admin UI, using PermissionAction+Resource.Consultant checks; deliberately does not exclude restricted-agency-admins (ORISO-Admin#84).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/constants/caseHandoverAccess.ts:canSeeSupervisorLogs": {
+   "summary": "True for non-super-admins who can Read Resource.Consultant; grants supervisor log menu visibility.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/constants/caseHandoverAccess.ts:canReadCaseHandoverAdmin": {
+   "summary": "True for super-admins or anyone who can Read Resource.Consultant; gates case handover admin read access.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/constants/caseHandoverAccess.ts:canEditCaseHandoverReasonPolicies": {
+   "summary": "True for super-admins or anyone who can Update Resource.Consultant; gates editing case handover reason policies.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/hooks/useTenantPermissionPolicies.ts": {
+   "summary": "React Query hooks fetching/mutating a tenant's permission policies via tenantPermissionPolicies API; mutation does optimistic update with rollback + error notification on failure.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/hooks/useTenantPermissionPolicies.ts:tenantPermissionPoliciesKey": {
+   "summary": "Builds the React Query cache key ['tenant-permission-policies', tenantId] for a tenant's permission policies.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/hooks/useTenantPermissionPolicies.ts:useTenantPermissionPolicies": {
+   "summary": "useQuery fetching a tenant's permission policies via getTenantPermissionPolicies, enabled only when tenantId is truthy.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/hooks/useTenantPermissionPolicies.ts:useTenantPermissionPoliciesMutation": {
+   "summary": "useMutation saving tenant permission policies with optimistic cache update, rollback and error notification on failure.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/Statistic/statisticPreferences.ts": {
+   "summary": "localStorage read/write helpers for statistics dashboard card-menu and filter-target selections, keyed per user via parseUserAuthInfo; all failures swallowed with try/catch fallbacks.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic/statisticPreferences.ts:createDefaultCardMenuSelection": {
+   "summary": "Returns empty default SelectedCardMenuByScope object with platform/tenant/agency keys.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic/statisticPreferences.ts:isCardMenuKey": {
+   "summary": "Type guard checking a value is a valid CardMenuKey string from cardMenuKeys.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic/statisticPreferences.ts:getStatisticPreferenceStorageKey": {
+   "summary": "Builds a per-user localStorage key by suffixing the base key with the logged-in user's id/username/email/sub.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic/statisticPreferences.ts:readStoredCardMenuSelection": {
+   "summary": "Reads/sanitizes stored per-scope card-menu selection from localStorage, falls back to defaults on error.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic/statisticPreferences.ts:storeCardMenuSelection": {
+   "summary": "Persists the card-menu selection object to localStorage under the per-user key, swallowing storage errors.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic/statisticPreferences.ts:readStoredFilterTargetSelection": {
+   "summary": "Reads and sanitizes stored per-scope filter-target id selections from localStorage, falling back to defaults on error.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic/statisticPreferences.ts:storeFilterTargetSelection": {
+   "summary": "Persists filter-target id selection to localStorage under the per-user key, swallowing storage errors.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/Statistic/useStatisticDashboardData.hook.ts": {
+   "summary": "Loads admin statistics dashboard data plus best-effort name lookups for agencies/tenants/topics via agencyEndpointBase/tenantAdminEndpoint/topicAdminEndpoint; name-lookup failures never break the dashboard.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic/useStatisticDashboardData.hook.ts:fetchNameLookup": {
+   "summary": "Fetches id->name map from a given URL without responseHandling (so 403s don't hard-redirect); returns {} on any failure.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic/useStatisticDashboardData.hook.ts:fetchAgencyNames": {
+   "summary": "Calls fetchNameLookup against agencyEndpointBase to build an agency id-to-name map.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic/useStatisticDashboardData.hook.ts:fetchTenantNames": {
+   "summary": "Calls fetchNameLookup against tenantAdminEndpoint search to build a tenant id-to-name map.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic/useStatisticDashboardData.hook.ts:fetchTopicNames": {
+   "summary": "Calls fetchNameLookup against topicAdminEndpoint to build a topic id-to-name map.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic/useStatisticDashboardData.hook.ts:useStatisticDashboardData": {
+   "summary": "Combines dashboard query with conditional name queries into StatisticData; only dashboard failure sets isError.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/Statistic/TutorialStatisticsSection.tsx": {
+   "summary": "Renders TOUR-07 tutorial-completion stats table (antd Table) via useTutorialStatistics; shows loading/forbidden/error/empty states distinctly, tenant column only for PLATFORM scope.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic/TutorialStatisticsSection.tsx:TutorialStatisticsSection": {
+   "summary": "Renders per-tour tutorial completion counts table with accessible scroll wrapper, distinct loading/forbidden/error/empt…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:.env.example": {
+   "summary": "Template env file: VITE_API_URL/APP_URL, VITE_KEYCLOAK_URL/REALM/CLIENT_ID, VITE_MATRIX_URL, VITE_COOKIE_DOMAIN, per-service VITE_*_ORIGIN overrides, legacy REACT_APP_* runtime equivalents.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:vite.config.ts": {
+   "summary": "Vite build/dev config: forces React-dependent libs (react, antd, mui, draft-js, tanstack) into one vendor-ui chunk to avoid init-order bugs; serves /admin/env.js in dev; base path /admin; optional API proxy.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:vite.config.ts:resolveManualChunk": {
+   "summary": "Rollup manualChunks resolver assigning node_modules deps to vendor-ui or vendor-dayjs chunks via regex matchers.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:vite.config.ts:runtimeEnvPlugin": {
+   "summary": "Dev-server plugin serving public/env.js (or in-memory window.__APP_CONFIG__ fallback) at the /admin/env.js path.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/users/management/useUserTableColumns.tsx": {
+   "summary": "Builds antd Table columns per TypeOfUser section from USER_TABLE_CONFIGS: sort-order mapping, agency chips, subdomain links, expand/collapse, edit/delete actions.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/users/management/useUserTableColumns.tsx:getColumnSortOrder": {
+   "summary": "Maps a column key + current sortBy/order API params to antd's 'ascend'/'descend' sortOrder via SORT_FIELD_BY_COLUMN.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/users/management/useUserTableColumns.tsx:useUserTableColumns": {
+   "summary": "Memoized hook building the antd ColumnProps array (name/status/agency/actions) for a user/tenant management table.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/users/management/useUserTableColumns.tsx:mapSorterToApiField": {
+   "summary": "Reverse-maps a UI column key to its backend sort field name via SORT_FIELD_BY_COLUMN.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/users/management/userTableConfigs.ts": {
+   "summary": "Declarative per-TypeOfUser table configs (visible columns, widths, default sort, resources, edit path) for user/tenant/admin management tables; uses routePathNames from appConfig and Resource/PermissionAction enums.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/users/management/userTableConfigs.ts:col": {
+   "summary": "Small factory building a UserTableColumnConfig object (key, visible, sortable, width).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/users/management/userTableConfigs.ts:baseIdentityColumns": {
+   "summary": "Returns the standard lastUpdated/status/name/email/username column set with fixed widths for consultant/admin sections.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/users/management/userTableConfigs.ts:tenantAdminIdentityColumns": {
+   "summary": "Like baseIdentityColumns but marks username non-sortable, for tenant-admin/platform-admin sections.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/users/management/userTableConfigs.ts:getVisibleColumns": {
+   "summary": "Filters a section's configured columns by visible flag and showTenant/showSubdomain options.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/users/management/userTableConfigs.ts:canReadSection": {
+   "summary": "Checks Read permission against a section's configured readResource via the passed can() predicate.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/StatisticCard/StatisticCard.tsx": {
+   "summary": "Single metric card for the statistics dashboard: icon, animated value, trend badge, optional per-slot metric picker menu; styled via global statisticDashboard__* classes.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/StatisticCard/StatisticCard.tsx:translateDashboardKey": {
+   "summary": "Wraps i18n translate() with a defaultValue fallback for dashboard-specific keys.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/StatisticCard/StatisticCard.tsx:getCardClassName": {
+   "summary": "Builds the metric card's CSS class name including its size modifier.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/StatisticCard/StatisticCard.tsx:getTrendClassName": {
+   "summary": "Builds the trend badge's CSS class name from its tone (great/good/bad/critical).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/StatisticCard/StatisticCard.tsx:getIconClassName": {
+   "summary": "Builds the metric icon wrapper's CSS class name from an IconTone (default 'plain').",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/StatisticCard/StatisticCard.tsx:getTrendMagnitude": {
+   "summary": "Parses the absolute numeric magnitude out of a trend value string (handles comma decimals).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/StatisticCard/StatisticCard.tsx:formatTrendValue": {
+   "summary": "Formats a trend magnitude as a localized '+/- X%' string using Intl number formatting.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/StatisticCard/StatisticCard.tsx:getTrendDirection": {
+   "summary": "Derives up/down/upRight/downRight trend direction from explicit direction, tone, and magnitude thresholds.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/StatisticCard/StatisticCard.tsx:getTrendScoreTone": {
+   "summary": "Derives great/good/bad/critical tone for a trend badge from its direction, tone and magnitude.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/StatisticCard/StatisticCard.tsx:getTrendIcon": {
+   "summary": "Maps a trend direction to the corresponding MUI arrow icon component.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/StatisticCard/StatisticCard.tsx:getEffectiveIconTone": {
+   "summary": "Special-cases icon tone defaults for the Requests and Conversations SVG icons.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/StatisticCard/StatisticCard.tsx:AnimatedValue": {
+   "summary": "Renders a metric value with a count-up animation via useAnimatedDisplayValue over 2800ms.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/StatisticCard/StatisticCard.tsx:MetricIcon": {
+   "summary": "Renders a card's metric SVG icon inside a toned wrapper span.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/StatisticCard/StatisticCard.tsx:TrendBadge": {
+   "summary": "Renders the trend arrow icon and formatted percentage badge with an accessible aria-label; null if no trend.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/StatisticCard/StatisticCard.tsx:StatisticCard": {
+   "summary": "Resolves active menu option (or default), renders header/icon/menu dropdown and value/trend/detail or empty-hint state.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/Tenants/AppSettings/PermissionsSettings/CaseHandoverCard/caseHandoverCardUtils.ts": {
+   "summary": "Pure helpers for case-handover reason-policy editor: consent classification, display-reason ordering with LEGAL_VIOLATION placeholder, immutable field updaters.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/AppSettings/PermissionsSettings/CaseHandoverCard/caseHandoverCardUtils.ts:isAdvisorConsentImplicit": {
+   "summary": "True if the reason code is COUNSELLOR_ASKED_FOR_ADVICE, meaning advisor consent is implicit.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/AppSettings/PermissionsSettings/CaseHandoverCard/caseHandoverCardUtils.ts:isAdvisorAbsentReason": {
+   "summary": "True if the reason code is one where the previous counsellor is absent (holiday/ill/left/emergency).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/AppSettings/PermissionsSettings/CaseHandoverCard/caseHandoverCardUtils.ts:sortPoliciesByDisplayOrder": {
+   "summary": "Sorts case handover reason policies by displayOrder (default 100 if unset).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/AppSettings/PermissionsSettings/CaseHandoverCard/caseHandoverCardUtils.ts:buildDisplayReasons": {
+   "summary": "Builds tab list of display reasons from backend policies (dropping OTHER_EMERGENCY), appends LEGAL_VIOLATION placeholde…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/AppSettings/PermissionsSettings/CaseHandoverCard/caseHandoverCardUtils.ts:isHandoverModuleEnabled": {
+   "summary": "True if any reason policy is enabled; drives the master 'Aktiviert' toggle state.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/AppSettings/PermissionsSettings/CaseHandoverCard/caseHandoverCardUtils.ts:applyModuleEnabled": {
+   "summary": "Sets 'enabled' on every reason policy to the given master-toggle boolean.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/AppSettings/PermissionsSettings/CaseHandoverCard/caseHandoverCardUtils.ts:applyClientConsent": {
+   "summary": "Updates clientConsentRequired boolean on the policy matching a given reason code.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/AppSettings/PermissionsSettings/CaseHandoverCard/caseHandoverCardUtils.ts:resolvedClientConsentPolicy": {
+   "summary": "Derives effective CaseHandoverConsentPolicy from a policy, falling back from legacy clientConsentRequired to OPT_IN/NON…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/AppSettings/PermissionsSettings/CaseHandoverCard/caseHandoverCardUtils.ts:applyClientConsentPolicy": {
+   "summary": "Writes new clientConsent policy onto a reason, syncs legacy clientConsentRequired boolean for compatibility.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/AppSettings/PermissionsSettings/CaseHandoverCard/caseHandoverCardUtils.ts:applyMaxAccessDuration": {
+   "summary": "Sets maxAccessDurationMinutes on a reason policy, clamped to a minimum of 15 minutes.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/AppSettings/PermissionsSettings/CaseHandoverCard/caseHandoverCardUtils.ts:getNotificationTemplate": {
+   "summary": "Reads the stored client notification template text for a policy and language, or '' if none.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/AppSettings/PermissionsSettings/CaseHandoverCard/caseHandoverCardUtils.ts:applyNotificationTemplate": {
+   "summary": "Sets or clears (on blank input) a reason's per-language notification template text.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/Tenants/AppSettings/PermissionsSettings/permissionsSettingsUtils.ts": {
+   "summary": "Core logic for tenant permission toggles: maps master toggles to feature fields (PLATFORM_TOGGLE_FIELDS), computes forced-off/enforced-on sets (ADR-013), builds TenantAdminControls payloads; AI scan defaults off (ADR-01…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/AppSettings/PermissionsSettings/permissionsSettingsUtils.ts:resolvePermissionPolicy": {
+   "summary": "Resolves a field's effective PolicyValue<boolean> from stored permissionPolicies or a computed default.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/AppSettings/PermissionsSettings/permissionsSettingsUtils.ts:getForcedOffFields": {
+   "summary": "From disabled master toggles, computes concrete feature fields forced false, with explicit true overrides removed.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/AppSettings/PermissionsSettings/permissionsSettingsUtils.ts:applyForcedOffFields": {
+   "summary": "Sets every field in forcedOffFields to false on a settings object copy.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/AppSettings/PermissionsSettings/permissionsSettingsUtils.ts:getEnforcedOnFields": {
+   "summary": "From enforced-on master toggles, computes the set of concrete feature fields locked to true for lower roles.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/AppSettings/PermissionsSettings/permissionsSettingsUtils.ts:applyEnforcedOnFields": {
+   "summary": "Sets every field in enforcedOnFields to true on a settings object copy.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/AppSettings/PermissionsSettings/permissionsSettingsUtils.ts:getRestrictedFields": {
+   "summary": "Union of forced-off and enforced-on fields — the fields a lower role may not edit (ADR-013).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/AppSettings/PermissionsSettings/permissionsSettingsUtils.ts:applyPermissionConstraintsToSettings": {
+   "summary": "Applies forced-off and enforced-on constraints to a settings object; enforced-on wins on conflicts.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/AppSettings/PermissionsSettings/permissionsSettingsUtils.ts:applyVisibleTogglesAsValues": {
+   "summary": "Maps super-admin visibleToggles into a full feature-settings object, starting from DEFAULT_PERMISSION_SETTINGS.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/AppSettings/PermissionsSettings/permissionsSettingsUtils.ts:syncMasterTogglesToTenantAdminControls": {
+   "summary": "Rebuilds allowedPermissionToggles directly from each toggle's own settings field (fixes 'toggle jumps back' bug).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/AppSettings/PermissionsSettings/permissionsSettingsUtils.ts:enforcedFieldsToToggles": {
+   "summary": "Converts a Set of enforced settings-field keys back into toggle-keyed enforcedPermissionToggles for persistence.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/AppSettings/PermissionsSettings/permissionsSettingsUtils.ts:buildTenantAdminControlsPayload": {
+   "summary": "Builds full TenantAdminControls save payload: synced allowed toggles, existing toggles, optional enforcedPermissionTogg…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/AppSettings/PermissionsSettings/permissionsSettingsUtils.ts:isSubToggleDisabled": {
+   "summary": "Determines if a chat-type card's sub-toggle renders disabled, based on master field and the 1:1-call special case.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/CustomIcons/EditorIcons.tsx": {
+   "summary": "Wraps SVG icons (maximize/minimize, published/unpublished, edit, cross-reference, arrow, version-history) via antd Icon; all decorative (aria-hidden) for the M3 rich-text editor toolbar/footer.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/CustomIcons/EditorIcons.tsx:MaximizeContentIcon": {
+   "summary": "Decorative icon wrapper rendering the fullscreen-enter SVG via antd Icon.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/CustomIcons/EditorIcons.tsx:MinimizeContentIcon": {
+   "summary": "Decorative icon wrapper rendering the fullscreen-exit SVG via antd Icon.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/CustomIcons/EditorIcons.tsx:PublishedIcon": {
+   "summary": "Decorative icon for a published document state in the editor footer.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/CustomIcons/EditorIcons.tsx:UnpublishedIcon": {
+   "summary": "Decorative icon for an unpublished/draft document state in the editor footer.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/CustomIcons/EditorIcons.tsx:EditIcon": {
+   "summary": "Decorative pencil-outline edit icon used for 'Entwurf bearbeiten' affordances.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/CustomIcons/EditorIcons.tsx:EditFilledIcon": {
+   "summary": "Decorative filled-pencil edit icon variant.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/CustomIcons/LegalIcons.tsx": {
+   "summary": "Icon set for legal editor cards (DPA/DPIA/GDPR/Imprint/Topic/CheckBox, outline+filled pairs) wrapped via antd Icon; not marked decorative unlike EditorIcons.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/CustomIcons/LegalIcons.tsx:DpaIcon": {
+   "summary": "Renders the DPA (Auftragsverarbeitungsvertrag) card header icon.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/CustomIcons/LegalIcons.tsx:DpiaIcon": {
+   "summary": "Renders the DSFA/DPIA living-document free-text editor icon.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/CustomIcons/LegalIcons.tsx:GdprIcon": {
+   "summary": "Renders the GDPR/privacy-policy card icon.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/CustomIcons/LegalIcons.tsx:ImprintIcon": {
+   "summary": "Renders the Impressum/imprint card icon.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/CustomIcons/LegalIcons.tsx:TopicIcon": {
+   "summary": "Outline variant of the Topic/Fachbereich icon.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/FormPluginEditor/M3RichTextEditor.tsx": {
+   "summary": "TipTap-based M3 rich-text editor shell: toolbar, fullscreen dialog, version look-back/restore, language switch, anchor navigation, image upload, publish/draft actions. Main export M3RichTextEditor; ~1228 lines.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/FormPluginEditor/M3RichTextEditor.tsx:isEmptyHtml": {
+   "summary": "Checks whether TipTap HTML is empty ('' or '<p></p>').",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/FormPluginEditor/M3RichTextEditor.tsx:editorSurfaceAttributes": {
+   "summary": "Returns a11y attrs (role=textbox, aria-label) for the editable surface; read-only surfaces get none.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/FormPluginEditor/M3RichTextEditor.tsx:parseVersionDate": {
+   "summary": "Parses a version id (plain YYYY-MM-DD or ISO string) into a Date, or null if unparseable.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/FormPluginEditor/M3RichTextEditor.tsx:ToolButton": {
+   "summary": "Small toolbar button primitive: prevents mousedown focus loss, shows active/disabled/title state.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/FormPluginEditor/M3RichTextEditor.tsx:MenuRow": {
+   "summary": "Renders one dropdown menu row with leading glyph, label, and trailing keyboard-shortcut hint.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/FormPluginEditor/M3RichTextEditor.tsx:Toolbar": {
+   "summary": "Full formatting toolbar (headings, marks, lists, links, images, highlight); stays visible but inert in read-only mode.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/FormPluginEditor/M3RichTextEditor.tsx:M3RichTextEditor": {
+   "summary": "Main editor component: composes toolbar, TipTap body, fullscreen modal, version select/restore, language switch, publis…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/Tenants/LegalSettings/components/LegalText/index.tsx": {
+   "summary": "Imprint/privacy card wiring M3RichTextEditor to tenant-admin mutation; handles per-language edits, local drafts, consent-sentence field (ADR-021), version look-back, dismissible hint snackbars scoped by opaque userId.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/components/LegalText/index.tsx:hintDismissedKey": {
+   "summary": "Builds the localStorage key for 'never show again' dismissal of the privacy/imprint editor hint.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/components/LegalText/index.tsx:hintSessionKey": {
+   "summary": "Builds the sessionStorage key for a session-only close of the editor hint snackbar.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/components/LegalText/index.tsx:scopedKey": {
+   "summary": "Appends a tenant:userId scope suffix to a storage key.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/components/LegalText/index.tsx:isHintDismissed": {
+   "summary": "Reads local/session storage to check if the hint snackbar was already dismissed for this scope.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/components/LegalText/index.tsx:LegalText": {
+   "summary": "Card: loads tenant legal content, merges draft+edits per language, validates consent token, publishes full language map…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/Tenants/AppSettings/SmtpSettings/index.tsx": {
+   "summary": "Tenant SMTP settings card (CardEditable form): inherits platform-level SMTP/global defaults, enforces globalSmtpEnabled/globalFeatureSystemNotificationEmailsEnabled gates, write-only password field (#730).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/AppSettings/SmtpSettings/index.tsx:isBlank": {
+   "summary": "Checks whether a value is undefined, null, or empty string.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/AppSettings/SmtpSettings/index.tsx:inheritString": {
+   "summary": "Falls back to the inherited (platform) string value when the tenant value is blank.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/AppSettings/SmtpSettings/index.tsx:normalizeSmtpPort": {
+   "summary": "Parses the port field to a number, falling back to the default SMTP port 587 if invalid/blank.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/AppSettings/SmtpSettings/index.tsx:SmtpSettings": {
+   "summary": "Renders the SMTP settings card, computing inherited platform defaults and submitting via mutation; clears password fiel…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/Tenants/LegalSettings/utils/legalContentLanguages.ts": {
+   "summary": "Pure helpers for the language->HTML legal content maps (DPA/department privacy): parse legacy/JSON storage, pick a language for display, list editable languages, merge edits without dropping untouched keys.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/utils/legalContentLanguages.ts:isEmptyHtml": {
+   "summary": "Checks whether stored HTML is undefined/empty or TipTap's empty-paragraph markup.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/utils/legalContentLanguages.ts:isEditableLanguageKey": {
+   "summary": "Tests whether a map key is a plain language code (e.g. de, de-CH) vs opaque metadata like de__meta.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/utils/legalContentLanguages.ts:parseLegalContentMap": {
+   "summary": "Parses stored raw content into a language->HTML record; legacy non-JSON plain content is exposed under 'de'.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/utils/legalContentLanguages.ts:pickLegalContentLanguage": {
+   "summary": "Returns one language's HTML for display, falling back to the first entry in the map.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/utils/legalContentLanguages.ts:getEditableLanguages": {
+   "summary": "Computes the languages offered in the editor: tenant active languages plus any extra plain-code keys already stored.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/utils/legalContentLanguages.ts:mergeLegalContentMap": {
+   "summary": "Builds the complete map to submit on publish: loaded content overlaid with edited languages, preserving untouched keys.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/mui/MuiFormField/MuiFormField.matrix.tsx": {
+   "summary": "Storybook matrix helper rendering MuiFormField in five states (enabled/focused/hovered/error/disabled) side by side for visual QA; uses orisoMuiTheme and antd Form.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/mui/MuiFormField/MuiFormField.matrix.tsx:ClearEndAdornment": {
+   "summary": "Trailing clear-button adornment component that resets a named antd Form field to empty via form.setFieldValue.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/mui/MuiFormField/MuiFormField.matrix.tsx:clearEndAdornment": {
+   "summary": "Factory returning a ClearEndAdornment bound to a given field name.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/mui/MuiFormField/MuiFormField.matrix.tsx:resolveEndAdornment": {
+   "summary": "Resolves an endAdornment prop that may be a node or a (fieldName) => node factory.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/mui/MuiFormField/MuiFormField.matrix.tsx:StateColumn": {
+   "summary": "Layout wrapper: renders a field plus its state caption underneath in the matrix grid.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/mui/MuiFormField/MuiFormField.matrix.tsx:FiveStateMatrix": {
+   "summary": "Story component: renders enabled/focused/hovered/error/disabled MuiFormField columns with a shared antd Form, forcing a…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/Layout/NavIcon.tsx": {
+   "summary": "Sidebar nav icon: picks active/hover/inactive SVG per routePathNames route (appConfig default export), decorates icons as presentation-only for a11y, tracks hover state locally.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Layout/NavIcon.tsx:decorateIcon": {
+   "summary": "Clones an icon element adding aria-hidden, focusable=false, role=presentation.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Layout/NavIcon.tsx:selectIcon": {
+   "summary": "Picks the correct active/hover/inactive icon variant and decorates it for a11y.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Layout/NavIcon.tsx:getIconState": {
+   "summary": "Derives 'active'|'hover'|'inactive' state from isActive and hover booleans.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Layout/NavIcon.tsx:isCurrentPathActive": {
+   "summary": "Checks whether the current route path equals or is nested under the nav item's path.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Layout/NavIcon.tsx:Icon": {
+   "summary": "Switches over routePathNames values to render the matching nav icon set for the given path/hover state.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Layout/NavIcon.tsx:NavIcon": {
+   "summary": "Public component: wraps Icon with local hover-state tracking via onMouseEnter/Leave.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/counsellorOnboarding/counsellorOnboarding.ts": {
+   "summary": "Public counsellor-invite onboarding client (#997), sibling of tenantOnboarding.ts; uses publicAccountInvitesEndpoint (appConfig) for resolve/register/2FA-activate, with a stub client for tests/Storybook.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/counsellorOnboarding/counsellorOnboarding.ts:isInviteLinkErrorReason": {
+   "summary": "Type guard checking a value is one of the known InviteLinkErrorReason strings.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/counsellorOnboarding/counsellorOnboarding.ts:toOnboardingError": {
+   "summary": "Maps a fetch error into InviteLinkError, preferring an explicit body 'reason' over the HTTP status mapping.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/counsellorOnboarding/counsellorOnboarding.ts:onboardingUrl": {
+   "summary": "Builds the public onboarding URL for an invite token plus optional suffix (/register, /two-factor).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/counsellorOnboarding/counsellorOnboarding.ts:createHttpCounsellorOnboardingClient": {
+   "summary": "Production client hitting the public unauthenticated onboarding endpoints for invite resolve, register, and 2FA activat…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/counsellorOnboarding/counsellorOnboarding.ts:createStubCounsellorOnboardingClient": {
+   "summary": "In-memory stub client for tests/Storybook simulating single-use links, topic-coverage validation, and a deterministic i…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/Tenants/LegalSettings/components/DataProcessingAgreementCard/index.tsx": {
+   "summary": "DPA (Auftragsverarbeitungsvertrag) card: M3RichTextEditor plus translate-on-publish/source-warning modals, version look-back, drafts, dismissible snackbars scoped per tenant:user via useLegalContentTranslation hook.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/components/DataProcessingAgreementCard/index.tsx:dismissedKey": {
+   "summary": "Builds the localStorage key for permanent dismissal of a DPA snackbar (blocker/signed) scoped by tenant:user.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/components/DataProcessingAgreementCard/index.tsx:sessionKey": {
+   "summary": "Builds the sessionStorage key for a session-only close of a DPA snackbar.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/components/DataProcessingAgreementCard/index.tsx:isSnackbarDismissed": {
+   "summary": "Reads local/session storage to check whether a given DPA snackbar kind was dismissed for this scope.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/components/DataProcessingAgreementCard/index.tsx:persistSnackbarDismissed": {
+   "summary": "Writes the localStorage flag for permanent 'never show again' dismissal of a DPA snackbar.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/components/DataProcessingAgreementCard/index.tsx:DataProcessingAgreementCard": {
+   "summary": "Renders the DPA editor card, wiring version restore/look-back, translate-on-publish flow, drafts, and role-gated help s…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/Tenants/LegalSettings/utils/legalDraftStorage.ts": {
+   "summary": "localStorage-only draft persistence for legal editors (dpa/imprint/privacy), keyed by tenantId:userId since the backend has no draft state; read/write/clear all fail closed on quota/private-mode errors.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/utils/legalDraftStorage.ts:legalDraftKey": {
+   "summary": "Builds the localStorage key for one legal document's draft in a given tenant:user scope, or undefined if scope missing.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/utils/legalDraftStorage.ts:isContentMap": {
+   "summary": "Type guard checking a value is a non-null, non-array object (candidate content map).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/utils/legalDraftStorage.ts:readLegalDraft": {
+   "summary": "Reads and validates a stored legal draft from localStorage; treats malformed/unreadable data as 'no draft'.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/utils/legalDraftStorage.ts:writeLegalDraft": {
+   "summary": "Persists a legal draft (content, consent, timestamp, baseVersionId) to localStorage, returning false if storage failed.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/utils/legalDraftStorage.ts:clearLegalDraft": {
+   "summary": "Removes a stored legal draft, returning whether removal actually succeeded.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/Statistic/useAnimatedDisplayValue.ts": {
+   "summary": "Hook that animates a locale-formatted numeric string (with % suffix support) from 0 to its target value via requestAnimationFrame with cubic ease-out; respects prefers-reduced-motion.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic/useAnimatedDisplayValue.ts:getNumberSeparators": {
+   "summary": "Returns decimal/group separators (',' '.' for de-locales, else '.' ',') based on locale prefix.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic/useAnimatedDisplayValue.ts:escapeRegExp": {
+   "summary": "Escapes regex special characters in a string for safe use in a dynamic RegExp.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic/useAnimatedDisplayValue.ts:parseDisplayNumber": {
+   "summary": "Parses a locale-formatted display string (with optional % suffix) into numeric value, decimal count, and suffix.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic/useAnimatedDisplayValue.ts:formatDisplayNumber": {
+   "summary": "Formats a number back to a locale string with fixed decimals plus the original suffix.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic/useAnimatedDisplayValue.ts:useAnimatedDisplayValue": {
+   "summary": "React hook returning an animated display value that counts up from 0 to the given formatted string over `duration` ms.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/auth/tokenSessionStore.ts": {
+   "summary": "Tiny in-memory (module-scope, non-persisted) store for the current access/refresh tokens, avoiding storing tokens in cookies/localStorage.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/tokenSessionStore.ts:setSessionTokens": {
+   "summary": "Stores the access and refresh tokens in module-scope variables (null if falsy).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/tokenSessionStore.ts:getSessionAccessToken": {
+   "summary": "Returns the current in-memory access token, or '' if unset.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/tokenSessionStore.ts:getSessionRefreshToken": {
+   "summary": "Returns the current in-memory refresh token, or '' if unset.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/tokenSessionStore.ts:hasSessionTokens": {
+   "summary": "Reports whether both access and refresh tokens are currently set.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/tokenSessionStore.ts:clearSessionTokens": {
+   "summary": "Clears both in-memory tokens (e.g. on logout).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/auth/accessSessionCookie.ts": {
+   "summary": "Low-level document.cookie helpers; explicitly refuses to set/read auth token cookies (must go via the auth BFF, isAuthTokenCookie check), uses runtimeConfig for domain/secure attrs.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/accessSessionCookie.ts:buildClientCookieAttributes": {
+   "summary": "Builds the cookie attribute string (secure/domain) from runtimeConfig via buildCookieAttributes.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/accessSessionCookie.ts:setValueInCookie": {
+   "summary": "Sets a non-auth cookie; throws if the name is an auth token cookie (those must go through the auth BFF).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/accessSessionCookie.ts:deleteCookieByName": {
+   "summary": "Deletes a cookie by name by setting an expired date, honoring the configured domain.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/accessSessionCookie.ts:getValueFromCookie": {
+   "summary": "Reads a cookie value by name from document.cookie; returns '' for auth token cookie names (blocked) or if not found.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/accessSessionCookie.ts:removeAllCookies": {
+   "summary": "Deletes all cookies except the allowed list, the language cookie, and auth token cookies.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/EmailPreview/brandedEmailStoryPreview.ts": {
+   "summary": "Storybook-only stand-in for the backend mail renderer: substitutes preheader/subject/content into a checked-in verbatim BrandedEmailLayoutRenderer HTML fixture. Exports renderBrandedEmailStoryPreview and INVITE_EMAIL_PR…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/EmailPreview/brandedEmailStoryPreview.ts:escapeHtml": {
+   "summary": "Escapes &, <, >, \" in a string for safe HTML embedding.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/EmailPreview/brandedEmailStoryPreview.ts:linkify": {
+   "summary": "Wraps bare URLs in already-escaped text with an <a> tag, mirroring the backend's content-cell link styling.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/EmailPreview/brandedEmailStoryPreview.ts:bodyToHtml": {
+   "summary": "Converts a plain-text mail body into paragraph HTML, linkifying URLs and turning single newlines into <br>.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/EmailPreview/brandedEmailStoryPreview.ts:preheader": {
+   "summary": "Builds the hidden preheader text: flattens whitespace, truncates to ~120 chars, HTML-escapes.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/EmailPreview/brandedEmailStoryPreview.ts:renderBrandedEmailStoryPreview": {
+   "summary": "Fills the branded frame fixture's title/preheader/subject/content slots and returns an InviteEmailPreviewDTO for a DPA_…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/lazyNamed.ts": {
+   "summary": "React.lazy helper for named exports that retries a failed chunk import once, then does a guarded full page reload on a stale-deploy chunk-load error. Exports lazyNamed, loadChunk, isChunkLoadError, CHUNK_RELOAD_FLAG, RE…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/lazyNamed.ts:isChunkLoadError": {
+   "summary": "Detects browser/bundler-specific 'failed to load chunk' error messages/names across Chrome, Safari, Firefox, webpack.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/lazyNamed.ts:readFlag": {
+   "summary": "Reads the sessionStorage reload-loop guard flag; returns true (block reload) if storage throws.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/lazyNamed.ts:writeFlag": {
+   "summary": "Sets or clears the sessionStorage chunk-reload guard flag, silently ignoring storage errors.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/lazyNamed.ts:loadChunk": {
+   "summary": "Loads a lazy chunk factory with one retry, then reloads the page once (guarded) on a persistent stale-deploy chunk erro…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/lazyNamed.ts:lazyNamed": {
+   "summary": "Wraps React.lazy around loadChunk to lazily import a named (non-default) export as a component.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/PlaceholderTemplate/placeholderTokens.ts": {
+   "summary": "`{{key}}` placeholder-token helpers ported from ORISO-Frontend's email design system, plus invite/legal-consent token definitions (INVITE_EMAIL_TOKENS, LEGAL_CONSENT_TOKENS) for admin template editors/previews.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/PlaceholderTemplate/placeholderTokens.ts:fillPlaceholders": {
+   "summary": "Substitutes {{key}} tokens with values from a map; leaves unknown keys in place.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/PlaceholderTemplate/placeholderTokens.ts:listPlaceholders": {
+   "summary": "Returns the distinct, whitespace-normalized {{placeholder}} tokens found in a template string.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/PlaceholderTemplate/placeholderTokens.ts:insertPlaceholder": {
+   "summary": "Inserts a {{key}} token at/over a text selection and returns the new value plus caret position.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/PlaceholderTemplate/placeholderTokens.ts:sampleValues": {
+   "summary": "Builds a key->sample value map from a list of PlaceholderTokenDef for feeding fillPlaceholders.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/PlaceholderTemplate/placeholderTokens.ts:inviteEmailTokensForKind": {
+   "summary": "Looks up the placeholder-token set offered for a given invite-email template kind.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/Page/index.tsx": {
+   "summary": "Page layout shell (Page, Page.Title, Page.Back, Page.BackWithActions) providing sticky header, desktop tab row with card-deck nav arrows, and mobile bottom-nav registration via CardDeckNavContext/useRegisterMobileNav.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Page/index.tsx:Page": {
+   "summary": "Root page wrapper: renders loading spinner or content inside a CardDeckNavProvider with optional sticky header styling.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Page/index.tsx:PageDeckNav": {
+   "summary": "Renders the left/right card-deck scroll arrows anchored to the page header, reading state from useCardDeckNav.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Page/index.tsx:PageTabs": {
+   "summary": "Desktop-only tab row (hidden on mobile) that renders page subsection NavLinks with icons and scrolls the active tab int…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Page/index.tsx:PageMobileNavRegistration": {
+   "summary": "Headless component publishing a page's subsections/back target to the mobile bottom nav via useRegisterMobileNav.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Page/index.tsx:getTruncatedTitle": {
+   "summary": "Truncates a string title to titleMaxLength with an ellipsis; passes through non-string/short titles unchanged.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/DataTable/DataTableHeader.tsx": {
+   "summary": "M3-styled <thead> for DataTable: sortable columns render a button cycling asc->desc->none with matching aria-sort; unsortable columns render plain text. Exports DataTableHeader, DataTableColumn/DataTableSort types.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/DataTable/DataTableHeader.tsx:nextSort": {
+   "summary": "Computes the next sort state for a column click: none->asc->desc->none cycle.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/DataTable/DataTableHeader.tsx:isSortable": {
+   "summary": "True only when a column is marked sortable AND an onSortChange handler is supplied.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/DataTable/DataTableHeader.tsx:ariaSortValue": {
+   "summary": "Derives the aria-sort attribute value (none/ascending/descending/undefined) for a column header.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/DataTable/DataTableHeader.tsx:SortIcon": {
+   "summary": "Renders the idle swap-vert icon or an up/down arrow depending on whether this column is the active sort.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/DataTable/DataTableHeader.tsx:DataTableHeader": {
+   "summary": "Renders the table header row, wiring sort buttons/aria-sort per column per isSortable/ariaSortValue/nextSort.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/Tenants/DpiaSettings/utils/dpiaDefaults.ts": {
+   "summary": "DSFA (DPIA) editor default draft texts (DSFA_EDITOR_DEFAULTS, German KDG/DSGVO legal scaffolds) per section, plus helpers to detect/seed/strip untouched defaults using a whitespace/attribute-normalizing fingerprint.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/DpiaSettings/utils/dpiaDefaults.ts:fingerprint": {
+   "summary": "Normalizes HTML (lowercase tags, strip attrs, collapse whitespace/nbsp) so TipTap re-serialization noise doesn't break…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/DpiaSettings/utils/dpiaDefaults.ts:isDpiaDefaultText": {
+   "summary": "True when a DPIA section's HTML still fingerprint-matches its unedited default draft.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/DpiaSettings/utils/dpiaDefaults.ts:hasOperatorDpiaText": {
+   "summary": "True when a section has non-empty text that is not just the untouched default.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/DpiaSettings/utils/dpiaDefaults.ts:seedDpiaDefaults": {
+   "summary": "Fills any DPIA section without operator text with its default draft, leaving stored text untouched.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/DpiaSettings/utils/dpiaDefaults.ts:stripDpiaDefaults": {
+   "summary": "Inverse of seedDpiaDefaults for persistence: replaces untouched default text with empty strings before saving.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/auth/accessSessionLocalStorage.ts": {
+   "summary": "Thin localStorage wrapper for auth token expiry timestamps (access_token_valid_until, refresh_token_valid_until). Exports getters/setters/removers used by the auth session flow.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/accessSessionLocalStorage.ts:getLocalStorageItem": {
+   "summary": "Reads a raw string value from localStorage by LocalStorageKey.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/accessSessionLocalStorage.ts:removeLocalStorageItem": {
+   "summary": "Removes a key from localStorage.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/accessSessionLocalStorage.ts:setTokenExpiryInLocalStorage": {
+   "summary": "Stores a token's absolute expiry time (now + expiresInMs*1000) in localStorage under the given key.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/accessSessionLocalStorage.ts:getTokenExpiryFromLocalStorage": {
+   "summary": "Reads both access/refresh token expiry timestamps from localStorage as parsed integers.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/auth/accessSessionLocalStorage.ts:removeTokenExpiryFromLocalStorage": {
+   "summary": "Clears both access and refresh token expiry entries from localStorage.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/M3Switch/index.tsx": {
+   "summary": "Custom M3-styled toggle switch button (role=switch) rendering distinct SVG icons for on/off/on-disabled states using CSS variable brand colors. Exports M3Switch.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/M3Switch/index.tsx:OnEnabledIcon": {
+   "summary": "SVG for the ON+enabled switch state: brand-red track with white thumb and checkmark.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/M3Switch/index.tsx:OnDisabledIcon": {
+   "summary": "SVG for the ON+disabled switch state: grey track/thumb instead of brand red.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/M3Switch/index.tsx:OffIcon": {
+   "summary": "SVG for the OFF switch state (shared by enabled and disabled), grey track with an X icon thumb.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/M3Switch/index.tsx:switchIcon": {
+   "summary": "Picks which of OnEnabledIcon/OnDisabledIcon/OffIcon to render given checked+disabled state.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/M3Switch/index.tsx:M3Switch": {
+   "summary": "Accessible switch button component that toggles via onChange, ignoring clicks while disabled.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/CaseHandoverConsentPolicyControl/CaseHandoverConsentPolicyControl.tsx": {
+   "summary": "Fab-menu control for setting the case-handover client-consent policy (OPT_IN/OPT_OUT/NONE x SUGGESTED/ENFORCED) at platform/tenant/agency level, with a read-only enforced-inherited state and an info Modal. Exports CaseH…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/CaseHandoverConsentPolicyControl/CaseHandoverConsentPolicyControl.tsx:policyKey": {
+   "summary": "Builds a menu item key string from a policy's value and mode.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/CaseHandoverConsentPolicyControl/CaseHandoverConsentPolicyControl.tsx:labelKey": {
+   "summary": "Maps a consent value+mode pair to its i18n label key (enforced/suggested opt-in/opt-out/none).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/CaseHandoverConsentPolicyControl/CaseHandoverConsentPolicyControl.tsx:triggerIcon": {
+   "summary": "Picks the switch-on/switch-off/silent trigger icon for the current consent value.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/CaseHandoverConsentPolicyControl/CaseHandoverConsentPolicyControl.tsx:CaseHandoverConsentPolicyControl": {
+   "summary": "Renders the label, status, and an M3FabMenu (or read-only button) to change/inspect the case-handover consent policy, w…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/PermissionPolicyControl/PermissionPolicyControl.tsx": {
+   "summary": "Fab-menu control for toggling a boolean feature's permission policy (enabled/disabled x SUGGESTED/ENFORCED) per platform/tenant/agency level, with read-only inherited-enforced state and an info Modal. Exports Permission…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/PermissionPolicyControl/PermissionPolicyControl.tsx:policyKey": {
+   "summary": "Builds a menu item key from a boolean policy's value and lowercased mode.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/PermissionPolicyControl/PermissionPolicyControl.tsx:actionLabelKey": {
+   "summary": "Maps a boolean value+mode to its i18n action label key (activation/deactivation, enforced/suggested).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/PermissionPolicyControl/PermissionPolicyControl.tsx:statusLabelKey": {
+   "summary": "Returns the i18n status label key: read-only enforced, enforced, or suggestion.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/PermissionPolicyControl/PermissionPolicyControl.tsx:PermissionPolicyControl": {
+   "summary": "Renders label/status and an M3FabMenu (or read-only button) to change a feature's enabled/disabled x enforced/suggested…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/mui/MuiSelectField/index.tsx": {
+   "summary": "antd Form.Item wrapping an MUI Autocomplete as a drop-in replacement for the old antd SelectFormField, supporting single/multi select, labelInValue, and `.Option` children. Exports MuiSelectField, MuiSelectOption.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/mui/MuiSelectField/index.tsx:optionsFromChildren": {
+   "summary": "Converts <MuiSelectField.Option> children into ResolvedOption descriptors (value/label/node/className).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/mui/MuiSelectField/index.tsx:MuiSelectControl": {
+   "summary": "Inner MUI Autocomplete control bound to antd Form.Item value/onChange/validation, handling single/multi select and labe…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/mui/MuiSelectField/index.tsx:MuiSelectField": {
+   "summary": "Public select field: wraps MuiSelectControl in antd Form.Item, resolves+sorts options from props or children, translate…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/FormFileUploaderField/index.tsx": {
+   "summary": "antd Form.Item image/icon uploader (base64, client-side only) validating MIME type/extension and a 500KB size cap; normalizes .ico data URLs. Exports FormFileUploaderField.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/FormFileUploaderField/index.tsx:isAcceptedFile": {
+   "summary": "Checks a file's MIME type against allowed photo types, plus icon types/.ico extension when allowIcon is set.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/FormFileUploaderField/index.tsx:acceptedFormats": {
+   "summary": "Builds the Upload component's `accept` string to match isAcceptedFile's rules.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/FormFileUploaderField/index.tsx:FormFileUploaderLocal": {
+   "summary": "Picture-card Upload control: validates file type/size in beforeUpload, base64-encodes and normalizes the value, merges…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/FormFileUploaderField/index.tsx:FormFileUploaderField": {
+   "summary": "Form.Item wrapper around FormFileUploaderLocal with a translated label and optional tooltip.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/reportClientError.ts": {
+   "summary": "Best-effort, non-throwing client-crash reporter that POSTs to appConfig's errorReportEndpoint (UserService OBS-P3 error intake) for SigNoz logging. Exports reportClientError.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/reportClientError.ts:currentUrl": {
+   "summary": "Returns a fallback URL or window.location.href, safe when window is undefined.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/reportClientError.ts:currentUserAgent": {
+   "summary": "Returns navigator.userAgent if navigator exists, else undefined.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/reportClientError.ts:reportClientError": {
+   "summary": "Fire-and-forget POSTs a structured client error report to errorReportEndpoint; never throws, used from error boundaries.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/Tenants/LegalSettings/utils/translationMeta.ts": {
+   "summary": "Helpers for the `<lang>__meta` machine-translation metadata convention (TenantService PR #55) in legal-text language maps. Exports metaKeyFor, getTranslationMeta, isMachineTranslated, buildTranslationMeta, LEGAL_SOURCE_…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/utils/translationMeta.ts:metaKeyFor": {
+   "summary": "Builds the `<language>__meta` map key for a given language code.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/utils/translationMeta.ts:getTranslationMeta": {
+   "summary": "Parses and returns a language's stored translation metadata JSON, or null if absent/invalid.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/utils/translationMeta.ts:isMachineTranslated": {
+   "summary": "True when the stored metadata for a language has mt:true.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/LegalSettings/utils/translationMeta.ts:buildTranslationMeta": {
+   "summary": "Serializes fresh {mt:true, src, at} metadata JSON for a just-machine-translated language.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/FormPluginEditor/headingAnchors.ts": {
+   "summary": "Custom TipTap Extension giving legal-text headings persistent slug `id`s for chapter navigation; ProseMirror plugin auto-assigns/dedupes ids, tracks 'anchorRemoved' so removal sticks; ensureHeadingAnchorIds() backfills…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/FormPluginEditor/headingAnchors.ts:slugifyAnchorId": {
+   "summary": "Turns heading text into a readable, ASCII, 48-char-max slug (e.g. 'Geltungsbereich' -> 'geltungsbereich'), falling back…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/FormPluginEditor/headingAnchors.ts:ensureHeadingAnchorIds": {
+   "summary": "Pure HTML-string helper: stamps missing ids onto headings of stored legal-text HTML for read-only viewers, honoring exi…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/FormPluginEditor/headingAnchors.ts:collectAnchors": {
+   "summary": "Walks a ProseMirror doc and returns all headings that currently carry a live (non-removed) anchor id, for the chip/ToC…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/FormPluginEditor/headingAnchors.ts:collectAnchorAssignments": {
+   "summary": "Computes which headings need a (new) deduped anchor id, skipping removed headings and levels with Auto Chapters disable…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/productTour/tourEngine.ts": {
+   "summary": "Pure logic for the react-joyride based product tour: maps app TourStep[] to Joyride Step[], computes placement fallback, and reduces Joyride callbacks into a controlled TourRunState + domain events.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/productTour/tourEngine.ts:tourTargetSelector": {
+   "summary": "Builds the `[data-tour-target=\"...\"]` CSS selector used to locate a tour step's target element.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/productTour/tourEngine.ts:mapStepsToJoyride": {
+   "summary": "Converts app-defined TourStep objects into react-joyride Step objects (target selector, placement, title/content).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/productTour/tourEngine.ts:effectivePlacement": {
+   "summary": "Falls back a side/top/bottom placement to 'center' when the target covers >=85% of the viewport, so the tooltip isn't o…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/productTour/tourEngine.ts:reduceTourCallback": {
+   "summary": "Pure reducer turning a Joyride CallBackProps into next TourRunState plus domain events (started/skipped/completed/targe…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/AdminMobileNav/MobileNavContext.tsx": {
+   "summary": "React Context letting a page register its subsections, back target, search and add action for the mobile bottom nav bar without prop-drilling; merges multiple registrations from header+toolbar; fixes an infinite registe…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/AdminMobileNav/MobileNavContext.tsx:MobileNavProvider": {
+   "summary": "Provider merging per-registrant MobileNavRegistration entries into one value; keeps `register` identity stable to avoid…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/AdminMobileNav/MobileNavContext.tsx:describe": {
+   "summary": "Serializes the data-only fields of a MobileNavRegistration (excluding callbacks) to detect real changes vs re-renders.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/AdminMobileNav/MobileNavContext.tsx:useRegisterMobileNav": {
+   "summary": "Hook a page calls to publish (or clear via null) its subsections/back/search/add to the mobile nav bar, reading callbac…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/AdminMobileNav/MobileNavContext.tsx:useMobileNav": {
+   "summary": "Read-side hook returning the currently merged MobileNavRegistration, or null if no provider/registration.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/mui/MuiRadioGroupField/index.tsx": {
+   "summary": "MUI-based drop-in replacement for antd FormRadioGroupField: wraps antd Form.Item around MUI RadioGroup, encoding non-string option values (incl. booleans) to strings for the DOM.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/mui/MuiRadioGroupField/index.tsx:MuiRadio": {
+   "summary": "Declarative <Radio> option child that never renders itself; parent reads its props to build the options list.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/mui/MuiRadioGroupField/index.tsx:encode": {
+   "summary": "Stringifies an option value (handles undefined/null/boolean) so MUI's DOM-only RadioGroup can round-trip non-string val…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/mui/MuiRadioGroupField/index.tsx:MuiRadioControl": {
+   "summary": "Controlled MUI FormControl+RadioGroup bound to antd Form state, showing validation error/help text and mapping encoded…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/mui/MuiRadioGroupField/index.tsx:MuiRadioGroupField": {
+   "summary": "Public component: antd Form.Item(noStyle) around MuiRadioControl, building options from children and applying required/…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/Links/AccountInvitesTab.tsx": {
+   "summary": "Admin 'Links' page tab managing account invites (tenant-admin or counsellor): loads/paginates invites via api/accountInvites, bulk select/revoke, CSV import, email templates dialog, taken-tenant-id tracking via searchTe…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Links/AccountInvitesTab.tsx:isBulkSelectable": {
+   "summary": "True when an invite is DRAFT or EMAIL_SENT — the only statuses eligible for bulk actions (send/resend/revoke).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Links/AccountInvitesTab.tsx:AccountInvitesTab": {
+   "summary": "Main tab component: fetches invites/templates, tracks taken tenant ids, drives InviteComposer/CSV import/EmailTemplates…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Links/AccountInvitesTab.tsx:TenantInvitesTab": {
+   "summary": "Thin wrapper rendering AccountInvitesTab for targetRole TENANT_ADMIN / templateKind TENANT_INVITE.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Links/AccountInvitesTab.tsx:CounsellorInvitesTab": {
+   "summary": "Thin wrapper rendering AccountInvitesTab configured for counsellor invites (includes the agency field).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/M3NumberField/index.tsx": {
+   "summary": "Material-3 pill-shaped number field with split increment/decrement steppers; supports displayText/onStep overrides for external ID allocation (#570). Also exports M3DurationField (15-min step, hour/min formatting) for c…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/M3NumberField/index.tsx:clamp": {
+   "summary": "Clamps a numeric candidate between optional min and max bounds.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/M3NumberField/index.tsx:M3NumberField": {
+   "summary": "Renders the M3 number field: text input plus up/down stepper buttons, supporting min/max/step, displayText mode, extern…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/M3NumberField/index.tsx:formatDuration": {
+   "summary": "Formats a minutes value as '<h> h <m> min' (dropping zero parts) for the duration field's display text.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/M3NumberField/index.tsx:M3DurationField": {
+   "summary": "M3NumberField preset for case-handover duration: 15-min min/step, 180-min default, no max, formatted display text.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/Statistic/statisticChartUtils.ts": {
+   "summary": "Pure chart-math helpers for the Statistic page: computes 'nice' axis max/labels for case-count bar charts and converts segment values into donut-chart arc offsets/sizes with gaps.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic/statisticChartUtils.ts:getCaseAxisMax": {
+   "summary": "Rounds a max data value up to a 'nice' axis ceiling (6, 10, 20, or nearest 10) for the case-count chart's Y axis.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic/statisticChartUtils.ts:getCaseAxisLabels": {
+   "summary": "Produces the four locale-formatted gridline labels (top, 66%, 33%, 0) for the case-count axis.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/Statistic/statisticChartUtils.ts:buildDonutSegments": {
+   "summary": "Converts ConversationSegment values into donut-chart render segments (color, offset%, size%) with a fixed gap between a…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/CardDeck/index.tsx": {
+   "summary": "Horizontal card-scroller component (CardDeck.Item + root) used across admin pages; measures scroll/gap/stacking state via ResizeObserver, falls back to vertical stack when too narrow for 2 cards (#568), registers nav wi…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/CardDeck/index.tsx:readListGap": {
+   "summary": "Reads the computed CSS column-gap/gap of the card list element, defaulting to 24px if unparsable.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/CardDeck/index.tsx:CardDeckItem": {
+   "summary": "Renders a single <li> card slot inside the deck's list, tagged with data-admin-card-deck-item.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/CardDeck/index.tsx:CardDeckRoot": {
+   "summary": "Main deck component: tracks scroll/stacked state via ResizeObserver+scroll listeners, exposes scroll(direction) to the…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/cards/AdvisorAccountCard/index.tsx": {
+   "summary": "Counsellor Setup Wizard 'Advisor Account Data' step card (Figma 1-34789): email/username/password fields via FloatingLabelInput, optional batch-mode/send-invitation/link-OTP actions and Cancel/Next footer.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/cards/AdvisorAccountCard/index.tsx:BatchIcon": {
+   "summary": "Inline SVG icon (rectangle + bar) used for the 'batch mode' action button.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/cards/AdvisorAccountCard/index.tsx:SendIcon": {
+   "summary": "Inline SVG paper-plane-style icon used for the 'send invitation' action button.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/cards/AdvisorAccountCard/index.tsx:AdvisorAccountCard": {
+   "summary": "Renders the advisor account data card: email (optionally read-only), username/password fields with error states, option…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/SideScrollerFooter/index.tsx": {
+   "summary": "Shared horizontal-scroller UI pieces (arrow button, position dots, and a free-standing footer combining both) reused by CardDeck's page-header nav and in-card scrollers like the theme preview.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/SideScrollerFooter/index.tsx:SideScrollerButton": {
+   "summary": "Single prev/next arrow button (MUI ArrowBack/ArrowForward icon) with optional edge-anchored flattened shape for the pag…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/SideScrollerFooter/index.tsx:SideScrollerDots": {
+   "summary": "Purely decorative position-indicator dots, one per card, highlighting the currently visible range.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/SideScrollerFooter/index.tsx:SideScrollerFooter": {
+   "summary": "Free-standing footer combining backward button, dots, and forward button for an in-card horizontal scroller.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/FormPluginEditor/useHeadingAnchorNav.ts": {
+   "summary": "Hook sharing anchor-navigation behavior between TipTap editors: syncs anchor list with the doc, runs a read-only scroll spy against the real scroll viewport (not editor.view.dom), handles hash-based deep links, jump/rem…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/FormPluginEditor/useHeadingAnchorNav.ts:escapeCssId": {
+   "summary": "CSS.escape polyfill fallback for embedded browsers lacking CSS.escape, used to build attribute selectors from anchor id…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/FormPluginEditor/useHeadingAnchorNav.ts:findScrollViewport": {
+   "summary": "Finds the nearest ancestor that actually scrolls (overflow auto/scroll with real scroll height), since editor.view.dom…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/FormPluginEditor/useHeadingAnchorNav.ts:useHeadingAnchorNav": {
+   "summary": "Main hook: maintains anchors/activeAnchorId state, auto-stamps ids while editable, consumes initial #hash deep link, ru…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/DataTable/PhaseStepper.tsx": {
+   "summary": "Compact M3 'bead track' progress stepper for DataTable rows (e.g. invite phases): done/current/pending/warning/error states with tooltip hints and an active/idle label under the track.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/DataTable/PhaseStepper.tsx:DoneCheck": {
+   "summary": "Small inline SVG checkmark icon rendered inside a 'done' bead.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/DataTable/PhaseStepper.tsx:activePhase": {
+   "summary": "Finds the phase needing attention (current/warning/error), or the last phase if all are done, for the label under the t…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/DataTable/PhaseStepper.tsx:PhaseStepper": {
+   "summary": "Renders the bead track with per-phase M3Tooltip explanations and an active/idle label, with screen-reader text per bead.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/CardDeck/CardDeckNavContext.tsx": {
+   "summary": "React Context bridging a CardDeck's scroll state to the sticky page-header arrow buttons (siblings without shared state); most-recently-registered deck wins during route transitions.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/CardDeck/CardDeckNavContext.tsx:CardDeckNavProvider": {
+   "summary": "Provider holding an ordered list of registered decks; exposes the most recently registered deck's nav as `nav`.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/CardDeck/CardDeckNavContext.tsx:useRegisterCardDeckNav": {
+   "summary": "Hook a CardDeck calls to register/unregister its scroll-control callbacks with the header; safe to call with no provide…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/CardDeck/CardDeckNavContext.tsx:useCardDeckNav": {
+   "summary": "Read-side hook returning the currently active deck's nav registration, or null.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/constants/settingsTabs.ts": {
+   "summary": "Builds the Settings page's tab list (global-config/master-data/general/legal/smtp/permissions/app-settings) filtered by super-admin status and Resource permissions (PermissionAction); uses appConfig's routePathNames.the…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/constants/settingsTabs.ts:compactTabs": {
+   "summary": "Filters out falsy entries from an array of conditionally-included SettingsTab objects.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/constants/settingsTabs.ts:getSettingsTabs": {
+   "summary": "Returns the permission-filtered settings tab list, branching between the super-admin tab set and the tenant/Träger tab…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/constants/settingsTabs.ts:getDefaultSettingsPath": {
+   "summary": "Returns the first available settings tab's path, or falls back to '<themeSettings>/legal' if none.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/Layout/adminNavFixtures.ts": {
+   "summary": "Shared `can`/`hasRole` stub builders (canFor, hasRoleFor) for AdminSidebar/nav-builder unit tests and Storybook stories, keeping test and story permission logic in sync.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Layout/adminNavFixtures.ts:matches": {
+   "summary": "Checks whether a PermissionGrant (bare Resource or {action,resource}) matches a given action/resource pair.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Layout/adminNavFixtures.ts:canFor": {
+   "summary": "Factory for a `can`-style predicate granting access if any grant matches the requested action(s)/resource.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Layout/adminNavFixtures.ts:hasRoleFor": {
+   "summary": "Factory returning a `hasRole`-style predicate true when the queried role(s) intersect the fixture's allowed roles.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/Layout/AdminSidebar.tsx": {
+   "summary": "Presentational antd Sider admin nav sidebar; pure props-in component (items, activityLogs, account, logout) with no permission/routing hooks, extracted from ProtectedPageLayoutWrapper (#283).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Layout/AdminSidebar.tsx:isPathMatch": {
+   "summary": "Tests currentPath against activeMatch.paths using 'includes' or 'startsWith' mode to extend active-link highlighting.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Layout/AdminSidebar.tsx:NavItemLink": {
+   "summary": "Renders one NavLink with icon+label, active class driven by NavLink's isActive OR isPathMatch.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Layout/AdminSidebar.tsx:AdminSidebar": {
+   "summary": "Renders the full sidebar: upper nav items, optional grouped activity-logs section, account link, and logout button.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/Tenants/GeneralSettings/components/Languages/index.tsx": {
+   "summary": "Tenant appearance card for active-languages selection; uses useTenantAppearanceFormData, supportedLanguages from appConfig; shows info modal when a language is newly added; 'de' always forced on and locked.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/GeneralSettings/components/Languages/index.tsx:ensureDefaultLanguage": {
+   "summary": "Returns the selected languages filtered to supportedLanguages order, always including 'de'.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/GeneralSettings/components/Languages/index.tsx:hasAddedLanguage": {
+   "summary": "Returns true if nextLanguages contains any language not present in previousLanguages.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/Tenants/GeneralSettings/components/Languages/index.tsx:Languages": {
+   "summary": "CardEditable form for tenant active languages (checkbox group); shows a follow-up modal when a language is newly added.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/CreateConsultantModal/index.tsx": {
+   "summary": "Quick-create-consultant modal launched from an agency form; uses useAddOrUpdateConsultantOrAgencyAdmin, unsaved-changes guard, and X_REASON-based error mapping (email/username/license/password) from fetchData.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/CreateConsultantModal/index.tsx:normalizeNumericIds": {
+   "summary": "Coerces a list of id values to a deduped array of positive finite numbers.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/CreateConsultantModal/index.tsx:buildQuickCreateConsultantData": {
+   "summary": "Builds the create-consultant payload from form values plus tenantId/agencyId/topicIds, forcing formalLanguage true.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/CreateConsultantModal/index.tsx:CreateConsultantModal": {
+   "summary": "Modal: trigger button disabled until tenant known, name/email/username/password form, submits via mutation, reports err…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/mui/MuiSwitchField/index.tsx": {
+   "summary": "MUI Switch styled as M3 toggle with check/close thumb icons; exports bare MuiSwitch, antd-bound MuiSwitchField (Form.Item valuePropName=checked) and internal MuiSwitchControl reading Form.Item status for error display.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/mui/MuiSwitchField/index.tsx:MuiSwitch": {
+   "summary": "Bare M3-styled MUI Switch for callers managing their own state/label outside antd Form (e.g. template dialog toggle).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/mui/MuiSwitchField/index.tsx:MuiSwitchControl": {
+   "summary": "Inner switch reading Form.Item validation status/errors to show helper/error text alongside the MUI Switch and label.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/mui/MuiSwitchField/index.tsx:MuiSwitchField": {
+   "summary": "antd Form.Item wrapper (noStyle) around MuiSwitchControl, deriving an accessible switchLabel from label when not given.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/hooks/useUserTwoFactorAuth.hook.ts": {
+   "summary": "React Query mutation hooks for 2FA setup/delete/email-code, calling apiPutTwoFactorAuthApp/Email, apiPostTwoFactorAuthEmailWithCode, apiDeleteTwoFactorAuth and patching the 'user-data' query cache on success.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/hooks/useUserTwoFactorAuth.hook.ts:useUserTwoFactorAuth": {
+   "summary": "Mutation enabling 2FA (app or email type), updating cached user-data twoFactorAuth.isActive/type on success.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/hooks/useUserTwoFactorAuth.hook.ts:useUserTwoFactorDelete": {
+   "summary": "Mutation disabling 2FA via apiDeleteTwoFactorAuth, marking cached twoFactorAuth.isActive false on success.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/hooks/useUserTwoFactorAuth.hook.ts:useUserTwoFactorSendEmailCode": {
+   "summary": "Mutation to send/update the 2FA email code; mutates cached user-data email field directly on success.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/pages/users/management/formatLastUpdated.ts": {
+   "summary": "Dayjs-based helpers (relativeTime/localizedFormat/utc plugins) to parse API UTC LocalDateTime strings and format a record's last-updated timestamp for the users management list.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/users/management/formatLastUpdated.ts:parseApiDate": {
+   "summary": "Parses a nullable API UTC date string (no offset) into a local dayjs object, returning null if invalid/absent.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/users/management/formatLastUpdated.ts:getLastUpdatedAt": {
+   "summary": "Returns parsed updateDate, falling back to createDate, as a dayjs object or null.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/pages/users/management/formatLastUpdated.ts:formatLastUpdated": {
+   "summary": "Formats a record's last-updated date as relative time or localized date/time string; '—' if none.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/context/FeatureContext.tsx": {
+   "summary": "React Context (FeatureProvider/useFeatureContext) deriving FeatureFlag entries (Appointments, Developer, Demographics, Topics, TopicsInRegistration, GroupChatV2, CentralDataProtectionTemplate) from tenant settings; degr…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/context/FeatureContext.tsx:FeatureProvider": {
+   "summary": "Provides FeatureContext state computed from tenantData/publicTenantData settings flags, with defensive undefined handli…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/context/FeatureContext.tsx:useFeatureContext": {
+   "summary": "Hook exposing isEnabled(flag) and toggleFeature(key); falls back to NO_FEATURES/ignoreFeatureUpdates if no provider.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/ListingTable/StatusTag.tsx": {
+   "summary": "Small antd Tag components: StatusTag for link status (ACTIVE/USED/EXPIRED) and AnonymityTag for anonymity level (full/customize name/name+email), styled via CSS module classes.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/ListingTable/StatusTag.tsx:getAnonymityClass": {
+   "summary": "Maps a normalized anonymity value ('full'/'customize name'/'name + email') to its style class; defaults to full.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/ListingTable/StatusTag.tsx:StatusTag": {
+   "summary": "Renders a colored Tag for a LinkStatus value (ACTIVE/USED/EXPIRED).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/ListingTable/StatusTag.tsx:AnonymityTag": {
+   "summary": "Renders a colored Tag for an anonymity value using getAnonymityClass.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/ImageUploadField/index.tsx": {
+   "summary": "M3 image upload field UI (preview tile + upload button + helper text), matching Figma Admin.ORISO avatar/individual-image specs; purely presentational, onUpload callback only.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/ImageUploadField/index.tsx:UploadIcon": {
+   "summary": "Inline SVG upload glyph used on the upload button.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/ImageUploadField/index.tsx:Placeholder": {
+   "summary": "Inline SVG placeholder image icon shown when no previewSrc is provided.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/ImageUploadField/index.tsx:ImageUploadField": {
+   "summary": "Renders preview (image or placeholder), title, upload button and helper text in rounded or circle shape.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/PillSelect/index.tsx": {
+   "summary": "M3 split-pill select (main segment + chevron) backed by an antd Dropdown, supporting single or multiple selection modes for the admin search's default filter controls (Figma 1165:17005).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/PillSelect/index.tsx:hasPillSelection": {
+   "summary": "Returns whether a PillSelectProps value (single or array for multiple mode) currently holds a selection.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/PillSelect/index.tsx:CheckMark": {
+   "summary": "Inline SVG checkmark icon used for selected options in multiple mode.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/PillSelect/index.tsx:PillSelect": {
+   "summary": "Renders the pill dropdown control, computing display label/selection and handling clicks; stays open across toggles in…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/FormPluginEditor/useEditorImageUpload.ts": {
+   "summary": "TipTap editor image-upload hook/helpers: validates PNG/JPEG/WebP <=2MB client-side (mirrors TenantMediaService), uploads via uploadTenantMedia, queues concurrent uploads, and provides drop/paste ProseMirror handlers.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/FormPluginEditor/useEditorImageUpload.ts:imageFilesFrom": {
+   "summary": "Filters a FileList/File[] down to files whose type starts with 'image/'.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/FormPluginEditor/useEditorImageUpload.ts:useEditorImageUpload": {
+   "summary": "Hook queuing sequential image uploads/inserts into a TipTap editor, restoring selection via a mapped bookmark after eac…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/FormPluginEditor/useEditorImageUpload.ts:createImageDropPasteHandlers": {
+   "summary": "Builds ProseMirror handleDrop/handlePaste props that extract image files and forward them to onImageFiles, preventing d…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/topic/addTopicData.ts": {
+   "summary": "POSTs a new topic to appConfig's topicEndpoint via fetchData; default-exports addTopicData(topicData) which builds the request body and creates the topic (external always false).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/topic/addTopicData.ts:buildTopicDataRequestBody": {
+   "summary": "Builds the JSON body for topic creation (name, description, internalIdentifier, status ACTIVE/INACTIVE, external:false).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/topic/addTopicData.ts:createTopic": {
+   "summary": "POSTs the topic request body to topicEndpoint via fetchData and parses the JSON response.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/topic/addTopicData.ts:addTopicData": {
+   "summary": "Public entry point: builds the request body from topicData and calls createTopic.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/counselor/addCounselorData.ts": {
+   "summary": "POSTs a new counselor to appConfig's counselorEndpoint via fetchData, stripping form data to allowed fields and returning CounselorData from the HAL _embedded response.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/counselor/addCounselorData.ts:parseTopicIds": {
+   "summary": "Extracts and normalizes numeric topic ids from counselorData.topicIds/topics (accepts raw ids or {value|id} objects).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/counselor/addCounselorData.ts:parseAgencyIds": {
+   "summary": "Extracts, normalizes and dedupes numeric agency ids from counselorData.agencyIds/agencies.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/counselor/addCounselorData.ts:addCounselorData": {
+   "summary": "Builds the stripped counselor payload (with parsed topic/agency ids), POSTs to counselorEndpoint, returns embedded Coun…",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/invitelinks/inviteLinkApiShared.ts": {
+   "summary": "Shared helpers for the invite-links admin API: PagedInviteLinksResponse type, X-Tenant-Id header builder, list query-string builder, and paged/array response normalizer. Re-exports invitelinksEndpoint from appConfig.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/invitelinks/inviteLinkApiShared.ts:inviteLinkHeaders": {
+   "summary": "Builds request headers with X-Tenant-Id, using an override or falling back to parseUserAuthInfo()'s tenantId, defaultin…",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/invitelinks/inviteLinkApiShared.ts:buildListQueryString": {
+   "summary": "Builds a URLSearchParams query string with page and size params for invite-link list requests.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/invitelinks/inviteLinkApiShared.ts:normalizeListResponse": {
+   "summary": "Normalizes a raw invite-link list response (plain array or paged object) into a consistent PagedInviteLinksResponse sha…",
+   "tags": [
+    "described"
+   ]
+  }
+ }
+}

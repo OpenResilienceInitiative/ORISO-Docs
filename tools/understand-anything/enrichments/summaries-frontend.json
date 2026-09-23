@@ -1,0 +1,4762 @@
+{
+ "meta": {
+  "generatedAt": "2026-09-04T14:31:25.991296Z",
+  "generatedBy": "claude-sonnet-file-summaries-2026-09",
+  "repo": "ORISO-Frontend",
+  "filesSelected": 220,
+  "filesSummarized": 220,
+  "functionsSummarized": 572,
+  "filtered": {
+   "kept": 791,
+   "dropped": 1
+  }
+ },
+ "nodeSummaries": {
+  "file:src/components/registration/registrationSteps.ts": {
+   "summary": "Builds and filters the registration wizard's step list (demographic, consultant-direct-link) based on ConsultingTypeInterface mandatoryFields; re-exports validation field helpers.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/registration/registrationSteps.ts:getDemographicRegistrationSteps": {
+   "summary": "Returns extra AgeInput/StateInput registration steps when consultingType.registration.mandatoryFields requires them.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/registration/registrationSteps.ts:mergeRegistrationSteps": {
+   "summary": "Inserts demographic steps into the base registration step list before the account-data step.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/registration/registrationSteps.ts:getConsultantDirectLinkTopicIds": {
+   "summary": "Extracts topic ids relevant to a consultant direct-link registration flow.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/registration/registrationSteps.ts:filterRegistrationStepsForDirectLink": {
+   "summary": "Filters registration steps for the consultant direct-link variant of the flow.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/app/TenantThemingLoader.tsx": {
+   "summary": "Small component showing a blocking Modal+Spinner overlay while useTenantTheming() is loading tenant theme/branding.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/app/TenantThemingLoader.tsx:TenantThemingLoader": {
+   "summary": "Renders a full-screen Modal with a Spinner if the tenant theme is still loading, otherwise null.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/utils/matrixTimelineEventFormatter.ts": {
+   "summary": "Converts raw Matrix timeline events (m.room.message/encrypted) into the app's internal chat message shape, handling redaction (ADR #827) and media/scanned-attachment download paths; also extracts m.reaction events.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/matrixTimelineEventFormatter.ts:getMatrixMediaDownloadPath": {
+   "summary": "Resolves an mxc:// content URL to a download path, preferring the media content scanner's scanned path when available.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/matrixTimelineEventFormatter.ts:formatMatrixTimelineEvent": {
+   "summary": "Maps a Matrix room timeline event + room into the app's chat-message object, incl. sender display name and redaction handling.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/matrixTimelineEventFormatter.ts:extractReactionEvents": {
+   "summary": "Filters a Matrix event array down to m.reaction events for separate handling from message rendering.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/globalState/provider/CallProvider.tsx": {
+   "summary": "React context/provider (CallContext) tracking active Matrix call state (idle/ringing/connecting/connected/ended), call mode, and the underlying MatrixCall object; exposes useCall() hook. Contains leftover debug console.log statements.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/globalState/provider/CallProvider.tsx:CallProvider": {
+   "summary": "Provides CallContext with start/receive/answer/reject/hangup call actions and call-mode/MatrixCall setters, backed by useState.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/globalState/provider/CallProvider.tsx:useCall": {
+   "summary": "Hook returning the CallContext value; throws/undefined if used outside CallProvider.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/messageSubmitInterface/TipTapComposer.tsx": {
+   "summary": "Rich-text chat message composer built on TipTap (StarterKit + mentions, links, highlight, task lists); forwardRef exposes clear/focus/setText/getHTML/insertText/insertMentionTrigger; wires keyboard-shortcuts hook and file drop/paste.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/TipTapComposer.tsx:isMentionSuggestionOpen": {
+   "summary": "Checks the DOM for an open @mention suggestion popup.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/TipTapComposer.tsx:getEditorPlainTextLength": {
+   "summary": "Returns the plain-text character length of the current TipTap editor content.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/TipTapComposer.tsx:isEditorReady": {
+   "summary": "Guards editor operations by checking the TipTap editor instance is initialized.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/TipTapComposer.tsx:clearInsertionMarker": {
+   "summary": "Removes the insertion-marker decoration used to track where text/snippets get inserted.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/TipTapComposer.tsx:getSelectionTextLength": {
+   "summary": "Computes the plain-text length of the current editor selection.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/app/app.tsx": {
+   "summary": "Root App component: sets up Router, ErrorBoundary, ContextProvider and provider stack (AppConfig, Informal, Locale, Notifications, Tenant, MatrixClientProvider, CallProvider).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/app/app.tsx:App": {
+   "summary": "Top-level App component composing all global providers, routing, and lazily-loaded route components.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/app/app.tsx:RouterWrapper": {
+   "summary": "Wraps route rendering with Router and shared route-level context/props.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/app/app.tsx:NotificationsContainer": {
+   "summary": "Reads NotificationsContext and renders the global Notifications component.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/containers/bookings/booking.routes.ts": {
+   "summary": "Defines the consultant Bookings tab config (Booked/Canceled/Expired/Settings) with per-tab AUTHORITIES.CONSULTANT_DEFAULT visibility conditions; default-exports the TabsType array.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/apiGetConsultantAppointments.ts": {
+   "summary": "API call fetching a consultant's booking events by status via endpoints.appointmentsServiceConsultantBookings, using fetchData with CATCH_ALL error handling.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiGetConsultantAppointments.ts:apiGetConsultantAppointments": {
+   "summary": "GETs a consultant's appointment bookings for a userId+status from the appointment service endpoint.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/session/SessionView.tsx": {
+   "summary": "Main session/chat detail view: resolves session by group/session id via useSession, handles mobile/desktop responsive view switching, group-chat join gating, banned-user overlay, and agency logo atom.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/session/SessionView.tsx:SessionView": {
+   "summary": "Renders the active session (chat) for the current route params, loading state, banned overlay, and group-chat join view as needed.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/utils/translationFallback.ts": {
+   "summary": "Small i18n helper wrapping a translate function to fall back to a default string when the key is missing/untranslated.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/translationFallback.ts:translateWithFallback": {
+   "summary": "Calls translate(key), returning fallback if the result is not a usable string or equals the raw key.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/sessionsList/sessionClassification.ts": {
+   "summary": "Small helper normalizing/validating a postcode value for display in the sessions list.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionsList/sessionClassification.ts:getDisplayablePostcode": {
+   "summary": "Returns a trimmed postcode string for display, or null for empty/placeholder values like '0'/'00000'.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/messageSubmitInterface/audienceOptions.ts": {
+   "summary": "Pure helpers behind the composer's audience (\"Send to\") selector: builds/classifies/reconciles recipient options from Matrix room members without guessing role from display-name text (fixes ORISO-Frontend#894).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/audienceOptions.ts:defaultAudienceSelection": {
+   "summary": "Picks the default audience selection: 'all' if offered, else the first concrete recipient option.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/audienceOptions.ts:restoreAudienceSelection": {
+   "summary": "Parses a saved audience selection string, returning null (not a default) if nothing usable remains, dropping departed participants.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/audienceOptions.ts:audienceIdentityKeys": {
+   "summary": "Builds a set of identity keys (raw, minus leading @, Matrix local part) for matching a recipient value.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/audienceOptions.ts:buildAudienceRoster": {
+   "summary": "Builds the full audience roster (participants + kinds) from Matrix room member data for the selector.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/audienceOptions.ts:classifyAudienceKind": {
+   "summary": "Classifies a participant as asker/consultant/supervisor/person from roster data (not label text).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/registration/autoLogin.ts": {
+   "summary": "Handles auto-login after registration: calls Keycloak token endpoint (with legacy-username fallback), sets auth tokens, fetches Budibase token, and computes post-registration redirect path/session id. Contains commented-out debug.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/registration/autoLogin.ts:loginKeycloak": {
+   "summary": "Calls getKeycloakAccessToken and stores the resulting access/refresh tokens via setTokens.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/registration/autoLogin.ts:autoLogin": {
+   "summary": "Logs a newly registered user in via Keycloak, trying entered then legacy-encoded username, and parses the resulting JWT.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/registration/autoLogin.ts:getPostRegistrationGroupChatId": {
+   "summary": "Extracts a group-chat id to redirect to from the post-registration URL search params.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/registration/autoLogin.ts:buildAppRedirectPath": {
+   "summary": "Builds the in-app path to redirect to right after registration/auto-login completes.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/containers/registration/hooks/useAgenciesForRegistration.ts": {
+   "summary": "Hook loading the agency list for the registration flow via apiAgencySelection, merging consultant-preselected agencies, respecting tenant topic/postcode auto-select settings.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/containers/registration/hooks/useAgenciesForRegistration.ts:useAgenciesForRegistration": {
+   "summary": "Fetches/merges agencies + consulting types for the given topic/postcode/consultingType, returning {isLoading, agencies, consultingTypes}.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/apiEnquiryAcceptance.ts": {
+   "summary": "API call accepting a new enquiry session via PUT to endpoints.sessionBase/new/{sessionId}, handling CONFLICT responses.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiEnquiryAcceptance.ts:apiEnquiryAcceptance": {
+   "summary": "PUTs to accept/claim a new enquiry session by sessionId.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/containers/bookings/components/BookingEvents/bookingEvents.tsx": {
+   "summary": "Consultant Bookings page: renders booking tabs (booked/canceled/expired/settings) via bookingRoutes, schedule-appointment CTA, consultant-only header variant based on hasUserAuthority(CONSULTANT_DEFAULT).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/containers/bookings/components/BookingEvents/bookingEvents.tsx:BookingEvents": {
+   "summary": "Renders the bookings page header, schedule button, and routed booking tabs for the current user.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/session/anonymousConsentInvariant.ts": {
+   "summary": "Pure predicates enforcing the anonymous-entry consent gate (Eingabesperre, ADR-018 / KDG §11): active only during pre-assignment enquiry phase, scoped to anonymous asker paths only.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/session/anonymousConsentInvariant.ts:isEnquiryPhase": {
+   "summary": "Checks whether a session status equals STATUS_EMPTY or STATUS_ENQUIRY (pre-assignment).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/session/anonymousConsentInvariant.ts:isPrivacyAcceptanceRecorded": {
+   "summary": "Treats dataPrivacyConfirmation as recorded only if it is a non-blank timestamp string.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/session/anonymousConsentInvariant.ts:requiresAnonymousInquiryConsent": {
+   "summary": "Determines if the anonymous-asker consent gate must be shown for the given context.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/session/anonymousConsentInvariant.ts:shouldShowAnonymousConsentGate": {
+   "summary": "Decides whether to render the in-chat consent gate UI given session/consent state.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/session/anonymousConsentInvariant.ts:shouldBlockAnonymousInquiryChat": {
+   "summary": "Decides whether the composer must be blocked (forward lock) until consent is confirmed.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/utils/appointmentIcs.ts": {
+   "summary": "Pure, DOM-free helper building an RFC-5545-valid iCalendar VEVENT string from raw appointment timestamps (fixes prior invalid UID/DTSTAMP/DURATION bugs); actual browser download lives elsewhere.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/appointmentIcs.ts:toDate": {
+   "summary": "Coerces a Date/string/number into a Date, throwing RangeError on invalid input.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/appointmentIcs.ts:formatUtc": {
+   "summary": "Formats a Date as an iCalendar UTC date-time string (YYYYMMDDTHHMMSSZ).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/appointmentIcs.ts:escapeText": {
+   "summary": "Escapes a TEXT value per RFC 5545 §3.3.11 (backslash, semicolon, comma).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/appointmentIcs.ts:foldLine": {
+   "summary": "Folds a long iCalendar line to the 75-octet limit per the spec.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/appointmentIcs.ts:buildAppointmentIcs": {
+   "summary": "Builds a complete VEVENT .ics document string from AppointmentIcsInput.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/utils/mergeWeblateCatalogue.ts": {
+   "summary": "Merges a Weblate translation payload with the bundled i18n catalogue so the bundle wins on key conflicts (fixes stale-Weblate leftover-English bug #1154).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/mergeWeblateCatalogue.ts:mergeWeblateCatalogue": {
+   "summary": "Deep-merges flattened bundle and Weblate objects with bundle values taking precedence, then unflattens.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/apiGetConsultantSessionList.ts": {
+   "summary": "Fetches a consultant's session/enquiry lists (my-sessions or merged registered+anonymous enquiries) via fetchData against consultant session endpoints, with pagination constants and per-request AbortSignal support.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiGetConsultantSessionList.ts:fetchListUrl": {
+   "summary": "GETs a session-list URL via fetchData with a 10s timeout and EMPTY error handling.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiGetConsultantSessionList.ts:apiGetConsultantSessionList": {
+   "summary": "Fetches the consultant's session or enquiry list by type/offset/tab, merging registered+anonymous enquiry feeds when needed.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiGetConsultantSessionList.ts:mergeEnquiryFeeds": {
+   "summary": "Merges the registered and anonymous enquiry API responses into one combined list.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/erstantwort/ErstantwortSequence.tsx": {
+   "summary": "Renders the Erstantwort (ADR-018 automated first-reply) as a staggered sequence of Carimat chat bubbles with typing-dots, an inline aria-live region (not a modal dialog), and optional action buttons/slots per Baustein.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/erstantwort/ErstantwortSequence.tsx:renderAction": {
+   "summary": "Renders an action button for a Baustein only when a real onAction handler is wired, avoiding dead buttons.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/erstantwort/ErstantwortSequence.tsx:ErstantwortSequence": {
+   "summary": "Reveals ResolvedBaustein bubbles one at a time with stagger/typing animation, firing onFirstReveal and onAction callbacks.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/globalState/provider/TenantProvider.tsx": {
+   "summary": "React context/provider holding the current tenant (TenantDataInterface); setTenant also applies tenantSettingsHelper.setTenantSettings as a side effect. Exposes useTenant() and useTenantState().",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/globalState/provider/TenantProvider.tsx:TenantProvider": {
+   "summary": "Provides TenantContext with tenant state and a setTenant that also syncs tenant settings globally.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/globalState/provider/TenantProvider.tsx:useTenant": {
+   "summary": "Returns the current tenant object from TenantContext, or null.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/globalState/provider/TenantProvider.tsx:useTenantState": {
+   "summary": "Returns {tenant, isLoading} distinguishing 'not yet loaded' from 'no tenant'.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/globalState/state.tsx": {
+   "summary": "Composes the app's global context providers (ConsultantList, ConsultingTypes, Notifications, UserData, SessionsData, Modal, AgencySpecific, Topics, KeyboardShortcuts) into one ContextProvider tree via ProviderComposer.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/globalState/state.tsx:ProviderComposer": {
+   "summary": "Nests an array of provider elements around children via reduceRight/cloneElement.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/globalState/state.tsx:KeyboardShortcutsShell": {
+   "summary": "Activates global keyboard shortcuts and renders the shortcut-help and command-palette dialogs.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/globalState/state.tsx:KeyboardShortcutsRoot": {
+   "summary": "Wraps children in KeyboardShortcutsProvider + KeyboardShortcutsShell; must sit after UserDataProvider so prefs isolate by userId.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/globalState/state.tsx:ContextProvider": {
+   "summary": "Top-level provider composing all global-state providers around the app tree.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/services/CallManager.ts": {
+   "summary": "Singleton service centralizing Matrix/Element-Call call state (idle/ringing/connecting/connected/left/ended), tracking 1:1 vs group calls and their room ids, guarding against double-init/race conditions.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/i18n.ts": {
+   "summary": "i18next setup: chained backend (fetch + localStorage cache) with bundled de/de@informal catalogues as fallback, merges Weblate translations via mergeWeblateCatalogue (bundle wins, versioned cache key #1154).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/i18n.ts:init": {
+   "summary": "Initializes i18next with chained backends, merges Weblate resources over bundled ones, and reports translation coverage/drift.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/sessionCookie/getMatrixAccessToken.ts": {
+   "summary": "Logs into the Matrix homeserver via endpoints.matrixAccessToken, manages a stable per-user device id (ORISO_WEB_ prefix), persists/clears Matrix login data in storage, and creates a matrix-js-sdk MatrixClient.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionCookie/getMatrixAccessToken.ts:getMatrixAccessToken": {
+   "summary": "Fetches a Matrix access token bound to a stable device id from the backend, or short-circuits if Matrix bootstrap is disabled.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionCookie/getMatrixAccessToken.ts:persistMatrixLoginData": {
+   "summary": "Stores Matrix access token, device id, user id and expiry in browser storage.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionCookie/getMatrixAccessToken.ts:clearPersistedMatrixDeviceId": {
+   "summary": "Removes the persisted Matrix device id for a given userId from storage.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionCookie/getMatrixAccessToken.ts:createMatrixClient": {
+   "summary": "Constructs a matrix-js-sdk MatrixClient using stored/derived homeserver, token and device credentials.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/app/authenticatedMatrixLoginData.ts": {
+   "summary": "Tiny helper adding an isAnonymous flag onto MatrixLoginData while preserving transient UIA fields.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/app/authenticatedMatrixLoginData.ts:withAuthenticatedSessionContext": {
+   "summary": "Returns a copy of MatrixLoginData with isAnonymous set for the authenticated session context.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/notificationsCenter/caseHandoverPreviewGate.ts": {
+   "summary": "Fail-closed gate (issue #924) hiding message previews on the Activity Timeline for sessions under case handover, mirroring SessionStream's handover curtain; calls apiGetCaseHandoverStatus and caches results.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/notificationsCenter/caseHandoverPreviewGate.ts:requiresCaseHandoverCheck": {
+   "summary": "Fail-closed check: true unless the loaded session proves handover cannot apply (group chat, unclaimed enquiry, or reader owns it).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/notificationsCenter/caseHandoverPreviewGate.ts:resetCaseHandoverPreviewGateCache": {
+   "summary": "Clears the internal case-handover status cache (used in tests).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/notificationsCenter/caseHandoverPreviewGate.ts:useCaseHandoverPreviewGate": {
+   "summary": "Hook returning whether a timeline card's preview may render, fetching handover status as needed.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/sessionsList/sessionToolbarFilters.ts": {
+   "summary": "Session-list toolbar chip filtering: normalizes legacy/new chip names, classifies sessions (circle/internal-group/anonymous-asker), builds a search haystack, and matches sessions against active toolbar filters.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionsList/sessionToolbarFilters.ts:normalizeSessionToolbarChip": {
+   "summary": "Maps legacy and current chip name variants onto the canonical SessionToolbarChipFilter union.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionsList/sessionToolbarFilters.ts:isConversationCircleSession": {
+   "summary": "True if a session is a group session with self-help Modality (a 'circle').",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionsList/sessionToolbarFilters.ts:buildSessionSearchHaystack": {
+   "summary": "Builds the searchable text blob for a session used by the toolbar search box.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionsList/sessionToolbarFilters.ts:sessionMatchesToolbar": {
+   "summary": "Combines chip filter, search text and other criteria to decide if a session row should show.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionsList/sessionToolbarFilters.ts:draftMatchesSession": {
+   "summary": "Checks whether a saved draft item belongs to a given session for the 'drafts' filter chip.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:proxy/server.js": {
+   "summary": "Express-based Node proxy server serving the built SPA: resolves build directory, registers LiveKit token routes, static asset serving/SPA fallback, and the API/settings/weblate proxy routes from ./routes.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:proxy/server.js:resolveApp": {
+   "summary": "Resolves a path relative to the app's working directory.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:proxy/server.js:createServer": {
+   "summary": "Boots the Express proxy server: prepares storage dir, locates the build output, wires LiveKit token, static, and API/proxy routes.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/session/caseHandoverHelpers.ts": {
+   "summary": "Pure helpers classifying case-handover status/access for a session (pending/denied statuses, whether current user is access-controlled or a handover candidate) based on authorities and session/user data.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/session/caseHandoverHelpers.ts:isCaseHandoverAccessControlled": {
+   "summary": "True if the current session's content must be gated behind case-handover for this user (excludes askers).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/session/caseHandoverHelpers.ts:isCaseHandoverCandidate": {
+   "summary": "Determines whether a session is a candidate for the case-handover flow given type/tab/user data.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/session/caseHandoverHelpers.ts:isCaseHandoverPending": {
+   "summary": "True if a handover status string is PENDING or PENDING_CLIENT_CONSENT.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/session/caseHandoverHelpers.ts:isCaseHandoverDenied": {
+   "summary": "True if a handover status string is DENIED or CLIENT_CONSENT_DECLINED.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/services/matrixClientRegistry.ts": {
+   "summary": "Tiny module-level registry holding a single reference to the active MatrixClientService so non-React code can reach it without prop drilling.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/matrixClientRegistry.ts:setMatrixClientServiceRef": {
+   "summary": "Stores the active MatrixClientService instance (or null) in the module-level registry.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/matrixClientRegistry.ts:getMatrixClientService": {
+   "summary": "Returns the currently registered MatrixClientService instance, or null.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/utils/pseudonymGenerator.ts": {
+   "summary": "Fetches and validates anonymous-animal avatar SVGs from /static/anon-animals (not /assets, to avoid Element Call route collision #840), caches and recolors them via anonName/engine; re-exports the engine.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/pseudonymGenerator.ts:assertValidSvg": {
+   "summary": "Validates that fetched SVG text is well-formed (DOMParser or regex fallback), throwing on empty/invalid content.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/pseudonymGenerator.ts:renderAvatarSvg": {
+   "summary": "Fetches (with cache) and recolors an anonymous-name avatar SVG for the given Avatar descriptor.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/apiSendEnquiry.ts": {
+   "summary": "Posts the first enquiry message for a session (encrypted finalization payload) to endpoints.sessionBase/{id}/enquiry/new.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiSendEnquiry.ts:apiSendEnquiry": {
+   "summary": "POSTs an encrypted enquiry-finalization payload built from a Matrix event id to create the session's first enquiry.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/utils/sessionUnread.ts": {
+   "summary": "Client-side unread derivation (#1147): since the backend always hard-codes messagesRead:true, this module is the single source of truth for unread state, read from the Matrix client's room notification counts.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/sessionUnread.ts:isRoomUnread": {
+   "summary": "True if the Matrix room for a given room id has unread notifications on this device.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/sessionUnread.ts:isChatItemUnread": {
+   "summary": "Derives unread state for a session/group-chat list item via its matrixRoomId.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/sessionUnread.ts:countUnreadSessions": {
+   "summary": "Counts unread sessions/chats in a list for the toolbar unread chip counter.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/apiGetTenantTheming.ts": {
+   "summary": "Fetches public tenant theming/config, deriving tenantId from the Keycloak JWT cookie when present, from endpoints.tenantServiceBase (public/id/{id} or public/ fallback); skips auth.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiGetTenantTheming.ts:apiGetTenantTheming": {
+   "summary": "GETs tenant theming data, using the tenantId from the Keycloak cookie JWT if available, else the generic public endpoint.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/call/widget/OrisoWidgetDriver.ts": {
+   "summary": "Custom matrix-widget-api WidgetDriver for embedded Element Call in 'matryoshka' widget mode: relays Matrix room/to-device events over postMessage using the host's already-crypto-enabled MatrixClient (per ADR-004).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/call/widget/OrisoWidgetDriver.ts:toWidgetEvent": {
+   "summary": "Narrows a matrix-js-sdk MatrixEvent to the widget API's IRoomEvent shape.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/call/widget/OrisoWidgetDriver.ts:isValidOpenIDToken": {
+   "summary": "Validates an OpenID credentials object has the required non-empty string fields.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/services/mediaContentScanner.ts": {
+   "summary": "Client protocol for matrix-content-scanner (ADR-019, ORISO-Admin#366/#1072): fail-closed encrypted-media scanning — seals decryption keys to the scanner's public key rather than sending files in the clear.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/mediaContentScanner.ts:isMediaContentScannerEnabled": {
+   "summary": "True if a media scanner URL is configured for this environment.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/mediaContentScanner.ts:getScannedMediaDownloadPath": {
+   "summary": "Builds the scanner-routed download path for an mxc:// media URL when scanning is enabled.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/mediaContentScanner.ts:downloadScannedEncryptedMedia": {
+   "summary": "Seals file decryption keys to the scanner's public key, POSTs them, and returns a safe/blocked/error MediaScanOutcome.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/mediaContentScanner.ts:parseMxcUri": {
+   "summary": "Parses an mxc:// URI into its server name and media id components.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/mediaContentScanner.ts:fetchScannerPublicKey": {
+   "summary": "Fetches the content scanner's public key from its /public_key endpoint.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/services/matrixGroupCallService.ts": {
+   "summary": "Legacy-style singleton wrapping matrix-js-sdk's GroupCall API for multi-participant calls, asserting the room is encrypted before starting/joining.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/app/RouterConfig.tsx": {
+   "summary": "Builds the full route/navigation-rail config for asker (RouterConfigUser) and consultant (RouterConfigConsultant) roles: session views, asker info, profile, bookings, tools, notifications, drafts.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/app/RouterConfig.tsx:showAppointmentsMenuItem": {
+   "summary": "Decides whether the Appointments nav item shows, based on feature flag and consultant/assigned-consultant authority.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/app/RouterConfig.tsx:RouterConfigUser": {
+   "summary": "Builds the asker (client) role's route/navigation configuration.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/app/RouterConfig.tsx:RouterConfigConsultant": {
+   "summary": "Builds the consultant role's route/navigation configuration from AppConfigInterface settings.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/utils/matrixEncryptedAttachment.ts": {
+   "summary": "AES-256-CTR Matrix v2 attachment encryption/decryption per the Matrix media spec: encrypts blobs, computes JWK keys/IV/sha256 hash, and decrypts+verifies using timing-safe hash comparison.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/matrixEncryptedAttachment.ts:encryptMatrixAttachment": {
+   "summary": "Encrypts a Blob with AES-CTR, returning the ciphertext plus a MatrixEncryptedFile descriptor (key/iv/hash).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/matrixEncryptedAttachment.ts:decryptMatrixAttachment": {
+   "summary": "Decrypts a Matrix v2 encrypted attachment and verifies its sha256 hash with a timing-safe comparison, throwing on mismatch.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/matrixEncryptedAttachment.ts:timingSafeEqual": {
+   "summary": "Constant-time string comparison used to verify attachment hashes without a timing side-channel.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/matrixEncryptedAttachment.ts:toBase64": {
+   "summary": "Encodes a byte array as base64.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/matrixEncryptedAttachment.ts:fromBase64": {
+   "summary": "Decodes a (possibly unpadded/URL-safe) base64 string into a byte array.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/services/matrixDeviceDehydration.ts": {
+   "summary": "Starts MSC3814 dehydrated-device rehydration (#439) so Megolm room keys sent during weeks-long login gaps stay decryptable; guarded by crypto/secret-storage readiness and an enableDeviceDehydration toggle; never throws.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/matrixDeviceDehydration.ts:startDeviceDehydration": {
+   "summary": "Starts/rehydrates a dehydrated Matrix device if enabled and crypto/secret-storage are ready; returns a status string, never throws.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/emails/kit/emailTemplate.ts": {
+   "summary": "Shared content model (EmailContent) and dual HTML/text renderers for every transactional email, generating the plain-text version from the same fields as HTML to prevent drift.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/emails/kit/emailTemplate.ts:renderEmailHtml": {
+   "summary": "Renders an EmailContent model into a full send-ready HTML email using emailDocument/molecules/organisms.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/emails/kit/emailTemplate.ts:renderEmailText": {
+   "summary": "Renders the same EmailContent model into a plain-text email body.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/utils/i18nCatalogueGuard.ts": {
+   "summary": "Diagnostics for translation catalogues: detects missing/extra keys between locale and fallback (aware of CLDR plural suffixes), redundant overlay keys, English-copy leakage, and placeholder token drift.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/i18nCatalogueGuard.ts:collectCatalogueDrift": {
+   "summary": "Computes keys extra-in-locale and missing-in-locale vs. a fallback catalogue, exempting known plural forms.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/i18nCatalogueGuard.ts:collectRedundantOverlayKeys": {
+   "summary": "Finds overlay-catalogue keys that duplicate (add nothing over) the fallback catalogue.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/i18nCatalogueGuard.ts:collectPlaceholderDriftKeys": {
+   "summary": "Flags translation keys whose {{placeholder}} tokens differ between locale and fallback.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/i18nCatalogueGuard.ts:findUnknownStaticTranslationKeys": {
+   "summary": "Finds translation keys referenced in source code that don't exist in any known catalogue.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/i18nCatalogueGuard.ts:flattenCatalogueKeys": {
+   "summary": "Flattens a nested translation catalogue object into a sorted list of dotted keys.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/call/GroupCallWidget.tsx": {
+   "summary": "Renders the embedded Element Call iframe widget for multi-participant group calls, managing call state via callManager/useElementCallWidget, resizable/draggable stage sizing, and camera/mic release on close.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/call/GroupCallWidget.tsx:GroupCallWidget": {
+   "summary": "Renders and manages the Element Call group-call iframe surface, wiring call state, sizing, and teardown/release of media on close.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/services/matrixCrypto.ts": {
+   "summary": "Builds a namespaced, hex-encoded local storage-key prefix for the Matrix crypto store, scoped per user+device id.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/matrixCrypto.ts:buildMatrixCryptoStorePrefix": {
+   "summary": "Builds an 'oriso-matrix-{userId}-{deviceId}' storage prefix, validating both ids are non-empty/trimmed.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/matrixCrypto.ts:encodeStorageSegment": {
+   "summary": "Hex-encodes a string for safe use as part of a storage key.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/utils/anonName/engine.ts": {
+   "summary": "Framework-agnostic anonymous-identity engine shared across registration and registration-less live chat: generates 'adjective+Animal+name' pseudonyms with a WCAG-contrast-checked avatar color/recolored SVG.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/anonName/engine.ts:generatePseudonym": {
+   "summary": "Generates a random localized pseudonym (adjective + animal + name) for the given language.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/anonName/engine.ts:generateAvatar": {
+   "summary": "Generates a random avatar (animal file + background color + contrasting icon color) for a language.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/anonName/engine.ts:generateAvatarForUser": {
+   "summary": "Deterministically derives an avatar from a hashed userId, so a given user always gets the same avatar.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/anonName/engine.ts:pickIconColor": {
+   "summary": "Picks near-black or white for the animal icon based on which reaches WCAG contrast ≥4.5 against the background.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/anonName/engine.ts:recolorSvg": {
+   "summary": "Recolors an animal SVG's fill to the chosen icon color.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/session/SubscriptionKeyLost.tsx": {
+   "summary": "Shows an inline info notice + button when the E2EE subscription/master key is lost, sending an alias MASTER_KEY_LOST message via apiSendAliasMessage and reloading the active session.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/session/SubscriptionKeyLost.tsx:SubscriptionKeyLost": {
+   "summary": "Renders the master-key-lost notice and a button to send the MASTER_KEY_LOST alias message, reloading the session on success.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/registration/accountData/consentAcceptance.ts": {
+   "summary": "Models per-Fachbereich(-version) consent identity for registration (ADR-021/022): stores WHAT text was accepted (agency+topic+wording fingerprint), not a bare boolean.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/registration/accountData/consentAcceptance.ts:departmentMayHaveConsentText": {
+   "summary": "True whenever both an agency and topic are selected, i.e. a Träger-authored consent text could apply.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/registration/accountData/consentAcceptance.ts:consentBindingKey": {
+   "summary": "Builds the identity key (agency+topic+wording fingerprint/version) representing exactly what consent text was agreed to.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/registration/accountData/consentAcceptance.ts:mayAcceptConsent": {
+   "summary": "Determines whether the registration flow may proceed given the current consent-acceptance state.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/registration/accountData/consentAcceptance.ts:effectiveConsentResolution": {
+   "summary": "Resolves the effective consent state (accepted/needs-review/none) by comparing stored and current binding keys.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/registration/accountData/consentAcceptance.ts:sentenceFingerprint": {
+   "summary": "Computes a short stable fingerprint of the consent sentence text so drift in wording invalidates prior acceptance.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/messageSubmitInterface/attachmentHelpers.ts": {
+   "summary": "Chat attachment constants and type-checking helpers: supported MIME types/extensions (images, PDF, Office docs, audio), 10MB max size, and isSupportedAttachment enforcing the allow-list independent of the native file-picker's accept filter.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/attachmentHelpers.ts:isSupportedAttachment": {
+   "summary": "Validates a File's type/extension against the supported attachment allow-list, since drag/drop/paste can bypass the picker's accept filter.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/attachmentHelpers.ts:getAttachmentSizeMBForKB": {
+   "summary": "Converts a file size in KB to MB for display/limit-check purposes.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/termsandconditions/isAnonymousAsker.ts": {
+   "summary": "Determines if a user entered anonymously by checking the ANONYMOUS_DEFAULT authority (never the username), fixing a prior bug where a username-prefix check never matched real anonymous accounts (#1087).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/termsandconditions/isAnonymousAsker.ts:isAnonymousAsker": {
+   "summary": "Returns true iff the user holds the ANONYMOUS_DEFAULT authority; coerces undefined (not-yet-loaded) to false.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/sessionsList/refetchEnquiryList.ts": {
+   "summary": "Replaces the visible enquiry queue with a fresh backend fetch, treating the API's 204/'EMPTY' error as a valid empty snapshot that clears stale sessions rather than an error.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionsList/refetchEnquiryList.ts:refetchEnquiryListState": {
+   "summary": "Fetches a fresh enquiry page and replaces session list/total/offset state, treating an 'EMPTY' error as a valid empty result.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/session/SessionStream.tsx": {
+   "summary": "The main chat message stream component: merges Matrix room timeline with legacy messages, handles case-handover requests, typing indicators, consultant assignment, session supervisors, team-discussion panel.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/session/SessionStream.tsx:SessionStream": {
+   "summary": "Renders and drives the live chat/message stream for a session, wiring Matrix events, case handover, typing, and consultant assignment.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/session/SessionStream.tsx:caseHandoverRequestIdFromPath": {
+   "summary": "Extracts a case-handover request id from the current route path/search params.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:playwright.config.ts": {
+   "summary": "Local-only (not CI) Playwright smoke config for the react-router v7 migration: boots the CRA dev server and asserts public routes render without an uncaught exception; needs a reachable dev-cluster backend.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/services/matrixRoomHistoryKeyTransfer.ts": {
+   "summary": "Device-to-device (Olm) transfer of Megolm room-history keys between a user's own devices via custom org.oriso.room_history_key_request/bundle Matrix events, throttled and capped.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/matrixRoomHistoryKeyTransfer.ts:isUndecryptedRoomEvent": {
+   "summary": "Detects whether a Matrix room event failed to decrypt (bad.encrypted, decryption failure, or SDK failure body text).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/matrixRoomHistoryKeyTransfer.ts:emitDiagnostic": {
+   "summary": "Dispatches a diagnostic CustomEvent describing a stage of the history-key-transfer process.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/polyfill.ts": {
+   "summary": "Loads browser polyfills (react-app-polyfill, TextEncoder/Decoder, fetch, Promise, DOM collections, Element.closest/remove/scroll) and silences Tone.js logging; imported first from app.tsx/initApp.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/globalState/provider/SessionsDataProvider.tsx": {
+   "summary": "React context + reducer holding the loaded sessions list and its ready state, with SET_READY/SET_SESSIONS/UPDATE_SESSIONS/REMOVE_SESSIONS actions.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/globalState/provider/SessionsDataProvider.tsx:reducer": {
+   "summary": "Reducer applying SET_READY/SET_SESSIONS/UPDATE_SESSIONS/REMOVE_SESSIONS actions to the sessions-data state.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/globalState/provider/SessionsDataProvider.tsx:SessionsDataProvider": {
+   "summary": "Provides SessionsDataContext (sessions, ready, dispatch) via useReducer to the app.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/services/draftStore.ts": {
+   "summary": "Draft bookkeeping constants/helpers; actual draft content is server-side (encrypted, via UserService /users/drafts) since #1071 removed plaintext local storage for shared-PC privacy.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/draftStore.ts:hasDraftContent": {
+   "summary": "True if a TipTap-serialized draft string has real text content after stripping tags/nbsp/zero-width-space.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/services/matrixLiveEventBridge.ts": {
+   "summary": "Bridges Matrix Room.timeline/sync events into the app's legacy LiveService-style event/callback system, detecting video/Element/group call invites and forwarding to CallManager (lazily required to avoid circular imports).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/matrixLiveEventBridge.ts:isVideoCallInvite": {
+   "summary": "Checks whether a Matrix event's content represents a legacy video-call invite.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/matrixLiveEventBridge.ts:isElementOrGroupCallInvite": {
+   "summary": "Checks whether an event content flags is_element_call or is_group_call.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/matrixLiveEventBridge.ts:getCallManager": {
+   "summary": "Lazily requires and returns the CallManager singleton to avoid a circular import at module init.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/legalContent/LegalTextReader.tsx": {
+   "summary": "Reading surface for published legal texts (DSGVO/Datenschutz etc.): chapter chips with anchor navigation, in-place scroll, and fullscreen mode; renders via LegalContentRenderer (this component never renders raw HTML itself).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/legalContent/LegalTextReader.tsx:LegalTextReader": {
+   "summary": "Renders the legal-text reading surface with chapter navigation chips and optional fullscreen toggle/close.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/legalContent/LegalTextReader.tsx:scrollAnchorIntoView": {
+   "summary": "Scrolls a given heading anchor into view within the reader's scroll container.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/legalContent/LegalTextReader.tsx:findScrollParent": {
+   "summary": "Finds the nearest scrollable ancestor element to use as the scroll container.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/hooks/useMatrixReady.tsx": {
+   "summary": "Hook returning true once the Matrix client exists and its sync state is 'PREPARED', for gating call/chat features on readiness.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/hooks/useMatrixReady.tsx:useMatrixReady": {
+   "summary": "Tracks Matrix client sync state via ClientEvent.Sync and returns true once PREPARED.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/login/Login.tsx": {
+   "summary": "Main login page/component: Keycloak username+password+OTP form, magic-link login, consultant-login blocking, 2FA resend, first-visit handling and redirect-to-app.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/login/Login.tsx:Login": {
+   "summary": "Renders and drives the login form (credentials, OTP, magic link) and post-login redirect/consultant-block handling.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/app/SessionsZone.tsx": {
+   "summary": "Two-column sessions view (list + detail) for the react-router v7 migration: both columns render for the same /sessions/... URL via independent nested <Routes>, replicating the old v5 parallel-panel layout.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/app/SessionsZone.tsx:SessionsZone": {
+   "summary": "Renders the parallel session-list and session-detail route columns, toggling mobile active/inactive classes by path.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/anonymousChat/AnonymousChat.tsx": {
+   "summary": "Live/anonymous-chat entry flow: agency/topic selection, consultant availability check, generates a pseudonym+password, calls apiPostRegistration to create an anonymous account, then redirects into the app.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/anonymousChat/AnonymousChat.tsx:AnonymousChat": {
+   "summary": "Drives the anonymous live-chat registration flow: agency/topic pick, pseudonym generation, registration API call, redirect.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/apiGetConsentText.ts": {
+   "summary": "Fetches and normalizes the per-agency/topic data-protection consent text (ADR-021), reading from the shared department-legal cache (getCachedDepartmentLegalOutcome) so callers never issue duplicate requests or disagree on a snapshot.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiGetConsentText.ts:apiGetConsentText": {
+   "summary": "Fetches the consent text for an agency/topic, using the cached department-legal outcome, and normalizes the response shape.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiGetConsentText.ts:normalizeConsentTextResponse": {
+   "summary": "Normalizes the AgencyService legal payload into ConsentTextData, correctly parsing versionId as a number.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiGetConsentText.ts:deriveConsentText": {
+   "summary": "Derives the final consent-text string/state from the normalized DPP response.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/services/pendingRecoveryKeyStore.ts": {
+   "summary": "Parks the silently-generated Matrix recovery key in localStorage per-user until the Sicherheit panel shows it and the user confirms; includes a cross-tab setup lock with TTL+heartbeat to avoid concurrent Tresor bootstraps.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/pendingRecoveryKeyStore.ts:savePendingRecoveryKey": {
+   "summary": "Stores the generated (not-yet-confirmed) recovery key for a user in localStorage.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/pendingRecoveryKeyStore.ts:beginRecoverySetup": {
+   "summary": "Acquires a cross-tab setup lock for a user's recovery-key bootstrap, returning an owner token.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/pendingRecoveryKeyStore.ts:withRecoverySetupLock": {
+   "summary": "Runs an async operation while holding the cross-tab recovery-setup lock, releasing it afterward.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/pendingRecoveryKeyStore.ts:clearPendingRecoveryKey": {
+   "summary": "Removes the pending recovery key from storage once the user has confirmed it.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/pendingRecoveryKeyStore.ts:refreshRecoverySetup": {
+   "summary": "Heartbeats the setup lock so a live tab's bootstrap isn't stolen by TTL expiry.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/services/matrixKeyBackupService.ts": {
+   "summary": "Thin orchestration layer over matrix-js-sdk CryptoApi for #437 key-backup/recovery UX: sets up secret storage/cross-signing/key backup, validates and applies a recovery key, and resets crypto identity.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/matrixKeyBackupService.ts:getEncryptionStatus": {
+   "summary": "Reports whether secret storage/cross-signing/key backup are ready for the current Matrix client.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/matrixKeyBackupService.ts:setUpRecovery": {
+   "summary": "Bootstraps secret storage, cross-signing and key backup, returning the generated recovery key.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/matrixKeyBackupService.ts:recoverWithKey": {
+   "summary": "Restores secret storage/crypto identity access using a user-entered recovery key.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/matrixKeyBackupService.ts:resetCryptoIdentity": {
+   "summary": "Resets the Matrix crypto identity (cross-signing/secret storage) when recovery is impossible.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/matrixKeyBackupService.ts:canBootstrapSilently": {
+   "summary": "Checks whether recovery setup can run without user interaction given the current EncryptionSetupStatus.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/registration/Registration.tsx": {
+   "summary": "The full multi-step registration wizard shell (very large, 1117 lines): topic/agency selection, account data, consent, header/step-nav, submits via apiPostRegistration and hands off through RegistrationHandover.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/registration/Registration.tsx:Registration": {
+   "summary": "Top-level registration flow component orchestrating step state, validation, and final apiPostRegistration submission.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/registration/Registration.tsx:RegistrationFooterBackLink": {
+   "summary": "Renders the 'back' navigation link/button in the registration footer.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/registration/Registration.tsx:RegistrationFooterPrimaryButton": {
+   "summary": "Renders the primary continue/submit button in the registration footer.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/globalState/provider/LocaleProvider.tsx": {
+   "summary": "Initializes i18n (via src/i18n init()) once tenant theming/settings are loaded, applying tenant-active-language restrictions, persists chosen locale to localStorage+cookie, and exposes LocaleContext/useLocaleData.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/globalState/provider/LocaleProvider.tsx:LocaleProvider": {
+   "summary": "Waits for tenant settings, initializes i18n with tenant-scoped supported languages, and provides LocaleContext.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/globalState/provider/LocaleProvider.tsx:useLocaleData": {
+   "summary": "Returns the current LocaleContext value, or an empty object if used outside the provider.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:cypress.config.js": {
+   "summary": "Cypress test-runner config: webpack preprocessor with SCSS/Sass loaders (incl. optional extensions settings.scss overlay), used for the (not CI-wired) Cypress E2E suite.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:cypress.config.js:getSassAdditionalData": {
+   "summary": "Builds the SCSS @import prelude injecting main (and optional extension) settings.scss before compiled content.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:cypress.config.js:styleLoaders": {
+   "summary": "Builds the webpack style/css/resolve-url/sass loader chain used by the Cypress webpack preprocessor.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/utils/theme/orisoScheme.ts": {
+   "summary": "Pure Material-3 color engine (THB-01): turns up to three admin-chosen seed colours into the full M3 --m3-* token role palette, tuned to reproduce a calmer, greyed benchmark look rather than stock M3 pastels.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/theme/orisoScheme.ts:computeOrisoPalette": {
+   "summary": "Computes the full set of --m3-* token colors from primary/accent/signal seed colors for light/dark/inverted schemes.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/theme/orisoScheme.ts:harmonizedAccentPalette": {
+   "summary": "Harmonizes an accent seed color's tonal palette toward the primary brand color.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/theme/orisoScheme.ts:signalFamily": {
+   "summary": "Builds the error/signal color tonal family, defaulting to Oriso's standard signal tones when no seed is given.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/apiSendMatrixAttachmentMessage.ts": {
+   "summary": "Sends a file attachment as a Matrix message via chatTransportService.sendFileMessage, wiring apiPostMessageEventNotification for backend metadata notification.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiSendMatrixAttachmentMessage.ts:apiSendMatrixAttachmentMessage": {
+   "summary": "Uploads/sends a file as a Matrix room message and posts the corresponding message-event notification.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/services/chatTransportService.ts": {
+   "summary": "Central chat send/edit/react/redact transport talking to the Matrix client (via matrixClientRegistry) and posting message-event notifications to the backend; resolves whether a session is Matrix-backed and its room id.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/legalContent/legalHtmlSanitizer.ts": {
+   "summary": "Single sanitize-html allowlist for all authored legal HTML (shared by LegalContentRenderer and the anonymous consent gate) and a stricter consent-sentence variant that drops img/class to block tracking pixels on unconsented rendering.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/legalContent/legalHtmlSanitizer.ts:sanitizeLegalHtml": {
+   "summary": "Sanitizes full legal-document HTML using LEGAL_HTML_SANITIZE_OPTIONS.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/legalContent/legalHtmlSanitizer.ts:sanitizeConsentHtml": {
+   "summary": "Sanitizes a consent-sentence HTML snippet with the stricter CONSENT_HTML_SANITIZE_OPTIONS (no img/class).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/registration/agencySelection/AgencySelection.tsx": {
+   "summary": "Registration step rendering the agency-selection results list, using useAgenciesForRegistration to fetch agencies for the chosen topic/postcode and showing a headline zipcode.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/registration/agencySelection/AgencySelection.tsx:AgencySelection": {
+   "summary": "Renders the agency-selection registration step, loading agencies for the current topic/postcode and rendering AgencySelectionResults.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/session/CaseHandoverCurtain.tsx": {
+   "summary": "Access-control curtain replacing CaseHandoverGate (Figma 'Teamberatung Case Handover'): wizard steps intro→select reason→describe→request, plus terminal pending/consentPending/denied states.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/session/CaseHandoverCurtain.tsx:CaseHandoverCurtain": {
+   "summary": "Container driving the case-handover curtain's step state and API calls (reasons list, access request).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/session/CaseHandoverCurtain.tsx:CaseHandoverCurtainView": {
+   "summary": "Presentational view rendering the curtain's current step (intro/reason/describe/pending/denied).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/utils/mediaUploadHelpers.ts": {
+   "summary": "Resolves the effective media-upload and media-inline-display feature flags per chat type (anonymous/1:1/group/supervision) from tenant settings.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/mediaUploadHelpers.ts:hasMediaUploadFeature": {
+   "summary": "Returns whether media upload is enabled for a given chat type per tenant settings.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/mediaUploadHelpers.ts:hasMediaInlineDisplayFeature": {
+   "summary": "Returns whether media should render inline (vs. plain download file) for a given chat type.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/services/matrixClientService.ts": {
+   "summary": "Very large (938 lines) core Matrix client wrapper service: login/token refresh, file/message content builders, device dehydration, room-history key transfer, encrypted attachments.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/matrixClientService.ts:buildMatrixFileMessageContent": {
+   "summary": "Builds the Matrix m.file/m.image/m.audio/m.video message content object for an (optionally encrypted) file.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/matrixClientService.ts:isMatrixForbiddenError": {
+   "summary": "Checks whether a caught error represents a Matrix M_FORBIDDEN response.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/matrixClientService.ts:isMatrixExpiredTokenError": {
+   "summary": "Checks whether a caught error represents an expired/invalid Matrix access token.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/matrixClientService.ts:getMatrixFileMessageType": {
+   "summary": "Derives the Matrix msgtype (m.image/m.audio/m.video/m.file) from a File's MIME type.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/legalLinks/useLegalLinkContent.ts": {
+   "summary": "Resolves whether a legal link is imprint or privacy (from its i18n key/title/url) and fetches the tenant-authored multilingual legal text for it, preferring the raw language map over the flat server-resolved string.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/legalLinks/useLegalLinkContent.ts:getLegalLinkKind": {
+   "summary": "Classifies a legal link as 'privacy' or 'imprint' from its raw i18n label (preferred) or title+url text.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/legalLinks/useLegalLinkContent.ts:useLegalLinkContent": {
+   "summary": "Hook resolving the tenant's authored legal content (imprint/privacy) for a given link, honoring the current UI language.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/message/MessageAttachment.tsx": {
+   "summary": "Renders a chat attachment: decrypts Matrix-encrypted files (or fetches via content scanner when enabled), tracks fail-closed MediaCheckState (unchecked/safe/blocked/error), shows attachment cards/voice player.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/message/MessageAttachment.tsx:MessageAttachment": {
+   "summary": "Fetches/decrypts (and optionally scans) an attachment and renders it as a card, voice player, or blocked/error state.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/call/widget/useElementCallWidget.ts": {
+   "summary": "Hook embedding Element Call as a Matrix widget (not standalone app): builds the iframe URL, wires the postMessage ClientWidgetApi channel via OrisoWidgetDriver, and exposes attachIframe/hangup/error.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/call/widget/useElementCallWidget.ts:useElementCallWidget": {
+   "summary": "Builds the Element Call widget URL/postMessage bridge for a room and returns {url, attachIframe, hangup, error}.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/call/widget/useElementCallWidget.ts:widgetIdForRoom": {
+   "summary": "Computes a stable widget id for a given room and instance nonce.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/call/widget/useElementCallWidget.ts:releaseIframeDevices": {
+   "summary": "Releases camera/mic devices held by the Element Call iframe on teardown.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/apiGetAskerSessionList.ts": {
+   "summary": "Fetches the asker's session list, deduplicating concurrent calls via a shared in-flight promise and resolving to an empty list on backend failure so chat still loads (CATCH_ALL never redirects to the error page).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiGetAskerSessionList.ts:apiGetAskerSessionList": {
+   "summary": "GETs the asker's session list, sharing one in-flight request across concurrent callers and swallowing errors into an empty result.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/app/Routing.tsx": {
+   "summary": "Top-level authenticated routing shell: picks consultant vs. user RouterConfig, renders NavigationBar/Header/ReleaseNote/Walkthrough/TwoFactorNag/AbsenceHandler/TermsAndConditions around the SessionsZone and other routed pages.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/app/Routing.tsx:Routing": {
+   "summary": "Selects the role-specific router config and renders the full authenticated app shell with nav, header, and routed content.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/registration/registrationDataValidation.ts": {
+   "summary": "Field-level validators for the registration form (topic/agency required, 5-digit zipcode, password via passwordCriteria, username length/charset 5-30 lowercase+digits+_-, age, German state code).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/services/liveKitService.ts": {
+   "summary": "Singleton wrapping the livekit-client Room for group video calls: connects with a token, tracks/broadcasts participant changes to subscribers, handles remote track subscribe/unsubscribe.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/initApp.tsx": {
+   "summary": "App bootstrap entry point: registers observability (meterProvider, web vitals, UTD tracking) before anything else, sets up lazy Registration/ThemeDemo routes, tenant-theme-aware AppThemeProvider.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/initApp.tsx:AppThemeProvider": {
+   "summary": "Recreates the MUI theme when the runtime tenant palette lands at :root (THB-05), providing it via MUI ThemeProvider.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/initApp.tsx:NewRegistration": {
+   "summary": "Wraps the lazy-loaded Registration component with UrlParamsProvider and RegistrationProvider.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/hooks/useMatrixDecryptionFailures.ts": {
+   "summary": "Per-message 'encryption broke' detector for the delivery-status UI: tracks event ids in a room that fail Matrix decryption past a 12s grace period (shorter than utdTracker's 5-min telemetry threshold).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/hooks/useMatrixDecryptionFailures.ts:useMatrixDecryptionFailures": {
+   "summary": "Watches a Matrix room's timeline and returns the set of event ids currently failing decryption past the grace period.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/pseudonym/PseudonymCard.tsx": {
+   "summary": "Renders the Carimat-branded chat bubble in the anonymous onboarding flow showing the user's generated pseudonym with a typewriter reveal animation.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/pseudonym/PseudonymCard.tsx:PseudonymCard": {
+   "summary": "Renders the Carimat pseudonym-introduction chat bubble with typewriter text and avatar reveal.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/sessionCookie/getKeycloakAccessToken.ts": {
+   "summary": "Performs the Keycloak OAuth2 password-grant token request (username/password/otp, client_id=app), omitting stale browser cookies; contains leftover commented-out debug console.log statements.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionCookie/getKeycloakAccessToken.ts:getKeycloakAccessToken": {
+   "summary": "POSTs the Keycloak password-grant token request and resolves/rejects with the parsed LoginData or a FetchErrorWithOptions.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/pseudonym/AnonymousConsentGate.tsx": {
+   "summary": "In-chat consent gate (ADR-022 Gate 2) for anonymous askers: renders a Träger-authored consent sentence via sanitizeConsentHtml inside a focus-trapped dialog with accept/reject controls before the anonymous chat may proceed.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/pseudonym/AnonymousConsentGate.tsx:AnonymousConsentGate": {
+   "summary": "Renders the focus-trapped anonymous consent dialog with sanitized consent HTML and accept/busy handling.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/utils/useTenantTheming.ts": {
+   "summary": "Hook applying tenant theming: fetches apiGetTenantTheming, injects --m3-* CSS vars via OrisoScheme engine (unless a Theme Builder preview overrides via URL seeds), sets theme-color meta and favicon for anonymous routes too.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/useTenantTheming.ts:applyTheming": {
+   "summary": "Applies a tenant's theming (palette, theme-color meta, favicon) to the document, honoring preview-mode URL overrides.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/useTenantTheming.ts:useTenantTheming": {
+   "summary": "Hook loading tenant theming data and applying it to the document; returns loading state.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/useTenantTheming.ts:getOrCreateHeadNode": {
+   "summary": "Finds or creates a <head> element matching a tag/attribute selector.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/apiCaseHandover.ts": {
+   "summary": "API layer for the case-handover feature: fetches handover reasons/candidates/status, requests single or batch access, and records client consent decisions against endpoints.sessionBase/{id}/case-handover*.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiCaseHandover.ts:apiGetCaseHandoverReasons": {
+   "summary": "GETs the list of available case-handover request reasons.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiCaseHandover.ts:apiGetCaseHandoverStatus": {
+   "summary": "GETs the case-handover status for a given session.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiCaseHandover.ts:apiRequestCaseHandoverAccess": {
+   "summary": "POSTs/PUTs a case-handover access request for a session with a reason.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiCaseHandover.ts:apiRequestCaseHandoverBatchAccess": {
+   "summary": "Requests case-handover access for multiple sessions in one batch call.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiCaseHandover.ts:apiDecideCaseHandoverClientConsent": {
+   "summary": "Records the client's opt-in/opt-out consent decision for a pending case-handover request.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/session/AcceptAssign.tsx": {
+   "summary": "Renders the accept/assign button for an enquiry: routes anonymous vs registered enquiries to different accept endpoints, handles E2EE room encryption on accept, and navigates into the accepted session.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/session/AcceptAssign.tsx:AcceptAssign": {
+   "summary": "Renders and drives the accept/assign action for an enquiry, including E2EE setup and post-accept navigation.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/erstantwort/erstantwortResolve.ts": {
+   "summary": "Resolves the Erstantwort bubble list either from a persisted FIRST_RESPONSE event (frozen wording wins, ADR-018 §4) or from the trigger catalogue when no event exists (e.g. post-dispatch trigger #825, Storybook).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/erstantwort/erstantwortResolve.ts:resolveErstantwortBausteine": {
+   "summary": "Resolves the final list of ResolvedBaustein bubbles from either a persisted event or the catalogue plus live state.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/erstantwort/erstantwortResolve.ts:fromEvent": {
+   "summary": "Builds Bausteine from a persisted FIRST_RESPONSE Matrix event's frozen wording.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/erstantwort/erstantwortResolve.ts:fromCatalogue": {
+   "summary": "Builds Bausteine from the trigger catalogue when no persisted event exists.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/erstantwort/erstantwortResolve.ts:applyLiveState": {
+   "summary": "Applies current live state (email/2FA availability) to resolved Bausteine, removing inapplicable CTAs.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/erstantwort/erstantwortResolve.ts:isBausteinSilenced": {
+   "summary": "Checks whether a Baustein should be suppressed given current context/state.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/globalState/provider/RegistrationProvider.tsx": {
+   "summary": "Provides RegistrationContext: registration form data (persisted to sessionStorage), available steps, and step components (TopicSelection, ZipcodeInput, AgencySelection, AccountData) merged per consulting type via mergeRegistrationSteps.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/globalState/provider/RegistrationProvider.tsx:RegistrationProvider": {
+   "summary": "Provides registration form state/data and step configuration, hydrating from URL params and sessionStorage.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/globalState/provider/UserDataProvider.tsx": {
+   "summary": "Simple context provider holding the logged-in user's data, with reloadUserData calling apiGetUserData to refresh it.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/globalState/provider/UserDataProvider.tsx:UserDataProvider": {
+   "summary": "Provides UserDataContext (userData, setUserData, reloadUserData) to the app.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/utils/resolveTenantMediaUrl.ts": {
+   "summary": "Rewrites root-relative /media/{id} references (admin-uploaded legal-text images) to the TenantService origin so they load correctly on the split app/api host topology; other URLs pass through untouched.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/resolveTenantMediaUrl.ts:resolveTenantMediaUrl": {
+   "summary": "Rewrites a bare /media/... src to the given tenant media origin, leaving absolute/data/blob URLs unchanged.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/apiMatrixUpload.ts": {
+   "summary": "Compatibility wrapper routing legacy attachment-upload callers through the Matrix SDK file-send path (matrixClientRegistry) with abort/progress support.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiMatrixUpload.ts:apiMatrixUploadFile": {
+   "summary": "Uploads a file as a Matrix message via the registered MatrixClientService, exposing abort control and progress callback.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/profile/EncryptionSettings/encryptionClient.ts": {
+   "summary": "Resolves a ready Matrix client for encryption-settings operations (recovery/key backup), retrying once if a stale Rust crypto queue triggers a device-recovery replacement mid-operation.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/profile/EncryptionSettings/encryptionClient.ts:resolveReadyEncryptionClient": {
+   "summary": "Returns a ready MatrixClient, either the given override or via the service's getReadyClient().",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/profile/EncryptionSettings/encryptionClient.ts:executeWithReadyEncryptionClient": {
+   "summary": "Runs an action against a ready Matrix client, retrying once if the client was replaced mid-flight by stale-device recovery.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/fetchData.ts": {
+   "summary": "Core HTTP fetch wrapper for the whole app: attaches Keycloak auth cookie/CSRF token, defines FETCH_METHODS/FETCH_ERRORS/X_REASON constants, classifies error responses, invalidates stale auth sessions, and can redirect to the error page.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/fetchData.ts:fetchData": {
+   "summary": "Performs an authenticated fetch request with configurable method/body/headers and per-call error-handling policy (CATCH_ALL, EMPTY, CONFLICT, etc.).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/fetchData.ts:invalidateStaleAuthSession": {
+   "summary": "Clears all cookies and the stored token-expiry when the session is detected as stale.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/fetchData.ts:recoverFromStaleAuthOnPublicRoute": {
+   "summary": "Recovers gracefully from a stale-auth 401 when the current route is a public auth route (avoids forced logout loop).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/apiAcceptAnonymousEnquiry.ts": {
+   "summary": "Accepts an anonymous Live Chat enquiry via its dedicated cross-tenant assignment endpoint (distinct from the registered-enquiry accept path) to avoid mis-assignment (#774).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiAcceptAnonymousEnquiry.ts:apiAcceptAnonymousEnquiry": {
+   "summary": "PUTs to accept an anonymous live-chat enquiry for the current consultant.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/legalLinks/LegalLinks.tsx": {
+   "summary": "Renders a list of legal links (imprint/privacy etc.) with configurable prefix/suffix/delimiter and an optional render-prop, translating labels and building URLs from TProvidedLegalLink entries.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/legalLinks/LegalLinks.tsx:LegalLinks": {
+   "summary": "Renders the configured legal links list, applying delimiters/prefix/suffix and optional custom rendering per link.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/legalContent/LegalContentRenderer.tsx": {
+   "summary": "Renders a resolved legal text (imprint/privacy) in the user's UI language: shows an 'original language' notice on missing translation, a machine-translation notice with toggle-to-original, sanitizes via sanitizeLegalHtml.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/legalContent/LegalContentRenderer.tsx:LegalContentRenderer": {
+   "summary": "Resolves and renders sanitized legal-text HTML for the current language, with original/machine-translation notices.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/apiPostRegistration.ts": {
+   "summary": "Submits the registration payload (URL-encoding the password, normalizing preferred language, clearing stale cookies) and, on success, chains into autoLogin to sign the new account in immediately.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiPostRegistration.ts:apiPostRegistration": {
+   "summary": "POSTs the registration payload (skipAuth) and then calls autoLogin with the new credentials.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/apiGetAppointmentsServiceBookingEventsByUserId.ts": {
+   "summary": "Fetches an asker's appointment booking events by user id from the appointment service.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiGetAppointmentsServiceBookingEventsByUserId.ts:apiAppointmentsServiceBookingEventsByAskerId": {
+   "summary": "GETs an asker's booking events by user id from the appointment service endpoint.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/caseHandover/caseHandoverPrivacy.ts": {
+   "summary": "Fail-closed filter hiding staff-only case-handover metadata (reason/explanation) on legacy Matrix events from any viewer without the CONSULTANT_DEFAULT authority.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/caseHandover/caseHandoverPrivacy.ts:getVisibleCaseHandoverInternalDetailsForViewer": {
+   "summary": "Returns case-handover internal details (reason/explanation) only for viewers with CONSULTANT_DEFAULT authority, else an empty object.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/sessionsList/SessionsList.tsx": {
+   "summary": "Very large (2033 lines) central sessions-list component: fetches/paginates asker or consultant session/enquiry lists, handles case-handover candidate batch access, unread derivation from Matrix, drafts metadata.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionsList/SessionsList.tsx:SessionsList": {
+   "summary": "Renders and drives the full sessions/enquiry list: fetching, pagination, unread state, case-handover batch access, and Matrix live updates.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionsList/SessionsList.tsx:useGroupWatcher": {
+   "summary": "Hook watching group-chat/session updates and triggering list refresh via useWatcher.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionsList/SessionsList.tsx:DraftMetadataListItem": {
+   "summary": "Renders a session list item's draft metadata (time/preview) row.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionsList/SessionsList.tsx:formatDraftTime": {
+   "summary": "Formats a draft's timestamp for display in the session list.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/utils/theme/applyTenantTheme.ts": {
+   "summary": "Frontend-specific runtime palette application (THB-05): reads stored tenant seed colors, computes per-scheme (light/dark/inverted) --m3-* token maps via OrisoScheme.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/theme/applyTenantTheme.ts:readTenantSeeds": {
+   "summary": "Extracts OrisoSeeds (primary/accent/signal) from stored tenant theming fields, or null if no seed stored.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/theme/applyTenantTheme.ts:applyTenantPalette": {
+   "summary": "Computes and applies a tenant's --m3-* token palette as inline styles on the document root.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/theme/applyTenantTheme.ts:applyPreviewFromLocation": {
+   "summary": "Applies a theme-preview palette from URL query seeds if present (Theme Builder sandboxed preview), returning whether it applied.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/theme/applyTenantTheme.ts:computeOrisoSchemes": {
+   "summary": "Computes the light/dark/inverted token maps for a given seed set in one call.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/apiGetDepartmentLegal.ts": {
+   "summary": "Fetches and normalizes per-agency/topic legal texts (DPP + imprint) with a discriminated ok/unavailable outcome (never collapsing 'not found' into 'could not read'.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiGetDepartmentLegal.ts:normalizeDepartmentLegalResponse": {
+   "summary": "Normalizes the raw AgencyService legal payload into typed DepartmentLegalData with numeric versionId.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiGetDepartmentLegal.ts:apiGetDepartmentLegal": {
+   "summary": "Fetches department (agency+topic) legal content directly from the backend endpoint.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiGetDepartmentLegal.ts:getCachedDepartmentLegalOutcome": {
+   "summary": "Returns the cached (or freshly fetched) DepartmentLegalOutcome for an agency/topic, shared across callers to avoid duplicate requests.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiGetDepartmentLegal.ts:clearDepartmentLegalCache": {
+   "summary": "Clears the cached department-legal outcome(s), forcing a re-fetch.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/app/AuthenticatedApp.tsx": {
+   "summary": "Shell mounted once logged in: fetches consulting types, initializes the Matrix client (getMatrixAccessToken → MatrixClientService.initializeClient), sets up notification permissions, group-chat auto-join.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/app/AuthenticatedApp.tsx:AuthenticatedApp": {
+   "summary": "Bootstraps the authenticated session: Matrix client init, consulting types, notifications, and renders the routed app.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/utils/i18nSupportedLanguages.ts": {
+   "summary": "Resolves which languages the language picker may offer, requiring Weblate translation coverage above a threshold before offering a Weblate-only language (bundled/fallback/@informal always pass).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/utils/i18nSupportedLanguages.ts:collectSupportedLanguages": {
+   "summary": "Filters the tenant's requested supported languages down to those meeting translation-coverage thresholds.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/emails/kit/emailAtoms.ts": {
+   "summary": "Lowest-level email-HTML building blocks (tables/inline styles only, no JS): escape helper, layout block, headline/body/footnote text styles, buttons, links, dividers, logo lockup, data rows, footer links — all driven by emailTokens.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/emails/kit/emailAtoms.ts:emailEscape": {
+   "summary": "HTML-escapes a string for safe use in email markup, preserving {{placeholder}} braces.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/emails/kit/emailAtoms.ts:emailBlock": {
+   "summary": "Renders a table-based layout block fragment with configurable padding.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/emails/kit/emailAtoms.ts:emailButton": {
+   "summary": "Renders an email-safe button (table-based, inline-styled) with the brand's primary color.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/emails/kit/emailAtoms.ts:emailHeadline": {
+   "summary": "Renders the email headline text style fragment.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/emails/kit/emailAtoms.ts:emailDataRowMarkup": {
+   "summary": "Renders a label/value data row fragment for the email data panel.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/app/navigationSidebarIcons.tsx": {
+   "summary": "Hand-authored SVG icon components for the app navigation rail (Inbox, Chats, Activity, Drafts, LiveChat, Globe, Logout — each with default/hover/filled variants), sourced from Figma paths.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/app/navigationSidebarIcons.tsx:NavChatsIcon": {
+   "summary": "Renders the default (outline) Chats navigation-rail icon.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/app/navigationSidebarIcons.tsx:NavActivityIcon": {
+   "summary": "Renders the default (outline) Activity/Timeline navigation-rail icon.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/app/navigationSidebarIcons.tsx:NavDraftsIcon": {
+   "summary": "Renders the default (outline) Drafts navigation-rail icon.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/app/navigationSidebarIcons.tsx:NavLogoutIcon": {
+   "summary": "Renders the default (outline) Logout navigation-rail icon.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/message/MessageItemComponent.tsx": {
+   "summary": "Extremely large (3180 lines) single chat-message renderer: text/markdown rendering, attachments, video-call/appointment/Erstantwort/E2EE/reassign/master-key-lost special messages.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/message/MessageItemComponent.tsx:MessageItemComponent": {
+   "summary": "Renders one chat message including its type-specific body, attachments, flyout menu, and visibility/authority-aware controls.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/message/MessageItemComponent.tsx:MessageFlyoutMenu": {
+   "summary": "Renders the per-message context menu (reply/forward/edit/mark/delete) gated by authority and message ownership.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/message/MessageItemComponent.tsx:DeleteMessage": {
+   "summary": "Deletes (Matrix-redacts) the current user's own message.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/session/sessionHelpers.ts": {
+   "summary": "Core session/chat classification and message-preparation helpers: session type derivation (enquiry/archived/group/session), group-vs-1:1 discrimination, Matrix+legacy message merge/prepare, display-name resolution.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/session/sessionHelpers.ts:getSessionType": {
+   "summary": "Derives the SESSION_TYPES value (enquiry/archived/group/session/unknown) for a list item.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/session/sessionHelpers.ts:mergeMatrixMessages": {
+   "summary": "Merges formatted Matrix timeline events into a single ordered message stream.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/session/sessionHelpers.ts:prepareMessages": {
+   "summary": "Transforms raw messages data into the MessageItem[] shape the UI renders.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/session/sessionHelpers.ts:isGroupChat": {
+   "summary": "Type-guards whether a chat item is a group chat (vs. a 1:1 session).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/session/sessionHelpers.ts:isMyMessage": {
+   "summary": "Checks whether a message id belongs to the current Matrix user.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/session/sessionHelpers.ts:isUserModerator": {
+   "summary": "Checks whether a given Matrix user id is a moderator of the chat item.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/features/keyboard-shortcuts/storage/preferenceStore.ts": {
+   "summary": "Per-user keyboard-shortcut preference storage in localStorage (versioned blob keyed by userId, __anonymous__ fallback): builds defaults, loads/saves/clears preferences, and converts between UI option values and ShortcutBinding objects.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/features/keyboard-shortcuts/storage/preferenceStore.ts:createDefaultPreferences": {
+   "summary": "Builds the default keyboard-shortcut binding set from the implemented-shortcuts registry, deriving the newline binding from the send binding.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/features/keyboard-shortcuts/storage/preferenceStore.ts:loadShortcutPreferences": {
+   "summary": "Loads a user's stored keyboard-shortcut preferences from localStorage, falling back to defaults.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/features/keyboard-shortcuts/storage/preferenceStore.ts:saveShortcutPreferences": {
+   "summary": "Persists a user's keyboard-shortcut preferences into the versioned localStorage blob.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/features/keyboard-shortcuts/storage/preferenceStore.ts:bindingToOptionValue": {
+   "summary": "Serializes a ShortcutBinding to its select-option string value.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/message/MessageItemComponent.mocks.ts": {
+   "summary": "Storybook/test mock-data builders for MessageItemComponent: mock active sessions (1:1 and group), user data, E2EE/server-settings/consultant-list contexts, message items, and sample message bodies (visibility, system notifications.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/message/MessageItemComponent.mocks.ts:mockActiveSession": {
+   "summary": "Builds a mock ExtendedSessionInterface (1:1) for Storybook/tests.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/message/MessageItemComponent.mocks.ts:mockMessageItem": {
+   "summary": "Builds a mock MessageItem with sensible defaults for Storybook/tests.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/message/MessageItemComponent.mocks.ts:mockMessageItemComponentProps": {
+   "summary": "Builds a full mock props object for the MessageItemComponent story.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/sessionsList/SessionToolbarFilterIcons.tsx": {
+   "summary": "Hand-authored SVG icon set for the sessions-list toolbar filter chips (Create, Unread with indicator dot, Draft, Nearby, LiveChat, Supervision, InternalGroup, Group, Archive); re-exports MailFilterIcon.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionsList/SessionToolbarFilterIcons.tsx:UnreadFilterIcon": {
+   "summary": "Renders the unread-filter chip icon, optionally with an indicator dot.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionsList/SessionToolbarFilterIcons.tsx:CreateChatFilterIcon": {
+   "summary": "Renders the create-chat toolbar chip icon.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/emptyState/lottieColorUtils.ts": {
+   "summary": "Recolors baked-in Lottie animation JSON colors at render time to match the current theme's CSS custom properties (accent/secondary), since Lottie data can't read CSS variables itself.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/emptyState/lottieColorUtils.ts:readCssColor": {
+   "summary": "Reads a hex color from a CSS custom property on the document root, falling back if invalid/unavailable.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/emptyState/lottieColorUtils.ts:recolorLottieAccent": {
+   "summary": "Rewrites a Lottie JSON's baked-in accent/secondary color values to the current theme's colors.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/emptyState/lottieColorUtils.ts:hexToLottieColor": {
+   "summary": "Converts a hex color string to Lottie's normalized [r,g,b] 0-1 float array format.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/messageSubmitInterface/messageEncryptionMode.ts": {
+   "summary": "Decides and dispatches how an asker's message is sent (enquiry vs. encrypted Matrix vs. blocked), including a retryable encrypted-initial-enquiry flow that caches the pending Matrix event id in storage for idempotent retry.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/messageEncryptionMode.ts:resolveAskerMessageTransport": {
+   "summary": "Determines which transport (enquiry/matrix/blocked/other) an asker's message submission should use.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/messageEncryptionMode.ts:sendEncryptedInitialEnquiry": {
+   "summary": "Sends the first encrypted Matrix enquiry message and finalizes it, retrying idempotently via a cached pending event id.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/messageEncryptionMode.ts:dispatchAskerMessageTransport": {
+   "summary": "Dispatches the message send through the resolved transport (enquiry/matrix/blocked) calling the matching handler.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/messageEncryptionMode.ts:createEnquirySubmissionGuard": {
+   "summary": "Creates a guard preventing a second concurrent enquiry submission from starting while one is in flight.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/messageEncryptionMode.ts:isAskerEnquirySubmission": {
+   "summary": "Determines whether the current submission context counts as an asker's initial enquiry.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/notificationsCenter/NotificationsCenter.tsx": {
+   "summary": "Very large (1381 lines) Activity Timeline panel: renders event feed with family filters (Requests/Messages/Drafts/Handover/Calls/System/Appointments), resolves per-event action targets, hydrates Matrix-based previews.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/notificationsCenter/NotificationsCenter.tsx:NotificationsCenter": {
+   "summary": "Renders and drives the Activity Timeline: feed filtering, item descriptions, navigation, and inline handover consent actions.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/notificationsCenter/NotificationsCenter.tsx:resolveItemCategory": {
+   "summary": "Resolves a timeline item's event family/category for filtering and icon selection.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/notificationsCenter/NotificationsCenter.tsx:describeItem": {
+   "summary": "Builds the rendered description strings for a timeline item via renderEventStrings.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/notificationsCenter/NotificationsCenter.tsx:resolveSessionId": {
+   "summary": "Extracts the target session id from a timeline event's params.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/notificationsCenter/NotificationsCenter.tsx:resolveRoomId": {
+   "summary": "Extracts the target Matrix room id from a timeline event's params.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/notificationsCenter/eventDescriptors/registry.ts": {
+   "summary": "Pure event-type→descriptor registry for the Activity Timeline (WP-06 Slice 0a): seeds the 6 live event types plus placeholders for future families (Requests/Messages/Drafts/Handover/Calls/System).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/notificationsCenter/eventDescriptors/registry.ts:getEventDescriptor": {
+   "summary": "Looks up the EventDescriptor for a given event_type, falling back to FALLBACK_DESCRIPTOR.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/notificationsCenter/eventDescriptors/registry.ts:isKnownEventType": {
+   "summary": "Checks whether an event_type has a registered descriptor.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/notificationsCenter/eventDescriptors/registry.ts:buildConversationPath": {
+   "summary": "Builds the conversation route path from event params (explicit actionPath, sourceSessionId, or seriesId).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/notificationsCenter/eventDescriptors/registry.ts:familyLabelKey": {
+   "summary": "Returns the i18n key for an event family's filter-chip label.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/sessionCookie/accessSessionCookie.ts": {
+   "summary": "Cookie helpers with SameSite=Strict (+secure on https) written client-side since they can't be HttpOnly (FE-H01); keycloak/refreshToken values also mirrored into localStorage as a fallback storage layer.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionCookie/accessSessionCookie.ts:setValueInCookie": {
+   "summary": "Writes a cookie value with SameSite=Strict security attributes (+secure on https).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionCookie/accessSessionCookie.ts:getValueFromCookie": {
+   "summary": "Reads a named cookie's value, tolerating a malformed cookie jar.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionCookie/accessSessionCookie.ts:removeAllCookies": {
+   "summary": "Deletes all known auth cookies except any in the given allowlist.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionCookie/accessSessionCookie.ts:readCookieValue": {
+   "summary": "Decodes and parses the cookie jar to find one value, tolerating decode errors from stray '%' characters.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/emails/kit/emailMolecules.ts": {
+   "summary": "Mid-level email building blocks (atoms + padding as full <tr> rows): header bar, title group, body prose, data panel, code panel, call-to-action button, secondary action, footnote, assurance line.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/emails/kit/emailMolecules.ts:emailProse": {
+   "summary": "Renders a list of paragraphs as email body copy, with a larger gap after the final paragraph.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/emails/kit/emailMolecules.ts:emailDataPanel": {
+   "summary": "Renders a tinted label/value data panel (e.g. appointment details) from EmailDataRow entries.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/emails/kit/emailMolecules.ts:emailCallToAction": {
+   "summary": "Renders the email's single primary call-to-action button block.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/emails/kit/emailMolecules.ts:emailFooter": {
+   "summary": "Renders the email footer with configurable links and separator.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/message/messageNameUtils.ts": {
+   "summary": "Normalizes Matrix-style identifiers (@user:server, email-style) into human-readable display names (turns 'free_bee_frankie_821' into 'free bee frankie'), preferring real first/last name over Matrix display name over username.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/message/messageNameUtils.ts:formatMessagePersonName": {
+   "summary": "Formats the display name to show for a message's sender given all available name sources.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/message/messageNameUtils.ts:resolvePreferredName": {
+   "summary": "Picks the best available name (real name > display name > username), humanizing technical identifiers.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/message/messageNameUtils.ts:humanizeTechnicalName": {
+   "summary": "Converts an underscore/dot-separated technical username into a readable space-separated name, dropping trailing numeric ids.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/message/messageNameUtils.ts:getMessagePersonInitials": {
+   "summary": "Derives display initials for a message sender's avatar.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/message/messageNameUtils.ts:resolveIncomingConsultantNameForAsker": {
+   "summary": "Resolves the consultant's display name as it should appear to an asker in an incoming message.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/messageSubmitInterface/messageSubmitInterfaceComponent.tsx": {
+   "summary": "Enormous (4579 lines) chat composer container: TipTap-based rich text, attachments, emoji picker, audience/recipient selection, encrypted send via chatTransportService/matrixClientService, resizable height, drag handle.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/messageSubmitInterfaceComponent.tsx:MessageSubmitInterfaceComponent": {
+   "summary": "Renders and drives the full chat message composer: text input, attachments, audience selection, and send dispatch across enquiry/Matrix transports.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/messageSubmitInterfaceComponent.tsx:getPlainTextFromComposerValue": {
+   "summary": "Extracts plain text from the composer's TipTap HTML value.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/pseudonym/BreathingTutorialCard.tsx": {
+   "summary": "Waiting-room breathing-exercise tutorial card with a terminal-style typewriter effect for Carimat bubble text, phase icons (inhale/hold/exhale), and confirm/cancel controls.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/pseudonym/BreathingTutorialCard.tsx:BreathingTutorialCard": {
+   "summary": "Renders the breathing-exercise tutorial card with phase-specific icon and typewriter instructions.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/pseudonym/BreathingTutorialCard.tsx:TerminalTypewriter": {
+   "summary": "Reveals text character-by-character with randomized delay and a blinking cursor.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/registration/registrationDesign/registrationDesign.ts": {
+   "summary": "Registration UI design tokens/assets: M3 color/motion constants, topic category icon imports (PNG assets per Fachbereich), and helpers building topic presentation groups/icons/display names for the registration wizard.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/registration/registrationDesign/registrationDesign.ts:getRegistrationTopicDisplay": {
+   "summary": "Resolves the display name/label for a registration topic in the current locale.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/registration/registrationDesign/registrationDesign.ts:buildRegistrationTopicPresentationGroups": {
+   "summary": "Groups registration topics into category presentation groups with icons for the topic-selection UI.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/registration/registrationDesign/registrationDesign.ts:getRegistrationTopicIcon": {
+   "summary": "Resolves the icon asset for a specific registration topic.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/registration/registrationDesign/registrationDesign.ts:getRegistrationCategoryIcon": {
+   "summary": "Resolves the icon asset for a topic category by index or group id.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/sessionsList/SessionsListToolbar.tsx": {
+   "summary": "Session-list toolbar: search field with people/type/counselling-centre tabs (SessionSearchPanel), filter chips (unread/drafts/nearby/liveChat/internalGroup/groups/supervision/archive).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionsList/SessionsListToolbar.tsx:SessionsListToolbar": {
+   "summary": "Renders the sessions-list search bar, filter chips, and create-chat actions.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionsList/SessionsListToolbar.tsx:buildArchiveTabPath": {
+   "summary": "Builds the route path for the archive tab of the sessions list.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionsList/SessionsListToolbar.tsx:buildCreateGroupChatPath": {
+   "summary": "Builds the route path for creating a new group chat, preserving the session-list tab query.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/apiMatrixSettingsPublic.ts": {
+   "summary": "Compatibility shim exposing legacy Rocket.Chat-style public settings (E2E_Enable, message size limits, delete permissions) derived from apiServerSettings/ServerAppConfigInterface for a Matrix deployment.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiMatrixSettingsPublic.ts:apiMatrixSettingsPublic": {
+   "summary": "Builds the legacy public-settings response shape from current server app config, merging with fallback defaults.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiMatrixSettingsPublic.ts:resolveE2eEnabled": {
+   "summary": "Determines the effective E2E_Enable setting value from server config.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiMatrixSettingsPublic.ts:getFallbackPublicSettings": {
+   "summary": "Returns the hard-coded default public-settings list used when server config can't supply a value.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/groupChat/createChatHelpers.ts": {
+   "summary": "Builders/validators for the group-chat creation/edit form: assembles the API request payload (repetitive/chatInterval logic, trimmed rule translations), validates topic length, and builds edit drafts from an existing series.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/groupChat/createChatHelpers.ts:buildGroupChatSeriesRequest": {
+   "summary": "Builds the API payload for creating a recurring/one-off group-chat series from form values.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/groupChat/createChatHelpers.ts:isGroupChatFeatureEnabled": {
+   "summary": "Checks the tenant's featureGroupChatV2Enabled flag.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/groupChat/createChatHelpers.ts:buildGroupChatEditDraft": {
+   "summary": "Builds an editable draft form value from an existing group-chat series for the edit dialog.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/groupChat/createChatHelpers.ts:isGroupChatTopicLengthValid": {
+   "summary": "Validates the group-chat topic text length against TOPIC_LENGTHS bounds.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/sessionsList/SessionSearchPanel.tsx": {
+   "summary": "Search-refinement dropdown attached to the session-list search pill (Figma 'Teamberatung Case Handover' Section 07): People (multi-select), By type (radio), Counselling centre (single-select topic radio).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionsList/SessionSearchPanel.tsx:SessionSearchPanel": {
+   "summary": "Renders the tabbed search-refinement panel (people/type/centre) with archive-only toggle.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/sessionsListItem/CaseHandoverActionButton.tsx": {
+   "summary": "Split-button on a session card for case-handover requests (Figma Section 05 states board): default mode requests access / shows status pill, batch mode toggles multi-select with confirm/deselect actions via a chevron dropdown menu.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionsListItem/CaseHandoverActionButton.tsx:CaseHandoverActionButton": {
+   "summary": "Renders the case-handover split action button in default or batch-selection mode.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/twoFactorAuth/twoFactorSetupFlow.ts": {
+   "summary": "Step-sequence definitions and navigation helpers for the 2FA setup wizard (app vs. email method), plus OTP normalization/validation.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/twoFactorAuth/twoFactorSetupFlow.ts:getSetupSteps": {
+   "summary": "Returns the ordered step list (APP_SETUP_STEPS or EMAIL_SETUP_STEPS) for a chosen 2FA method.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/twoFactorAuth/twoFactorSetupFlow.ts:getNextSetupStep": {
+   "summary": "Returns the next step in the 2FA setup flow given the current step and method.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/twoFactorAuth/twoFactorSetupFlow.ts:isOtpValid": {
+   "summary": "Validates that an OTP string matches the required length/format.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/twoFactorAuth/twoFactorSetupFlow.ts:normalizeOtp": {
+   "summary": "Strips non-digit characters from a raw OTP input.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/emails/kit/emailDialect.ts": {
+   "summary": "Post-processes the kit's rendered HTML/text markup into the three placeholder dialects backend mail senders need: plain {{name}} (UserService SMTP), Thymeleaf [[${name}]] (MailService).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/emails/kit/emailDialect.ts:toEmailDialectHtml": {
+   "summary": "Converts rendered HTML markup's {{placeholders}} into the target dialect's syntax.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/emails/kit/emailDialect.ts:toEmailDialectText": {
+   "summary": "Converts rendered plain-text markup's {{placeholders}} into the target dialect's syntax.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/emails/kit/emailDialect.ts:toThymeleafHtml": {
+   "summary": "Converts {{placeholder}} tokens in HTML to Thymeleaf [[${name}]] tag syntax.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/emails/kit/emailDialect.ts:toFreemarker": {
+   "summary": "Converts {{placeholder}} tokens to FreeMarker ${(name!'')?html} syntax for the Keycloak theme.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/auth/auth.ts": {
+   "summary": "Auth session lifecycle helpers: detects public/invite routes, checks active session validity from stored token expiry, persists Keycloak access/refresh tokens, and schedules proactive token refresh (RENEW_BEFORE_EXPIRY_IN_MS before expiry).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/auth/auth.ts:isPublicAuthRoute": {
+   "summary": "Checks whether the current path is a public auth route (login/registration/invite/error pages) not requiring an active session.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/auth/auth.ts:hasActiveAuthSession": {
+   "summary": "Checks whether the stored access or refresh token expiry is still in the future.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/auth/auth.ts:setTokens": {
+   "summary": "Persists access/refresh tokens into cookies and their expiry timestamps into localStorage.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/auth/auth.ts:handleTokenRefresh": {
+   "summary": "Schedules/performs proactive Keycloak token refresh before expiry, optionally redirecting on failure.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/auth/auth.ts:refreshTokens": {
+   "summary": "Calls refreshKeycloakAccessToken and stores the renewed tokens.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/erstantwort/erstantwortPayload.ts": {
+   "summary": "Frontend half of the ADR-018 Erstantwort wire contract: parses/validates the versioned [SYSTEM_NOTIFICATION] FIRST_RESPONSE JSON payload into typed Bausteine/actions/links, enforcing frozen wording and safe-URL link validation.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/erstantwort/erstantwortPayload.ts:parseErstantwortPayload": {
+   "summary": "Parses and validates a raw FIRST_RESPONSE message body into a typed Erstantwort payload, or an error result on mismatch/higher version.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/erstantwort/erstantwortPayload.ts:isErstantwortMessage": {
+   "summary": "Checks whether a raw message body is a FIRST_RESPONSE system-notification payload.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/erstantwort/erstantwortPayload.ts:isSafeHttpUrl": {
+   "summary": "Validates that a Baustein link URL uses http/https (rejects javascript: etc.).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/erstantwort/erstantwortPayload.ts:normaliseBaustein": {
+   "summary": "Normalizes/validates one raw Baustein entry from the wire payload into its typed shape.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/groupChat/groupChatAuthorContent.ts": {
+   "summary": "Manages the multilingual author-editable content (hint message, rules) for a group-chat series: normalizes language codes, keeps translations in sync with the tenant's active languages, and builds/applies translation-request payloads.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/groupChat/groupChatAuthorContent.ts:syncGroupChatAuthorContentLanguages": {
+   "summary": "Reconciles a draft's source language and per-language translations against the tenant's currently active languages.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/groupChat/groupChatAuthorContent.ts:normalizeGroupChatLanguages": {
+   "summary": "Normalizes and dedupes a list of language codes (lowercase, base subtag only).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/groupChat/groupChatAuthorContent.ts:buildGroupChatAuthorTranslationRequest": {
+   "summary": "Builds the API request payload to translate group-chat author content into other active languages.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/groupChat/groupChatAuthorContent.ts:applyGroupChatAuthorTranslations": {
+   "summary": "Merges a translation API response back into the author-content draft.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/messageSubmitInterface/__storybook__/composerStoryDecorator.tsx": {
+   "summary": "Storybook test-harness decorator for the real MessageSubmitInterfaceComponent: provides mock active session, consultant/supervisor data, a mocked Matrix client, and fetch mocks for audience/consultant endpoints.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/__storybook__/composerStoryDecorator.tsx:buildMockActiveSession": {
+   "summary": "Builds a mock ExtendedSessionInterface for the composer Storybook harness.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/__storybook__/composerStoryDecorator.tsx:buildMockMatrixClientService": {
+   "summary": "Builds a minimal mock MatrixClientService stand-in with given room members for Storybook.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/__storybook__/composerStoryDecorator.tsx:installComposerFetchMocks": {
+   "summary": "Installs fetch mocks returning arrays for audience/consultant endpoints the composer needs in Storybook.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/__storybook__/composerStoryDecorator.tsx:ComposerStoryDecorator": {
+   "summary": "Wraps a composer story with mocked contexts (session, user, Matrix client) and fetch routes.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/mobile/linkMenu/LinkMenu.tsx": {
+   "summary": "Renders a mobile menu of grouped links/items/custom components (profile menu style), using type-guards to discriminate group vs. item vs. component entries.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/mobile/linkMenu/LinkMenu.tsx:LinkMenu": {
+   "summary": "Renders the mobile link-menu list, dispatching each entry to its group/item/component renderer.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/mobile/linkMenu/LinkMenu.tsx:isLinkMenuGroup": {
+   "summary": "Type-guards whether a menu entry is a group (has 'items').",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/mobile/linkMenu/LinkMenu.tsx:isLinkMenuItem": {
+   "summary": "Type-guards whether a menu entry is a plain link item.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:generate-smart-stories.js": {
+   "summary": "Node CLI script that scans core UI components and generates Storybook story files only for actual React components (detected via export/JSX/import heuristics), skipping constants and type-only modules.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:generate-smart-stories.js:isReactComponent": {
+   "summary": "Heuristically detects whether a source file exports a React component (vs. constants/types).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:generate-smart-stories.js:generateStory": {
+   "summary": "Generates a Storybook story file for a detected component.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:generate-smart-stories.js:main": {
+   "summary": "Entry point orchestrating story generation across the CORE_COMPONENTS list.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/app/NavigationBar.tsx": {
+   "summary": "Very large (849 lines) primary app navigation rail: session-type links, live-chat availability toggle, notification status toggle, locale switch, logout, unread indicators, and Budibase tools link.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/app/NavigationBar.tsx:NavigationBar": {
+   "summary": "Renders the main navigation rail with role-aware links, toggles, locale switch, and logout.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/app/NavigationBar.tsx:NavigationUnreadIndicator": {
+   "summary": "Renders the unread-count indicator badge on a nav-rail item.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/app/NavigationBar.tsx:getFigmaRailLabel": {
+   "summary": "Resolves the Figma-spec nav-rail label text for an item, hyphenating as needed.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/app/navigationHandler.ts": {
+   "summary": "DOM-manipulation helpers toggling CSS classes for the mobile list/detail two-pane layout (desktop/mobileListView/mobileDetailView/mobileUserProfileView) and wiring nav-item click handlers.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/app/navigationHandler.ts:desktopView": {
+   "summary": "Removes mobile-inactive CSS classes to restore the desktop two-column layout.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/app/navigationHandler.ts:mobileListView": {
+   "summary": "Applies CSS classes to show the mobile list pane and hide the detail pane.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/app/navigationHandler.ts:mobileDetailView": {
+   "summary": "Applies CSS classes to show the mobile detail pane and hide the list pane.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/app/navigationHandler.ts:initNavigationHandler": {
+   "summary": "Wires click listeners on .navigation__item elements to switch to mobile list view.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/conversationCreate/circle/circleDefaults.ts": {
+   "summary": "Persists (per agency, in localStorage) the last-submitted Gesprächskreis (support circle) settings as defaults for the next circle, seeded with two general rules per active language on first use.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/conversationCreate/circle/circleDefaults.ts:buildInitialAuthorContent": {
+   "summary": "Builds initial author content (hint/rules) for a new circle across the given active languages.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/conversationCreate/circle/circleDefaults.ts:loadCircleDefaults": {
+   "summary": "Loads the last-saved circle defaults for an agency from localStorage.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/conversationCreate/circle/circleDefaults.ts:saveCircleDefaults": {
+   "summary": "Persists the current circle configuration as the new default for an agency.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/conversationCreate/circle/circleDefaults.ts:getGeneralRules": {
+   "summary": "Returns the two default general-conduct rules for a given language, falling back to English.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/devToolbar/DevToolbar.tsx": {
+   "summary": "Developer-only floating toolbar: toggles dev-only settings (E2EE disabled, 2FA overrides, locale, translation-check/cache), shows request logs (requestCollector), draggable position; storage keys re-exported from devToolbarKeys.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/devToolbar/DevToolbar.tsx:DevToolbar": {
+   "summary": "Renders the developer toolbar panel with switches and request log viewer.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/devToolbar/DevToolbar.tsx:useDevToolbar": {
+   "summary": "Hook managing DevToolbar visibility/position state from localStorage.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/devToolbar/DevToolbar.tsx:DevToolbarWrapper": {
+   "summary": "Conditionally mounts the DevToolbar only when enabled for the environment/user.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/groupChat/groupChatCalendar.ts": {
+   "summary": "Builds a neutral (non-personalized) .ics calendar event for a group-chat occurrence, escaping/folding text per RFC 5545, and triggers its browser download.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/groupChat/groupChatCalendar.ts:buildNeutralGroupChatCalendar": {
+   "summary": "Builds an RFC-5545 VEVENT .ics string for a group-chat occurrence from start/duration/title.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/groupChat/groupChatCalendar.ts:downloadNeutralGroupChatIcs": {
+   "summary": "Triggers a browser download of the generated group-chat .ics file.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/groupChat/groupChatCalendar.ts:foldIcsLine": {
+   "summary": "Folds an ICS line to the RFC 5545 75-octet limit.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/messageSubmitInterface/composerMessageSnapshot.ts": {
+   "summary": "Converts the composer's live TipTap HTML into a plain-text snapshot (stripping markup/entities/nbsp/zero-width-space) to decide whether there is real content and whether a failed-send should preserve the composer's text for retry.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/composerMessageSnapshot.ts:stripComposerMarkup": {
+   "summary": "Strips TipTap HTML markup down to plain text, decoding entities and normalizing whitespace.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/composerMessageSnapshot.ts:resolveComposerMessageSnapshot": {
+   "summary": "Resolves the composer's current plain-text snapshot for send/telemetry purposes.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/composerMessageSnapshot.ts:shouldPreserveComposerAfterRetry": {
+   "summary": "Decides whether the composer text should be kept (not cleared) after a failed send, to allow retry.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/composerMessageSnapshot.ts:hasComposerTextContent": {
+   "summary": "Checks whether the composer's HTML value contains any real (non-whitespace) text.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/registration/agencySelection/AgencyDetailsPanel.tsx": {
+   "summary": "Expandable agency-detail panel in registration: address/opening-hours/phone, OpenStreetMap embed + native maps deep-link, language list, and legal links (imprint/privacy) resolved per department/topic.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/registration/agencySelection/AgencyDetailsPanel.tsx:AgencyDetailsPanel": {
+   "summary": "Renders the expandable agency details panel with map, contact info, languages, and legal links.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/registration/agencySelection/AgencyDetailsPanel.tsx:osmEmbedSrc": {
+   "summary": "Builds an OpenStreetMap embed iframe URL from agency lat/lng.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/registration/agencySelection/AgencyDetailsPanel.tsx:nativeNavHref": {
+   "summary": "Builds a platform-appropriate (Apple/Google) native maps navigation deep link.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/globalState/provider/NotificationsProvider.tsx": {
+   "summary": "Large (554 lines) provider for both toast notifications and the event-notification feed: fetches/merges/marks-read server events via apiEventNotifications, plays notification sounds, and resolves event action targets for the timeline.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/globalState/provider/NotificationsProvider.tsx:NotificationsProvider": {
+   "summary": "Provides NotificationsContext: toast notifications plus the server event-notification feed with fetch/merge/mark-read and sound playback.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/globalState/provider/NotificationsProvider.tsx:mergeNotificationFeed": {
+   "summary": "Merges newly fetched event-notification items into the existing feed state, deduping and sorting newest-first.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/globalState/provider/NotificationsProvider.tsx:normalizeEventNotification": {
+   "summary": "Normalizes a raw event-notification API item into the feed's internal shape.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/globalState/provider/NotificationsProvider.tsx:capLocalItems": {
+   "summary": "Caps the number of locally-buffered notification feed items to a fixed limit.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:.design-sync/gen-entry.mjs": {
+   "summary": "Build-tooling script generating .design-sync/ds-entry.ts, the single bundle entry exposing app components as window.OrisoApp for the Figma design-sync converter.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:.design-sync/gen-entry.mjs:isExcluded": {
+   "summary": "Checks whether a module path is in the heavy-dependency exclude list.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:.design-sync/gen-entry.mjs:looksLikeComponentModule": {
+   "summary": "Heuristically determines whether a module is a component (PascalCase name or *Component suffix) vs. a lowercase helper.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:.design-sync/gen-entry.mjs:parseImports": {
+   "summary": "Parses a story file's relative imports to derive which component modules it needs bundled.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:dtsgen.ts": {
+   "summary": "Build-time script generating TypeScript .d.ts DTOs from OpenAPI specs of active ORISO backend services (UserService, AgencyService), fetched from GitHub dev branch (or a local override path).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:dtsgen.ts:fetchSpec": {
+   "summary": "Fetches an OpenAPI spec file from GitHub or a local override path and parses it.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:dtsgen.ts:mergeRefComponents": {
+   "summary": "Merges referenced spec files' components.schemas into the main spec, rewriting cross-file $refs to local pointers.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:dtsgen.ts:rewriteExternalRefs": {
+   "summary": "Rewrites external cross-file $ref pointers in a schema to local in-document pointers.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:generate-professional-stories.js": {
+   "summary": "Node CLI script generating enterprise-style Storybook stories for components, mapping each component's folder to a Storybook category (Forms/Display/Layout/Feedback/etc.) via a hard-coded lookup.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:generate-professional-stories.js:getComponentExport": {
+   "summary": "Extracts the exported component name (named or default) from a source file.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:generate-professional-stories.js:generateStory": {
+   "summary": "Generates a Storybook story file for a component, categorized via CATEGORY_MAP.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:generate-professional-stories.js:main": {
+   "summary": "Entry point driving story generation across all target component directories.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:proxy/routes/api.js": {
+   "summary": "Dev-only Express middleware proxying API calls to a remote backend (REACT_APP_DEV_REMOTE_API_URL etc.) via http-proxy-middleware, rewriting Origin/Referer headers to match a configured remote frontend origin.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:proxy/routes/api.js:resolveRemoteApiTarget": {
+   "summary": "Resolves the remote API proxy target URL from environment variables.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:proxy/routes/api.js:createRemoteProxy": {
+   "summary": "Creates the http-proxy-middleware instance for the remote API target, rewriting Origin/Referer headers.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:proxy/routes/api.js:normalizeTarget": {
+   "summary": "Normalizes a target URL string, defaulting to https:// and trimming trailing slashes.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/apiTwoFactorAuth.ts": {
+   "summary": "API calls managing 2FA setup/state: enabling app-based (TOTP secret+otp) or email-based 2FA, patching the 'encourage 2FA' user flag, validating an email 2FA code, and disabling 2FA.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiTwoFactorAuth.ts:apiPutTwoFactorAuthApp": {
+   "summary": "Enables TOTP app-based 2FA by submitting the secret and a verification OTP.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiTwoFactorAuth.ts:apiPutTwoFactorAuthEmail": {
+   "summary": "Enables email-based 2FA for the given email address.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiTwoFactorAuth.ts:apiPostTwoFactorAuthEmailWithCode": {
+   "summary": "Validates an email 2FA setup code.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiTwoFactorAuth.ts:apiDeleteTwoFactorAuth": {
+   "summary": "Disables 2FA for the current user.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/call/__storybook__/groupCallHarness.tsx": {
+   "summary": "Storybook-only test harness for GroupCallWidget stories: fake Matrix client/room ids, callManager seeding for incoming/connecting/active call states, and a fetch-delay helper to hold the call-token request in flight.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/call/__storybook__/groupCallHarness.tsx:makeFakeMatrixClientService": {
+   "summary": "Builds a minimal fake MatrixClientService for GroupCallWidget stories.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/call/__storybook__/groupCallHarness.tsx:seedIncomingElementCall": {
+   "summary": "Seeds callManager with a fake incoming Element Call for the 'incoming' story state.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/call/__storybook__/groupCallHarness.tsx:GroupCallStoryHarness": {
+   "summary": "Renders GroupCallWidget wrapped with the fake Matrix client context for a given story mode.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/caseHandover/CaseHandoverClientCards.tsx": {
+   "summary": "Client-facing case-handover chat surfaces (Figma 'Chat Room Desktop'): CaseHandoverAcceptedCard (accepted notice + view-conversation action) and CaseHandoverSystemMessageCard.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/caseHandover/CaseHandoverClientCards.tsx:CaseHandoverAcceptedCard": {
+   "summary": "Renders the 'your inquiry has been accepted' card with a view-conversation action.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/caseHandover/CaseHandoverClientCards.tsx:CaseHandoverSystemMessageCard": {
+   "summary": "Renders a case-handover system notice as a standard incoming Carimat message bubble.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/caseHandover/CaseHandoverClientCards.tsx:CaseHandoverConsentCard": {
+   "summary": "Renders the client-facing consent card for opting in/out of a case handover.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/chatMenuDropdown/ChatMenuDropdown.tsx": {
+   "summary": "Reusable dropdown/menu shell primitives (container, header, divider, section, item) used to build chat-related context menus like the case-handover and message flyout menus.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/chatMenuDropdown/ChatMenuDropdown.tsx:ChatMenuDropdownHeader": {
+   "summary": "Renders the dropdown menu's title/subtitle header.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/chatMenuDropdown/ChatMenuDropdown.tsx:ChatMenuDropdownItem": {
+   "summary": "Renders a single selectable dropdown menu item.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/conversationCreate/formatAvailability.ts": {
+   "summary": "Resolves which conversation formats (internal group / self-help circle) a counsellor may create for an agency from tenant settings, falling back to featureGroupChatV2Enabled until dedicated per-format admin flags exist.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/conversationCreate/formatAvailability.ts:getConversationFormatAvailability": {
+   "summary": "Computes which conversation formats (internal/circle) are enabled for a tenant.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/conversationCreate/formatAvailability.ts:getAvailableFormats": {
+   "summary": "Returns the list of available conversation formats from an availability object.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/conversationCreate/formatAvailability.ts:resolveInitialStep": {
+   "summary": "Determines which step (picker/internal/circle) the create-conversation flow should open on.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/dpaSign/DpaSign.tsx": {
+   "summary": "Public one-shot DPA (Datenverarbeitungsvertrag/AVV) signing page reached via token link: shows the AVV text via LegalContentRenderer, collects signer details, and confirms signature via apiConfirmDpaSignature.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/dpaSign/DpaSign.tsx:DpaSign": {
+   "summary": "Renders and drives the DPA-signing form, preview text, and submission flow.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/dpaSign/DpaSign.tsx:resolveErrorKind": {
+   "summary": "Classifies a DPA-sign API error into a known DPA_SIGN_ERRORS kind for display.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/dpaSign/DpaSign.tsx:formatDpaDate": {
+   "summary": "Formats a date for display on the DPA signing page in the selected language.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/draftsCenter/DraftsCenter.tsx": {
+   "summary": "Drafts Center page: lists saved message drafts (apiGetUserDrafts), formats relative time and HTML-to-text previews, deletes drafts, and links back into the originating conversation (embedded-notifications and draft-scope query params.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/draftsCenter/DraftsCenter.tsx:DraftsCenter": {
+   "summary": "Renders and drives the drafts list, deletion, and navigation back to the source conversation.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/draftsCenter/DraftsCenter.tsx:getDraftPreviewText": {
+   "summary": "Converts a draft's HTML content into a trimmed plain-text preview.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/draftsCenter/DraftsCenter.tsx:formatRelativeTime": {
+   "summary": "Formats a timestamp as a short relative time string (now/Xm/Xh/Xd).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/form/OrisoSelect.tsx": {
+   "summary": "M3-styled single/multi-select MUI wrapper components with search filtering support, built on orisoInputDesign tokens.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/form/OrisoSelect.tsx:OrisoSelect": {
+   "summary": "Renders a single-select M3-styled dropdown field.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/form/OrisoSelect.tsx:OrisoMultiSelect": {
+   "summary": "Renders a multi-select M3-styled dropdown field with optional search filtering.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/form/OrisoSelect.tsx:optionMatchesSearch": {
+   "summary": "Checks whether a select option matches the current search text.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/groupChat/groupChatHelpers.ts": {
+   "summary": "Group-chat authorization/visibility helpers: detects V2 group sessions, checks ownership/moderation rights, and decides when the group-chat join view or waiting area should show.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/groupChat/groupChatHelpers.ts:canModerateGroupChat": {
+   "summary": "Checks if the current user is the owner or a moderator of the group chat.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/groupChat/groupChatHelpers.ts:isGroupChatOwner": {
+   "summary": "Checks if the current user is the consultant/owner of the group chat.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/groupChat/groupChatHelpers.ts:getGroupChatWaitingAreaVisibility": {
+   "summary": "Determines whether the group-chat waiting area should be shown for the current join/ban state.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/messageSubmitInterface/inputField/composerResize.ts": {
+   "summary": "Pure math for the composer's manual resize/auto-grow: bounds (max 2/3 viewport height per Figma), auto-grow-to-14-lines calculation, clamping, and step increments; width is never resizable.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/inputField/composerResize.ts:calculateAutoComposerHeight": {
+   "summary": "Computes the composer's auto-grow height from content height/line height, capped to 14 lines.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/inputField/composerResize.ts:getComposerHeightBounds": {
+   "summary": "Computes min/max composer height bounds for the current viewport size.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/inputField/composerResize.ts:clampComposerHeight": {
+   "summary": "Clamps a requested composer height to its min/max bounds.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/inputField/composerResize.ts:stepComposerHeight": {
+   "summary": "Steps the composer height up/down by a fixed increment (keyboard resize).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/messageSubmitInterface/richtextHelpers.ts": {
+   "summary": "Draft.js-based composer helpers: enforces INPUT_MAX_LENGTH (7500 chars), handles pasted text sanitization (multiple sanitize-html option sets), auto-linkifies URLs in plain text.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/richtextHelpers.ts:handleEditorBeforeInput": {
+   "summary": "Draft.js beforeInput handler enforcing the composer's max character length.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/richtextHelpers.ts:handleEditorPastedText": {
+   "summary": "Draft.js paste handler sanitizing and inserting pasted HTML/text content.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/richtextHelpers.ts:urlifyLinksInText": {
+   "summary": "Converts bare URLs in plain text into clickable link markup.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/richtextHelpers.ts:normalizeHighlightColor": {
+   "summary": "Normalizes a highlight-mark color value produced by markdown-to-draft conversion.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/notificationsCenter/notificationActionTarget.ts": {
+   "summary": "Parses and resolves the shared event-notification params contract (#846, pinned identically on ORISO-UserService) into a navigable action path/target for a timeline item.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/notificationsCenter/notificationActionTarget.ts:parseEventActionParams": {
+   "summary": "Parses raw (possibly JSON-string) event params into the typed EventActionParams shape, keeping only known keys.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/notificationsCenter/notificationActionTarget.ts:resolveNotificationActionPath": {
+   "summary": "Resolves the navigation path for a notification event using its descriptor and params.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/notificationsCenter/notificationActionTarget.ts:toInterpolationValues": {
+   "summary": "Converts event params into i18n interpolation values for rendering notification text.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/notificationsCenter/timelineFilter.ts": {
+   "summary": "Pure client-side filter helpers for the Activity Timeline's family chips and search box (ADR-AT-01: no server full-text search), deriving each item's family from the event-descriptor registry.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/notificationsCenter/timelineFilter.ts:filterTimelineItems": {
+   "summary": "Filters a timeline feed by active family, unread-only flag, and search query.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/notificationsCenter/timelineFilter.ts:getFamiliesInFeed": {
+   "summary": "Returns the set of event families actually present in the current feed (for showing only relevant chips).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/notificationsCenter/timelineFilter.ts:familyOf": {
+   "summary": "Resolves an item's event family via the event-descriptor registry.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/notificationsCenter/timelineTime.ts": {
+   "summary": "Locale-aware relative/absolute time formatting for the Activity Timeline (#845) via Intl.RelativeTimeFormat, replacing a prior hardcoded-English formatter; normalizes zone-less server timestamps as UTC.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/notificationsCenter/timelineTime.ts:formatRelativeTime": {
+   "summary": "Formats a timestamp as a locale-aware relative time string (e.g. 'vor 5 Std.') via Intl.RelativeTimeFormat, falling back to an absolute date past a week.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/notificationsCenter/timelineTime.ts:formatAbsoluteTime": {
+   "summary": "Formats a timestamp as a locale-aware absolute date/time string.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/notificationsCenter/timelineTime.ts:normalizeServerTimestamp": {
+   "summary": "Appends a 'Z' UTC suffix to naive (zone-less) server timestamps before parsing.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/sessionCookie/accessSessionLocalStorage.ts": {
+   "summary": "Small localStorage wrapper for auth token expiry timestamps (access/refresh), used to compute active-session validity.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionCookie/accessSessionLocalStorage.ts:setTokenExpiryInLocalStorage": {
+   "summary": "Computes and stores a token's absolute expiry timestamp given its expires-in seconds.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionCookie/accessSessionLocalStorage.ts:getTokenExpiryFromLocalStorage": {
+   "summary": "Reads the stored access/refresh token expiry timestamps.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionCookie/accessSessionLocalStorage.ts:removeTokenExpiryFromLocalStorage": {
+   "summary": "Removes the stored access/refresh token expiry timestamps.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/services/clientStorageHygiene.ts": {
+   "summary": "Shared-PC storage-hygiene sweep (#1071, KDG/DSFA findings): purges legacy plaintext draft storage and app-scoped Web Storage on logout/startup while retaining the pending Tresor recovery key (unrecoverable if dropped).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/clientStorageHygiene.ts:purgeAppWebStorage": {
+   "summary": "Clears all app-scoped Web Storage keys except retained prefixes (pending recovery key/setup lock).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/clientStorageHygiene.ts:purgeLegacyDraftStorage": {
+   "summary": "Removes the legacy plaintext chat-drafts localStorage key left by older builds.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/services/clientStorageHygiene.ts:clearMatrixSsoHandoffCookies": {
+   "summary": "Expires leftover Matrix SSO handoff cookies from a retired Element UI integration.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/apiEventNotifications.ts": {
+   "summary": "API layer for the server-side event-notification feed: fetches paginated notifications, marks one/all read, and clears the feed.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiEventNotifications.ts:apiGetEventNotifications": {
+   "summary": "GETs a page of the event-notification feed.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiEventNotifications.ts:apiMarkEventNotificationRead": {
+   "summary": "PATCHes one notification as read.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiEventNotifications.ts:apiMarkAllEventNotificationsRead": {
+   "summary": "PATCHes all notifications as read.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/apiPostError.ts": {
+   "summary": "Best-effort fire-and-forget client-error reporting (OBS-P3, ORISO-Helm#62): posts message/stack/url/userAgent/severity to endpoints.error, mapping internal error levels to warn/error severity.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiPostError.ts:apiPostError": {
+   "summary": "Reports a client-side error/warning to the backend error endpoint, best-effort.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiPostError.ts:severityFor": {
+   "summary": "Maps an internal error level to the wire severity (error/warn).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/apiUserDrafts.ts": {
+   "summary": "API layer for server-side, room-key-encrypted per-conversation drafts: fetch all, fetch one by scopeKey, upsert, and delete; fetch-all fails soft to an empty list.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiUserDrafts.ts:apiGetUserDrafts": {
+   "summary": "Fetches the user's saved drafts, failing soft to an empty list on error.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiUserDrafts.ts:apiGetUserDraft": {
+   "summary": "Fetches a single draft by scope key.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiUserDrafts.ts:apiUpsertUserDraft": {
+   "summary": "Creates or updates a draft for a scope key.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiUserDrafts.ts:apiDeleteUserDraft": {
+   "summary": "Deletes a draft by scope key.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/auth/consultantLoginBlock.ts": {
+   "summary": "Marks/consumes a session-storage flag when a consultant login is blocked (e.g. wrong app), clears the auth session, and checks whether a JWT belongs to a consultant realm role.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/auth/consultantLoginBlock.ts:isConsultantAccessToken": {
+   "summary": "Checks whether a decoded JWT's realm roles include 'consultant'.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/auth/consultantLoginBlock.ts:clearAuthSession": {
+   "summary": "Clears all cookies and token-expiry localStorage entries.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/auth/consultantLoginBlock.ts:markConsultantLoginBlocked": {
+   "summary": "Sets a sessionStorage flag recording that a consultant login was blocked.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/auth/consultantLoginBlock.ts:consumeConsultantLoginBlocked": {
+   "summary": "Reads and clears the consultant-login-blocked flag, returning whether it was set.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/call/widget/orisoWidgetCapabilities.ts": {
+   "summary": "Exact first-party capability allowlist shared with ORISO-ElementCall's widget mode: room/state/to-device event types and capability strings the embedded call iframe may request.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/call/widget/orisoWidgetCapabilities.ts:isAllowedWidgetCapability": {
+   "summary": "Checks whether a requested widget-API capability string is on the allowlist.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/call/widget/orisoWidgetCapabilities.ts:eventTypeFromCapability": {
+   "summary": "Extracts the Matrix event type from a prefixed widget capability string, stripping any state-key suffix.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/card/index.tsx": {
+   "summary": "Simple presentational Card component with Header/Content/Footer subcomponents attached as static properties.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/card/index.tsx:Card": {
+   "summary": "Renders a card container div with optional className.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/form/OrisoTimePicker.tsx": {
+   "summary": "M3-styled time picker with a custom clock-dial dialog (drag-to-select hour/minute) and text-input fallback, built on dayjs; supports 12/24-hour and a custom trigger render-prop.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/form/OrisoTimePicker.tsx:OrisoTimePicker": {
+   "summary": "Renders the time picker field/trigger and manages the clock-dial dialog.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/form/OrisoTimePicker.tsx:OrisoTimeDial": {
+   "summary": "Renders the interactive circular clock-dial for hour/minute selection.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/localeSwitch/LocaleSwitchPill.tsx": {
+   "summary": "Language-switcher control (pill or compact circle variant) showing each language's endonym (self-name, never translated exonyms) via a curated map + Intl.DisplayNames fallback, plus its ISO code; persists selection to a cookie.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/localeSwitch/LocaleSwitchPill.tsx:LocaleSwitchPill": {
+   "summary": "Renders the language-switcher dropdown pill/circle and applies the selected locale.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/localeSwitch/LocaleSwitchPill.tsx:toEndonym": {
+   "summary": "Resolves a locale's self-name (endonym) via a curated map, then Intl.DisplayNames, then the catalogue label.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/localeSwitch/LocaleSwitchPill.tsx:toIsoLabel": {
+   "summary": "Extracts the uppercase ISO base-language code from a locale string.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/login/LoginSecurityExplainer.tsx": {
+   "summary": "Illustrative security-explainer panel on the login page showing an animated hex-noise 'encrypted wire' visual (never resolving to readable text) to explain Matrix E2EE to the user.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/login/LoginSecurityExplainer.tsx:LoginSecurityExplainer": {
+   "summary": "Renders the login-page security explainer with animated cipher noise and illustrative icons.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/login/LoginSecurityExplainer.tsx:useCipherNoise": {
+   "summary": "Hook producing continuously-randomized hex noise strings for the cipher animation, respecting prefers-reduced-motion.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/message/ReassignMessage.tsx": {
+   "summary": "System-message components for the consultant reassignment flow: request (accept/decline buttons), sent, accepted, and declined states, rendered inline in the chat stream.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/message/ReassignMessage.tsx:ReassignRequestMessage": {
+   "summary": "Renders the reassignment request message with accept/decline buttons.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/message/ReassignMessage.tsx:ReassignRequestAcceptedMessage": {
+   "summary": "Renders the message shown once a reassignment request was accepted.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/message/ReassignMessage.tsx:ReassignRequestDeclinedMessage": {
+   "summary": "Renders the message shown once a reassignment request was declined.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/message/messageStoryShell.tsx": {
+   "summary": "Shared Storybook shell for chat-message stories: standardizes viewport widths matching message.styles.scss's 900px breakpoint, wraps stories with the production provider stack (UserData/ActiveSession/E2EE/ConsultantList/ServerSettings.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/message/messageStoryShell.tsx:MessageStoryShell": {
+   "summary": "Wraps a message story at a fixed viewport width matching the production CSS breakpoints.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/message/messageStoryShell.tsx:MessageContextShell": {
+   "summary": "Wraps a story with the production context-provider stack a message component expects.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/message/messageStoryShell.tsx:withMessageContexts": {
+   "summary": "Storybook decorator function applying MessageContextShell to a story.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/productTour/tourEngine.ts": {
+   "summary": "Pure react-joyride tour helpers: maps app-defined TourStep to Joyride Step config, computes an effective placement (falling back to centered overlay when the target covers ≥85% of the viewport).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/productTour/tourEngine.ts:mapStepsToJoyride": {
+   "summary": "Converts app TourStep definitions into react-joyride Step objects with target selectors.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/productTour/tourEngine.ts:effectivePlacement": {
+   "summary": "Falls back a side/edge tooltip placement to 'center' when the target covers most of the viewport.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/productTour/tourEngine.ts:reduceTourCallback": {
+   "summary": "Reduces a Joyride callback event into the next tour run state (status/stepIndex/run).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/profile/NotificationSettings/NotificationConfigDialog.tsx": {
+   "summary": "Notification-preferences dialog: per notification area/kind, configures sound (with preview/mute), volume (stepped arrows), banner mode, and email toggle; built on notificationConfig model types.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/profile/NotificationSettings/NotificationConfigDialog.tsx:NotificationConfigDialog": {
+   "summary": "Renders the notification-settings dialog wrapper around NotificationConfigView.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/profile/NotificationSettings/NotificationConfigDialog.tsx:NotificationConfigView": {
+   "summary": "Renders the full notification-settings form (per-area/kind rows) and applies changes.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/profile/NotificationSettings/NotificationConfigDialog.tsx:KindRow": {
+   "summary": "Renders one notification-kind row: volume controls, sound dropdown with preview, and email toggle.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/pseudonym/BotMessageAnimation.tsx": {
+   "summary": "Shared Carimat bot animation primitives: TypingDots (bouncing three-dot indicator) and TypewriterText/TypingReveal (character-by-character reveal with jittered delay and blinking cursor), used across onboarding/waiting-room bubbles.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/pseudonym/BotMessageAnimation.tsx:TypingDots": {
+   "summary": "Renders an animated three-dot 'typing...' indicator.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/pseudonym/BotMessageAnimation.tsx:TypewriterText": {
+   "summary": "Reveals text character-by-character with randomized per-character delay, firing onDone when finished.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/pseudonym/BotMessageAnimation.tsx:TypingReveal": {
+   "summary": "Combines TypingDots and TypewriterText into a sequenced typing-then-reveal animation.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/session/getModality.ts": {
+   "summary": "Single source of truth (ADR-006) for a conversation's Modality (AGENCY_COUNSELLING/LIVE_CHAT/INTERNAL_GROUP/SELF_HELP), orthogonal to lifecycle status.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/session/getModality.ts:getModality": {
+   "summary": "Derives the Modality enum value for a conversation item from its session/group-chat data.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/session/getModality.ts:isAnonymousUsername": {
+   "summary": "Checks whether a username matches known anonymous/live-chat handle patterns.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/session/replyQuote.ts": {
+   "summary": "Converts a stored transport-markup message into plain-text reply-quote/preview contexts and rich-text edit context, fixing a bug (#978) where naive tag-stripping left ORISO transport tokens ([VISIBLE_TO:...].",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/session/replyQuote.ts:buildReplyQuoteContext": {
+   "summary": "Builds the composer's 'reply to' context (event id, author, plain-text preview) from a message.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/session/replyQuote.ts:buildReplyQuotePreview": {
+   "summary": "Builds a length-capped plain-text preview of a quoted message for in-bubble display.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/session/replyQuote.ts:buildEditContext": {
+   "summary": "Builds the edit context (event id + rich HTML) for editing a previously sent message.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/sessionMenu/SessionMenu.tsx": {
+   "summary": "Very large (1066 lines) session context-menu: archive/unarchive, leave/stop group chat, start audio/video call (forces 1:1 Matrix WebRTC for non-group sessions), notification settings dialog, legal links.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionMenu/SessionMenu.tsx:SessionMenu": {
+   "summary": "Renders and drives the session's flyout menu with archive/leave/call/notification/legal actions.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionMenu/SessionMenu.tsx:VideoCallHeaderIcon": {
+   "summary": "Renders the video-call icon for the session menu header.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/sessionMenu/SessionMenu.tsx:SessionMenuFlyoutGroup": {
+   "summary": "Renders a grouped section of items within the session flyout menu.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/stage/effects/useStageEffect.ts": {
+   "summary": "Loads and runs the login-page background stage effect (canvas animation) lazily once idle (with a hard timeout backstop since requestIdleCallback isn't guaranteed to fire) and only when visible and viewport ≥900px.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/stage/effects/useStageEffect.ts:useStageEffect": {
+   "summary": "Hook managing the stage effect's lifecycle phase (idle/loading/active/skipped) and loading the effect module lazily.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/stage/effects/useStageEffect.ts:whenIdle": {
+   "summary": "Runs a callback once the browser is idle, with a hard setTimeout backstop since requestIdleCallback isn't always guaranteed.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/stage/effects/useStageEffect.ts:whenOnScreen": {
+   "summary": "Detects when the stage element becomes visible on screen, with a polling fallback.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/stage/lampMap/lampMapGeometry.ts": {
+   "summary": "Geometry/scheduling for the login-page 'lamp map' background effect: a coarse Germany border polygon, a Mercator-like projection, a point-in-polygon grid of lamp dots, and a deterministic (seeded-random) animation schedule.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/stage/lampMap/lampMapGeometry.ts:createProjection": {
+   "summary": "Builds a lon/lat-to-pixel projection function for the map background.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/stage/lampMap/lampMapGeometry.ts:createPointGrid": {
+   "summary": "Generates the grid of lamp points inside Germany's border polygon.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/stage/lampMap/lampMapGeometry.ts:buildSchedule": {
+   "summary": "Builds a deterministic lamp-lighting animation schedule from a seeded random sequence.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/emails/index.ts": {
+   "summary": "Public entry point of the transactional email kit: exposes the content catalogue keyed by locale (de-sie/de-du/en) and email id, and buildEmail() which renders HTML+text via the chosen dialect with brand/placeholder options.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/emails/index.ts:buildEmail": {
+   "summary": "Renders a full email (HTML+text) for a given id/locale/brand/dialect combination.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/emails/index.ts:getEmailContent": {
+   "summary": "Looks up the EmailContent model for a given email id and locale.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/emails/index.ts:fillEmailPlaceholders": {
+   "summary": "Substitutes sample values into an email's {{placeholder}} tokens for preview.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/emails/index.ts:listEmailPlaceholders": {
+   "summary": "Extracts the list of {{placeholder}} tokens present in a rendered email source.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/emails/preview/EmailPreview.tsx": {
+   "summary": "Storybook preview harness rendering full email HTML documents inside a width-simulated iframe (email markup can't render inline: own body/resets/viewport media queries).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/emails/preview/EmailPreview.tsx:EmailPreview": {
+   "summary": "Renders an email document inside a sized iframe with subject/preheader strip.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/emails/preview/EmailPreview.tsx:useFittedFrame": {
+   "summary": "Measures the iframe's rendered content and grows the frame height to fit it.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/emails/preview/EmailPreview.tsx:wrapEmailFragment": {
+   "summary": "Wraps a raw email HTML fragment into a full previewable document.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/features/keyboard-shortcuts/components/KeyboardShortcutsSettings.tsx": {
+   "summary": "Keyboard-shortcuts settings panel: accordion of categories, per-action binding select dropdowns (localized key-name labels), reset-to-default, and save via preferenceStore.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/features/keyboard-shortcuts/components/KeyboardShortcutsSettings.tsx:KeyboardShortcutsSettings": {
+   "summary": "Renders and drives the keyboard-shortcuts settings accordion/form.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/features/keyboard-shortcuts/components/KeyboardShortcutsSettings.tsx:useShortcutLabels": {
+   "summary": "Hook returning localized labels for modifier/special key names.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/features/keyboard-shortcuts/components/KeyboardShortcutsSettings.tsx:toSelectOptions": {
+   "summary": "Builds the select-dropdown option list for a shortcut action's supported bindings.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/features/keyboard-shortcuts/constants/registry.ts": {
+   "summary": "Central registry of all keyboard-shortcut definitions (id, category, default/supported bindings, scope, implemented flag) driving both runtime dispatch and the settings UI.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/features/keyboard-shortcuts/constants/registry.ts:getShortcutDefinition": {
+   "summary": "Looks up a shortcut's definition by action id.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/features/keyboard-shortcuts/constants/registry.ts:getImplementedShortcuts": {
+   "summary": "Returns only the shortcut definitions currently implemented.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/features/keyboard-shortcuts/constants/registry.ts:getSettingsShortcutRows": {
+   "summary": "Returns the shortcut definitions to display as rows in the settings UI.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/features/keyboard-shortcuts/constants/registry.ts:isSupportedBinding": {
+   "summary": "Checks whether a given binding is in a shortcut's list of supported bindings.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/globalState/provider/ConsultingTypesProvider.tsx": {
+   "summary": "Context provider holding the loaded list of consulting types; useConsultingTypes/useConsultingType throw if accessed before the provider initializes or for an unknown id.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/globalState/provider/ConsultingTypesProvider.tsx:ConsultingTypesProvider": {
+   "summary": "Provides ConsultingTypesContext (list + setter) to the app.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/globalState/provider/ConsultingTypesProvider.tsx:useConsultingTypes": {
+   "summary": "Returns the loaded consulting types list, throwing if the provider isn't initialized.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/globalState/provider/ConsultingTypesProvider.tsx:getConsultingType": {
+   "summary": "Looks up a consulting type by id, throwing if not found.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/globalState/provider/TopicsProvider.tsx": {
+   "summary": "Context provider fetching and holding the topics list (apiGetTopicsData), refetching when the locale changes; useTopics/useTopic throw if accessed before initialization or for an unknown id.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/globalState/provider/TopicsProvider.tsx:TopicsProvider": {
+   "summary": "Fetches and provides the topics list, refreshing on locale change.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/globalState/provider/TopicsProvider.tsx:getTopics": {
+   "summary": "Looks up a topic by id, throwing if not found.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/globalState/provider/TopicsProvider.tsx:useTopics": {
+   "summary": "Returns the loaded topics list, throwing if the provider isn't initialized.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:.design-sync/overrides/story-imports.mjs": {
+   "summary": "Forked build-tooling module controlling how Storybook story files resolve imports for the design-sync preview compiler: routes package/component imports to the shipped window.<GLOBAL> bundle (preserving React context identity).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:.design-sync/overrides/story-imports.mjs:storyImportPlugins": {
+   "summary": "Builds the esbuild plugin/loader set implementing the story-import resolution rules (package shim, component redirect, SCSS/SVG loaders).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:.design-sync/overrides/story-imports.mjs:exportedComponentFor": {
+   "summary": "Resolves whether an import path resolves to an exported component's module, returning its export name.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/apiDoNotDisturb.ts": {
+   "summary": "Fetches/sets the global cross-device Do-Not-Disturb window (UserService), which also gates notification emails; the frontend mirrors it to silence toast/sound/push while active.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiDoNotDisturb.ts:apiGetDoNotDisturb": {
+   "summary": "GETs the current Do-Not-Disturb window (dndUntil).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiDoNotDisturb.ts:apiSetDoNotDisturb": {
+   "summary": "PUTs a new Do-Not-Disturb window.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/apiGetAgencyConsultantList.ts": {
+   "summary": "Fetches consultant lists (per-agency and tenant-wide) with a throwing variant (#993) so callers can distinguish 'no other consultants' from 'request rejected' when the caller lacks VIEW_AGENCY_CONSULTANTS authority.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiGetAgencyConsultantList.ts:fetchAgencyConsultantList": {
+   "summary": "Throwing GET of an agency's consultant list, letting callers distinguish empty from denied.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiGetAgencyConsultantList.ts:apiGetAgencyConsultantList": {
+   "summary": "GETs an agency's consultant list, swallowing errors into an empty array.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiGetAgencyConsultantList.ts:apiGetTenantConsultantList": {
+   "summary": "GETs the tenant-wide consultant list for group-chat creation, swallowing errors to empty.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/apiGroupChatRoles.ts": {
+   "summary": "API calls managing group-chat participant roles: change a participant's role, transfer ownership, and remove a participant.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiGroupChatRoles.ts:apiChangeGroupChatParticipantRole": {
+   "summary": "PUTs a new role (OWNER/CO_MODERATOR/PARTICIPANT) for a group-chat participant.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiGroupChatRoles.ts:apiTransferGroupChatOwnership": {
+   "summary": "POSTs an ownership transfer to another consultant.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiGroupChatRoles.ts:apiRemoveGroupChatParticipant": {
+   "summary": "DELETEs a participant from a group-chat series.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/apiGroupChatSettings.ts": {
+   "summary": "Creates/updates group-chat series settings, routing to the V1 or V2 create endpoint based on the featureGroupChatV2Enabled client-routing flag (stripped from the actual payload).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiGroupChatSettings.ts:apiCreateGroupChat": {
+   "summary": "Creates a group-chat series via the V1 or V2 endpoint depending on the feature flag.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiGroupChatSettings.ts:apiUpdateGroupChat": {
+   "summary": "Updates an existing group-chat series's settings.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiGroupChatSettings.ts:groupChatPayload": {
+   "summary": "Strips the client-only routing flag from the group-chat settings before sending to the API.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/apiSetLiveChatAvailability.ts": {
+   "summary": "Sets/gets/heartbeats a consultant's Redis-backed live-chat availability; the set call's promise rejects on unacknowledged writes so callers must not optimistically show the new state.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiSetLiveChatAvailability.ts:apiSetLiveChatAvailability": {
+   "summary": "PUTs the consultant's live-chat availability flag.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiSetLiveChatAvailability.ts:apiGetLiveChatAvailability": {
+   "summary": "GETs the consultant's current live-chat availability.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiSetLiveChatAvailability.ts:apiHeartbeatLiveChatAvailability": {
+   "summary": "POSTs a heartbeat refreshing the availability lease; can never enable availability on its own.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/api/apiTeamDiscussion.ts": {
+   "summary": "API for the Team-Besprechung feature (FE#514/ADR-016): a per-enquiry Matrix room the advice seeker is never a member of; GET returns null when none exists yet, open lazily creates and joins it.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiTeamDiscussion.ts:apiGetTeamDiscussion": {
+   "summary": "Fetches the existing team-discussion room for a session, or null if none exists.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/api/apiTeamDiscussion.ts:apiOpenTeamDiscussion": {
+   "summary": "Opens (lazily creating) the team-discussion room and joins the caller.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/animatedIllustration/AnimatedIllustration.tsx": {
+   "summary": "Lottie-based success illustration component enforcing the product-wide playback policy (0.5x speed, play-once, no loop) with static SVG fallback on reduced-motion, and theme-aware recoloring via CSS custom properties.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/animatedIllustration/AnimatedIllustration.tsx:AnimatedIllustration": {
+   "summary": "Renders a Lottie animation (or static fallback under reduced-motion) recolored to the current theme.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/animatedIllustration/AnimatedIllustration.tsx:CheckAnimation": {
+   "summary": "Preset AnimatedIllustration for the success-checkmark animation.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/animatedIllustration/AnimatedIllustration.tsx:EmailSentAnimation": {
+   "summary": "Preset AnimatedIllustration for the email-sent confirmation animation.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/app/PreConditions.tsx": {
+   "summary": "Gate rendered before the app boots when a hard prerequisite (currently: sessionStorage/cookies usable) is missing, polling every 2s; contains leftover commented debug console.log.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/app/PreConditions.tsx:preConditionsMet": {
+   "summary": "Checks whether sessionStorage (a proxy for cookies enabled) is usable, returning the failed precondition id or null.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/app/PreConditions.tsx:PreConditions": {
+   "summary": "Polls preConditionsMet every 2s and renders a blocking message when a precondition fails.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/buttonGroup/ButtonGroup.tsx": {
+   "summary": "M3 button-group primitive for equally-weighted answer choices (consent messages, Carimat quick guides): primary/tonal/outline variants, stacked/horizontal-flex/horizontal-scroll alignment, optional numbered badges.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/buttonGroup/ButtonGroup.tsx:ButtonGroup": {
+   "summary": "Renders the M3 button-group with configurable variant/alignment and per-item overrides.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/buttonGroup/ButtonGroup.tsx:BoxedDigit": {
+   "summary": "Renders a boxed numbered digit badge in front of a group-item label.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/conversationCreate/internal/InternalChatCreateCard.tsx": {
+   "summary": "Single-screen card creating an internal group chat ('Interna besprechen', Figma 8480-27986): person picker with vacated-staff handling, name field, and a split-button whose state (disabled/outlined/primary) tracks selection.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/conversationCreate/internal/InternalChatCreateCard.tsx:InternalChatCreateCard": {
+   "summary": "Renders the internal-chat creation card with person picker, name field, and create action.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/error/Error.tsx": {
+   "summary": "Public error page (400/401/404/500) reading the status code from a DOM data attribute, applying tenant theming and locale, with a return-to-login button.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/error/Error.tsx:Error": {
+   "summary": "Wraps ErrorContent with AppConfigProvider and LocaleProvider for the standalone error page.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/error/Error.tsx:ErrorContent": {
+   "summary": "Renders the status-code-specific illustration, message, and return-to-login button.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/error/Error.tsx:getStatusCode": {
+   "summary": "Reads the HTTP status code from the #errorRoot DOM element's data attribute.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/erstantwort/erstantwortCatalogue.ts": {
+   "summary": "The platform-owned, fixed ~15-unit Erstantwort Baustein catalogue (ADR-018 §5): ordering/triggers/modality assignment/toggleability are platform-controlled and never Träger-configurable.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/erstantwort/erstantwortCatalogue.ts:catalogueForTrigger": {
+   "summary": "Returns the catalogue Bausteine applicable for a given trigger and modality context.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/erstantwort/erstantwortCatalogue.ts:bausteinById": {
+   "summary": "Looks up a catalogue Baustein entry by its stable id.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/incomingVideoCall/IncomingVideoCall.tsx": {
+   "summary": "Legacy incoming-video-call notification/banner: answer/decline controls, E2EE support check for the call, and caller initials avatar; queries the Matrix client's call-event handler for the pending call.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/incomingVideoCall/IncomingVideoCall.tsx:IncomingVideoCall": {
+   "summary": "Renders the incoming-call notification with answer/decline actions.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/incomingVideoCall/IncomingVideoCall.tsx:isNotificationTypeCall": {
+   "summary": "Type-guards whether a notification is an incoming-video-call notification.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/incomingVideoCall/IncomingVideoCall.tsx:getInitials": {
+   "summary": "Derives up to 3 initials from a caller's display name.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/invite/inviteLinkHelpers.ts": {
+   "summary": "Helpers for redeeming an invite link: builds the destination session URL, applies the returned auth tokens+CSRF token, and performs the redirect.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/invite/inviteLinkHelpers.ts:applyRedeemSessionCredentials": {
+   "summary": "Applies tokens and regenerates the CSRF token from an invite-redeem response.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/invite/inviteLinkHelpers.ts:redirectToInviteSession": {
+   "summary": "Redirects the browser to the redeemed invite session's in-app URL.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/invite/inviteLinkHelpers.ts:buildInviteSessionAppUrl": {
+   "summary": "Builds the in-app session URL for a redeemed invite.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/legalContent/legalHeadingAnchors.ts": {
+   "summary": "Stamps chapter-navigation anchor ids onto already-sanitized legal-text HTML headings after render (ids in authored HTML are stripped by the sanitizer's allowlist).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/legalContent/legalHeadingAnchors.ts:stampHeadingAnchors": {
+   "summary": "Walks rendered legal-text headings and assigns stable slug ids for chapter navigation.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/legalContent/legalHeadingAnchors.ts:slugifyAnchorId": {
+   "summary": "Slugifies heading text into a URL-safe anchor id matching the Admin's slugifyAnchorId vocabulary.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/legalContent/legalHeadingAnchors.ts:truncateAnchorChipLabel": {
+   "summary": "Truncates a chapter chip's label to 33 chars on a word boundary near the end.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/legalLinks/LegalLinkModal.tsx": {
+   "summary": "Dialog rendering an operator-authored legal text (imprint/privacy) and nothing else — fixed a prior hardcoded English fallback that named a nonexistent operator.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/legalLinks/LegalLinkModal.tsx:LegalLinkModal": {
+   "summary": "Loads and renders the scoped legal text (tenant/platform/agency) inside the shared M3 dialog.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/legalLinks/LegalLinkModal.tsx:getInternalPath": {
+   "summary": "Extracts an internal route path from a legal-link URL if it's same-origin.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/logout/logout.ts": {
+   "summary": "Central logout orchestration: drops live-chat availability while the token is still valid, calls Keycloak/Calcom/Budibase logout, purges app Web Storage and legacy Matrix localStorage keys, resets the Matrix client registry.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/logout/logout.ts:logout": {
+   "summary": "Orchestrates the full logout sequence: availability drop, backend logout calls, storage purge, Matrix client reset, redirect.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/logout/logout.ts:invalidateCookies": {
+   "summary": "Clears all auth cookies and token expiry as part of logout.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/logout/logout.ts:redirectAfterLogout": {
+   "summary": "Redirects the browser to the login page (or a given URL) after logout completes.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/messageSubmitInterface/composerTransportEncoding.ts": {
+   "summary": "Encodes composer HTML (highlight <mark> colors, block text-align) into custom [[hl:#rrggbb]]/[[align:center]] transport tokens before send, since markdown conversion downstream drops <mark> and inline text-align.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/composerTransportEncoding.ts:composerHtmlToTransportMarkup": {
+   "summary": "Applies both highlight-color and alignment encoding to composer HTML before sending.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/composerTransportEncoding.ts:encodeHighlightColorsForTransport": {
+   "summary": "Converts <mark> highlight spans into [[hl:color]]...[[/hl]] transport tokens.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/composerTransportEncoding.ts:encodeAlignmentForTransport": {
+   "summary": "Converts block text-align styling into [[align:x]]...[[/align]] transport tokens.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/messageSubmitInterface/transportMarkupToComposerHtml.ts": {
+   "summary": "Inverse of composerTransportEncoding: strips ORISO message prefixes and rehydrates [[align:]]/[[hl:]] transport tokens back into TipTap-ready HTML for editing/quoting a stored message.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/transportMarkupToComposerHtml.ts:transportMarkupToComposerHtml": {
+   "summary": "Converts a stored transport-markup message body back into TipTap-editable HTML.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/messageSubmitInterface/transportMarkupToComposerHtml.ts:applyAlignToInnerHtml": {
+   "summary": "Applies text-align styling back onto inner HTML when rehydrating an [[align:]] token.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/productTour/TourOverviewCarousel.tsx": {
+   "summary": "Profile page's tutorial overview: lists available product tours with versioned per-user progress and a Start/Continue/Restart action per tour; strips inline HTML markup from shared tooltip copy so the compact card never renders raw tags.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/productTour/TourOverviewCarousel.tsx:TourOverviewCarousel": {
+   "summary": "Renders the list of available tours with progress state and start/continue/restart actions.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/productTour/TourOverviewCarousel.tsx:actionForStatus": {
+   "summary": "Maps a tour's progress status to the appropriate start mode (start/continue/restart).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/productTour/TourOverviewCarousel.tsx:toPlainText": {
+   "summary": "Strips HTML tags from tour copy so the compact card never renders raw markup.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/profile/Profile.tsx": {
+   "summary": "Profile section shell (large, 581 lines): routed sub-pages (profile.routes), mobile link-menu vs. desktop tab layout, logout action, legal links, and first-visit tour trigger.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/profile/Profile.tsx:Profile": {
+   "summary": "Renders the profile section's navigation (tabs or mobile link-menu) and routed content.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/profile/Profile.tsx:ProfileItem": {
+   "summary": "Renders a single profile navigation item/link.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/profile/Profile.tsx:ProfileGroup": {
+   "summary": "Renders a grouped section of profile navigation items.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/profile/profileHelpers.ts": {
+   "summary": "Small profile-page utility helpers: converts a nested user-data object into a displayable array, resolves the i18n translation base key by consulting type, and dedupes array values.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/profile/profileHelpers.ts:convertUserDataObjectToArray": {
+   "summary": "Recursively converts a user-data object into an array of {type, value} entries for display.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/profile/profileHelpers.ts:getUserDataTranslateBase": {
+   "summary": "Resolves the i18n key prefix (Addiction vs U25) for a consulting type.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/profile/profileHelpers.ts:isUniqueLanguage": {
+   "summary": "Array filter predicate deduping a list of language values.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/pseudonym/ConsultantAcceptedActionBar.tsx": {
+   "summary": "Action bar shown once a counsellor accepts an anonymous enquiry (Figma StandardButtonGroup): a dismiss pill and a 'start chat now' button pointing the asker toward the composer.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/pseudonym/ConsultantAcceptedActionBar.tsx:ConsultantAcceptedActionBar": {
+   "summary": "Renders the dismiss/start-chat action bar shown after a counsellor accepts the enquiry.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/pseudonym/WaitingQueueActionBar.tsx": {
+   "summary": "Action bar for the anonymous live-chat waiting queue: queue-position counter, 'calm companion' breathing-game entry, mail-counselling request, and leave-queue action (opening a stay/start/give-up dialog, #893).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/pseudonym/WaitingQueueActionBar.tsx:WaitingQueueActionBar": {
+   "summary": "Renders the waiting-queue action bar with position counter and calm-companion/mail/leave actions.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/pseudonym/WaitingQueueActionBar.tsx:QueueStatus": {
+   "summary": "Renders the queue-position status text/counter.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/components/registration/accountData/accountDataDraft.ts": {
+   "summary": "In-memory-only (never session/localStorage, including password) module-level draft of the registration account-data step, so back/forward navigation in the stepper preserves typed values including the accepted-consent binding key.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/registration/accountData/accountDataDraft.ts:getAccountDataDraft": {
+   "summary": "Returns the current in-memory account-data draft, or null.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/registration/accountData/accountDataDraft.ts:setAccountDataDraft": {
+   "summary": "Stores the account-data draft in memory.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/components/registration/accountData/accountDataDraft.ts:clearAccountDataDraft": {
+   "summary": "Clears the in-memory account-data draft.",
+   "tags": [
+    "described"
+   ]
+  }
+ }
+}

@@ -1,0 +1,139 @@
+{
+  "tour": [
+    {
+      "order": 1,
+      "title": "Start here: what the service is",
+      "description": "Read the repository documents first. README.md states what the Agency Service does and how to run it, AGENTS.md carries the working rules for this repository, and CHANGELOG.md is the fastest way to see which subsystems moved recently. AgencyServiceApplication is the Spring Boot entry point.",
+      "nodeIds": [
+        "document:README.md",
+        "document:AGENTS.md",
+        "document:CHANGELOG.md",
+        "file:src/main/java/de/caritas/cob/agencyservice/AgencyServiceApplication.java"
+      ]
+    },
+    {
+      "order": 2,
+      "title": "The core entity: Agency",
+      "description": "Agency is the master record: name, description, address and contact, geo coordinates, opening hours, consulting type, offline and delete flags. AgencyRepository is the plain data access port, while the tenant-aware and tenant-unaware variants exist so the same query can be run with or without tenant scoping.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/agencyservice/api/repository/agency/Agency.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/repository/agency/AgencyRepository.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/repository/agency/AgencyTenantAwareRepository.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/repository/agency/AgencyTenantUnawareRepository.java"
+      ]
+    },
+    {
+      "order": 3,
+      "title": "Departments are agency x topic",
+      "description": "AgencyTopic is the join entity that the product calls a department. It has its own publication status, details, imprint and data protection content. AgencyTopicMergeService reconciles the topic list an admin submits with the rows that already exist instead of deleting and recreating them.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/agencyservice/api/repository/agencytopic/AgencyTopic.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/repository/agencytopic/PublicationStatus.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyTopicMergeService.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyTopicEnrichmentService.java"
+      ]
+    },
+    {
+      "order": 4,
+      "title": "The public API and agency search",
+      "description": "AgencyController is the small public surface: list agencies, list by tenant, by ids, by consulting type, plus department legal texts. AgencyService holds the matching logic, building an AgencySearch from postcode, consulting type, topic, age and gender and choosing the repository that fits the tenancy mode.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/agencyservice/api/controller/AgencyController.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/service/AgencyService.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/service/AgencySearch.java",
+        "endpoint:api/agencyservice.yaml:GET /agencies"
+      ]
+    },
+    {
+      "order": 5,
+      "title": "Catchment areas: postcode ranges",
+      "description": "Which agency serves which postcode is expressed as AgencyPostcodeRange rows. The admin service creates, updates and deletes them, PostcodeRangeTransformer parses admin input and PostcodeRangeValidator enforces the range rules that agency search later depends on.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/agencyservice/api/repository/agencypostcoderange/AgencyPostcodeRange.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/AgencyPostcodeRangeAdminService.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agencypostcoderange/PostcodeRangeValidator.java",
+        "endpoint:api/agencyadminservice.yaml:POST /agencyadmin/postcoderanges/{agencyId}"
+      ]
+    },
+    {
+      "order": 6,
+      "title": "The admin surface",
+      "description": "AgencyAdminController serves the whole /agencyadmin tree and is by far the widest controller in the repository. AgencyAdminService performs create, update, merge, changetype and delete, and AgencyAdminSearchService builds the predicate-based paged search that the admin panel lists agencies with.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/agencyservice/api/admin/controller/AgencyAdminController.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/AgencyAdminService.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/agency/AgencyAdminSearchService.java",
+        "endpoint:api/agencyadminservice.yaml:GET /agencyadmin/agencies"
+      ]
+    },
+    {
+      "order": 7,
+      "title": "Validation before every write",
+      "description": "AgencyValidator dispatches to the ConcreteAgencyValidator implementations, annotated for create or update. Each one owns a single rule: consulting type, postcode, demographics, offline status, tenant and update permission. DeleteAgencyValidator guards deletion separately.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/agencyservice/api/admin/validation/AgencyValidator.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/ConcreteAgencyValidator.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/AgencyPostcodeValidator.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/admin/validation/DeleteAgencyValidator.java"
+      ]
+    },
+    {
+      "order": 8,
+      "title": "Legal texts and their inheritance chain",
+      "description": "LegalText and LegalTextVersion store the editable record and its immutable published snapshots, distinguished by kind and level. LegalTextInheritanceResolver decides which text applies to a department by walking department, then agency, then the tenant chain, and reports which level won.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/agencyservice/api/repository/legaltext/LegalText.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/repository/legaltext/LegalTextVersion.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/service/legal/LegalTextInheritanceResolver.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/service/legal/LegalTextSourceLevel.java"
+      ]
+    },
+    {
+      "order": 9,
+      "title": "Editing, sanitizing and publishing legal content",
+      "description": "LegalTextAdminService owns the admin lifecycle of a legal text and records a version whenever a text is published. LegalContentSanitizer cleans the incoming rich text per language, LegalTextTokens restores the placeholder tokens the sanitizer would otherwise destroy, and ConsentTextService additionally insists on the mandatory tokens.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/LegalTextAdminService.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/LegalContentSanitizer.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/LegalTextTokens.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/ConsentTextService.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/LegalTextVersionService.java"
+      ]
+    },
+    {
+      "order": 10,
+      "title": "Reading legal text back out publicly",
+      "description": "The public path is deliberately narrow: DepartmentLegalService returns only published content and refuses deleted agencies, DepartmentLegalPublicationState decides what counts as published, and PublicLegalTextRenderer substitutes the server-owned placeholder values so the client never sees raw tokens. CentralDataProtectionTemplateService supplies the platform-level template when a tenant may not override it.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/agencyservice/api/service/DepartmentLegalService.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/service/legal/DepartmentLegalPublicationState.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/service/legal/PublicLegalTextRenderer.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/service/CentralDataProtectionTemplateService.java"
+      ]
+    },
+    {
+      "order": 11,
+      "title": "Multitenancy and authorization",
+      "description": "HttpTenantFilter runs TenantResolverService on every request, which chains the access-token, header, subdomain and technical-user resolvers and cross-validates them before writing TenantContext. TenantHibernateInterceptor applies the tenant to persisted rows; Authority and LegalAdminAccessGuard decide what an admin of a given rank may touch.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/agencyservice/filter/HttpTenantFilter.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/tenant/TenantResolverService.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/service/TenantHibernateInterceptor.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/authorization/Authority.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/admin/service/legal/LegalAdminAccessGuard.java"
+      ]
+    },
+    {
+      "order": 12,
+      "title": "Talking to the neighbours, and cleaning up",
+      "description": "The service calls ConsultingTypeService, TopicService, TenantService and the Appointment Service through generated clients built by the factories in config/apiclient, with RestTemplateConfig attaching the shared headers. The deletion scheduler and AgencyPurgeTransaction close the loop by purging agencies marked for deletion and telling the Appointment Service to drop its copy.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/agencyservice/config/apiclient/ConsultingTypeServiceApiControllerFactory.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/config/resttemplate/RestTemplateConfig.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/service/AppointmentService.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/workflow/DeleteAgenciesMarkedForDeletionScheduler.java",
+        "file:src/main/java/de/caritas/cob/agencyservice/api/workflow/AgencyPurgeTransaction.java"
+      ]
+    }
+  ]
+}
