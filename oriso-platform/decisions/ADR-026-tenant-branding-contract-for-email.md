@@ -10,7 +10,7 @@
   `ORISO-TenantService#269` and `ORISO-UserService#1229` (tenant-pinned logo route, merged
   2026-09-22)
 - **Scope:** which brand values an outgoing mail uses, where they come from, and what happens when
-  they are absent or unusable.
+  they are absent or unusable; the dated addendum below also fixes sender transport ownership.
 
 ---
 
@@ -90,6 +90,53 @@ behind the fallbacks:
 Until the sender identity exists, a recipient sees the right organisation **inside** the mail and the
 wrong one in the `From:` line. That is the single most visible remaining defect of this contract, and
 it is a TenantService change, not an e-mail change.
+
+## Addendum — sender transport and configuration (accepted 2026-09-25)
+
+Frank chose the explicit server mode proposed in
+[ORISO-Frontend#1562](https://github.com/OpenResilienceInitiative/ORISO-Frontend/issues/1562).
+This extends the branding contract to the sender the recipient sees. It supersedes the
+conflicting no-platform-fallback assumption in ORISO-TenantService#240 **only when the
+Träger explicitly uses platform mode**.
+
+1. **The platform server has one owner: deployment configuration.** Its host, port,
+   encryption mode, sender and credentials come from the same deployed configuration for
+   all platform mails, including Keycloak account mails and the Admin test. Admin shows
+   the effective settings read-only; it cannot store a competing platform configuration.
+   Where account access requires mail, installation or startup reports a missing or invalid
+   platform SMTP setting rather than leaving those flows silently unable to send.
+
+2. **Every Träger has an explicit mode.** New Träger use `PLATFORM` by default; they may
+   choose `OWN` and save a complete server configuration. The Admin form never persists
+   displayed platform values as a tenant override. Existing records must be audited before
+   assigning a mode: a complete own configuration can be proposed for `OWN`, while a
+   partial configuration needs an operator-visible correction and must not be silently
+   interpreted as either mode.
+
+3. **Sending obeys the selected mode.** `PLATFORM` dispatches through the platform
+   server with a truthful platform sender and the Träger identified in the display name
+   and reply address where appropriate. `OWN` dispatches through TenantService, which
+   owns and decrypts the tenant credential only at send time. If that configuration is
+   incomplete or delivery fails, the caller reports a failure; it never retries through
+   the platform server. Do not put a Träger-owned domain in `From` while relaying through
+   the platform server.
+
+4. **Public links never acquire a fallback host.** A missing, empty or placeholder
+   public origin fails installation or service startup with the setting named. Neither
+   production nor localhost may be substituted. The optional `OWN` SMTP configuration
+   is validated when selected; its absence does not prevent a `PLATFORM` Träger from
+   using the platform server.
+
+5. **The secret boundary is preserved.** UserService does not read the tenant SMTP
+   password through an end-user-authenticated tenant DTO or cache it. TenantService's
+   internal delivery endpoint remains restricted to the technical identity. The
+   endpoint's current lack of a platform fallback is correct inside `OWN` mode; the
+   mode decision belongs to the orchestration above it.
+
+The addendum is a policy decision, not a claim of implementation or deployment. The
+initial delivery must include two-tenant send tests (platform and own server), sender
+headers, failure/no-fallback checks, and real mailbox readback on Dev. Stage needs a
+separate operator rollout and test.
 
 ## Consequences
 
