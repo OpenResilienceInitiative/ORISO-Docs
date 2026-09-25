@@ -34,7 +34,6 @@ not change.
 - Operators choose the rule without a migration or a code change; turning the switch off
   restores ADR-014 behaviour immediately.
 - Legacy multi-topic agencies stay valid data. Cleaning them up is a manual, deliberate act.
-- AgencyService caches application settings (up to 10 minutes on dev/prod), so enforcement can
-  lag behind the Admin toggle by that long. The Admin picker reads the setting directly.
-- If the settings lookup fails, AgencyService treats the switch as off (fail open) and logs it,
-  so a ConsultingTypeService outage never blocks agency edits.
+- AgencyService caches settings for up to 10 minutes, so server enforcement can lag the toggle.
+  Accepted: the Admin picker enforces it at once; the server check is the backstop.
+- A failed settings lookup counts as off (fail open, logged), so it never blocks agency edits.
