@@ -20,20 +20,20 @@ not change.
    unchanged. The switch is enforced where topics are written (AgencyService agency create and
    update), not in the schema.
 3. **When the switch is on,** an agency may hold at most one topic. A create or update that would
-   leave an agency with more than one topic, including a topic it did not have before, is
-   rejected with `409 Conflict`, reason `ONE_TOPIC_PER_AGENCY`.
-4. **Existing multi-topic agencies are not changed automatically.** They keep their topics, may
-   remove topics and may be saved unchanged, but cannot gain a topic while they hold more than
-   one.
+   leave it with more than one topic, one of them new, gets `409`, reason `ONE_TOPIC_PER_AGENCY`.
+4. **Existing multi-topic agencies are not changed automatically.** They may keep, remove or
+   re-save their topics, but cannot gain a topic while they hold more than one.
 5. **Admin UI:** the switch is a toggle on the Global Settings page. With the switch on, the
    agency topic picker is single-select. An agency that already has several topics shows all of
    them with a notice instead of silently dropping any (disable, don't hide).
 
 ## Consequences
 
-- Operators choose the rule without a migration or a code change; turning the switch off
-  restores ADR-014 behaviour immediately.
+- Operators choose the rule without a migration or a code change. The server applies a toggle
+  within seconds: AgencyService reads the flag uncached on every topic-adding save. Other
+  admins see the new picker mode only after reloading the Admin.
 - Legacy multi-topic agencies stay valid data. Cleaning them up is a manual, deliberate act.
-- AgencyService caches settings for up to 10 minutes, so server enforcement can lag the toggle.
-  Accepted: the Admin picker enforces it at once; the server check is the backstop.
-- A failed settings lookup counts as off (fail open, logged), so it never blocks agency edits.
+- Hard restriction, fail closed: if the settings cannot be read, a save that would add a topic
+  is refused with `503`, reason `SETTINGS_UNAVAILABLE`. Saves that add no topic are unaffected.
+- The counsellor-edit action "add topic at centre B" (ORISO-Admin#1082) is disabled when it
+  would violate the switch.
