@@ -1,6 +1,6 @@
 # ADR-014 Amendment 2026-09-25: platform policy one-topic-per-agency
 
-- **Status:** Proposed — 2026-09-25 (ORISO-UserService#1264, slice C4)
+- **Status:** Accepted — 2026-09-26 by the product owner, on the condition built here: platform admins turn it on or off with a switch in Global Settings (ORISO-UserService#1264, slice C4)
 - **Amends:** `ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent.md`
 - **Related:** ORISO-AgencyService#132 (multi-topic agencies), `ADR-003` decision #3
 
