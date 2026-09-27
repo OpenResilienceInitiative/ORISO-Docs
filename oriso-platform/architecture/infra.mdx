@@ -157,10 +157,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - app.oriso.org
+    - app.example.org
     secretName: frontend-tls
   rules:
-  - host: app.oriso.org
+  - host: app.example.org
     http:
       paths:
       - path: /
@@ -271,7 +271,7 @@ kubectl get all -n caritas
 ### Keycloak
 - **Purpose:** OIDC/OAuth2 authentication
 - **Service:** `oriso-platform-keycloak.caritas.svc.cluster.local:8080`
-- **External URL:** https://auth.oriso.org
+- **External URL:** https://auth.example.org
 - **Realm:** `online-beratung`
 - **Client:** `app`
 
@@ -285,7 +285,7 @@ kubectl get all -n caritas
 ### SignOZ
 - **Purpose:** Observability and APM
 - **Namespace:** `platform`
-- **Access:** http://91.99.219.182:3001
+- **Access:** http://YOUR_SERVER_IP:3001
 - **Components:**
   - SignOZ Backend
   - ClickHouse (time-series DB)
@@ -294,12 +294,12 @@ kubectl get all -n caritas
 ### Health Dashboard
 - **Purpose:** Service health monitoring
 - **Service:** `oriso-platform-health-dashboard`
-- **Access:** http://91.99.219.182:9001
+- **Access:** http://YOUR_SERVER_IP:9001
 - **Checks:** All `/actuator/health` endpoints
 
 ### Status Page
 - **Purpose:** Public status page
-- **URL:** http://status.oriso.site
+- **URL:** http://status.example.org
 
 ## Resource Management
 

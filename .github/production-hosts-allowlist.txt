@@ -1,0 +1,24 @@
+# Files that may name ORISO's own hosts. Checked by .github/scripts/check_production_hosts.py.
+#
+# Everything else must use placeholders (app.example.org, auth.example.org, ...): a generic
+# instruction that names a real host gets copied into another installation's config.
+# Add a file here only when it documents ORISO's own installation, and give the reason.
+# One glob per line; "*" also matches "/". An entry that matches no tracked file fails the check.
+
+# Build output and graph data, regenerated from sources; never edited by hand.
+site/out-docs-domain/*                       # committed static export of the docs site (stale build output)
+.understand-anything/*                       # Understand-Anything graph data produced by the graph pipeline
+
+# The documentation and graph sites themselves (their real public addresses).
+site/README.md                               # how ORISO's own docs site is built and deployed
+site/lib/shared.ts                           # canonical origin of the hosted graph site
+site/scripts/sync-content.mjs                # comment pointing at the hosted DPIA page
+site/content/docs/index.mdx                  # links to the hosted graph site
+oriso-platform/dsfa-analysis/README.md       # link to the published DPIA
+tools/understand-anything/README.md          # ORISO's own graph dashboard host
+tools/understand-anything/provenance/local-guidance-migration.md  # same
+tools/understand-anything/skills/oriso-graph/SKILL.md             # same
+
+# Decision records naming ORISO's own environment-specific Matrix identity (marked in the text).
+oriso-platform/decisions/ADR-005-matrix-federation-off-dns-server-name.md
+oriso-platform/decisions/ADR-012-self-help-group-chat-extend-not-rebuild-future-timeline.md
