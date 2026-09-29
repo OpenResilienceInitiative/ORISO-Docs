@@ -28,23 +28,23 @@ In your DNS provider, create the following A records:
 
 | Subdomain | Points To | Purpose |
 |-----------|-----------|---------|
-| `api.oriso.org` | `$SERVER_IP` | Backend API |
-| `app.oriso.org` | `$SERVER_IP` | Frontend application |
-| `admin.oriso.org` | `$SERVER_IP` | Admin panel |
-| `auth.oriso.org` | `$SERVER_IP` | Keycloak authentication |
-| `matrix.oriso.org` | `$SERVER_IP` | Matrix Synapse |
-| `element.oriso.org` | `$SERVER_IP` | Element.io client (optional) |
-| `status.oriso.site` | `$SERVER_IP` | Status page (optional) |
+| `api.example.org` | `$SERVER_IP` | Backend API |
+| `app.example.org` | `$SERVER_IP` | Frontend application |
+| `admin.example.org` | `$SERVER_IP` | Admin panel |
+| `auth.example.org` | `$SERVER_IP` | Keycloak authentication |
+| `matrix.example.org` | `$SERVER_IP` | Matrix Synapse |
+| `element.example.org` | `$SERVER_IP` | Element.io client (optional) |
+| `status.example.org` | `$SERVER_IP` | Status page (optional) |
 
 <Note>
-Replace `oriso.org` with your actual domain. DNS propagation may take a few minutes to hours.
+`example.org` is a placeholder. Replace it with your own domain (Helm `global.domainName`). DNS propagation may take a few minutes to hours.
 </Note>
 
 <Check>
 Verify DNS resolution:
 ```bash
-dig api.oriso.org
-nslookup app.oriso.org
+dig api.example.org
+nslookup app.example.org
 ```
 Both should return your server IP.
 </Check>
@@ -124,12 +124,12 @@ kubectl get certificate -n caritas
 kubectl describe certificate <cert-name> -n caritas
 
 # Test HTTPS endpoints
-curl -I https://app.oriso.org
-curl -I https://api.oriso.org
-curl -I https://auth.oriso.org
+curl -I https://app.example.org
+curl -I https://api.example.org
+curl -I https://auth.example.org
 
 # Check certificate validity
-echo | openssl s_client -servername app.oriso.org -connect app.oriso.org:443 2>/dev/null | openssl x509 -noout -dates
+echo | openssl s_client -servername app.example.org -connect app.example.org:443 2>/dev/null | openssl x509 -noout -dates
 ```
 
 <Check>
@@ -172,14 +172,14 @@ kubectl get certificaterequest -n caritas
 ### DNS Not Resolving
 ```bash
 # Test DNS resolution
-dig api.oriso.org
-nslookup app.oriso.org
+dig api.example.org
+nslookup app.example.org
 
 # Check DNS propagation
 # Use online tools: https://dnschecker.org
 
 # Verify DNS points to correct IP
-curl -I http://api.oriso.org
+curl -I http://api.example.org
 ```
 
 ### Certificate Not Issued
@@ -195,7 +195,7 @@ kubectl logs -n cert-manager -l app=cert-manager
 kubectl describe clusterissuer letsencrypt-prod
 
 # Verify HTTP-01 challenge
-curl http://api.oriso.org/.well-known/acme-challenge/test
+curl http://api.example.org/.well-known/acme-challenge/test
 ```
 
 ### Certificate Expired
