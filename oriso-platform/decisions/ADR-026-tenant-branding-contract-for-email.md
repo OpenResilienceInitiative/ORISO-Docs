@@ -138,6 +138,33 @@ initial delivery must include two-tenant send tests (platform and own server), s
 headers, failure/no-fallback checks, and real mailbox readback on Dev. Stage needs a
 separate operator rollout and test.
 
+## Amendment — platform SMTP source (accepted 2026-09-29)
+
+Frank and Hassan agreed to replace point 1 of the 2026-09-25 addendum. **Admin Settings /
+ConsultingTypeService is the only persistent runtime source for platform SMTP.** The explicit
+`PLATFORM`/`OWN` tenant modes, own-server secret boundary, and public-URL rule above remain in
+force. Every platform sender, including invitation, DPA, password reset, sign-in link, Admin
+test mail, and Keycloak one-time code, must follow the same saved settings and credential
+rotation. Deployment SMTP values must not override those settings or act as a silent fallback.
+
+A fresh installation is provider-neutral. The chart must not assume ORISO's existing mail
+host, sender address, mailbox, or any particular SMTP product. It may accept a one-time
+bootstrap input only if the first administrator cannot reach Admin Settings without mail;
+that input must initialize the Admin-owned configuration and then cease to be a runtime
+source. Otherwise the installation can start without SMTP, explain what needs configuring,
+and return a named error from mail-dependent operations until the settings are complete.
+The public URL remains a hard installation or startup requirement. Provision the encryption
+key for saved SMTP passwords independently of the choice of mail provider.
+
+Keycloak needs reconciliation when Admin Settings change as well as when it starts; an
+install-only or Helm-upgrade-only job would miss password rotation. Credentials must not be
+written to a chart value, log, process argument, or temporary staging Secret. Reading from
+Admin Settings does not itself change how Keycloak persists its realm SMTP configuration;
+that storage is a separate security concern. Acceptance requires an actual fresh-install
+setup walk-through, all platform mail types and rotation tested against received mail on
+Dev, plus the separate Stage operator gate. Open implementation PRs are not acceptance
+evidence until reviewed, merged, deployed, and verified.
+
 ## Consequences
 
 - Catalogue mails become tenant-branded once decision 1 lands; on `dev` today only invite mails are.
