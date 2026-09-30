@@ -3,6 +3,8 @@
 - **Status:** Accepted — Frank, 2026-09-15
 - **Implementation:** partly on `dev` — decision 4 yes, decision 3 on one path, decisions 1, 2 and 5 not (see Implementation status)
 - **Date:** 2026-09-15 (implementation status re-measured on `dev` 2026-09-22)
+- **Amendment:** 2026-09-30 — Frank chose a separately required legal organisation name
+  for installation; this supersedes the organisation-name fallback in decision 4.
 - **Deciders:** Frank (product) + AI (engineering)
 - **Related:** `ADR-010` (platform-controlled per-tenant appearance allowlist); `ADR-024`
   (notification matrix); `ADR-025` (replacing the upstream mail path); EPIC `ORISO-Frontend#828`;
@@ -54,17 +56,23 @@ Two consequences follow that a web-side branding contract does not have to think
    a conversation to have with them rather than a rule to soften. Text and border colours are
    derived from the accepted colour, never stored separately.
 
-4. **No mail renders with an empty organisation line.** Every value has a working fallback:
-   brand name falls back to the platform name and finally to `ORISO`; imprint and privacy URLs are
-   synthesised from the tenant base URL; the logo may be absent. A missing field degrades the mail,
-   it never blanks it.
+4. **No mail renders with an empty organisation line.** A fresh installation must explicitly
+   configure both its product name and its separate legal organisation name. The legal name is not
+   inferred from the product name or from `ORISO`. Missing values stop installation or mail-theme
+   startup with a named configuration error. Tenant-specific values are resolved through the
+   approved branding contract; a logo may be absent. Public imprint and privacy links still use
+   the validated installation origin. Neither a name nor a public link silently falls back to a
+   different installation's identity.
 
 5. **Branding is resolved fresh per mail, with a short cache.** Tenant data is read through
    `getRestrictedTenantDataFresh` behind a ten-second TTL cache, bounded to 1000 entries, negatives
    cached too. A Träger who changes their logo does not wait for a deployment; a digest batch does
    not hammer TenantService.
 
-## Implementation status (measured on `dev`, 2026-09-22)
+## Historical implementation status (measured on `dev`, 2026-09-22)
+
+The following table records that dated measurement. It predates the 2026-09-30 amendment and
+does not assert today's source, deployment, or received-mail state.
 
 | Decision | State on `dev` |
 |---|---|
