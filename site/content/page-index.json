@@ -258,7 +258,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "docs/platform/dpia-publication.md",
-      "sourceHash": "f0c9ca20dd0b7c8079397c6860f25110d246553112acb572bc4f41f3b1151081",
+      "sourceHash": "cf1df70b2ec9ae6efa8e04f68fc7086633f296354bd24c522c92642f9485fc93",
       "locales": {
         "de": {
           "available": true,
@@ -291,8 +291,8 @@
           }
         }
       },
-      "sourceRevision": null,
-      "sourceState": "working-copy",
+      "sourceRevision": "99a265e9bab7c013ad8a2fd139d9517cd4dd3b84",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     },
     {

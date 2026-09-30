@@ -26,6 +26,8 @@ Entwürfe dürfen erzeugt werden, während Freigaben fehlen. Eine öffentliche A
 
 ## Veröffentlichung und Prüfung
 
+Quellbelege werden mit jedem veröffentlichten Plattform-Release anhand seiner exakten Repository-Versionen und vollständigen Commitliste erneut geprüft. Ein Dev-Merge oder zeitgesteuerter Lauf darf keinen neuen öffentlichen Graphen oder technischen Dokumentationsstand veröffentlichen. Geänderte juristische Aussagen gehen in die Prüfliste; die drei Freigaben binden weiterhin unabhängig die konkrete DSFA-Version.
+
 Historische Veröffentlichungen bleiben unverändert. Eine neue freigegebene Version erhält ihr eigenes Verzeichnis und Inhaltsmanifest. Der aktuelle Verweis wechselt erst, nachdem das neue Artefakt geprüft wurde. Deutsches HTML, englisches HTML und beide PDFs müssen dieselbe freigegebene Version ausweisen.
 
 Vergleiche nach der Aktivierung die tatsächlich öffentlichen Bytes mit dem geprüften Manifest. Prüfe Kapitellinks, Sprachwechsel und PDF-Downloads im Browser. Lokaler Build, gemergter PR und öffentlicher Rückvergleich sind getrennte Nachweise.

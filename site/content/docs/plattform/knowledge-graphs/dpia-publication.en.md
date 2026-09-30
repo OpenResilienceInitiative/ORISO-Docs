@@ -26,6 +26,8 @@ Draft rendering is allowed while approvals are pending. Public activation must r
 
 ## Publication and verification
 
+Source evidence is rechecked with each published platform release, using its exact repository versions and full commit vector. A Dev merge or a clock-based job cannot publish a new public graph or technical documentation release. Changed legal claims enter the review queue; the three approvals still bind the exact legal version independently.
+
 Historical releases are immutable. A new approved version gets its own directory and content manifest. The current link changes only after the new artifact is verified. German HTML, English HTML and both PDFs must identify the same approved version.
 
 After activation, compare the actual public bytes against the reviewed manifest and test chapter links, language switching and PDF downloads in a browser. A local build, a merged PR and a public readback are separate evidence states.
