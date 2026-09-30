@@ -34,7 +34,7 @@ docs/platform/super-graph-index.md # ORISO own-site reference or counterpart of 
 docs/platform/understand-anything.md # ORISO own-site reference or counterpart of reviewed project-specific source
 index.mdx # ORISO own-site reference or counterpart of reviewed project-specific source
 oriso-platform/coding-standards.mdx # ORISO own-site reference or counterpart of reviewed project-specific source
-site/app/[lang]/layout.tsx # ORISO own-site reference or counterpart of reviewed project-specific source
+site/app/[[]lang]/layout.tsx # ORISO own-site reference or counterpart of reviewed project-specific source
 site/content/docs/betrieb/getting-started/index.de.mdx # ORISO own-site reference or counterpart of reviewed project-specific source
 site/content/docs/betrieb/getting-started/index.en.mdx # ORISO own-site reference or counterpart of reviewed project-specific source
 site/content/docs/betrieb/operations/coding-standards.de.mdx # ORISO own-site reference or counterpart of reviewed project-specific source
