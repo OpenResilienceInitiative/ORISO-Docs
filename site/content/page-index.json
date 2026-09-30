@@ -387,8 +387,8 @@
           }
         }
       },
-      "sourceRevision": "e5b055db4c93c29b4cc314724e93ee2d13f19f45",
-      "sourceState": "working-copy",
+      "sourceRevision": "645863292ef7736cb682c2b8e81e59fb5025df56",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     },
     {
@@ -502,8 +502,8 @@
           }
         }
       },
-      "sourceRevision": "c8dd52928ab0e32b4e6aaf26b293a6ccea80ed0d",
-      "sourceState": "working-copy",
+      "sourceRevision": "645863292ef7736cb682c2b8e81e59fb5025df56",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     },
     {
@@ -1863,8 +1863,8 @@
           }
         }
       },
-      "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
-      "sourceState": "working-copy",
+      "sourceRevision": "645863292ef7736cb682c2b8e81e59fb5025df56",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     },
     {
@@ -2652,8 +2652,8 @@
           }
         }
       },
-      "sourceRevision": "f13e8d503f87d07d924615ec5045de309da0693d",
-      "sourceState": "working-copy",
+      "sourceRevision": "645863292ef7736cb682c2b8e81e59fb5025df56",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     },
     {
@@ -4367,8 +4367,8 @@
           }
         }
       },
-      "sourceRevision": "b928ed9591892b9fe9b0a038890b3beac241422d",
-      "sourceState": "working-copy",
+      "sourceRevision": "645863292ef7736cb682c2b8e81e59fb5025df56",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     },
     {
@@ -4817,8 +4817,8 @@
           }
         }
       },
-      "sourceRevision": "54deb844a7a74b5545aa4dd6fc00f55535afdbb8",
-      "sourceState": "working-copy",
+      "sourceRevision": "645863292ef7736cb682c2b8e81e59fb5025df56",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     },
     {
@@ -7026,8 +7026,8 @@
           }
         }
       },
-      "sourceRevision": null,
-      "sourceState": "working-copy",
+      "sourceRevision": "645863292ef7736cb682c2b8e81e59fb5025df56",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     }
   ],
