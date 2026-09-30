@@ -46,6 +46,9 @@ def sanitize(value):
  parser=PublicOnly();parser.feed(value);return ''.join(parser.output)
 def digest(value):return hashlib.sha256(value).hexdigest()
 def validate(root,manifest):
+ from datetime import date
+ try:date.fromisoformat(manifest['date'])
+ except (ValueError,TypeError,KeyError):raise ValueError('ISO source date required')
  if manifest.get('locales')!=['de','en']:raise ValueError('Both DE and EN required')
  if manifest.get('version')!='v5-draft':raise ValueError('Explicit v5-draft required')
  if set(manifest.get('approval',{}))!={'technical','operator','legal'} or any(value!='pending' for value in manifest['approval'].values()):raise ValueError('Preparation cannot manufacture approval')
@@ -93,8 +96,9 @@ def html_input(data,approved_version=None):
  if approved_version:data['version']=approved_version
  body=public_body(data);warning=('Approved release / Freigegebene Fassung' if approved_version else warning_text(data['locale']))
  robots='index,follow' if approved_version else 'noindex,nofollow'
- navigation='<nav><a href="../de/">Deutsch</a> · <a href="../en/">English</a> · <a href="dsfa.pdf">PDF</a></nav>' if approved_version else ''
- return f'<!doctype html><html lang="{data["locale"]}"><head><meta charset="utf-8"><meta name="robots" content="{robots}"><title>ORISO DSFA {data["version"]} {data["locale"]}</title><style>body{{font:16px/1.55 sans-serif;max-width:1000px;margin:40px auto;padding:16px}}table{{border-collapse:collapse;width:100%}}th,td{{border:1px solid #aaa;padding:6px;vertical-align:top}}aside{{border:2px solid #b45309;padding:15px}}@media print{{body{{font-size:10pt}}h2{{break-before:page}}thead{{display:table-header-group}}}}</style></head><body>{navigation}<h1>ORISO DSFA {data["version"]}</h1><p>{data["date"]} · {data["locale"].upper()}</p><aside>{warning}</aside>{body}</body></html>'
+ locale_script="""<script>document.querySelectorAll('[data-language-switch]').forEach(link=>link.addEventListener('click',()=>{link.hash=window.location.hash;}));</script>""" if approved_version else ''
+ navigation='<nav><a data-language-switch href="../de/">Deutsch</a> · <a data-language-switch href="../en/">English</a> · <a href="dsfa.pdf">PDF</a></nav>' if approved_version else ''
+ return f'<!doctype html><html lang="{escape(str(data["locale"]))}"><head><meta charset="utf-8"><meta name="robots" content="{robots}"><title>ORISO DSFA {escape(str(data["version"]))} {escape(str(data["locale"]))}</title><style>body{{font:16px/1.55 sans-serif;max-width:1000px;margin:40px auto;padding:16px}}table{{border-collapse:collapse;width:100%}}th,td{{border:1px solid #aaa;padding:6px;vertical-align:top}}aside{{border:2px solid #b45309;padding:15px}}@media print{{body{{font-size:10pt}}h2{{break-before:page}}thead{{display:table-header-group}}}}</style></head><body>{navigation}<h1>ORISO DSFA {escape(str(data["version"]))}</h1><p>{escape(str(data["date"]))} · {data["locale"].upper()}</p><aside>{warning}</aside>{body}{locale_script}</body></html>'
 def pdf_input(data,destination,approved_version=None):
  """ReportLab consumes exactly the validated Markdown used to construct HTML."""
  data=dict(data)
@@ -109,7 +113,7 @@ def pdf_input(data,destination,approved_version=None):
  if font.exists():
   pdfmetrics.registerFont(TTFont('DraftUnicode',str(font)))
   for style in styles.byName.values():style.fontName='DraftUnicode'
- story=[Paragraph(escape(f'ORISO DSFA {data["version"]} · {data["locale"].upper()} · {data["date"]}'),styles['Title']),Paragraph(escape(label if approved_version else label+' — '+warning_text(data['locale'])),styles['Normal']),Spacer(1,12)]
+ story=[Paragraph(escape(f'ORISO DSFA {escape(str(data["version"]))} · {data["locale"].upper()} · {escape(str(data["date"]))}'),styles['Title']),Paragraph(escape(label if approved_version else label+' — '+warning_text(data['locale'])),styles['Normal']),Spacer(1,12)]
  # Both outputs consume the same sanitised DOM, including complete table contents.
  class ReviewBlocks(HTMLParser):
   def __init__(self):super().__init__();self.blocks=[];self.parts=[];self.heading=False
@@ -130,9 +134,9 @@ def pdf_input(data,destination,approved_version=None):
   story.extend([Paragraph(escape(text),style),Spacer(1,6)])
  def footer(canvas,doc):
   canvas.saveState();canvas.setFont('DraftUnicode' if font.exists() else 'Helvetica',8)
-  canvas.drawString(40,25,f'ORISO DSFA {data["version"]} · {data["locale"].upper()} · {label}')
+  canvas.drawString(40,25,f'ORISO DSFA {escape(str(data["version"]))} · {data["locale"].upper()} · {label}')
   canvas.drawRightString(550,25,str(doc.page));canvas.restoreState()
- SimpleDocTemplate(str(destination),title=f'ORISO DSFA {data["version"]} {data["locale"]}',author='ORISO Docs draft preparation').build(story,onFirstPage=footer,onLaterPages=footer)
+ SimpleDocTemplate(str(destination),title=f'ORISO DSFA {escape(str(data["version"]))} {escape(str(data["locale"]))}',author='ORISO Docs draft preparation').build(story,onFirstPage=footer,onLaterPages=footer)
 def main():
  parser=argparse.ArgumentParser();parser.add_argument('root',type=Path);parser.add_argument('--output',type=Path,required=True);parser.add_argument('--pdf',action='store_true');parser.add_argument('--approvals',type=Path);parser.add_argument('--check-publication-approval',action='store_true');parser.add_argument('--activate',action='store_true');parser.add_argument('--public',action='store_true');parser.add_argument('--latest',action='store_true');args=parser.parse_args()
  manifest=json.loads((args.root/'manifest.json').read_text());validate(args.root,manifest)

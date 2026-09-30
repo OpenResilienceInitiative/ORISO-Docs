@@ -136,3 +136,23 @@ class ApprovalGateTests(unittest.TestCase):
    self.assertEqual(list(Path(folder).iterdir()),[])
 
 if __name__=='__main__':unittest.main()
+
+class ApprovedLocaleNavigationTests(unittest.TestCase):
+ def test_approved_locale_switch_preserves_chapter_hash(self):
+  from dsfa_draft import html_input
+  data={'version':'synthetic-draft','locale':'de','date':'2026-09-30','markdown':'<a id="kap10"></a>\n\nSynthetic test text.'}
+  html=html_input(data,approved_version='5')
+  self.assertIn('data-language-switch',html)
+  self.assertIn('link.hash=window.location.hash',html)
+  self.assertIn('href="../en/"',html)
+  self.assertNotIn('data-language-switch',html_input(data))
+
+ def test_source_date_cannot_inject_active_header_content(self):
+  from dsfa_draft import validate,html_input
+  from pathlib import Path
+  import copy,json
+  root=Path(__file__).resolve().parents[1]/'oriso-platform/dsfa-text/drafts/2026-09-30-v5-draft'
+  manifest=json.loads((root/'manifest.json').read_text());manifest['date']='<script>unsafe</script>'
+  with self.assertRaises(ValueError):validate(root,manifest)
+  html=html_input({'version':'<script>unsafe</script>','locale':'de','date':'<img src=x>','markdown':'Synthetic.'})
+  self.assertNotIn('<script>',html);self.assertNotIn('<img src=x>',html)

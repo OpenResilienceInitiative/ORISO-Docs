@@ -63,3 +63,5 @@ No host, Git or GitHub mutation occurred. Actual operator/legal approval, annex 
 ## Parent integration verification
 
 After focused independent review, new legal/evidence suite32tests and historical generator11tests pass. Internal v2 map retains86claims:81identifier-matched code references,17source-bound without file identifier matches (including3trees),26identifier-missing and9unbound;0runtime claimsverified. Internal visibility neverconferspublicReady. Historical evidence map is unchanged. Local site types/fullbuild complete108publicpages91currentpairs, and actual IAB DE/EN draft HTML exposes all12chapter anchors, v5-draft/date/unapproved warning. Missing annexes/operator facts/approvals still block publication.
+
+Final locale delta:34 new tests pass after approved-language chapter-fragment preservation and escaped/ISO-date header metadata. Actual local browser synthetic approved fixture switched DE to EN while retaining kap10 and its target; the real draft remains script-free and unapproved. This fixture is not a real approval or publication.

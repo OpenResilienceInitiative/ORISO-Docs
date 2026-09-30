@@ -57,3 +57,5 @@ python tools/legal_publication.py --verify-live \
 ```
 
 The URL must be HTTPS and exactly match the expected version path, without credentials, query or fragment. No redirects are followed. Readback compares the public manifest's complete bytes, SHA-256, length and version with the retained expectation, then checks all four DE/EN HTML/PDF artifacts against their exact expected SHA-256 and length. HTTP 200 alone cannot pass. Request deadlines are five seconds within a thirty-second readback budget; body lengths are capped to expectations (maximum 64 MiB per artifact). Local HTTP exists only through the injected unit-test transport seam, not the CLI. This command reads only; it does not install or activate anything.
+
+Approved HTML navigation preserves the current chapter fragment when changing language. The only added script is the renderer-owned fragment-copy handler; source scripts remain removed. Unapproved draft HTML stays script-free. Header metadata is escaped and source dates must be ISO dates.
