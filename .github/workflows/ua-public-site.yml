@@ -90,6 +90,7 @@ jobs:
       - run: node --test tools/understand-anything/site/hub/test/*.test.mjs tools/understand-anything/hosted-viewer/*.test.mjs
       - name: Produce public-only validated generation
         env:
+          UA_MOUNT_ROOT: ${{ runner.temp }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail

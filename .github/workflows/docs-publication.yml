@@ -111,6 +111,7 @@ jobs:
           python3 .github/scripts/ua_sources.py --tooling "$UA_TOOLING" --base "$RUNNER_TEMP/docs-ua-base" --inventory "$RUNNER_TEMP/docs-ua-inventory.json" --repo-args "$RUNNER_TEMP/docs-ua-args.txt" "${RELEASE_ARGS[@]}"
       - name: Produce and verify a complete source-bound generation
         env:
+          UA_MOUNT_ROOT: ${{ runner.temp }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
