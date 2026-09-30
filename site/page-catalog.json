@@ -976,12 +976,12 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/ADR-008-supervision-role-and-side-channel-confidentiality.md",
-          "sourceHash": "4818273cb11dd4af073e18b41fd7533707b5f3d7e54e1d8c5cb08ffbfa24ce91",
+          "sourceHash": "1a4b13f53d710106beb8fdeae50f2ea7cf2a66724dd1bb648e5848f3835c46ab",
           "reviewedAt": "2026-09-30"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/ADR-008-supervision-role-and-side-channel-confidentiality.md",
-          "sourceHash": "4818273cb11dd4af073e18b41fd7533707b5f3d7e54e1d8c5cb08ffbfa24ce91",
+          "sourceHash": "1a4b13f53d710106beb8fdeae50f2ea7cf2a66724dd1bb648e5848f3835c46ab",
           "reviewedAt": "2026-09-30"
         }
       }
@@ -1160,12 +1160,12 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md",
-          "sourceHash": "04bda06fefa894216115cdfe35aaaf908535db5f7ba21299efec26bcc998e4cc",
+          "sourceHash": "f37a8ec5a53c64cdde6e7348c21817ca69e92eb7256d9558c5c9b3c1553568b8",
           "reviewedAt": "2026-09-30"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md",
-          "sourceHash": "04bda06fefa894216115cdfe35aaaf908535db5f7ba21299efec26bcc998e4cc",
+          "sourceHash": "f37a8ec5a53c64cdde6e7348c21817ca69e92eb7256d9558c5c9b3c1553568b8",
           "reviewedAt": "2026-09-30"
         }
       }

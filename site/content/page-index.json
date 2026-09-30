@@ -3103,7 +3103,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/decisions/ADR-008-supervision-role-and-side-channel-confidentiality.md",
-      "sourceHash": "4818273cb11dd4af073e18b41fd7533707b5f3d7e54e1d8c5cb08ffbfa24ce91",
+      "sourceHash": "1a4b13f53d710106beb8fdeae50f2ea7cf2a66724dd1bb648e5848f3835c46ab",
       "locales": {
         "de": {
           "available": true,
@@ -3122,7 +3122,9 @@
             "open-pending-franks-final-requirements--data-protection-officer": "open-pending-franks-final-requirements--data-protection-officer",
             "offen-franks-anforderungen-und-datenschutzbeauftragter": "open-pending-franks-final-requirements--data-protection-officer",
             "addendum-2026-07-13-grill-with-docs-standing-auto-assignment--unified-opt-out-consent": "addendum-2026-07-13-grill-with-docs-standing-auto-assignment--unified-opt-out-consent",
-            "ergänzung-2026-07-13-dauerhafte-automatische-zuweisung-und-einheitlicher-widerspruch": "addendum-2026-07-13-grill-with-docs-standing-auto-assignment--unified-opt-out-consent"
+            "ergänzung-2026-07-13-dauerhafte-automatische-zuweisung-und-einheitlicher-widerspruch": "addendum-2026-07-13-grill-with-docs-standing-auto-assignment--unified-opt-out-consent",
+            "addendum-2026-09-05-standing-supervision-is-always-on--inform-do-not-offer-an-opt-out": "addendum-2026-09-05-standing-supervision-is-always-on--inform-do-not-offer-an-opt-out",
+            "nachtrag-2026-09-05-dauerhafte-supervision-bleibt-immer-aktiv--informieren-keine-widerspruchsmöglichkeit-anbieten": "addendum-2026-09-05-standing-supervision-is-always-on--inform-do-not-offer-an-opt-out"
           }
         },
         "en": {
@@ -3135,11 +3137,12 @@
             "considered-options-hiding-the-side-channel": "considered-options-hiding-the-side-channel",
             "consequences": "consequences",
             "open-pending-franks-final-requirements--data-protection-officer": "open-pending-franks-final-requirements--data-protection-officer",
-            "addendum-2026-07-13-grill-with-docs-standing-auto-assignment--unified-opt-out-consent": "addendum-2026-07-13-grill-with-docs-standing-auto-assignment--unified-opt-out-consent"
+            "addendum-2026-07-13-grill-with-docs-standing-auto-assignment--unified-opt-out-consent": "addendum-2026-07-13-grill-with-docs-standing-auto-assignment--unified-opt-out-consent",
+            "addendum-2026-09-05-standing-supervision-is-always-on--inform-do-not-offer-an-opt-out": "addendum-2026-09-05-standing-supervision-is-always-on--inform-do-not-offer-an-opt-out"
           }
         }
       },
-      "sourceRevision": "26c1323fae062c19f3e285cbd2920edf48688042",
+      "sourceRevision": "3504a8cad65e03875f180e355f9bb818501c3f12",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -3485,7 +3488,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md",
-      "sourceHash": "04bda06fefa894216115cdfe35aaaf908535db5f7ba21299efec26bcc998e4cc",
+      "sourceHash": "f37a8ec5a53c64cdde6e7348c21817ca69e92eb7256d9558c5c9b3c1553568b8",
       "locales": {
         "de": {
           "available": true,
@@ -3500,7 +3503,9 @@
             "considered-options": "considered-options",
             "erwogene-optionen": "considered-options",
             "consequences": "consequences",
-            "folgen": "consequences"
+            "folgen": "consequences",
+            "addendum-2026-09-05-§3-was-wrong--there-is-no-archive-auto-deletion-a-dedicated-purge-job-is-decided": "addendum-2026-09-05-§3-was-wrong--there-is-no-archive-auto-deletion-a-dedicated-purge-job-is-decided",
+            "nachtrag-2026-09-05-§3-war-falsch--keine-automatische-archivlöschung-eigener-löschlauf-beschlossen": "addendum-2026-09-05-§3-was-wrong--there-is-no-archive-auto-deletion-a-dedicated-purge-job-is-decided"
           }
         },
         "en": {
@@ -3511,11 +3516,12 @@
             "context": "context",
             "decision": "decision",
             "considered-options": "considered-options",
-            "consequences": "consequences"
+            "consequences": "consequences",
+            "addendum-2026-09-05-§3-was-wrong--there-is-no-archive-auto-deletion-a-dedicated-purge-job-is-decided": "addendum-2026-09-05-§3-was-wrong--there-is-no-archive-auto-deletion-a-dedicated-purge-job-is-decided"
           }
         }
       },
-      "sourceRevision": "26c1323fae062c19f3e285cbd2920edf48688042",
+      "sourceRevision": "58834bd2b70f2c6878e523c4512cbe5cc265c232",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
