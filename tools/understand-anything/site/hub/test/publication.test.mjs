@@ -21,7 +21,7 @@ for name in sorted(required_repositories()):
 shutil.rmtree(p/'ORISO-Test')
 for name in ['ORISO-Platform','ORISO-Supergraph']:
  f=p/name/'.understand-anything/knowledge-graph.json';g=json.loads(f.read_text());g['project']['sourceCommits']={s['repository']:s['sourceSHA'] for s in sources};f.write_text(json.dumps(g))
-lock=dict(schemaVersion='oriso.platform-release/v1',version='v2.0.7',releaseUrl='https://github.com/OpenResilienceInitiative/ORISO-Frontend/releases/tag/v2.0.7',documentationRevision=${JSON.stringify(revision)},sources=[{k:s[k] for k in ['repository','ref','sourceSHA']} for s in sources])
+lock=dict(schemaVersion='oriso.platform-release/v1',version='v2.0.7',releaseUrl='https://github.com/OpenResilienceInitiative/ORISO-Helm/releases/tag/v2.0.7',documentationRevision=${JSON.stringify(revision)},sources=[{k:s[k] for k in ['repository','ref','sourceSHA']} for s in sources])
 release=dict(lock=lock,sha256=hashlib.sha256(canonical_bytes(lock)).hexdigest(),publishedAt=now.isoformat(),releaseId=1,evidenceScope='published-github-release-and-source-refs')
 seal(p,sources,now=now,release=release)
 (p.parent/'release.json').write_text(json.dumps(lock))

@@ -29,7 +29,7 @@ class ConsumerTests(unittest.TestCase):
    shutil.rmtree(gen/'ORISO-Test')
    for name in ['ORISO-Platform','ORISO-Supergraph']:
     p=gen/name/'.understand-anything/knowledge-graph.json';g=json.loads(p.read_text());g['project']['sourceCommits']={s['repository']:sha for s in sources};p.write_text(json.dumps(g))
-   lock=dict(schemaVersion='oriso.platform-release/v1',version='v2.0.7',releaseUrl='https://github.com/OpenResilienceInitiative/ORISO-Frontend/releases/tag/v2.0.7',documentationRevision=sha,sources=[{k:s[k] for k in ['repository','ref','sourceSHA']} for s in sources])
+   lock=dict(schemaVersion='oriso.platform-release/v1',version='v2.0.7',releaseUrl='https://github.com/OpenResilienceInitiative/ORISO-Helm/releases/tag/v2.0.7',documentationRevision=sha,sources=[{k:s[k] for k in ['repository','ref','sourceSHA']} for s in sources])
    evidence=dict(lock=lock,sha256=hashlib.sha256(canonical_bytes(lock)).hexdigest(),publishedAt=now.isoformat(),releaseId=1,evidenceScope='published-github-release-and-source-refs')
    seal(gen,sources,now=now,release=evidence)
    manifest_path=gen/'manifest.json';original=manifest_path.read_text();tampered=json.loads(original);tampered['release']['sha256']='b'*64;manifest_path.write_text(json.dumps(tampered))

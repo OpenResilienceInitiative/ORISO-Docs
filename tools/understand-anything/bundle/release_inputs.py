@@ -5,6 +5,7 @@ from .contract import require
 SHA=re.compile(r'^[a-f0-9]{40}$')
 PRIVATE={'ORISO-E2E','ORISO-Infra'}
 OWNER='OpenResilienceInitiative'
+HELM_RELEASE_CONTRACT='oriso.helm-release/v1'
 def required_repositories():
     from .pipeline import REPOS
     return {name for name,_,_ in REPOS if name not in PRIVATE}
@@ -15,6 +16,7 @@ def validate_lock(lock,documentation_revision=None):
     require(isinstance(lock['version'],str) and re.fullmatch(r'v?\d+\.\d+\.\d+',lock['version']),'exact released version required')
     url=urllib.parse.urlparse(lock['releaseUrl']);parts=url.path.split('/')
     require(url.scheme=='https' and url.netloc=='github.com' and not url.query and not url.fragment and len(parts)==6 and parts[1]==OWNER and parts[3:5]==['releases','tag'],'explicit published GitHub release URL required')
+    require(parts[2]=='ORISO-Helm','platform release origin must be ORISO-Helm')
     tag=urllib.parse.unquote(parts[5]);require(tag==lock['version'],'release version must equal exact GitHub tag name')
     require(isinstance(lock['documentationRevision'],str) and SHA.fullmatch(lock['documentationRevision']),'full documentation release SHA required')
     if documentation_revision is not None:require(lock['documentationRevision']==documentation_revision,'documentation revision differs from release lock')
@@ -50,6 +52,11 @@ def verify_release(lock,documentation_revision=None,api=github_json,tag_sha=remo
         if source['ref'].startswith('refs/tags/'):require(tag_sha(source['repository'],source['ref'])==source['sourceSHA'],'retargeted release tag or wrong source SHA')
     release=api('repos/'+OWNER+'/'+origin+'/releases/tags/'+urllib.parse.quote(tag,safe=''))
     require(release.get('draft') is False and release.get('prerelease') is False and release.get('published_at') and release.get('tag_name')==tag and release.get('html_url')==lock['releaseUrl'],'actual published release identity required')
+    canonical=canonical_bytes(lock);digest=hashlib.sha256(canonical).hexdigest()
+    assets=release.get('assets',[])
+    require(isinstance(assets,list),'published release asset metadata required')
+    assets=[asset for asset in assets if isinstance(asset,dict) and asset.get('name')=='platform-release.json']
+    require(len(assets)==1 and assets[0].get('state')=='uploaded' and type(assets[0].get('size')) is int and assets[0]['size']==len(canonical) and assets[0].get('digest')=='sha256:'+digest,'published release asset must match exact canonical release lock')
     source=next(s for s in lock['sources'] if s['repository']==origin);require(tag_sha(origin,'refs/tags/'+tag)==source['sourceSHA'],'published release origin tag differs from locked source SHA')
     return {'lock':lock,'sha256':hashlib.sha256(canonical_bytes(lock)).hexdigest(),'publishedAt':release['published_at'],'releaseId':release.get('id'),'evidenceScope':'published-github-release-and-source-refs'}
 def load_release(path,documentation_revision=None,verify=True):

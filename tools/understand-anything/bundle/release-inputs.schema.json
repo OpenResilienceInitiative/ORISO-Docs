@@ -21,7 +21,7 @@
     },
     "releaseUrl": {
       "type": "string",
-      "pattern": "^https://github.com/OpenResilienceInitiative/[^/]+/releases/tag/[^/?#]+$"
+      "pattern": "^https://github.com/OpenResilienceInitiative/ORISO-Helm/releases/tag/[^/?#]+$"
     },
     "documentationRevision": {
       "type": "string",

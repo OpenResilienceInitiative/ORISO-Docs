@@ -19,3 +19,5 @@ test('mutable tips, private inputs and invented release identities rejected',()=
 });
 
 test("activation refuses incomplete release vectors and origins outside that vector",()=>{const incomplete=lock();incomplete.sources=incomplete.sources.filter(s=>s.repository!=="ORISO-Helm");assert.throws(()=>bindPlatformRelease(incomplete,revision),/source vector\/origin/);const invalid=lock();invalid.releaseUrl="https://github.com/OpenResilienceInitiative/ORISO-Other/releases/tag/v2.0.9";assert.throws(()=>bindPlatformRelease(invalid,revision),/source vector\/origin/);});
+
+test('other public release origins fail with an otherwise complete sixteen-source lock',()=>{for(const repository of ['ORISO-Frontend','ORISO-Docs','ORISO-UserService']){const invalid=lock();invalid.releaseUrl=invalid.releaseUrl.replace('/ORISO-Helm/','/'+repository+'/');assert.throws(()=>bindPlatformRelease(invalid,revision),/source vector\/origin/);}});

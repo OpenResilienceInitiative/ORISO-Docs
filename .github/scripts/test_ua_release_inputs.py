@@ -1,11 +1,11 @@
-import unittest,sys,pathlib,tempfile,subprocess,json,copy
+import unittest,sys,pathlib,tempfile,subprocess,json,copy,hashlib
 TOOLS=pathlib.Path(__file__).resolve().parents[2]/'tools/understand-anything';sys.path.insert(0,str(TOOLS))
-from bundle.release_inputs import validate_lock,verify_release,load_release,required_repositories
+from bundle.release_inputs import validate_lock,verify_release,load_release,required_repositories,canonical_bytes
 from bundle.pipeline import fetch_source
 from bundle.contract import ContractError
 
-def lock():return {'schemaVersion':'oriso.platform-release/v1','version':'v2.0.7','releaseUrl':'https://github.com/OpenResilienceInitiative/ORISO-Frontend/releases/tag/v2.0.7','documentationRevision':'a'*40,'sources':[{'repository':n,'ref':'refs/tags/v2.0.7','sourceSHA':'a'*40} for n in sorted(required_repositories())]}
-def api(path):return {'private':False,'visibility':'public'} if '/releases/' not in path else {'draft':False,'prerelease':False,'published_at':'2026-09-30T00:00:00Z','tag_name':'v2.0.7','html_url':lock()['releaseUrl'],'id':1}
+def lock():return {'schemaVersion':'oriso.platform-release/v1','version':'v2.0.7','releaseUrl':'https://github.com/OpenResilienceInitiative/ORISO-Helm/releases/tag/v2.0.7','documentationRevision':'a'*40,'sources':[{'repository':n,'ref':'refs/tags/v2.0.7','sourceSHA':'a'*40} for n in sorted(required_repositories())]}
+def api(path):return {'private':False,'visibility':'public'} if '/releases/' not in path else {'draft':False,'prerelease':False,'published_at':'2026-09-30T00:00:00Z','tag_name':'v2.0.7','html_url':lock()['releaseUrl'],'id':1,'assets':[{'name':'platform-release.json','state':'uploaded','size':len(canonical_bytes(lock())),'digest':'sha256:'+hashlib.sha256(canonical_bytes(lock())).hexdigest()}]}
 class ReleaseLockTests(unittest.TestCase):
  def test_complete_lock_is_source_evidence_not_approval(self):
   result=verify_release(lock(),api=api,tag_sha=lambda *_:'a'*40);self.assertEqual(result['evidenceScope'],'published-github-release-and-source-refs');self.assertEqual(len(result['sha256']),64)
@@ -23,6 +23,21 @@ class ReleaseLockTests(unittest.TestCase):
   with tempfile.TemporaryDirectory() as name:
    p=pathlib.Path(name);result=subprocess.run([sys.executable,str(pathlib.Path(__file__).with_name('ua_sources.py')),'--tooling',str(TOOLS),'--base',str(p/'sources'),'--inventory',str(p/'inventory.json'),'--repo-args',str(p/'args'),'--require-release','--documentation-revision','a'*40],capture_output=True,text=True)
    self.assertNotEqual(result.returncode,0);self.assertIn('release manifest required',result.stdout);self.assertFalse((p/'sources').exists())
+ def test_other_public_origin_rejected_despite_complete_valid_source_vector(self):
+  for origin in ['ORISO-Frontend','ORISO-Docs','ORISO-UserService']:
+   data=lock();data['releaseUrl']=data['releaseUrl'].replace('/ORISO-Helm/','/'+origin+'/')
+   with self.assertRaisesRegex(Exception,'ORISO-Helm'):validate_lock(data)
+ def test_helm_origin_tag_must_match_its_exact_locked_sha(self):
+  data=lock();helm=next(s for s in data['sources'] if s['repository']=='ORISO-Helm');helm['ref']=helm['sourceSHA']
+  with self.assertRaisesRegex(Exception,'origin tag'):verify_release(data,api=lambda p:{**api(p),'assets':[{'name':'platform-release.json','state':'uploaded','size':len(canonical_bytes(data)),'digest':'sha256:'+hashlib.sha256(canonical_bytes(data)).hexdigest()}]} if '/releases/' in p else api(p),tag_sha=lambda repo,ref:'b'*40 if repo=='ORISO-Helm' else 'a'*40)
+ def test_release_asset_missing_duplicate_state_size_and_digest_fail(self):
+  for assets in [[],[api('repos/x/releases/tags/x')['assets'][0]]*2,[{**api('repos/x/releases/tags/x')['assets'][0],'state':'new'}],[{**api('repos/x/releases/tags/x')['assets'][0],'size':1}],[{**api('repos/x/releases/tags/x')['assets'][0],'digest':'sha256:'+'b'*64}]]:
+   with self.subTest(assets=assets):
+    with self.assertRaisesRegex(Exception,'release asset'):verify_release(lock(),api=lambda p:{**api(p),'assets':assets} if '/releases/' in p else api(p),tag_sha=lambda *_:'a'*40)
+ def test_other_payload_same_helm_version_and_commit_is_not_released_asset(self):
+  data=lock();next(s for s in data['sources'] if s['repository']=='ORISO-UserService')['sourceSHA']='b'*40
+  shas={s['repository']:s['sourceSHA'] for s in data['sources']}
+  with self.assertRaisesRegex(Exception,'release asset'):verify_release(data,api=api,tag_sha=lambda repo,ref:shas[repo])
  def test_actual_git_tag_retarget_and_sha_fetch(self):
   with tempfile.TemporaryDirectory() as name:
    p=pathlib.Path(name);remote=p/'remote';subprocess.run(['git','init','-q',str(remote)],check=True);(remote/'file').write_text('one');subprocess.run(['git','-C',str(remote),'add','.'],check=True)
