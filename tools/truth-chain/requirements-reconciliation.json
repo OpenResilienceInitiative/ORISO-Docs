@@ -139,27 +139,27 @@
       "requirement": "Reuse PR118 PR107 PR131; development targets dev, public updates use exact released sources; isolate generated output",
       "state": "IN_PROGRESS",
       "package": "P2 generation",
-      "evidence": "PR141targetdev,head32796a2; independent63Node/87Python source review, no clock triggers, exactrelease lock/sourcevector and directCLI activationguards; hosted04:15UTCpublicsyncretired; realartifactCIrerunpending",
-      "nextAction": "Pass actual current-head CI artifact after Docker mount/UID fixes; human review/merge; confirm platform release coordinator, configure existing host/viewers, publish and verify exact released bytes/browser",
-      "sourceState": "SOURCE_READY"
+      "evidence": "PR141 targetdev; independently reviewed63Node+89Python(26CI/60bundle/3viewer); no clock triggers; strict exact-release lock/source vector/direct activation guards; hosted04:15UTCpublicsync retired. Legacy platform narrative excluded before mutation with hash/date/missing-review metadata; baseline bytes retained; actual full artifact CI pending.",
+      "nextAction": "Pass current-head full artifact CI; obtain human review/merge and actual release coordinator/host/viewer bindings; publish exact released bytes and verify publicly. Aggregate semantic curation remains open.",
+      "sourceState": "IN_PROGRESS"
     },
     {
       "id": "D17",
       "requirement": "Automated publication manifest source revision hash and live readback",
       "state": "IN_PROGRESS",
       "package": "P2 publishing",
-      "evidence": "PR141targetdev,head32796a2; independent63Node/87Python source review, no clock triggers, exactrelease lock/sourcevector and directCLI activationguards; hosted04:15UTCpublicsyncretired; realartifactCIrerunpending",
-      "nextAction": "Pass actual current-head CI artifact after Docker mount/UID fixes; human review/merge; confirm platform release coordinator, configure existing host/viewers, publish and verify exact released bytes/browser",
-      "sourceState": "SOURCE_READY"
+      "evidence": "PR141 targetdev; independently reviewed63Node+89Python(26CI/60bundle/3viewer); no clock triggers; strict exact-release lock/source vector/direct activation guards; hosted04:15UTCpublicsync retired. Legacy platform narrative excluded before mutation with hash/date/missing-review metadata; baseline bytes retained; actual full artifact CI pending.",
+      "nextAction": "Pass current-head full artifact CI; obtain human review/merge and actual release coordinator/host/viewer bindings; publish exact released bytes and verify publicly. Aggregate semantic curation remains open.",
+      "sourceState": "IN_PROGRESS"
     },
     {
       "id": "D18",
       "requirement": "Resolve stale Understand generation and expand existing feature backlog",
       "state": "IN_PROGRESS",
       "package": "Understand / graph package",
-      "evidence": "PR141targetdev,head32796a2; independent63Node/87Python source review, no clock triggers, exactrelease lock/sourcevector and directCLI activationguards; hosted04:15UTCpublicsyncretired; realartifactCIrerunpending",
-      "nextAction": "Pass actual current-head CI artifact after Docker mount/UID fixes; human review/merge; confirm platform release coordinator, configure existing host/viewers, publish and verify exact released bytes/browser",
-      "sourceState": "SOURCE_READY"
+      "evidence": "PR141 targetdev; independently reviewed63Node+89Python(26CI/60bundle/3viewer); no clock triggers; strict exact-release lock/source vector/direct activation guards; hosted04:15UTCpublicsync retired. Legacy platform narrative excluded before mutation with hash/date/missing-review metadata; baseline bytes retained; actual full artifact CI pending.",
+      "nextAction": "Pass current-head full artifact CI; obtain human review/merge and actual release coordinator/host/viewer bindings; publish exact released bytes and verify publicly. Aggregate semantic curation remains open.",
+      "sourceState": "IN_PROGRESS"
     },
     {
       "id": "D19",
@@ -210,8 +210,8 @@
       "requirement": "Replace nightly/daily publication and Dev-tip activation with platform release updates using exact released repository versions and full commits",
       "state": "IN_PROGRESS",
       "package": "P2 release integration / issue106",
-      "evidence": "PR141targetdev,head32796a2; independent63Node/87Python source review, no clock triggers, exactrelease lock/sourcevector and directCLI activationguards; hosted04:15UTCpublicsyncretired; realartifactCIrerunpending",
-      "nextAction": "Pass actual current-head CI artifact after Docker mount/UID fixes; human review/merge; confirm platform release coordinator, configure existing host/viewers, publish and verify exact released bytes/browser",
+      "evidence": "PR141 targetdev; independently reviewed63Node+89Python(26CI/60bundle/3viewer); no clock triggers; strict exact-release lock/source vector/direct activation guards; hosted04:15UTCpublicsync retired. Legacy platform narrative excluded before mutation with hash/date/missing-review metadata; baseline bytes retained; actual full artifact CI pending.",
+      "nextAction": "Pass current-head full artifact CI; obtain human review/merge and actual release coordinator/host/viewer bindings; publish exact released bytes and verify publicly. Aggregate semantic curation remains open.",
       "decisionSource": "User follow-up: PR106 hat ein Problem ... immer mit dem Release ... Dev wesentlich instabiler",
       "sourceState": "SOURCE_READY"
     }
@@ -4291,7 +4291,14 @@
     "policy": "Public graph, Docs, hub and DPIA source evidence updates require a published platform release and its exact immutable source vector; Dev PRs/checks/previews remain supported",
     "status": "IN_PROGRESS",
     "humanReleaseApprovals": "Separate technical/operator/legal exact-version gates retained",
-    "sourceImplementation": "PR141; all public source activation requires exact published platform-release lock; source tests reviewed; actualCIartifactrerunpending"
+    "hostSchedulingEvidence": {
+      "host": "49.13.11.37",
+      "removed": "04:15 UTC root ua-site-sync.sh",
+      "backup": "/root/oriso-schedule-backups/20260930T151740Z-before-release-policy.crontab",
+      "readback": "exact match; other entries unchanged",
+      "scope": "Actual old public hub sync retired; no source deployment or release dispatch binding"
+    },
+    "sourceImplementation": "PR141; reviewed exact release-only activation and source vector; legacy unbound aggregate narrative excluded before mutation, no claimed semantic review; full artifact CI pending"
   },
-  "reviewCheckpoint": "PR141 source-ready; independent63Node/87Python; release-only amendment implemented; actual current-head CI artifact rerun and coordinator binding open"
+  "reviewCheckpoint": "PR141 independently reviewed63Node+89Python; legacy unbound narrative excluded before graph mutation with explicit review gap; baseline retained; complete artifact CI, actual release coordinator/host, public acceptance and legal approvals remain open"
 }
