@@ -1,0 +1,309 @@
+---
+title: "Infrastruktur bereitstellen"
+description: "Die gesamte ORISO-Plattform-Infrastruktur über ein übergeordnetes Helm-Chart bereitstellen"
+---
+
+# Infrastruktur bereitstellen
+
+Stellen Sie die vollständige Infrastruktur der ORISO-Plattform mit Helm-Charts bereit. Alle Dienste werden über ein einzelnes übergeordnetes Helm-Chart bereitgestellt.
+
+<Info>
+Die ORISO-Plattform v3.0.0 nutzt Helm-Charts zur Bereitstellung. Alle 21 Dienste werden mit einem einzigen Befehl über das übergeordnete Chart `oriso-platform` bereitgestellt.
+</Info>
+
+<Steps>
+<Step title="Zum Helm-Verzeichnis wechseln">
+
+Bereiten Sie die Helm-Bereitstellungsumgebung vor.
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes/helm
+
+# Verify Helm chart structure
+ls -la oriso-platform/
+
+# Check values file
+ls -la values.yaml
+```
+
+<Check>
+Sie sollten Folgendes sehen:
+- Verzeichnis `oriso-platform/` (übergeordnetes Chart)
+- Datei `values.yaml` (globale Werte)
+- Verzeichnis `charts/` (untergeordnete Charts)
+</Check>
+
+</Step>
+
+<Step title="Helm-Abhängigkeiten aktualisieren">
+
+Aktualisieren Sie vor der Bereitstellung die Helm-Chart-Abhängigkeiten.
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes/helm
+
+# Navigate to umbrella chart
+cd oriso-platform
+
+# Update dependencies
+helm dependency update
+
+# Return to helm directory
+cd ..
+```
+
+<Check>
+Abhängigkeiten sollten erfolgreich heruntergeladen werden. Prüfen Sie die Ausgabe auf Fehler.
+</Check>
+
+<Info>
+Dadurch werden alle in `oriso-platform/Chart.yaml` definierten Abhängigkeiten untergeordneter Charts heruntergeladen.
+</Info>
+
+</Step>
+
+<Step title="Gesamte Plattform bereitstellen">
+
+Stellen Sie alle Dienste über das übergeordnete Helm-Chart bereit.
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes/helm
+
+# Deploy entire platform
+helm install oriso-platform ./oriso-platform \
+  --namespace caritas \
+  --create-namespace \
+  -f values.yaml
+
+# Monitor deployment
+kubectl get pods -n caritas -w
+```
+
+<Info>
+Dieser einzelne Befehl stellt Folgendes bereit:
+- Infrastruktur: MariaDB, MongoDB, PostgreSQL, Redis, RabbitMQ
+- Authentifizierung: Keycloak
+- Kommunikation: Matrix Synapse, Element, Discovery
+- WebRTC: LiveKit
+- Backend: 4 Microservices
+- Frontend: 2 Anwendungen
+- Überwachung: SignOZ, Health Dashboard (falls aktiviert)
+
+**Gesamt: 21 Dienste**
+</Info>
+
+<Check>
+Alle Pods sollten schließlich den Zustand `Running` erreichen. Das Starten aller Dienste kann 5–10 Minuten dauern.
+</Check>
+
+</Step>
+
+<Step title="Bereitstellung prüfen">
+
+Prüfen Sie, ob alle Dienste bereitgestellt wurden und laufen.
+
+```bash
+# Check all pods
+kubectl get pods -n caritas
+
+# Check Helm release
+helm list -n caritas
+
+# Check services
+kubectl get svc -n caritas
+
+# Check persistent volumes
+kubectl get pvc -n caritas
+```
+
+<Check>
+Erwartete Ausgabe:
+- Die Helm-Release `oriso-platform` sollte den Status `deployed` anzeigen.
+- Alle Pods sollten `Running` sein (der erste Start kann Zeit benötigen).
+- Dienste sollten mit dem Präfix `oriso-platform-*` erstellt werden.
+- PVCs sollten `Bound` sein.
+</Check>
+
+</Step>
+
+<Step title="Ingress-Ressourcen bereitstellen">
+
+Stellen Sie Kubernetes-Ingress-Ressourcen für externen Zugriff bereit.
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes/ingress
+
+# Deploy all Ingress resources
+kubectl apply -f .
+
+# Verify Ingress
+kubectl get ingress -n caritas
+
+# Check TLS certificates
+kubectl get certificate -n caritas
+```
+
+<Info>
+Dadurch werden 33 Ingress-Ressourcen in 22 YAML-Dateien bereitgestellt. Sie ermöglichen:
+- Externen Zugriff auf alle Dienste
+- TLS-Zertifikate über cert-manager
+- Umschreiben von Pfaden und CORS-Unterstützung
+</Info>
+
+<Check>
+Ingress-Ressourcen sollten erstellt werden. cert-manager stellt die TLS-Zertifikate automatisch aus (dies kann einige Minuten dauern).
+</Check>
+
+</Step>
+</Steps>
+
+## Bereitstellungsphasen
+
+Das Helm-Chart stellt Dienste in folgender Reihenfolge bereit:
+
+1. **Infrastruktur** – Datenbanken, Cache, Warteschlange
+2. **Authentifizierung** – Keycloak
+3. **Kommunikation** – Matrix, Element, Discovery
+4. **WebRTC** - LiveKit
+5. **Backend** – 4 Microservices
+6. **Frontend** – 2 Anwendungen
+7. **Überwachung** – SignOZ, Health Dashboard
+
+## Überprüfung
+
+Prüfen Sie nach der Bereitstellung, ob alles funktioniert:
+
+```bash
+# Check all pods are running
+kubectl get pods -n caritas
+
+# Check Helm release status
+helm status oriso-platform -n caritas
+
+# Check services
+kubectl get svc -n caritas
+
+# Check Ingress
+kubectl get ingress -n caritas
+
+# Check TLS certificates
+kubectl get certificate -n caritas
+
+# Test endpoints (after DNS is configured)
+curl -I https://app.example.org
+curl -I https://api.example.org
+```
+
+## Bereitstellung aktualisieren
+
+So aktualisieren Sie die Bereitstellung:
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes/helm
+
+# Update dependencies
+cd oriso-platform
+helm dependency update
+cd ..
+
+# Upgrade
+helm upgrade oriso-platform ./oriso-platform \
+  --namespace caritas \
+  -f values.yaml
+```
+
+## Zurückrollen
+
+Wenn etwas schiefgeht:
+
+```bash
+# List release history
+helm history oriso-platform -n caritas
+
+# Rollback to previous version
+helm rollback oriso-platform -n caritas
+
+# Or rollback to specific revision
+helm rollback oriso-platform <revision-number> -n caritas
+```
+
+## Fehlerbehebung
+
+### Pods starten nicht
+```bash
+# Check pod status
+kubectl get pods -n caritas
+
+# Check pod logs
+kubectl logs -n caritas <pod-name>
+
+# Check pod events
+kubectl describe pod -n caritas <pod-name>
+```
+
+### Helm-Installation schlägt fehl
+```bash
+# Check Helm release
+helm list -n caritas
+
+# Check release status
+helm status oriso-platform -n caritas
+
+# View release values
+helm get values oriso-platform -n caritas
+
+# Check for errors
+helm get manifest oriso-platform -n caritas | grep -i error
+```
+
+### Dienste sind nicht erreichbar
+```bash
+# Check Ingress Controller
+kubectl get pods -n ingress-nginx
+
+# Check Ingress resources
+kubectl get ingress -n caritas
+
+# Check Ingress Controller logs
+kubectl logs -n ingress-nginx -l app.kubernetes.io/component=controller
+```
+
+### TLS-Zertifikate werden nicht ausgestellt
+```bash
+# Check cert-manager
+kubectl get pods -n cert-manager
+
+# Check certificates
+kubectl get certificate -n caritas
+kubectl describe certificate <cert-name> -n caritas
+
+# Check certificate requests
+kubectl get certificaterequest -n caritas
+```
+
+## Deinstallation
+
+So deinstallieren Sie die Plattform (Daten bleiben in PVCs erhalten):
+
+```bash
+# Uninstall Helm release
+helm uninstall oriso-platform --namespace caritas
+
+# Remove Ingress resources (optional)
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes/ingress
+kubectl delete -f .
+
+# Note: PVCs are retained by default
+# To delete PVCs (WARNING: This deletes data):
+kubectl delete pvc --all -n caritas
+```
+
+<Warning>
+Die Deinstallation der Helm-Release löscht PersistentVolumeClaims standardmäßig NICHT. Ihre Daten bleiben erhalten. Löschen Sie PVCs nur, wenn Sie alle Daten entfernen möchten.
+</Warning>
+
+## Nächste Schritte
+
+- [Datenbanken einrichten](/oriso-platform/setup-databases) – Datenbankschemata initialisieren
+- [Keycloak konfigurieren](/oriso-platform/configure-keycloak) – Realm importieren und HTTP-Zugriff konfigurieren
+- [Nach der Bereitstellung](/oriso-platform/post-deployment) – Abschließende Schritte nach der Bereitstellung ausführen

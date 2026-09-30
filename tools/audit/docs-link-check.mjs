@@ -98,13 +98,19 @@ function navigationPages() {
 /** url (`/plattform/architecture-hub/architecture`) -> { file, anchors:Set } */
 function indexGeneratedPages() {
   const pages = new Map();
+  const catalogPath=join(repo,'site/content/page-index.json');
+  const catalog=existsSync(catalogPath) ? JSON.parse(readFileSync(catalogPath,'utf8')).pages : [];
   for (const file of walk(generated)) {
     if (!/\.mdx?$/.test(file)) continue;
     const rel = relative(generated, file).replace(/\.mdx?$/, '');
-    const url = '/' + rel.replace(/(^|\/)index$/, '');
+    const localized=rel.match(/^(.*)\.(de|en)$/);
+    const route=(localized ? localized[1] : rel).replace(/(^|\/)index$/, '');
+    const url='/' + (localized ? localized[2]+'/' : '') + route;
     const raw = readFileSync(file, 'utf8');
     const anchors = new Set();
     for (const m of stripFences(raw).matchAll(/^#{1,6}\s+(.+)$/gm)) anchors.add(slugify(m[1]));
+    const record=catalog.find(p=>p.route===route);
+    if(localized&&record) for(const [local,canonical] of Object.entries(record.locales[localized[2]].sectionAliases)){anchors.add(local);anchors.add(canonical);}
     pages.set(url.replace(/\/$/, '') || '/', { file, anchors });
   }
   return pages;
@@ -199,7 +205,7 @@ function checkLinks(pages) {
       let target = pathPart.startsWith('/')
         ? pathPart
         : '/' + join(dirUrl.replace(/^\//, ''), pathPart).replace(/\\/g, '/');
-      target = target.replace(/\.mdx?$/, '').replace(/\/$/, '');
+      target = target.split('?')[0].replace(/\.mdx?$/, '').replace(/\/$/, '');
       if (target.startsWith('/dokumentation/')) target = target.slice('/dokumentation'.length);
 
       // Images and other static files are served from `site/public`, not from the page tree.

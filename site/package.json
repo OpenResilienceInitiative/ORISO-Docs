@@ -5,12 +5,11 @@
   "scripts": {
     "sync": "node scripts/sync-content.mjs",
     "predev": "node scripts/sync-content.mjs",
-    "prebuild": "node scripts/sync-content.mjs",
-    "build": "next build",
+    "build": "node scripts/build.mjs",
     "dev": "next dev",
     "start": "serve out",
     "types:check": "next typegen && tsc --noEmit",
-    "build:root": "NEXT_PUBLIC_BASE_PATH= next build"
+    "build:root": "NEXT_PUBLIC_BASE_PATH= node scripts/build.mjs"
   },
   "dependencies": {
     "cnfast": "^0.1.0",

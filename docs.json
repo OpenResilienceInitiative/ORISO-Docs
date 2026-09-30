@@ -69,6 +69,7 @@
             "pages": [
               "docs/platform/overview",
               "docs/platform/install-and-run-locally",
+              "docs/platform/local-development",
               "docs/platform/architecture"
             ]
           },
@@ -100,7 +101,6 @@
           {
             "group": "Archive",
             "pages": [
-              "docs/platform/local-development",
               "docs/platform/onboarding-guide",
               "docs/platform/user-management-flow",
               "docs/platform/super-graph-index",
