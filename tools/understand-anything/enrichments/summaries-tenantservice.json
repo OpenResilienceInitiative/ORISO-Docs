@@ -1,0 +1,796 @@
+{
+ "meta": {
+  "generatedAt": "2026-09-04T14:25:29Z",
+  "generatedBy": "claude-sonnet-file-summaries-2026-09",
+  "repo": "ORISO-TenantService",
+  "filesSelected": 86,
+  "filesSummarized": 86,
+  "functionsSummarized": 46,
+  "filtered": {
+   "kept": 130,
+   "dropped": 2
+  }
+ },
+ "nodeSummaries": {
+  "file:src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java": {
+   "summary": "Central facade for all tenant CRUD, DPA onboarding, admin-controls, permission-policy and read paths; orchestrates TenantService/Converter/Sanitizer/DPA services. Rolls back tenant creation on consulting-type or DPA failure.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java:createTenant": {
+   "summary": "Sanitizes/validates input, allocates ID, creates tenant, provisions default consulting types, records onboarding DPA ...",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java:updateTenant": {
+   "summary": "Sanitizes and validates changed fields, authorises the caller for what changed, then persists the updated tenant.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java:deleteTenant": {
+   "summary": "Deletes a tenant and its dependent records after authorisation checks.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java:findTenantById": {
+   "summary": "Looks up a tenant by id and converts it to the outbound TenantDTO.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java:canAccessTenant": {
+   "summary": "Checks whether the current caller is authorised to access the given tenant.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/controller/TenantController.java": {
+   "summary": "REST controller implementing TenantApi/TenantadminApi: tenant CRUD, DPA sign/preview/status/versions, admin controls, permission policies, translation, tenant-id reservation, DPIA and branding endpoints. Delegates to facades.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/controller/TenantController.java:createTenant": {
+   "summary": "POST endpoint creating a new tenant via TenantServiceFacade.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/controller/TenantController.java:updateTenant": {
+   "summary": "PUT endpoint updating an existing tenant by id.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/controller/TenantController.java:getTenantById": {
+   "summary": "GET endpoint returning a single tenant's admin DTO.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/controller/TenantController.java:signDataProcessingAgreement": {
+   "summary": "POST endpoint for an authenticated tenant admin to sign the current DPA version.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/controller/TenantController.java:getDataProcessingAgreementStatus": {
+   "summary": "GET endpoint returning the tenant's derived DPA status.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/converter/TenantConverter.java": {
+   "summary": "Maps TenantEntity/TenantData to the many outbound DTOs (DTO, MultilingualDTO, RestrictedTenantDTO, AdminTenantDTO, Licensing/Theming/Content) and back to entities; masks SMTP password; renders template placeholders.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/converter/TenantConverter.java:toEntity": {
+   "summary": "Maps an inbound MultilingualTenantDTO to a new TenantEntity.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/converter/TenantConverter.java:toDTO": {
+   "summary": "Maps a TenantData/entity plus a language to the outbound single-language TenantDTO.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/converter/TenantConverter.java:toMultilingualDTO": {
+   "summary": "Maps a TenantData/entity to the outbound MultilingualTenantDTO carrying all languages.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/converter/TenantConverter.java:toRestrictedTenantDTO": {
+   "summary": "Maps to the pruned public RestrictedTenantDTO view for anonymous/counselling-app consumers.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/converter/TenantConverter.java:toAdminTenantDTO": {
+   "summary": "Maps to the admin-facing AdminTenantDTO including admin-only fields.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/service/TenantPermissionPolicyService.java": {
+   "summary": "Resolves and persists per-tenant boolean/case-handover permission-policy overrides against platform defaults, serializing overrides as JSON on TenantEntity and sanitizing/validating incoming overrides.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/service/TenantPermissionPolicyService.java:getResolvedPolicies": {
+   "summary": "Resolves a tenant's effective boolean permission policies against platform defaults.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/service/TenantPermissionPolicyService.java:saveOverrides": {
+   "summary": "Validates, sanitizes and persists a tenant's boolean permission-policy overrides.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/service/TenantPermissionPolicyService.java:getResolvedCaseHandoverPolicies": {
+   "summary": "Resolves the tenant's effective case-handover policy set.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/facade/TenantFacadeAuthorisationService.java": {
+   "summary": "Authorisation guard for tenant mutations: checks role/tenant match, restricts single-tenant admins from changing licensing/appearance/legal content beyond their scope, throws TenantAuthorisationException.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/facade/TenantFacadeAuthorisationService.java:assertUserIsAuthorizedToAccessTenant": {
+   "summary": "Throws unless the caller's role/tenant match grants access to the given tenant.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/facade/TenantFacadeAuthorisationService.java:assertUserHasSufficientPermissionsToChangeAttributes": {
+   "summary": "Throws unless the caller may change the specific attributes being modified.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/facade/TenantFacadeAuthorisationService.java:canAccessTenant": {
+   "summary": "Boolean check for whether the caller may access the given tenant.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/facade/TenantFacadeAuthorisationService.java:isSuperAdmin": {
+   "summary": "Returns whether the current caller holds the platform super-admin role.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/service/TenantService.java": {
+   "summary": "Persistence-facing service wrapping TenantRepository: create/update/delete tenants, subdomain uniqueness checks, single-domain subdomain override, default settings, and various find-by queries.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/service/TenantService.java:create": {
+   "summary": "Persists a new TenantEntity, applying single-domain subdomain override and create/update dates.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/service/TenantService.java:update": {
+   "summary": "Persists changes to an existing TenantEntity.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/service/TenantService.java:findTenantById": {
+   "summary": "Finds a TenantEntity by primary key.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/service/TenantService.java:findTenantBySubdomain": {
+   "summary": "Finds a TenantEntity by its subdomain.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/service/TenantService.java:delete": {
+   "summary": "Deletes a tenant entity.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/service/TenantDpaService.java": {
+   "summary": "Records/queries DPA signature confirmations and published-version history for a tenant; issues hashed single-use public sign tokens and consumes them atomically. Gotcha: getSignatures must never be caller-tenant-id exposed (IDOR).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/service/TenantDpaService.java:recordSignature": {
+   "summary": "Persists a new DPA signature record for a tenant/version.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/service/TenantDpaService.java:getSignatures": {
+   "summary": "Returns all recorded signatures for a tenant id — never expose via caller-supplied-id endpoint (IDOR).",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/service/TenantDpaService.java:createSignInvite": {
+   "summary": "Mints a hashed single-use public sign token/invite for a tenant.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/service/TenantDpaService.java:confirmSignature": {
+   "summary": "Atomically consumes a valid sign token and records the resulting signature.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/service/TenantDpaService.java:recordPublishedVersion": {
+   "summary": "Records a newly published DPA content version with its activation date.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/facade/TenantDpaFacade.java": {
+   "summary": "Tenant-scoped, authorisation-guarded entry point for admin DPA queries (sign invites, signatures, gate/status, publish, versions); wraps TenantDpaService/TenantDpaStatusService with per-request tenant-access checks.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/facade/TenantDpaFacade.java:createSignInvite": {
+   "summary": "Authorises the caller for the tenant then mints a DPA sign invite link.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/facade/TenantDpaFacade.java:signDpa": {
+   "summary": "Authorises the caller then records their DPA signature.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/facade/TenantDpaFacade.java:getGateStatus": {
+   "summary": "Returns whether the tenant is currently gated (blocked) pending DPA signature.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/facade/TenantDpaFacade.java:publishDpa": {
+   "summary": "Publishes new DPA content as the tenant's current version.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/facade/TenantDpaFacade.java:getVersions": {
+   "summary": "Returns the tenant's DPA version history.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/service/TenantAdminControlsService.java": {
+   "summary": "Reads/writes the platform-global tenant_admin_controls JSON (translation API keys, allowed/enforced permission toggles) and enriches outbound tenant DTOs with those controls.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/service/TenantAdminControlsService.java:getControls": {
+   "summary": "Reads the current platform-global tenant admin controls.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/service/TenantAdminControlsService.java:updateControls": {
+   "summary": "Persists updated platform-global tenant admin controls.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/service/TenantAdminControlsService.java:enrichTenantDtoWithTenantAdminControls": {
+   "summary": "Adds the current admin-controls values onto an outbound tenant DTO.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/service/TenantAdminControlsService.java:setTranslationApiKey": {
+   "summary": "Encrypts and stores a machine-translation provider API key.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/service/TenantIdAllocationService.java": {
+   "summary": "Authoritative tenant-ID allocator (TEN-INV-U1): FREE/RESERVED/ASSIGNED ledger in tenant_id_reservation table; AUTO mode retries smallest-free-ID on primary-key races; supports reserve/release/rollback.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/service/TenantIdAllocationService.java:getStatus": {
+   "summary": "Returns FREE/RESERVED/ASSIGNED status for a given tenant id.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/service/TenantIdAllocationService.java:reserve": {
+   "summary": "Reserves a specific or auto-selected free tenant id in the ledger.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/service/TenantIdAllocationService.java:assignIdForNewTenant": {
+   "summary": "Consumes a reservation (or allocates AUTO) to assign the id to a newly created tenant.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/service/TenantIdAllocationService.java:release": {
+   "summary": "Releases a previously reserved (not yet assigned) tenant id back to FREE.",
+   "tags": [
+    "described"
+   ]
+  },
+  "function:src/main/java/com/vi/tenantservice/api/service/TenantIdAllocationService.java:rollbackAssignment": {
+   "summary": "Reverts a tenant-id assignment if tenant creation fails afterwards.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/facade/TenantFacadeChangeDetectionService.java": {
+   "summary": "Diffs incoming tenant settings/content against the stored entity to compute the list of actually-changed TenantSetting/TenantContent items, used for authorisation scoping and audit.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/service/TenantDpaStatusService.java": {
+   "summary": "Derives authoritative DPA status for a tenant from version-in-force + admin signature audit trail + legacy token signatures (GoverningDpaResolver picks the version); handles in-app signing and onboarding signing.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/controller/ExceptionHandlerAdvice.java": {
+   "summary": "@ControllerAdvice mapping domain exceptions (bad request, constraint violation, ID-allocation conflict, settings-update conflict, illegal state) to HTTP error responses.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/config/security/AuthorisationService.java": {
+   "summary": "Reads role/authority/tenant-id/user info off the current Keycloak JWT principal; central helper used across facades/controllers for authorisation checks.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/facade/TranslationFacade.java": {
+   "summary": "Machine-translation facade for admin legal texts: manages masked provider API keys (super-admin only) and dispatches translate requests to the configured OpenAI-compatible provider client.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/service/GoverningDpaResolver.java": {
+   "summary": "Single source of truth for which DPA document/version governs a tenant: the tenant's own published DPA if any, else the platform operator's document (app.dpa.operator-tenant-id).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/util/TranslationMetaUtil.java": {
+   "summary": "Static helpers for the '<lang>__meta' convention marking machine-translated entries inside multilingual JSON content maps (build/parse/strip meta keys).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/service/translation/OpenAiCompatibleChatClient.java": {
+   "summary": "Abstract base for OpenAI-compatible chat-completions translation providers (OpenRouter, Mistral); builds the translation prompt and maps HTTP failures to typed TranslationException reasons.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/service/PlatformDpiaMasterDataService.java": {
+   "summary": "Reads/replaces the singleton platform-level DPIA operator master data record; sanitizes free-text fields on write.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/service/SingleDomainTenantOverrideService.java": {
+   "summary": "Overrides certain tenant settings/content/branding for single-domain multitenancy deployments so the platform tenant's privacy/branding shows through per-tenant subdomains.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/service/consultingtype/ApplicationSettingsService.java": {
+   "summary": "Client-side service calling ConsultingTypeService's application-settings API (Keycloak-authenticated headers) to read settings and persist the main tenant subdomain.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/service/consultingtype/ConsultingTypeService.java": {
+   "summary": "Provisions default consulting types for a new tenant and patches/fetches consulting types via the generated ConsultingTypeService client, adding Keycloak auth headers.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/service/httpheader/SecurityHeaderSupplier.java": {
+   "summary": "Builds outbound HTTP headers (CSRF token, Keycloak bearer authorization) for calls this service makes to other ORISO services.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/service/translation/TranslationApiKeyEncryptionService.java": {
+   "summary": "Encrypts/decrypts platform-global machine-translation provider API keys at rest, sharing the SmtpPasswordEncryptionService's AES-256-GCM secret/format under its own semantic wrapper.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/tenant/AccessTokenTenantResolver.java": {
+   "summary": "TenantResolver implementation reading the tenant id from the authenticated user's JWT access-token claims.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/tenant/CookieTenantResolver.java": {
+   "summary": "TenantResolver implementation reading the tenant id from a request cookie, used for non-authenticated public flows.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/tenant/TenantResolverService.java": {
+   "summary": "Orchestrates the ordered chain of TenantResolver strategies (access-token, cookie, subdomain) to determine the current request's tenant id.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/validation/InputSanitizer.java": {
+   "summary": "OWASP-based HTML/URL sanitizer utility: strips unsafe markup, validates asset URLs, and offers formatting-preserving variants for richer legal-text fields.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/validation/TenantInputSanitizer.java": {
+   "summary": "Applies InputSanitizer across a MultilingualTenantDTO's theming, content and translation fields before persistence, preserving fields that must not be sanitized.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/converter/EffectiveThemingApplier.java": {
+   "summary": "Fills unset tenant branding/theming values by inheriting from the platform tenant (id 0), producing the effective theming shown to end users.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/facade/PlatformDpiaMasterDataFacade.java": {
+   "summary": "Composes the public DPIA master-data view by combining the platform operator master data with the resolved tenant's public branding, reusing the restricted tenant DTO to avoid new exposure.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/facade/TenantFacadeDependentSettingsOverrideService.java": {
+   "summary": "Enforces settings that depend on each other (e.g. turning off 'topics in registration' when the topics feature itself is off) on tenant create/update.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/policy/LegacyPermissionPolicyMapper.java": {
+   "summary": "Converts legacy boolean permission-policy fields/maps into the newer PolicyValue representation for backward compatibility.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/service/DpaSignatureOwnership.java": {
+   "summary": "Filters DPA signature rows to those actually belonging to the tenant ID's current occupant, since tenant IDs are reusable slots and a released/reassigned ID could otherwise show a stranger's signature.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/service/DpaSignedNoticeHintService.java": {
+   "summary": "Fires an untrusted, best-effort async hint to UserService when a forwarded DPA signature lands, so it can notify the forwarding administrator; failures are swallowed by design.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/service/TenantMediaService.java": {
+   "summary": "Stores/serves tenant-owned editor images with content-type sniffed from magic bytes only (never client-supplied); rejects SVG and anything unrecognised; enforces a 2MB size cap.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/config/security/JwtAuthConverter.java": {
+   "summary": "Converts a Spring Security JWT into an AbstractAuthenticationToken, delegating granted-authority mapping to RoleAuthorizationAuthorityMapper.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/converter/PlatformDpiaMasterDataConverter.java": {
+   "summary": "Maps the DPIA master-data DTO groups to/from the typed singleton entity; PUT is a full replace so absent DTO groups clear their columns.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/model/TenantIdReservationEntity.java": {
+   "summary": "JPA entity for the tenant-ID allocation ledger row; implements Persistable so save() always INSERTs (never silently UPDATEs) since IDs are application-assigned.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/model/TenantSettings.java": {
+   "summary": "Large @Data settings model embedded on TenantEntity (feature flags, UI toggles, media limits); applyDefaults()/getBooleanFieldDefaults() backfill new boolean fields for existing tenants.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/policy/PermissionPolicyResolver.java": {
+   "summary": "Generic static resolver that merges an override PolicyValue with a platform default into a resolved value, optionally tracking the origin (override vs default).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/service/DpaSignToken.java": {
+   "summary": "Generates a secure single-use 256-bit token for public DPA sign links and returns its SHA-256 hash for storage, so the raw token cannot be recovered from the database.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/service/PublicBrandingAssetService.java": {
+   "summary": "Resolves a tenant's effective branding asset (logo/favicon) and returns its decoded bytes for the public branding endpoint.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/service/consultingtype/UserAdminService.java": {
+   "summary": "Client-side service calling UserService's admin API to fetch the list of tenant admin users, adding Keycloak auth headers.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/tenant/SubdomainTenantResolver.java": {
+   "summary": "TenantResolver implementation resolving tenant id from the request's subdomain via TenantService lookup.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/authorisation/RoleAuthorizationAuthorityMapper.java": {
+   "summary": "Spring GrantedAuthoritiesMapper implementation translating Keycloak role names into Spring Security GrantedAuthority objects.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/converter/EffectivePermissionSettingsApplier.java": {
+   "summary": "Applies platform admin-controls constraints (allowed/enforced permission toggles) onto the public Settings DTO served to the counselling app, per ADR-013 P4.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/converter/InheritedBrandingEchoStripper.java": {
+   "summary": "Nulls out branding fields on an incoming Theming submission when they merely echo the existing inherited (platform) value, so inheritance is not accidentally pinned.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/exception/TenantIdAllocationConflictException.java": {
+   "summary": "RuntimeException mapped to HTTP 409, thrown when a requested tenant ID is already assigned or reserved (TEN-INV-U1).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/model/AssignedOrSequenceIdGenerator.java": {
+   "summary": "Hibernate SequenceStyleGenerator subclass that honours a pre-assigned tenant ID (from TenantIdAllocationService) instead of always drawing from the DB sequence.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/service/TenantDpaRetentionService.java": {
+   "summary": "Scheduled daily purge of DENIED DPA confirmation records older than a configurable retention window.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/service/TranslationService.java": {
+   "summary": "Resolves the current request's language context (e.g. from a cookie) for translation and localisation purposes.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/config/security/WebSecurityConfig.java": {
+   "summary": "Spring Security/Keycloak configuration: builds the SecurityFilterChain, exempts /tenant/public/** from auth, and wires JwtAuthConverter.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/TenantServiceApplication.java": {
+   "summary": "Spring Boot application entry point; @EnableScheduling activates the service's cron-based jobs (e.g. DPA retention purge).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/config/RestrictedPublicTenantJacksonConfig.java": {
+   "summary": "Jackson module configuration controlling serialization of the restricted/public tenant DTO view.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/config/apiclient/ConsultingTypeServiceApiControllerFactory.java": {
+   "summary": "Factory bean producing the generated ConsultingTypeControllerApi client used to call ConsultingTypeService.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/controller/TenantMediaController.java": {
+   "summary": "Public REST endpoint serving stored tenant media (legal-text images) to anonymous visitors; ids are UUIDs, content is immutable so responses are cached aggressively.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/exception/ConsultingTypeCommunicationException.java": {
+   "summary": "Checked exception wrapping failures communicating with ConsultingTypeService.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/model/TenantDpaAdminSignatureEntity.java": {
+   "summary": "Append-only JPA entity recording an authenticated tenant admin's DPA signature (signer identity, version, timestamp, verbatim submitted form JSON); no update/delete operations exposed.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/model/TenantDpaVersionEntity.java": {
+   "summary": "Immutable JPA entity snapshotting a published DPA version's content, one row per publish, enabling a 'look back' history in the admin UI.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/service/BrandingAssetDecoder.java": {
+   "summary": "Decodes data-URI and legacy base64 branding asset strings into raw bytes plus content type, with an upper size bound enforced before allocation.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/service/InvalidDpaSignTokenException.java": {
+   "summary": "RuntimeException thrown when a DPA sign token is unknown, already consumed, or expired.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/service/translation/ApiKeyMasker.java": {
+   "summary": "Masks a provider API key for admin read endpoints, keeping a recognisable prefix and last 4 characters so distinct keys remain distinguishable without exposing the full secret.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/tenant/TenantHeaderSupplier.java": {
+   "summary": "Reads the tenant id from an inbound request header, used by internal service-to-service calls.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/model/PlatformDpiaMasterDataEntity.java": {
+   "summary": "JPA entity for the single-row platform-level DPIA operator master data, publicly readable via /tenant/public/dpia; deliberately typed columns, never a JSON blob, to avoid secrets/drift.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/model/TenantAdminAllowedPermissionTogglesSettings.java": {
+   "summary": "@Data settings model holding which permission toggles a tenant admin is allowed/enforced to change, embedded within the admin-controls JSON.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/model/TenantAdminControlsEntity.java": {
+   "summary": "JPA entity storing the platform-global tenant_admin_controls JSON blob (translation keys, permission toggle policy).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/model/TenantEntity.java": {
+   "summary": "Core JPA entity for a tenant (Träger): subdomain, licensing, theming, content and settings; implements TenantData. Central persistence anchor referenced by nearly every other class in this service.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/model/TenantMediaEntity.java": {
+   "summary": "JPA entity storing a tenant-owned media file's bytes directly in the database (volumes are tiny; simplifies backups) behind the /media endpoint.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/model/TenantPermissionPolicyEntity.java": {
+   "summary": "JPA entity persisting a tenant's per-feature permission-policy overrides as structured columns/JSON.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/model/TenantRestrictedDataView.java": {
+   "summary": "Read-only projection implementing TenantRestrictedData, exposing only the pruned public subset of tenant fields.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/model/TenantSmtpSettings.java": {
+   "summary": "@Data model for a tenant's SMTP configuration (host, credentials, encrypted password) embedded within tenant settings.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/repository/TenantDpaSignatureRepository.java": {
+   "summary": "Spring Data repository for TenantDpaAdminSignatureEntity/legacy DPA signature rows, providing tenant- and token-scoped lookups.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/repository/TenantIdReservationRepository.java": {
+   "summary": "Spring Data repository for the tenant-ID allocation ledger; includes a pessimistic-lock query the public DPA forward flow uses to serialise concurrent reservation access.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/repository/TenantMediaRepository.java": {
+   "summary": "Spring Data JpaRepository for TenantMediaEntity, keyed by media id (UUID string).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/repository/TenantPermissionPolicyRepository.java": {
+   "summary": "Spring Data repository for TenantPermissionPolicyEntity, providing tenant-scoped lookups of permission-policy overrides.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/repository/TenantRepository.java": {
+   "summary": "Core Spring Data JpaRepository for TenantEntity: subdomain/infix search, exists-by-subdomain checks, and bulk lookups used throughout the service.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/service/translation/TranslationProviderClient.java": {
+   "summary": "Interface for a machine-translation provider (LLM chat-completions API) able to translate HTML content, implemented by OpenAiCompatibleChatClient subclasses.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/tenant/TenantResolver.java": {
+   "summary": "Strategy interface for resolving the current tenant id from an HttpServletRequest, implemented by AccessToken/Cookie/Subdomain resolvers.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/service/TemplateService.java": {
+   "summary": "Loads default/multilingual data-protection-contact mail templates from bundled resource files for tenant onboarding defaults.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/config/apiclient/ApplicationSettingsApiClient.java": {
+   "summary": "Extension of the generated UserService API client adapting multi-value query-parameter handling for application-settings calls.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/controller/VersionController.java": {
+   "summary": "REST controller exposing the running service's build version and version-info metadata, loaded from bundled version properties.",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/service/translation/MistralClient.java": {
+   "summary": "OpenAiCompatibleChatClient subclass configured for Mistral's chat-completions API (api.mistral.ai/v1).",
+   "tags": [
+    "described"
+   ]
+  },
+  "file:src/main/java/com/vi/tenantservice/api/service/translation/OpenRouterClient.java": {
+   "summary": "OpenAiCompatibleChatClient subclass configured for OpenRouter's chat-completions API (openrouter.ai/api/v1).",
+   "tags": [
+    "described"
+   ]
+  }
+ }
+}

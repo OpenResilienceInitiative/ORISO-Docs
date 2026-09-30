@@ -16,7 +16,7 @@ import urllib.parse
 import urllib.request
 import uuid
 from .contract import ContractError, MAX_FILE, read_json, require, validate, write_json
-from .pipeline import REPOS, fetch_source, refresh, run
+from .pipeline import REPOS, fetch_source, refresh, run, normalize_ref
 from .storage import pull, rollback
 
 TOOLS = Path(__file__).resolve().parents[1]
@@ -378,6 +378,9 @@ def refresh_main(argv):
         action="append",
         help="explicit repo:branch[:enrichment.json] input inventory",
     )
+    parser.add_argument("--release-manifest")
+    parser.add_argument("--require-release", action="store_true")
+    parser.add_argument("--documentation-revision")
     args = parser.parse_args(argv)
     base = Path(args.base)
     publish_root = Path(args.publish_root) if args.publish_root else base / "published"
@@ -386,21 +389,34 @@ def refresh_main(argv):
         pieces = item.split(":")
         require(len(pieces) in (2, 3), "expected repo:branch[:enrichment]")
         specs.append((pieces[0], pieces[1], pieces[2] if len(pieces) == 3 else ""))
+    release_evidence=None
+    if args.require_release or args.release_manifest:
+        if args.require_release:require(args.documentation_revision is not None,"Exact documentation revision required for public release inputs")
+        from .release_inputs import load_release
+        release_evidence=load_release(args.release_manifest,args.documentation_revision)
+        enrichment={n:e for n,_,e in REPOS}
+        locked_specs=[(s['repository'],s['ref'],enrichment[s['repository']]) for s in release_evidence['lock']['sources']]
+        if specs:require({n:normalize_ref(r) for n,r,_ in specs}=={n:r for n,r,_ in locked_specs},'CLI inputs differ from release lock')
+        specs=locked_specs
     specs = specs or REPOS
     if args.mode == "verify":
         manifest = validate(
             publish_root / "current",
-            expected_refs={n: "refs/heads/" + b for n, b, _ in specs},
+            expected_refs={n: normalize_ref(b) for n, b, _ in specs},
         )
         for name, branch, _ in specs:
             source_status(
-                manifest, base / name, name, "refs/heads/" + branch, allow=True
+                manifest, base / name, name, normalize_ref(branch), allow=True
             )
+        if release_evidence:
+            require(manifest.get('release',{}).get('sha256')==release_evidence['sha256'],'generation release binding differs')
+            locked={s['repository']:s['sourceSHA'] for s in release_evidence['lock']['sources']}
+            require({s['repository']:s['sourceSHA'] for s in manifest['sources']}==locked,'generation released source SHA vector differs')
         print(
             f'VALID-CURRENT-SOURCE {manifest["generationId"]} ({len(specs)} freshly fetched inputs)'
         )
     else:
-        refresh(base, args.tools, publish_root, specs)
+        refresh(base, args.tools, publish_root, specs, **({"release_evidence":release_evidence} if release_evidence else {}))
     return 0
 
 

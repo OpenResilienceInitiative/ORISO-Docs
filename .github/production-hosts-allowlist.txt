@@ -90,3 +90,31 @@ oriso-platform/dsfa-text/kap-06-verfahren-und-technik.md # DPIA own public docum
 tools/audit/dsfa-status-2026-09-05.md # DPIA own public documentation reference or exact regression fixture
 tools/dsfa_draft.py # DPIA own public documentation reference or exact regression fixture
 tools/test_dsfa_draft.py # DPIA own public documentation reference or exact regression fixture
+
+# Reviewed technical/legal cross-links and ORISO public publication tooling (exact files).
+.github/workflows/docs-publication.yml # ORISO own public host, artifact origin or deliberate publication regression fixture
+docs/platform/dpia-publication.md # ORISO own public host, artifact origin or deliberate publication regression fixture
+site/content/docs/plattform/knowledge-graphs/dpia-publication.de.md # ORISO own public host, artifact origin or deliberate publication regression fixture
+site/content/docs/plattform/knowledge-graphs/dpia-publication.en.md # ORISO own public host, artifact origin or deliberate publication regression fixture
+site/translations/de/docs/platform/dpia-publication.md # ORISO own public host, artifact origin or deliberate publication regression fixture
+site/translations/en/docs/platform/dpia-publication.md # ORISO own public host, artifact origin or deliberate publication regression fixture
+tools/docs-publication/README.md # ORISO own public host, artifact origin or deliberate publication regression fixture
+tools/docs-publication/publication.mjs # ORISO own public host, artifact origin or deliberate publication regression fixture
+tools/docs-publication/test/publication.test.mjs # ORISO own public host, artifact origin or deliberate publication regression fixture
+tools/docs-publication/test/release.test.mjs # ORISO own public host, artifact origin or deliberate publication regression fixture
+tools/truth-chain/lib/generate-pages.mjs # ORISO own public host, artifact origin or deliberate publication regression fixture
+tools/understand-anything/hosted-viewer/README.md # ORISO own public host, artifact origin or deliberate publication regression fixture
+tools/understand-anything/site/hub/assets/lang.js # ORISO own public host, artifact origin or deliberate publication regression fixture
+tools/understand-anything/site/hub/features/de.html # ORISO own public host, artifact origin or deliberate publication regression fixture
+tools/understand-anything/site/hub/features/en.html # ORISO own public host, artifact origin or deliberate publication regression fixture
+tools/understand-anything/site/hub/features/index.html # ORISO own public host, artifact origin or deliberate publication regression fixture
+tools/understand-anything/site/hub/index.html # ORISO own public host, artifact origin or deliberate publication regression fixture
+tools/understand-anything/site/hub/render-features.mjs # ORISO own public host, artifact origin or deliberate publication regression fixture
+tools/understand-anything/site/hub/test/hub.test.mjs # ORISO own public host, artifact origin or deliberate publication regression fixture
+.github/workflows/ua-public-site.yml # ORISO own public installation binding or deliberate publication regression fixture
+tools/truth-chain/requirements-reconciliation.json # ORISO own public installation binding or deliberate publication regression fixture
+tools/understand-anything/hosted-viewer/configure-source-mounts.py # ORISO own public installation binding or deliberate publication regression fixture
+tools/understand-anything/hosted-viewer/consumer_test.py # ORISO own public installation binding or deliberate publication regression fixture
+tools/understand-anything/hosted-viewer/readback.py # ORISO own public installation binding or deliberate publication regression fixture
+tools/docs-publication/test/workflow-release.test.mjs # ORISO own public installation binding or deliberate publication regression fixture
+tools/docs-publication/test/release-fixture.mjs # Exact released source-vector fixture for ORISO public publication regression tests

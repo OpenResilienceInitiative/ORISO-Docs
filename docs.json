@@ -95,7 +95,8 @@
           {
             "group": "Knowledge Graphs",
             "pages": [
-              "docs/platform/understand-anything"
+              "docs/platform/understand-anything",
+              "docs/platform/dpia-publication"
             ]
           },
           {

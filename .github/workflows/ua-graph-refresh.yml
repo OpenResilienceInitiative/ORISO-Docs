@@ -20,20 +20,17 @@ name: Understand Anything graph refresh
 # private repository reaches this public channel.
 
 on:
-  schedule:
-    # Daily. The reviewer runs per PR, so a graph at most one day old is the
-    # useful target; the old two-hourly cadence made sense when the output fed a
-    # live dashboard rather than a per-PR consumer.
-    - cron: "40 2 * * *"
+  repository_dispatch:
+    types: [platform-release-published]
   workflow_dispatch:
     inputs:
-      publish:
-        description: "Publish the generation to the release channel"
-        type: boolean
-        default: true
+      release_manifest:
+        description: 'Exact platform release manifest JSON (published version and immutable source commits)'
+        required: true
+        type: string
 
 permissions:
-  contents: write # replaces the rolling release assets
+  contents: write # publishes exact released source assets
   id-token: write # build provenance for the published archives
   attestations: write
 
@@ -65,6 +62,18 @@ jobs:
         uses: actions/checkout@v4
         with:
           persist-credentials: false
+          fetch-depth: 0
+      - name: Preserve exact platform release inputs
+        if: github.event_name == 'repository_dispatch' || github.event_name == 'workflow_dispatch'
+        id: release-input
+        run: python3 .github/scripts/release_event.py
+      - name: Check out the released documentation source
+        if: github.event_name == 'repository_dispatch' || github.event_name == 'workflow_dispatch'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.release-input.outputs.documentation-revision }}
+          persist-credentials: false
+          fetch-depth: 0
 
       - name: Install the pinned producer toolchain
         run: |
@@ -77,19 +86,20 @@ jobs:
 
       - name: Resolve and clone the inputs
         env:
-          # Optional. Without it the two private inputs (ORISO-E2E, ORISO-Infra)
-          # are skipped and the run covers the public repositories, which is all
-          # the public channel may carry anyway.
-          UA_GRAPH_TOKEN: ${{ secrets.UA_GRAPH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           python3 .github/scripts/ua_sources.py \
             --tooling "${UA_TOOLING}" \
             --base "${UA_WORK}/base" \
             --inventory "${UA_WORK}/inventory.json" \
-            --repo-args "${UA_WORK}/repo-args.txt"
+            --repo-args "${UA_WORK}/repo-args.txt" \
+            --release-manifest "$RUNNER_TEMP/platform-release.json" --require-release \
+            --documentation-revision "$(git rev-parse HEAD)"
 
       - name: Build one complete generation
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           mkdir -p "${UA_WORK}/published"
@@ -102,9 +112,11 @@ jobs:
               "${REPO_ARGS[@]}"
 
       - name: Verify the generation against live sources
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         # `refresh verify` re-fetches every source ref and checks the full SHA
-        # recorded in the manifest. It is the difference between "a generation
-        # exists" and "this generation is the code that is on dev right now".
+        # recorded in the release lock. Moving a tag or mismatching a SHA fails;
+        # a moving Dev branch is never a publication source.
         run: |
           set -euo pipefail
           mapfile -t REPO_ARGS < "${UA_WORK}/repo-args.txt"
@@ -133,7 +145,6 @@ jobs:
       # gives no such guarantee. Attesting between packing and uploading is
       # what makes the attested bytes and the published bytes the same bytes.
       - name: Pack the publishable graphs
-        if: github.event_name != 'workflow_dispatch' || inputs.publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -144,13 +155,11 @@ jobs:
             --dry-run
 
       - name: Attest the archives
-        if: github.event_name != 'workflow_dispatch' || inputs.publish
         uses: actions/attest-build-provenance@v2
         with:
           subject-path: ${{ env.UA_WORK }}/assets/*.tar.gz
 
       - name: Publish to the consumer channel
-        if: github.event_name != 'workflow_dispatch' || inputs.publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -159,17 +168,6 @@ jobs:
             --generation "${UA_WORK}/published/current" \
             --out "${UA_WORK}/assets" \
             --upload-only
-
-      - name: Pack without publishing
-        if: github.event_name == 'workflow_dispatch' && !inputs.publish
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -euo pipefail
-          python3 .github/scripts/ua_publish_graphs.py \
-            --generation "${UA_WORK}/published/current" \
-            --out "${UA_WORK}/assets" \
-            --dry-run
 
       - name: Keep the manifest for diagnosis
         if: always()

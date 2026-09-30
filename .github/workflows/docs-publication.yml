@@ -1,0 +1,171 @@
+name: Documentation publication evidence
+on:
+  pull_request:
+    paths: ['site/**', 'docs.json', 'docs/**', 'product/**', 'oriso-platform/**', 'tools/truth-chain/**', 'tools/docs-publication/**', 'tools/understand-anything/**', 'tools/evidence-decay-check.mjs', '.github/scripts/ua_sources.py', '.github/workflows/docs-publication.yml']
+  push:
+    branches: [dev]
+    paths: ['site/**', 'docs.json', 'docs/**', 'product/**', 'oriso-platform/**', 'tools/truth-chain/**', 'tools/docs-publication/**', 'tools/understand-anything/**', 'tools/evidence-decay-check.mjs', '.github/scripts/ua_sources.py', '.github/workflows/docs-publication.yml']
+  repository_dispatch:
+    types: [platform-release-published]
+  workflow_dispatch:
+    inputs:
+      release_manifest:
+        description: 'Exact platform release manifest JSON (published version and immutable source commits)'
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: documentation-evidence-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: pnpm/action-setup@v4
+        with: {version: '10.6.2'}
+      - run: pnpm --dir site install --frozen-lockfile
+      - run: node --test site/tests/*.test.mjs site/scripts/page-catalog.test.mjs site/scripts/catalog/*.test.mjs tools/truth-chain/test/*.test.mjs tools/docs-publication/test/*.test.mjs tools/understand-anything/site/hub/test/*.test.mjs tools/understand-anything/hosted-viewer/*.test.mjs
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.13'}
+      - run: python -m pip install PyYAML==6.0.3
+      - run: PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -s tools/understand-anything/hosted-viewer -p '*_test.py' -q
+  publication-binding:
+    # Fail promptly on a hosted runner, before any self-hosted job can queue.
+    if: github.event_name == 'repository_dispatch' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Require explicit existing host and nginx current binding
+        env:
+          DOCS_PUBLICATION_RUNNER_LABELS: ${{ vars.DOCS_PUBLICATION_RUNNER_LABELS }}
+          DOCS_PUBLICATION_ROOT: ${{ vars.DOCS_PUBLICATION_ROOT }}
+          DOCS_PUBLICATION_CURRENT_LINK: ${{ vars.DOCS_PUBLICATION_CURRENT_LINK }}
+        run: |
+          node - <<'NODE'
+          const missing=['DOCS_PUBLICATION_RUNNER_LABELS','DOCS_PUBLICATION_ROOT','DOCS_PUBLICATION_CURRENT_LINK'].filter(k=>!process.env[k]);
+          if(missing.length)throw Error('Missing deployment binding: '+missing.join(', ')+'; owner must bind the existing Docs nginx root to an immutable release current directory.');
+          const labels=JSON.parse(process.env.DOCS_PUBLICATION_RUNNER_LABELS);
+          if(!Array.isArray(labels)||!labels.includes('self-hosted')||labels.some(l=>typeof l!=='string'||!l.trim()))throw Error('DOCS_PUBLICATION_RUNNER_LABELS must name the configured self-hosted Docs host runner');
+          if(!process.env.DOCS_PUBLICATION_CURRENT_LINK.startsWith('/'))throw Error('DOCS_PUBLICATION_CURRENT_LINK must name the existing nginx symlink');
+          if(!process.env.DOCS_PUBLICATION_ROOT.startsWith('/'))throw Error('DOCS_PUBLICATION_ROOT must be an explicit absolute host path with nginx serving its current directory');
+          NODE
+  artifact:
+    # PRs build a non-activatable preview from fresh public source refs.
+    # Dev/PR builds remain previews. Only explicit released source locks activate.
+    needs: contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 80
+    outputs:
+      revision: ${{ steps.revision.outputs.revision }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Preserve exact platform release inputs
+        if: github.event_name == 'repository_dispatch' || github.event_name == 'workflow_dispatch'
+        id: release-input
+        run: python3 .github/scripts/release_event.py
+      - name: Check out the released documentation source
+        if: github.event_name == 'repository_dispatch' || github.event_name == 'workflow_dispatch'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.release-input.outputs.documentation-revision }}
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Resolve exact approved documentation revision
+        id: revision
+        run: echo "revision=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.6.2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: pnpm
+          cache-dependency-path: site/pnpm-lock.yaml
+      - name: Install pinned graph producer and consumer
+        run: |
+          python3 tools/understand-anything/install.py --runtime-root "$RUNNER_TEMP/docs-ua-runtime" --profile "$RUNNER_TEMP/docs-ua-profile"
+          echo "UA_TOOLING=$RUNNER_TEMP/docs-ua-runtime/current/tooling" >> "$GITHUB_ENV"
+      - name: Verify the actual pinned source-preview API
+        run: node tools/understand-anything/hosted-viewer/runtime-test.mjs --upstream "$RUNNER_TEMP/docs-ua-runtime/current/upstream"
+      - name: Resolve only public producer source inputs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # No private graph token is made available to this public pipeline.
+        run: |
+          RELEASE_ARGS=()
+          if [ -f "$RUNNER_TEMP/platform-release.json" ]; then RELEASE_ARGS=(--release-manifest "$RUNNER_TEMP/platform-release.json" --require-release --documentation-revision "$(git rev-parse HEAD)"); fi
+          python3 .github/scripts/ua_sources.py --tooling "$UA_TOOLING" --base "$RUNNER_TEMP/docs-ua-base" --inventory "$RUNNER_TEMP/docs-ua-inventory.json" --repo-args "$RUNNER_TEMP/docs-ua-args.txt" "${RELEASE_ARGS[@]}"
+      - name: Produce and verify a complete source-bound generation
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          mapfile -t REPO_ARGS < "$RUNNER_TEMP/docs-ua-args.txt"
+          PYTHONPATH="$UA_TOOLING" PYTHONDONTWRITEBYTECODE=1 python3 -m bundle refresh --base "$RUNNER_TEMP/docs-ua-base" --tools "$UA_TOOLING" --publish-root "$RUNNER_TEMP/docs-ua-published" "${REPO_ARGS[@]}"
+          PYTHONPATH="$UA_TOOLING" PYTHONDONTWRITEBYTECODE=1 python3 -m bundle refresh verify --base "$RUNNER_TEMP/docs-ua-base" --tools "$UA_TOOLING" --publish-root "$RUNNER_TEMP/docs-ua-published" "${REPO_ARGS[@]}"
+      - name: Export graph, check evidence decay and generate registered bilingual pages
+        run: node tools/truth-chain/prepare-documentation.mjs --generation "$RUNNER_TEMP/docs-ua-published/current" --tooling "$UA_TOOLING" --repos-root "$RUNNER_TEMP/docs-ua-base"
+      - name: Install pinned site dependencies
+        run: pnpm --dir site install --frozen-lockfile
+      - name: Require complete current translations and build root routes
+        run: |
+          node site/scripts/sync-content.mjs --full-current
+          pnpm --dir site types:check
+          pnpm --dir site build:root
+      - name: Bind source revision and every public artifact byte
+        env:
+          DOCUMENTATION_EVENT: ${{ github.event_name }}
+        run: |
+          if [ "$DOCUMENTATION_EVENT" != "repository_dispatch" ] && [ "$DOCUMENTATION_EVENT" != "workflow_dispatch" ]; then
+            node tools/docs-publication/publication.mjs --preview --origin http://127.0.0.1:3000
+          else
+            node tools/docs-publication/publication.mjs --release-manifest "$RUNNER_TEMP/platform-release.json" --generation "$RUNNER_TEMP/docs-ua-published/current" --origin https://docs.oriso.org
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: technical-docs-${{ github.run_id }}
+          path: site/out/
+          if-no-files-found: error
+          retention-days: 30
+  activate-and-readback:
+    if: github.event_name == 'repository_dispatch' || github.event_name == 'workflow_dispatch'
+    needs: [artifact, publication-binding]
+    runs-on: ${{ fromJSON(vars.DOCS_PUBLICATION_RUNNER_LABELS || '["ubuntu-latest"]') }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.artifact.outputs.revision }}
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: technical-docs-${{ github.run_id }}
+          path: ${{ runner.temp }}/technical-docs-artifact
+      - uses: actions/setup-node@v4
+        with: {node-version: '24'}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.13'}
+      - name: Activate exact immutable reviewed artifact
+        env:
+          DOCS_PUBLICATION_ROOT: ${{ vars.DOCS_PUBLICATION_ROOT }}
+          DOCS_PUBLICATION_CURRENT_LINK: ${{ vars.DOCS_PUBLICATION_CURRENT_LINK }}
+          DOCS_REVISION: ${{ needs.artifact.outputs.revision }}
+        run: |
+          node tools/docs-publication/release.mjs --artifact "$RUNNER_TEMP/technical-docs-artifact" --destination "$DOCS_PUBLICATION_ROOT" --current-link "$DOCS_PUBLICATION_CURRENT_LINK" --origin https://docs.oriso.org --revision "$DOCS_REVISION"
+      - name: Verify every public artifact hash at canonical origin
+        run: node tools/docs-publication/publication.mjs --verify-live --manifest "$RUNNER_TEMP/technical-docs-artifact/publication-manifest.json"

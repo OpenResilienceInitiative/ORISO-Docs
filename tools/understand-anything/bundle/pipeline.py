@@ -97,35 +97,21 @@ def validate_narrative_report(output):
         )
 
 
-def fetch_source(repository, ref):
-    branch = ref.removeprefix("refs/heads/")
-    require(
-        ref.startswith("refs/heads/") and branch and not branch.startswith("-"),
-        "expected branch ref required",
-    )
-    run(
-        [
-            "git",
-            "-C",
-            str(repository),
-            "fetch",
-            "--no-tags",
-            "origin",
-            f"+{ref}:refs/remotes/origin/{branch}",
-        ],
-        timeout=90,
-    )
-    return run(
-        [
-            "git",
-            "-C",
-            str(repository),
-            "rev-parse",
-            "--verify",
-            f"refs/remotes/origin/{branch}^{{commit}}",
-        ],
-        timeout=10,
-    )
+def normalize_ref(ref):
+    if ref.startswith(('refs/heads/', 'refs/tags/')) or re.fullmatch(r'[a-f0-9]{40}', ref):return ref
+    require(bool(re.fullmatch(r'[A-Za-z0-9_.+/-]+', ref)) and not ref.startswith('-') and '..' not in ref, 'invalid input ref')
+    return 'refs/heads/'+ref
+
+def fetch_source(repository, ref, expected_sha=None):
+    ref=normalize_ref(ref)
+    require(bool(re.fullmatch(r'(refs/(heads|tags)/[A-Za-z0-9_.+/-]+|[a-f0-9]{40})',ref)) and '..' not in ref, 'exact source ref required')
+    # Separate private tracking ref avoids silently reusing a stale local tag.
+    import hashlib
+    target='refs/oriso-inputs/'+hashlib.sha256(ref.encode()).hexdigest()
+    run(['git','-C',str(repository),'fetch','--no-tags','origin',f'+{ref}:{target}'],timeout=90)
+    sha=run(['git','-C',str(repository),'rev-parse','--verify',target+'^{commit}'],timeout=10)
+    if expected_sha is not None:require(sha==expected_sha,'released source SHA differs from fetched exact ref')
+    return sha
 
 
 def aggregate_coverage(path, repo_graphs):
@@ -150,7 +136,7 @@ def aggregate_coverage(path, repo_graphs):
     write_json(path, graph)
 
 
-def refresh(base, tools, publish_root, specs=None):
+def refresh(base, tools, publish_root, specs=None, release_evidence=None):
     base = Path(base).resolve()
     tools = Path(tools).resolve()
     publish_root = Path(publish_root).resolve()
@@ -164,11 +150,12 @@ def refresh(base, tools, publish_root, specs=None):
             stage.mkdir()
             source_root.mkdir()
             sources = []
-            expected = {name: f"refs/heads/{branch}" for name, branch, _ in specs}
+            expected = {name: normalize_ref(branch) for name, branch, _ in specs}
+            released_shas = {s["repository"]:s["sourceSHA"] for s in release_evidence["lock"]["sources"]} if release_evidence else {}
             # Fetch ALL inputs before any analysis; a failed archived fetch is still a failure.
             for name, branch, _ in specs:
                 repository = base / name
-                sha = fetch_source(repository, expected[name])
+                sha = fetch_source(repository, expected[name], expected_sha=released_shas.get(name))
                 fetched = now_utc().isoformat()
                 sources.append(
                     dict(
@@ -312,7 +299,9 @@ def refresh(base, tools, publish_root, specs=None):
                 env=env,
             )
             validate_narrative_report(narrative_output)
-            manifest = seal(stage, sources, expected_refs=expected)
+            if release_evidence:
+                for name, ref, _ in specs:fetch_source(base/name, normalize_ref(ref), expected_sha=released_shas[name])
+            manifest = seal(stage, sources, expected_refs=expected, release=release_evidence)
             run(
                 [str(runner), str(tools / "ua-validate-consumer.mjs"), str(stage)],
                 cwd=tools,
