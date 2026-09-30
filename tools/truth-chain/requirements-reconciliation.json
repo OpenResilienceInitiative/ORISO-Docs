@@ -226,9 +226,9 @@
       "originalExecutionState": "OPEN",
       "currentPackage": "P2 legal evidence schema",
       "currentState": "open",
-      "implementedEquivalent": "Partial equivalent inspected; remaining requirement retained.",
-      "remainingGap": "Fresh remote/runtime validation and owner review of unbound/identifier-missing evidence remain open. Local source snapshot migration does not clear draft warnings.",
-      "nextAction": "Per-DSFA-claim source.branch/full commit, lifecycle and runtime schema plus migration of every claim remain missing. Chapter-pair and graph-bundle validators are narrower equivalents.",
+      "implementedEquivalent": "PR119 source adds per-claim source.branch/fullSHA, lifecycle/runtime validation and migration preserving86/86 original claims; schema/test source reviewed, runtime0verified.",
+      "remainingGap": "Review the completed internal per-claim v2 schema and86/86 migration in PR119; verify currently unbound/identifier-missing sources against released commits and obtain actual runtime evidence and owner review. No runtime or public/legal acceptance inferred.",
+      "nextAction": "Review the completed internal per-claim v2 schema and86/86 migration in PR119; verify currently unbound/identifier-missing sources against released commits and obtain actual runtime evidence and owner review. No runtime or public/legal acceptance inferred.",
       "implementationUpdate": "PR119 adds internal evidence-v2schema and migrationof86/86claims;fullDocsclaimsourcecommitsandactualavailablecodecommit/hashbindings;0runtimeproof",
       "sourceState": "SOURCE_READY_PARTIAL",
       "sourceEvidence": [
@@ -249,6 +249,18 @@
           "path": "tools/truth-chain/lib/pipeline.mjs",
           "line": 40,
           "sha256": "a2a1719b2f0ef2c3cdab7bc6d14311c7054dd196365bf9142720442bded972cc"
+        },
+        {
+          "package": "Legal",
+          "path": "tools/dsfa_evidence.py",
+          "line": 15,
+          "sha256": "4229f3a5597de3e851c976561fe1280c37192901b16ccd9c00a9bc7540962976"
+        },
+        {
+          "package": "Legal",
+          "path": "tools/test_dsfa_evidence.py",
+          "line": 8,
+          "sha256": "aedb05e16afa12ec3a5da6ad62edeed7f05c482f27aa926bf7ce4fa3ffd0cf49"
         }
       ],
       "verificationBoundary": "Source mappings only; latest package reports/PRs carry independent test evidence. No merged/live/legal completion inferred."
@@ -262,9 +274,9 @@
       "originalExecutionState": "OPEN",
       "currentPackage": "P2 legal evidence schema",
       "currentState": "historical-method",
-      "implementedEquivalent": "Partial equivalent inspected; remaining requirement retained.",
-      "remainingGap": "Fresh remote/runtime validation and owner review of unbound/identifier-missing evidence remain open. Local source snapshot migration does not clear draft warnings.",
-      "nextAction": "Per-DSFA-claim source.branch/full commit, lifecycle and runtime schema plus migration of every claim remain missing. Chapter-pair and graph-bundle validators are narrower equivalents.",
+      "implementedEquivalent": "PR119 source adds per-claim source.branch/fullSHA, lifecycle/runtime validation and migration preserving86/86 original claims; schema/test source reviewed, runtime0verified.",
+      "remainingGap": "Review the completed internal per-claim v2 schema and86/86 migration in PR119; verify currently unbound/identifier-missing sources against released commits and obtain actual runtime evidence and owner review. No runtime or public/legal acceptance inferred.",
+      "nextAction": "Review the completed internal per-claim v2 schema and86/86 migration in PR119; verify currently unbound/identifier-missing sources against released commits and obtain actual runtime evidence and owner review. No runtime or public/legal acceptance inferred.",
       "methodDisposition": "Retain original method/history; exact old filenames, baseline and commit-message examples are not current acceptance evidence. Use current equivalent command/module and preserve the outcome gap.",
       "implementationUpdate": "PR119 adds internal evidence-v2schema and migrationof86/86claims;fullDocsclaimsourcecommitsandactualavailablecodecommit/hashbindings;0runtimeproof",
       "sourceState": "SOURCE_READY_PARTIAL",
@@ -286,6 +298,18 @@
           "path": "tools/truth-chain/lib/pipeline.mjs",
           "line": 40,
           "sha256": "a2a1719b2f0ef2c3cdab7bc6d14311c7054dd196365bf9142720442bded972cc"
+        },
+        {
+          "package": "Legal",
+          "path": "tools/dsfa_evidence.py",
+          "line": 15,
+          "sha256": "4229f3a5597de3e851c976561fe1280c37192901b16ccd9c00a9bc7540962976"
+        },
+        {
+          "package": "Legal",
+          "path": "tools/test_dsfa_evidence.py",
+          "line": 8,
+          "sha256": "aedb05e16afa12ec3a5da6ad62edeed7f05c482f27aa926bf7ce4fa3ffd0cf49"
         }
       ],
       "verificationBoundary": "Source mappings only; latest package reports/PRs carry independent test evidence. No merged/live/legal completion inferred."
@@ -299,9 +323,9 @@
       "originalExecutionState": "OPEN",
       "currentPackage": "P2 legal evidence schema",
       "currentState": "open",
-      "implementedEquivalent": "Partial equivalent inspected; remaining requirement retained.",
-      "remainingGap": "Fresh remote/runtime validation and owner review of unbound/identifier-missing evidence remain open. Local source snapshot migration does not clear draft warnings.",
-      "nextAction": "Per-DSFA-claim source.branch/full commit, lifecycle and runtime schema plus migration of every claim remain missing. Chapter-pair and graph-bundle validators are narrower equivalents.",
+      "implementedEquivalent": "PR119 source adds per-claim source.branch/fullSHA, lifecycle/runtime validation and migration preserving86/86 original claims; schema/test source reviewed, runtime0verified.",
+      "remainingGap": "Review the completed internal per-claim v2 schema and86/86 migration in PR119; verify currently unbound/identifier-missing sources against released commits and obtain actual runtime evidence and owner review. No runtime or public/legal acceptance inferred.",
+      "nextAction": "Review the completed internal per-claim v2 schema and86/86 migration in PR119; verify currently unbound/identifier-missing sources against released commits and obtain actual runtime evidence and owner review. No runtime or public/legal acceptance inferred.",
       "implementationUpdate": "PR119 adds internal evidence-v2schema and migrationof86/86claims;fullDocsclaimsourcecommitsandactualavailablecodecommit/hashbindings;0runtimeproof",
       "sourceState": "SOURCE_READY_PARTIAL",
       "sourceEvidence": [
@@ -322,6 +346,18 @@
           "path": "tools/truth-chain/lib/pipeline.mjs",
           "line": 40,
           "sha256": "a2a1719b2f0ef2c3cdab7bc6d14311c7054dd196365bf9142720442bded972cc"
+        },
+        {
+          "package": "Legal",
+          "path": "tools/dsfa_evidence.py",
+          "line": 15,
+          "sha256": "4229f3a5597de3e851c976561fe1280c37192901b16ccd9c00a9bc7540962976"
+        },
+        {
+          "package": "Legal",
+          "path": "tools/test_dsfa_evidence.py",
+          "line": 8,
+          "sha256": "aedb05e16afa12ec3a5da6ad62edeed7f05c482f27aa926bf7ce4fa3ffd0cf49"
         }
       ],
       "verificationBoundary": "Source mappings only; latest package reports/PRs carry independent test evidence. No merged/live/legal completion inferred."
@@ -335,9 +371,9 @@
       "originalExecutionState": "OPEN",
       "currentPackage": "P2 legal evidence schema",
       "currentState": "open",
-      "implementedEquivalent": "Partial equivalent inspected; remaining requirement retained.",
-      "remainingGap": "Fresh remote/runtime validation and owner review of unbound/identifier-missing evidence remain open. Local source snapshot migration does not clear draft warnings.",
-      "nextAction": "Per-DSFA-claim source.branch/full commit, lifecycle and runtime schema plus migration of every claim remain missing. Chapter-pair and graph-bundle validators are narrower equivalents.",
+      "implementedEquivalent": "PR119 source adds per-claim source.branch/fullSHA, lifecycle/runtime validation and migration preserving86/86 original claims; schema/test source reviewed, runtime0verified.",
+      "remainingGap": "Review the completed internal per-claim v2 schema and86/86 migration in PR119; verify currently unbound/identifier-missing sources against released commits and obtain actual runtime evidence and owner review. No runtime or public/legal acceptance inferred.",
+      "nextAction": "Review the completed internal per-claim v2 schema and86/86 migration in PR119; verify currently unbound/identifier-missing sources against released commits and obtain actual runtime evidence and owner review. No runtime or public/legal acceptance inferred.",
       "implementationUpdate": "PR119 adds internal evidence-v2schema and migrationof86/86claims;fullDocsclaimsourcecommitsandactualavailablecodecommit/hashbindings;0runtimeproof",
       "sourceState": "SOURCE_READY_PARTIAL",
       "sourceEvidence": [
@@ -358,6 +394,18 @@
           "path": "tools/truth-chain/lib/pipeline.mjs",
           "line": 40,
           "sha256": "a2a1719b2f0ef2c3cdab7bc6d14311c7054dd196365bf9142720442bded972cc"
+        },
+        {
+          "package": "Legal",
+          "path": "tools/dsfa_evidence.py",
+          "line": 15,
+          "sha256": "4229f3a5597de3e851c976561fe1280c37192901b16ccd9c00a9bc7540962976"
+        },
+        {
+          "package": "Legal",
+          "path": "tools/test_dsfa_evidence.py",
+          "line": 8,
+          "sha256": "aedb05e16afa12ec3a5da6ad62edeed7f05c482f27aa926bf7ce4fa3ffd0cf49"
         }
       ],
       "verificationBoundary": "Source mappings only; latest package reports/PRs carry independent test evidence. No merged/live/legal completion inferred."
@@ -371,9 +419,9 @@
       "originalExecutionState": "OPEN",
       "currentPackage": "P2 legal evidence schema",
       "currentState": "historical-method",
-      "implementedEquivalent": "Partial equivalent inspected; remaining requirement retained.",
-      "remainingGap": "Fresh remote/runtime validation and owner review of unbound/identifier-missing evidence remain open. Local source snapshot migration does not clear draft warnings.",
-      "nextAction": "Per-DSFA-claim source.branch/full commit, lifecycle and runtime schema plus migration of every claim remain missing. Chapter-pair and graph-bundle validators are narrower equivalents.",
+      "implementedEquivalent": "PR119 source adds per-claim source.branch/fullSHA, lifecycle/runtime validation and migration preserving86/86 original claims; schema/test source reviewed, runtime0verified.",
+      "remainingGap": "Review the completed internal per-claim v2 schema and86/86 migration in PR119; verify currently unbound/identifier-missing sources against released commits and obtain actual runtime evidence and owner review. No runtime or public/legal acceptance inferred.",
+      "nextAction": "Review the completed internal per-claim v2 schema and86/86 migration in PR119; verify currently unbound/identifier-missing sources against released commits and obtain actual runtime evidence and owner review. No runtime or public/legal acceptance inferred.",
       "methodDisposition": "Retain original method/history; exact old filenames, baseline and commit-message examples are not current acceptance evidence. Use current equivalent command/module and preserve the outcome gap.",
       "implementationUpdate": "PR119 adds internal evidence-v2schema and migrationof86/86claims;fullDocsclaimsourcecommitsandactualavailablecodecommit/hashbindings;0runtimeproof",
       "sourceState": "SOURCE_READY_PARTIAL",
@@ -395,6 +443,18 @@
           "path": "tools/truth-chain/lib/pipeline.mjs",
           "line": 40,
           "sha256": "a2a1719b2f0ef2c3cdab7bc6d14311c7054dd196365bf9142720442bded972cc"
+        },
+        {
+          "package": "Legal",
+          "path": "tools/dsfa_evidence.py",
+          "line": 15,
+          "sha256": "4229f3a5597de3e851c976561fe1280c37192901b16ccd9c00a9bc7540962976"
+        },
+        {
+          "package": "Legal",
+          "path": "tools/test_dsfa_evidence.py",
+          "line": 8,
+          "sha256": "aedb05e16afa12ec3a5da6ad62edeed7f05c482f27aa926bf7ce4fa3ffd0cf49"
         }
       ],
       "verificationBoundary": "Source mappings only; latest package reports/PRs carry independent test evidence. No merged/live/legal completion inferred."
@@ -408,9 +468,9 @@
       "originalExecutionState": "OPEN",
       "currentPackage": "P2 legal evidence schema",
       "currentState": "historical-method",
-      "implementedEquivalent": "Partial equivalent inspected; remaining requirement retained.",
-      "remainingGap": "Fresh remote/runtime validation and owner review of unbound/identifier-missing evidence remain open. Local source snapshot migration does not clear draft warnings.",
-      "nextAction": "Per-DSFA-claim source.branch/full commit, lifecycle and runtime schema plus migration of every claim remain missing. Chapter-pair and graph-bundle validators are narrower equivalents.",
+      "implementedEquivalent": "PR119 source adds per-claim source.branch/fullSHA, lifecycle/runtime validation and migration preserving86/86 original claims; schema/test source reviewed, runtime0verified.",
+      "remainingGap": "Review the completed internal per-claim v2 schema and86/86 migration in PR119; verify currently unbound/identifier-missing sources against released commits and obtain actual runtime evidence and owner review. No runtime or public/legal acceptance inferred.",
+      "nextAction": "Review the completed internal per-claim v2 schema and86/86 migration in PR119; verify currently unbound/identifier-missing sources against released commits and obtain actual runtime evidence and owner review. No runtime or public/legal acceptance inferred.",
       "methodDisposition": "Retain original method/history; exact old filenames, baseline and commit-message examples are not current acceptance evidence. Use current equivalent command/module and preserve the outcome gap.",
       "implementationUpdate": "PR119 adds internal evidence-v2schema and migrationof86/86claims;fullDocsclaimsourcecommitsandactualavailablecodecommit/hashbindings;0runtimeproof",
       "sourceState": "SOURCE_READY_PARTIAL",
@@ -432,6 +492,18 @@
           "path": "tools/truth-chain/lib/pipeline.mjs",
           "line": 40,
           "sha256": "a2a1719b2f0ef2c3cdab7bc6d14311c7054dd196365bf9142720442bded972cc"
+        },
+        {
+          "package": "Legal",
+          "path": "tools/dsfa_evidence.py",
+          "line": 15,
+          "sha256": "4229f3a5597de3e851c976561fe1280c37192901b16ccd9c00a9bc7540962976"
+        },
+        {
+          "package": "Legal",
+          "path": "tools/test_dsfa_evidence.py",
+          "line": 8,
+          "sha256": "aedb05e16afa12ec3a5da6ad62edeed7f05c482f27aa926bf7ce4fa3ffd0cf49"
         }
       ],
       "verificationBoundary": "Source mappings only; latest package reports/PRs carry independent test evidence. No merged/live/legal completion inferred."
@@ -4084,8 +4156,8 @@
       "currentPackage": "P2 freshness workflow",
       "currentState": "open",
       "implementedEquivalent": "Partial implementation only: Bundle exact/ref/age missing-source tests and expired/private pipeline rejection fixtures exist; archived status policy still needs catalog resolution.",
-      "remainingGap": "Daily approved-dev generation/docs workflow exists without issue/PR writes; real workflow binding and one actual upstream-change through hosted graph/docs/live acceptance remain open.",
-      "nextAction": "Daily approved-dev generation/docs workflow exists without issue/PR writes; real workflow binding and one actual upstream-change through hosted graph/docs/live acceptance remain open.",
+      "remainingGap": "D24 controls: bind the actual platform-release coordinator to exact released repo/ref/fullSHA inputs and prove release-driven graph/Docs/hub publication with public byte/browser readback. PR source checks generate explicitly non-activatable previews. Semantic review and actual runtime acceptance remain separate; no daily/schedule activation.",
+      "nextAction": "D24 controls: bind the actual platform-release coordinator to exact released repo/ref/fullSHA inputs and prove release-driven graph/Docs/hub publication with public byte/browser readback. PR source checks generate explicitly non-activatable previews. Semantic review and actual runtime acceptance remain separate; no daily/schedule activation.",
       "sourceEvidence": [
         {
           "package": "P2",
@@ -4107,7 +4179,8 @@
         }
       ],
       "verificationBoundary": "Source mappings only; latest package reports/PRs carry independent test evidence. No merged/live/legal completion inferred.",
-      "methodDecision20260930": "Nightly/daily method superseded by user; retained evidence/content outcome is release-bound to exact commits."
+      "methodDecision20260930": "Nightly/daily method superseded by user; retained evidence/content outcome is release-bound to exact commits.",
+      "implementationUpdate": "PR141 removes schedules, enforces exact released source-vector activation and provides source/ref checks plus non-activatable PR previews. Original nightly/daily method is historical, its evidence/content outcome remains required at releases."
     },
     {
       "originalId": "AUG3-030",
@@ -4119,8 +4192,8 @@
       "currentPackage": "P2 freshness workflow",
       "currentState": "open",
       "implementedEquivalent": "PR contract job and source-change workflows invoke validation; current graph freshness is not runtime acceptance.",
-      "remainingGap": "PR contracts job runs fixture tests; actual source-producing freshness/generation job currently runs only approved dev/schedule. Add or prove source/ref freshness checking for documentation PR current-data claims, with actionable repository/commit differences.",
-      "nextAction": "PR contracts job runs fixture tests; actual source-producing freshness/generation job currently runs only approved dev/schedule. Add or prove source/ref freshness checking for documentation PR current-data claims, with actionable repository/commit differences.",
+      "remainingGap": "D24 controls: bind the actual platform-release coordinator to exact released repo/ref/fullSHA inputs and prove release-driven graph/Docs/hub publication with public byte/browser readback. PR source checks generate explicitly non-activatable previews. Semantic review and actual runtime acceptance remain separate; no daily/schedule activation.",
+      "nextAction": "D24 controls: bind the actual platform-release coordinator to exact released repo/ref/fullSHA inputs and prove release-driven graph/Docs/hub publication with public byte/browser readback. PR source checks generate explicitly non-activatable previews. Semantic review and actual runtime acceptance remain separate; no daily/schedule activation.",
       "methodDisposition": "Retain original method/history; exact old filenames, baseline and commit-message examples are not current acceptance evidence. Use current equivalent command/module and preserve the outcome gap.",
       "sourceEvidence": [
         {
@@ -4142,7 +4215,8 @@
           "sha256": "990052872b081512296d39494ef837b9d872ada9bdb3da184ab2c5b612f2651b"
         }
       ],
-      "verificationBoundary": "Source mappings only; latest package reports/PRs carry independent test evidence. No merged/live/legal completion inferred."
+      "verificationBoundary": "Source mappings only; latest package reports/PRs carry independent test evidence. No merged/live/legal completion inferred.",
+      "implementationUpdate": "PR141 removes schedules, enforces exact released source-vector activation and provides source/ref checks plus non-activatable PR previews. Original nightly/daily method is historical, its evidence/content outcome remains required at releases."
     },
     {
       "originalId": "AUG3-031",
@@ -4154,8 +4228,8 @@
       "currentPackage": "P2 freshness workflow",
       "currentState": "source-ready",
       "implementedEquivalent": "Workflow schedule uses contents:read and has no issue/PR creation calls; host binding remains explicit.",
-      "remainingGap": "Daily approved-dev generation/docs workflow exists without issue/PR writes; real workflow binding and one actual upstream-change through hosted graph/docs/live acceptance remain open.",
-      "nextAction": "Daily approved-dev generation/docs workflow exists without issue/PR writes; real workflow binding and one actual upstream-change through hosted graph/docs/live acceptance remain open.",
+      "remainingGap": "D24 controls: bind the actual platform-release coordinator to exact released repo/ref/fullSHA inputs and prove release-driven graph/Docs/hub publication with public byte/browser readback. PR source checks generate explicitly non-activatable previews. Semantic review and actual runtime acceptance remain separate; no daily/schedule activation.",
+      "nextAction": "D24 controls: bind the actual platform-release coordinator to exact released repo/ref/fullSHA inputs and prove release-driven graph/Docs/hub publication with public byte/browser readback. PR source checks generate explicitly non-activatable previews. Semantic review and actual runtime acceptance remain separate; no daily/schedule activation.",
       "sourceEvidence": [
         {
           "package": "P2",
@@ -4177,7 +4251,8 @@
         }
       ],
       "verificationBoundary": "Source mappings only; latest package reports/PRs carry independent test evidence. No merged/live/legal completion inferred.",
-      "methodDecision20260930": "Nightly/daily method superseded by user; retained evidence/content outcome is release-bound to exact commits."
+      "methodDecision20260930": "Nightly/daily method superseded by user; retained evidence/content outcome is release-bound to exact commits.",
+      "implementationUpdate": "PR141 removes schedules, enforces exact released source-vector activation and provides source/ref checks plus non-activatable PR previews. Original nightly/daily method is historical, its evidence/content outcome remains required at releases."
     },
     {
       "originalId": "AUG3-032",
@@ -4189,8 +4264,8 @@
       "currentPackage": "P2 freshness workflow",
       "currentState": "open",
       "implementedEquivalent": "Partial equivalent inspected; remaining requirement retained.",
-      "remainingGap": "Daily approved-dev generation/docs workflow exists without issue/PR writes; real workflow binding and one actual upstream-change through hosted graph/docs/live acceptance remain open.",
-      "nextAction": "Daily approved-dev generation/docs workflow exists without issue/PR writes; real workflow binding and one actual upstream-change through hosted graph/docs/live acceptance remain open.",
+      "remainingGap": "D24 controls: bind the actual platform-release coordinator to exact released repo/ref/fullSHA inputs and prove release-driven graph/Docs/hub publication with public byte/browser readback. PR source checks generate explicitly non-activatable previews. Semantic review and actual runtime acceptance remain separate; no daily/schedule activation.",
+      "nextAction": "D24 controls: bind the actual platform-release coordinator to exact released repo/ref/fullSHA inputs and prove release-driven graph/Docs/hub publication with public byte/browser readback. PR source checks generate explicitly non-activatable previews. Semantic review and actual runtime acceptance remain separate; no daily/schedule activation.",
       "sourceEvidence": [
         {
           "package": "P2",
@@ -4212,7 +4287,8 @@
         }
       ],
       "verificationBoundary": "Source mappings only; latest package reports/PRs carry independent test evidence. No merged/live/legal completion inferred.",
-      "methodDecision20260930": "Nightly/daily method superseded by user; retained evidence/content outcome is release-bound to exact commits."
+      "methodDecision20260930": "Nightly/daily method superseded by user; retained evidence/content outcome is release-bound to exact commits.",
+      "implementationUpdate": "PR141 removes schedules, enforces exact released source-vector activation and provides source/ref checks plus non-activatable PR previews. Original nightly/daily method is historical, its evidence/content outcome remains required at releases."
     },
     {
       "originalId": "AUG3-033",
@@ -4258,8 +4334,8 @@
       "currentPackage": "P2 freshness workflow",
       "currentState": "historical-method",
       "implementedEquivalent": "Partial equivalent inspected; remaining requirement retained.",
-      "remainingGap": "Daily approved-dev generation/docs workflow exists without issue/PR writes; real workflow binding and one actual upstream-change through hosted graph/docs/live acceptance remain open.",
-      "nextAction": "Daily approved-dev generation/docs workflow exists without issue/PR writes; real workflow binding and one actual upstream-change through hosted graph/docs/live acceptance remain open.",
+      "remainingGap": "D24 controls: bind the actual platform-release coordinator to exact released repo/ref/fullSHA inputs and prove release-driven graph/Docs/hub publication with public byte/browser readback. PR source checks generate explicitly non-activatable previews. Semantic review and actual runtime acceptance remain separate; no daily/schedule activation.",
+      "nextAction": "D24 controls: bind the actual platform-release coordinator to exact released repo/ref/fullSHA inputs and prove release-driven graph/Docs/hub publication with public byte/browser readback. PR source checks generate explicitly non-activatable previews. Semantic review and actual runtime acceptance remain separate; no daily/schedule activation.",
       "methodDisposition": "Retain original method/history; exact old filenames, baseline and commit-message examples are not current acceptance evidence. Use current equivalent command/module and preserve the outcome gap.",
       "sourceEvidence": [
         {
@@ -4282,7 +4358,8 @@
         }
       ],
       "verificationBoundary": "Source mappings only; latest package reports/PRs carry independent test evidence. No merged/live/legal completion inferred.",
-      "methodDecision20260930": "Nightly/daily method superseded by user; retained evidence/content outcome is release-bound to exact commits."
+      "methodDecision20260930": "Nightly/daily method superseded by user; retained evidence/content outcome is release-bound to exact commits.",
+      "implementationUpdate": "PR141 removes schedules, enforces exact released source-vector activation and provides source/ref checks plus non-activatable PR previews. Original nightly/daily method is historical, its evidence/content outcome remains required at releases."
     }
   ],
   "controllingDecision": {
