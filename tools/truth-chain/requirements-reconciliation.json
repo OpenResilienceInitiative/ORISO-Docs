@@ -139,27 +139,27 @@
       "requirement": "Reuse PR118 PR107 PR131; development targets dev, public updates use exact released sources; isolate generated output",
       "state": "IN_PROGRESS",
       "package": "P2 generation",
-      "evidence": "P2 selective PR107/118/131/115 reuse;51meaningful tests;clean109page3931file build;generation fixture119pages98pairs passed",
-      "nextAction": "Finish release-manifest validation and release-only triggers, independently review, then bind the platform release coordinator; no time-based or Dev-tip public activation",
-      "sourceState": "IN_PROGRESS"
+      "evidence": "PR141targetdev,head32796a2; independent63Node/87Python source review, no clock triggers, exactrelease lock/sourcevector and directCLI activationguards; hosted04:15UTCpublicsyncretired; realartifactCIrerunpending",
+      "nextAction": "Pass actual current-head CI artifact after Docker mount/UID fixes; human review/merge; confirm platform release coordinator, configure existing host/viewers, publish and verify exact released bytes/browser",
+      "sourceState": "SOURCE_READY"
     },
     {
       "id": "D17",
       "requirement": "Automated publication manifest source revision hash and live readback",
       "state": "IN_PROGRESS",
       "package": "P2 publishing",
-      "evidence": "P2 selective PR107/118/131/115 reuse;51meaningful tests;clean109page3931file build;generation fixture119pages98pairs passed",
-      "nextAction": "Finish release-manifest validation and release-only triggers, independently review, then bind the platform release coordinator; no time-based or Dev-tip public activation",
-      "sourceState": "IN_PROGRESS"
+      "evidence": "PR141targetdev,head32796a2; independent63Node/87Python source review, no clock triggers, exactrelease lock/sourcevector and directCLI activationguards; hosted04:15UTCpublicsyncretired; realartifactCIrerunpending",
+      "nextAction": "Pass actual current-head CI artifact after Docker mount/UID fixes; human review/merge; confirm platform release coordinator, configure existing host/viewers, publish and verify exact released bytes/browser",
+      "sourceState": "SOURCE_READY"
     },
     {
       "id": "D18",
       "requirement": "Resolve stale Understand generation and expand existing feature backlog",
       "state": "IN_PROGRESS",
       "package": "Understand / graph package",
-      "evidence": "Live site21Sep/one feature",
-      "nextAction": "Finish release-manifest validation and release-only triggers, independently review, then bind the platform release coordinator; no time-based or Dev-tip public activation",
-      "sourceState": "IN_PROGRESS"
+      "evidence": "PR141targetdev,head32796a2; independent63Node/87Python source review, no clock triggers, exactrelease lock/sourcevector and directCLI activationguards; hosted04:15UTCpublicsyncretired; realartifactCIrerunpending",
+      "nextAction": "Pass actual current-head CI artifact after Docker mount/UID fixes; human review/merge; confirm platform release coordinator, configure existing host/viewers, publish and verify exact released bytes/browser",
+      "sourceState": "SOURCE_READY"
     },
     {
       "id": "D19",
@@ -210,9 +210,10 @@
       "requirement": "Replace nightly/daily publication and Dev-tip activation with platform release updates using exact released repository versions and full commits",
       "state": "IN_PROGRESS",
       "package": "P2 release integration / issue106",
-      "evidence": "Explicit user amendment2026-09-30; issue106 title/body corrected with exact readback; release source lock/triggers being implemented",
-      "nextAction": "Validate wrong/moved tags and missing inputs, review workflow gates, bind the release coordinator",
-      "decisionSource": "User follow-up: PR106 hat ein Problem ... immer mit dem Release ... Dev wesentlich instabiler"
+      "evidence": "PR141targetdev,head32796a2; independent63Node/87Python source review, no clock triggers, exactrelease lock/sourcevector and directCLI activationguards; hosted04:15UTCpublicsyncretired; realartifactCIrerunpending",
+      "nextAction": "Pass actual current-head CI artifact after Docker mount/UID fixes; human review/merge; confirm platform release coordinator, configure existing host/viewers, publish and verify exact released bytes/browser",
+      "decisionSource": "User follow-up: PR106 hat ein Problem ... immer mit dem Release ... Dev wesentlich instabiler",
+      "sourceState": "SOURCE_READY"
     }
   ],
   "originalRequirements": [
@@ -4289,6 +4290,8 @@
     "source": "Frank’s follow-up on ticket106: no 02:00/nightly publication; update with the release because Dev can be unstable",
     "policy": "Public graph, Docs, hub and DPIA source evidence updates require a published platform release and its exact immutable source vector; Dev PRs/checks/previews remain supported",
     "status": "IN_PROGRESS",
-    "humanReleaseApprovals": "Separate technical/operator/legal exact-version gates retained"
-  }
+    "humanReleaseApprovals": "Separate technical/operator/legal exact-version gates retained",
+    "sourceImplementation": "PR141; all public source activation requires exact published platform-release lock; source tests reviewed; actualCIartifactrerunpending"
+  },
+  "reviewCheckpoint": "PR141 source-ready; independent63Node/87Python; release-only amendment implemented; actual current-head CI artifact rerun and coordinator binding open"
 }
