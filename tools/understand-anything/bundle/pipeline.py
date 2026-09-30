@@ -4,6 +4,7 @@ from __future__ import annotations
 import collections
 import datetime as dt
 import json
+import hashlib
 import os
 import re
 from pathlib import Path
@@ -95,6 +96,37 @@ def validate_narrative_report(output):
         require(
             report.get(field) == [], f"platform narrative {field} must be an empty list"
         )
+
+
+def exclude_unbound_platform_narrative(graph_path, enrichment_path):
+    """Retain historical source bytes, disclose the review gap, never apply it."""
+    raw = Path(enrichment_path).read_bytes()
+    enrichment = json.loads(raw)
+    require(isinstance(enrichment, dict), "platform narrative input must be an object")
+    # No aggregate reviewed-vector evaluator exists in the current applier.
+    # Only its explicit legacy shape can be excluded; claimed bindings fail closed.
+    require(set(enrichment) <= {"meta", "serviceSummaries", "layerDescriptions", "concepts", "tour"}, "reviewed platform narrative method unsupported or unknown input fields")
+    meta = enrichment.get("meta", {})
+    require(isinstance(meta, dict) and set(meta) <= {"generatedAt", "generatedBy"}, "reviewed platform narrative vector verification unsupported")
+    def review_claim(value):
+        if isinstance(value, dict):
+            return any(key in {"claim", "reviewedAt", "sourceCommit", "sourceSHA", "releaseBinding", "evidence", "confidence", "generationId", "sourceRepositories"} or key == "status" and item != "unbound" or review_claim(item) for key, item in value.items())
+        return isinstance(value, list) and any(review_claim(item) for item in value)
+    require(not review_claim(enrichment), "reviewed platform narrative vector verification unsupported")
+    for field in ("serviceSummaries", "layerDescriptions"):
+        entries = enrichment.get(field, {})
+        require(isinstance(entries, dict) and all(isinstance(value, str) for value in entries.values()), "reviewed platform narrative values unsupported")
+    for field, allowed in [("concepts", {"id", "name", "summary", "tags", "related"}), ("tour", {"order", "title", "description", "nodeIds"})]:
+        entries = enrichment.get(field, [])
+        require(isinstance(entries, list) and all(isinstance(value, dict) and set(value) <= allowed for value in entries), "reviewed platform narrative item fields unsupported")
+    graph = read_json(graph_path)
+    graph.setdefault("metadata", {})["narrativeCoverage"] = {
+        "status": "excluded-unbound", "reason": "missing-review",
+        "input": {"path": "platform/narrative/platform-enrich.json", "sha256": hashlib.sha256(raw).hexdigest(), "generatedAt": meta.get("generatedAt"), "generatedBy": meta.get("generatedBy")},
+        "appliedReviewedClaims": 0, "runtimeVerified": False,
+    }
+    write_json(graph_path, graph)
+    return graph["metadata"]["narrativeCoverage"]
 
 
 def normalize_ref(ref):
@@ -288,17 +320,11 @@ def refresh(base, tools, publish_root, specs=None, release_evidence=None):
                 cwd=tools,
                 env=env,
             )
-            narrative_output = run(
-                [
-                    str(runner),
-                    str(tools / "platform/narrative/apply-platform-enrich.mjs"),
-                    str(platform_dir / "knowledge-graph.json"),
-                    str(tools / "platform/narrative/platform-enrich.json"),
-                ],
-                cwd=tools,
-                env=env,
+            narrative_coverage = exclude_unbound_platform_narrative(
+                platform_dir / "knowledge-graph.json",
+                tools / "platform/narrative/platform-enrich.json",
             )
-            validate_narrative_report(narrative_output)
+            print("PLATFORM-NARRATIVE " + json.dumps(narrative_coverage, sort_keys=True), flush=True)
             if release_evidence:
                 for name, ref, _ in specs:fetch_source(base/name, normalize_ref(ref), expected_sha=released_shas[name])
             manifest = seal(stage, sources, expected_refs=expected, release=release_evidence)
