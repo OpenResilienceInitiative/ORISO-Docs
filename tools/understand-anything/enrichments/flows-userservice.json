@@ -1,0 +1,352 @@
+{
+  "orderedFlows": [
+    {
+      "id": "flow:reviewed-account-deletion",
+      "name": "Account deletion: scheduled asker path",
+      "summary": "Ordered source walkthrough of scheduled asker deletion and its content-cleanup guard. This does not certify remote deletion, every account variant, or runtime completion.",
+      "steps": [
+        {
+          "name": "Select eligible deleted accounts",
+          "summary": "Load accounts with deleteDate, normalize and save lifecycle, then filter for hard-delete readiness.",
+          "sources": [
+            "src/main/java/de/caritas/cob/userservice/api/workflow/delete/service/DeleteUserAccountService.java"
+          ],
+          "tests": [
+            "src/test/java/de/caritas/cob/userservice/api/workflow/delete/service/DeleteUserAccountServiceTest.java"
+          ]
+        },
+        {
+          "name": "Execute the registered deletion actions",
+          "summary": "Asker action order starts Keycloak, Matrix, rooms/sessions and agency relation, then anonymous registry, appointments, drafts, notifications and database account.",
+          "sources": [
+            "src/main/java/de/caritas/cob/userservice/api/workflow/delete/service/DeleteUserAccountService.java"
+          ],
+          "tests": [
+            "src/test/java/de/caritas/cob/userservice/api/workflow/delete/service/DeleteUserAccountServiceTest.java"
+          ],
+          "onError": {
+            "name": "Collect action errors",
+            "summary": "The service collects workflow errors and invokes the workflow error-mail service when errors exist; this is not proof the mail arrives.",
+            "sources": [
+              "src/main/java/de/caritas/cob/userservice/api/workflow/delete/service/DeleteUserAccountService.java"
+            ]
+          }
+        },
+        {
+          "name": "Retain retryable identity for failed plaintext cleanup",
+          "summary": "Database deletion refuses to remove the user row when earlier unencrypted-content cleanup failed; otherwise remove chat memberships/mobile tokens, record a tombstone and delete.",
+          "sources": [
+            "src/main/java/de/caritas/cob/userservice/api/workflow/delete/action/asker/DeleteDatabaseAskerAction.java"
+          ],
+          "tests": [
+            "src/test/java/de/caritas/cob/userservice/api/workflow/delete/action/asker/DeleteDatabaseAskerActionTest.java"
+          ],
+          "onError": {
+            "name": "Record database error",
+            "summary": "Database and dependent-row exceptions append a deletion workflow error.",
+            "sources": [
+              "src/main/java/de/caritas/cob/userservice/api/workflow/delete/action/asker/DeleteDatabaseAskerAction.java"
+            ]
+          },
+          "compensation": {
+            "name": "Preserve retry anchor",
+            "summary": "Keep the user row on failed content cleanup or dependent-row deletion so a later scheduler pass can retry; no reversal of prior remote deletion is claimed.",
+            "sources": [
+              "src/main/java/de/caritas/cob/userservice/api/workflow/delete/action/asker/DeleteDatabaseAskerAction.java"
+            ]
+          }
+        }
+      ],
+      "claim": {
+        "sourceCommit": "f8f80fab4e0e18cc83511dc290307447c0fc41c1",
+        "generatedAt": "2026-09-06T22:58:21Z",
+        "reviewedAt": "2026-09-06T22:58:21Z",
+        "generationId": "ua06-source-review-2026-09-07-f8f80fab4e0e",
+        "confidence": "source-reviewed",
+        "evidence": [
+          {
+            "nodeId": "file:src/main/java/de/caritas/cob/userservice/api/workflow/delete/action/asker/DeleteDatabaseAskerAction.java",
+            "sourceCommit": "f8f80fab4e0e18cc83511dc290307447c0fc41c1",
+            "sourceRange": [
+              1,
+              112
+            ],
+            "sourceFingerprint": "a04482893069dc382876f8fa960fd6f85dce228377253351325a8d70988b95cf",
+            "kind": "source"
+          },
+          {
+            "nodeId": "file:src/main/java/de/caritas/cob/userservice/api/workflow/delete/service/DeleteUserAccountService.java",
+            "sourceCommit": "f8f80fab4e0e18cc83511dc290307447c0fc41c1",
+            "sourceRange": [
+              1,
+              120
+            ],
+            "sourceFingerprint": "510c907d737e03b04bced850d16602f3b27efb4cb671a6dc9f48763cf39f607d",
+            "kind": "source"
+          },
+          {
+            "nodeId": "file:src/test/java/de/caritas/cob/userservice/api/workflow/delete/action/asker/DeleteDatabaseAskerActionTest.java",
+            "sourceCommit": "f8f80fab4e0e18cc83511dc290307447c0fc41c1",
+            "sourceRange": [
+              1,
+              167
+            ],
+            "sourceFingerprint": "d5bf5a2b7ffe48bef8f4eed63a6946d3abb60b4d7bfa51cd2870863ab6bfc778",
+            "kind": "test-source"
+          },
+          {
+            "nodeId": "file:src/test/java/de/caritas/cob/userservice/api/workflow/delete/service/DeleteUserAccountServiceTest.java",
+            "sourceCommit": "f8f80fab4e0e18cc83511dc290307447c0fc41c1",
+            "sourceRange": [
+              1,
+              159
+            ],
+            "sourceFingerprint": "8c13714d271f317f4fe8afe739c904c1d4b59201392ed68234e519d3c7dbaa08",
+            "kind": "test-source"
+          }
+        ],
+        "acceptanceEvidence": []
+      }
+    },
+    {
+      "id": "flow:reviewed-anonymous-chat",
+      "name": "Anonymous chat: enquiry creation entry",
+      "summary": "Ordered source walkthrough of CreateAnonymousEnquiryFacade. Acceptance, room cleanup and recipient UI are separate flows; no complete live chat acceptance is claimed.",
+      "steps": [
+        {
+          "name": "Check anonymous consulting policy",
+          "summary": "Normal entry checks consulting-type anonymous permission. The explicit invite-link path can skip that check.",
+          "sources": [
+            "src/main/java/de/caritas/cob/userservice/api/conversation/facade/CreateAnonymousEnquiryFacade.java"
+          ],
+          "tests": [
+            "src/test/java/de/caritas/cob/userservice/api/facade/conversation/CreateAnonymousEnquiryFacadeTest.java"
+          ],
+          "onError": {
+            "name": "Reject disabled anonymous entry",
+            "summary": "A false anonymous permission produces BadRequestException before identity creation.",
+            "sources": [
+              "src/main/java/de/caritas/cob/userservice/api/conversation/facade/CreateAnonymousEnquiryFacade.java"
+            ]
+          }
+        },
+        {
+          "name": "Create anonymous credentials",
+          "summary": "Build generated username/password and default postcode then invoke AnonymousUserCreatorService.",
+          "sources": [
+            "src/main/java/de/caritas/cob/userservice/api/conversation/facade/CreateAnonymousEnquiryFacade.java"
+          ],
+          "tests": [
+            "src/test/java/de/caritas/cob/userservice/api/facade/conversation/CreateAnonymousEnquiryFacadeTest.java"
+          ]
+        },
+        {
+          "name": "Create conversation and return session credentials",
+          "summary": "Invoke conversation creator using the new credentials; then return tokens, expiry values and session ID.",
+          "sources": [
+            "src/main/java/de/caritas/cob/userservice/api/conversation/facade/CreateAnonymousEnquiryFacade.java"
+          ],
+          "tests": [
+            "src/test/java/de/caritas/cob/userservice/api/facade/conversation/CreateAnonymousEnquiryFacadeTest.java"
+          ],
+          "onError": {
+            "name": "Propagate downstream failure",
+            "summary": "This facade declares no catch/compensation around identity and conversation calls. Lower-level recovery requires separate inspection; successful cleanup is not inferred.",
+            "sources": [
+              "src/main/java/de/caritas/cob/userservice/api/conversation/facade/CreateAnonymousEnquiryFacade.java"
+            ]
+          }
+        }
+      ],
+      "claim": {
+        "sourceCommit": "f8f80fab4e0e18cc83511dc290307447c0fc41c1",
+        "generatedAt": "2026-09-06T22:58:21Z",
+        "reviewedAt": "2026-09-06T22:58:21Z",
+        "generationId": "ua06-source-review-2026-09-07-f8f80fab4e0e",
+        "confidence": "source-reviewed",
+        "evidence": [
+          {
+            "nodeId": "file:src/main/java/de/caritas/cob/userservice/api/conversation/facade/CreateAnonymousEnquiryFacade.java",
+            "sourceCommit": "f8f80fab4e0e18cc83511dc290307447c0fc41c1",
+            "sourceRange": [
+              1,
+              91
+            ],
+            "sourceFingerprint": "1f917e26b3006fc5722db0a1edc21ac20645d74eb279ab180a28aa0160178062",
+            "kind": "source"
+          },
+          {
+            "nodeId": "file:src/test/java/de/caritas/cob/userservice/api/facade/conversation/CreateAnonymousEnquiryFacadeTest.java",
+            "sourceCommit": "f8f80fab4e0e18cc83511dc290307447c0fc41c1",
+            "sourceRange": [
+              1,
+              114
+            ],
+            "sourceFingerprint": "24763316a0065671869be535ad1858457833034c698078b74ed9cf2b467f1aac",
+            "kind": "test-source"
+          }
+        ],
+        "acceptanceEvidence": []
+      }
+    },
+    {
+      "id": "flow:reviewed-invitations",
+      "name": "Invitations: draft, delivery and acceptance",
+      "summary": "Ordered source walkthrough across the separate create/send/accept commands. SMTP handoff and persisted acceptance are not evidence of mailbox delivery or completed provisioning.",
+      "steps": [
+        {
+          "name": "Validate and create draft",
+          "summary": "Validate recipient/allocation modes, reserve IDs when applicable, persist DRAFT invitation with pending gates.",
+          "sources": [
+            "src/main/java/de/caritas/cob/userservice/api/service/accountinvite/AccountInviteService.java"
+          ],
+          "tests": [
+            "src/test/java/de/caritas/cob/userservice/api/service/accountinvite/AccountInviteServiceTest.java"
+          ],
+          "onError": {
+            "name": "Creation exception",
+            "summary": "RuntimeException during draft construction/save is propagated.",
+            "sources": [
+              "src/main/java/de/caritas/cob/userservice/api/service/accountinvite/AccountInviteService.java"
+            ]
+          },
+          "compensation": {
+            "name": "Release reservations on caught creation failure",
+            "summary": "Creation catch releases reserved agency/tenant IDs before rethrowing. This is a source catch path, not durable cross-service compensation proof.",
+            "sources": [
+              "src/main/java/de/caritas/cob/userservice/api/service/accountinvite/AccountInviteService.java"
+            ]
+          }
+        },
+        {
+          "name": "Dispatch invitation and record EMAIL_SENT",
+          "summary": "Render server-chosen accept URL, call invite mail dispatcher, then persist token hash/status and SENT delivery receipt.",
+          "sources": [
+            "src/main/java/de/caritas/cob/userservice/api/service/accountinvite/AccountInviteService.java"
+          ],
+          "tests": [
+            "src/test/java/de/caritas/cob/userservice/api/service/accountinvite/AccountInviteServiceTest.java"
+          ],
+          "onError": {
+            "name": "Record failed SMTP handoff",
+            "summary": "SmtpSendException invokes best-effort independent delivery failure recorder and is rethrown. Ambiguous accepted handoff remains a separate risk.",
+            "sources": [
+              "src/main/java/de/caritas/cob/userservice/api/service/accountinvite/AccountInviteService.java"
+            ]
+          }
+        },
+        {
+          "name": "Claim token and apply access gates",
+          "summary": "Accept uses guarded claimForAcceptance update; a lost race rereads persisted state. Access readiness also checks verification and 2FA gates.",
+          "sources": [
+            "src/main/java/de/caritas/cob/userservice/api/service/accountinvite/AccountInviteService.java"
+          ],
+          "tests": [
+            "src/test/java/de/caritas/cob/userservice/api/service/accountinvite/AccountInviteServiceTest.java"
+          ],
+          "onError": {
+            "name": "Terminal or expired token",
+            "summary": "Expired, revoked, superseded and consumed states have explicit responses; pending-2FA accepted invitations have bounded resume semantics.",
+            "sources": [
+              "src/main/java/de/caritas/cob/userservice/api/service/accountinvite/AccountInviteService.java"
+            ]
+          }
+        }
+      ],
+      "claim": {
+        "sourceCommit": "f8f80fab4e0e18cc83511dc290307447c0fc41c1",
+        "generatedAt": "2026-09-06T22:58:21Z",
+        "reviewedAt": "2026-09-06T22:58:21Z",
+        "generationId": "ua06-source-review-2026-09-07-f8f80fab4e0e",
+        "confidence": "source-reviewed",
+        "evidence": [
+          {
+            "nodeId": "file:src/main/java/de/caritas/cob/userservice/api/service/accountinvite/AccountInviteService.java",
+            "sourceCommit": "f8f80fab4e0e18cc83511dc290307447c0fc41c1",
+            "sourceRange": [
+              1,
+              866
+            ],
+            "sourceFingerprint": "f094a157feed84b91e580f88a40eb7554724ddc562a6033770501c2efae5b8e6",
+            "kind": "source"
+          },
+          {
+            "nodeId": "file:src/test/java/de/caritas/cob/userservice/api/service/accountinvite/AccountInviteServiceTest.java",
+            "sourceCommit": "f8f80fab4e0e18cc83511dc290307447c0fc41c1",
+            "sourceRange": [
+              1,
+              1968
+            ],
+            "sourceFingerprint": "c8f932b5e18c5b299d08836d53381786c20a89b7be773e43b225fe99414a4e3f",
+            "kind": "test-source"
+          }
+        ],
+        "acceptanceEvidence": []
+      }
+    },
+    {
+      "id": "flow:reviewed-notifications",
+      "name": "Notifications: request.new timeline recipient loop",
+      "summary": "Ordered source walkthrough of the request.new Activity Timeline producer only. Email, browser sound and actual recipient rendering require separate evidence.",
+      "steps": [
+        {
+          "name": "Prepare recipient loop",
+          "summary": "Reject null session/recipients, build enquiry action path and params, filter blank recipient IDs and deduplicate.",
+          "sources": [
+            "src/main/java/de/caritas/cob/userservice/api/service/notification/EventNotificationService.java"
+          ],
+          "tests": [
+            "src/test/java/de/caritas/cob/userservice/api/service/notification/EventNotificationServiceTest.java"
+          ]
+        },
+        {
+          "name": "Persist request.new per recipient",
+          "summary": "For each remaining consultant call createEvent with system category, request.new type, session and tenant context.",
+          "sources": [
+            "src/main/java/de/caritas/cob/userservice/api/service/notification/EventNotificationService.java"
+          ],
+          "tests": [
+            "src/test/java/de/caritas/cob/userservice/api/service/notification/EventNotificationServiceTest.java"
+          ],
+          "onError": {
+            "name": "Continue after one failed recipient",
+            "summary": "The per-recipient RuntimeException catch logs the failure and continues. No durable retry or compensation is promised by this loop.",
+            "sources": [
+              "src/main/java/de/caritas/cob/userservice/api/service/notification/EventNotificationService.java"
+            ]
+          }
+        }
+      ],
+      "claim": {
+        "sourceCommit": "f8f80fab4e0e18cc83511dc290307447c0fc41c1",
+        "generatedAt": "2026-09-06T22:58:21Z",
+        "reviewedAt": "2026-09-06T22:58:21Z",
+        "generationId": "ua06-source-review-2026-09-07-f8f80fab4e0e",
+        "confidence": "source-reviewed",
+        "evidence": [
+          {
+            "nodeId": "file:src/main/java/de/caritas/cob/userservice/api/service/notification/EventNotificationService.java",
+            "sourceCommit": "f8f80fab4e0e18cc83511dc290307447c0fc41c1",
+            "sourceRange": [
+              1,
+              1165
+            ],
+            "sourceFingerprint": "435bae4505b23d049c059726191d012502b6e44b719d752d14252ad500fbe87f",
+            "kind": "source"
+          },
+          {
+            "nodeId": "file:src/test/java/de/caritas/cob/userservice/api/service/notification/EventNotificationServiceTest.java",
+            "sourceCommit": "f8f80fab4e0e18cc83511dc290307447c0fc41c1",
+            "sourceRange": [
+              1,
+              1858
+            ],
+            "sourceFingerprint": "3a4fea7e19ca71f1acd7be4e2869cddfbf3b3ea5eaa53b6abc0d72760ad4232f",
+            "kind": "test-source"
+          }
+        ],
+        "acceptanceEvidence": []
+      }
+    }
+  ]
+}

@@ -42,6 +42,7 @@ Do a **clean homeserver rebuild** with:
   - Pre-Dev: `server_name = matrix.oriso-dev.site`;
   - Dev: `server_name = matrix.oriso.org`;
   - Production/Main is outside the authorized scope of this work;
+  - These names are ORISO's own installations, not defaults. The Helm chart ships a placeholder (`values.yaml.default`) and every installation sets its own `matrixServerName`; the ORISO values live only in the Dev/production overlays.
 - federation **explicitly off** — `federation_domain_whitelist: []` (or `send_federation: false`), and drop the federation listener / port 8009/8448 and the `.well-known/matrix/server` delegation;
 - remove `accept_keys_insecurely` and `suppress_key_validation_warnings`.
 

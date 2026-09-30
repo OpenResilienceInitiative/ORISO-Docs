@@ -1,207 +1,474 @@
 {
+  "meta": {
+    "generatedAt": "2026-09-04T12:30:00Z",
+    "generatedBy": "claude-opus-deep-run-2026-09",
+    "repo": "ORISO-Admin"
+  },
   "concepts": [
     {
       "id": "concept:admin-spa",
       "name": "Admin Dashboard SPA",
-      "summary": "React 19 + TypeScript single-page admin application built with Vite. UI is a hybrid of Ant Design 5 (with the React-19 patch) and MUI 9, both themed to the muted M3 scheme. Pages are lazy-loaded via lazyPages, runtime configuration is generated into env.js at container start, and OpenTelemetry web-vitals metrics are emitted from the browser.",
-      "tags": ["frontend", "core"],
+      "summary": "A Vite-built React single-page application that is the administration surface of the ORISO counselling platform. `src/index.tsx` boots it, `src/App.tsx` and `src/AdminApp.tsx` wire routing, providers and the lazy page registry in `src/pages/lazyPages.ts`, and `src/components/Layout` supplies the protected and public page shells. The container ships as static assets served by nginx (`Dockerfile`) alongside a small auth backend-for-frontend in `scripts/`.",
+      "tags": [
+        "spa",
+        "react",
+        "vite",
+        "shell"
+      ],
       "related": [
+        "src/index.tsx",
         "src/App.tsx",
-        "src/appConfig.ts",
+        "src/AdminApp.tsx",
         "src/pages/lazyPages.ts",
-        "src/config/runtimeConfig.ts",
-        "scripts/generate-runtime-env.js",
-        "src/observability/initObservability.ts",
-        "MODERNIZATION-PLAN.md"
-      ]
-    },
-    {
-      "id": "concept:admin-management-domains",
-      "name": "Management Domains (Pages)",
-      "summary": "The admin UI is organized by management domains under src/pages: Agency (list/edit with FieldGrid master data), Links (invites), TenantSettings (theme/global settings tabs), Tenants, Topics, users (accounts/agency-admins/tenant-admins/platform-admins tables), Statistic, Logs (case-handover, inactive-accounts, supervisor), Profile, Login, PasswordReset, and the public TenantOnboarding wizard. Which settings tabs render is derived per role/permission in settingsTabs.",
-      "tags": ["structure"],
-      "related": [
-        "src/pages/lazyPages.ts",
-        "src/constants/settingsTabs.ts",
-        "src/pages/TenantSettings/index.tsx",
-        "src/pages/Logs/LogsTabsLayout.tsx",
-        "src/pages/users/management/UserManagementTable.tsx",
-        "src/pages/Agency/Edit/index.tsx"
+        "src/components/Layout/ProtectedPageLayoutWrapper.tsx",
+        "Dockerfile"
       ]
     },
     {
       "id": "concept:admin-api-layer",
       "name": "API Layer",
-      "summary": "src/api holds per-domain HTTP client modules (tenant, agency, admins, counselor, user, settings, statistic, invitelinks, accountInvites, tenantOnboarding, passwordReset, idAllocation, tutorial) built on a shared fetchData wrapper. Endpoint URLs are centralized in appConfig.ts and point at UserService, TenantService, AgencyService and ConsultingTypeService; data fetching/caching in the UI goes through TanStack Query v5 hooks under src/hooks.",
-      "tags": ["integration"],
+      "summary": "Every backend call goes through `src/api/fetchData.ts`, which centralises URL building, auth headers, CSRF and error shaping (`FetchErrorWithOptions`). Below it, `src/api/` is split one folder per backend concern — tenant, agency, counselor, admins, topic, invitelinks, accountInvites, legal, settings, statistic, tutorial, user, consultingtype, idAllocation, passwordReset — and `src/appConfig.ts` resolves the endpoint bases the folders use.",
+      "tags": [
+        "api",
+        "http",
+        "client",
+        "errors"
+      ],
       "related": [
         "src/api/fetchData.ts",
         "src/appConfig.ts",
-        "src/api/agency/getAgencyData.ts",
-        "src/api/settings/apiServerSettings.ts",
-        "src/hooks/useTenantData.hook.tsx"
+        "src/utils/extractApiErrorMessage.ts",
+        "src/utils/parseHalResponse.ts",
+        "src/api/agency/getAgencyById.ts"
       ]
     },
     {
-      "id": "concept:admin-m3-design-system",
-      "name": "M3 Design System and AntD→MUI Migration",
-      "summary": "A muted Material 3 token scheme drives both UI libraries: antdM3Theme maps M3 tokens into the AntD ConfigProvider while orisoMuiTheme themes MUI 9. Custom M3 components (M3Button, M3Switch, M3FabMenu, M3NumberField, MuiFormField and friends) progressively replace AntD widgets; the migration is deliberate and incremental — AntD is still imported in roughly 179 files versus around 42 MUI files — with Form.Item kept as the form scaffolding during conversion. The mui9/antd inventory doc tracks remaining surfaces.",
-      "tags": ["frontend", "design-system"],
+      "id": "concept:admin-management-domains",
+      "name": "Management Domains (Pages)",
+      "summary": "`src/pages/` is organised by administrative domain: Tenants, Agency, users, Topics, Links (invites), Statistic, Logs, GlobalSettings, TenantSettings, Profile, plus the public surfaces Login, PasswordReset, TenantOnboarding and CounsellorOnboarding. Each domain typically has a `List` and an `Edit` route, and the sidebar entries live in `src/components/Layout/adminNavItems.ts`.",
+      "tags": [
+        "pages",
+        "routing",
+        "navigation"
+      ],
       "related": [
-        "src/theme/antdM3Theme.ts",
-        "src/theme/orisoMuiTheme.ts",
-        "src/components/M3FabMenu/M3FabMenu.tsx",
-        "src/components/mui/MuiFormField/index.tsx",
-        "docs/admin-mui9-antd-inventory.md"
+        "src/components/Layout/adminNavItems.ts",
+        "src/pages/Tenants/List/index.tsx",
+        "src/pages/Agency/List/index.tsx",
+        "src/pages/users/List/index.tsx",
+        "src/pages/Links/index.tsx"
       ]
     },
     {
-      "id": "concept:admin-mobile-navigation",
-      "name": "Mobile Navigation (Thumb-Reachable Redesign)",
-      "summary": "New mobile navigation shell: a floating action button menu (M3FabMenu) opens the AdminMobileNav which mirrors the desktop sidebar, with per-page secondary rows, section pills and a MobileNavProvider context. Replaces the folded sidebar on small viewports; a provider re-render loop that froze the whole admin panel after one navigation was fixed in #707.",
-      "tags": ["frontend", "navigation", "mobile"],
+      "id": "concept:tenant-administration",
+      "name": "Tenant Administration",
+      "summary": "Tenants (Träger) are the top-level configurable unit. `src/pages/Tenants` lists and edits them, while the heavy configuration lives in `src/components/Tenants` — GeneralSettings (name, logo, colours, ThemeBuilder), AppSettings (communication, notifications, topics, permissions, SMTP, Erstantwort texts), LegalSettings and DpiaSettings. Reads and writes run through `src/api/tenant/` and the `useTenantData` / `useTenantDataMutation` hooks.",
+      "tags": [
+        "tenant",
+        "traeger",
+        "settings",
+        "theming"
+      ],
       "related": [
-        "src/components/AdminMobileNav/AdminMobileNav.tsx",
-        "src/components/AdminMobileNav/MobileNavContext.tsx",
-        "src/components/M3FabMenu/M3FabMenu.tsx",
-        "docs/mobile-nav-thumb-redesign-plan.md"
+        "src/pages/Tenants/Edit/index.tsx",
+        "src/components/Tenants/GeneralSettings/index.tsx",
+        "src/api/tenant/getSingleTenantData.ts",
+        "src/hooks/useTenantDataMutation.hook.ts",
+        "src/components/Tenants/GeneralSettings/components/ThemeBuilder/index.tsx"
       ]
     },
     {
-      "id": "concept:admin-statistics-dashboard",
-      "name": "Statistics Dashboard",
-      "summary": "Card-based statistics dashboard fed by the UserService useradmin statistics endpoints: a dashboard endpoint for platform metrics and a tutorial-statistics endpoint for onboarding-tour completion. StatisticCard renders animated values with per-metric menus and calm empty-state hints ('not yet collected') instead of fake zeros; user card preferences persist via statisticPreferences.",
-      "tags": ["frontend", "statistics"],
+      "id": "concept:agency-administration",
+      "name": "Agency and Department Administration",
+      "summary": "Agencies (Beratungsstellen) are edited in `src/pages/Agency/Edit`, split into GeneralInformation, AgencySettings, ContactSettings, RegistrationSettings (including PostCodeRanges), ResponsibleSettings and DepartmentDetails. `src/api/agency/` covers create, update, delete, type change, post-code ranges, consultant assignment and department-level data protection/imprint documents; `src/pages/Agency/List/agencySort.ts` holds the list ordering rules.",
+      "tags": [
+        "agency",
+        "department",
+        "registration"
+      ],
       "related": [
-        "src/pages/Statistic/useStatisticDashboardData.hook.ts",
-        "src/api/statistic/getDashboardStatistics.ts",
-        "src/components/StatisticCard/StatisticCard.tsx",
-        "src/pages/Statistic/TutorialStatisticsSection.tsx",
-        "src/api/statistic/getTutorialStatistics.ts",
-        "src/pages/Statistic/statisticPreferences.ts",
-        "docs/statistics-dashboard-parent-task.md"
+        "src/pages/Agency/Edit/index.tsx",
+        "src/pages/Agency/Edit/components/RegistrationSettings/index.tsx",
+        "src/api/agency/updateAgencyData.ts",
+        "src/api/agency/departmentDetails.ts",
+        "src/pages/Agency/List/agencySort.ts"
       ]
     },
     {
-      "id": "concept:admin-legal-dpa-module",
-      "name": "Legal Texts and DPA (AVV) Module",
-      "summary": "Legal settings manage imprint, privacy and DPA content per tenant, department and agency with a TipTap-based M3 rich-text editor (FormPluginEditor). Editors open on the legal source language (pinned even when languages load late), warn on publish when the source language was left untouched, and can machine-translate on publish. The DPA side adds versioned agreements, signature tracking, DPA invite emails, and a DpaBlockerGate that locks the admin UI until the organisation DPA is signed.",
-      "tags": ["legal", "compliance", "dpa"],
+      "id": "concept:user-and-consultant-administration",
+      "name": "User, Consultant and Admin Administration",
+      "summary": "`src/pages/users` manages consultants, agency admins, tenant admins and platform admins in one table (`management/UserManagementTable.tsx`, `useUserTableColumns.tsx`, `userTableConfigs.ts`) with section pills to switch cohorts. Creation and edit go through `src/api/counselor/` and `src/api/admins/`, including granting a consultant identity to an admin (`grantConsultantIdentityData.ts`, gated by `src/utils/canGrantConsultantIdentity.ts`).",
+      "tags": [
+        "users",
+        "consultants",
+        "admins",
+        "identity"
+      ],
+      "related": [
+        "src/pages/users/management/UserManagementTable.tsx",
+        "src/pages/users/Edit/index.tsx",
+        "src/api/counselor/editCounselorData.ts",
+        "src/api/admins/grantConsultantIdentityData.ts",
+        "src/utils/canGrantConsultantIdentity.ts"
+      ]
+    },
+    {
+      "id": "concept:account-invites-and-links",
+      "name": "Account Invites and Invite Links",
+      "summary": "The Links page bundles two mechanisms: per-person account invites (`src/api/accountInvites/accountInvites.ts` — list, create, send, resend, revoke plus email-template CRUD and preview) and topic-scoped registration links (`src/api/invitelinks/topicInviteLinks.ts`). The UI adds an InviteComposer, a CSV bulk import (`src/pages/Links/csv/parseInviteCsv.ts`) and a progress board whose phase model lives in `src/pages/Links/inviteProgress/derivePhases.ts`.",
+      "tags": [
+        "invites",
+        "onboarding",
+        "csv",
+        "email-templates"
+      ],
+      "related": [
+        "src/api/accountInvites/accountInvites.ts",
+        "src/pages/Links/InviteComposer.tsx",
+        "src/pages/Links/inviteProgress/derivePhases.ts",
+        "src/pages/Links/csv/parseInviteCsv.ts",
+        "src/api/invitelinks/topicInviteLinks.ts"
+      ]
+    },
+    {
+      "id": "concept:legal-texts-and-consent",
+      "name": "Legal Texts and Consent Editing",
+      "summary": "`src/components/Tenants/LegalSettings` is the editor for tenant and agency legal texts: draft handling (`hooks/useLegalDraft.ts`, `utils/legalDraftStorage.ts`), version selection (`utils/legalVersionOptions.ts`, `src/api/legal/getLegalTextVersions.ts`), consent templates and their validation (`utils/consentTextValidation.ts`), plus publish-time modals for source warnings and translate-on-publish. Machine translation of legal content goes through `src/api/tenant/translation.ts`.",
+      "tags": [
+        "legal",
+        "consent",
+        "publishing",
+        "translation"
+      ],
       "related": [
         "src/components/Tenants/LegalSettings/index.tsx",
-        "src/components/FormPluginEditor/TiptapEditor.tsx",
-        "src/components/Tenants/LegalSettings/components/PublishSourceWarningModal/index.tsx",
-        "src/components/Tenants/LegalSettings/components/DepartmentSelect/index.tsx",
+        "src/components/Tenants/LegalSettings/hooks/useLegalDraft.ts",
+        "src/components/Tenants/LegalSettings/utils/consentTextValidation.ts",
+        "src/api/legal/getLegalTextVersions.ts",
+        "src/api/tenant/translation.ts",
+        "src/components/Tenants/LegalSettings/components/TranslateOnPublishModal/index.tsx"
+      ]
+    },
+    {
+      "id": "concept:dpa-agreement-and-gate",
+      "name": "Data Processing Agreement (DPA) and its Gate",
+      "summary": "A tenant's DPA has its own status, versions and signature endpoints in `src/api/tenant/` (`getDpaStatus`, `getDpaVersions`, `getDpaSignatures`, `signDpaAdmin`, `publishDpa`, `createDpaSignInvite`, `sendDpaInviteEmail`). Until it is signed, `src/components/DpaBlocker/DpaBlockerGate.tsx` blocks the admin UI, driven by `src/api/tenant/getDpaGate.ts` and `src/utils/dpaBlockerGate.ts`. `src/components/DpaForwardDialog` lets an admin forward the signing task to a legally authorised person.",
+      "tags": [
+        "dpa",
+        "avv",
+        "gate",
+        "signature"
+      ],
+      "related": [
         "src/components/DpaBlocker/DpaBlockerGate.tsx",
-        "src/components/DpaLegalForm/DpaFormSection.tsx",
-        "src/hooks/useDpaGate.hook.ts",
-        "src/hooks/useDpaSignatures.hook.ts"
+        "src/api/tenant/getDpaGate.ts",
+        "src/utils/dpaBlockerGate.ts",
+        "src/api/tenant/signDpaAdmin.ts",
+        "src/api/tenantOnboarding/dpaForward.ts",
+        "src/components/DpaForwardDialog/DpaForwardDialog.tsx"
       ]
     },
     {
-      "id": "concept:admin-tenant-onboarding-wizard",
-      "name": "Tenant-Admin Onboarding Wizard",
-      "summary": "Public (unauthenticated) onboarding flow at /admin/tenant-onboarding/{rawToken}: an emailed account-invite link leads through account creation, organisation DPA acceptance and a mandatory-or-deferrable 2FA setup step before landing in the admin panel. Token handling and step state live in useTenantAdminOnboardingFlow; the backend counterpart is the UserService AccountInviteService.",
-      "tags": ["onboarding", "frontend"],
+      "id": "concept:dpia-master-data",
+      "name": "DPIA Master Data and Text Editor",
+      "summary": "The data protection impact assessment is edited per tenant under `src/components/Tenants/DpiaSettings`: a section selector, a rich-text editor container and defaults in `utils/dpiaDefaults.ts` / `utils/dpiaSections.ts`, talking to the backend via `api/dpiaTextGateway.ts` and `src/api/tenant/getDpiaMasterData.ts` / `updateDpiaMasterData.ts`. `src/components/Dpia/DpiaDocumentPage.tsx` renders the resulting document.",
+      "tags": [
+        "dpia",
+        "dsfa",
+        "editor",
+        "compliance"
+      ],
       "related": [
-        "src/pages/TenantOnboarding/TenantAdminOnboarding.tsx",
-        "src/pages/TenantOnboarding/useTenantAdminOnboardingFlow.ts",
-        "src/api/tenantOnboarding/tenantOnboarding.ts",
-        "src/api/accountInvites/accountInvites.ts",
-        "src/components/TwoFactorSetup/OnboardingTwoFactorSetup.tsx"
+        "src/components/Tenants/DpiaSettings/components/DpiaTextEditorContainer/index.tsx",
+        "src/components/Tenants/DpiaSettings/utils/dpiaSections.ts",
+        "src/components/Tenants/DpiaSettings/api/dpiaTextGateway.ts",
+        "src/api/tenant/updateDpiaMasterData.ts",
+        "src/components/Dpia/DpiaDocumentPage.tsx"
       ]
     },
     {
-      "id": "concept:admin-invite-links",
-      "name": "Links and Invite Composer",
-      "summary": "The Links page unifies invitation management: an InviteComposer for counsellor and tenant-admin invites (with derived department routing), account-invite tables with bulk actions, CSV bulk import, an email-template dialog with live EmailTemplatePreview, and an external-inbounds tab. Invites are sent through UserService invitelinks / account-invites / invite-email-templates endpoints.",
-      "tags": ["frontend", "invites"],
-      "related": [
-        "src/pages/Links/index.tsx",
-        "src/pages/Links/InviteComposer.tsx",
-        "src/pages/Links/AccountInvitesTab.tsx",
-        "src/pages/Links/EmailTemplatesDialog.tsx",
-        "src/api/invitelinks/invitelinks.ts",
-        "src/api/accountInvites/accountInvites.ts",
-        "src/components/EmailTemplatePreview/index.tsx"
-      ]
-    },
-    {
-      "id": "concept:admin-permissions-model",
-      "name": "Permissions Settings and Role Model",
-      "summary": "Function-access settings render permission cards per audience (super-admin, tenant, agency, asker) with toggles constrained by granular access rules and an enforce-mode footer switch. Client-side gating maps Keycloak roles to PermissionAction/Resource pairs via userRolesToPermissions and the useUserPermission hook, which also decides which settings tabs and nav entries are visible.",
-      "tags": ["authorization", "settings"],
+      "id": "concept:permissions-and-roles",
+      "name": "Roles, Permissions and Access Gates",
+      "summary": "Keycloak roles from the token are mapped to UI permissions in `src/constants/userRolesToPermissions.ts`, which merges role permissions and applies a ceiling for restricted agency admins; `src/hooks/useUserPermission.ts` and `src/utils/adminPortalAccess.ts` gate routes and controls. Tenant-wide permission policies are configured in `src/components/Tenants/AppSettings/PermissionsSettings` and persisted via `src/api/tenant/tenantPermissionPolicies.ts`.",
+      "tags": [
+        "rbac",
+        "permissions",
+        "keycloak",
+        "gating"
+      ],
       "related": [
         "src/constants/userRolesToPermissions.ts",
         "src/hooks/useUserPermission.ts",
-        "src/components/Tenants/AppSettings/PermissionsSettings/index.tsx",
-        "src/components/Tenants/AppSettings/PermissionsSettings/EnforceModeSwitch/index.tsx",
-        "src/constants/settingsTabs.ts"
+        "src/utils/adminPortalAccess.ts",
+        "src/components/Tenants/AppSettings/PermissionsSettings/permissionsToggleLogic.ts",
+        "src/api/tenant/tenantPermissionPolicies.ts"
       ]
     },
     {
-      "id": "concept:admin-auth-2fa",
-      "name": "Authentication, Password Reset and 2FA",
-      "summary": "Keycloak-backed login with token/session helpers under src/api/auth and route protection via ProtectedRoute. A self-service password-reset flow (request + confirm pages) and per-user two-factor setup (authenticator app or email OTP) are first-class: TwoFactorSetup components serve both the profile page and the onboarding wizard, with a deferral hook for postponable setup.",
-      "tags": ["auth", "security"],
+      "id": "concept:auth-session-and-bff",
+      "name": "Authentication Session and Auth BFF",
+      "summary": "Login and token lifetime are handled in `src/api/auth/auth.ts` (bootstrap, refresh timers, token accessors) with storage split between httpOnly cookies (`accessSessionCookie.ts`), local storage (`accessSessionLocalStorage.ts`) and an in-memory store (`tokenSessionStore.ts`). A small Node backend-for-frontend in `scripts/auth-bff-handlers.mjs` (served by `scripts/auth-bff-server.mjs`, proxied in dev by `vite.authBffPlugin.ts`) sets, clears and refreshes those cookies against Keycloak.",
+      "tags": [
+        "auth",
+        "keycloak",
+        "bff",
+        "cookies"
+      ],
       "related": [
         "src/api/auth/auth.ts",
-        "src/router/ProtectedRoute.tsx",
-        "src/api/passwordReset/passwordReset.ts",
-        "src/pages/PasswordReset/PasswordResetConfirm.tsx",
-        "src/components/TwoFactorSetup/TwoFactorSetup.tsx",
-        "src/hooks/useUserTwoFactorAuth.hook.ts"
+        "src/api/auth/authBffClient.ts",
+        "scripts/auth-bff-handlers.mjs",
+        "vite.authBffPlugin.ts",
+        "src/api/auth/logout.ts"
+      ]
+    },
+    {
+      "id": "concept:two-factor-authentication",
+      "name": "Two-Factor Authentication Setup",
+      "summary": "`src/components/TwoFactorSetup` implements both app-based (TOTP) and email-based second factors, with a shared state machine in `twoFactorSetupFlow.ts` and separate entry points for onboarding and the profile page. `src/api/user/apiTwoFactorAuth.ts` performs the calls; `src/utils/platformAdminTwoFactorGate.ts` and `src/hooks/useTwoFactorSetupDeferral.hook.ts` decide when setup is mandatory or may be deferred.",
+      "tags": [
+        "2fa",
+        "totp",
+        "security",
+        "onboarding"
+      ],
+      "related": [
+        "src/components/TwoFactorSetup/twoFactorSetupFlow.ts",
+        "src/api/user/apiTwoFactorAuth.ts",
+        "src/utils/platformAdminTwoFactorGate.ts",
+        "src/hooks/useTwoFactorSetupDeferral.hook.ts",
+        "src/pages/Profile/MandatoryTwoFactorSetup.tsx"
+      ]
+    },
+    {
+      "id": "concept:statistics-and-logs",
+      "name": "Statistics Dashboard and Audit Logs",
+      "summary": "`src/pages/Statistic.tsx` renders the dashboard; the shaping of periods, topics, targets and chart series is pure logic in `src/pages/Statistic/statisticDashboardData.ts`, fed by `src/api/statistic/getDashboardStatistics.ts` and a tutorial-progress section. Separately, `src/pages/Logs` shows case-handover, supervisor and inactive-account audit logs through dedicated hooks.",
+      "tags": [
+        "statistics",
+        "charts",
+        "audit-logs"
+      ],
+      "related": [
+        "src/pages/Statistic.tsx",
+        "src/pages/Statistic/statisticDashboardData.ts",
+        "src/api/statistic/getDashboardStatistics.ts",
+        "src/pages/Logs/LogsTabsLayout.tsx",
+        "src/hooks/useCaseHandoverLogsData.ts"
+      ]
+    },
+    {
+      "id": "concept:design-system-and-mui-migration",
+      "name": "Design System and MUI Migration",
+      "summary": "The repo is moving from AntD to MUI: `src/components/mui/` holds the replacement form fields (MuiFormField, MuiSelectField, MuiSwitchField, MuiColorField, MuiSliderField) and `docs/admin-mui9-antd-inventory.md` tracks what is left. Theming is generated from M3 seeds in `src/utils/themeSeeds.ts` and `src/utils/theme/orisoScheme.ts` and applied via `src/hooks/useAdminTheme.hook.ts`; a card system, DataTable and the mobile navigation complete the shared UI kit.",
+      "tags": [
+        "mui",
+        "antd",
+        "m3",
+        "theming",
+        "migration"
+      ],
+      "related": [
+        "src/components/mui/MuiFormField/index.tsx",
+        "docs/admin-mui9-antd-inventory.md",
+        "src/utils/themeSeeds.ts",
+        "src/hooks/useAdminTheme.hook.ts",
+        "src/components/DataTable/DataTable.tsx",
+        "src/components/AdminMobileNav/AdminMobileNav.tsx"
       ]
     }
   ],
   "flows": [
     {
       "id": "flow:admin-login-to-management",
-      "name": "Login → Manage Platform Entities",
-      "summary": "Admin signs in (Login page, Keycloak-backed; 2FA where enabled) → ProtectedRoute admits the role → a lazy-loaded management page renders → data loads through TanStack Query hooks over the src/api clients → edits are written back to the owning backend service (UserService, TenantService, AgencyService, ConsultingTypeService).",
+      "name": "Admin Logs In → Reaches the Management Shell",
+      "summary": "`src/pages/Login/LoginForm.tsx` submits credentials through `src/hooks/useLoginMutation.hook.ts` → tokens are exchanged and stored by `src/api/auth/auth.ts` with cookie help from `scripts/auth-bff-handlers.mjs` → `src/components/Layout/Initialization.tsx` bootstraps user, tenant and feature data → `src/constants/userRolesToPermissions.ts` turns Keycloak roles into UI permissions → `src/components/Layout/ProtectedPageLayoutWrapper.tsx` renders the sidebar from `adminNavItems.ts`.",
+      "tags": [
+        "auth",
+        "bootstrap",
+        "navigation"
+      ],
       "related": [
+        "src/pages/Login/LoginForm.tsx",
+        "src/hooks/useLoginMutation.hook.ts",
         "src/api/auth/auth.ts",
-        "src/router/ProtectedRoute.tsx",
-        "src/App.tsx",
-        "src/pages/lazyPages.ts",
-        "src/api/fetchData.ts"
+        "src/components/Layout/Initialization.tsx",
+        "src/constants/userRolesToPermissions.ts",
+        "src/components/Layout/adminNavItems.ts"
+      ]
+    },
+    {
+      "id": "flow:platform-admin-creates-tenant",
+      "name": "Platform Admin Creates and Configures a Tenant",
+      "summary": "`src/pages/Tenants/List/index.tsx` starts creation → `src/hooks/useAddOrUpdateTenant.hook.ts` posts via `src/api/tenant/addTenantData.ts` → the editor `src/pages/Tenants/Edit/index.tsx` opens the General, AppSettings, LegalSettings and ThemeSettings tabs → branding is edited in `src/components/Tenants/GeneralSettings/index.tsx` with logo upload through `src/api/tenant/uploadTenantMedia.ts` → changes are persisted with `src/hooks/useTenantDataMutation.hook.ts`.",
+      "tags": [
+        "tenant",
+        "create",
+        "settings"
+      ],
+      "related": [
+        "src/pages/Tenants/List/index.tsx",
+        "src/hooks/useAddOrUpdateTenant.hook.ts",
+        "src/api/tenant/addTenantData.ts",
+        "src/pages/Tenants/Edit/index.tsx",
+        "src/api/tenant/uploadTenantMedia.ts",
+        "src/hooks/useTenantDataMutation.hook.ts"
+      ]
+    },
+    {
+      "id": "flow:admin-creates-agency",
+      "name": "Admin Creates an Agency → Assigns Topics and Consultants",
+      "summary": "`src/pages/Agency/List/index.tsx` opens the create route → `src/pages/Agency/Edit/index.tsx` collects general, registration and contact data → topic ids are normalised by `src/api/agency/normalizeTopicIds.ts` before `src/api/agency/addAgencyData.ts` is called → post-code ranges are stored via `src/api/agency/updateAgencyPostCodeRange.ts` → consultants are attached with `src/api/agency/assignAgencyToConsultants.ts`.",
+      "tags": [
+        "agency",
+        "topics",
+        "consultants"
+      ],
+      "related": [
+        "src/pages/Agency/List/index.tsx",
+        "src/pages/Agency/Edit/index.tsx",
+        "src/api/agency/normalizeTopicIds.ts",
+        "src/api/agency/addAgencyData.ts",
+        "src/api/agency/updateAgencyPostCodeRange.ts",
+        "src/api/agency/assignAgencyToConsultants.ts"
+      ]
+    },
+    {
+      "id": "flow:admin-invites-account",
+      "name": "Admin Invites an Account → Tracks it to Acceptance",
+      "summary": "`src/pages/Links/InviteComposer.tsx` (or the bulk path `src/pages/Links/InviteCsvImportModal.tsx` with `csv/parseInviteCsv.ts`) creates invites through `src/api/accountInvites/accountInvites.ts` → the mail body comes from an invite email template previewed by `src/hooks/useInviteEmailPreview.hook.ts` → sent invites appear in `src/pages/Links/AccountInvitesTab.tsx` → `src/pages/Links/inviteProgress/derivePhases.ts` derives phase and bucket for `InviteProgressBoard.tsx`, where invites can be resent or revoked.",
+      "tags": [
+        "invites",
+        "bulk",
+        "email",
+        "tracking"
+      ],
+      "related": [
+        "src/pages/Links/InviteComposer.tsx",
+        "src/api/accountInvites/accountInvites.ts",
+        "src/pages/Links/csv/parseInviteCsv.ts",
+        "src/hooks/useInviteEmailPreview.hook.ts",
+        "src/pages/Links/inviteProgress/derivePhases.ts",
+        "src/pages/Links/inviteProgress/InviteProgressBoard.tsx"
       ]
     },
     {
       "id": "flow:tenant-admin-onboarding",
-      "name": "Invite Email → Tenant-Admin Onboarding",
-      "summary": "Admin composes an account invite (Links page) → UserService emails a link containing a raw token → invitee opens /admin/tenant-onboarding/{token} → creates the account → accepts the organisation DPA → completes (or defers) 2FA setup → lands in the admin panel; until the DPA is signed the DpaBlockerGate keeps the rest of the UI locked.",
+      "name": "Invited Tenant Admin Onboards via Link",
+      "summary": "The invite link opens `src/pages/TenantOnboarding/TenantAdminOnboardingPage.tsx` → `useTenantAdminOnboardingFlow.ts` drives the steps against the client in `src/api/tenantOnboarding/tenantOnboarding.ts`, which raises `InviteLinkError` for dead or used links (rendered by `LinkErrorState.tsx`) → AccountStep sets credentials, TwoFactorStep runs the second factor, OrganisationDpaStep presents the DPA → DoneStep closes the flow.",
+      "tags": [
+        "onboarding",
+        "invite-link",
+        "public-surface"
+      ],
       "related": [
-        "src/pages/Links/InviteComposer.tsx",
-        "src/api/accountInvites/accountInvites.ts",
+        "src/pages/TenantOnboarding/TenantAdminOnboardingPage.tsx",
         "src/pages/TenantOnboarding/useTenantAdminOnboardingFlow.ts",
-        "src/components/TwoFactorSetup/OnboardingTwoFactorSetup.tsx",
-        "src/components/DpaBlocker/DpaBlockerGate.tsx"
+        "src/api/tenantOnboarding/tenantOnboarding.ts",
+        "src/pages/TenantOnboarding/OrganisationDpaStep.tsx",
+        "src/pages/TenantOnboarding/LinkErrorState.tsx"
       ]
     },
     {
-      "id": "flow:legal-edit-and-publish",
-      "name": "Legal Text Edit → Publish",
-      "summary": "Editor opens a legal document (imprint/privacy/DPA) for a tenant, department or agency → the TipTap editor pins the legal source language → on publish, a warning fires if only translations changed while the source language stayed untouched, and translate-on-publish can regenerate translations → published text is served to the app layer and gates registration/consent there.",
+      "id": "flow:dpa-gate-sign-or-forward",
+      "name": "Tenant Admin Passes the DPA Gate → Signs or Forwards",
+      "summary": "`src/components/DpaBlocker/DpaBlockerGate.tsx` asks `src/hooks/useDpaGate.hook.ts` (backed by `src/api/tenant/getDpaGate.ts`) whether the admin area is blocked → `src/utils/dpaBlockerGate.ts` decides the blocking state → the admin either signs with `src/api/tenant/signDpaAdmin.ts` or opens `src/components/DpaForwardDialog/DpaForwardDialog.tsx` → `src/api/tenantOnboarding/dpaForward.ts` creates the forward link, enforces the forward budget and reports awaiting-signature state.",
+      "tags": [
+        "dpa",
+        "gate",
+        "signature",
+        "forwarding"
+      ],
+      "related": [
+        "src/components/DpaBlocker/DpaBlockerGate.tsx",
+        "src/hooks/useDpaGate.hook.ts",
+        "src/utils/dpaBlockerGate.ts",
+        "src/api/tenant/signDpaAdmin.ts",
+        "src/components/DpaForwardDialog/DpaForwardDialog.tsx",
+        "src/api/tenantOnboarding/dpaForward.ts"
+      ]
+    },
+    {
+      "id": "flow:publish-legal-text",
+      "name": "Admin Edits a Legal Text → Translates → Publishes",
+      "summary": "`src/components/Tenants/LegalSettings/index.tsx` loads the current text and its versions via `src/hooks/useLegalTextVersions.hook.ts` → editing happens in the Tiptap-based editor `src/components/FormPluginEditor/TiptapEditor.tsx` with drafts kept by `hooks/useLegalDraft.ts` → consent placeholders are checked by `utils/consentTextValidation.ts` → publishing shows `TranslateOnPublishModal` which calls `src/api/tenant/translation.ts` for the remaining locales.",
+      "tags": [
+        "legal",
+        "editor",
+        "translation",
+        "publish"
+      ],
       "related": [
         "src/components/Tenants/LegalSettings/index.tsx",
+        "src/hooks/useLegalTextVersions.hook.ts",
         "src/components/FormPluginEditor/TiptapEditor.tsx",
-        "src/components/Tenants/LegalSettings/components/PublishSourceWarningModal/index.tsx",
-        "src/components/Tenants/LegalSettings/components/TranslateOnPublishModal/index.tsx",
-        "src/hooks/useTranslateLegalContent.hook.ts"
+        "src/components/Tenants/LegalSettings/hooks/useLegalDraft.ts",
+        "src/components/Tenants/LegalSettings/utils/consentTextValidation.ts",
+        "src/api/tenant/translation.ts"
       ]
     },
     {
-      "id": "flow:statistics-dashboard-load",
-      "name": "Statistics Dashboard Load",
-      "summary": "Statistic page mounts → useStatisticDashboardData queries the UserService useradmin statistics/dashboard endpoint (tutorial stats separately) → responses map into card view-models → StatisticCard animates values, or renders the muted empty-state hint when a metric is not collected yet → card layout preferences persist per user.",
+      "id": "flow:edit-dpia-master-data",
+      "name": "Admin Edits DPIA Master Data",
+      "summary": "The DPIA tab loads master data with `src/hooks/useDpiaMasterData.hook.ts` from `src/api/tenant/getDpiaMasterData.ts` → `src/components/Tenants/DpiaSettings/components/DpiaSectionSelect/index.tsx` picks a section defined in `utils/dpiaSections.ts` → the section text is edited in `DpiaTextEditorContainer` and written back through `src/hooks/useDpiaMasterDataMutation.hook.ts` → `src/components/Dpia/DpiaDocumentPage.tsx` renders the assembled document.",
+      "tags": [
+        "dpia",
+        "compliance",
+        "editor"
+      ],
       "related": [
+        "src/hooks/useDpiaMasterData.hook.ts",
+        "src/api/tenant/getDpiaMasterData.ts",
+        "src/components/Tenants/DpiaSettings/utils/dpiaSections.ts",
+        "src/components/Tenants/DpiaSettings/components/DpiaTextEditorContainer/index.tsx",
+        "src/hooks/useDpiaMasterDataMutation.hook.ts",
+        "src/components/Dpia/DpiaDocumentPage.tsx"
+      ]
+    },
+    {
+      "id": "flow:configure-tenant-permissions",
+      "name": "Admin Configures Tenant Permission Policies",
+      "summary": "`src/components/Tenants/AppSettings/PermissionsSettings/index.tsx` picks the variant for the current role (SuperAdmin, Tenant or Agency permissions) → toggles are resolved by `permissionsToggleLogic.ts` and `permissionsSettingsUtils.ts`, with case-handover specifics in `CaseHandoverCard` and `src/constants/caseHandoverAccess.ts` → the resulting policy is saved via `src/api/tenant/tenantPermissionPolicies.ts` and read back by `src/hooks/useTenantPermissionPolicies.ts`.",
+      "tags": [
+        "permissions",
+        "policies",
+        "case-handover"
+      ],
+      "related": [
+        "src/components/Tenants/AppSettings/PermissionsSettings/index.tsx",
+        "src/components/Tenants/AppSettings/PermissionsSettings/permissionsToggleLogic.ts",
+        "src/constants/caseHandoverAccess.ts",
+        "src/api/tenant/tenantPermissionPolicies.ts",
+        "src/hooks/useTenantPermissionPolicies.ts"
+      ]
+    },
+    {
+      "id": "flow:view-statistics-dashboard",
+      "name": "Admin Opens the Statistics Dashboard",
+      "summary": "`src/pages/Statistic.tsx` reads stored filter preferences from `src/pages/Statistic/statisticPreferences.ts` → `useStatisticDashboardData.hook.ts` fetches raw numbers via `src/api/statistic/getDashboardStatistics.ts` → `statisticDashboardData.ts` builds week starts, topic and target series and empty states → charts render through `statisticChartUtils.ts`, and `TutorialStatisticsSection.tsx` adds tutorial progress from `src/api/statistic/getTutorialStatistics.ts`.",
+      "tags": [
+        "statistics",
+        "dashboard",
+        "charts"
+      ],
+      "related": [
+        "src/pages/Statistic.tsx",
+        "src/pages/Statistic/statisticPreferences.ts",
         "src/pages/Statistic/useStatisticDashboardData.hook.ts",
         "src/api/statistic/getDashboardStatistics.ts",
         "src/pages/Statistic/statisticDashboardData.ts",
-        "src/components/StatisticCard/StatisticCard.tsx",
-        "src/pages/Statistic/statisticPreferences.ts"
+        "src/pages/Statistic/TutorialStatisticsSection.tsx"
       ]
     }
-  ]
+  ],
+  "layerDescriptions": {
+    "Domain Concepts": "Orientation catalogue for the admin shell and API layer, tenant and agency administration, invitations, legal texts, DPA, DPIA, permissions, authentication and 2FA, statistics, design components, and their administrative flows.",
+    "API Layer": "Everything under `src/api/` plus the auth backend-for-frontend in `scripts/` — typed client functions per backend concern (tenant, agency, counselor, admins, topic, invites, legal, settings, statistic, user) funnelled through `src/api/fetchData.ts`.",
+    "External Services": "The nginx base image declared in the `Dockerfile` that serves the built admin bundle and the auth-BFF scripts.",
+    "UI Layer": "React pages under `src/pages/` and components under `src/components/` — tenant/agency/user editors, DataTable, cards, MUI form fields, DPA and DPIA dialogs, the rich-text editors and their Storybook stories.",
+    "Core": "Application wiring and domain glue: `src/App.tsx`, `src/AdminApp.tsx`, `src/appConfig.ts`, `src/i18n.ts`, the data-fetching hooks in `src/hooks/`, contexts, enums and types.",
+    "Utility Layer": "Pure helpers in `src/utils/` — theming and branding, JWT and HAL parsing, validation, error-message extraction, permission and gate predicates, plus Storybook decorators.",
+    "Configuration Layer": "Build- and runtime-configuration files such as the Vite config and the `.env.example` variables (Keycloak URL/realm/client, API and app URLs, cookie domain and security flags).",
+    "Test Layer": "The Vitest setup in `src/test/` (`setup.ts`, `memoryStorage.ts`, AntD notice cleanup) that supports the unit and component tests colocated with the source."
+  }
 }

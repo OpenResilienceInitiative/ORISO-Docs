@@ -1,0 +1,26 @@
+{
+  "concepts": [
+    {
+      "id": "concept:observability-stack",
+      "name": "SigNoz Observability Stack",
+      "summary": "Deployment configuration for the SigNoz observability stack (Helm values in three revisions: original, current, backup) plus the ingress that exposes it. Pure configuration repo — the SigNoz software itself is upstream.",
+      "tags": ["domain", "observability", "configuration"],
+      "related": ["signoz-values-current.yaml", "signoz-values-original.yaml", "ingress.yaml", "DEPLOYMENT.md"]
+    },
+    {
+      "id": "concept:service-monitors",
+      "name": "Service Monitors",
+      "summary": "Monitoring scripts that feed SigNoz: monitor-services.py / monitor-to-signoz.py push service states, monitor-matrix.sh watches the Matrix stack, service-health-exporter.py exposes health metrics.",
+      "tags": ["monitoring"],
+      "related": ["monitoring/monitor-services.py", "monitoring/monitor-to-signoz.py", "monitoring/monitor-matrix.sh", "service-health-exporter.py", "MONITORING-GUIDE.md"]
+    }
+  ],
+  "flows": [
+    {
+      "id": "flow:metrics-ingest",
+      "name": "Metrics Ingestion",
+      "summary": "Monitor scripts probe the platform services → monitor-to-signoz.py forwards results into SigNoz → dashboards and alerts run on the ingested data.",
+      "related": ["monitoring/monitor-services.py", "monitoring/monitor-to-signoz.py", "signoz-values-current.yaml"]
+    }
+  ]
+}
