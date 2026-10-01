@@ -18,13 +18,11 @@ class ReportLocationTests(unittest.TestCase):
    self.assertFalse(destination.exists())
 
 class PublicPolicyTests(unittest.TestCase):
- def test_shared_policy_is_exact_supported_vector_and_subset_of_public_visibility(self):
+ def test_shared_policy_is_exact_supported_public_vector(self):
   import json
   from bundle.release_inputs import required_repositories
   tools=pathlib.Path(__file__).resolve().parents[1]
   policy=json.loads((tools/'bundle/public-repositories.json').read_text())
   names=required_repositories()
-  visibility=json.loads((tools.parent/'truth-chain/public-repositories.json').read_text())
   self.assertEqual(set(policy['repositories']),names)
   self.assertEqual(len(names),16)
-  self.assertTrue(names <= set(visibility['repositories']))

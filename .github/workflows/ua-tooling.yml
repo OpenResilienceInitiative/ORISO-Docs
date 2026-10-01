@@ -4,11 +4,15 @@ on:
     paths:
       - 'tools/understand-anything/**'
       - '.github/workflows/ua-tooling.yml'
+      - '.github/scripts/ua_public_policy_test.py'
+      - 'tools/truth-chain/public-repositories.json'
   push:
     branches: [dev, pre-dev]
     paths:
       - 'tools/understand-anything/**'
       - '.github/workflows/ua-tooling.yml'
+      - '.github/scripts/ua_public_policy_test.py'
+      - 'tools/truth-chain/public-repositories.json'
 permissions:
   contents: read
 jobs:
@@ -20,6 +24,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Verify supported repositories against canonical public visibility
+        run: python3 .github/scripts/ua_public_policy_test.py -v
       - name: Install the pinned producer and consumer in a clean profile
         run: |
           python3 tools/understand-anything/install.py --runtime-root /tmp/oriso-ua-runtime --profile /tmp/oriso-ua-profile

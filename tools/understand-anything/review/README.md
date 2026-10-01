@@ -46,6 +46,10 @@ Unknown visibility and private repositories are excluded before authored bytes,
 graph files or source bytes are read. The release validator and report share
 this policy. Complete-generation mode refuses excluded inputs before full
 generation validation can read their graphs.
+Installed-runtime tests validate the exact supported vector. The repository
+visibility subset is checked before installation by
+`.github/scripts/ua_public_policy_test.py`; neither check is skipped when the
+other tree is unavailable.
 
 A person must still review the explanation against its evidence, record the
 review date and confidence, and run the separate SemanticClaim assessment.
