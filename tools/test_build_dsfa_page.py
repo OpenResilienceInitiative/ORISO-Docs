@@ -25,12 +25,54 @@ class BrandingPlaceholderTest(unittest.TestCase):
         self.assertIn('id="operator-favicon"', branded)
         self.assertIn('data-branding-placeholder="favicon"', branded)
 
-    def test_live_script_applies_branding_values_from_public_master_data(self):
-        script = MODULE.LIVE_MASTER_DATA_SCRIPT
+    def test_current_build_never_fetches_or_defaults_operator_facts(self):
+        self.assertEqual(MODULE.LIVE_MASTER_DATA_SCRIPT, '')
+        page='<span class="dyn" title="aus Admin-Panel Global Settings: operator.legalName">Deutscher Caritasverband</span><span class="dyn" title="aus Admin-Panel Global Settings: stats.tenants">0</span>'
+        output,count=MODULE.fill_master_data(page)
+        self.assertNotIn('Caritas',output);self.assertNotIn('>0<',output)
+        self.assertIn('Fehlt',output)
+    def test_current_build_binds_build_time_snapshot(self):
+        import json
+        import public_operator_snapshot as op
+        snapshot=op.capture(json.dumps({'operator':{'legalName':'SYNTHETIC_UNCONFIRMED'}}).encode(),operator_id='synthetic',origin='https://operator.example.invalid',source_date='2026-10-01T10:00:00Z',source_sha=op.SOURCE_SHA)
+        page='<span class="dyn" title="aus Admin-Panel Global Settings: operator.legalName">old</span>'
+        output,count=MODULE.fill_master_data(page,snapshot)
+        self.assertIn('Unbestätigt',output);self.assertNotIn('SYNTHETIC_UNCONFIRMED',output)
 
-        self.assertIn("m.branding", script)
-        self.assertIn("theming.logo", script)
-        self.assertIn("theming.favicon", script)
+    def test_confirmed_operator_cannot_escape_style_element(self):
+        import json
+        from html.parser import HTMLParser
+        import public_operator_snapshot as op
+        class Elements(HTMLParser):
+            def __init__(self):
+                super().__init__(); self.scripts = 0
+            def handle_starttag(self,tag,attrs):
+                if tag == 'script': self.scripts += 1
+        name='</style><script>window.fixture=1</script><style>'
+        snapshot=op.capture(json.dumps({'operator':{'legalName':name}}).encode(),operator_id='synthetic',origin='https://operator.example.invalid',source_date='2026-10-01T00:00:00Z',source_sha=op.SOURCE_SHA)
+        page='<html><head><style>@top-right { content: "old" } @bottom-left { content: "old · Datenschutz" }</style></head><body></body></html>'
+        output,_=MODULE.fill_master_data(page,snapshot,snapshot['snapshotHash'])
+        parsed=Elements();parsed.feed(output)
+        self.assertEqual(parsed.scripts,0)
+        self.assertNotIn('</style><script>',output)
+
+    def test_actual_statistics_placeholders_do_not_keep_historical_counts(self):
+        page='<span class="dyn" title="aus Plattform-Statistik: stats.tenants">12</span><span class="dyn" title="aus Plattform-Statistik: stats.referenceDate">01.08.2026</span>'
+        output,count=MODULE.fill_master_data(page)
+        self.assertEqual(count,2)
+        self.assertNotIn('>12<',output);self.assertNotIn('01.08.2026',output)
+        self.assertIn('Fehlt',output)
+
+    def test_count_keeps_its_own_date_and_never_uses_document_date(self):
+        import json
+        import public_operator_snapshot as op
+        payload={'operator':{'legalName':'SYNTHETIC'},'document':{'documentDate':'2026-09-30'},'keyFigures':{'tenants':{'count':0,'asOfDate':'2026-09-01'},'counsellingCentres':{'count':3,'asOfDate':'2026-09-02'}}}
+        snapshot=op.capture(json.dumps(payload).encode(),operator_id='synthetic',origin='https://operator.example.invalid',source_date='2026-10-01T00:00:00Z',source_sha=op.SOURCE_SHA)
+        page='<span class="dyn" title="aus Plattform-Statistik: stats.tenants">12</span><span class="dyn" title="aus Plattform-Statistik: stats.counsellingCentres">148</span><span class="dyn" title="aus Plattform-Statistik: stats.referenceDate">old</span>'
+        output,count=MODULE.fill_master_data(page,snapshot,snapshot['snapshotHash'])
+        self.assertEqual(count,3)
+        self.assertIn('0 (Stand: 2026-09-01)',output);self.assertIn('3 (Stand: 2026-09-02)',output)
+        self.assertNotIn('2026-09-30',output);self.assertNotIn('>148<',output)
 
 
 class ResponsibilityMarkerTest(unittest.TestCase):

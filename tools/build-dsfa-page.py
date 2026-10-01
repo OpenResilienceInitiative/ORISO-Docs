@@ -21,6 +21,7 @@ import sys
 from pathlib import Path
 
 import yaml
+from public_operator_snapshot import confirmation_hash, load, lookup, read_json, render_html, unavailable, validate
 
 HERE = Path(__file__).resolve().parent
 SRC = HERE.parent / "oriso-platform" / "dsfa-text"
@@ -286,7 +287,8 @@ def template_section(md: str, key: str) -> str:
 # Kleines Skript am Seitenende: holt die Stammdaten aus dem Administrationsbereich und
 # ersetzt die Vorgabewerte. Faellt der Abruf aus (kein Netz, Datei lokal geoeffnet,
 # PDF-Erzeugung), bleiben die im Dokument stehenden Werte unveraendert stehen.
-LIVE_MASTER_DATA_SCRIPT = r"""
+LIVE_MASTER_DATA_SCRIPT = ''
+"""
 <script>
 /* Stammdaten aus dem Administrationsbereich (TenantService: GET /tenant/public/dpia,
    gleiche Herkunft ueber den Proxy /api/dpia). Schlaegt der Abruf fehl, bleibt der im
@@ -444,37 +446,61 @@ PROCESSOR_NOTE = (
 )
 
 
-def fill_master_data(page: str) -> tuple[str, int]:
-    """Vorgabewerte in die dyn-Felder schreiben; gibt (Seite, Anzahl) zurueck."""
+def fill_master_data(page: str, snapshot=None, confirmed_hash=None) -> tuple[str, int]:
+    """Fill current operator placeholders from the validated snapshot."""
+    snapshot = snapshot if snapshot is not None else unavailable()
+    validate(snapshot)
+    render_html(snapshot, "de", confirmed_hash)
     count = 0
+
+    aliases = {"legal.supervisoryAuthority": "supervisoryAuthority.name"}
+    for key in ["tenants", "counsellingCentres", "activeCounsellors", "registeredClients"]:
+        aliases["stats." + key] = "keyFigures." + key + ".count"
+
+    def value_for(key):
+        if key == "stats.referenceDate":
+            dates = [
+                lookup(snapshot["payload"], "keyFigures." + name + ".asOfDate")
+                for name in ["tenants", "counsellingCentres", "activeCounsellors", "registeredClients"]
+            ]
+            return "Siehe Stände je Kennzahl" if any(dates) and confirmed_hash else "Unbestätigt" if any(dates) else "Fehlt"
+        if key.startswith("stats.") and key in aliases:
+            value = lookup(snapshot["payload"], aliases[key])
+            as_of = lookup(snapshot["payload"], "keyFigures." + key.split(".", 1)[1] + ".asOfDate")
+            if value is None:
+                return "Fehlt"
+            if not confirmed_hash:
+                return "Unbestätigt"
+            return str(value) + " (Stand: " + (as_of or "Fehlt") + ")"
+        if key == "operator.contact":
+            fields = [
+                lookup(snapshot["payload"], "operator." + field)
+                for field in ["contactEmail", "contactPhone"]
+            ]
+            value = " / ".join(value for value in fields if value) or None
+        else:
+            value = lookup(snapshot["payload"], aliases.get(key, key))
+        return str(value) if value is not None and confirmed_hash else "Unbestätigt" if value is not None else "Fehlt"
 
     def repl(m):
         nonlocal count
-        key, current = m.group(1), m.group(2)
-        value = MASTER_DATA.get(key)
-        if value is None or value == current:
-            return m.group(0)
+        title = m.group(1)
+        key = title.split(": ", 1)[-1]
         count += 1
-        return '<span class="dyn" title="%s">%s</span>' % (key, value)
+        return '<span class="dyn" title="%s">%s</span>' % (
+            html.escape(title, quote=True), html.escape(value_for(key))
+        )
 
-    page = re.sub(r'<span class="dyn" title="([^"]*)">([^<]*)</span>', repl, page)
-
-    # Platzhalterzeile der Auftragsverarbeitertabelle durch die vertraglich benannten
-    # Entwicklungsdienstleister ersetzen.
-    m = re.search(r"<tr>(?:(?!</tr>).)*Entwicklungs-/Supportdienstleister.*?</tr>", page, re.S)
-    if m:
-        page = page[: m.start()] + PROCESSOR_ROWS + page[m.end():]
-        count += 2
-        end_table = page.find("</table>", m.start())
-        close = page.find("</div>", end_table)
-        if close > 0:
-            page = page[: close + len("</div>")] + PROCESSOR_NOTE + page[close + len("</div>"):]
-
-    # Kopf- und Fusszeile des Druck-Layouts fuehren denselben Namen wie das Dokument.
-    operator = MASTER_DATA["aus Admin-Panel Global Settings: operator.legalName"].replace("&nbsp;", " ")
-    page = re.sub(r'(@top-right\s*\{ content: ")[^"]*(")', lambda x: x.group(1) + operator + x.group(2), page)
-    page = re.sub(r'(@bottom-left\s*\{ content: ")[^"]*( · Datenschutz)',
-                  lambda x: x.group(1) + operator + x.group(2), page)
+    page = re.sub(
+        r'<span class="dyn" title="((?:aus Admin-Panel Global Settings|aus Plattform-Statistik): [^"]*)">.*?</span>',
+        repl,
+        page,
+        flags=re.S,
+    )
+    operator = value_for("operator.legalName")
+    css_operator = operator.replace("\\", "\\\\").replace('"', '\\"').replace("\n", " ").replace("<", "\\3c ")
+    page = re.sub(r'(@top-right\s*\{ content: ")[^"]*(")', lambda m: m.group(1) + css_operator + m.group(2), page)
+    page = re.sub(r'(@bottom-left\s*\{ content: ")[^"]*( · Datenschutz)', lambda m: m.group(1) + css_operator + m.group(2), page)
     return page, count
 
 
@@ -891,8 +917,17 @@ def main() -> int:
 
     versions = read_versions()
     page_out = apply_versioning(head + new_body + tail, versions)
-    page_out, filled = fill_master_data(page_out)
+    snapshot_path = os.environ.get("ORISO_OPERATOR_SNAPSHOT")
+    snapshot = load(snapshot_path) if snapshot_path else unavailable()
+    confirmation_path = os.environ.get("ORISO_OPERATOR_CONFIRMATION")
+    confirmed = (
+        confirmation_hash(snapshot, read_json(Path(confirmation_path).read_bytes()))
+        if confirmation_path
+        else None
+    )
+    page_out, filled = fill_master_data(page_out, snapshot, confirmed)
     page_out = add_branding_placeholders(page_out)
+    page_out = page_out.replace("</body>", render_html(snapshot, "de", confirmed) + "</body>", 1)
     if "live-badge" not in page_out:
         page_out = page_out.replace("  .qnote--todo {", LIVE_BADGE_CSS + "  .qnote--todo {", 1)
         page_out = page_out.replace("</body>", LIVE_MASTER_DATA_SCRIPT + "</body>", 1)
