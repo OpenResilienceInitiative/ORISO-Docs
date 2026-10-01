@@ -1,0 +1,5 @@
+Markdown==3.11
+pillow==12.3.0
+pypdf==6.19.0
+PyYAML==6.0.3
+reportlab==5.0.1

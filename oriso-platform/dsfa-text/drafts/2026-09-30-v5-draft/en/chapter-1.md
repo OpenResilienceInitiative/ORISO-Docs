@@ -8,12 +8,7 @@ The platform is provided by the operator and its affiliated organisations. Proce
 
 ### 1.1 Controller
 
-| Controller | Deutscher Caritasverband e. V. |
-| --- | --- |
-| Address | Karlstraße 40, 79104 Freiburg im Breisgau |
-| Contact | datenschutz@caritas.example · +49 761 200-0 |
-| Data protection officer | Data Protection Office |
-| Competent supervisory authority | Diocesan data protection officer / State Commissioner for Data Protection — Katholisches Datenschutzzentrum Frankfurt, Hausener Weg 66, 60489 Frankfurt am Main |
+The operator organisation has not been confirmed for this review draft. The operator snapshot bound to both languages, HTML and PDF at the end of this document is the shared source. Missing values remain visible as missing; observed values remain unconfirmed until reviewed. Previous example names and contact details are not current operator master data.
 
 ### 1.2 Annexes
 
@@ -21,4 +16,4 @@ Annex 1 — risk analysis (extract in [Chapter 10](#kap10)) · Annex 2 — delet
 
 ### 1.3 Reassessment
 
-This DPIA is reviewed routinely; next date: **01 June 2027**. The review history corresponds to the document history (see version block); each version remains accessible at its version URL, while *latest* points to the current edition.
+This DPIA is reviewed routinely. The next review date is not confirmed and will come from the approved operator snapshot. The review history corresponds to the document history (see version block); each version remains accessible at its version URL, while *latest* points to the current edition.

@@ -1,7 +1,9 @@
 {
+  "operatorSnapshotHash": "4238c69b12166e7bfd94b289e0813b6db662278d58750d519ba0800a6a5be0a4",
+  "operatorFieldsConfirmed": false,
   "version": "v5-draft",
   "date": "2026-09-30",
-  "sourceManifestHash": "e6c70d2541bcc8aa536ecdb00e2d66cd4332cc2357d51f9cae7670e3462833b3",
+  "sourceManifestHash": "4c822bb5cb7d87e24f4304ec0d0397c689cad3de2a0f2584572e42db1a067d3e",
   "approval": {
     "technical": "pending",
     "operator": "pending",
@@ -10,36 +12,36 @@
   "publication": "gated; three exact-version approval records required",
   "locales": {
     "de": {
-      "inputHash": "8979b5a75a77a47e4adee53e03b24b75099d0206151e73ae95ce873c3e6162b5",
+      "inputHash": "91205714b128434c12f04d539667a255dd8c0df868006e2a443a6d4f33c6ccbc",
       "artifacts": {
         "dsfa-v5-draft-de.html": {
-          "sha256": "75fb9a3299d9c1776e4085f6dbdda5672c95a90ebfaa84e67aa1300d750e29a0",
-          "bytes": 130714
+          "sha256": "22866a31c78d5fe76b18c0f327824ec3014d5f42330f4e29b0c390044e26f663",
+          "bytes": 132558
         },
         "dsfa-v5-draft-de.input.json": {
-          "sha256": "ddf4c3b189c54825cc866c2ec23979ace1776079a5374f93876fc098f5a8a5b0",
-          "bytes": 122711
+          "sha256": "171195403c7993bb4f19d22d4ab73962f32396d229fafb778df692368713d4b0",
+          "bytes": 124143
         },
         "dsfa-v5-draft-de.pdf": {
-          "sha256": "3e64109e61cd4db9c1ce56dda4b5e12647297fb7d983542819edcf0eba3e98f3",
-          "bytes": 134160
+          "sha256": "506672c2540977cd55d990c7ce7aa556a30f77233a966b932034c44e744f7a47",
+          "bytes": 136195
         }
       }
     },
     "en": {
-      "inputHash": "b138d93020cf37a5c238ff6d039b42b3ee2c2e197c93dad6e37d2a5198b0e94d",
+      "inputHash": "eb93c58da54acfdff2f950ea83b4ceebb71da20737832fa7d7d943db1f1a6ea9",
       "artifacts": {
         "dsfa-v5-draft-en.html": {
-          "sha256": "7beda3c65dab301da17f6f647ecf1309c60453e622aa202bef3987d47b5562be",
-          "bytes": 112214
+          "sha256": "201bf5b995f05dd881336b87d9129fc78c54cba6e237ab539d9c1f52821ed1fd",
+          "bytes": 114048
         },
         "dsfa-v5-draft-en.input.json": {
-          "sha256": "a6978538d8d655c867f2c0e810cb797268ef61170acec920e5160f2877e05ef1",
-          "bytes": 104179
+          "sha256": "a629b3defe64efae6fd63ab3be34d28756f3061f42cd309ed15a35fef1be5bb1",
+          "bytes": 105577
         },
         "dsfa-v5-draft-en.pdf": {
-          "sha256": "0b91c1157f48e486620974f7bb44e0cd6061638c3f803dc853dd6d5364b63540",
-          "bytes": 118447
+          "sha256": "e59063a7b7e1ef1b5de3cb46a466f8af20caef9ad068aa5ea5ebf4e8cdded823",
+          "bytes": 120551
         }
       }
     }

@@ -12,12 +12,7 @@ Die Plattform ist ein Angebot des Betreibers und seiner angeschlossenen Träger.
 
 ### 1.1 Verantwortlicher
 
-| Verantwortlicher | Deutscher Caritasverband e. V. |
-| --- | --- |
-| Anschrift | Karlstraße 40, 79104 Freiburg im Breisgau |
-| Kontakt | datenschutz@caritas.example · +49 761 200-0 |
-| Datenschutzbeauftragte:r | Stabsstelle Datenschutz |
-| Zuständige Aufsicht | Diözesandatenschutzbeauftragte:r / Landesbeauftragte:r für Datenschutz — Katholisches Datenschutzzentrum Frankfurt, Hausener Weg 66, 60489 Frankfurt am Main |
+Die Betreiberorganisation ist für diesen Prüfentwurf noch nicht bestätigt. Maßgeblich ist der gemeinsam für beide Sprachfassungen, HTML und PDF gebundene Betreiber-Snapshot am Ende des Dokuments. Fehlende Angaben bleiben als fehlend sichtbar; vorhandene, ungeprüfte Angaben bleiben unbestätigt. Frühere Beispielnamen und Kontaktangaben gelten nicht als aktuelle Stammdaten.
 
 ### 1.2 Anlagen
 
@@ -27,7 +22,6 @@ Anlage 1 — Risikoanalyse (Auszug in [Kapitel 10](#kap10)) ·
 
 ### 1.3 Wiederholung
 
-Diese DSFA wird routinemäßig überprüft, nächster Termin:
-        **01.06.2027**.
+Diese DSFA wird routinemäßig überprüft. Der nächste Termin ist noch nicht bestätigt und wird aus dem freigegebenen Betreiber-Snapshot übernommen.
         Die Überprüfungshistorie entspricht der Dokumentenhistorie (siehe Versionsblock); jede Version
         bleibt unter ihrer Versions-URL abrufbar, *latest* verweist auf den aktuellen Stand.

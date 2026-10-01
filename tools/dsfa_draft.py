@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Build unapproved, immutable-version bilingual review artifacts, never publish."""
 import argparse,hashlib,json,re
+from public_operator_snapshot import bound_snapshot,render_html,unavailable
 from pathlib import Path
 from html import escape
 from html.parser import HTMLParser
@@ -85,12 +86,13 @@ def validate_historical(repo,snapshots):
 def build_input(root,manifest,locale):
  validate(root,manifest)
  if locale not in manifest['locales']:raise ValueError('Unsupported locale')
- return {'version':manifest['version'],'date':manifest['date'],'locale':locale,'markdown':'\n\n'.join(f'<a id="kap{c["id"]}"></a>\n\n'+(root/c[locale]).read_text() for c in manifest['chapters'])}
+ snapshot=bound_snapshot(root,manifest)
+ return {'operatorSnapshot':snapshot,'confirmedOperatorSnapshotHash':snapshot['snapshotHash'] if manifest.get('operatorFieldsConfirmed') is True else None,'version':manifest['version'],'date':manifest['date'],'locale':locale,'markdown':'\n\n'.join(f'<a id="kap{c["id"]}"></a>\n\n'+(root/c[locale]).read_text() for c in manifest['chapters'])}
 def public_body(data):
  import markdown
- return sanitize(markdown.markdown(data['markdown'],extensions=['tables','fenced_code']))
+ return sanitize(markdown.markdown(data['markdown'],extensions=['tables','fenced_code']))+render_html(data.get('operatorSnapshot',unavailable()),data['locale'],data.get('confirmedOperatorSnapshotHash'))
 def warning_text(locale):
- return 'Unapproved review draft. Source claims and illustrative operator values need exact-version technical, operator and legal review. Annex 2 is not available.' if locale=='en' else 'Nicht freigegebener Prüfentwurf. Quellaussagen und beispielhafte Betreiberwerte benötigen versionsgenaue technische, Betreiber- und juristische Prüfung. Anlage 2 liegt nicht vor.'
+ return 'Unapproved review draft. Source claims and operator data need exact-version technical, operator and legal review. Annex 2 is not available.' if locale=='en' else 'Nicht freigegebener Prüfentwurf. Quellaussagen und Betreiberdaten benötigen versionsgenaue technische, Betreiber- und juristische Prüfung. Anlage 2 liegt nicht vor.'
 def html_input(data,approved_version=None):
  data=dict(data)
  if approved_version:data['version']=approved_version
@@ -104,7 +106,7 @@ def pdf_input(data,destination,approved_version=None):
  data=dict(data)
  if approved_version:data['version']=approved_version
  label='Approved release / Freigegebene Fassung' if approved_version else 'UNAPPROVED / NICHT FREIGEGEBEN'
- from reportlab.platypus import SimpleDocTemplate,Paragraph,Spacer,PageBreak
+ from reportlab.platypus import SimpleDocTemplate,Paragraph,Spacer,PageBreak,Image
  from reportlab.lib.styles import getSampleStyleSheet
  from reportlab.pdfbase import pdfmetrics
  from reportlab.pdfbase.ttfonts import TTFont
@@ -122,14 +124,21 @@ def pdf_input(data,destination,approved_version=None):
    if value:self.blocks.append((self.heading,value))
    self.parts=[];self.heading=False
   def handle_starttag(self,tag,attrs):
-   if tag in {'h1','h2','h3','h4','p','li','tr'}:self.flush();self.heading=tag.startswith('h')
+   if tag in {'h1','h2','h3','h4','p','li','tr','dt','dd'}:self.flush();self.heading=tag.startswith('h')
+   if tag=='img':
+    source=dict(attrs).get('src','')
+    if source.startswith('data:image/'):
+     self.flush();self.blocks.append(('image',source.split(',',1)[1]))
    if tag in {'td','th'} and self.parts:self.parts.append(' | ')
    if tag=='br':self.parts.append(' ')
   def handle_endtag(self,tag):
-   if tag in {'h1','h2','h3','h4','p','li','tr'}:self.flush()
+   if tag in {'h1','h2','h3','h4','p','li','tr','dt','dd'}:self.flush()
   def handle_data(self,value):self.parts.append(value)
  blocks=ReviewBlocks();blocks.feed(public_body(data));blocks.flush()
  for heading,text in blocks.blocks:
+  if heading=='image':
+   import base64,io
+   image=Image(io.BytesIO(base64.b64decode(text,validate=True)));image._restrictSize(120,80);story.extend([image,Spacer(1,6)]);continue
   style=styles['Heading2'] if heading else styles['Normal']
   story.extend([Paragraph(escape(text),style),Spacer(1,6)])
  def footer(canvas,doc):
@@ -146,8 +155,9 @@ def main():
   validate_publication(args.root,records)
   if args.activate or args.public or args.latest:raise ValueError('Use legal_publication.py with explicit destination root and approved release version after readiness gates')
   print('Exact-version approval gate satisfied');return
+ snapshot=bound_snapshot(args.root,manifest)
  args.output.mkdir(parents=True,exist_ok=True)
- artifacts={'version':manifest['version'],'date':manifest['date'],'sourceManifestHash':digest((args.root/'manifest.json').read_bytes()),'approval':manifest['approval'],'publication':'gated; three exact-version approval records required','locales':{}}
+ artifacts={'operatorSnapshotHash':snapshot['snapshotHash'],'operatorFieldsConfirmed':manifest.get('operatorFieldsConfirmed') is True,'version':manifest['version'],'date':manifest['date'],'sourceManifestHash':digest((args.root/'manifest.json').read_bytes()),'approval':manifest['approval'],'publication':'gated; three exact-version approval records required','locales':{}}
  for locale in manifest['locales']:
   data=build_input(args.root,manifest,locale);stem=f'dsfa-{manifest["version"]}-{locale}';htmlpath=args.output/(stem+'.html');htmlpath.write_text(html_input(data));inputpath=args.output/(stem+'.input.json');inputpath.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
   records={p.name:{'sha256':digest(p.read_bytes()),'bytes':p.stat().st_size} for p in [htmlpath,inputpath]}

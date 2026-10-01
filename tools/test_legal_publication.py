@@ -15,7 +15,12 @@ class PublicationTests(unittest.TestCase):
    annex[ident]={'state':'confirmed','files':{}}
    for locale in ['de','en']:
     name=f'annex-{ident}-{locale}.md';(root/name).write_text(f'## Annex {ident}\n\nComplete synthetic {locale} annex.');annex[ident]['files'][locale]={'path':name,'sha256':hashlib.sha256((root/name).read_bytes()).hexdigest()}
-  m={'version':'v5-draft','releaseVersion':'5','date':'2026-09-30','locales':['de','en'],'approval':dict.fromkeys(['technical','operator','legal'],'pending'),'chapters':chapters,'missingAnnexes':[],'sourceWarnings':[],'operatorFieldsConfirmed':True,'unconfirmedOperatorFields':[],'annexReadiness':annex}
+  import public_operator_snapshot as op
+  payload={'operator':{key:'Synthetic test value' for key in op.STRINGS},'supervisoryAuthority':{'legalFramework':'GDPR','name':'Synthetic authority','address':'Synthetic address','email':'public@example.invalid'},'document':{'documentDate':'2026-10-01','nextReviewDate':'2027-10-01'},'keyFigures':{key:{'count':1,'asOfDate':'2026-10-01'} for key in op.SCHEMA['keyFigures']}}
+  payload['operator']['contactEmail']='public@example.invalid'
+  snapshot=op.capture(json.dumps(payload).encode(),operator_id='synthetic',origin='https://operator.example.invalid',source_date='2026-10-01T10:00:00Z',source_sha=op.SOURCE_SHA)
+  (root/'operator.json').write_text(json.dumps(snapshot))
+  m={'operatorSnapshot':{'path':'operator.json','snapshotHash':snapshot['snapshotHash']},'version':'v5-draft','releaseVersion':'5','date':'2026-09-30','locales':['de','en'],'approval':dict.fromkeys(['technical','operator','legal'],'pending'),'chapters':chapters,'missingAnnexes':[],'sourceWarnings':[],'operatorFieldsConfirmed':True,'unconfirmedOperatorFields':[],'annexReadiness':annex}
   self.write(root,m);return m
  def write(self,root,m):
   (root/'manifest.json').write_text(json.dumps(m));h=hashlib.sha256((root/'manifest.json').read_bytes()).hexdigest()

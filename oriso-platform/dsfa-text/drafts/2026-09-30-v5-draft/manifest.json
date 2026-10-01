@@ -17,12 +17,12 @@
       "id": "1",
       "de": "de/chapter-1.md",
       "en": "en/chapter-1.md",
-      "sourceHash": "83f4db13a9e86563b1f512929196b40d5d47e1c1845096b1e9b5b721df0a350d",
+      "sourceHash": "9b9634b04b9eecbb2037807173cdd13e47954985238c142bc6af8c471598989c",
       "hashes": {
-        "de": "83f4db13a9e86563b1f512929196b40d5d47e1c1845096b1e9b5b721df0a350d",
-        "en": "7bb404deacfdcd7d1930c9350c26b1fc260e5a4268cc510468a04eafad429025"
+        "de": "9b9634b04b9eecbb2037807173cdd13e47954985238c142bc6af8c471598989c",
+        "en": "619756ecc5e67d378b57d0e6ccdaf27bcaafe0d2531dd75824a067757ee36fcc"
       },
-      "translationSourceHash": "83f4db13a9e86563b1f512929196b40d5d47e1c1845096b1e9b5b721df0a350d"
+      "translationSourceHash": "9b9634b04b9eecbb2037807173cdd13e47954985238c142bc6af8c471598989c"
     },
     {
       "id": "2",

@@ -1,0 +1,48 @@
+name: Operator snapshot and legal contracts
+on:
+  pull_request:
+    paths:
+      - 'tools/public_operator_snapshot.py'
+      - 'tools/*operator*'
+      - 'tools/dsfa_draft.py'
+      - 'tools/legal_publication.py'
+      - 'tools/test_dsfa*'
+      - 'tools/test_legal*'
+      - 'tools/build-dsfa-page.py'
+      - 'tools/test_build_dsfa_page.py'
+      - 'tools/requirements-operator-tests.txt'
+      - 'tools/understand-anything/site/hub/**'
+      - 'oriso-platform/dsfa-text/**'
+      - '.github/workflows/operator-snapshot.yml'
+  push:
+    branches: [dev]
+permissions:
+  contents: read
+jobs:
+  source-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      PYTHONPATH: tools
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.12.0'
+      - name: Install isolated test dependencies
+        run: python -m pip install -r tools/requirements-operator-tests.txt
+      - name: Check the shared source and rendering contracts
+        run: |
+          set -euo pipefail
+          if [[ -f tools/dsfa_draft.py ]]; then
+            python -m unittest tools/test_public_operator_snapshot.py tools/test_operator_rendering.py tools/test_legal_publication.py tools/test_dsfa_draft.py tools/test_dsfa_evidence.py -q
+          else
+            python -m unittest tools/test_public_operator_snapshot.py tools/test_build_dsfa_page.py -q
+            node --test tools/understand-anything/site/hub/test/*.test.mjs
+          fi

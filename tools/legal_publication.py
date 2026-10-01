@@ -59,7 +59,7 @@ def publish(root,destination_root,release_version,activate_links=()):
    for locale in ['de','en']:
     out=staged/locale;out.mkdir();(out/'index.html').write_text(html_input(data[locale],approved_version=release_version));pdf_input(data[locale],out/'dsfa.pdf',approved_version=release_version)
     for file in out.iterdir():hashes[str(file.relative_to(staged))]={'sha256':digest(file.read_bytes()),'bytes':file.stat().st_size}
-   public_manifest={'releaseVersion':release_version,'date':manifest['date'],'sourceManifestHash':receipt['sourceManifestHash'],'sourceDraftVersion':receipt['draftVersion'],'approvalStates':dict.fromkeys(['technical','operator','legal'],'approved'),'approvalRecordsHash':digest((root/'approvals.json').read_bytes()),'locales':['de','en'],'inputHashes':{locale:digest(data[locale]['markdown'].encode()) for locale in ['de','en']},'artifacts':hashes}
+   public_manifest={'operatorSnapshotHash':data['de']['operatorSnapshot']['snapshotHash'],'operatorFieldsConfirmed':True,'releaseVersion':release_version,'date':manifest['date'],'sourceManifestHash':receipt['sourceManifestHash'],'sourceDraftVersion':receipt['draftVersion'],'approvalStates':dict.fromkeys(['technical','operator','legal'],'approved'),'approvalRecordsHash':digest((root/'approvals.json').read_bytes()),'locales':['de','en'],'inputHashes':{locale:digest(data[locale]['markdown'].encode()) for locale in ['de','en']},'artifacts':hashes}
    (staged/'manifest.json').write_text(json.dumps(public_manifest,indent=2)+'\n')
    # A new directory rename on the same filesystem publishes both locales together.
    os.rename(staged,target)
