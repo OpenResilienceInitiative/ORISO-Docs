@@ -13,6 +13,7 @@ import socket
 import ssl
 import subprocess
 import sys
+import tempfile
 import time
 import urllib.error
 import urllib.parse
@@ -73,6 +74,8 @@ def parse(argv):
     p.add_argument('--hybrid', action='store_true')
     p.add_argument('-f', '--follow', action='store_true')
     args = p.parse_args(argv)
+    if args.ui not in ('admin', 'frontend', 'both', 'none'):
+        raise ContractError('ORISO_UI must be admin, frontend, both, or none')
     args.target = args.target or ('services' if args.command == 'stop' else 'all')
     if args.services is not None:
         selected = list(dict.fromkeys(args.services.replace(',', ' ').split()))
@@ -228,19 +231,10 @@ def doctor(args):
         report['tools']['docker']['compose_version'] = output(['docker', 'compose', 'version', '--short'])
         # Existing containers never get adopted just because a project name matches.
         existing = output(['docker', 'ps', '-aq', '--filter', 'label=com.docker.compose.project=' + args.project])
-        if existing:
-            owned_infra = args.target == 'services'
-            try:
-                verify_owner(args)
-            except (ContractError, ValueError, OSError):
-                owned_infra = False
-            for container in existing.split():
-                owner = output(['docker', 'inspect', '--format', '{{ index .Config.Labels "org.oriso.local.owner" }}', container])
-                service = output(['docker', 'inspect', '--format', '{{ index .Config.Labels "com.docker.compose.service" }}', container])
-                if owner != args.owner or service == 'gateway':
-                    owned_infra = False
-            if not owned_infra:
-                errors.append('Compose project already has containers; use status/stop all before start')
+        if args.target == 'services':
+            errors.extend(existing_infra_errors(args, existing.split()))
+        elif existing:
+            errors.append('Compose project already has containers; use status/stop all before start')
     if report['tools']['docker']['available']:
         discovered = output(['docker', 'volume', 'ls', '-q', '--filter', 'label=com.docker.compose.project=' + args.project]).split()
         # Compose resolves by exact volume name even when an old/foreign volume has no project label.
@@ -338,6 +332,40 @@ def doctor(args):
                           'frontend_selected': 'frontend' in args.selected, 'trust_scope': 'runtime certificate only; no system/browser trust changes'}
     report['ready'] = not errors
     return report
+
+
+def existing_infra_errors(args, containers):
+    """Read-only prerequisite for starting native services against retained infrastructure."""
+    try:
+        verify_owner(args)
+    except (ContractError, ValueError, OSError):
+        return ['start services requires an owned runtime and healthy infrastructure; run start infra first']
+    expected = set(infra_services(args))
+    found = set()
+    errors = []
+    for container in containers:
+        result = command(['docker', 'inspect', container])
+        try:
+            if not result or result.returncode:
+                raise ValueError('inspection failed')
+            details, = json.loads(result.stdout)
+            labels = details['Config']['Labels']
+            service = labels['com.docker.compose.service']
+            state = details['State']
+            if (labels.get('org.oriso.local.owner') != args.owner or
+                    labels.get('com.docker.compose.project') != args.project or
+                    service not in expected or service in found or
+                    state.get('Running') is not True or state.get('Health', {}).get('Status') != 'healthy'):
+                raise ValueError('ownership or health mismatch')
+            found.add(service)
+        except (ValueError, KeyError, TypeError, AttributeError):
+            errors.append('Existing infrastructure must contain only owned, running, healthy services')
+    if found != expected:
+        errors.append('Missing healthy owned infrastructure: ' + ', '.join(sorted(expected - found)))
+    if not errors and not healthy(args.auth + '/realms/online-beratung/.well-known/openid-configuration',
+                                  args.auth + '/realms/online-beratung', auth=True):
+        errors.append('Authentication metadata is unavailable or has the wrong issuer; no services will start')
+    return errors
 
 
 def emit(report, json_mode):
@@ -466,15 +494,15 @@ def realm_contract(args):
     # Imports skip existing realms. Persist this contract with the volume instead of claiming changed origins were applied.
     config = {'admin_port': args.ports['admin'], 'frontend_port': args.ports['frontend'], 'auth': args.auth,
               'fixture_sha256': hashlib.sha256((HERE / 'fixtures/local-realm.json').read_bytes()).hexdigest(),
-              'app_tls_port': args.ports['app_tls'], 'https_frontend_selected': 'frontend' in args.selected}
+              'app_tls_port': args.ports['app_tls']}
     return hashlib.sha256(json.dumps(config, sort_keys=True).encode()).hexdigest()
 
 
 def write_realm(args):
     realm = json.loads((HERE / 'fixtures/local-realm.json').read_text())
     origins = [f'http://{host}:{args.ports[service]}' for service in ('admin', 'frontend') for host in ('localhost', '127.0.0.1')]
-    if 'frontend' in args.selected:
-        origins += [f'https://{host}:{args.ports["app_tls"]}' for host in ('localhost', '127.0.0.1')]
+    # The retained realm supports later UI selection without re-importing or widening beyond loopback.
+    origins += [f'https://{host}:{args.ports["app_tls"]}' for host in ('localhost', '127.0.0.1')]
     for client in realm['clients']:
         client['webOrigins'] = origins
         client['redirectUris'] = [origin + '/*' for origin in origins]
@@ -507,11 +535,36 @@ def app_origin(args):
 
 
 def app_tls_config(args):
+    verify_owner(args)
     cert = args.runtime / 'app-edge-cert.pem'
     key = args.runtime / 'app-edge-key.pem'
+    if cert.is_symlink() or key.is_symlink():
+        raise ContractError('TLS material must be regular files inside the owned runtime')
     if cert.exists() != key.exists():
         raise ContractError('Incomplete owned TLS certificate/key pair; refusing to overwrite it')
-    if not cert.exists():
+    renew = not cert.exists()
+    if not renew:
+        # A valid pair is retained. Renew within one day of expiry, before starting a listener.
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        context.load_cert_chain(certfile=str(cert), keyfile=str(key))
+        expiry = command(['openssl', 'x509', '-in', str(cert), '-checkend', '86400', '-noout'])
+        if not expiry or expiry.returncode not in (0, 1):
+            raise ContractError('Cannot verify the owned TLS certificate lifetime')
+        renew = expiry.returncode == 1
+    if renew:
+        if not available(args.ports['app_tls']):
+            raise ContractError('Cannot renew TLS material while the app edge port is in use')
+        record = args.runtime / 'pids/app_tls.json'
+        if record.exists():
+            pid = int(json.loads(record.read_text())['pid'])
+            try:
+                os.kill(pid, 0)
+            except ProcessLookupError:
+                pass
+            except PermissionError:
+                raise ContractError('Cannot verify that the previous TLS process stopped')
+            else:
+                raise ContractError('Stop the owned TLS process before renewing its certificate')
         config = args.runtime / 'app-edge-openssl.cnf'
         config.write_text("""[req]
 prompt = no
@@ -527,10 +580,18 @@ extendedKeyUsage = serverAuth
 subjectKeyIdentifier = hash
 authorityKeyIdentifier = keyid:always,issuer:always
 """)
-        result = command(['openssl', 'req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-days', '30',
-                          '-config', str(config), '-keyout', str(key), '-out', str(cert)], timeout=30)
-        if not result or result.returncode != 0:
-            raise ContractError('Owned local TLS certificate generation failed; inspect openssl availability')
+        with tempfile.TemporaryDirectory(prefix='.app-edge-', dir=args.runtime) as staged:
+            new_key, new_cert = Path(staged) / 'key.pem', Path(staged) / 'cert.pem'
+            result = command(['openssl', 'req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-days', '30',
+                              '-config', str(config), '-keyout', str(new_key), '-out', str(new_cert)], timeout=30)
+            if not result or result.returncode != 0:
+                raise ContractError('Owned local TLS certificate generation failed; existing pair preserved')
+            context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+            context.load_cert_chain(certfile=str(new_cert), keyfile=str(new_key))
+            new_key.chmod(0o600)
+            new_cert.chmod(0o600)
+            new_key.replace(key)
+            new_cert.replace(cert)
     key.chmod(0o600)
     cert.chmod(0o600)
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)

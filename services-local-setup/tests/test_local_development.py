@@ -213,10 +213,14 @@ class RunnerContracts(RunnerFixture, unittest.TestCase):
         self.assertEqual(existing.read_text(), 'VITE_CUSTOM=user-choice\n')
 
     def test_backend_failure_propagates_readiness_timeout(self):
-        self.repo('ORISO-UserService', backend=True)
-        result = self.run_runner('start', 'services', '--services', 'userservice')
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn('readiness', result.stderr.lower())
+        repo = self.repo('ORISO-UserService', backend=True)
+        module = BundleContracts.module
+        args = module.parse(['start', 'services', '--services', 'userservice'])
+        # Exercise the real failing backend command without bypassing infrastructure preflight.
+        process = subprocess.Popen([str(repo / 'mvnw')], cwd=repo)
+        process.wait(timeout=5)
+        with self.assertRaisesRegex(module.ContractError, 'userservice.*readiness'):
+            module.wait_readiness(args, {'userservice': process})
 
     def test_bad_arguments_doctor_is_valid_json(self):
         result, data = self.doctor('--services', 'unknown')
@@ -365,7 +369,7 @@ class LifecycleContracts(RunnerFixture, unittest.TestCase):
                 os.killpg(process.pid, 15)
                 process.wait(timeout=10)
 
-    def test_start_services_accepts_only_owned_existing_infra(self):
+    def test_start_services_refuses_incomplete_existing_infra(self):
         self.repo('ORISO-UserService', backend=True)
         module = BundleContracts.module
         args = module.parse(['start', 'services', '--workspace-root', str(self.workspace), '--services', 'userservice'])
@@ -376,7 +380,7 @@ class LifecycleContracts(RunnerFixture, unittest.TestCase):
         docker.write_text('#!/bin/sh\ncase "$*" in *"compose version"*) echo 2.39.0;; *"info"*) echo ok;; *"volume inspect"*) echo \'Error: No such volume\' >&2; exit 1;; *"ps"*) echo fixture-container;; *"inspect"*) echo "' + args.owner + '";; "compose "*) echo "$*" >> "$ORISO_TEST_TRACE";; esac\n')
         result = self.run_runner('start', 'services', '--services', 'userservice')
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn('readiness', result.stderr.lower())
+        self.assertIn('infrastructure', result.stderr.lower())
         self.assertNotIn('already has containers', result.stderr)
 
     def test_malformed_port_is_rejected_before_mutations(self):
