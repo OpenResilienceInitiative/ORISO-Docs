@@ -1,0 +1,42 @@
+name: Documentation command contracts
+
+on:
+  pull_request:
+    paths:
+      - "tools/docs-commands/**"
+      - "services-local-setup/README.md"
+      - "services-local-setup/README.de.md"
+      - "services-local-setup/ORISO-local-development-runbook.md"
+      - ".github/workflows/docs-command-contracts.yml"
+  push:
+    branches: [dev, main]
+    paths:
+      - "tools/docs-commands/**"
+      - "services-local-setup/README.md"
+      - "services-local-setup/README.de.md"
+      - "services-local-setup/ORISO-local-development-runbook.md"
+      - ".github/workflows/docs-command-contracts.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docs-command-contracts-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Test Markdown command extraction
+        run: python3 -m unittest discover -s tools/docs-commands -p 'test_*.py' -v
+      - name: Check selected local development guides
+        run: >-
+          python3 tools/docs-commands/extract.py --strict
+          services-local-setup/README.md
+          services-local-setup/README.de.md
+          services-local-setup/ORISO-local-development-runbook.md
