@@ -378,6 +378,7 @@ def refresh_main(argv):
         action="append",
         help="explicit repo:branch[:enrichment.json] input inventory",
     )
+    parser.add_argument("--internal-report-root", help="internal claim candidate artifacts outside public root")
     parser.add_argument("--release-manifest")
     parser.add_argument("--require-release", action="store_true")
     parser.add_argument("--documentation-revision")
@@ -400,6 +401,7 @@ def refresh_main(argv):
         specs=locked_specs
     specs = specs or REPOS
     if args.mode == "verify":
+        require(args.internal_report_root is None, "internal report is generated during refresh only")
         manifest = validate(
             publish_root / "current",
             expected_refs={n: normalize_ref(b) for n, b, _ in specs},
@@ -416,7 +418,7 @@ def refresh_main(argv):
             f'VALID-CURRENT-SOURCE {manifest["generationId"]} ({len(specs)} freshly fetched inputs)'
         )
     else:
-        refresh(base, args.tools, publish_root, specs, **({"release_evidence":release_evidence} if release_evidence else {}))
+        refresh(base, args.tools, publish_root, specs, **({"release_evidence":release_evidence} if release_evidence else {}), **({"internal_report_root":args.internal_report_root} if args.internal_report_root else {}))
     return 0
 
 

@@ -168,11 +168,22 @@ def aggregate_coverage(path, repo_graphs):
     write_json(path, graph)
 
 
-def refresh(base, tools, publish_root, specs=None, release_evidence=None):
+def internal_report_directory(destination, publish_root):
+    destination = Path(destination).resolve()
+    public = Path(publish_root).resolve()
+    require(destination != public and public not in destination.parents,
+            "internal report must be outside public root")
+    return destination
+
+
+def refresh(base, tools, publish_root, specs=None, release_evidence=None, internal_report_root=None):
     base = Path(base).resolve()
     tools = Path(tools).resolve()
     publish_root = Path(publish_root).resolve()
     specs = specs or REPOS
+    report_root = internal_report_directory(internal_report_root, publish_root) if internal_report_root is not None else None
+    if report_root is not None:
+        require("ORISO-Docs" in {name for name, _, _ in specs}, "pinned Docs authored source required for internal report")
     env = os.environ.copy()
     with locked(publish_root):
         with tempfile.TemporaryDirectory(prefix=".build-", dir=publish_root) as tmp:
@@ -333,6 +344,17 @@ def refresh(base, tools, publish_root, specs=None, release_evidence=None):
                 cwd=tools,
                 env=env,
             )
+            if report_root is not None:
+                # Fresh immutable source checkouts still exist here. Historical
+                # authored bytes come from the pinned Docs input, never dirty tooling.
+                run([
+                    str(runner), str(tools / "ua-claim-candidates.mjs"),
+                    "--generation", str(stage), "--public-root", str(publish_root),
+                    "--sources", str(source_root),
+                    "--inputs", str(tools / "review/claim-packages.json"),
+                    "--authored-root", str(source_root / "ORISO-Docs"),
+                    "--out", str(report_root / (manifest["generationId"] + ".json")),
+                ], cwd=tools, env=env)
             _publish(stage, publish_root)
             print(
                 f'PUBLISHED {manifest["generationId"]} ({len(sources)} sources, complete generation)',

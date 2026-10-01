@@ -109,6 +109,7 @@ jobs:
             python3 -m bundle refresh \
               --base "${UA_WORK}/base" \
               --publish-root "${UA_WORK}/published" \
+              --internal-report-root "$RUNNER_TEMP/internal-review" \
               "${REPO_ARGS[@]}"
 
       - name: Verify the generation against live sources
@@ -168,6 +169,14 @@ jobs:
             --generation "${UA_WORK}/published/current" \
             --out "${UA_WORK}/assets" \
             --upload-only
+
+      - name: Keep internal source associations separate from public graphs
+        uses: actions/upload-artifact@v4
+        with:
+          name: ua-internal-claim-candidates
+          path: ${{ runner.temp }}/internal-review/*.json
+          if-no-files-found: error
+          retention-days: 30
 
       - name: Keep the manifest for diagnosis
         if: always()

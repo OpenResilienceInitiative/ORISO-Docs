@@ -7,8 +7,13 @@ PRIVATE={'ORISO-E2E','ORISO-Infra'}
 OWNER='OpenResilienceInitiative'
 HELM_RELEASE_CONTRACT='oriso.helm-release/v1'
 def required_repositories():
+    policy=json.loads(Path(__file__).with_name('public-repositories.json').read_text())
+    require(policy.get('schemaVersion')=='oriso.ua.supported-public-repositories/v1' and isinstance(policy.get('repositories'),list),'supported-public repository policy required')
+    names=set(policy['repositories'])
+    require(len(names)==len(policy['repositories']) and not names & PRIVATE,'invalid supported-public repository policy')
     from .pipeline import REPOS
-    return {name for name,_,_ in REPOS if name not in PRIVATE}
+    require(names=={name for name,_,_ in REPOS if name not in PRIVATE},'supported-public policy differs from producer inventory')
+    return names
 def canonical_bytes(lock):return json.dumps(lock,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()
 def validate_lock(lock,documentation_revision=None):
     require(isinstance(lock,dict) and set(lock)=={'schemaVersion','version','releaseUrl','documentationRevision','sources'},'release lock fields required')
