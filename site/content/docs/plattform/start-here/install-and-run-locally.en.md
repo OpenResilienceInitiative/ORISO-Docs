@@ -8,8 +8,15 @@ Start here. This page gets you from an empty machine to a running piece of ORISO
 It has three tracks; pick the one that matches your first ticket and ignore the others
 until you need them.
 
-Every version and command below is taken from the repositories themselves — the links
-open the exact file on `dev` in a new tab.
+Runtime requirements below come from the service and UI sources on `dev`. The local
+runner update is tracked in [ORISO-Docs issue 48](https://github.com/OpenResilienceInitiative/ORISO-Docs/issues/48)
+and [PR 142](https://github.com/OpenResilienceInitiative/ORISO-Docs/pull/142).
+The local API/Admin baseline was checked on 2026-10-01 with runner revision
+[`dd7f82d25e28`](https://github.com/OpenResilienceInitiative/ORISO-Docs/tree/dd7f82d25e28407e0b3f359e034c4a3bb2579387).
+The [verification receipt](https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/dd7f82d25e28407e0b3f359e034c4a3bb2579387/services-local-setup/verification/2026-10-01-local-baseline.json)
+records the exact service/UI commits and the scope of the check. Use those commits
+to reproduce that run; a newer `dev` checkout can differ. Source checks, local
+execution and a published release are separate evidence.
 
 ## Choose your track
 
@@ -28,31 +35,37 @@ open the exact file on `dev` in a new tab.
 | npm engine range | `>=22 <23` (frontend), `^22.12.0` (admin) | [`ORISO-Frontend/package.json#L11-L13`](https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/dev/package.json#L11-L13), [`ORISO-Admin/package.json#L6-L8`](https://github.com/OpenResilienceInitiative/ORISO-Admin/blob/dev/package.json#L6-L8) |
 | JDK | 21 | [`ORISO-UserService/pom.xml#L28`](https://github.com/OpenResilienceInitiative/ORISO-UserService/blob/dev/pom.xml#L28), [`ORISO-AgencyService/pom.xml#L29`](https://github.com/OpenResilienceInitiative/ORISO-AgencyService/blob/dev/pom.xml#L29), [`ORISO-TenantService/pom.xml#L30`](https://github.com/OpenResilienceInitiative/ORISO-TenantService/blob/dev/pom.xml#L30), [`ORISO-ConsultingTypeService/pom.xml#L31`](https://github.com/OpenResilienceInitiative/ORISO-ConsultingTypeService/blob/dev/pom.xml#L31) |
 | Maven | not installed separately — every service ships `./mvnw` | the service repositories |
-| Docker with Compose | any current release | databases, cache, queue, local Keycloak |
+| Python | 3.10 or later | the local runner |
+| Docker with Compose | Compose v2 | bundled local databases, cache, queue and Keycloak |
 | Git, curl | any | clone and health checks |
 
 `nvm use` picks up `.nvmrc` in both UI repositories. For the JDK, any distribution of
-21 works; SDKMAN is convenient if you also keep older JDKs around.
+21 works; select the same JDK through `JAVA_HOME` and `PATH`. The runner reads the
+selected services' `pom.xml` and UIs' `package.json` and rejects runtime mismatches.
 
 ## Get the repositories
 
-All repositories must be **siblings inside one workspace folder** — the local runner and
-several scripts resolve paths from that layout.
+Service and UI repositories must be **siblings inside one workspace folder**.
+Git worktrees are supported. The runner may live in a separate selected Docs
+checkout or worktree; set its path and the source workspace separately below.
+The bundled local baseline does not require ORISO-Database, ORISO-Keycloak or
+Deployment checkouts. ORISO-Frontend is required only when selected.
+
+Clone the service sources from `dev`. Until PR 142 is merged, select the checked
+Docs runner revision explicitly instead of assuming the default Docs branch
+contains it. The receipt records the service revisions used for the local check.
 
 ```bash
 mkdir ORISO && cd ORISO
 
 git clone https://github.com/OpenResilienceInitiative/ORISO-Docs.git
-git clone https://github.com/OpenResilienceInitiative/ORISO-Database.git
-git clone https://github.com/OpenResilienceInitiative/ORISO-Keycloak.git
-
-git clone https://github.com/OpenResilienceInitiative/ORISO-UserService.git
-git clone https://github.com/OpenResilienceInitiative/ORISO-TenantService.git
-git clone https://github.com/OpenResilienceInitiative/ORISO-AgencyService.git
-git clone https://github.com/OpenResilienceInitiative/ORISO-ConsultingTypeService.git
-
-git clone https://github.com/OpenResilienceInitiative/ORISO-Admin.git
-git clone https://github.com/OpenResilienceInitiative/ORISO-Frontend.git
+git -C ORISO-Docs checkout --detach dd7f82d25e28407e0b3f359e034c4a3bb2579387
+git clone --branch dev https://github.com/OpenResilienceInitiative/ORISO-UserService.git
+git clone --branch dev https://github.com/OpenResilienceInitiative/ORISO-TenantService.git
+git clone --branch dev https://github.com/OpenResilienceInitiative/ORISO-AgencyService.git
+git clone --branch dev https://github.com/OpenResilienceInitiative/ORISO-ConsultingTypeService.git
+git clone --branch dev https://github.com/OpenResilienceInitiative/ORISO-Admin.git
+git clone --branch dev https://github.com/OpenResilienceInitiative/ORISO-Frontend.git
 ```
 
 Which repository owns what is listed in the [repository map](/en/plattform/flows-und-reference/repository-map).
@@ -111,16 +124,26 @@ npm run lint
 
 ## Track C: a backend service
 
-Each of the four services is an ordinary Spring Boot application built with Maven
-wrapper and JDK 21:
+The services build with Maven wrapper and JDK 21. For local development, prefer the
+managed runner below: it supplies local infrastructure and the service environment.
+The runner selects the `dev` Spring profile and `dev,seed` Liquibase contexts.
+There is no common supported `local` profile across all four services.
+
+The following manual example is only for an already configured local service.
+First start its dependencies and explicitly supply loopback database, authentication
+and peer-service endpoints, fixture credentials, required callback URLs and
+technical-client settings. The `dev` profile name does not mean that shared Dev
+resources should be used. The command alone does not provide this configuration
+or establish successful startup:
 
 ```bash
 cd ORISO-AgencyService
-./mvnw spring-boot:run -Dspring-boot.run.profiles=local -DskipTests
+SPRING_LIQUIBASE_CONTEXTS=dev,seed ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev -DskipTests
 ```
 
-The same shape works for `ORISO-UserService`, `ORISO-TenantService` and
-`ORISO-ConsultingTypeService`. What each one additionally needs before it will start:
+The wrapper command has the same shape for `ORISO-UserService`, `ORISO-TenantService`
+and `ORISO-ConsultingTypeService`, but each needs its own complete local environment.
+This table summarizes dependencies; it is not a complete startup configuration:
 
 | Service | Needs | Contract |
 | --- | --- | --- |
@@ -132,47 +155,92 @@ The same shape works for `ORISO-UserService`, `ORISO-TenantService` and
 Read the contract first, the controller second. That order saves an hour per endpoint —
 see [backend services](/en/plattform/core-systems/backend-services).
 
-Start order when you run several at once: TenantService, ConsultingTypeService,
-AgencyService, UserService. Everything depends on Keycloak and its database being up
-first.
+For a managed local baseline, use the runner below to start the local dependencies
+and selected services together. Service schemas and development seeds come from
+each service's current Liquibase master with the `dev,seed` contexts. Do not apply
+copied ORISO-Database SQL or ad-hoc schema repairs to make a service start.
 
 ## The full local stack
 
-`ORISO-Docs` ships an experimental runner for infrastructure, databases, a gateway, services and a UI. Its default Java selectors still choose 11/17 while the service sources require 21. Use the manual tracks above until you explicitly configure an installed Java 21 candidate for both legacy selector variables. The frontend runner also needs `ORISO_FRONTEND_NODE_BIN` pointing to Node 22; `nvm use` alone does not override its Node 18 path. No full-stack startup is claimed as verified here. The supported preflight command is `check`; there is no `doctor` subcommand.
+The runner contract covers the local API/Admin baseline: four Java services, Admin,
+a loopback gateway, MariaDB, MongoDB, Redis, RabbitMQ, stock local Keycloak and a
+local Mailpit SMTP catcher.
+Infrastructure comes from bundled local fixtures with synthetic credentials and
+published ports bound to loopback. Use disposable checkouts and data for the first
+validation. Chat, calls, outbound mail and custom ORISO Keycloak SPI registration
+or recovery flows are outside this baseline.
 
-Inspect the runner configuration before using these commands:
-
-```bash
-./ORISO-Docs/services-local-setup/run-oriso-local.sh check
-./ORISO-Docs/services-local-setup/run-oriso-local.sh start --ui admin
-./ORISO-Docs/services-local-setup/run-oriso-local.sh status
-./ORISO-Docs/services-local-setup/run-oriso-local.sh logs -f userservice
-./ORISO-Docs/services-local-setup/run-oriso-local.sh stop
-```
-
-Hybrid mode runs the ORISO services locally but authenticates against the shared dev
-Keycloak, so you skip the realm import. Set `DEV_KEYCLOAK_ISSUER_URL` to the approved shared dev issuer first; the runner requires this explicit value:
+Replace both example paths. The workspace selects service sources; the runner path
+selects the Docs revision being tested. They can be different directories.
 
 ```bash
-ORISO_DEV_KEYCLOAK_URL="$DEV_KEYCLOAK_ISSUER_URL" \
-  ./ORISO-Docs/services-local-setup/run-oriso-local.sh start --hybrid --ui admin
+export ORISO_WORKSPACE_ROOT="/path/to/ORISO"
+export ORISO_LOCAL_RUNNER="/path/to/selected/ORISO-Docs/services-local-setup/run-oriso-local.sh"
+"$ORISO_LOCAL_RUNNER" doctor --json
 ```
 
-Default ports: gateway `8088`, admin `9000`, frontend `9002`.
+Doctor is read-only: it reports source commits, branches, selected tools and ports,
+and supported capabilities. Exit 1 means resolve the listed prerequisite before
+starting. It does not install dependencies, print credentials or stop unknown port
+listeners. Default selection is all four backends plus Admin; select `--ui frontend`,
+`--ui both`, `--ui none` or a backend subset with `--services "userservice tenantservice"`.
 
-The runner is a work in progress and always uses whichever branch each repository has
-checked out — it never switches or pulls. The full option list, the environment
-variables and the known gaps are in the
-[local development runbook](https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/dev/services-local-setup/ORISO-local-development-runbook.md),
-the script itself is
-[`run-oriso-local.sh`](https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/dev/services-local-setup/run-oriso-local.sh).
+```bash
+"$ORISO_LOCAL_RUNNER" start all
+"$ORISO_LOCAL_RUNNER" status
+"$ORISO_LOCAL_RUNNER" logs tenantservice
+"$ORISO_LOCAL_RUNNER" stop all
+```
 
-The runner itself and its runbook contain two unresolved defaults:
+Start may install missing UI dependencies, build services and create owned runtime
+files and local database volumes. Its readiness contract requires selected
+application health and local OIDC metadata; a listening port alone is insufficient.
+`start infra` checks infrastructure only. `stop all` stops owned process groups and
+Compose containers while preserving named volumes and unrelated resources. Plain
+`stop` leaves infrastructure running. Never delete volumes to repair an unexplained
+migration failure; retain the failing log and source revision first.
 
-- it asks for JDK 11 and 17, but all four services target **JDK 21** today (see the
-  prerequisites table above);
-- its default Node path for the frontend points at an 18.x install, while `.nvmrc` says
-  22.12.0 — set `ORISO_FRONTEND_NODE_BIN` explicitly to your Node 22 bin directory.
+Default URLs are Admin `http://localhost:9000`, gateway `http://localhost:8088`,
+and local auth `http://localhost:8080`; selected Frontend uses port `9002`. The
+synthetic local realm is for development, not real operator identities. Record
+doctor JSON, source commits, health responses and the browser journey under test.
+Local SMTP capture uses `127.0.0.1:1025`; captured test mail is visible in the
+Mailpit inbox at `http://localhost:8025`. Mailpit has no outbound relay configured.
+This local capture capability does not verify a platform mail journey or external
+delivery; actual platform and outbound mail remain unverified.
+Service app-link origins use the real local HTTPS edge `https://localhost:9443`.
+Its certificate remains in the owned runtime directory; readiness verifies it
+explicitly without changing system or browser trust. With Frontend absent, app
+routes return 503. Optional HTTPS Frontend proxying is not a tested browser/API/auth
+or DPA journey. Admin browser checks use the actual local HTTP entry point.
+OpenSSL is required to create the local certificate. Do not bypass a browser
+certificate warning to claim acceptance.
+
+The isolated local check in the receipt returned `UP` for all four service health
+endpoints. Admin served its login page with Username, Password and Sign in;
+no login was submitted. The check verified the HTTPS edge certificate, local
+OIDC metadata and the fixture technical JWT subject/role, and accepted a test
+message with Mailpit inbox readback. Owned teardown freed all 14 selected ports,
+kept five named volumes and left pre-existing Element Call containers unchanged.
+This verifies the API/Admin baseline and local SMTP capture. Platform mail,
+outbound delivery, DPA signing, custom Keycloak SPI, chat/calls, Dev deployment and
+public release verification remain open. An Admin login page is not an accepted
+authenticated browser journey.
+
+Local mode uses bundled authentication. Hybrid mode requires `--hybrid` and an
+explicit approved `ORISO_DEV_KEYCLOAK_URL`; it uses external authentication without
+provisioning it. Supply remote credentials through the approved local secret
+mechanism. Local fixture credentials are never sent to remote auth. Success in
+local mode does not establish hybrid readiness.
+
+The runner uses each selected repository's checked-out source and never switches
+branches or pulls. Source revision, review, merge, deployment and release readback
+remain separate. The complete port options, failure procedure and verification
+boundaries are in the
+[local development runbook](https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/dd7f82d25e28407e0b3f359e034c4a3bb2579387/services-local-setup/ORISO-local-development-runbook.md).
+See the [English quick start](https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/dd7f82d25e28407e0b3f359e034c4a3bb2579387/services-local-setup/README.md)
+and [`run-oriso-local.sh`](https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/dd7f82d25e28407e0b3f359e034c4a3bb2579387/services-local-setup/run-oriso-local.sh)
+at the checked revision linked from [PR 142](https://github.com/OpenResilienceInitiative/ORISO-Docs/pull/142).
 
 ## Where to go next
 

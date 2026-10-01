@@ -345,7 +345,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "docs/platform/install-and-run-locally.md",
-      "sourceHash": "be68fdcf07c1c578947bfc0d4199d1ab4a2e01dc8fc04f1d51eb71dab851de48",
+      "sourceHash": "aa49daf482ae5f1a30550d30b63ad33688a1b0cd4661bf19227dd310c7a64a67",
       "locales": {
         "de": {
           "available": true,
@@ -388,7 +388,7 @@
         }
       },
       "sourceRevision": "645863292ef7736cb682c2b8e81e59fb5025df56",
-      "sourceState": "committed",
+      "sourceState": "working-copy",
       "factsStatus": "source-only"
     },
     {

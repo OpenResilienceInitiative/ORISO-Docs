@@ -7,7 +7,16 @@ description: "Der Einstieg für neue Entwickler: Voraussetzungen, Repositories u
 
 Beginne hier. Diese Seite führt dich von einem noch nicht eingerichteten Rechner zu einem laufenden Teil von ORISO. Wähle einen der drei Wege passend zu deinem ersten Ticket. Die anderen brauchst du erst später.
 
-Alle Versionen und Befehle unten stammen aus den Repositories selbst. Die Links öffnen die genaue Datei auf `dev` in einem neuen Tab.
+Die Laufzeitversionen unten stammen aus den Service- und UI-Quellen auf `dev`.
+Die Überarbeitung des lokalen Runners wird in [ORISO-Docs Issue 48](https://github.com/OpenResilienceInitiative/ORISO-Docs/issues/48)
+und [PR 142](https://github.com/OpenResilienceInitiative/ORISO-Docs/pull/142) geführt.
+Die lokale API-/Admin-Basis wurde am 01.10.2026 mit Runner-Revision
+[`dd7f82d25e28`](https://github.com/OpenResilienceInitiative/ORISO-Docs/tree/dd7f82d25e28407e0b3f359e034c4a3bb2579387)
+geprüft. Der [Prüfbeleg](https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/dd7f82d25e28407e0b3f359e034c4a3bb2579387/services-local-setup/verification/2026-10-01-local-baseline.json)
+hält die genauen Service-/UI-Commits und den Umfang fest. Verwende diese Commits,
+um den Lauf zu wiederholen; ein neuerer `dev`-Checkout kann abweichen.
+Quellprüfung, lokale Ausführung und ein veröffentlichter Release sind getrennte
+Nachweise.
 
 ## Wähle deinen Weg
 
@@ -26,29 +35,40 @@ Alle Versionen und Befehle unten stammen aus den Repositories selbst. Die Links 
 | Versionsbereich im engine-Feld | `>=22 <23` (frontend), `^22.12.0` (admin) | [`ORISO-Frontend/package.json#L11-L13`](https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/dev/package.json#L11-L13), [`ORISO-Admin/package.json#L6-L8`](https://github.com/OpenResilienceInitiative/ORISO-Admin/blob/dev/package.json#L6-L8) |
 | JDK | 21 | [`ORISO-UserService/pom.xml#L28`](https://github.com/OpenResilienceInitiative/ORISO-UserService/blob/dev/pom.xml#L28), [`ORISO-AgencyService/pom.xml#L29`](https://github.com/OpenResilienceInitiative/ORISO-AgencyService/blob/dev/pom.xml#L29), [`ORISO-TenantService/pom.xml#L30`](https://github.com/OpenResilienceInitiative/ORISO-TenantService/blob/dev/pom.xml#L30), [`ORISO-ConsultingTypeService/pom.xml#L31`](https://github.com/OpenResilienceInitiative/ORISO-ConsultingTypeService/blob/dev/pom.xml#L31) |
 | Maven | keine separate Installation — jeder Service enthält `./mvnw` | die Service-Repositories |
-| Docker mit Compose | eine aktuelle Version | Datenbanken, Cache, Warteschlange, lokales Keycloak |
+| Python | 3.10 oder neuer | der lokale Runner |
+| Docker mit Compose | Compose v2 | mitgelieferte lokale Datenbanken, Cache, Warteschlange und Keycloak |
 | Git, curl | beliebig | Klonen und Zustandsprüfungen |
 
-`nvm use` liest in beiden UI-Repositories die `.nvmrc`. Jede JDK-21-Distribution ist geeignet. SDKMAN hilft, wenn du zusätzlich ältere JDKs benötigst.
+`nvm use` liest in beiden UI-Repositories die `.nvmrc`. Jede JDK-21-Distribution ist
+geeignet. `JAVA_HOME` und `PATH` müssen dasselbe JDK auswählen. Der Runner liest
+`pom.xml` der gewählten Dienste und `package.json` der Oberflächen und bricht bei
+einem Versionskonflikt ab.
 
 ## Repositories klonen
 
-Alle Repositories müssen **nebeneinander in einem gemeinsamen Workspace-Ordner** liegen. Der lokale Runner und mehrere Skripte lösen Pfade anhand dieser Struktur auf.
+Service- und UI-Repositories müssen **nebeneinander in einem gemeinsamen
+Workspace-Ordner** liegen. Git-Worktrees werden unterstützt. Der Runner darf in
+einem getrennten Docs-Checkout oder Worktree liegen. Gib seinen Pfad und den
+Quell-Workspace unten getrennt an. Die mitgelieferte lokale Basis benötigt keine
+Checkouts von ORISO-Database, ORISO-Keycloak oder Deployment. ORISO-Frontend wird
+nur benötigt, wenn es ausgewählt ist.
+
+Klone die Service-Quellen von `dev`. Wähle bis zum Merge von PR 142 die geprüfte
+Docs-Runner-Revision ausdrücklich aus. Setze nicht voraus, dass der Standardbranch
+von Docs sie bereits enthält. Der Prüfbeleg nennt die Service-Revisionen des
+lokalen Nachweises.
 
 ```bash
 mkdir ORISO && cd ORISO
 
 git clone https://github.com/OpenResilienceInitiative/ORISO-Docs.git
-git clone https://github.com/OpenResilienceInitiative/ORISO-Database.git
-git clone https://github.com/OpenResilienceInitiative/ORISO-Keycloak.git
-
-git clone https://github.com/OpenResilienceInitiative/ORISO-UserService.git
-git clone https://github.com/OpenResilienceInitiative/ORISO-TenantService.git
-git clone https://github.com/OpenResilienceInitiative/ORISO-AgencyService.git
-git clone https://github.com/OpenResilienceInitiative/ORISO-ConsultingTypeService.git
-
-git clone https://github.com/OpenResilienceInitiative/ORISO-Admin.git
-git clone https://github.com/OpenResilienceInitiative/ORISO-Frontend.git
+git -C ORISO-Docs checkout --detach dd7f82d25e28407e0b3f359e034c4a3bb2579387
+git clone --branch dev https://github.com/OpenResilienceInitiative/ORISO-UserService.git
+git clone --branch dev https://github.com/OpenResilienceInitiative/ORISO-TenantService.git
+git clone --branch dev https://github.com/OpenResilienceInitiative/ORISO-AgencyService.git
+git clone --branch dev https://github.com/OpenResilienceInitiative/ORISO-ConsultingTypeService.git
+git clone --branch dev https://github.com/OpenResilienceInitiative/ORISO-Admin.git
+git clone --branch dev https://github.com/OpenResilienceInitiative/ORISO-Frontend.git
 ```
 
 Die Zuständigkeiten der Repositories findest du in der [Repository-Übersicht](./repository-map.md).
@@ -103,14 +123,29 @@ npm run lint
 
 ## Weg C: ein Backend-Service
 
-Jeder der vier Services ist eine gewöhnliche Spring-Boot-Anwendung mit Maven-Wrapper und JDK 21:
+Die Dienste werden mit Maven-Wrapper und JDK 21 gebaut. Verwende für lokale
+Entwicklung vorzugsweise den verwalteten Runner unten. Er stellt lokale
+Infrastruktur und die Dienstumgebung bereit. Der Runner wählt das Spring-Profil
+`dev` und die Liquibase-Kontexte `dev,seed`. Ein gemeinsam unterstütztes Profil
+`local` gibt es nicht für alle vier Dienste.
+
+Das folgende manuelle Beispiel gilt nur für einen bereits lokal konfigurierten
+Dienst. Starte zuerst seine Abhängigkeiten und gib ausdrücklich lokale Datenbank-,
+Authentifizierungs- und Dienst-Endpunkte auf Loopback, Fixture-Zugangsdaten,
+erforderliche Rückruf-URLs und Einstellungen der technischen Clients an. Der
+Profilname `dev` bedeutet nicht, dass Ressourcen der gemeinsamen Dev-Umgebung
+verwendet werden sollen. Der Befehl allein liefert diese Konfiguration nicht und
+belegt keinen erfolgreichen Start:
 
 ```bash
 cd ORISO-AgencyService
-./mvnw spring-boot:run -Dspring-boot.run.profiles=local -DskipTests
+SPRING_LIQUIBASE_CONTEXTS=dev,seed ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev -DskipTests
 ```
 
-Dasselbe Muster funktioniert für `ORISO-UserService`, `ORISO-TenantService` und `ORISO-ConsultingTypeService`. Für den Start braucht jeder Service zusätzlich:
+Der Wrapper-Befehl hat für `ORISO-UserService`, `ORISO-TenantService` und
+`ORISO-ConsultingTypeService` dieselbe Form. Jeder Dienst benötigt jedoch seine
+eigene vollständige lokale Umgebung. Die Tabelle fasst Abhängigkeiten zusammen;
+sie ist keine vollständige Startkonfiguration:
 
 | Service | Benötigt | Vertrag |
 | --- | --- | --- |
@@ -121,42 +156,103 @@ Dasselbe Muster funktioniert für `ORISO-UserService`, `ORISO-TenantService` und
 
 Lies zuerst den Vertrag und danach den Controller. Diese Reihenfolge spart eine Stunde pro Endpunkt — siehe [Backend-Services](./backend-services.md).
 
-Startreihenfolge bei mehreren Services: TenantService, ConsultingTypeService, AgencyService, UserService. Keycloak und seine Datenbank müssen vorher laufen.
+Verwende für eine verwaltete lokale Basis den Runner unten. Er startet die lokalen
+Abhängigkeiten und gewählten Dienste zusammen. Tabellen und Entwicklungsdaten
+erzeugen die aktuellen Liquibase-Master der Dienste mit den Kontexten `dev,seed`.
+Verwende weder kopiertes ORISO-Database-SQL noch nachträgliche Schema-Reparaturen,
+um einen Dienst zum Starten zu bringen.
 
 ## Der vollständige lokale Stack
 
-`ORISO-Docs` enthält einen experimentellen Runner für Infrastruktur, Datenbanken, Gateway, Dienste und UI. Seine Java-Auswahl verwendet standardmäßig noch 11/17, während die Dienstquellen Java 21 verlangen. Verwende die manuellen Wege oben, bis du für beide alten Auswahlvariablen ausdrücklich einen installierten Java-21-Kandidaten eingerichtet hast. Für das Frontend muss außerdem `ORISO_FRONTEND_NODE_BIN` auf Node 22 zeigen; `nvm use` allein überschreibt den Node-18-Pfad des Runners nicht. Ein erfolgreicher Start des gesamten Stacks ist hier nicht nachgewiesen. Der unterstützte Vorabcheck heißt `check`; einen Unterbefehl `doctor` gibt es nicht.
+Der Runner-Vertrag umfasst die lokale Basis für API- und Admin-Entwicklung: vier
+Java-Dienste, Admin, einen Gateway auf Loopback, MariaDB, MongoDB, Redis, RabbitMQ,
+unverändertes lokales Keycloak und den lokalen SMTP-Auffangdienst Mailpit.
+Die Infrastruktur stammt aus mitgelieferten
+lokalen Fixtures mit künstlichen Zugangsdaten. Veröffentlichte Ports sind an
+Loopback gebunden. Verwende für den ersten Nachweis getrennte Checkouts und
+Testdaten. Chat, Anrufe, ausgehende E-Mails sowie spezielle ORISO-Keycloak-SPI-
+Registrierungs- und Wiederherstellungsabläufe gehören nicht zu dieser Basis.
 
-Prüfe die Runner-Konfiguration vor diesen Befehlen:
-
-```bash
-./ORISO-Docs/services-local-setup/run-oriso-local.sh check
-./ORISO-Docs/services-local-setup/run-oriso-local.sh start --ui admin
-./ORISO-Docs/services-local-setup/run-oriso-local.sh status
-./ORISO-Docs/services-local-setup/run-oriso-local.sh logs -f userservice
-./ORISO-Docs/services-local-setup/run-oriso-local.sh stop
-```
-
-Im Hybridmodus laufen die ORISO-Services lokal; die Anmeldung erfolgt am gemeinsamen Dev-Keycloak. Der Realm-Import entfällt vollständig. Das ist die übliche Wahl für Admin- und Backend-Arbeit:
-
-Setze vorher `DEV_KEYCLOAK_ISSUER_URL` auf die freigegebene Dev-Issuer-URL; der Runner verlangt diese ausdrückliche Angabe.
+Ersetze beide Beispielpfade. Der Workspace wählt die Service-Quellen aus; der
+Runner-Pfad wählt die getestete Docs-Revision. Die Verzeichnisse dürfen verschieden
+sein.
 
 ```bash
-ORISO_DEV_KEYCLOAK_URL="$DEV_KEYCLOAK_ISSUER_URL" \
-  ./ORISO-Docs/services-local-setup/run-oriso-local.sh start --hybrid --ui admin
+export ORISO_WORKSPACE_ROOT="/path/to/ORISO"
+export ORISO_LOCAL_RUNNER="/path/to/selected/ORISO-Docs/services-local-setup/run-oriso-local.sh"
+"$ORISO_LOCAL_RUNNER" doctor --json
 ```
 
-Standardports: gateway `8088`, admin `9000`, frontend `9002`.
+Doctor liest ausschließlich. Es zeigt Quellrevisionen, Branches, gewählte Werkzeuge
+und Ports sowie unterstützte Fähigkeiten. Exit 1 bedeutet, dass die genannte
+Voraussetzung vor dem Start behoben werden muss. Es installiert nichts, gibt keine
+Zugangsdaten aus und beendet keine fremden Port-Nutzer. Standard sind vier Backends
+und Admin. `--ui frontend`, `--ui both`, `--ui none` oder
+`--services "userservice tenantservice"` ändern die Auswahl.
 
-Der Runner wird noch entwickelt und verwendet immer den gerade ausgecheckten Branch jedes Repositories. Er wechselt keine Branches und führt kein Pull aus. Alle Optionen, Umgebungsvariablen und bekannten Lücken stehen im
-[Runbook für lokale Entwicklung](https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/dev/services-local-setup/ORISO-local-development-runbook.md),
-das Skript selbst ist
-[`run-oriso-local.sh`](https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/dev/services-local-setup/run-oriso-local.sh).
+```bash
+"$ORISO_LOCAL_RUNNER" start all
+"$ORISO_LOCAL_RUNNER" status
+"$ORISO_LOCAL_RUNNER" logs tenantservice
+"$ORISO_LOCAL_RUNNER" stop all
+```
 
-Zwei Angaben im Runbook weichen vom Code ab. Beachte sie, bevor du die Anleitung wörtlich befolgst:
+Start installiert gegebenenfalls UI-Abhängigkeiten, baut Dienste und erzeugt eigene
+Laufzeitdateien sowie lokale Datenbank-Volumes. Sein Bereitschaftsvertrag verlangt
+Health-Ergebnisse der gewählten Anwendungen und lokale OIDC-Metadaten. Ein offener
+Port allein reicht nicht. `start infra` prüft ausschließlich Infrastruktur.
+`stop all` beendet eigene Prozessgruppen und Compose-Container; benannte Volumes
+und fremde Ressourcen bleiben erhalten. `stop` ohne `all` lässt die Infrastruktur
+laufen. Lösche keine Volumes, um einen ungeklärten Migrationsfehler zu beheben.
+Sichere zuerst das fehlerhafte Log und den Quellstand.
 
-- es verlangt JDK 11 und 17, aber alle vier Services verwenden heute **JDK 21** (siehe die Tabelle mit Voraussetzungen oben);
-- der Standardpfad für Frontend-Node verweist auf eine 18.x-Installation, während `.nvmrc` 22.12.0 vorgibt — setze `ORISO_FRONTEND_NODE_BIN` ausdrücklich auf das Bin-Verzeichnis von Node 22.
+Standardadressen sind Admin `http://localhost:9000`, Gateway `http://localhost:8088`
+und lokale Authentifizierung `http://localhost:8080`. Das ausgewählte Frontend
+verwendet Port `9002`. Der künstliche Realm dient der Entwicklung; seine Benutzer
+sind keine echten Betreiber-Identitäten. Halte Doctor-JSON, Quellrevisionen,
+Health-Antworten und den geprüften Browserablauf fest.
+
+Lokaler SMTP-Empfang verwendet `127.0.0.1:1025`. Abgefangene Test-E-Mails sind im
+Mailpit-Posteingang unter `http://localhost:8025` sichtbar. Mailpit hat keine
+Weiterleitung nach außen. Diese lokale Auffangfunktion belegt weder einen
+E-Mail-Ablauf der Plattform noch externe Zustellung. Tatsächliche Plattform-Mails
+und ausgehende Zustellung bleiben ungeprüft.
+
+Die App-Link-Ursprünge verwenden den echten lokalen HTTPS-Einstieg
+`https://localhost:9443`. Sein Zertifikat bleibt im eigenen Laufzeitordner. Die
+Bereitschaftsprüfung vertraut ihm ausdrücklich, ohne System- oder Browservertrauen
+zu ändern. Ohne Frontend liefern App-Routen 503. Der optionale HTTPS-Frontend-Proxy
+ist kein geprüfter Browser-/API-/Auth- oder DPA-Ablauf. Admin wird über seinen
+tatsächlichen lokalen HTTP-Einstieg geprüft. OpenSSL erzeugt das Testzertifikat.
+Browser-Zertifikatswarnungen dürfen für einen Nachweis nicht umgangen werden.
+
+Der isolierte lokale Lauf im Prüfbeleg lieferte `UP` für alle vier Service-
+Health-Endpunkte. Admin zeigte seine Login-Seite mit Username, Password und
+Sign in; es wurde keine Anmeldung abgesendet. Geprüft wurden das Zertifikat des
+HTTPS-Einstiegs, lokale OIDC-Metadaten und Subjekt/Rolle des technischen Fixture-
+JWTs sowie die Annahme einer Testnachricht mit anschließendem Lesen im Mailpit-
+Posteingang. Das Beenden eigener Ressourcen gab alle 14 gewählten Ports frei,
+erhielt fünf benannte Volumes und ließ bereits vorhandene Element-Call-Container
+unverändert. Das belegt die API-/Admin-Basis und lokalen SMTP-Empfang.
+Plattform-Mails, externe Zustellung, DPA-Unterzeichnung, spezielle Keycloak-SPIs,
+Chat/Anrufe, Dev-Deployment und öffentliche Release-Prüfung bleiben offen. Eine
+Admin-Login-Seite belegt keinen angenommenen authentifizierten Browserablauf.
+
+Der lokale Modus verwendet mitgelieferte Authentifizierung. Hybridmodus verlangt
+`--hybrid` und eine ausdrücklich freigegebene `ORISO_DEV_KEYCLOAK_URL`. Er verwendet
+externe Authentifizierung, ohne sie einzurichten. Übergib entfernte Zugangsdaten
+über den freigegebenen lokalen Secret-Mechanismus. Lokale Fixture-Zugangsdaten
+werden nie an entfernte Authentifizierung gesendet. Ein Erfolg im lokalen Modus
+belegt keine Hybrid-Bereitschaft.
+
+Der Runner verwendet die ausgecheckten Quellen der gewählten Repositories. Er
+wechselt keine Branches und führt kein Pull aus. Quellrevision, Review, Merge,
+Deployment und Release-Prüfung bleiben getrennte Nachweise. Alle Port-Optionen,
+die Fehlersuche und Nachweisgrenzen stehen im
+[Runbook für lokale Entwicklung](https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/dd7f82d25e28407e0b3f359e034c4a3bb2579387/services-local-setup/ORISO-local-development-runbook.md).
+Lies den [deutschen Einstieg](https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/dd7f82d25e28407e0b3f359e034c4a3bb2579387/services-local-setup/README.de.md)
+und [`run-oriso-local.sh`](https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/dd7f82d25e28407e0b3f359e034c4a3bb2579387/services-local-setup/run-oriso-local.sh)
+auf der geprüften Revision aus [PR 142](https://github.com/OpenResilienceInitiative/ORISO-Docs/pull/142).
 
 ## Nächste Schritte
 
