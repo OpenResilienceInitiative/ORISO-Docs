@@ -10,8 +10,8 @@ Die Laufzeitversionen unten stammen aus den Service- und UI-Quellen auf `dev`.
 Die Überarbeitung des lokalen Runners wird in [ORISO-Docs Issue 48](https://github.com/OpenResilienceInitiative/ORISO-Docs/issues/48)
 und [PR 142](https://github.com/OpenResilienceInitiative/ORISO-Docs/pull/142) geführt.
 Die lokale API-/Admin-Basis wurde am 01.10.2026 mit Runner-Revision
-[`dd7f82d25e28`](https://github.com/OpenResilienceInitiative/ORISO-Docs/tree/dd7f82d25e28407e0b3f359e034c4a3bb2579387)
-geprüft. Der [Prüfbeleg](https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/dd7f82d25e28407e0b3f359e034c4a3bb2579387/services-local-setup/verification/2026-10-01-local-baseline.json)
+[`bd6250215d6f`](https://github.com/OpenResilienceInitiative/ORISO-Docs/tree/bd6250215d6f4dbcb3d68a056a88f06a2277d0b0)
+geprüft. Der [Prüfbeleg](https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/bd6250215d6f4dbcb3d68a056a88f06a2277d0b0/services-local-setup/verification/2026-10-01-reviewed-baseline.json)
 hält die genauen Service-/UI-Commits und den Umfang fest. Verwende diese Commits,
 um den Lauf zu wiederholen; ein neuerer `dev`-Checkout kann abweichen.
 Quellprüfung, lokale Ausführung und ein veröffentlichter Release sind getrennte
@@ -61,7 +61,7 @@ lokalen Nachweises.
 mkdir ORISO && cd ORISO
 
 git clone https://github.com/OpenResilienceInitiative/ORISO-Docs.git
-git -C ORISO-Docs checkout --detach dd7f82d25e28407e0b3f359e034c4a3bb2579387
+git -C ORISO-Docs checkout --detach bd6250215d6f4dbcb3d68a056a88f06a2277d0b0
 git clone --branch dev https://github.com/OpenResilienceInitiative/ORISO-UserService.git
 git clone --branch dev https://github.com/OpenResilienceInitiative/ORISO-TenantService.git
 git clone --branch dev https://github.com/OpenResilienceInitiative/ORISO-AgencyService.git
@@ -226,8 +226,9 @@ tatsächlichen lokalen HTTP-Einstieg geprüft. OpenSSL erzeugt das Testzertifika
 Browser-Zertifikatswarnungen dürfen für einen Nachweis nicht umgangen werden.
 
 Der isolierte lokale Lauf im Prüfbeleg lieferte `UP` für alle vier Service-
-Health-Endpunkte. Admin zeigte seine Login-Seite mit Username, Password und
-Sign in; es wurde keine Anmeldung abgesendet. Geprüft wurden das Zertifikat des
+Health-Endpunkte nach getrenntem Infrastruktur- und Dienststart. Die Browser-Prüfung
+im vorherigen Beleg zeigte auf derselben Admin-Quellrevision Username, Password
+und Sign in; es wurde keine Anmeldung abgesendet. Der neue Beleg prüft Admin per HTTP. Geprüft wurden das Zertifikat des
 HTTPS-Einstiegs, lokale OIDC-Metadaten und Subjekt/Rolle des technischen Fixture-
 JWTs sowie die Annahme einer Testnachricht mit anschließendem Lesen im Mailpit-
 Posteingang. Das Beenden eigener Ressourcen gab alle 14 gewählten Ports frei,
@@ -248,9 +249,9 @@ Der Runner verwendet die ausgecheckten Quellen der gewählten Repositories. Er
 wechselt keine Branches und führt kein Pull aus. Quellrevision, Review, Merge,
 Deployment und Release-Prüfung bleiben getrennte Nachweise. Alle Port-Optionen,
 die Fehlersuche und Nachweisgrenzen stehen im
-[Runbook für lokale Entwicklung](https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/dd7f82d25e28407e0b3f359e034c4a3bb2579387/services-local-setup/ORISO-local-development-runbook.md).
-Lies den [deutschen Einstieg](https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/dd7f82d25e28407e0b3f359e034c4a3bb2579387/services-local-setup/README.de.md)
-und [`run-oriso-local.sh`](https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/dd7f82d25e28407e0b3f359e034c4a3bb2579387/services-local-setup/run-oriso-local.sh)
+[Runbook für lokale Entwicklung](https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/bd6250215d6f4dbcb3d68a056a88f06a2277d0b0/services-local-setup/ORISO-local-development-runbook.md).
+Lies den [deutschen Einstieg](https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/bd6250215d6f4dbcb3d68a056a88f06a2277d0b0/services-local-setup/README.de.md)
+und [`run-oriso-local.sh`](https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/bd6250215d6f4dbcb3d68a056a88f06a2277d0b0/services-local-setup/run-oriso-local.sh)
 auf der geprüften Revision aus [PR 142](https://github.com/OpenResilienceInitiative/ORISO-Docs/pull/142).
 
 ## Nächste Schritte

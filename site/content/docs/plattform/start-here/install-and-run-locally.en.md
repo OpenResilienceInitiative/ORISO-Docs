@@ -12,8 +12,8 @@ Runtime requirements below come from the service and UI sources on `dev`. The lo
 runner update is tracked in [ORISO-Docs issue 48](https://github.com/OpenResilienceInitiative/ORISO-Docs/issues/48)
 and [PR 142](https://github.com/OpenResilienceInitiative/ORISO-Docs/pull/142).
 The local API/Admin baseline was checked on 2026-10-01 with runner revision
-[`dd7f82d25e28`](https://github.com/OpenResilienceInitiative/ORISO-Docs/tree/dd7f82d25e28407e0b3f359e034c4a3bb2579387).
-The [verification receipt](https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/dd7f82d25e28407e0b3f359e034c4a3bb2579387/services-local-setup/verification/2026-10-01-local-baseline.json)
+[`bd6250215d6f`](https://github.com/OpenResilienceInitiative/ORISO-Docs/tree/bd6250215d6f4dbcb3d68a056a88f06a2277d0b0).
+The [verification receipt](https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/bd6250215d6f4dbcb3d68a056a88f06a2277d0b0/services-local-setup/verification/2026-10-01-reviewed-baseline.json)
 records the exact service/UI commits and the scope of the check. Use those commits
 to reproduce that run; a newer `dev` checkout can differ. Source checks, local
 execution and a published release are separate evidence.
@@ -59,7 +59,7 @@ contains it. The receipt records the service revisions used for the local check.
 mkdir ORISO && cd ORISO
 
 git clone https://github.com/OpenResilienceInitiative/ORISO-Docs.git
-git -C ORISO-Docs checkout --detach dd7f82d25e28407e0b3f359e034c4a3bb2579387
+git -C ORISO-Docs checkout --detach bd6250215d6f4dbcb3d68a056a88f06a2277d0b0
 git clone --branch dev https://github.com/OpenResilienceInitiative/ORISO-UserService.git
 git clone --branch dev https://github.com/OpenResilienceInitiative/ORISO-TenantService.git
 git clone --branch dev https://github.com/OpenResilienceInitiative/ORISO-AgencyService.git
@@ -237,9 +237,9 @@ The runner uses each selected repository's checked-out source and never switches
 branches or pulls. Source revision, review, merge, deployment and release readback
 remain separate. The complete port options, failure procedure and verification
 boundaries are in the
-[local development runbook](https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/dd7f82d25e28407e0b3f359e034c4a3bb2579387/services-local-setup/ORISO-local-development-runbook.md).
-See the [English quick start](https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/dd7f82d25e28407e0b3f359e034c4a3bb2579387/services-local-setup/README.md)
-and [`run-oriso-local.sh`](https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/dd7f82d25e28407e0b3f359e034c4a3bb2579387/services-local-setup/run-oriso-local.sh)
+[local development runbook](https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/bd6250215d6f4dbcb3d68a056a88f06a2277d0b0/services-local-setup/ORISO-local-development-runbook.md).
+See the [English quick start](https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/bd6250215d6f4dbcb3d68a056a88f06a2277d0b0/services-local-setup/README.md)
+and [`run-oriso-local.sh`](https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/bd6250215d6f4dbcb3d68a056a88f06a2277d0b0/services-local-setup/run-oriso-local.sh)
 at the checked revision linked from [PR 142](https://github.com/OpenResilienceInitiative/ORISO-Docs/pull/142).
 
 ## Where to go next
