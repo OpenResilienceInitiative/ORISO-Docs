@@ -173,12 +173,12 @@
       "translations": {
         "de": {
           "path": "site/translations/de/docs/platform/install-and-run-locally.md",
-          "sourceHash": "df416a420ebc9b384a859de0ae57f0dc319c1a38c69fc63c8d647e80ce3b47bc",
+          "sourceHash": "7092b9a979675c3f84702deac841f4a3ee1b4e6f60048ca79ef2fe4207a55e30",
           "reviewedAt": "2026-10-01"
         },
         "en": {
           "path": "site/translations/en/docs/platform/install-and-run-locally.md",
-          "sourceHash": "df416a420ebc9b384a859de0ae57f0dc319c1a38c69fc63c8d647e80ce3b47bc",
+          "sourceHash": "7092b9a979675c3f84702deac841f4a3ee1b4e6f60048ca79ef2fe4207a55e30",
           "reviewedAt": "2026-10-01"
         }
       }

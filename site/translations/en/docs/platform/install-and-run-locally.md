@@ -218,8 +218,9 @@ OpenSSL is required to create the local certificate. Do not bypass a browser
 certificate warning to claim acceptance.
 
 The isolated local check in the receipt returned `UP` for all four service health
-endpoints. Admin served its login page with Username, Password and Sign in;
-no login was submitted. The check verified the HTTPS edge certificate, local
+endpoints after the separate infrastructure/services start. The preceding browser
+receipt showed Username, Password and Sign in on the identical Admin source
+revision; no login was submitted. The new receipt checks Admin over HTTP. It verified the HTTPS edge certificate, local
 OIDC metadata and the fixture technical JWT subject/role, and accepted a test
 message with Mailpit inbox readback. Owned teardown freed all 14 selected ports,
 kept five named volumes and left pre-existing Element Call containers unchanged.
