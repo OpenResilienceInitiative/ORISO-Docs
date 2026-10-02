@@ -14,6 +14,10 @@
 > topic-before-consent invariant below is unchanged and is the reason Gate 2 in `ADR-022` can
 > resolve a department document at all.
 
+> **Amended 2026-09-25 (ORISO-UserService#1264).** A global platform switch can restrict every
+> agency to one topic (Caritas). The data model stays multi-topic; see
+> `ADR-014-amendment-2026-09-25-one-topic-per-agency-policy.md`.
+
 - **Deciders:** Frank + AI
 - **Related:** `ADR-003` (Department = unique Agency × Topic — **partially superseded by this ADR**, see below);
   `ADR-021` (hierarchy, versioning, consent text — extends this record); `ADR-022` (consent gates);
