@@ -5,6 +5,8 @@ description: Where the detailed merged ORISO graph is saved and how to use or re
 
 # ORISO Super Graph Index
 
+> **Outdated — archived.** Describes the merge-only super graph of May 2026. See [How we keep the docs honest](./understand-anything.md) and [understand.oriso.org](https://understand.oriso.org/).
+
 ## What This Is
 
 The ORISO super graph is a merge-only graph built from existing Understand-Anything outputs in all 9 target repositories. It does not re-analyze source code and it does not overwrite sibling repository graphs.

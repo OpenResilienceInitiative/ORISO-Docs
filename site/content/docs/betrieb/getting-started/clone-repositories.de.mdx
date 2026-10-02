@@ -1,0 +1,185 @@
+---
+title: "ORISO-Repositories klonen"
+description: "Projektverzeichnis erstellen und ORISO-Repositories mit SCP, Git oder manuellen Verfahren übertragen"
+source: "oriso-platform/clone-repositories.mdx"
+---
+
+Richten Sie das Projektverzeichnis ein und übertragen Sie die ORISO-Repositories auf Ihren Server.
+
+<Steps>
+<Step title="Projektverzeichnis erstellen">
+
+Erstellen Sie das Hauptprojektverzeichnis für die Dateien der ORISO-Plattform.
+
+```bash
+# Create project directory
+mkdir -p ~/online-beratung
+cd ~/online-beratung
+
+# Initialize git (optional)
+git init
+```
+
+</Step>
+
+<Step title="Repository ORISO-Kubernetes übertragen">
+
+Wählen Sie eines der folgenden Verfahren, um Ihre ORISO-Repositories auf den neuen Server zu übertragen.
+
+<Tabs items={["Verfahren 1: SCP (von bestehendem Server)","Verfahren 2: Git-Repository","Verfahren 3: Manuelle Übertragung (tar.gz)"]}>
+<Tab value="Verfahren 1: SCP (von bestehendem Server)">
+
+Übertragen Sie die Dateien mit SCP direkt von einem bestehenden Server.
+
+```bash
+# On NEW server, from OLD server
+scp -r old-server:/path/to/caritas-workspace ~/online-beratung/
+
+# Verify
+ls -la ~/online-beratung/caritas-workspace/
+```
+
+</Tab>
+
+<Tab value="Verfahren 2: Git-Repository">
+
+Klonen Sie ein Git-Repository, wenn Ihr Code versionsverwaltet ist.
+
+```bash
+# Clone from Git
+cd ~/online-beratung
+git clone <your-oriso-repo-url> caritas-workspace
+
+# Verify
+ls -la ~/online-beratung/caritas-workspace/
+```
+
+</Tab>
+
+<Tab value="Verfahren 3: Manuelle Übertragung (tar.gz)">
+
+Erstellen Sie ein Archiv auf dem alten Server und übertragen Sie es.
+
+**Auf dem ALTEN Server:**
+
+```bash
+cd /path/to/online-beratung
+tar -czf oriso-complete.tar.gz caritas-workspace/
+```
+
+**Auf den NEUEN Server übertragen:**
+
+```bash
+scp oriso-complete.tar.gz new-server:~/
+```
+
+**Auf dem NEUEN Server:**
+
+```bash
+cd ~/online-beratung
+tar -xzf ~/oriso-complete.tar.gz
+
+# Verify
+ls -la ~/online-beratung/caritas-workspace/
+```
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Repository-Struktur prüfen">
+
+Prüfen Sie, ob alle erforderlichen Repositories und Verzeichnisse vorhanden sind.
+
+```bash
+cd ~/online-beratung/caritas-workspace
+
+# Check structure
+ls -la
+```
+
+<Callout type="success">
+Sie sollten folgende Verzeichnisse sehen (nach Bereitstellungspriorität geordnet):
+
+**Vorrangig (für die Bereitstellung erforderlich):**
+- `ORISO-Kubernetes/` – Helm-Charts und Ingress-Ressourcen
+- `ORISO-Database/` – Datenbankschemata und Einrichtungsskripte
+
+**Authentifizierung:**
+- `ORISO-Keycloak/` – Keycloak-Realm-Konfiguration
+
+**Backend-Dienste:**
+- `ORISO-TenantService/`
+- `ORISO-UserService/`
+- `ORISO-AgencyService/`
+- `ORISO-ConsultingTypeService/`
+
+**Frontend:**
+- `ORISO-Frontend/`
+- `ORISO-Admin/`
+
+**Kommunikation:**
+- `ORISO-Matrix/` – Bereitstellung von Matrix Synapse
+- `ORISO-Element/` – Element.io-Webclient
+
+**Überwachung (optional):**
+- `ORISO-SignOZ/` – Observability-Plattform
+- `ORISO-HealthDashboard/` – Zustandsüberwachung
+- `ORISO-Status/` – Statusseite
+</Callout>
+
+**ORISO-Kubernetes-Struktur prüfen:**
+
+```bash
+tree -L 2 ORISO-Kubernetes/
+```
+
+<Callout type="success">
+Erwartete Struktur:
+```
+ORISO-Kubernetes/
+├── README.md
+├── helm/
+│   ├── oriso-platform/      # Umbrella Helm chart
+│   ├── charts/              # Individual service charts
+│   └── values.yaml          # Global values
+└── ingress/                 # Ingress resources
+    ├── *.yaml               # Ingress configuration files
+    └── README.md
+```
+</Callout>
+
+**ORISO-Database-Struktur prüfen:**
+
+```bash
+tree -L 2 ORISO-Database/
+```
+
+<Callout type="success">
+Erwartete Struktur:
+```
+ORISO-Database/
+├── README.md
+├── mariadb/                 # MariaDB schemas
+│   ├── tenantservice/
+│   ├── userservice/
+│   ├── consultingtypeservice/
+│   └── agencyservice/
+├── mongodb/                 # MongoDB schemas
+│   └── consulting_types/
+└── scripts/
+    ├── setup/
+    │   └── 00-master-setup.sh
+    └── backup/
+```
+</Callout>
+
+</Step>
+</Steps>
+
+## Nächste Schritte
+
+- [Kubernetes einrichten](/de/betrieb/getting-started/setup-kubernetes) – k3s prüfen und Namespace erstellen
+- [Infrastruktur bereitstellen](/de/betrieb/deployment/deploy-infrastructure) – Datenbanken und Keycloak bereitstellen
+
