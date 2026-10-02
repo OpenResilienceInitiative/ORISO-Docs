@@ -195,9 +195,11 @@ yet". Tracked in `ORISO-UserService#1252`.
   same colours.
 - `accent` and `signal` are read from the tenant but not used until mail has a dark rendering.
 - If the Träger has no usable colour, the platform theming colour is used (TenantService already
-  inherits missing values from it). If that is also missing, mail theme startup fails with a named
-  configuration error, in the same way as decision 4 does for the organisation name. No brand colour
-  is hardcoded in the mail code.
+  inherits missing values from it). If that is also missing, mail uses the neutral installation
+  default `#000000` (black, white button label). It is an installation value, not a brand colour,
+  and it is used only when neither tenant nor platform theming has a usable colour. It is exempt
+  from the near-grey rule above, which would otherwise reject it. No error is raised, and no brand
+  colour is hardcoded in the mail code.
 - Frontend and UserService are tested against one shared golden fixture of seed colours and expected
   results, owned by the Frontend. UserService keeps a copy and CI checks that the copy is identical.
 
