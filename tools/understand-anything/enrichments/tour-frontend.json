@@ -1,0 +1,161 @@
+{
+  "tour": [
+    {
+      "order": 1,
+      "title": "What this repository is",
+      "description": "ORISO-Frontend is the single-page application that both askers and consultants use: registration, the session inbox, chat, video calls, bookings, profile and legal pages. Start with the README and CONTEXT documents to see the stack (React 19, TypeScript, MUI, Storybook) and the house rules. docs/architecture/current-architecture.md gives the current, self-declared architecture picture.",
+      "nodeIds": [
+        "document:README.md",
+        "document:CONTEXT.md",
+        "document:docs/architecture/current-architecture.md"
+      ]
+    },
+    {
+      "order": 2,
+      "title": "The entry point",
+      "description": "src/initApp.tsx is where the browser bundle starts: it pulls in polyfills, i18n and the root providers before mounting the app. src/components/app/app.tsx is the shell it renders. Read these two first — almost every other question about ordering (theme before render, locale before text) is answered here.",
+      "nodeIds": [
+        "file:src/initApp.tsx",
+        "file:src/components/app/app.tsx",
+        "file:src/polyfill.ts"
+      ]
+    },
+    {
+      "order": 3,
+      "title": "Routing and the two zones",
+      "description": "Routing is table-driven. RouterConfig.tsx assembles the route definitions, Routing.tsx renders them, AuthenticatedApp.tsx guards everything that needs a login, and SessionsZone.tsx is the workspace where consultants and askers actually converse. Feature areas add their own route modules, so a missing page is usually a missing entry in one of these tables.",
+      "nodeIds": [
+        "file:src/components/app/RouterConfig.tsx",
+        "file:src/components/app/Routing.tsx",
+        "file:src/components/app/AuthenticatedApp.tsx",
+        "file:src/components/app/SessionsZone.tsx"
+      ]
+    },
+    {
+      "order": 4,
+      "title": "Global state is a stack of providers",
+      "description": "There is no Redux store. src/globalState/state.tsx composes context providers for the user, the tenant, the locale, the session list, the Matrix client, calls and encryption. When you wonder where a value comes from, look for its provider here rather than for a reducer. globalState_notes.md records the intent behind the layering.",
+      "nodeIds": [
+        "file:src/globalState/state.tsx",
+        "file:src/globalState/provider/UserDataProvider.tsx",
+        "file:src/globalState/provider/SessionsDataProvider.tsx",
+        "document:src/globalState/globalState_notes.md"
+      ]
+    },
+    {
+      "order": 5,
+      "title": "Talking to the backends",
+      "description": "Every backend call lives in its own small file under src/api, named apiXxx.ts. fetchData.ts is the shared wrapper that adds auth headers and raises FetchErrorWithOptions; endpoints.ts holds the URLs. The backend contracts are generated into src/generated/userservice.d.ts and agencyservice.d.ts, so a type error there usually means a backend change.",
+      "nodeIds": [
+        "file:src/api/fetchData.ts",
+        "file:src/resources/scripts/endpoints.ts",
+        "file:src/generated/userservice.d.ts",
+        "file:src/generated/agencyservice.d.ts"
+      ]
+    },
+    {
+      "order": 6,
+      "title": "The asker funnel: registration and agency selection",
+      "description": "Registration.tsx orchestrates the stepper defined in registrationSteps.ts: topic, postcode, agency, demographics, account data. AgencySelection.tsx is the piece that turns a postcode and topic into a list of agencies, and registrationDataValidation.ts holds the field rules. This is the busiest business flow in the repo.",
+      "nodeIds": [
+        "file:src/components/registration/Registration.tsx",
+        "file:src/components/registration/registrationSteps.ts",
+        "file:src/components/registration/agencySelection/AgencySelection.tsx",
+        "file:src/components/registration/registrationDataValidation.ts"
+      ]
+    },
+    {
+      "order": 7,
+      "title": "Consent and legal texts are data, not code",
+      "description": "Legal texts arrive from the backend per tenant and department, are sanitised, and only then rendered. apiGetConsentText.ts and apiGetDepartmentLegal.ts fetch them, legalHtmlSanitizer.ts strips unsafe markup, LegalContentRenderer.tsx displays them, and consentAcceptance.ts decides when a registration may proceed. Do not hardcode legal wording anywhere.",
+      "nodeIds": [
+        "file:src/api/apiGetConsentText.ts",
+        "file:src/api/apiGetDepartmentLegal.ts",
+        "file:src/components/legalContent/legalHtmlSanitizer.ts",
+        "file:src/components/legalContent/LegalContentRenderer.tsx",
+        "file:src/components/registration/accountData/consentAcceptance.ts"
+      ]
+    },
+    {
+      "order": 8,
+      "title": "Login and the token chain",
+      "description": "Login.tsx authenticates against Keycloak; getKeycloakAccessToken.ts, refreshKeycloakAccessToken.ts and accessSessionCookie.ts keep the tokens. Matrix has its own credentials, derived by authenticatedMatrixLoginData.ts and stored via getMatrixAccessToken.ts. Two token systems side by side is the single most common source of confusion in this repo.",
+      "nodeIds": [
+        "file:src/components/login/Login.tsx",
+        "file:src/components/sessionCookie/getKeycloakAccessToken.ts",
+        "file:src/components/sessionCookie/getMatrixAccessToken.ts",
+        "file:src/components/app/authenticatedMatrixLoginData.ts"
+      ]
+    },
+    {
+      "order": 9,
+      "title": "Messaging runs on Matrix",
+      "description": "MatrixClientService creates and owns the client, matrixClientRegistry.ts keeps the singleton so nothing starts a second one, MatrixLiveEventBridge turns Matrix timeline events into app-level events, and ChatTransportService is the facade the UI calls. MATRIX-INTEGRATION-GUIDE.md is the short written orientation for this subsystem.",
+      "nodeIds": [
+        "file:src/services/matrixClientService.ts",
+        "file:src/services/matrixClientRegistry.ts",
+        "file:src/services/matrixLiveEventBridge.ts",
+        "file:src/services/chatTransportService.ts",
+        "document:MATRIX-INTEGRATION-GUIDE.md"
+      ]
+    },
+    {
+      "order": 10,
+      "title": "The session workspace and the composer",
+      "description": "SessionsList.tsx is the inbox, with sessionClassification.ts deciding which bucket a conversation belongs to; SessionView.tsx and SessionStream.tsx render the open conversation. Writing happens in the TipTap-based composer, which also owns audience selection, drafts and file drop-and-paste.",
+      "nodeIds": [
+        "file:src/components/sessionsList/SessionsList.tsx",
+        "file:src/components/sessionsList/sessionClassification.ts",
+        "file:src/components/session/SessionStream.tsx",
+        "file:src/components/messageSubmitInterface/TipTapComposer.tsx"
+      ]
+    },
+    {
+      "order": 11,
+      "title": "Encryption you can lose and recover",
+      "description": "Rooms are end-to-end encrypted, so key handling is first-class. matrixCrypto.ts covers room encryption state, matrixKeyBackupService.ts the recovery key and backup (with its own error classes), matrixDeviceDehydration.ts the device lifecycle. ADR-019 explains why the key backup setup is deliberately silent for the user.",
+      "nodeIds": [
+        "file:src/services/matrixCrypto.ts",
+        "file:src/services/matrixKeyBackupService.ts",
+        "file:src/services/matrixDeviceDehydration.ts",
+        "document:docs/architecture/adr-019-silent-key-backup-setup.md"
+      ]
+    },
+    {
+      "order": 12,
+      "title": "Calls are an embedded widget",
+      "description": "The app does not implement a call UI; it embeds Element Call. useElementCallWidget.ts loads the widget, OrisoWidgetDriver.ts brokers the widget API, MatrixGroupCallService and LiveKitService handle the group call and the SFU media path, and CallManager coordinates the lifecycle. ADR-018 documents the Matryoshka embedding decision.",
+      "nodeIds": [
+        "file:src/components/call/widget/useElementCallWidget.ts",
+        "file:src/components/call/widget/OrisoWidgetDriver.ts",
+        "file:src/services/matrixGroupCallService.ts",
+        "file:src/services/liveKitService.ts",
+        "document:docs/architecture/adr-018-element-call-matryoshka.md"
+      ]
+    },
+    {
+      "order": 13,
+      "title": "Theming and language are per tenant",
+      "description": "orisoScheme.ts derives the full Material-3 palette from seeds, applyTenantTheme.ts writes the CSS variables and TenantThemingLoader.tsx applies the tenant's theme before the UI paints. Language works the same way: i18n.ts sets up the catalogues and mergeWeblateCatalogue.ts overlays externally supplied translations. Never hand-pick a grey or a hex value.",
+      "nodeIds": [
+        "file:src/utils/theme/orisoScheme.ts",
+        "file:src/utils/theme/applyTenantTheme.ts",
+        "file:src/components/app/TenantThemingLoader.tsx",
+        "file:src/i18n.ts",
+        "file:src/utils/mergeWeblateCatalogue.ts"
+      ]
+    },
+    {
+      "order": 14,
+      "title": "How the repo proves itself",
+      "description": "Four test surfaces coexist: Storybook (.storybook/main.ts and preview.tsx, with hundreds of colocated *.stories.tsx), colocated unit tests, Playwright smoke and cross-browser specs, and Cypress e2e with a stubbed matrix-js-sdk. The Node proxy in proxy/server.js serves the built app and mints LiveKit tokens — worth knowing before you debug a local run.",
+      "nodeIds": [
+        "file:.storybook/main.ts",
+        "file:.storybook/preview.tsx",
+        "file:playwright.config.ts",
+        "file:cypress.config.js",
+        "file:proxy/server.js"
+      ]
+    }
+  ]
+}
