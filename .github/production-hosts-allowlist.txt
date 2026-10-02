@@ -74,3 +74,19 @@ site/translations/en/oriso-platform/coding-standards.mdx # ORISO own-site refere
 site/translations/en/oriso-platform/decisions/ADR-005-matrix-federation-off-dns-server-name.md # ORISO own-site reference or counterpart of reviewed project-specific source
 site/translations/en/oriso-platform/decisions/ADR-012-self-help-group-chat-extend-not-rebuild-future-timeline.md # ORISO own-site reference or counterpart of reviewed project-specific source
 site/translations/en/site/home.mdx # ORISO own-site reference or counterpart of reviewed project-specific source
+
+# Reviewed DPIA source and review artifacts linking ORISO public documentation (exact files).
+oriso-platform/dsfa-text/README.md # DPIA own public documentation reference or exact regression fixture
+oriso-platform/dsfa-text/drafts/2026-09-30-v5-draft/artifacts/dsfa-v5-draft-de.html # DPIA own public documentation reference or exact regression fixture
+oriso-platform/dsfa-text/drafts/2026-09-30-v5-draft/artifacts/dsfa-v5-draft-de.input.json # DPIA own public documentation reference or exact regression fixture
+oriso-platform/dsfa-text/drafts/2026-09-30-v5-draft/artifacts/dsfa-v5-draft-en.html # DPIA own public documentation reference or exact regression fixture
+oriso-platform/dsfa-text/drafts/2026-09-30-v5-draft/artifacts/dsfa-v5-draft-en.input.json # DPIA own public documentation reference or exact regression fixture
+oriso-platform/dsfa-text/drafts/2026-09-30-v5-draft/de/chapter-6.md # DPIA own public documentation reference or exact regression fixture
+oriso-platform/dsfa-text/drafts/2026-09-30-v5-draft/en/chapter-6.md # DPIA own public documentation reference or exact regression fixture
+oriso-platform/dsfa-text/drafts/2026-09-30-v5-draft/manifest.json # DPIA own public documentation reference or exact regression fixture
+oriso-platform/dsfa-text/evidence-map-v2.json # DPIA own public documentation reference or exact regression fixture
+oriso-platform/dsfa-text/evidence-map.yaml # DPIA own public documentation reference or exact regression fixture
+oriso-platform/dsfa-text/kap-06-verfahren-und-technik.md # DPIA own public documentation reference or exact regression fixture
+tools/audit/dsfa-status-2026-09-05.md # DPIA own public documentation reference or exact regression fixture
+tools/dsfa_draft.py # DPIA own public documentation reference or exact regression fixture
+tools/test_dsfa_draft.py # DPIA own public documentation reference or exact regression fixture
