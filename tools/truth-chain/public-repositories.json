@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "checkedAt": "2026-09-30",
+  "source": "GitHub repository visibility",
+  "repositories": [
+    "ORISO-Admin",
+    "ORISO-AgencyService",
+    "ORISO-ConsultingTypeService",
+    "ORISO-Database",
+    "ORISO-Debian",
+    "ORISO-Docs",
+    "ORISO-Element",
+    "ORISO-ElementCall",
+    "ORISO-Frontend",
+    "ORISO-HealthDashboard",
+    "ORISO-Helm",
+    "ORISO-Keycloak",
+    "ORISO-Kubernetes",
+    "ORISO-Livekit",
+    "ORISO-Matrix",
+    "ORISO-Nginx",
+    "ORISO-Redis",
+    "ORISO-SigNoz",
+    "ORISO-Status",
+    "ORISO-TenantService",
+    "ORISO-UserService"
+  ]
+}

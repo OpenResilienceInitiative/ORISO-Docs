@@ -139,7 +139,28 @@ class VisibilityLookup(unittest.TestCase):
             public = publisher.public_repositories(
                 "OpenResilienceInitiative", list(answers), "t"
             )
-        self.assertEqual(public, {"ORISO-Frontend"})
+            self.assertEqual(public, {"ORISO-Frontend"})
+
+
+class ReleasePolicy(unittest.TestCase):
+    def test_dev_generation_rejected_before_publication(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            generation(tmp, ['ORISO-Frontend'], ['ORISO-Frontend'])
+            with mock.patch.object(publisher, 'validate_generation') as validate, mock.patch.object(publisher, 'verify_release') as verify:
+                with self.assertRaisesRegex(ValueError, 'Dev previews'):
+                    publisher.require_release_generation(tmp)
+                validate.assert_not_called(); verify.assert_not_called()
+
+    def test_upload_only_requires_the_same_attested_asset_bytes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            archive = os.path.join(tmp, 'ORISO-Frontend.tar.gz')
+            with open(archive, 'wb') as handle: handle.write(b'reviewed bytes')
+            record = publisher.packed_inventory(tmp, 'generation-a', ['ORISO-Frontend'])
+            with open(os.path.join(tmp, 'packed-release.json'), 'w') as handle: json.dump(record, handle)
+            publisher.verify_packed_inventory(tmp, 'generation-a', ['ORISO-Frontend'])
+            with self.assertRaises(ValueError): publisher.verify_packed_inventory(tmp, 'generation-b', ['ORISO-Frontend'])
+            with open(archive, 'wb') as handle: handle.write(b'changed bytes')
+            with self.assertRaises(ValueError): publisher.verify_packed_inventory(tmp, 'generation-a', ['ORISO-Frontend'])
 
 
 if __name__ == "__main__":

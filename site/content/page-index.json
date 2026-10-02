@@ -249,6 +249,53 @@
       "factsStatus": "source-only"
     },
     {
+      "id": "docs/platform/dpia-publication",
+      "route": "plattform/knowledge-graphs/dpia-publication",
+      "aliases": [
+        "docs/platform/dpia-publication",
+        "docs/platform/dpia-publication.md"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "source": "docs/platform/dpia-publication.md",
+      "sourceHash": "cf1df70b2ec9ae6efa8e04f68fc7086633f296354bd24c522c92642f9485fc93",
+      "locales": {
+        "de": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "dpia-sources-versions-and-publication": "dpia-sources-versions-and-publication",
+            "dsfa-quellen-versionen-und-veröffentlichung": "dpia-sources-versions-and-publication",
+            "sources-and-evidence": "sources-and-evidence",
+            "quellen-und-nachweise": "sources-and-evidence",
+            "german-and-english-bindings": "german-and-english-bindings",
+            "bindung-der-deutschen-und-englischen-fassung": "german-and-english-bindings",
+            "three-separate-approvals": "three-separate-approvals",
+            "drei-getrennte-freigaben": "three-separate-approvals",
+            "publication-and-verification": "publication-and-verification",
+            "veröffentlichung-und-prüfung": "publication-and-verification",
+            "current-review-boundary": "current-review-boundary",
+            "grenze-des-aktuellen-prüfpakets": "current-review-boundary"
+          }
+        },
+        "en": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "dpia-sources-versions-and-publication": "dpia-sources-versions-and-publication",
+            "sources-and-evidence": "sources-and-evidence",
+            "german-and-english-bindings": "german-and-english-bindings",
+            "three-separate-approvals": "three-separate-approvals",
+            "publication-and-verification": "publication-and-verification",
+            "current-review-boundary": "current-review-boundary"
+          }
+        }
+      },
+      "sourceRevision": "99a265e9bab7c013ad8a2fd139d9517cd4dd3b84",
+      "sourceState": "committed",
+      "factsStatus": "source-only"
+    },
+    {
       "id": "docs/platform/frontend-admin-overview",
       "route": "plattform/core-systems/frontend-admin-overview",
       "aliases": [
@@ -7038,8 +7085,8 @@
     }
   ],
   "coverage": {
-    "currentPages": 91,
-    "completePairs": 91,
+    "currentPages": 92,
+    "completePairs": 92,
     "missing": [],
     "stale": []
   }

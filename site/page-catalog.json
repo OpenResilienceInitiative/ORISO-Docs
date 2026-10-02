@@ -2379,6 +2379,29 @@
           "reviewedAt": "2026-09-30 AI source/translation alignment; human legal approval separate"
         }
       }
+    },
+    {
+      "id": "docs/platform/dpia-publication",
+      "source": "docs/platform/dpia-publication.md",
+      "route": "plattform/knowledge-graphs/dpia-publication",
+      "aliases": [
+        "docs/platform/dpia-publication",
+        "docs/platform/dpia-publication.md"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/docs/platform/dpia-publication.md",
+          "sourceHash": "cf1df70b2ec9ae6efa8e04f68fc7086633f296354bd24c522c92642f9485fc93",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/docs/platform/dpia-publication.md",
+          "sourceHash": "cf1df70b2ec9ae6efa8e04f68fc7086633f296354bd24c522c92642f9485fc93",
+          "reviewedAt": "2026-09-30"
+        }
+      }
     }
   ]
 }

@@ -254,7 +254,7 @@ if sha is None:g['project']['sourceCommits']={'ORISO-Test':json.loads((pathlib.P
         narrative.write_text(
             json.dumps(
                 {
-                    "meta": {"title": "Reviewed platform orientation"},
+                    "meta": {"generatedAt": "2026-09-04T00:00:00Z", "generatedBy": "historical-fixture"},
                     "tour": [
                         {
                             "order": 1,
@@ -296,7 +296,6 @@ if sha is None:g['project']['sourceCommits']={'ORISO-Test':json.loads((pathlib.P
             "ua-generate.mjs",
             "ua-build-supergraph.mjs",
             "ua-platform-graph.mjs",
-            "apply-platform-enrich.mjs",
             "ua-validate-consumer.mjs",
         ]:
             with self.subTest(stage=stage):
@@ -312,55 +311,26 @@ if sha is None:g['project']['sourceCommits']={'ORISO-Test':json.loads((pathlib.P
             (self.repo / "README.md").read_text(), "uncommitted developer work"
         )
 
-    def test_platform_narrative_is_applied_before_seal_and_publication(self):
-        result = self.refresh()
-        self.assertEqual(result.returncode, 0, result.stderr)
-        manifest = validate(self.output / "current")
-        graph_path = (
-            self.output
-            / "current/ORISO-Platform/.understand-anything/knowledge-graph.json"
-        )
-        graph = json.loads(graph_path.read_text())
-        self.assertEqual(
-            graph["metadata"].get("narrative"),
-            {"title": "Reviewed platform orientation"},
-        )
-        self.assertEqual(graph["tour"][0]["description"], "Staged narrative")
-        self.assertEqual(graph["generationId"], manifest["generationId"])
+    def test_unbound_platform_narrative_is_excluded_before_mutation(self):
+        import hashlib
+        baseline=self.worker / "platform/narrative/platform-enrich.json"
+        original=baseline.read_bytes();env=os.environ.copy();env['FAULT_STAGE']='apply-platform-enrich.mjs'
+        result=self.refresh(env);self.assertEqual(result.returncode,0,result.stderr)
+        manifest=validate(self.output / 'current');graph=json.loads((self.output / 'current/ORISO-Platform/.understand-anything/knowledge-graph.json').read_text())
+        self.assertEqual(graph['tour'],[]);self.assertNotIn('narrative',graph['metadata'])
+        self.assertEqual(graph['metadata']['narrativeCoverage'],dict(status='excluded-unbound',reason='missing-review',input=dict(path='platform/narrative/platform-enrich.json',sha256=hashlib.sha256(original).hexdigest(),generatedAt='2026-09-04T00:00:00Z',generatedBy='historical-fixture'),appliedReviewedClaims=0,runtimeVerified=False))
+        self.assertEqual(baseline.read_bytes(),original);self.assertEqual(graph['generationId'],manifest['generationId'])
 
-    def test_invalid_narrative_reports_retain_complete_previous_generation(self):
-        first = self.refresh()
-        self.assertEqual(first.returncode, 0, first.stderr)
-        old = (self.output / "current").resolve()
-        original_manifest = (old / "manifest.json").read_bytes()
-        reports = [
-            '{"droppedRefs":["authored-adr"],"missingStats":[]}',
-            '{"droppedRefs":[],"missingStats":["services.test.tables"]}',
-            "",
-            "{malformed",
-            "null",
-            "[]",
-            "{}",
-            '{"droppedRefs":[]}',
-            '{"missingStats":[]}',
-            '{"droppedRefs":null,"missingStats":[]}',
-            '{"droppedRefs":[],"missingStats":{}}',
-            '{"droppedRefs":["lost"],"droppedRefs":[],"missingStats":[]}',
-            '{"droppedRefs":[],"missingStats":[],"count":NaN}',
-        ]
-        for report in reports:
-            with self.subTest(report=report):
-                env = os.environ.copy()
-                env["NARRATIVE_REPORT"] = report
-                result = self.refresh(env)
-                self.assertNotEqual(result.returncode, 0, result.stdout)
-                self.assertNotIn("PUBLISHED", result.stdout)
-                self.assertIn("narrative", result.stderr)
-                self.assertEqual((self.output / "current").resolve(), old)
-                self.assertEqual(
-                    (old / "manifest.json").read_bytes(), original_manifest
-                )
-                validate(old)
+    def test_purported_reviewed_narrative_fails_before_previous_activation_changes(self):
+        self.assertEqual(self.refresh().returncode,0);old=(self.output/'current').resolve()
+        baseline=self.worker / 'platform/narrative/platform-enrich.json';data=json.loads(baseline.read_text());data['meta']['reviewedAt']='2026-09-30T00:00:00Z';baseline.write_text(json.dumps(data))
+        result=self.refresh();self.assertNotEqual(result.returncode,0);self.assertIn('reviewed platform narrative',result.stderr);self.assertEqual((self.output/'current').resolve(),old)
+
+    def test_invalid_attempted_narrative_report_remains_strict(self):
+        from bundle.pipeline import validate_narrative_report
+        for report in ['{"droppedRefs":["lost"],"missingStats":[]}', '{"droppedRefs":[],"missingStats":["missing"]}', '', '{malformed', '{}']:
+            with self.assertRaises(Exception):validate_narrative_report(report)
+        validate_narrative_report('{"droppedRefs":[],"missingStats":[]}')
 
     def test_versioned_analysis_policy_overrides_unversioned_checkout_policy(self):
         policy = self.worker / "analysis-config/ORISO-Test.understandignore"
