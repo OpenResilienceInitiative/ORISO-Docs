@@ -5,6 +5,8 @@
 - **Date:** 2026-09-15 (implementation status re-measured on `dev` 2026-09-22)
 - **Amendment:** 2026-09-30 — Frank chose a separately required legal organisation name
   for installation; this supersedes the organisation-name fallback in decision 4.
+- **Amendment:** 2026-10-02 — Frank chose that mail colours follow the same design-token
+  logic as the web frontend; this supersedes decision 3 (see the amendment below).
 - **Deciders:** Frank (product) + AI (engineering)
 - **Related:** `ADR-010` (platform-controlled per-tenant appearance allowlist); `ADR-024`
   (notification matrix); `ADR-025` (replacing the upstream mail path); EPIC `ORISO-Frontend#828`;
@@ -55,6 +57,9 @@ Two consequences follow that a web-side branding contract does not have to think
    This will reject colours that some Träger use in print — that is the intended outcome, and it is
    a conversation to have with them rather than a rule to soften. Text and border colours are
    derived from the accepted colour, never stored separately.
+
+   **Superseded 2026-10-02:** see "Amendment — mail colours follow the design tokens" below.
+   A light colour is no longer rejected.
 
 4. **No mail renders with an empty organisation line.** A fresh installation must explicitly
    configure both its product name and its separate legal organisation name. The legal name is not
@@ -173,13 +178,50 @@ setup walk-through, all platform mail types and rotation tested against received
 Dev, plus the separate Stage operator gate. Open implementation PRs are not acceptance
 evidence until reviewed, merged, deployed, and verified.
 
+## Amendment — mail colours follow the design tokens (accepted 2026-10-02)
+
+Frank decided that a mail must show the colours the web frontend shows for the same Träger.
+This supersedes decision 3 and the `theming.accent` paragraph in "What TenantService does not have
+yet". Tracked in `ORISO-UserService#1252`.
+
+3'. **Mail uses the same token logic as the web frontend.**
+
+- A Träger's `primaryColor` is used as-is for the header stripe and the button fill.
+- The label colour on the button is derived like the frontend's `on-primary`: white if the colour
+  reaches 4.5:1 against white, otherwise a dark tone of the same hue.
+- Text links on the white content area are darkened until they reach 4.5:1. Stripe and button keep
+  the Träger's colour.
+- A colour the frontend ignores as too pale (near-grey) is ignored in mail too, so both reject the
+  same colours.
+- `accent` and `signal` are read from the tenant but not used until mail has a dark rendering.
+- If the Träger has no usable colour, the platform theming colour is used (TenantService already
+  inherits missing values from it). If that is also missing, mail uses the neutral installation
+  default `#000000` (black, white button label). It is an installation value, not a brand colour,
+  and it is used only when neither tenant nor platform theming has a usable colour. It is exempt
+  from the near-grey rule above, which would otherwise reject it. No error is raised, and no brand
+  colour is hardcoded in the mail code.
+- Frontend and UserService are tested against one shared golden fixture of seed colours and expected
+  results, owned by the Frontend. UserService keeps a copy and CI checks that the copy is identical.
+
+Why: replacing a light brand colour with ORISO's red discards the Träger's identity, which is the
+opposite of this ADR's goal. Legibility is guaranteed by derivation, not by rejection, exactly as in
+the web UI.
+
+Not decided here: serving finished tokens from TenantService to every consumer (one implementation
+instead of two). It would remove the parity risk but touches TenantService, Frontend, Admin and
+UserService, so it needs its own decision.
+
+Implementation status: not implemented on `dev` at the time of this amendment. UserService's
+generated TenantService client does not yet carry `accent` and `signal`.
+
 ## Consequences
 
 - Catalogue mails become tenant-branded once decision 1 lands; on `dev` today only invite mails are.
 - The per-tenant tone (`de-sie` versus `de-du`) is **not** part of this contract and has no field
   anywhere. Until one exists, German resolves to the formal variant everywhere and `de-du` is
   reachable only in Storybook.
-- Rejecting a Träger colour is visible behaviour, not a silent substitution: the fallback is logged.
+- A Träger colour is no longer rejected for being light (amendment 2026-10-02); only an invalid or
+  near-grey value falls back, and the fallback is logged.
 - `ADR-010` governs what a Träger may change in the app's appearance; this ADR governs what of that
   reaches a mail. Where they disagree, the narrower rule wins — a value that ADR-010 allows in the app
   may still be refused in a mail, for the two reasons above.
