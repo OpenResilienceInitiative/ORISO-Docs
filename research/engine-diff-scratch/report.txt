@@ -1,0 +1,103 @@
+
+### light (CIEDE2000 / RGB-euclid)
+| token | #1c4f8f | #f8e71c | #ffff00 | #ffd400 | #a5000a | #808080 |
+|---|---|---|---|---|---|---|
+| `--m3-primary` | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 |
+| `--m3-on-primary` | 0 / 0 | 18.8 / 39 | 19.1 / 38 | 18.7 / 40 | 0 / 0 | 6.1 / 11 |
+| `--m3-primary-container` | 40.2 / 215 | 12.3 / 36 | 14.7 / 41 | 2.7 / 5 | 44.3 / 280 | 20.4 / 139 |
+| `--m3-on-primary-container` | 81.9 / 361 | 45.3 / 145 | 45.5 / 142 | 43.6 / 144 | 83.5 / 359 | 9.6 / 40 |
+| `--m3-primary-fixed` | 6.7 / 19 | 22.1 / 194 | 20.9 / 216 | 15.3 / 98 | 2.8 / 12 | 2 / 15 |
+| `--m3-primary-fixed-dim` | 9.2 / 39 | 18.3 / 197 | 17 / 193 | 17.7 / 187 | 0 / 0 | 4.8 / 34 |
+| `--m3-on-primary-fixed-variant` | 1.1 / 14 | 48.9 / 193 | 52.7 / 214 | 46.9 / 182 | 0 / 0 | 15.2 / 73 |
+| `--m3-secondary` | 0.4 / 2 | 0.4 / 2 | 0.4 / 2 | 0.4 / 2 | 0.4 / 2 | 0.4 / 2 |
+| `--m3-on-secondary` | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 |
+| `--m3-secondary-container` | 0.4 / 2 | 0.4 / 2 | 0.4 / 2 | 0.4 / 2 | 0.4 / 2 | 0.4 / 2 |
+| `--m3-on-secondary-container` | 0.8 / 1 | 0.8 / 1 | 0.8 / 1 | 0.8 / 1 | 0.8 / 1 | 0.8 / 1 |
+| `--m3-error` | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 |
+| `--m3-on-error` | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 |
+| `--m3-surface` | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 |
+| `--m3-on-surface` | 1.4 / 2 | 1.4 / 2 | 1.4 / 2 | 1.4 / 2 | 1.4 / 2 | 1.4 / 2 |
+| `--m3-surface-container-low` | 0.8 / 1 | 0.8 / 1 | 0.8 / 1 | 0.8 / 1 | 0.8 / 1 | 0.8 / 1 |
+| `--m3-surface-container` | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 |
+| `--m3-surface-container-high` | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 |
+| `--m3-surface-container-highest` | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 |
+| `--m3-on-background` | 10.2 / 15 | 10.2 / 15 | 10.2 / 15 | 10.2 / 15 | 10.2 / 15 | 10.2 / 15 |
+| `--m3-on-surface-variant` | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 |
+| `--m3-outline` | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 |
+| `--m3-outline-variant` | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 |
+| `--oriso-app-action` | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 8.8 / 52 | 0 / 0 |
+
+### inverted (CIEDE2000 / RGB-euclid)
+| token | #1c4f8f | #f8e71c | #ffff00 | #ffd400 | #a5000a | #808080 |
+|---|---|---|---|---|---|---|
+| `--m3-primary` | 14.6 / 60 | 23.6 / 228 | 22.2 / 225 | 23.1 / 221 | 13.6 / 69 | 8.5 / 64 |
+| `--m3-on-primary` | 14.4 / 67 | 26.5 / 54 | 26.6 / 52 | 26.3 / 57 | 30.6 / 95 | 8.8 / 36 |
+| `--m3-primary-container` | 3 / 19 | 54.4 / 234 | 58.2 / 257 | 52.4 / 222 | 3.5 / 18 | 21.2 / 99 |
+| `--m3-on-primary-container` | 12.8 / 50 | 89.3 / 304 | 89.4 / 299 | 87 / 317 | 14.8 / 56 | 80.3 / 343 |
+| `--m3-primary-fixed` | 6.7 / 19 | 22.1 / 194 | 20.9 / 216 | 15.3 / 98 | 2.8 / 12 | 2 / 15 |
+| `--m3-primary-fixed-dim` | 9.2 / 39 | 18.3 / 197 | 17 / 193 | 17.7 / 187 | 0 / 0 | 4.8 / 34 |
+| `--m3-on-primary-fixed-variant` | 1.1 / 14 | 48.9 / 193 | 52.7 / 214 | 46.9 / 182 | 0 / 0 | 15.2 / 73 |
+| `--m3-secondary` | 3.7 / 24 | 3.7 / 24 | 3.7 / 24 | 3.7 / 24 | 3.7 / 24 | 3.7 / 24 |
+| `--m3-on-secondary` | 6.6 / 36 | 6.6 / 36 | 6.6 / 36 | 6.6 / 36 | 6.6 / 36 | 6.6 / 36 |
+| `--m3-secondary-container` | 2.3 / 12 | 2.3 / 12 | 2.3 / 12 | 2.3 / 12 | 2.3 / 12 | 2.3 / 12 |
+| `--m3-on-secondary-container` | 2.7 / 21 | 2.7 / 21 | 2.7 / 21 | 2.7 / 21 | 2.7 / 21 | 2.7 / 21 |
+| `--m3-error` | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 |
+| `--m3-on-error` | 27.6 / 87 | 27.6 / 87 | 27.6 / 87 | 27.6 / 87 | 27.6 / 87 | 27.6 / 87 |
+| `--m3-error-container` | 5.3 / 30 | 5.3 / 30 | 5.3 / 30 | 5.3 / 30 | 5.3 / 30 | 5.3 / 30 |
+| `--m3-on-error-container` | 15.8 / 48 | 15.8 / 48 | 15.8 / 48 | 15.8 / 48 | 15.8 / 48 | 15.8 / 48 |
+| `--m3-surface` | 0.7 / 1 | 0.7 / 1 | 0.7 / 1 | 0.7 / 1 | 0.7 / 1 | 0.7 / 1 |
+| `--m3-on-surface` | 0.9 / 2 | 0.9 / 2 | 0.9 / 2 | 0.9 / 2 | 0.9 / 2 | 0.9 / 2 |
+| `--m3-surface-container-lowest` | 1.9 / 4 | 1.9 / 4 | 1.9 / 4 | 1.9 / 4 | 1.9 / 4 | 1.9 / 4 |
+| `--m3-surface-container-low` | 1.7 / 4 | 1.7 / 4 | 1.7 / 4 | 1.7 / 4 | 1.7 / 4 | 1.7 / 4 |
+| `--m3-surface-container` | 1.5 / 5 | 1.5 / 5 | 1.5 / 5 | 1.5 / 5 | 1.5 / 5 | 1.5 / 5 |
+| `--m3-surface-container-high` | 1.7 / 6 | 1.7 / 6 | 1.7 / 6 | 1.7 / 6 | 1.7 / 6 | 1.7 / 6 |
+| `--m3-surface-container-highest` | 1.6 / 8 | 1.6 / 8 | 1.6 / 8 | 1.6 / 8 | 1.6 / 8 | 1.6 / 8 |
+| `--m3-background` | 0.7 / 1 | 0.7 / 1 | 0.7 / 1 | 0.7 / 1 | 0.7 / 1 | 0.7 / 1 |
+| `--m3-on-background` | 84.1 / 370 | 84.1 / 370 | 84.1 / 370 | 84.1 / 370 | 84.1 / 370 | 84.1 / 370 |
+| `--m3-inverse-surface` | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 |
+| `--m3-inverse-on-surface` | 1.4 / 2 | 1.4 / 2 | 1.4 / 2 | 1.4 / 2 | 1.4 / 2 | 1.4 / 2 |
+| `--m3-surface-variant` | 3.8 / 5 | 3.8 / 5 | 3.8 / 5 | 3.8 / 5 | 3.8 / 5 | 3.8 / 5 |
+| `--m3-on-surface-variant` | 7.7 / 12 | 7.7 / 12 | 7.7 / 12 | 7.7 / 12 | 7.7 / 12 | 7.7 / 12 |
+| `--m3-outline` | 6.4 / 12 | 6.4 / 12 | 6.4 / 12 | 6.4 / 12 | 6.4 / 12 | 6.4 / 12 |
+| `--m3-outline-variant` | 5.2 / 9 | 5.2 / 9 | 5.2 / 9 | 5.2 / 9 | 5.2 / 9 | 5.2 / 9 |
+| `--oriso-app-action` | 15.4 / 65 | 24.4 / 232 | 23 / 229 | 23.8 / 225 | 14.6 / 74 | 8.9 / 67 |
+
+FE only (light): --m3-primary-hover --m3-hover-layer --m3-selected-layer --m3-primary-outline --m3-on-primary-fixed --m3-inverse-primary --m3-surface-tint --m3-success --m3-secondary-fixed --m3-secondary-fixed-dim --m3-on-secondary-fixed --m3-on-secondary-fixed-variant --m3-tertiary --m3-on-tertiary --m3-tertiary-container --m3-on-tertiary-container --m3-error-container --m3-on-error-container --m3-surface-container-lowest --m3-surface-dim --m3-surface-bright --m3-background --m3-inverse-surface --m3-inverse-on-surface --m3-surface-variant --m3-shadow --m3-scrim --oriso-primary-fixed --oriso-primary-fixed-dim --oriso-on-primary-fixed --oriso-on-primary-fixed-variant --oriso-lottie-accent-color --oriso-lottie-secondary-color --primary --primary-3 --hover-primary --skin-color-primary --skin-color-primary-hover --skin-color-primary-contrast-safe --skin-color-secondary --skin-color-secondary-contrast-safe --skin-color-default
+
+AD only (light): --admin-workspace-background --admin-search-surface --admin-search-text --admin-search-placeholder --admin-search-icon --admin-search-hover-surface --admin-table-surface --admin-table-header-surface --admin-table-row-hover-surface --admin-table-footer-surface --admin-table-border --admin-table-text --admin-table-header-text --admin-table-chip-surface --admin-table-chip-border --admin-table-chip-text --admin-form-field-surface --admin-form-card-surface --admin-form-label-text --admin-field-surface --admin-field-outline --admin-field-surface-hover --admin-field-selected-surface --admin-field-selected-text --admin-nav-indicator-surface --admin-nav-indicator-icon --oriso-app-accent --oriso-app-accent-dark --oriso-app-accent-light --oriso-app-on-accent --oriso-app-accent-container --oriso-app-chat-surface --oriso-app-on-action
+
+FE only (inverted): --m3-primary-hover --m3-hover-layer --m3-selected-layer --m3-primary-outline --m3-on-primary-fixed --m3-inverse-primary --m3-surface-tint --m3-success --m3-secondary-fixed --m3-secondary-fixed-dim --m3-on-secondary-fixed --m3-on-secondary-fixed-variant --m3-tertiary --m3-on-tertiary --m3-tertiary-container --m3-on-tertiary-container --m3-surface-dim --m3-surface-bright --m3-shadow --m3-scrim --oriso-primary-fixed --oriso-primary-fixed-dim --oriso-on-primary-fixed --oriso-on-primary-fixed-variant --oriso-lottie-accent-color --oriso-lottie-secondary-color --primary --primary-3 --hover-primary --skin-color-primary --skin-color-primary-hover --skin-color-primary-contrast-safe --skin-color-secondary --skin-color-secondary-contrast-safe --skin-color-default
+
+AD only (inverted): --admin-workspace-background --admin-search-surface --admin-search-text --admin-search-placeholder --admin-search-icon --admin-search-hover-surface --admin-table-surface --admin-table-header-surface --admin-table-row-hover-surface --admin-table-footer-surface --admin-table-border --admin-table-text --admin-table-header-text --admin-table-chip-surface --admin-table-chip-border --admin-table-chip-text --admin-form-field-surface --admin-form-card-surface --admin-form-label-text --admin-field-surface --admin-field-outline --admin-field-surface-hover --admin-field-selected-surface --admin-field-selected-text --admin-nav-indicator-surface --admin-nav-indicator-icon --oriso-app-accent --oriso-app-accent-dark --oriso-app-accent-light --oriso-app-on-accent --oriso-app-accent-container --oriso-app-chat-surface --oriso-app-on-action
+AD engine "notacolor" -> #a5000a tooPale true
+AD engine null -> #a5000a tooPale false
+AD engine undefined -> #a5000a tooPale false
+AD engine "" -> #a5000a tooPale false
+combo accent
+--m3-primary #a5000a #a5000a 0
+--m3-on-primary #ffffff #ffffff 0
+--m3-primary-container #cc1e1c #1c4f8f 44.7
+--m3-on-primary-container #ffe2de #ffffff 12.2
+--m3-primary-fixed #ffdad5 #1c4f8f 55.8
+--m3-primary-fixed-dim #ffb4aa #32427a 56.9
+--m3-on-primary-fixed-variant #930008 #910009 0.5
+--m3-secondary #4d5374 #4c555f 10.5
+--m3-on-secondary #ffffff #ffffff 0
+--m3-secondary-container #656b8d #646d78 10
+--m3-on-secondary-container #ececff #e7effc 5.1
+--m3-error #b1005e #b1005e 0
+--m3-on-error #ffffff #ffffff 0
+--m3-surface #fcf9f9 #fcf9f9 0
+--m3-on-surface #1b1b1c #1a1c1e 1.4
+--m3-surface-container-low #f6f3f3 #f7f3f4 0.8
+--m3-surface-container #f0edee #f0edee 0
+--m3-surface-container-high #eae7e8 #eae7e8 0
+--m3-surface-container-highest #e4e2e2 #e4e2e2 0
+--m3-on-background #1b1b1c #281715 10.2
+--m3-on-surface-variant #444748 #444748 0
+--m3-outline #747878 #747878 0
+--m3-outline-variant #c4c7c8 #c4c7c8 0
+--oriso-app-action #a5000a #a5000a 0
+combo signal
+--m3-error #ff6600 #ff6600 0
+--m3-on-error #360f00 #141c25 23.6
