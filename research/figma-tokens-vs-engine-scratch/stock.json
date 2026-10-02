@@ -1,0 +1,1424 @@
+{
+ "Light": {
+  "Primary": {
+   "stock": "#bd0f13",
+   "fig": "#a5000a",
+   "dE": 5.1
+  },
+  "On Primary": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Primary Container": {
+   "stock": "#ffdad5",
+   "fig": "#cc1e1c",
+   "dE": 42.5
+  },
+  "On Primary Container": {
+   "stock": "#930008",
+   "fig": "#ffe2de",
+   "dE": 57.6
+  },
+  "Secondary": {
+   "stock": "#565f6a",
+   "fig": "#655f65",
+   "dE": 8
+  },
+  "On Secondary": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Secondary Container": {
+   "stock": "#dae3f0",
+   "fig": "#646d78",
+   "dE": 35.2
+  },
+  "On Secondary Container": {
+   "stock": "#3f4852",
+   "fig": "#e7effc",
+   "dE": 54.7
+  },
+  "Tertiary": {
+   "stock": "#565f6a",
+   "fig": "#565f6a",
+   "dE": 0
+  },
+  "On Tertiary": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Tertiary Container": {
+   "stock": "#dae3f0",
+   "fig": "#9ba4b0",
+   "dE": 16.1
+  },
+  "On Tertiary Container": {
+   "stock": "#3f4852",
+   "fig": "#313a44",
+   "dE": 4.6
+  },
+  "Error": {
+   "stock": "#b90162",
+   "fig": "#b1005e",
+   "dE": 1.7
+  },
+  "On Error": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Error Container": {
+   "stock": "#ffd9e2",
+   "fig": "#de0077",
+   "dE": 38.6
+  },
+  "On Error Container": {
+   "stock": "#8e004a",
+   "fig": "#fff7f7",
+   "dE": 61.3
+  },
+  "Background": {
+   "stock": "#fcf9f8",
+   "fig": "#f2efef",
+   "dE": 2.1
+  },
+  "On Background": {
+   "stock": "#1c1b1c",
+   "fig": "#281715",
+   "dE": 9.5
+  },
+  "Surface": {
+   "stock": "#fcf9f8",
+   "fig": "#fafbfb",
+   "dE": 1.9
+  },
+  "On Surface": {
+   "stock": "#1c1b1c",
+   "fig": "#1b1b1c",
+   "dE": 0.7
+  },
+  "Surface Variant": {
+   "stock": "#e5e2e1",
+   "fig": "#e0e3e3",
+   "dE": 2.9
+  },
+  "On Surface Variant": {
+   "stock": "#474647",
+   "fig": "#444748",
+   "dE": 2.5
+  },
+  "Outline": {
+   "stock": "#787777",
+   "fig": "#747878",
+   "dE": 2.8
+  },
+  "Outline Variant": {
+   "stock": "#c8c6c6",
+   "fig": "#c4c7c8",
+   "dE": 2.5
+  },
+  "Surface Tint": {
+   "stock": "#bd0f13",
+   "fig": "#bd0f13",
+   "dE": 0
+  },
+  "Inverse Surface": {
+   "stock": "#313030",
+   "fig": "#303031",
+   "dE": 0.8
+  },
+  "Inverse On Surface": {
+   "stock": "#f3f0f0",
+   "fig": "#f3f0f0",
+   "dE": 0
+  },
+  "Inverse Primary": {
+   "stock": "#ffb4aa",
+   "fig": "#ffb4aa",
+   "dE": 0
+  },
+  "Primary Fixed": {
+   "stock": "#ffdad5",
+   "fig": "#ffdad5",
+   "dE": 0
+  },
+  "On Primary Fixed": {
+   "stock": "#410001",
+   "fig": "#410001",
+   "dE": 0
+  },
+  "Primary Fixed Dim": {
+   "stock": "#ffb4aa",
+   "fig": "#ffb4aa",
+   "dE": 0
+  },
+  "On Primary Fixed Variant": {
+   "stock": "#930008",
+   "fig": "#930008",
+   "dE": 0
+  },
+  "Secondary Fixed": {
+   "stock": "#dae3f0",
+   "fig": "#dae3f0",
+   "dE": 0
+  },
+  "On Secondary Fixed": {
+   "stock": "#131c26",
+   "fig": "#141c25",
+   "dE": 0.6
+  },
+  "Secondary Fixed Dim": {
+   "stock": "#bec7d4",
+   "fig": "#bec7d4",
+   "dE": 0
+  },
+  "On Secondary Fixed Variant": {
+   "stock": "#3f4852",
+   "fig": "#3f4852",
+   "dE": 0
+  },
+  "Tertiary Fixed": {
+   "stock": "#dae3f0",
+   "fig": "#dae3f0",
+   "dE": 0
+  },
+  "On Tertiary Fixed": {
+   "stock": "#131c26",
+   "fig": "#141c25",
+   "dE": 0.6
+  },
+  "Tertiary Fixed Dim": {
+   "stock": "#bec7d4",
+   "fig": "#bec7d4",
+   "dE": 0
+  },
+  "On Tertiary Fixed Variant": {
+   "stock": "#3f4852",
+   "fig": "#3f4852",
+   "dE": 0
+  },
+  "Surface Dim": {
+   "stock": "#dcd9d9",
+   "fig": "#dcd9da",
+   "dE": 0.5
+  },
+  "Surface Bright": {
+   "stock": "#fcf9f8",
+   "fig": "#fbfafa",
+   "dE": 1
+  },
+  "Surface Container Lowest": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Surface Container Low": {
+   "stock": "#f6f3f2",
+   "fig": "#f6f3f3",
+   "dE": 0.5
+  },
+  "Surface Container": {
+   "stock": "#f0eded",
+   "fig": "#eae7e8",
+   "dE": 1.4
+  },
+  "Surface Container High": {
+   "stock": "#eae7e7",
+   "fig": "#e7e3e3",
+   "dE": 1
+  },
+  "Surface Container Highest": {
+   "stock": "#e5e2e1",
+   "fig": "#e4e2e2",
+   "dE": 0.6
+  }
+ },
+ "Light Medium Contrast": {
+  "Primary": {
+   "stock": "#740005",
+   "fig": "#740004",
+   "dE": 0.2
+  },
+  "On Primary": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Primary Container": {
+   "stock": "#d32421",
+   "fig": "#cc1e1c",
+   "dE": 1.8
+  },
+  "On Primary Container": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Secondary": {
+   "stock": "#2e3741",
+   "fig": "#2e3741",
+   "dE": 0
+  },
+  "On Secondary": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Secondary Container": {
+   "stock": "#656e79",
+   "fig": "#646d78",
+   "dE": 0.4
+  },
+  "On Secondary Container": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Tertiary": {
+   "stock": "#2e3741",
+   "fig": "#2e3741",
+   "dE": 0
+  },
+  "On Tertiary": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Tertiary Container": {
+   "stock": "#656e79",
+   "fig": "#656e79",
+   "dE": 0
+  },
+  "On Tertiary Container": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Error": {
+   "stock": "#6f0039",
+   "fig": "#6f0039",
+   "dE": 0
+  },
+  "On Error": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Error Container": {
+   "stock": "#ce1f71",
+   "fig": "#d40072",
+   "dE": 1.3
+  },
+  "On Error Container": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Background": {
+   "stock": "#fcf9f8",
+   "fig": "#fff8f7",
+   "dE": 1.9
+  },
+  "On Background": {
+   "stock": "#1c1b1c",
+   "fig": "#281715",
+   "dE": 9.5
+  },
+  "Surface": {
+   "stock": "#fcf9f8",
+   "fig": "#fcf9f9",
+   "dE": 0.5
+  },
+  "On Surface": {
+   "stock": "#111111",
+   "fig": "#111112",
+   "dE": 0.6
+  },
+  "Surface Variant": {
+   "stock": "#e5e2e1",
+   "fig": "#e0e3e3",
+   "dE": 2.9
+  },
+  "On Surface Variant": {
+   "stock": "#363636",
+   "fig": "#333738",
+   "dE": 2.4
+  },
+  "Outline": {
+   "stock": "#535252",
+   "fig": "#4f5354",
+   "dE": 2.9
+  },
+  "Outline Variant": {
+   "stock": "#6e6d6d",
+   "fig": "#6a6e6e",
+   "dE": 2.8
+  },
+  "Surface Tint": {
+   "stock": "#bd0f13",
+   "fig": "#bd0f13",
+   "dE": 0
+  },
+  "Inverse Surface": {
+   "stock": "#313030",
+   "fig": "#303031",
+   "dE": 0.8
+  },
+  "Inverse On Surface": {
+   "stock": "#f3f0f0",
+   "fig": "#f3f0f0",
+   "dE": 0
+  },
+  "Inverse Primary": {
+   "stock": "#ffb4aa",
+   "fig": "#ffb4aa",
+   "dE": 0
+  },
+  "Primary Fixed": {
+   "stock": "#d32421",
+   "fig": "#d32420",
+   "dE": 0.2
+  },
+  "On Primary Fixed": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Primary Fixed Dim": {
+   "stock": "#ae000b",
+   "fig": "#ae000b",
+   "dE": 0
+  },
+  "On Primary Fixed Variant": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Secondary Fixed": {
+   "stock": "#656e79",
+   "fig": "#656e79",
+   "dE": 0
+  },
+  "On Secondary Fixed": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Secondary Fixed Dim": {
+   "stock": "#4d5660",
+   "fig": "#4d5660",
+   "dE": 0
+  },
+  "On Secondary Fixed Variant": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Tertiary Fixed": {
+   "stock": "#656e79",
+   "fig": "#656e79",
+   "dE": 0
+  },
+  "On Tertiary Fixed": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Tertiary Fixed Dim": {
+   "stock": "#4d5660",
+   "fig": "#4d5660",
+   "dE": 0
+  },
+  "On Tertiary Fixed Variant": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Surface Dim": {
+   "stock": "#c8c6c6",
+   "fig": "#c8c6c6",
+   "dE": 0
+  },
+  "Surface Bright": {
+   "stock": "#fcf9f8",
+   "fig": "#fcf9f9",
+   "dE": 0.5
+  },
+  "Surface Container Lowest": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Surface Container Low": {
+   "stock": "#f6f3f2",
+   "fig": "#f6f3f3",
+   "dE": 0.5
+  },
+  "Surface Container": {
+   "stock": "#eae7e7",
+   "fig": "#eae7e8",
+   "dE": 0.5
+  },
+  "Surface Container High": {
+   "stock": "#dfdcdc",
+   "fig": "#dfdcdd",
+   "dE": 0.5
+  },
+  "Surface Container Highest": {
+   "stock": "#d4d1d1",
+   "fig": "#d3d1d1",
+   "dE": 0.5
+  }
+ },
+ "Light High Contrast": {
+  "Primary": {
+   "stock": "#610003",
+   "fig": "#610003",
+   "dE": 0
+  },
+  "On Primary": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Primary Container": {
+   "stock": "#980008",
+   "fig": "#980008",
+   "dE": 0
+  },
+  "On Primary Container": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Secondary": {
+   "stock": "#242d37",
+   "fig": "#242d36",
+   "dE": 0.6
+  },
+  "On Secondary": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Secondary Container": {
+   "stock": "#414a55",
+   "fig": "#414a54",
+   "dE": 0.6
+  },
+  "On Secondary Container": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Tertiary": {
+   "stock": "#242d37",
+   "fig": "#242d36",
+   "dE": 0.6
+  },
+  "On Tertiary": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Tertiary Container": {
+   "stock": "#414a55",
+   "fig": "#414a54",
+   "dE": 0.6
+  },
+  "On Tertiary Container": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Error": {
+   "stock": "#5d002e",
+   "fig": "#5d002e",
+   "dE": 0
+  },
+  "On Error": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Error Container": {
+   "stock": "#92004c",
+   "fig": "#92004c",
+   "dE": 0
+  },
+  "On Error Container": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Background": {
+   "stock": "#fcf9f8",
+   "fig": "#fff8f7",
+   "dE": 1.9
+  },
+  "On Background": {
+   "stock": "#1c1b1c",
+   "fig": "#281715",
+   "dE": 9.5
+  },
+  "Surface": {
+   "stock": "#fcf9f8",
+   "fig": "#fcf9f9",
+   "dE": 0.5
+  },
+  "On Surface": {
+   "stock": "#000000",
+   "fig": "#000000",
+   "dE": 0
+  },
+  "Surface Variant": {
+   "stock": "#e5e2e1",
+   "fig": "#e0e3e3",
+   "dE": 2.9
+  },
+  "On Surface Variant": {
+   "stock": "#000000",
+   "fig": "#000000",
+   "dE": 0
+  },
+  "Outline": {
+   "stock": "#2c2c2c",
+   "fig": "#292d2d",
+   "dE": 2.6
+  },
+  "Outline Variant": {
+   "stock": "#4a4949",
+   "fig": "#464a4a",
+   "dE": 3
+  },
+  "Surface Tint": {
+   "stock": "#bd0f13",
+   "fig": "#bd0f13",
+   "dE": 0
+  },
+  "Inverse Surface": {
+   "stock": "#313030",
+   "fig": "#303031",
+   "dE": 0.8
+  },
+  "Inverse On Surface": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Inverse Primary": {
+   "stock": "#ffb4aa",
+   "fig": "#ffb4aa",
+   "dE": 0
+  },
+  "Primary Fixed": {
+   "stock": "#980008",
+   "fig": "#980008",
+   "dE": 0
+  },
+  "On Primary Fixed": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Primary Fixed Dim": {
+   "stock": "#6d0004",
+   "fig": "#6d0004",
+   "dE": 0
+  },
+  "On Primary Fixed Variant": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Secondary Fixed": {
+   "stock": "#414a55",
+   "fig": "#414a54",
+   "dE": 0.6
+  },
+  "On Secondary Fixed": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Secondary Fixed Dim": {
+   "stock": "#2b333d",
+   "fig": "#2b333d",
+   "dE": 0
+  },
+  "On Secondary Fixed Variant": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Tertiary Fixed": {
+   "stock": "#414a55",
+   "fig": "#414a54",
+   "dE": 0.6
+  },
+  "On Tertiary Fixed": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Tertiary Fixed Dim": {
+   "stock": "#2b333d",
+   "fig": "#2b333d",
+   "dE": 0
+  },
+  "On Tertiary Fixed Variant": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Surface Dim": {
+   "stock": "#bab8b8",
+   "fig": "#bab8b9",
+   "dE": 0.6
+  },
+  "Surface Bright": {
+   "stock": "#fcf9f8",
+   "fig": "#fcf9f9",
+   "dE": 0.5
+  },
+  "Surface Container Lowest": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Surface Container Low": {
+   "stock": "#f3f0f0",
+   "fig": "#f3f0f0",
+   "dE": 0
+  },
+  "Surface Container": {
+   "stock": "#e5e2e1",
+   "fig": "#e4e2e2",
+   "dE": 0.6
+  },
+  "Surface Container High": {
+   "stock": "#d6d4d3",
+   "fig": "#d6d4d4",
+   "dE": 0.6
+  },
+  "Surface Container Highest": {
+   "stock": "#c8c6c6",
+   "fig": "#c8c6c6",
+   "dE": 0
+  }
+ },
+ "Dark": {
+  "Primary": {
+   "stock": "#ffb4aa",
+   "fig": "#ffb4aa",
+   "dE": 0
+  },
+  "On Primary": {
+   "stock": "#690004",
+   "fig": "#690004",
+   "dE": 0
+  },
+  "Primary Container": {
+   "stock": "#930008",
+   "fig": "#cc1e1c",
+   "dE": 12.2
+  },
+  "On Primary Container": {
+   "stock": "#ffdad5",
+   "fig": "#ffe2de",
+   "dE": 2.8
+  },
+  "Secondary": {
+   "stock": "#bec7d4",
+   "fig": "#bec7d4",
+   "dE": 0
+  },
+  "On Secondary": {
+   "stock": "#28313b",
+   "fig": "#28313b",
+   "dE": 0
+  },
+  "Secondary Container": {
+   "stock": "#3f4852",
+   "fig": "#646d78",
+   "dE": 13.2
+  },
+  "On Secondary Container": {
+   "stock": "#dae3f0",
+   "fig": "#e7effc",
+   "dE": 2.7
+  },
+  "Tertiary": {
+   "stock": "#bec7d4",
+   "fig": "#bec7d4",
+   "dE": 0
+  },
+  "On Tertiary": {
+   "stock": "#28313b",
+   "fig": "#28313b",
+   "dE": 0
+  },
+  "Tertiary Container": {
+   "stock": "#3f4852",
+   "fig": "#9ba4b0",
+   "dE": 36.6
+  },
+  "On Tertiary Container": {
+   "stock": "#dae3f0",
+   "fig": "#313a44",
+   "dE": 60.6
+  },
+  "Error": {
+   "stock": "#ffb1c8",
+   "fig": "#ffb1c8",
+   "dE": 0
+  },
+  "On Error": {
+   "stock": "#650033",
+   "fig": "#650033",
+   "dE": 0
+  },
+  "Error Container": {
+   "stock": "#8e004a",
+   "fig": "#de0077",
+   "dE": 16.6
+  },
+  "On Error Container": {
+   "stock": "#ffd9e2",
+   "fig": "#fff7f7",
+   "dE": 12.2
+  },
+  "Background": {
+   "stock": "#131313",
+   "fig": "#1f0f0d",
+   "dE": 9.2
+  },
+  "On Background": {
+   "stock": "#e5e2e1",
+   "fig": "#f1ebea",
+   "dE": 2.5
+  },
+  "Surface": {
+   "stock": "#131313",
+   "fig": "#131314",
+   "dE": 0.7
+  },
+  "On Surface": {
+   "stock": "#e5e2e1",
+   "fig": "#e4e2e2",
+   "dE": 0.6
+  },
+  "Surface Variant": {
+   "stock": "#474647",
+   "fig": "#444748",
+   "dE": 2.5
+  },
+  "On Surface Variant": {
+   "stock": "#c8c6c6",
+   "fig": "#c4c7c8",
+   "dE": 2.5
+  },
+  "Outline": {
+   "stock": "#929090",
+   "fig": "#8e9192",
+   "dE": 2.7
+  },
+  "Outline Variant": {
+   "stock": "#474647",
+   "fig": "#444748",
+   "dE": 2.5
+  },
+  "Surface Tint": {
+   "stock": "#ffb4aa",
+   "fig": "#ffb4aa",
+   "dE": 0
+  },
+  "Inverse Surface": {
+   "stock": "#e5e2e1",
+   "fig": "#e4e2e2",
+   "dE": 0.6
+  },
+  "Inverse On Surface": {
+   "stock": "#313030",
+   "fig": "#303031",
+   "dE": 0.8
+  },
+  "Inverse Primary": {
+   "stock": "#bd0f13",
+   "fig": "#bd0f13",
+   "dE": 0
+  },
+  "Primary Fixed": {
+   "stock": "#ffdad5",
+   "fig": "#ffdad5",
+   "dE": 0
+  },
+  "On Primary Fixed": {
+   "stock": "#410001",
+   "fig": "#410001",
+   "dE": 0
+  },
+  "Primary Fixed Dim": {
+   "stock": "#ffb4aa",
+   "fig": "#ffb4aa",
+   "dE": 0
+  },
+  "On Primary Fixed Variant": {
+   "stock": "#930008",
+   "fig": "#930008",
+   "dE": 0
+  },
+  "Secondary Fixed": {
+   "stock": "#dae3f0",
+   "fig": "#dae3f0",
+   "dE": 0
+  },
+  "On Secondary Fixed": {
+   "stock": "#131c26",
+   "fig": "#141c25",
+   "dE": 0.6
+  },
+  "Secondary Fixed Dim": {
+   "stock": "#bec7d4",
+   "fig": "#bec7d4",
+   "dE": 0
+  },
+  "On Secondary Fixed Variant": {
+   "stock": "#3f4852",
+   "fig": "#3f4852",
+   "dE": 0
+  },
+  "Tertiary Fixed": {
+   "stock": "#dae3f0",
+   "fig": "#dae3f0",
+   "dE": 0
+  },
+  "On Tertiary Fixed": {
+   "stock": "#131c26",
+   "fig": "#141c25",
+   "dE": 0.6
+  },
+  "Tertiary Fixed Dim": {
+   "stock": "#bec7d4",
+   "fig": "#bec7d4",
+   "dE": 0
+  },
+  "On Tertiary Fixed Variant": {
+   "stock": "#3f4852",
+   "fig": "#3f4852",
+   "dE": 0
+  },
+  "Surface Dim": {
+   "stock": "#131313",
+   "fig": "#131314",
+   "dE": 0.7
+  },
+  "Surface Bright": {
+   "stock": "#393939",
+   "fig": "#39393a",
+   "dE": 0.7
+  },
+  "Surface Container Lowest": {
+   "stock": "#0e0e0e",
+   "fig": "#0e0e0f",
+   "dE": 0.5
+  },
+  "Surface Container Low": {
+   "stock": "#1c1b1c",
+   "fig": "#1b1b1c",
+   "dE": 0.7
+  },
+  "Surface Container": {
+   "stock": "#201f20",
+   "fig": "#1f1f20",
+   "dE": 0.7
+  },
+  "Surface Container High": {
+   "stock": "#2a2a2a",
+   "fig": "#2a2a2b",
+   "dE": 0.7
+  },
+  "Surface Container Highest": {
+   "stock": "#353535",
+   "fig": "#353535",
+   "dE": 0
+  }
+ },
+ "Dark Medium Contrast": {
+  "Primary": {
+   "stock": "#ffd2cc",
+   "fig": "#ffd2cc",
+   "dE": 0
+  },
+  "On Primary": {
+   "stock": "#540002",
+   "fig": "#540002",
+   "dE": 0
+  },
+  "Primary Container": {
+   "stock": "#ff5447",
+   "fig": "#ff5447",
+   "dE": 0
+  },
+  "On Primary Container": {
+   "stock": "#000000",
+   "fig": "#000000",
+   "dE": 0
+  },
+  "Secondary": {
+   "stock": "#d4ddea",
+   "fig": "#d4ddea",
+   "dE": 0
+  },
+  "On Secondary": {
+   "stock": "#1e2630",
+   "fig": "#1e2630",
+   "dE": 0
+  },
+  "Secondary Container": {
+   "stock": "#88929d",
+   "fig": "#88929d",
+   "dE": 0
+  },
+  "On Secondary Container": {
+   "stock": "#000000",
+   "fig": "#000000",
+   "dE": 0
+  },
+  "Tertiary": {
+   "stock": "#d4ddea",
+   "fig": "#d4ddea",
+   "dE": 0
+  },
+  "On Tertiary": {
+   "stock": "#1e2630",
+   "fig": "#1e2630",
+   "dE": 0
+  },
+  "Tertiary Container": {
+   "stock": "#88929d",
+   "fig": "#9ba4b0",
+   "dE": 5.9
+  },
+  "On Tertiary Container": {
+   "stock": "#000000",
+   "fig": "#101922",
+   "dE": 8.2
+  },
+  "Error": {
+   "stock": "#ffd0dc",
+   "fig": "#ffd0dc",
+   "dE": 0
+  },
+  "On Error": {
+   "stock": "#510027",
+   "fig": "#510028",
+   "dE": 0.4
+  },
+  "Error Container": {
+   "stock": "#fe4a95",
+   "fig": "#ff4895",
+   "dE": 0.2
+  },
+  "On Error Container": {
+   "stock": "#000000",
+   "fig": "#000000",
+   "dE": 0
+  },
+  "Background": {
+   "stock": "#131313",
+   "fig": "#1f0f0d",
+   "dE": 9.2
+  },
+  "On Background": {
+   "stock": "#e5e2e1",
+   "fig": "#fbdbd7",
+   "dE": 10.8
+  },
+  "Surface": {
+   "stock": "#131313",
+   "fig": "#131314",
+   "dE": 0.7
+  },
+  "On Surface": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Surface Variant": {
+   "stock": "#474647",
+   "fig": "#444748",
+   "dE": 2.5
+  },
+  "On Surface Variant": {
+   "stock": "#dedcdb",
+   "fig": "#dadddd",
+   "dE": 2.5
+  },
+  "Outline": {
+   "stock": "#b4b1b1",
+   "fig": "#afb2b3",
+   "dE": 3.1
+  },
+  "Outline Variant": {
+   "stock": "#929090",
+   "fig": "#8d9191",
+   "dE": 3.3
+  },
+  "Surface Tint": {
+   "stock": "#ffb4aa",
+   "fig": "#ffb4aa",
+   "dE": 0
+  },
+  "Inverse Surface": {
+   "stock": "#e5e2e1",
+   "fig": "#e4e2e2",
+   "dE": 0.6
+  },
+  "Inverse On Surface": {
+   "stock": "#2a2a2a",
+   "fig": "#2a2a2b",
+   "dE": 0.7
+  },
+  "Inverse Primary": {
+   "stock": "#950008",
+   "fig": "#950008",
+   "dE": 0
+  },
+  "Primary Fixed": {
+   "stock": "#ffdad5",
+   "fig": "#ffdad5",
+   "dE": 0
+  },
+  "On Primary Fixed": {
+   "stock": "#2d0001",
+   "fig": "#2d0001",
+   "dE": 0
+  },
+  "Primary Fixed Dim": {
+   "stock": "#ffb4aa",
+   "fig": "#ffb4aa",
+   "dE": 0
+  },
+  "On Primary Fixed Variant": {
+   "stock": "#740005",
+   "fig": "#740004",
+   "dE": 0.2
+  },
+  "Secondary Fixed": {
+   "stock": "#dae3f0",
+   "fig": "#dae3f0",
+   "dE": 0
+  },
+  "On Secondary Fixed": {
+   "stock": "#09121b",
+   "fig": "#09121b",
+   "dE": 0
+  },
+  "Secondary Fixed Dim": {
+   "stock": "#bec7d4",
+   "fig": "#bec7d4",
+   "dE": 0
+  },
+  "On Secondary Fixed Variant": {
+   "stock": "#2e3741",
+   "fig": "#2e3741",
+   "dE": 0
+  },
+  "Tertiary Fixed": {
+   "stock": "#dae3f0",
+   "fig": "#dae3f0",
+   "dE": 0
+  },
+  "On Tertiary Fixed": {
+   "stock": "#09121b",
+   "fig": "#09121b",
+   "dE": 0
+  },
+  "Tertiary Fixed Dim": {
+   "stock": "#bec7d4",
+   "fig": "#bec7d4",
+   "dE": 0
+  },
+  "On Tertiary Fixed Variant": {
+   "stock": "#2e3741",
+   "fig": "#2e3741",
+   "dE": 0
+  },
+  "Surface Dim": {
+   "stock": "#131313",
+   "fig": "#131314",
+   "dE": 0.7
+  },
+  "Surface Bright": {
+   "stock": "#454444",
+   "fig": "#454445",
+   "dE": 0.7
+  },
+  "Surface Container Lowest": {
+   "stock": "#070707",
+   "fig": "#070708",
+   "dE": 0.4
+  },
+  "Surface Container Low": {
+   "stock": "#1e1d1e",
+   "fig": "#1d1d1e",
+   "dE": 0.7
+  },
+  "Surface Container": {
+   "stock": "#282828",
+   "fig": "#282828",
+   "dE": 0
+  },
+  "Surface Container High": {
+   "stock": "#333232",
+   "fig": "#333233",
+   "dE": 0.7
+  },
+  "Surface Container Highest": {
+   "stock": "#3e3d3d",
+   "fig": "#3e3d3e",
+   "dE": 0.7
+  }
+ },
+ "Dark High Contrast": {
+  "Primary": {
+   "stock": "#ffece9",
+   "fig": "#ffece9",
+   "dE": 0
+  },
+  "On Primary": {
+   "stock": "#000000",
+   "fig": "#000000",
+   "dE": 0
+  },
+  "Primary Container": {
+   "stock": "#ffaea4",
+   "fig": "#ffaea4",
+   "dE": 0
+  },
+  "On Primary Container": {
+   "stock": "#220000",
+   "fig": "#220000",
+   "dE": 0
+  },
+  "Secondary": {
+   "stock": "#e8f1fe",
+   "fig": "#e8f1fe",
+   "dE": 0
+  },
+  "On Secondary": {
+   "stock": "#000000",
+   "fig": "#000000",
+   "dE": 0
+  },
+  "Secondary Container": {
+   "stock": "#bac3d0",
+   "fig": "#bac3d0",
+   "dE": 0
+  },
+  "On Secondary Container": {
+   "stock": "#040c15",
+   "fig": "#040c14",
+   "dE": 0.6
+  },
+  "Tertiary": {
+   "stock": "#e8f1fe",
+   "fig": "#e8f1fe",
+   "dE": 0
+  },
+  "On Tertiary": {
+   "stock": "#000000",
+   "fig": "#000000",
+   "dE": 0
+  },
+  "Tertiary Container": {
+   "stock": "#bac3d0",
+   "fig": "#bac3d0",
+   "dE": 0
+  },
+  "On Tertiary Container": {
+   "stock": "#040c15",
+   "fig": "#040c15",
+   "dE": 0
+  },
+  "Error": {
+   "stock": "#ffebef",
+   "fig": "#ffebef",
+   "dE": 0
+  },
+  "On Error": {
+   "stock": "#000000",
+   "fig": "#000000",
+   "dE": 0
+  },
+  "Error Container": {
+   "stock": "#ffabc4",
+   "fig": "#ffabc4",
+   "dE": 0
+  },
+  "On Error Container": {
+   "stock": "#20000c",
+   "fig": "#20000c",
+   "dE": 0
+  },
+  "Background": {
+   "stock": "#131313",
+   "fig": "#1f0f0d",
+   "dE": 9.2
+  },
+  "On Background": {
+   "stock": "#e5e2e1",
+   "fig": "#fbdbd7",
+   "dE": 10.8
+  },
+  "Surface": {
+   "stock": "#131313",
+   "fig": "#131314",
+   "dE": 0.7
+  },
+  "On Surface": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Surface Variant": {
+   "stock": "#474647",
+   "fig": "#444748",
+   "dE": 2.5
+  },
+  "On Surface Variant": {
+   "stock": "#ffffff",
+   "fig": "#ffffff",
+   "dE": 0
+  },
+  "Outline": {
+   "stock": "#f2efef",
+   "fig": "#eef0f1",
+   "dE": 2.4
+  },
+  "Outline Variant": {
+   "stock": "#c4c2c2",
+   "fig": "#c0c3c4",
+   "dE": 2.5
+  },
+  "Surface Tint": {
+   "stock": "#ffb4aa",
+   "fig": "#ffb4aa",
+   "dE": 0
+  },
+  "Inverse Surface": {
+   "stock": "#e5e2e1",
+   "fig": "#e4e2e2",
+   "dE": 0.6
+  },
+  "Inverse On Surface": {
+   "stock": "#000000",
+   "fig": "#000000",
+   "dE": 0
+  },
+  "Inverse Primary": {
+   "stock": "#950008",
+   "fig": "#950008",
+   "dE": 0
+  },
+  "Primary Fixed": {
+   "stock": "#ffdad5",
+   "fig": "#ffdad5",
+   "dE": 0
+  },
+  "On Primary Fixed": {
+   "stock": "#000000",
+   "fig": "#000000",
+   "dE": 0
+  },
+  "Primary Fixed Dim": {
+   "stock": "#ffb4aa",
+   "fig": "#ffb4aa",
+   "dE": 0
+  },
+  "On Primary Fixed Variant": {
+   "stock": "#2d0001",
+   "fig": "#2d0001",
+   "dE": 0
+  },
+  "Secondary Fixed": {
+   "stock": "#dae3f0",
+   "fig": "#dae3f0",
+   "dE": 0
+  },
+  "On Secondary Fixed": {
+   "stock": "#000000",
+   "fig": "#000000",
+   "dE": 0
+  },
+  "Secondary Fixed Dim": {
+   "stock": "#bec7d4",
+   "fig": "#bec7d4",
+   "dE": 0
+  },
+  "On Secondary Fixed Variant": {
+   "stock": "#09121b",
+   "fig": "#09121b",
+   "dE": 0
+  },
+  "Tertiary Fixed": {
+   "stock": "#dae3f0",
+   "fig": "#dae3f0",
+   "dE": 0
+  },
+  "On Tertiary Fixed": {
+   "stock": "#000000",
+   "fig": "#000000",
+   "dE": 0
+  },
+  "Tertiary Fixed Dim": {
+   "stock": "#bec7d4",
+   "fig": "#bec7d4",
+   "dE": 0
+  },
+  "On Tertiary Fixed Variant": {
+   "stock": "#09121b",
+   "fig": "#09121b",
+   "dE": 0
+  },
+  "Surface Dim": {
+   "stock": "#131313",
+   "fig": "#131314",
+   "dE": 0.7
+  },
+  "Surface Bright": {
+   "stock": "#515050",
+   "fig": "#505050",
+   "dE": 0.6
+  },
+  "Surface Container Lowest": {
+   "stock": "#000000",
+   "fig": "#000000",
+   "dE": 0
+  },
+  "Surface Container Low": {
+   "stock": "#201f20",
+   "fig": "#1f1f20",
+   "dE": 0.7
+  },
+  "Surface Container": {
+   "stock": "#313030",
+   "fig": "#303031",
+   "dE": 0.8
+  },
+  "Surface Container High": {
+   "stock": "#3c3b3b",
+   "fig": "#3b3b3c",
+   "dE": 0.8
+  },
+  "Surface Container Highest": {
+   "stock": "#474647",
+   "fig": "#474647",
+   "dE": 0
+  }
+ }
+}

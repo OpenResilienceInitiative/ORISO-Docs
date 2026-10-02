@@ -1,0 +1,1938 @@
+[
+ {
+  "role": "Primary",
+  "token": "--m3-primary",
+  "Light": {
+   "fig": "#a5000a",
+   "eng": "#a5000a",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#740004",
+   "eng": "#a5000a",
+   "dE": 9.7,
+   "rgb": 49
+  },
+  "Light High Contrast": {
+   "fig": "#610003",
+   "eng": "#a5000a",
+   "dE": 13.7,
+   "rgb": 68
+  },
+  "Dark": {
+   "fig": "#ffb4aa",
+   "eng": "#ffb4aa",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#ffd2cc",
+   "eng": "#ffb4aa",
+   "dE": 8.5,
+   "rgb": 45
+  },
+  "Dark High Contrast": {
+   "fig": "#ffece9",
+   "eng": "#ffb4aa",
+   "dE": 17.1,
+   "rgb": 84
+  }
+ },
+ {
+  "role": "On Primary",
+  "token": "--m3-on-primary",
+  "Light": {
+   "fig": "#ffffff",
+   "eng": "#ffffff",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#ffffff",
+   "eng": "#ffffff",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light High Contrast": {
+   "fig": "#ffffff",
+   "eng": "#ffffff",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark": {
+   "fig": "#690004",
+   "eng": "#690004",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#540002",
+   "eng": "#690004",
+   "dE": 4.7,
+   "rgb": 21
+  },
+  "Dark High Contrast": {
+   "fig": "#000000",
+   "eng": "#690004",
+   "dE": 27.7,
+   "rgb": 105
+  }
+ },
+ {
+  "role": "Primary Container",
+  "token": "--m3-primary-container",
+  "Light": {
+   "fig": "#cc1e1c",
+   "eng": "#cc1e1c",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#cc1e1c",
+   "eng": "#cc1e1c",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light High Contrast": {
+   "fig": "#980008",
+   "eng": "#cc1e1c",
+   "dE": 11.3,
+   "rgb": 63
+  },
+  "Dark": {
+   "fig": "#cc1e1c",
+   "eng": "#930008",
+   "dE": 12.2,
+   "rgb": 67
+  },
+  "Dark Medium Contrast": {
+   "fig": "#ff5447",
+   "eng": "#930008",
+   "dE": 28.5,
+   "rgb": 151
+  },
+  "Dark High Contrast": {
+   "fig": "#ffaea4",
+   "eng": "#930008",
+   "dE": 47.8,
+   "rgb": 257
+  }
+ },
+ {
+  "role": "On Primary Container",
+  "token": "--m3-on-primary-container",
+  "Light": {
+   "fig": "#ffe2de",
+   "eng": "#ffe2de",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#ffffff",
+   "eng": "#ffe2de",
+   "dE": 12.2,
+   "rgb": 44
+  },
+  "Light High Contrast": {
+   "fig": "#ffffff",
+   "eng": "#ffe2de",
+   "dE": 12.2,
+   "rgb": 44
+  },
+  "Dark": {
+   "fig": "#ffe2de",
+   "eng": "#ffdad5",
+   "dE": 2.8,
+   "rgb": 12
+  },
+  "Dark Medium Contrast": {
+   "fig": "#000000",
+   "eng": "#ffdad5",
+   "dE": 86.2,
+   "rgb": 397
+  },
+  "Dark High Contrast": {
+   "fig": "#220000",
+   "eng": "#ffdad5",
+   "dE": 84.2,
+   "rgb": 376
+  }
+ },
+ {
+  "role": "Secondary",
+  "token": "--m3-secondary",
+  "Light": {
+   "fig": "#655f65",
+   "eng": "#4d5660",
+   "dE": 9.1,
+   "rgb": 26
+  },
+  "Light Medium Contrast": {
+   "fig": "#2e3741",
+   "eng": "#4d5660",
+   "dE": 10.4,
+   "rgb": 54
+  },
+  "Light High Contrast": {
+   "fig": "#242d36",
+   "eng": "#4d5660",
+   "dE": 13.6,
+   "rgb": 72
+  },
+  "Dark": {
+   "fig": "#bec7d4",
+   "eng": "#bec7d4",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#d4ddea",
+   "eng": "#bec7d4",
+   "dE": 5.2,
+   "rgb": 38
+  },
+  "Dark High Contrast": {
+   "fig": "#e8f1fe",
+   "eng": "#bec7d4",
+   "dE": 9.6,
+   "rgb": 73
+  }
+ },
+ {
+  "role": "On Secondary",
+  "token": "--m3-on-secondary",
+  "Light": {
+   "fig": "#ffffff",
+   "eng": "#ffffff",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#ffffff",
+   "eng": "#ffffff",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light High Contrast": {
+   "fig": "#ffffff",
+   "eng": "#ffffff",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark": {
+   "fig": "#28313b",
+   "eng": "#28313b",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#1e2630",
+   "eng": "#28313b",
+   "dE": 3.5,
+   "rgb": 18
+  },
+  "Dark High Contrast": {
+   "fig": "#000000",
+   "eng": "#28313b",
+   "dE": 14.1,
+   "rgb": 86
+  }
+ },
+ {
+  "role": "Secondary Container",
+  "token": "--m3-secondary-container",
+  "Light": {
+   "fig": "#646d78",
+   "eng": "#656e79",
+   "dE": 0.4,
+   "rgb": 2
+  },
+  "Light Medium Contrast": {
+   "fig": "#646d78",
+   "eng": "#656e79",
+   "dE": 0.4,
+   "rgb": 2
+  },
+  "Light High Contrast": {
+   "fig": "#414a54",
+   "eng": "#656e79",
+   "dE": 12.9,
+   "rgb": 63
+  },
+  "Dark": {
+   "fig": "#646d78",
+   "eng": "#3f4852",
+   "dE": 13.2,
+   "rgb": 65
+  },
+  "Dark Medium Contrast": {
+   "fig": "#88929d",
+   "eng": "#3f4852",
+   "dE": 28.4,
+   "rgb": 128
+  },
+  "Dark High Contrast": {
+   "fig": "#bac3d0",
+   "eng": "#3f4852",
+   "dE": 46.2,
+   "rgb": 215
+  }
+ },
+ {
+  "role": "On Secondary Container",
+  "token": "--m3-on-secondary-container",
+  "Light": {
+   "fig": "#e7effc",
+   "eng": "#e6effb",
+   "dE": 0.8,
+   "rgb": 1
+  },
+  "Light Medium Contrast": {
+   "fig": "#ffffff",
+   "eng": "#e6effb",
+   "dE": 6.9,
+   "rgb": 30
+  },
+  "Light High Contrast": {
+   "fig": "#ffffff",
+   "eng": "#e6effb",
+   "dE": 6.9,
+   "rgb": 30
+  },
+  "Dark": {
+   "fig": "#e7effc",
+   "eng": "#dae3f0",
+   "dE": 2.7,
+   "rgb": 21
+  },
+  "Dark Medium Contrast": {
+   "fig": "#000000",
+   "eng": "#dae3f0",
+   "dE": 85.3,
+   "rgb": 396
+  },
+  "Dark High Contrast": {
+   "fig": "#040c14",
+   "eng": "#dae3f0",
+   "dE": 84.1,
+   "rgb": 375
+  }
+ },
+ {
+  "role": "Tertiary",
+  "token": "--m3-tertiary",
+  "Light": {
+   "fig": "#565f6a",
+   "eng": "#565f6a",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#2e3741",
+   "eng": "#565f6a",
+   "dE": 13.6,
+   "rgb": 70
+  },
+  "Light High Contrast": {
+   "fig": "#242d36",
+   "eng": "#565f6a",
+   "dE": 16.8,
+   "rgb": 88
+  },
+  "Dark": {
+   "fig": "#bec7d4",
+   "eng": "#bec7d4",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#d4ddea",
+   "eng": "#bec7d4",
+   "dE": 5.2,
+   "rgb": 38
+  },
+  "Dark High Contrast": {
+   "fig": "#e8f1fe",
+   "eng": "#bec7d4",
+   "dE": 9.6,
+   "rgb": 73
+  }
+ },
+ {
+  "role": "On Tertiary",
+  "token": "--m3-on-tertiary",
+  "Light": {
+   "fig": "#ffffff",
+   "eng": "#ffffff",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#ffffff",
+   "eng": "#ffffff",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light High Contrast": {
+   "fig": "#ffffff",
+   "eng": "#ffffff",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark": {
+   "fig": "#28313b",
+   "eng": "#28313b",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#1e2630",
+   "eng": "#28313b",
+   "dE": 3.5,
+   "rgb": 18
+  },
+  "Dark High Contrast": {
+   "fig": "#000000",
+   "eng": "#28313b",
+   "dE": 14.1,
+   "rgb": 86
+  }
+ },
+ {
+  "role": "Tertiary Container",
+  "token": "--m3-tertiary-container",
+  "Light": {
+   "fig": "#9ba4b0",
+   "eng": "#9ba4b0",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#656e79",
+   "eng": "#9ba4b0",
+   "dE": 19.4,
+   "rgb": 94
+  },
+  "Light High Contrast": {
+   "fig": "#414a54",
+   "eng": "#9ba4b0",
+   "dE": 35.9,
+   "rgb": 157
+  },
+  "Dark": {
+   "fig": "#9ba4b0",
+   "eng": "#3f4852",
+   "dE": 36.6,
+   "rgb": 161
+  },
+  "Dark Medium Contrast": {
+   "fig": "#9ba4b0",
+   "eng": "#3f4852",
+   "dE": 36.6,
+   "rgb": 161
+  },
+  "Dark High Contrast": {
+   "fig": "#bac3d0",
+   "eng": "#3f4852",
+   "dE": 46.2,
+   "rgb": 215
+  }
+ },
+ {
+  "role": "On Tertiary Container",
+  "token": "--m3-on-tertiary-container",
+  "Light": {
+   "fig": "#313a44",
+   "eng": "#313a44",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#ffffff",
+   "eng": "#313a44",
+   "dE": 65.4,
+   "rgb": 341
+  },
+  "Light High Contrast": {
+   "fig": "#ffffff",
+   "eng": "#313a44",
+   "dE": 65.4,
+   "rgb": 341
+  },
+  "Dark": {
+   "fig": "#313a44",
+   "eng": "#dae3f0",
+   "dE": 60.6,
+   "rgb": 294
+  },
+  "Dark Medium Contrast": {
+   "fig": "#101922",
+   "eng": "#dae3f0",
+   "dE": 81.4,
+   "rgb": 352
+  },
+  "Dark High Contrast": {
+   "fig": "#040c15",
+   "eng": "#dae3f0",
+   "dE": 84.1,
+   "rgb": 374
+  }
+ },
+ {
+  "role": "Error",
+  "token": "--m3-error",
+  "Light": {
+   "fig": "#b1005e",
+   "eng": "#b1005e",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#6f0039",
+   "eng": "#b1005e",
+   "dE": 13.2,
+   "rgb": 76
+  },
+  "Light High Contrast": {
+   "fig": "#5d002e",
+   "eng": "#b1005e",
+   "dE": 16.8,
+   "rgb": 97
+  },
+  "Dark": {
+   "fig": "#ffb1c8",
+   "eng": "#ffb1c8",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#ffd0dc",
+   "eng": "#ffb1c8",
+   "dE": 8.4,
+   "rgb": 37
+  },
+  "Dark High Contrast": {
+   "fig": "#ffebef",
+   "eng": "#ffb1c8",
+   "dE": 17.4,
+   "rgb": 70
+  }
+ },
+ {
+  "role": "On Error",
+  "token": "--m3-on-error",
+  "Light": {
+   "fig": "#ffffff",
+   "eng": "#ffffff",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#ffffff",
+   "eng": "#ffffff",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light High Contrast": {
+   "fig": "#ffffff",
+   "eng": "#ffffff",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark": {
+   "fig": "#650033",
+   "eng": "#650033",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#510028",
+   "eng": "#650033",
+   "dE": 4.1,
+   "rgb": 23
+  },
+  "Dark High Contrast": {
+   "fig": "#000000",
+   "eng": "#650033",
+   "dE": 27.4,
+   "rgb": 113
+  }
+ },
+ {
+  "role": "Error Container",
+  "token": "--m3-error-container",
+  "Light": {
+   "fig": "#de0077",
+   "eng": "#de0077",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#d40072",
+   "eng": "#de0077",
+   "dE": 2.2,
+   "rgb": 11
+  },
+  "Light High Contrast": {
+   "fig": "#92004c",
+   "eng": "#de0077",
+   "dE": 15.8,
+   "rgb": 87
+  },
+  "Dark": {
+   "fig": "#de0077",
+   "eng": "#8e004a",
+   "dE": 16.6,
+   "rgb": 92
+  },
+  "Dark Medium Contrast": {
+   "fig": "#ff4895",
+   "eng": "#8e004a",
+   "dE": 28.7,
+   "rgb": 154
+  },
+  "Dark High Contrast": {
+   "fig": "#ffabc4",
+   "eng": "#8e004a",
+   "dE": 47.1,
+   "rgb": 239
+  }
+ },
+ {
+  "role": "On Error Container",
+  "token": "--m3-on-error-container",
+  "Light": {
+   "fig": "#fff7f7",
+   "eng": "#fff7f7",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#ffffff",
+   "eng": "#fff7f7",
+   "dE": 4,
+   "rgb": 11
+  },
+  "Light High Contrast": {
+   "fig": "#ffffff",
+   "eng": "#fff7f7",
+   "dE": 4,
+   "rgb": 11
+  },
+  "Dark": {
+   "fig": "#fff7f7",
+   "eng": "#ffd9e2",
+   "dE": 12.2,
+   "rgb": 37
+  },
+  "Dark Medium Contrast": {
+   "fig": "#000000",
+   "eng": "#ffd9e2",
+   "dE": 86.5,
+   "rgb": 404
+  },
+  "Dark High Contrast": {
+   "fig": "#20000c",
+   "eng": "#ffd9e2",
+   "dE": 84.3,
+   "rgb": 378
+  }
+ },
+ {
+  "role": "Background",
+  "token": "--m3-background",
+  "Light": {
+   "fig": "#f2efef",
+   "eng": "#fcf9f9",
+   "dE": 2.1,
+   "rgb": 17
+  },
+  "Light Medium Contrast": {
+   "fig": "#fff8f7",
+   "eng": "#fcf9f9",
+   "dE": 1.8,
+   "rgb": 4
+  },
+  "Light High Contrast": {
+   "fig": "#fff8f7",
+   "eng": "#fcf9f9",
+   "dE": 1.8,
+   "rgb": 4
+  },
+  "Dark": {
+   "fig": "#1f0f0d",
+   "eng": "#131314",
+   "dE": 9.1,
+   "rgb": 14
+  },
+  "Dark Medium Contrast": {
+   "fig": "#1f0f0d",
+   "eng": "#131314",
+   "dE": 9.1,
+   "rgb": 14
+  },
+  "Dark High Contrast": {
+   "fig": "#1f0f0d",
+   "eng": "#131314",
+   "dE": 9.1,
+   "rgb": 14
+  }
+ },
+ {
+  "role": "On Background",
+  "token": "--m3-on-background",
+  "Light": {
+   "fig": "#281715",
+   "eng": "#1b1b1c",
+   "dE": 10.2,
+   "rgb": 15
+  },
+  "Light Medium Contrast": {
+   "fig": "#281715",
+   "eng": "#1b1b1c",
+   "dE": 10.2,
+   "rgb": 15
+  },
+  "Light High Contrast": {
+   "fig": "#281715",
+   "eng": "#1b1b1c",
+   "dE": 10.2,
+   "rgb": 15
+  },
+  "Dark": {
+   "fig": "#f1ebea",
+   "eng": "#e4e2e2",
+   "dE": 2.8,
+   "rgb": 18
+  },
+  "Dark Medium Contrast": {
+   "fig": "#fbdbd7",
+   "eng": "#e4e2e2",
+   "dE": 11.2,
+   "rgb": 26
+  },
+  "Dark High Contrast": {
+   "fig": "#fbdbd7",
+   "eng": "#e4e2e2",
+   "dE": 11.2,
+   "rgb": 26
+  }
+ },
+ {
+  "role": "Surface",
+  "token": "--m3-surface",
+  "Light": {
+   "fig": "#fafbfb",
+   "eng": "#fcf9f9",
+   "dE": 2,
+   "rgb": 3
+  },
+  "Light Medium Contrast": {
+   "fig": "#fcf9f9",
+   "eng": "#fcf9f9",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light High Contrast": {
+   "fig": "#fcf9f9",
+   "eng": "#fcf9f9",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark": {
+   "fig": "#131314",
+   "eng": "#131314",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#131314",
+   "eng": "#131314",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark High Contrast": {
+   "fig": "#131314",
+   "eng": "#131314",
+   "dE": 0,
+   "rgb": 0
+  }
+ },
+ {
+  "role": "On Surface",
+  "token": "--m3-on-surface",
+  "Light": {
+   "fig": "#1b1b1c",
+   "eng": "#1b1b1c",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#111112",
+   "eng": "#1b1b1c",
+   "dE": 2.9,
+   "rgb": 17
+  },
+  "Light High Contrast": {
+   "fig": "#000000",
+   "eng": "#1b1b1c",
+   "dE": 5.9,
+   "rgb": 47
+  },
+  "Dark": {
+   "fig": "#e4e2e2",
+   "eng": "#e4e2e2",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#ffffff",
+   "eng": "#e4e2e2",
+   "dE": 6,
+   "rgb": 49
+  },
+  "Dark High Contrast": {
+   "fig": "#ffffff",
+   "eng": "#e4e2e2",
+   "dE": 6,
+   "rgb": 49
+  }
+ },
+ {
+  "role": "Surface Variant",
+  "token": "--m3-surface-variant",
+  "Light": {
+   "fig": "#e0e3e3",
+   "eng": "#e0e3e3",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#e0e3e3",
+   "eng": "#e0e3e3",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light High Contrast": {
+   "fig": "#e0e3e3",
+   "eng": "#e0e3e3",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark": {
+   "fig": "#444748",
+   "eng": "#444748",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#444748",
+   "eng": "#444748",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark High Contrast": {
+   "fig": "#444748",
+   "eng": "#444748",
+   "dE": 0,
+   "rgb": 0
+  }
+ },
+ {
+  "role": "On Surface Variant",
+  "token": "--m3-on-surface-variant",
+  "Light": {
+   "fig": "#444748",
+   "eng": "#444748",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#333738",
+   "eng": "#444748",
+   "dE": 5.4,
+   "rgb": 28
+  },
+  "Light High Contrast": {
+   "fig": "#000000",
+   "eng": "#444748",
+   "dE": 19.7,
+   "rgb": 122
+  },
+  "Dark": {
+   "fig": "#c4c7c8",
+   "eng": "#c4c7c8",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#dadddd",
+   "eng": "#c4c7c8",
+   "dE": 5.2,
+   "rgb": 38
+  },
+  "Dark High Contrast": {
+   "fig": "#ffffff",
+   "eng": "#c4c7c8",
+   "dE": 12.6,
+   "rgb": 98
+  }
+ },
+ {
+  "role": "Outline",
+  "token": "--m3-outline",
+  "Light": {
+   "fig": "#747878",
+   "eng": "#747878",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#4f5354",
+   "eng": "#747878",
+   "dE": 13.8,
+   "rgb": 64
+  },
+  "Light High Contrast": {
+   "fig": "#292d2d",
+   "eng": "#747878",
+   "dE": 26,
+   "rgb": 130
+  },
+  "Dark": {
+   "fig": "#8e9192",
+   "eng": "#8e9192",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#afb2b3",
+   "eng": "#8e9192",
+   "dE": 10.1,
+   "rgb": 57
+  },
+  "Dark High Contrast": {
+   "fig": "#eef0f1",
+   "eng": "#8e9192",
+   "dE": 24.7,
+   "rgb": 165
+  }
+ },
+ {
+  "role": "Outline Variant",
+  "token": "--m3-outline-variant",
+  "Light": {
+   "fig": "#c4c7c8",
+   "eng": "#c4c7c8",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#6a6e6e",
+   "eng": "#c4c7c8",
+   "dE": 28.6,
+   "rgb": 155
+  },
+  "Light High Contrast": {
+   "fig": "#464a4a",
+   "eng": "#c4c7c8",
+   "dE": 46,
+   "rgb": 218
+  },
+  "Dark": {
+   "fig": "#444748",
+   "eng": "#444748",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#8d9191",
+   "eng": "#444748",
+   "dE": 28.3,
+   "rgb": 127
+  },
+  "Dark High Contrast": {
+   "fig": "#c0c3c4",
+   "eng": "#444748",
+   "dE": 46.6,
+   "rgb": 215
+  }
+ },
+ {
+  "role": "Surface Tint",
+  "token": "--m3-surface-tint",
+  "Light": {
+   "fig": "#bd0f13",
+   "eng": "#bd0f13",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#bd0f13",
+   "eng": "#bd0f13",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light High Contrast": {
+   "fig": "#bd0f13",
+   "eng": "#bd0f13",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark": {
+   "fig": "#ffb4aa",
+   "eng": "#ffb4aa",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#ffb4aa",
+   "eng": "#ffb4aa",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark High Contrast": {
+   "fig": "#ffb4aa",
+   "eng": "#ffb4aa",
+   "dE": 0,
+   "rgb": 0
+  }
+ },
+ {
+  "role": "Shadow",
+  "token": "--m3-shadow",
+  "Light": {
+   "fig": "#000000",
+   "eng": "#000000",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#000000",
+   "eng": "#000000",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light High Contrast": {
+   "fig": "#000000",
+   "eng": "#000000",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark": {
+   "fig": "#000000",
+   "eng": "#000000",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#000000",
+   "eng": "#000000",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark High Contrast": {
+   "fig": "#000000",
+   "eng": "#000000",
+   "dE": 0,
+   "rgb": 0
+  }
+ },
+ {
+  "role": "Scrim",
+  "token": "--m3-scrim",
+  "Light": {
+   "fig": "#000000",
+   "eng": "#000000",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#000000",
+   "eng": "#000000",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light High Contrast": {
+   "fig": "#000000",
+   "eng": "#000000",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark": {
+   "fig": "#000000",
+   "eng": "#000000",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#000000",
+   "eng": "#000000",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark High Contrast": {
+   "fig": "#000000",
+   "eng": "#000000",
+   "dE": 0,
+   "rgb": 0
+  }
+ },
+ {
+  "role": "Inverse Surface",
+  "token": "--m3-inverse-surface",
+  "Light": {
+   "fig": "#303031",
+   "eng": "#303031",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#303031",
+   "eng": "#303031",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light High Contrast": {
+   "fig": "#303031",
+   "eng": "#303031",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark": {
+   "fig": "#e4e2e2",
+   "eng": "#e4e2e2",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#e4e2e2",
+   "eng": "#e4e2e2",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark High Contrast": {
+   "fig": "#e4e2e2",
+   "eng": "#e4e2e2",
+   "dE": 0,
+   "rgb": 0
+  }
+ },
+ {
+  "role": "Inverse On Surface",
+  "token": "--m3-inverse-on-surface",
+  "Light": {
+   "fig": "#f3f0f0",
+   "eng": "#f3f0f1",
+   "dE": 0.5,
+   "rgb": 1
+  },
+  "Light Medium Contrast": {
+   "fig": "#f3f0f0",
+   "eng": "#f3f0f1",
+   "dE": 0.5,
+   "rgb": 1
+  },
+  "Light High Contrast": {
+   "fig": "#ffffff",
+   "eng": "#f3f0f1",
+   "dE": 3.4,
+   "rgb": 24
+  },
+  "Dark": {
+   "fig": "#303031",
+   "eng": "#303031",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#2a2a2b",
+   "eng": "#303031",
+   "dE": 1.9,
+   "rgb": 10
+  },
+  "Dark High Contrast": {
+   "fig": "#000000",
+   "eng": "#303031",
+   "dE": 12.5,
+   "rgb": 84
+  }
+ },
+ {
+  "role": "Inverse Primary",
+  "token": "--m3-inverse-primary",
+  "Light": {
+   "fig": "#ffb4aa",
+   "eng": "#ffb4aa",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#ffb4aa",
+   "eng": "#ffb4aa",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light High Contrast": {
+   "fig": "#ffb4aa",
+   "eng": "#ffb4aa",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark": {
+   "fig": "#bd0f13",
+   "eng": "#ba1918",
+   "dE": 0.9,
+   "rgb": 12
+  },
+  "Dark Medium Contrast": {
+   "fig": "#950008",
+   "eng": "#ba1918",
+   "dE": 8,
+   "rgb": 47
+  },
+  "Dark High Contrast": {
+   "fig": "#950008",
+   "eng": "#ba1918",
+   "dE": 8,
+   "rgb": 47
+  }
+ },
+ {
+  "role": "Primary Fixed",
+  "token": "--m3-primary-fixed",
+  "Light": {
+   "fig": "#ffdad5",
+   "eng": "#ffdad5",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#d32420",
+   "eng": "#ffdad5",
+   "dE": 40.9,
+   "rgb": 260
+  },
+  "Light High Contrast": {
+   "fig": "#980008",
+   "eng": "#ffdad5",
+   "dE": 54.9,
+   "rgb": 316
+  },
+  "Dark": {
+   "fig": "#ffdad5",
+   "eng": "#ffdad5",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#ffdad5",
+   "eng": "#ffdad5",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark High Contrast": {
+   "fig": "#ffdad5",
+   "eng": "#ffdad5",
+   "dE": 0,
+   "rgb": 0
+  }
+ },
+ {
+  "role": "On Primary Fixed",
+  "token": "--m3-on-primary-fixed",
+  "Light": {
+   "fig": "#410001",
+   "eng": "#410001",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#ffffff",
+   "eng": "#410001",
+   "dE": 88.1,
+   "rgb": 407
+  },
+  "Light High Contrast": {
+   "fig": "#ffffff",
+   "eng": "#410001",
+   "dE": 88.1,
+   "rgb": 407
+  },
+  "Dark": {
+   "fig": "#410001",
+   "eng": "#410001",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#2d0001",
+   "eng": "#410001",
+   "dE": 6.2,
+   "rgb": 20
+  },
+  "Dark High Contrast": {
+   "fig": "#000000",
+   "eng": "#410001",
+   "dE": 23,
+   "rgb": 65
+  }
+ },
+ {
+  "role": "Primary Fixed Dim",
+  "token": "--m3-primary-fixed-dim",
+  "Light": {
+   "fig": "#ffb4aa",
+   "eng": "#ffb4aa",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#ae000b",
+   "eng": "#ffb4aa",
+   "dE": 42.1,
+   "rgb": 253
+  },
+  "Light High Contrast": {
+   "fig": "#6d0004",
+   "eng": "#ffb4aa",
+   "dE": 59.5,
+   "rgb": 285
+  },
+  "Dark": {
+   "fig": "#ffb4aa",
+   "eng": "#ffb4aa",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#ffb4aa",
+   "eng": "#ffb4aa",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark High Contrast": {
+   "fig": "#ffb4aa",
+   "eng": "#ffb4aa",
+   "dE": 0,
+   "rgb": 0
+  }
+ },
+ {
+  "role": "On Primary Fixed Variant",
+  "token": "--m3-on-primary-fixed-variant",
+  "Light": {
+   "fig": "#930008",
+   "eng": "#930008",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#ffffff",
+   "eng": "#930008",
+   "dE": 63.6,
+   "rgb": 371
+  },
+  "Light High Contrast": {
+   "fig": "#ffffff",
+   "eng": "#930008",
+   "dE": 63.6,
+   "rgb": 371
+  },
+  "Dark": {
+   "fig": "#930008",
+   "eng": "#930008",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#740004",
+   "eng": "#930008",
+   "dE": 6.2,
+   "rgb": 31
+  },
+  "Dark High Contrast": {
+   "fig": "#2d0001",
+   "eng": "#930008",
+   "dE": 23.5,
+   "rgb": 102
+  }
+ },
+ {
+  "role": "Secondary Fixed",
+  "token": "--m3-secondary-fixed",
+  "Light": {
+   "fig": "#dae3f0",
+   "eng": "#dae3f0",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#656e79",
+   "eng": "#dae3f0",
+   "dE": 34.8,
+   "rgb": 204
+  },
+  "Light High Contrast": {
+   "fig": "#414a54",
+   "eng": "#dae3f0",
+   "dE": 51.5,
+   "rgb": 267
+  },
+  "Dark": {
+   "fig": "#dae3f0",
+   "eng": "#dae3f0",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#dae3f0",
+   "eng": "#dae3f0",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark High Contrast": {
+   "fig": "#dae3f0",
+   "eng": "#dae3f0",
+   "dE": 0,
+   "rgb": 0
+  }
+ },
+ {
+  "role": "On Secondary Fixed",
+  "token": "--m3-on-secondary-fixed",
+  "Light": {
+   "fig": "#141c25",
+   "eng": "#141c25",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#ffffff",
+   "eng": "#141c25",
+   "dE": 85.6,
+   "rgb": 393
+  },
+  "Light High Contrast": {
+   "fig": "#ffffff",
+   "eng": "#141c25",
+   "dE": 85.6,
+   "rgb": 393
+  },
+  "Dark": {
+   "fig": "#141c25",
+   "eng": "#141c25",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#09121b",
+   "eng": "#141c25",
+   "dE": 2.9,
+   "rgb": 18
+  },
+  "Dark High Contrast": {
+   "fig": "#000000",
+   "eng": "#141c25",
+   "dE": 8.7,
+   "rgb": 51
+  }
+ },
+ {
+  "role": "Secondary Fixed Dim",
+  "token": "--m3-secondary-fixed-dim",
+  "Light": {
+   "fig": "#bec7d4",
+   "eng": "#bec7d4",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#4d5660",
+   "eng": "#bec7d4",
+   "dE": 39.6,
+   "rgb": 197
+  },
+  "Light High Contrast": {
+   "fig": "#2b333d",
+   "eng": "#bec7d4",
+   "dE": 59,
+   "rgb": 258
+  },
+  "Dark": {
+   "fig": "#bec7d4",
+   "eng": "#bec7d4",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#bec7d4",
+   "eng": "#bec7d4",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark High Contrast": {
+   "fig": "#bec7d4",
+   "eng": "#bec7d4",
+   "dE": 0,
+   "rgb": 0
+  }
+ },
+ {
+  "role": "On Secondary Fixed Variant",
+  "token": "--m3-on-secondary-fixed-variant",
+  "Light": {
+   "fig": "#3f4852",
+   "eng": "#3f4852",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#ffffff",
+   "eng": "#3f4852",
+   "dE": 57.7,
+   "rgb": 317
+  },
+  "Light High Contrast": {
+   "fig": "#ffffff",
+   "eng": "#3f4852",
+   "dE": 57.7,
+   "rgb": 317
+  },
+  "Dark": {
+   "fig": "#3f4852",
+   "eng": "#3f4852",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#2e3741",
+   "eng": "#3f4852",
+   "dE": 5.6,
+   "rgb": 29
+  },
+  "Dark High Contrast": {
+   "fig": "#09121b",
+   "eng": "#3f4852",
+   "dE": 16.9,
+   "rgb": 94
+  }
+ },
+ {
+  "role": "Tertiary Fixed",
+  "token": "--m3-tertiary-fixed",
+  "Light": {
+   "fig": "#dae3f0",
+   "dE": null,
+   "rgb": null
+  },
+  "Light Medium Contrast": {
+   "fig": "#656e79",
+   "dE": null,
+   "rgb": null
+  },
+  "Light High Contrast": {
+   "fig": "#414a54",
+   "dE": null,
+   "rgb": null
+  },
+  "Dark": {
+   "fig": "#dae3f0",
+   "dE": null,
+   "rgb": null
+  },
+  "Dark Medium Contrast": {
+   "fig": "#dae3f0",
+   "dE": null,
+   "rgb": null
+  },
+  "Dark High Contrast": {
+   "fig": "#dae3f0",
+   "dE": null,
+   "rgb": null
+  }
+ },
+ {
+  "role": "On Tertiary Fixed",
+  "token": "--m3-on-tertiary-fixed",
+  "Light": {
+   "fig": "#141c25",
+   "dE": null,
+   "rgb": null
+  },
+  "Light Medium Contrast": {
+   "fig": "#ffffff",
+   "dE": null,
+   "rgb": null
+  },
+  "Light High Contrast": {
+   "fig": "#ffffff",
+   "dE": null,
+   "rgb": null
+  },
+  "Dark": {
+   "fig": "#141c25",
+   "dE": null,
+   "rgb": null
+  },
+  "Dark Medium Contrast": {
+   "fig": "#09121b",
+   "dE": null,
+   "rgb": null
+  },
+  "Dark High Contrast": {
+   "fig": "#000000",
+   "dE": null,
+   "rgb": null
+  }
+ },
+ {
+  "role": "Tertiary Fixed Dim",
+  "token": "--m3-tertiary-fixed-dim",
+  "Light": {
+   "fig": "#bec7d4",
+   "dE": null,
+   "rgb": null
+  },
+  "Light Medium Contrast": {
+   "fig": "#4d5660",
+   "dE": null,
+   "rgb": null
+  },
+  "Light High Contrast": {
+   "fig": "#2b333d",
+   "dE": null,
+   "rgb": null
+  },
+  "Dark": {
+   "fig": "#bec7d4",
+   "dE": null,
+   "rgb": null
+  },
+  "Dark Medium Contrast": {
+   "fig": "#bec7d4",
+   "dE": null,
+   "rgb": null
+  },
+  "Dark High Contrast": {
+   "fig": "#bec7d4",
+   "dE": null,
+   "rgb": null
+  }
+ },
+ {
+  "role": "On Tertiary Fixed Variant",
+  "token": "--m3-on-tertiary-fixed-variant",
+  "Light": {
+   "fig": "#3f4852",
+   "dE": null,
+   "rgb": null
+  },
+  "Light Medium Contrast": {
+   "fig": "#ffffff",
+   "dE": null,
+   "rgb": null
+  },
+  "Light High Contrast": {
+   "fig": "#ffffff",
+   "dE": null,
+   "rgb": null
+  },
+  "Dark": {
+   "fig": "#3f4852",
+   "dE": null,
+   "rgb": null
+  },
+  "Dark Medium Contrast": {
+   "fig": "#2e3741",
+   "dE": null,
+   "rgb": null
+  },
+  "Dark High Contrast": {
+   "fig": "#09121b",
+   "dE": null,
+   "rgb": null
+  }
+ },
+ {
+  "role": "Surface Dim",
+  "token": "--m3-surface-dim",
+  "Light": {
+   "fig": "#dcd9da",
+   "eng": "#dcd9da",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#c8c6c6",
+   "eng": "#dcd9da",
+   "dE": 4.7,
+   "rgb": 34
+  },
+  "Light High Contrast": {
+   "fig": "#bab8b9",
+   "eng": "#dcd9da",
+   "dE": 8.2,
+   "rgb": 58
+  },
+  "Dark": {
+   "fig": "#131314",
+   "eng": "#131314",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#131314",
+   "eng": "#131314",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark High Contrast": {
+   "fig": "#131314",
+   "eng": "#131314",
+   "dE": 0,
+   "rgb": 0
+  }
+ },
+ {
+  "role": "Surface Bright",
+  "token": "--m3-surface-bright",
+  "Light": {
+   "fig": "#fbfafa",
+   "eng": "#fcf9f9",
+   "dE": 1,
+   "rgb": 2
+  },
+  "Light Medium Contrast": {
+   "fig": "#fcf9f9",
+   "eng": "#fcf9f9",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light High Contrast": {
+   "fig": "#fcf9f9",
+   "eng": "#fcf9f9",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark": {
+   "fig": "#39393a",
+   "eng": "#39393a",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#454445",
+   "eng": "#39393a",
+   "dE": 3.7,
+   "rgb": 20
+  },
+  "Dark High Contrast": {
+   "fig": "#505050",
+   "eng": "#39393a",
+   "dE": 7.7,
+   "rgb": 39
+  }
+ },
+ {
+  "role": "Surface Container Lowest",
+  "token": "--m3-surface-container-lowest",
+  "Light": {
+   "fig": "#ffffff",
+   "eng": "#ffffff",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#ffffff",
+   "eng": "#ffffff",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light High Contrast": {
+   "fig": "#ffffff",
+   "eng": "#ffffff",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark": {
+   "fig": "#0e0e0f",
+   "eng": "#0e0e0f",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#070708",
+   "eng": "#0e0e0f",
+   "dE": 1.2,
+   "rgb": 12
+  },
+  "Dark High Contrast": {
+   "fig": "#000000",
+   "eng": "#0e0e0f",
+   "dE": 2.4,
+   "rgb": 25
+  }
+ },
+ {
+  "role": "Surface Container Low",
+  "token": "--m3-surface-container-low",
+  "Light": {
+   "fig": "#f6f3f3",
+   "eng": "#f6f3f3",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#f6f3f3",
+   "eng": "#f6f3f3",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light High Contrast": {
+   "fig": "#f3f0f0",
+   "eng": "#f6f3f3",
+   "dE": 0.6,
+   "rgb": 5
+  },
+  "Dark": {
+   "fig": "#1b1b1c",
+   "eng": "#1b1b1c",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#1d1d1e",
+   "eng": "#1b1b1c",
+   "dE": 0.6,
+   "rgb": 3
+  },
+  "Dark High Contrast": {
+   "fig": "#1f1f20",
+   "eng": "#1b1b1c",
+   "dE": 1.3,
+   "rgb": 7
+  }
+ },
+ {
+  "role": "Surface Container",
+  "token": "--m3-surface-container",
+  "Light": {
+   "fig": "#eae7e8",
+   "eng": "#f0edee",
+   "dE": 1.3,
+   "rgb": 10
+  },
+  "Light Medium Contrast": {
+   "fig": "#eae7e8",
+   "eng": "#f0edee",
+   "dE": 1.3,
+   "rgb": 10
+  },
+  "Light High Contrast": {
+   "fig": "#e4e2e2",
+   "eng": "#f0edee",
+   "dE": 2.6,
+   "rgb": 20
+  },
+  "Dark": {
+   "fig": "#1f1f20",
+   "eng": "#1f1f20",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#282828",
+   "eng": "#1f1f20",
+   "dE": 2.9,
+   "rgb": 15
+  },
+  "Dark High Contrast": {
+   "fig": "#303031",
+   "eng": "#1f1f20",
+   "dE": 5.4,
+   "rgb": 29
+  }
+ },
+ {
+  "role": "Surface Container High",
+  "token": "--m3-surface-container-high",
+  "Light": {
+   "fig": "#e7e3e3",
+   "eng": "#eae7e8",
+   "dE": 1,
+   "rgb": 7
+  },
+  "Light Medium Contrast": {
+   "fig": "#dfdcdd",
+   "eng": "#eae7e8",
+   "dE": 2.4,
+   "rgb": 19
+  },
+  "Light High Contrast": {
+   "fig": "#d6d4d4",
+   "eng": "#eae7e8",
+   "dE": 4.4,
+   "rgb": 34
+  },
+  "Dark": {
+   "fig": "#2a2a2b",
+   "eng": "#2a2a2b",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#333233",
+   "eng": "#2a2a2b",
+   "dE": 2.7,
+   "rgb": 14
+  },
+  "Dark High Contrast": {
+   "fig": "#3b3b3c",
+   "eng": "#2a2a2b",
+   "dE": 5.5,
+   "rgb": 29
+  }
+ },
+ {
+  "role": "Surface Container Highest",
+  "token": "--m3-surface-container-highest",
+  "Light": {
+   "fig": "#e4e2e2",
+   "eng": "#e4e2e2",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Light Medium Contrast": {
+   "fig": "#d3d1d1",
+   "eng": "#e4e2e2",
+   "dE": 3.9,
+   "rgb": 29
+  },
+  "Light High Contrast": {
+   "fig": "#c8c6c6",
+   "eng": "#e4e2e2",
+   "dE": 6.6,
+   "rgb": 48
+  },
+  "Dark": {
+   "fig": "#353535",
+   "eng": "#353535",
+   "dE": 0,
+   "rgb": 0
+  },
+  "Dark Medium Contrast": {
+   "fig": "#3e3d3e",
+   "eng": "#353535",
+   "dE": 2.9,
+   "rgb": 15
+  },
+  "Dark High Contrast": {
+   "fig": "#474647",
+   "eng": "#353535",
+   "dE": 5.8,
+   "rgb": 31
+  }
+ }
+]
