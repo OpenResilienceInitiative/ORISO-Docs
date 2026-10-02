@@ -1,0 +1,160 @@
+{
+  "realm": "online-beratung",
+  "enabled": true,
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "resetPasswordAllowed": false,
+  "roles": {
+    "realm": [
+      {
+        "name": "user"
+      },
+      {
+        "name": "user-admin"
+      },
+      {
+        "name": "USER_ADMIN"
+      },
+      {
+        "name": "agency-admin"
+      },
+      {
+        "name": "restricted-agency-admin"
+      },
+      {
+        "name": "tenant-admin"
+      },
+      {
+        "name": "single-tenant-admin"
+      },
+      {
+        "name": "technical"
+      },
+      {
+        "name": "otp-config-admin"
+      },
+      {
+        "name": "consultant"
+      },
+      {
+        "name": "anonymous"
+      },
+      {
+        "name": "asker"
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "app",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "redirectUris": [
+        "http://localhost:*/*",
+        "http://127.0.0.1:*/*"
+      ],
+      "webOrigins": [
+        "http://localhost:9000",
+        "http://127.0.0.1:9000",
+        "http://localhost:9002",
+        "http://127.0.0.1:9002"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256"
+      }
+    },
+    {
+      "clientId": "tenant-service",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "redirectUris": [
+        "http://localhost:*/*",
+        "http://127.0.0.1:*/*"
+      ],
+      "webOrigins": [
+        "http://localhost:9000",
+        "http://127.0.0.1:9000",
+        "http://localhost:9002",
+        "http://127.0.0.1:9002"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256"
+      }
+    },
+    {
+      "clientId": "consulting-type-service",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "redirectUris": [
+        "http://localhost:*/*",
+        "http://127.0.0.1:*/*"
+      ],
+      "webOrigins": [
+        "http://localhost:9000",
+        "http://127.0.0.1:9000",
+        "http://localhost:9002",
+        "http://127.0.0.1:9002"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256"
+      }
+    }
+  ],
+  "users": [
+    {
+      "username": "local-admin",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "local-admin@example.invalid",
+      "firstName": "Local",
+      "lastName": "Administrator",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "local-only-admin",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "user-admin",
+        "USER_ADMIN",
+        "tenant-admin",
+        "agency-admin",
+        "otp-config-admin"
+      ],
+      "clientRoles": {
+        "realm-management": [
+          "realm-admin"
+        ]
+      }
+    },
+    {
+      "username": "local-technical",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "local-technical@example.invalid",
+      "firstName": "Local",
+      "lastName": "Technical",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "local-only-technical",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "technical"
+      ],
+      "id": "99e987bf-d54c-59aa-b2b1-78c34c52a76b"
+    }
+  ]
+}
