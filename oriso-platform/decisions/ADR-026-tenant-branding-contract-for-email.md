@@ -195,11 +195,19 @@ yet". Tracked in `ORISO-UserService#1252`.
   same colours.
 - `accent` and `signal` are read from the tenant but not used until mail has a dark rendering.
 - If the Träger has no usable colour, the platform theming colour is used (TenantService already
-  inherits missing values from it). If that is also missing, mail uses the neutral installation
-  default `#000000` (black, white button label). It is an installation value, not a brand colour,
-  and it is used only when neither tenant nor platform theming has a usable colour. It is exempt
-  from the near-grey rule above, which would otherwise reject it. No error is raised, and no brand
+  inherits missing values from it). If that is also missing or unusable, mail uses the neutral
+  installation default `#000000` (black, white button label). No error is raised, and no brand
   colour is hardcoded in the mail code.
+- **The `#000000` default is an explicit mail-only exception to the near-grey rule.** The web
+  frontend rejects a near-grey ("too pale", chroma below 12) colour, and black is such a colour. That
+  guard applies to a colour a Träger or the platform has *configured*, as a seed. The default is not a
+  configured seed but a constant in the mail code, so it bypasses the guard. The web frontend does not
+  do this: for the same case (no usable colour anywhere) it keeps its default palette, not black.
+  Mail and web therefore differ here on purpose, and this ADR records it rather than hiding it.
+- **The installation setting is the platform tenant's `theming.primaryColor`** (platform theming). It
+  is the one setting an installation uses to change the mail default. The constant `#000000` applies
+  only while that value is unset or unusable (invalid or near-grey). The white label colour follows
+  from the normal 4.5:1 rule applied to whichever colour is in effect.
 - Frontend and UserService are tested against one shared golden fixture of seed colours and expected
   results, owned by the Frontend. UserService keeps a copy and CI checks that the copy is identical.
 
