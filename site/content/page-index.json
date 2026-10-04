@@ -291,7 +291,7 @@
           }
         }
       },
-      "sourceRevision": "99a265e9bab7c013ad8a2fd139d9517cd4dd3b84",
+      "sourceRevision": "7436815a3f675139e4413cf51c508064d2b60bd9",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -434,8 +434,8 @@
           }
         }
       },
-      "sourceRevision": "bc273a25c281e0b2c108fa69915966951eff7cd4",
-      "sourceState": "working-copy",
+      "sourceRevision": "ee2b4b5539aa21b6ceeab4c7d7bbb58b6b841b66",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     },
     {
@@ -4017,7 +4017,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/decisions/ADR-026-tenant-branding-contract-for-email.md",
-      "sourceHash": "a76bf7951d2c68c766112a381e12259f56067d8b13d3d5b7e18c19eb2ae23f49",
+      "sourceHash": "0dc8ec32b21d31847343babc2b806c7a1a2b2389a44ea4ed4dc3771f9361a2a9",
       "locales": {
         "de": {
           "available": true,
@@ -4029,10 +4029,16 @@
             "kontext": "context",
             "decision": "decision",
             "entscheidung": "decision",
-            "implementation-status-measured-on-dev-2026-09-22": "implementation-status-measured-on-dev-2026-09-22",
-            "implementierungsstand-auf-dev-gemessen-2026-09-22": "implementation-status-measured-on-dev-2026-09-22",
+            "historical-implementation-status-measured-on-dev-2026-09-22": "historical-implementation-status-measured-on-dev-2026-09-22",
+            "historischer-implementierungsstand-auf-dev-gemessen-2026-09-22": "historical-implementation-status-measured-on-dev-2026-09-22",
             "what-tenantservice-does-not-have-yet": "what-tenantservice-does-not-have-yet",
             "was-tenantservice-noch-fehlt": "what-tenantservice-does-not-have-yet",
+            "addendum--sender-transport-and-configuration-accepted-2026-09-25": "addendum--sender-transport-and-configuration-accepted-2026-09-25",
+            "nachtrag--sender-transport-und-konfiguration-angenommen-2026-09-25": "addendum--sender-transport-and-configuration-accepted-2026-09-25",
+            "amendment--platform-smtp-source-accepted-2026-09-29": "amendment--platform-smtp-source-accepted-2026-09-29",
+            "änderung--smtp-quelle-der-plattform-angenommen-2026-09-29": "amendment--platform-smtp-source-accepted-2026-09-29",
+            "amendment--mail-colours-follow-the-design-tokens-accepted-2026-10-02": "amendment--mail-colours-follow-the-design-tokens-accepted-2026-10-02",
+            "änderung--e-mail-farben-folgen-den-design-tokens-angenommen-2026-10-02": "amendment--mail-colours-follow-the-design-tokens-accepted-2026-10-02",
             "consequences": "consequences",
             "folgen": "consequences"
           }
@@ -4044,13 +4050,16 @@
             "adr-026-one-tenant-branding-contract-for-e-mail-and-a-colour-that-cannot-carry-white-text-is-rejected": "adr-026-one-tenant-branding-contract-for-e-mail-and-a-colour-that-cannot-carry-white-text-is-rejected",
             "context": "context",
             "decision": "decision",
-            "implementation-status-measured-on-dev-2026-09-22": "implementation-status-measured-on-dev-2026-09-22",
+            "historical-implementation-status-measured-on-dev-2026-09-22": "historical-implementation-status-measured-on-dev-2026-09-22",
             "what-tenantservice-does-not-have-yet": "what-tenantservice-does-not-have-yet",
+            "addendum--sender-transport-and-configuration-accepted-2026-09-25": "addendum--sender-transport-and-configuration-accepted-2026-09-25",
+            "amendment--platform-smtp-source-accepted-2026-09-29": "amendment--platform-smtp-source-accepted-2026-09-29",
+            "amendment--mail-colours-follow-the-design-tokens-accepted-2026-10-02": "amendment--mail-colours-follow-the-design-tokens-accepted-2026-10-02",
             "consequences": "consequences"
           }
         }
       },
-      "sourceRevision": "6f6a9734ed5e0d6681e2b8d0807304a5b3a1872f",
+      "sourceRevision": "d41386073f3d7b5325364d422edc282a6d17a3d4",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },

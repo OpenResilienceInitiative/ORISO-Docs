@@ -1390,13 +1390,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/ADR-026-tenant-branding-contract-for-email.md",
-          "sourceHash": "a76bf7951d2c68c766112a381e12259f56067d8b13d3d5b7e18c19eb2ae23f49",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "0dc8ec32b21d31847343babc2b806c7a1a2b2389a44ea4ed4dc3771f9361a2a9",
+          "reviewedAt": "2026-10-04"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/ADR-026-tenant-branding-contract-for-email.md",
-          "sourceHash": "a76bf7951d2c68c766112a381e12259f56067d8b13d3d5b7e18c19eb2ae23f49",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "0dc8ec32b21d31847343babc2b806c7a1a2b2389a44ea4ed4dc3771f9361a2a9",
+          "reviewedAt": "2026-10-04"
         }
       }
     },
