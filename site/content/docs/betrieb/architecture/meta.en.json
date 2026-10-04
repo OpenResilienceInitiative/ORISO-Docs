@@ -1,0 +1,10 @@
+{
+  "title": "Architecture",
+  "pages": [
+    "backend",
+    "data",
+    "frontend",
+    "infra",
+    "overview"
+  ]
+}

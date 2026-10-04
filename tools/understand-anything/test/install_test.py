@@ -13,10 +13,14 @@ class InstallerTests(unittest.TestCase):
         (self.source/'toolchain.lock.json').write_text(json.dumps({'upstream':{'url':'https://example.invalid/repo','commit':'a'*40},'patches':[],'pnpm':'10.6.2','nodeImage':'node@sha256:test'}))
         (self.source/'ua-pull.sh').write_text('fixture');(self.source/'ua-dashboard.sh').write_text('fixture')
         (self.source/'skills/oriso-graph').mkdir(parents=True);(self.source/'skills/oriso-graph/SKILL.md').write_text('fixture')
+        (self.source/'hosted-viewer').mkdir()
+        for name in ['source-location.mjs','source-location.d.mts']:(self.source/'hosted-viewer'/name).write_text('fixture module')
         self.root=self.base/'runtime';self.profile=self.base/'profile'
     def tearDown(self): self.temp.cleanup()
     def install(self):
-        with patch.object(installer,'SOURCE',self.source),patch.object(installer,'run'):
+        def fake_run(*args,**kwargs):
+            if args[:1]==('git',) and 'checkout' in args:(Path(args[2])/'understand-anything-plugin/packages/dashboard').mkdir(parents=True)
+        with patch.object(installer,'SOURCE',self.source),patch.object(installer,'run',side_effect=fake_run):
             return installer.install(self.root,self.profile)
     def test_same_release_keeps_prior_rollback(self):
         first=self.install();(self.source/'ua-pull.sh').write_text('second');second=self.install()

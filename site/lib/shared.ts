@@ -1,19 +1,19 @@
-export const appName = 'ORISO Dokumentation';
+export const appName = 'ORISO Documentation';
 export const docsRoute = '/';
 export const docsImageRoute = '/og/docs';
 export const docsContentRoute = '/llms.mdx/docs';
 
-/** Path prefix the static export is served under (nginx `location /dokumentation/`). */
-export const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '/dokumentation';
+/** Docs is hosted at its own root; a preview may explicitly choose a prefix. */
+export const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
 
 export const gitConfig = {
   user: 'OpenResilienceInitiative',
   repo: 'ORISO-Docs',
-  branch: 'pre-dev',
+  branch: 'dev',
 };
 
 /** Branch the Understand-Anything graph is built from — GitHub deep links point there. */
-export const codeBranch = 'pre-dev';
+export const codeBranch = 'main';
 
 /**
  * Understand-Anything dashboards on the same origin: repo -> { slug, token }.

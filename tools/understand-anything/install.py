@@ -78,6 +78,9 @@ def install(root, profile=None, docker=False):
 
 def _install_locked(root, profile=None, docker=False):
     lock = json.loads((SOURCE / 'toolchain.lock.json').read_text())
+    for module in lock.get('sourcePreviewModules', []):
+        if digest(SOURCE / module['path']) != module['sha256']:
+            raise ValueError('Source preview module checksum mismatch: ' + module['path'])
     for patch in lock['patches']:
         if digest(SOURCE / patch['path']) != patch['sha256']:
             raise ValueError('Toolchain patch checksum mismatch: ' + patch['path'])
@@ -94,6 +97,8 @@ def _install_locked(root, profile=None, docker=False):
         for patch in lock['patches']:
             run('git', '-C', str(upstream), 'apply', '--check', str(tooling / patch['path']))
             run('git', '-C', str(upstream), 'apply', str(tooling / patch['path']))
+        shutil.copyfile(tooling / 'hosted-viewer/source-location.mjs', upstream / 'understand-anything-plugin/packages/dashboard/source-location.mjs')
+        shutil.copyfile(tooling / 'hosted-viewer/source-location.d.mts', upstream / 'understand-anything-plugin/packages/dashboard/source-location.d.mts')
         def runtime(args, cwd):
             if docker:
                 run('docker', 'run', '--rm', '-v', f'{root}:{root}', '-w', str(cwd), lock['nodeImage'], *args)

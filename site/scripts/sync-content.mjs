@@ -1,25 +1,20 @@
-// Builds the generated part of `content/docs` from the repository's canonical sources.
-//
-//   oriso-platform/dsfa-text/*.md        -> content/docs/legal/dsfa/*.mdx   (chapters, operator drafts)
-//   oriso-platform/dsfa-text/evidence-map.yaml -> content/evidence.json    (data for <Evidence/>)
-//   oriso-platform/decisions/ADR-*.md    -> content/docs/decisions/adr-NNN.md
-//
-// The sources stay the single source of truth; everything written here is git-ignored and
-// regenerated on every `pnpm dev` / `pnpm build`.
-
+// Generates locale pages from the editorial catalog and explicitly marked graph registry.
+// Canonical DSFA publication belongs to Understand; technical Docs never copies it.
 import { readFileSync, writeFileSync, mkdirSync, rmSync, readdirSync, existsSync, cpSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { makeLinkRewriter } from './catalog/link-rewriter.mjs';
+import { buildPageIndex, mergeCatalog, sourceHash, validateFullCurrent, sectionAliases } from './page-catalog.mjs';
+import { sourceEvidence } from './catalog/source-evidence.mjs';
+import { nginxRedirectMap } from './catalog/redirect-map.mjs';
 import { parse as parseYaml } from 'yaml';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const site = join(here, '..');
 const repo = join(site, '..');
-const SRC_DSFA = join(repo, 'oriso-platform', 'dsfa-text');
+const generatedPages = existsSync(join(repo,'docs/generated/page-catalog.json')) ? (await import('../../tools/truth-chain/lib/generated-catalog.mjs')).loadGeneratedCatalog(repo) : [];
 const SRC_ADR = join(repo, 'oriso-platform', 'decisions');
 const OUT_DOCS = join(site, 'content', 'docs');
-const OUT_DSFA = join(OUT_DOCS, 'legal', 'dsfa');
-const OUT_ADR = join(OUT_DOCS, 'decisions');
 
 // ------------------------------------------------------------------ helpers
 
@@ -39,238 +34,6 @@ function splitTitle(md) {
   const m = md.match(/^# (.+)\n/);
   if (!m) return { title: undefined, body: md };
   return { title: m[1].trim(), body: md.slice(m[0].length).replace(/^\n+/, '') };
-}
-
-/** First real paragraph (no heading, no table, no list) trimmed to ~180 chars — used as description. */
-function firstParagraph(body) {
-  const paras = body.split(/\n\s*\n/);
-  for (const p of paras) {
-    const t = p.trim();
-    if (!t || /^[#>|\-*\d]/.test(t) || t.startsWith('```') || t.startsWith('<')) continue;
-    const one = t.replace(/\s+/g, ' ');
-    return one.length > 180 ? one.slice(0, 177).replace(/\s+\S*$/, '') + ' …' : one;
-  }
-  return undefined;
-}
-
-/** Turn bare `ADR-0NN` mentions into links — but not inside inline code, links or headings. */
-function linkAdrMentions(md, known) {
-  const lines = md.split('\n');
-  let inFence = false;
-  return lines
-    .map((line) => {
-      if (/^\s*```/.test(line)) inFence = !inFence;
-      if (inFence || /^#/.test(line)) return line;
-      // Protect inline code and existing markdown links.
-      const parts = line.split(/(`[^`]*`|\[[^\]]*\]\([^)]*\))/);
-      return parts
-        .map((seg, i) => {
-          if (i % 2 === 1) return seg;
-          return seg.replace(/\bADR-(\d{3})\b/g, (whole, num) =>
-            known.has(num) ? `[${whole}](/decisions/adr-${num})` : whole,
-          );
-        })
-        .join('');
-    })
-    .join('\n');
-}
-
-// ------------------------------------------------------------------ ADRs
-
-function syncAdrs() {
-  rmSync(OUT_ADR, { recursive: true, force: true });
-  mkdirSync(OUT_ADR, { recursive: true });
-
-  const files = readdirSync(SRC_ADR)
-    .filter((f) => /^ADR-\d{3}-.*\.md$/.test(f))
-    .sort();
-  const known = new Set(files.map((f) => f.match(/^ADR-(\d{3})/)[1]));
-
-  const pages = [];
-  for (const f of files) {
-    const num = f.match(/^ADR-(\d{3})/)[1];
-    const raw = readUtf8(join(SRC_ADR, f));
-    const { title, body } = splitTitle(raw);
-    const status = (body.match(/\*\*Status:\*\*\s*([^\n]+)/) || [])[1]?.replace(/[*_]/g, '').trim();
-    const date = (body.match(/\*\*Date:\*\*\s*([^\n]+)/) || [])[1]?.trim();
-    const slug = `adr-${num}`;
-    const meta = {
-      title: title ?? f.replace(/\.md$/, ''),
-      description: [status && `Status: ${status}`, date && `Datum: ${date}`].filter(Boolean).join(' · ') || undefined,
-      source: `oriso-platform/decisions/${f}`,
-    };
-    // ADRs stay plain Markdown (they contain angle brackets and braces in prose and code).
-    writeFileSync(join(OUT_ADR, `${slug}.md`), frontmatter(meta) + linkAdrMentions(body, known));
-    pages.push(slug);
-  }
-
-  const adrIndex = {};
-  for (const f of files) {
-    const num = f.match(/^ADR-(\d{3})/)[1];
-    const { title, body } = splitTitle(readUtf8(join(SRC_ADR, f)));
-    const status = (body.match(/\*\*Status:\*\*\s*([^\n]+)/) || [])[1]?.replace(/[*_]/g, '').trim();
-    adrIndex[num] = { title: title ?? f, status, slug: `adr-${num}` };
-  }
-  mkdirSync(join(site, 'content'), { recursive: true });
-  writeFileSync(join(site, 'content', 'adr-index.json'), JSON.stringify(adrIndex, null, 2) + '\n');
-
-  const readme = existsSync(join(SRC_ADR, 'README.md')) ? readUtf8(join(SRC_ADR, 'README.md')) : '';
-  const { body: readmeBody } = splitTitle(readme);
-  const index =
-    frontmatter({
-      title: 'Architekturentscheidungen (ADR)',
-      description: `Plattformweite Architecture Decision Records — ${files.length} Entscheidungen, aus dem Repository ORISO-Docs.`,
-    }) +
-    `Diese Reihe ist die kanonische Sammlung der plattformweiten Entscheidungen. Die DSFA-Kapitel verweisen auf sie; jeder Verweis der Form \`ADR-0NN\` in den Kapiteltexten ist auf die jeweilige Seite verlinkt.\n\n` +
-    `| Nr. | Entscheidung | Status |\n|---|---|---|\n` +
-    files
-      .map((f) => {
-        const num = f.match(/^ADR-(\d{3})/)[1];
-        const raw = readUtf8(join(SRC_ADR, f));
-        const { title, body } = splitTitle(raw);
-        const status = (body.match(/\*\*Status:\*\*\s*([^\n]+)/) || [])[1]?.replace(/[*_]/g, '').trim() ?? '';
-        const short = (title ?? '').replace(/^ADR-\d{3}\s*[:—–-]\s*/, '');
-        return `| [ADR-${num}](/decisions/adr-${num}) | ${short.replace(/\|/g, '\\|')} | ${status.replace(/\|/g, '\\|').slice(0, 60)} |`;
-      })
-      .join('\n') +
-    `\n\n## Herkunft und Pflege\n\n` +
-    linkAdrMentions(readmeBody, known);
-  writeFileSync(join(OUT_ADR, 'index.md'), index);
-  writeFileSync(
-    join(OUT_ADR, 'meta.json'),
-    JSON.stringify({ title: 'Entscheidungen (ADR)', root: true, pages: ['index', ...pages] }, null, 2) + '\n',
-  );
-  return known;
-}
-
-// ------------------------------------------------------------------ evidence map
-
-function loadEvidence() {
-  const doc = parseYaml(readUtf8(join(SRC_DSFA, 'evidence-map.yaml')));
-  const entries = (doc.entries ?? []).map((e) => ({
-    slug: e.slug,
-    chapter: String(e.chapter),
-    claim: e.claim,
-    status: e.status,
-    evidence: (e.evidence ?? []).map((ev) => ({
-      repo: ev.repo,
-      path: ev.path,
-      lines: ev.lines ? String(ev.lines) : undefined,
-      expect: ev.expect ?? [],
-      note: ev.note,
-    })),
-  }));
-  mkdirSync(join(site, 'content'), { recursive: true });
-  writeFileSync(
-    join(site, 'content', 'evidence.json'),
-    JSON.stringify({ generated: String(doc.generated ?? ''), entries }, null, 2) + '\n',
-  );
-  const byChapter = new Map();
-  for (const e of entries) {
-    if (!byChapter.has(e.chapter)) byChapter.set(e.chapter, []);
-    byChapter.get(e.chapter).push(e.slug);
-  }
-  return byChapter;
-}
-
-// ------------------------------------------------------------------ DSFA chapters
-
-// Which platform decisions belong to which section. Curated by hand; verified against the ADR
-// titles on 2026-08-17. Keys are `<file-stem>#<section number>`.
-const RELATED_ADRS = {
-  'kap-06#6.2': ['001', '006', '007', '012'],
-  'kap-06#6.2.6': ['020'],
-  'kap-06#6.3': ['003', '014', '021', '022'],
-  'kap-06#6.4': ['023'],
-  'kap-06#6.5': ['013'],
-  'kap-06#6.9': ['002', '004', '005'],
-  'kap-06#6.10': ['020'],
-  'kap-06#6.12': ['015', '019'],
-  'kap-06#6.13': ['002', '008', '016'],
-  'kap-06#6.14': ['018'],
-  'kap-06#6.16': ['010', '011', '023'],
-  'kap-06#6.17': ['005', '011'],
-  'kap-07#7.2': ['021', '022'],
-  'kap-08#8.10': ['022'],
-};
-
-const DSFA_FILES = [
-  { src: 'README.md', out: 'index', title: 'DSFA — Entwicklerteil', order: 0 },
-  { src: 'kap-02-schwellwertanalyse.md', out: '02-schwellwertanalyse', order: 2 },
-  { src: 'kap-06-verfahren-und-technik.md', out: '06-verfahren-und-technik', order: 6 },
-  { src: 'kap-07-rechtsgrundlagen.md', out: '07-rechtsgrundlagen', order: 7 },
-  { src: 'kap-08-betroffenenrechte.md', out: '08-betroffenenrechte', order: 8 },
-  { src: 'kap-10-ergebnis.md', out: '10-ergebnis', order: 10 },
-  { src: 'vorlagen-betreiber.md', out: 'vorlagen-betreiber', title: 'Vorlagen für den Betreiber', order: 20 },
-];
-
-function injectSectionBlocks(body, stem, byChapter, adrKnown) {
-  // For every numbered heading (## 6.6 / ### 6.2.6) that owns related ADRs or evidence entries,
-  // append the blocks at the END of that section — i.e. right before the next heading of the
-  // same or a higher level (or at EOF). Inserts run bottom-up so indices stay valid.
-  const lines = body.split('\n');
-  const headings = [];
-  let inFence = false;
-  lines.forEach((line, i) => {
-    if (/^\s*```/.test(line)) inFence = !inFence;
-    const h = !inFence && line.match(/^(#{2,3}) (\d+(?:\.\d+)+)\s/);
-    if (h) headings.push({ i, level: h[1].length, key: h[2] });
-  });
-  const inserts = [];
-  headings.forEach((h, idx) => {
-    const adrs = RELATED_ADRS[`${stem}#${h.key}`]?.filter((n) => adrKnown.has(n)) ?? [];
-    const evidence = byChapter.get(h.key) ?? [];
-    if (!adrs.length && !evidence.length) return;
-    const next = headings.slice(idx + 1).find((n) => n.level <= h.level);
-    const at = next ? next.i : lines.length;
-    const block = [];
-    if (adrs.length) block.push('', `<RelatedAdrs numbers={${JSON.stringify(adrs)}} />`);
-    if (evidence.length) block.push('', `<Evidence chapter=${JSON.stringify(h.key)} slugs={${JSON.stringify(evidence)}} />`);
-    block.push('');
-    inserts.push({ at, block });
-  });
-  inserts.sort((a, b) => b.at - a.at);
-  for (const { at, block } of inserts) lines.splice(at, 0, ...block);
-  return lines.join('\n');
-}
-
-function syncDsfa(byChapter, adrKnown) {
-  rmSync(OUT_DSFA, { recursive: true, force: true });
-  mkdirSync(OUT_DSFA, { recursive: true });
-  const pages = [];
-  for (const f of DSFA_FILES.sort((a, b) => a.order - b.order)) {
-    const p = join(SRC_DSFA, f.src);
-    if (!existsSync(p)) continue;
-    const raw = readUtf8(p);
-    const { title, body } = splitTitle(raw);
-    let text = linkAdrMentions(body, adrKnown);
-    const stem = (f.src.match(/^kap-\d+/) || [f.src])[0]; // kap-06
-    if (/^kap-/.test(f.src)) text = injectSectionBlocks(text, stem, byChapter, adrKnown);
-    // The README's own file table references sibling files by name — turn them into links.
-    if (f.src === 'README.md') {
-      for (const g of DSFA_FILES) {
-        if (g.src === 'README.md') continue;
-        text = text.replaceAll('`' + g.src + '`', `[\`${g.src}\`](/legal/dsfa/${g.out})`);
-      }
-    }
-    const meta = {
-      title: f.title ?? title ?? f.out,
-      description: firstParagraph(body),
-      source: `oriso-platform/dsfa-text/${f.src}`,
-    };
-    writeFileSync(join(OUT_DSFA, `${f.out}.mdx`), frontmatter(meta) + text);
-    pages.push(f.out);
-  }
-  writeFileSync(
-    join(OUT_DSFA, 'meta.json'),
-    JSON.stringify({ title: 'DSFA (Datenschutz-Folgenabschätzung)', pages }, null, 2) + '\n',
-  );
-  mkdirSync(join(OUT_DOCS, 'legal'), { recursive: true });
-  writeFileSync(
-    join(OUT_DOCS, 'legal', 'meta.json'),
-    JSON.stringify({ title: 'Recht & Compliance', root: true, pages: ['dsfa'] }, null, 2) + '\n',
-  );
-  return pages;
 }
 
 // ------------------------------------------------------------------ Produkt- und Plattformdoku
@@ -335,6 +98,23 @@ function migrateMdx(raw) {
   return out;
 }
 
+/**
+ * ```mermaid-Blöcke in `<Mermaid chart={…} />` überführen.
+ *
+ * In den Quelldateien bleibt der Zaun stehen — GitHub rendert ihn von sich aus, und der
+ * Diagrammtext bleibt diffbar. Auf der Site zeichnet die Komponente ihn im Browser. Der
+ * Diagrammtext geht als JSON-String in das Attribut, damit Anführungszeichen, Klammern und
+ * Zeilenumbrüche MDX nicht durcheinanderbringen.
+ */
+function convertMermaid(text) {
+  let found = 0;
+  const out = text.replace(/^```mermaid\n([\s\S]*?)^```[ \t]*$/gm, (_whole, body) => {
+    found++;
+    return `<Mermaid chart={${JSON.stringify(body.replace(/\n$/, ''))}} />`;
+  });
+  return { text: out, found };
+}
+
 /** Bilder der Alt-Doku unter public/ bereitstellen — die Seiten verweisen absolut darauf. */
 function copyDocsAssets() {
   let n = 0;
@@ -354,60 +134,168 @@ function copyDocsAssets() {
   return n;
 }
 
-function syncProductDocs() {
-  const cfgPath = join(repo, 'docs.json');
-  if (!existsSync(cfgPath)) return [];
-  const cfg = JSON.parse(readUtf8(cfgPath));
-  const tabs = cfg.navigation?.tabs ?? [];
-  // Tab-Titel -> Ordnername und Anzeigename in der Seitenleiste
-  const TAB_DIRS = {
-    'Product': ['produkt', 'Produkt'],
-    'ORISO Platform Architecture': ['plattform', 'Plattform-Architektur'],
-    'ORISO Platform Setup': ['betrieb', 'Betrieb & Einrichtung'],
-  };
-  const roots = [];
-  let pages = 0;
-  const missing = [];
+// ------------------------------------------------------------------ Links umschreiben
 
-  for (const tab of tabs) {
-    const [dir, label] = TAB_DIRS[tab.tab] ?? [tab.tab.toLowerCase().replace(/\W+/g, '-'), tab.tab];
-    const outRoot = join(OUT_DOCS, dir);
-    rmSync(outRoot, { recursive: true, force: true });
-    mkdirSync(outRoot, { recursive: true });
-    const groupDirs = [];
+const GITHUB_BLOB = 'https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/dev';
 
-    for (const group of tab.groups ?? []) {
-      const gdir = group.group.toLowerCase().replace(/&/g, 'und').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-      const gPath = join(outRoot, gdir);
-      mkdirSync(gPath, { recursive: true });
-      const gPages = [];
+/**
+ * Die Seiten stammen aus einer Mintlify-Navigation und verlinken einander auf zwei Arten,
+ * von denen im Fumadocs-Baum keine mehr stimmt:
+ *
+ *   `/oriso-platform/troubleshooting`  — Mintlify-Seiten-ID, hier gibt es diesen Pfad nicht
+ *   `./backend-services.md`            — Repository-Nachbardatei, liegt hier in einer anderen Gruppe
+ *
+ * Beides wird auf die tatsächliche Seiten-URL abgebildet (`/plattform/kernsysteme/backend-services`).
+ * Verweise auf Repository-Dateien, die keine Seite sind (`./diagrams/auth-flow.mmd`,
+ * `services-local-setup/run-oriso-local.sh`), zeigen auf GitHub — dort sind sie lesbar,
+ * und externe Links öffnet die Site ohnehin in einem neuen Tab.
+ */
+/**
+ * Die Site setzt die Überschrift aus dem Frontmatter-Titel. Steht im Text noch einmal
+ * dieselbe H1 — so schreiben es die aus dem Graphen erzeugten Seiten —, erscheint sie
+ * doppelt. Also entfernen, aber nur wenn sie wirklich dem Titel entspricht.
+ */
+function dropDuplicateH1(raw) {
+  const fm = raw.match(/^---\n([\s\S]*?)\n---\n/);
+  if (!fm) return raw;
+  const title = fm[1].match(/^title:\s*(.+)$/m)?.[1].trim().replace(/^["']|["']$/g, '');
+  if (!title) return raw;
+  const rest = raw.slice(fm[0].length);
+  const h1 = rest.match(/^\n*# (.+)\n/);
+  if (!h1) return raw;
+  const norm = (s) => s.toLowerCase().replace(/[^\p{L}\p{N}]/gu, '');
+  if (norm(h1[1]) !== norm(title)) return raw;
+  return fm[0] + rest.slice(h1[0].length).replace(/^\n+/, '');
+}
 
-      for (const page of group.pages ?? []) {
-        // Mintlify referenziert ohne Endung; im Repo liegen .mdx und .md gemischt.
-        const src = [page + '.mdx', page + '.md'].map((c) => join(repo, c)).find(existsSync);
-        if (!src) { missing.push(page); continue; }
-        const name = page.split('/').pop();
-        // .md-Quellen bleiben .md — sie enthalten keine Komponenten und dürfen nicht
-        // versehentlich als JSX geparst werden (spitze Klammern in Beispielen).
-        const isMdx = src.endsWith('.mdx');
-        writeFileSync(join(gPath, name + (isMdx ? '.mdx' : '.md')),
-                      isMdx ? migrateMdx(readUtf8(src)) : readUtf8(src));
-        gPages.push(name);
-        pages++;
-      }
-      if (!gPages.length) { rmSync(gPath, { recursive: true, force: true }); continue; }
-      writeFileSync(join(gPath, 'meta.json'),
-        JSON.stringify({ title: group.group, pages: gPages }, null, 2) + '\n');
-      groupDirs.push(gdir);
+function syncCatalogDocs() {
+  function removeLocalized(dir) {
+    for(const entry of readdirSync(dir,{withFileTypes:true})) {
+      const path=join(dir,entry.name);
+      if(entry.isDirectory()) removeLocalized(path);
+      else if(/\.(de|en)\.(mdx?|json)$/.test(entry.name)) rmSync(path);
     }
-
-    writeFileSync(join(outRoot, 'meta.json'),
-      JSON.stringify({ title: label, root: true, pages: groupDirs }, null, 2) + '\n');
-    roots.push(dir);
   }
-  console.log(`[sync-content] ${pages} Produkt-/Plattformseiten übernommen` +
-              (missing.length ? `, ${missing.length} fehlen: ${missing.slice(0, 4).join(', ')}` : ''));
-  return roots;
+  const catalogPath = join(site, 'page-catalog.json');
+  const editorialCatalog = JSON.parse(readUtf8(catalogPath));
+  const catalog = mergeCatalog(editorialCatalog, generatedPages);
+  const cfg = JSON.parse(readUtf8(join(repo, 'docs.json')));
+  const lifecycle = new Map();
+  for (const tab of cfg.navigation.tabs) for (const group of tab.groups ?? [])
+    for (const id of group.pages ?? []) lifecycle.set(id, group.group === 'Archive' ? 'archived' : 'current');
+  for (const page of catalog.pages) {
+    if (lifecycle.has(page.id)) page.lifecycle = lifecycle.get(page.id);
+    page.translations ??= {};
+    for (const locale of ['de', 'en']) {
+      const path = `site/translations/${locale}/${page.source}`;
+      // First import binds a new translation to its source; never re-stamp old records.
+      if (!page.translations[locale] && existsSync(join(repo, path)))
+        page.translations[locale] = { path, sourceHash: sourceHash(readFileSync(join(repo, page.source))), reviewedAt: '2026-09-30' };
+    }
+  }
+  const read = p => existsSync(join(repo, p)) ? readUtf8(join(repo, p)) : undefined;
+  const index = buildPageIndex(catalog, read);
+  for (const page of index.pages) Object.assign(page, sourceEvidence(repo,page.source,page.sourceHash));
+  writeFileSync(catalogPath, JSON.stringify(editorialCatalog, null, 2) + '\n');
+  writeFileSync(join(site, 'content', 'page-index.json'), JSON.stringify(index, null, 2) + '\n');
+  mkdirSync(join(site,'nginx'),{recursive:true});
+  writeFileSync(join(site,'nginx','legacy-redirects.conf'),nginxRedirectMap(index.pages));
+  if (process.argv.includes('--full-current')) validateFullCurrent(index);
+  removeLocalized(OUT_DOCS);
+  const dirs = new Map();
+  for (const locale of ['de', 'en']) {
+    const urls = new Map(), anchors = new Map();
+    for (const page of index.pages) {
+      for (const alias of [page.id, page.route, ...page.aliases]) {
+        const key = alias.replace(/^\//, '').replace(/\.mdx?$/, '');
+        urls.set(key, `/${locale}${page.route ? '/' + page.route : ''}`);
+        anchors.set(key, Object.values(page.locales[locale].sectionAliases));
+      }
+    }
+    const linker = makeLinkRewriter(urls, p => /^(oriso-platform\/assets|product\/assets|logo)\//.test(p) && existsSync(join(repo,p)), anchors, repo);
+    for (const page of catalog.pages) {
+      const state = index.pages.find(p => p.id === page.id).locales[locale];
+      const raw = state.available ? read(page.translations[locale].path) : read(page.source);
+      let body = dropDuplicateH1(raw);
+      if(page.id === 'oriso-platform/decisions/README') {
+        const columns = locale === 'de' ? '| Entscheidung | Titel | Quellstatus |' : '| Decision | Title | Source status |';
+        body += '\n\n' + columns + '\n|---|---|---|\n' + catalog.pages.filter(p => /^decisions\/adr-/.test(p.route)).map(adr => {
+          const original = read(adr.source);
+          const translated = adr.translations[locale] ? read(adr.translations[locale].path) : undefined;
+          const title = splitTitle(translated ?? original).title ?? adr.id;
+          const status = original.match(/\*\*Status:\*\*\s*([^\n]+)/)?.[1] ?? '';
+          return `| [${adr.route.split('/').pop().toUpperCase()}](/${locale}/${adr.route}) | ${title.replace(/\|/g,'\\|')} | ${status.replace(/\|/g,'\\|')} |`;
+        }).join('\n') + '\n';
+      }
+      if (!/^---\n/.test(body)) {
+        const split = splitTitle(body);
+        body = frontmatter({title: split.title ?? page.id}) + split.body;
+      }
+      // Runtime source links always point at the canonical source, never the generated locale copy.
+      const fm = body.match(/^---\n([\s\S]*?)\n---\n/);
+      if (fm) body = frontmatter({...parseYaml(fm[1]), source: page.source}) + body.slice(fm[0].length).replace(/^\n+/, '');
+      if (page.source.endsWith('.mdx')) body = migrateMdx(body);
+      const mermaid = convertMermaid(body);
+      const extension = page.source.endsWith('.mdx') || mermaid.found ? 'mdx' : 'md';
+      const route = page.route || 'index';
+      const fileRoute = catalog.pages.some(other => other.route.startsWith(route + '/')) ? route + '/index' : route;
+      const out = join(OUT_DOCS, `${fileRoute}.${locale}.${extension}`);
+      mkdirSync(dirname(out), { recursive: true });
+      writeFileSync(out, linker.rewrite(mermaid.text, dirname(page.source)));
+      // Folder index uses Fumadocs index files; independent stable route is directory URL.
+      const dir = dirname(fileRoute);
+      if (!dirs.has(dir)) dirs.set(dir, new Set());
+      dirs.get(dir).add(fileRoute.split('/').pop());
+    }
+  }
+  // Remove legacy non-localized generated pages, preserving the canonical home source.
+  function clean(dir) {
+    for (const entry of readdirSync(dir, {withFileTypes:true})) {
+      const p=join(dir,entry.name);
+      if(entry.isDirectory()) clean(p);
+      else if (/\.mdx?$/.test(entry.name) && !/\.(de|en)\.mdx?$/.test(entry.name) && p !== join(OUT_DOCS,'index.mdx')) rmSync(p);
+      else if(entry.name==='meta.json') rmSync(p);
+    }
+  }
+  clean(OUT_DOCS);
+  // Navigation placement may change without changing page URLs.
+  const tabDirs={'Product':'produkt','ORISO Platform Architecture':'plattform','ORISO Platform Setup':'betrieb'};
+  const moved = new Map();
+  for(const tab of cfg.navigation.tabs) for(const group of tab.groups ?? []) for(const id of group.pages ?? []) {
+    const page=catalog.pages.find(p=>p.id===id); if(!page) continue;
+    const groupDir=group.group.toLowerCase().replace(/&/g,'und').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+    const target=`${tabDirs[tab.tab]}/${groupDir}`;
+    const route=page.route || 'index';
+    const fileRoute=catalog.pages.some(other=>other.route.startsWith(route+'/')) ? route+'/index' : route;
+    const originalDir=dirname(fileRoute);
+    if(target!==originalDir && page.route) {
+      dirs.get(originalDir)?.delete(fileRoute.split('/').pop());
+      if(!dirs.has(target)) dirs.set(target,new Set());
+      const key='@'+id; dirs.get(target).add(key); moved.set(key,page);
+    }
+  }
+  for(const [dir,names] of dirs) if(!names.size) dirs.delete(dir);
+  // Meta files are locale-specific; hierarchy follows frozen catalog routes.
+  for(const dir of [...dirs.keys()]) {
+    let child=dir;
+    while(child!=='.') {
+      const parent=dirname(child);
+      if(!dirs.has(parent)) dirs.set(parent,new Set());
+      dirs.get(parent).add(child.split('/').pop());
+      child=parent;
+    }
+  }
+  function folderTitle(dir,locale) {
+    const key=dir.split('/').pop();
+    const labels={graphs:['Generierte Graphbelege','Generated graph evidence'],produkt:['Produkt','Product'],plattform:['Plattformarchitektur','Platform architecture'],betrieb:['Einrichtung und Betrieb','Setup and operations'],decisions:['Architekturentscheidungen','Architecture decisions'],'start-here':['Hier beginnen','Start here'],'core-systems':['Kernsysteme','Core systems'],'flows-und-reference':['Abläufe und Referenz','Flows and reference'],'knowledge-graphs':['Wissensgraphen','Knowledge graphs'],archive:['Archiv','Archive'],overview:['Überblick','Overview'],'architecture-und-roles':['Architektur und Rollen','Architecture and roles'],'core-features':['Kernfunktionen','Core features'],'flows-und-internals':['Abläufe und Interna','Flows and internals'],'design-und-quality':['Design und Qualität','Design and quality'],'getting-started':['Erste Schritte','Getting started'],architecture:['Architektur','Architecture'],deployment:['Bereitstellung','Deployment'],'configuration-und-testing':['Konfiguration und Tests','Configuration and testing'],operations:['Betrieb','Operations']};
+    return dir==='.'?'ORISO':labels[key]?.[locale==='de'?0:1] ?? key;
+  }
+  for(const [dir, names] of dirs) for(const locale of ['de','en']) {
+    const pages=[...names].sort((a,b)=>a==='index'?-1:b==='index'?1:a.localeCompare(b,'en'));
+    const folder=join(OUT_DOCS,dir==='.'?'':dir); mkdirSync(folder,{recursive:true});
+    writeFileSync(join(folder,`meta.${locale}.json`),JSON.stringify({title: folderTitle(dir,locale),pages: pages.map(name => { const page=moved.get(name); if(!page)return name; const translation=page.translations[locale]; const text=translation ? read(translation.path) : read(page.source); const title=text.match(/^title:\s*(.+)$/m)?.[1].replace(/^['"]|['"]$/g,'') ?? splitTitle(text).title ?? page.id.split('/').pop(); return `[${title}](/${locale}/${page.route})`; })},null,2)+'\n');
+  }
+  console.log(`[sync-content] Catalog ${index.pages.length} pages; current translations ${index.coverage.completePairs}/${index.coverage.currentPages}, missing ${index.coverage.missing.length}, stale ${index.coverage.stale.length}`);
 }
 
 // ------------------------------------------------------------------ main
@@ -415,9 +303,8 @@ function syncProductDocs() {
 // Die DSFA lebt als eigenständiges Dokument auf understand.oriso.org/legal/dsfa/ und wird
 // hier bewusst NICHT gerendert — diese Site trägt die Entwickler- und Produktdokumentation.
 rmSync(join(OUT_DOCS, 'legal'), { recursive: true, force: true });
-const adrKnown = syncAdrs();
-const roots = syncProductDocs();
+const adrCount = readdirSync(SRC_ADR).filter(name => /^ADR-\d{3}-.*\.md$/.test(name)).length;
+syncCatalogDocs();
 const assets = copyDocsAssets();
-writeFileSync(join(OUT_DOCS, 'meta.json'),
-  JSON.stringify({ pages: ['index', ...roots, 'decisions'] }, null, 2) + '\n');
-console.log(`[sync-content] ${adrKnown.size} ADRs, ${assets} Bilddateien, Wurzeln: ${roots.join(', ')}`);
+
+console.log(`[sync-content] ${adrCount} ADRs, ${assets} Bilddateien, catalog routes`);
