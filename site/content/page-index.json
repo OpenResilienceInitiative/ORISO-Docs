@@ -6271,7 +6271,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "product/features/self-help-groups.mdx",
-      "sourceHash": "ca460614c95ff67e956d4adc8a8196568d035de0efcf73e3aa43a8a42f2fbc96",
+      "sourceHash": "c3895cb4b286def3ebb24f4ddbe8c90d7b3e79d1d37ba25ac141458cfef3b010",
       "locales": {
         "de": {
           "available": true,
@@ -6310,7 +6310,7 @@
           }
         }
       },
-      "sourceRevision": "910c6edb98bdb0d7def1b4448b49e369a2eeafce",
+      "sourceRevision": "029e785e0ff893cabca7ab5911ef273255b20632",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },

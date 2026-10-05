@@ -118,16 +118,18 @@ The consent story has three steps. Steps 1 and 2 are merged into `dev`. Step 3 i
    (ORISO-Frontend#1531).
 2. **At registration: no agreement is recorded (merged).** The invite link names the
    Beratungsstelle but no postcode, so the app registers with the placeholder postcode `00000`.
-   For that placeholder the server deliberately clears the privacy and terms confirmations on the
-   new account, exactly as it does for the anonymous live chat. So after joining through the link,
-   **0a and 0b accounts have no agreement on record**, even though the box was ticked.
+   The registration also sends the terms confirmation (`termsAccepted: "true"`), as every
+   registration does. For the placeholder postcode the server then deliberately clears **both** the
+   privacy confirmation and the terms confirmation on the new account, exactly as it does for the
+   anonymous live chat. So after joining through the link, **0a and 0b accounts have neither
+   agreement on record**, even though the box was ticked.
 3. **Before the first message: the Beratungsstelle's privacy statement (pending,
    ORISO-Frontend#1549).** Decided by Frank on 23.09.2026. A group client whose agreement is not on
    record sees the statement of the Beratungsstelle that runs the group before they can write. This
    is the second consent gate of [ADR-022](/en/decisions/adr-022), with the same sentence rules as the
    live chat. The client answers "Einverstanden" or "Ablehnen". The statement replaces the
-   conversation, and the composer stays hidden until the client agrees. "Einverstanden" records the
-   agreement on the account.
+   conversation, and the composer stays hidden until the client agrees. "Einverstanden" records
+   both the privacy confirmation and the terms confirmation on the account.
 
 <Callout type="warn">
 **Until ORISO-Frontend#1549 is merged**, a client who joined through the link has no agreement on
@@ -181,13 +183,15 @@ token check itself is merged (ORISO-UserService#1248).
 - After registration the app follows the link as before: `PUT /users/chat/<id>/assign` answers
   `409` because the person is already a member, and the app opens the waiting room.
 - Consent (merged): the group entry renders `AccountData` with `entry="link"` and the default
-  `dataProtection="checkbox"`. `RegistrationProvider` sends `postcode: "00000"` for a link that
-  names the agency, and `CreateUserFacade.shouldClearPrivacyConfirmations` in ORISO-UserService
+  `dataProtection="checkbox"`. `Registration.tsx` sends `termsAccepted: "true"` with every
+  registration, `RegistrationProvider` sends `postcode: "00000"` for a link that names the agency,
+  and `CreateUserFacade.shouldClearPrivacyConfirmations` in ORISO-UserService
   sets `dataPrivacyConfirmation` and `termsAndConditionsConfirmation` to `null` for that postcode.
   This rides on the anonymous live-chat placeholder; there is no group-specific rule.
 - Consent gate (pending, ORISO-Frontend#1549): `SessionItemComponent` shows `GroupConsentGate`
   when the session is a group, the user is an asker and `userData.dataPrivacyConfirmation` is
-  empty. "Einverstanden" sends `PATCH /users/data` with `dataPrivacyConfirmation: true`.
+  empty. "Einverstanden" sends `PATCH /users/data` with `dataPrivacyConfirmation: true` and
+  `termsAndConditionsConfirmation: true`.
 - Deploy order: the backend ignores unknown fields and the old frontend never sends
   `groupChatId`, so either side can go first. The rule takes effect once both are deployed.
 
@@ -206,7 +210,7 @@ server for this page.
 | Registration through the link opens no enquiry (backend) | ORISO-UserService#1241 | open, pending |
 | Registration through the link names the group (frontend) | ORISO-Frontend#1547 | open, pending |
 | Privacy gate before the first group message, legal menu in the waiting room, group words while joining | ORISO-Frontend#1549 (after #1547) | open, pending |
-| Automatic deletion of join-without-account accounts | ORISO-UserService#1247, ORISO-Frontend#1552 (part of ORISO-UserService#1001) | both open, pending; #1247 has merge conflicts |
+| Automatic deletion of join-without-account accounts | ORISO-UserService#1247, ORISO-Frontend#1552 (part of ORISO-UserService#1001) | both open, pending; #1247 has changes requested in review |
 | Group start time and repeat setting kept when editing | ORISO-UserService#1234, ORISO-Frontend#1527 | both open |
 | Chat-Info on phones, create form, countdown | ORISO-Frontend#1528, #1529, #1530 | open |
 | Consent pointer per group membership | — | not started |
