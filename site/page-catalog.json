@@ -2037,12 +2037,12 @@
       "translations": {
         "en": {
           "path": "site/translations/en/product/features/self-help-groups.mdx",
-          "sourceHash": "ca460614c95ff67e956d4adc8a8196568d035de0efcf73e3aa43a8a42f2fbc96",
+          "sourceHash": "c3895cb4b286def3ebb24f4ddbe8c90d7b3e79d1d37ba25ac141458cfef3b010",
           "reviewedAt": "2026-10-05"
         },
         "de": {
           "path": "site/translations/de/product/features/self-help-groups.mdx",
-          "sourceHash": "ca460614c95ff67e956d4adc8a8196568d035de0efcf73e3aa43a8a42f2fbc96",
+          "sourceHash": "c3895cb4b286def3ebb24f4ddbe8c90d7b3e79d1d37ba25ac141458cfef3b010",
           "reviewedAt": "2026-10-05"
         }
       }

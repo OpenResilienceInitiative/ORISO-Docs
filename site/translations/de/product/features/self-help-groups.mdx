@@ -121,17 +121,18 @@ Die Einwilligung läuft in drei Schritten. Schritt 1 und 2 sind in `dev` gemergt
    sein muss (ORISO-Frontend#1531).
 2. **Bei der Registrierung: keine Einwilligung gespeichert (gemergt).** Der Einladungslink nennt
    die Beratungsstelle, aber keine Postleitzahl, daher registriert die App mit der
-   Platzhalter-Postleitzahl `00000`. Für diesen Platzhalter löscht der Server bewusst die
-   Datenschutz- und AGB-Bestätigung am neuen Konto, genau wie beim anonymen Live-Chat. Nach dem
-   Beitritt über den Link haben **0a- und 0b-Konten also keine Einwilligung gespeichert**, obwohl
-   der Haken gesetzt war.
+   Platzhalter-Postleitzahl `00000`. Die Registrierung sendet außerdem, wie jede Registrierung, die
+   AGB-Bestätigung mit (`termsAccepted: "true"`). Für die Platzhalter-Postleitzahl löscht der
+   Server dann bewusst **beide**, die Datenschutz- und die AGB-Bestätigung am neuen Konto, genau
+   wie beim anonymen Live-Chat. Nach dem Beitritt über den Link haben **0a- und 0b-Konten also
+   keine der beiden Bestätigungen gespeichert**, obwohl der Haken gesetzt war.
 3. **Vor der ersten Nachricht: die Datenschutzerklärung der Beratungsstelle (ausstehend,
    ORISO-Frontend#1549).** Von Frank am 23.09.2026 entschieden. Ratsuchende in einer Gruppe, deren
    Einwilligung nicht gespeichert ist, sehen vor dem Schreiben die Erklärung der Beratungsstelle,
    die die Gruppe führt. Das ist das zweite Einwilligungstor aus [ADR-022](/decisions/adr-022), mit
    denselben Satzregeln wie im Live-Chat. Die Person antwortet „Einverstanden“ oder „Ablehnen“. Die
    Erklärung ersetzt das Gespräch, und das Eingabefeld bleibt verborgen, bis die Person zustimmt.
-   „Einverstanden“ speichert die Einwilligung am Konto.
+   „Einverstanden“ speichert die Datenschutz- und die AGB-Bestätigung am Konto.
 
 <Warning>
 **Bis ORISO-Frontend#1549 gemergt ist**, hat eine Person, die über den Link beigetreten ist, keine
@@ -190,15 +191,16 @@ Prüfung des Einladungs-Tokens selbst ist gemergt (ORISO-UserService#1248).
 - Nach der Registrierung folgt die App dem Link wie bisher: `PUT /users/chat/<id>/assign` antwortet
   mit `409`, weil die Person schon Mitglied ist, und die App öffnet den Warteraum.
 - Einwilligung (gemergt): Der Gruppeneinstieg rendert `AccountData` mit `entry="link"` und dem
-  Standardwert `dataProtection="checkbox"`. `RegistrationProvider` sendet `postcode: "00000"` für
-  einen Link, der die Beratungsstelle nennt, und `CreateUserFacade.shouldClearPrivacyConfirmations`
+  Standardwert `dataProtection="checkbox"`. `Registration.tsx` sendet bei jeder Registrierung
+  `termsAccepted: "true"`, `RegistrationProvider` sendet `postcode: "00000"` für einen Link, der
+  die Beratungsstelle nennt, und `CreateUserFacade.shouldClearPrivacyConfirmations`
   in ORISO-UserService setzt für diese Postleitzahl `dataPrivacyConfirmation` und
   `termsAndConditionsConfirmation` auf `null`. Das hängt am Platzhalter des anonymen Live-Chats;
   eine eigene Gruppenregel gibt es nicht.
 - Einwilligungstor (ausstehend, ORISO-Frontend#1549): `SessionItemComponent` zeigt
   `GroupConsentGate`, wenn die Sitzung eine Gruppe ist, die Person ratsuchend ist und
   `userData.dataPrivacyConfirmation` leer ist. „Einverstanden“ sendet `PATCH /users/data` mit
-  `dataPrivacyConfirmation: true`.
+  `dataPrivacyConfirmation: true` und `termsAndConditionsConfirmation: true`.
 - Reihenfolge der Bereitstellung: Das Backend ignoriert unbekannte Felder, und das alte Frontend
   sendet nie `groupChatId`; jede Seite kann also zuerst kommen. Die Regel greift, sobald beide
   bereitgestellt sind.
@@ -218,7 +220,7 @@ auf dem Dev-Server geprüft.
 | Registrierung über den Link eröffnet keine Anfrage (Backend) | ORISO-UserService#1241 | offen, ausstehend |
 | Registrierung über den Link benennt die Gruppe (Frontend) | ORISO-Frontend#1547 | offen, ausstehend |
 | Datenschutztor vor der ersten Gruppennachricht, Rechtliches-Menü im Warteraum, Gruppentexte beim Beitritt | ORISO-Frontend#1549 (nach #1547) | offen, ausstehend |
-| Automatisches Löschen von Konten aus „Ohne Konto beitreten“ | ORISO-UserService#1247, ORISO-Frontend#1552 (Teil von ORISO-UserService#1001) | beide offen, ausstehend; #1247 hat Merge-Konflikte |
+| Automatisches Löschen von Konten aus „Ohne Konto beitreten“ | ORISO-UserService#1247, ORISO-Frontend#1552 (Teil von ORISO-UserService#1001) | beide offen, ausstehend; für #1247 sind im Review Änderungen angefragt |
 | Startzeit und Wiederholung bleiben beim Bearbeiten erhalten | ORISO-UserService#1234, ORISO-Frontend#1527 | beide offen |
 | Chat-Info auf dem Telefon, Anlegeformular, Countdown | ORISO-Frontend#1528, #1529, #1530 | offen |
 | Einwilligungsverweis pro Gruppenmitgliedschaft | — | nicht begonnen |
