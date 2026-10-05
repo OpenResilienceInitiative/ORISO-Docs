@@ -1,0 +1,354 @@
+---
+title: "Nutzerrollen und Berechtigungen"
+description: "Die vollständige vierstufige Rollenhierarchie: Plattform-Admin, Träger-Admin, Beratungsstellen-Admin, Beratende — plus Ratsuchende und Supervisionsfunktion. Möglichkeiten, Grenzen und Zuordnung zu Keycloak-Realm-Rollen."
+---
+
+<Info>
+Das Produkt beschreibt **vier Mitarbeitendenebenen** (Plattform / Träger / Beratungsstellen-Administration / Beratende) plus anonyme **Ratsuchende**. Intern werden sie auf **vierzehn Keycloak-Realm-Rollen** abgebildet, die feingranulare API-Aktionen steuern.
+</Info>
+
+## 3.1 Hierarchie auf einen Blick
+
+```mermaid
+%%{init: { 'theme':'base', 'themeVariables':{ 'fontSize':'15px' } }}%%
+flowchart TD
+  PA[Platform Admin<br/>MFA must]:::pa
+  TA[Tenant Admin<br/>MFA must]:::ta
+  CA[Counselor Admin]:::ca
+  CO[Counselor<br/>function: Supervisor]:::co
+  CC[Counseling Center<br/>aka Agency]:::cc
+  CL((Client / Anonymous)):::cl
+
+  PA -->|creates| TA
+  PA -.->|signs Data Policy with| TA
+  TA -->|creates| CC
+  TA -->|creates| CA
+  TA -->|or directly creates| CO
+  CA -->|creates / invites| CO
+  CC -->|attaches| CA
+  CC -->|attaches| CO
+  CL -->|enters waiting room| CO
+  CL -.->|never registers, just gets a pseudonym| CL
+
+  classDef pa fill:#ffebee,stroke:#c62828,color:#000
+  classDef ta fill:#fff3e0,stroke:#ef6c00,color:#000
+  classDef ca fill:#e8f5e8,stroke:#2e7d32,color:#000
+  classDef co fill:#e3f2fd,stroke:#1565c0,color:#000
+  classDef cc fill:#f3e5f5,stroke:#6a1b9a,color:#000
+  classDef cl fill:#fce4ec,stroke:#ad1457,color:#000
+```
+
+**Zwei unverletzliche Regeln**:
+
+1. **Hierarchische Isolation** — ein Träger sieht keinen anderen. Eine Beratungsstelle sieht keine Ratsuchenden oder Beratenden einer anderen.
+2. **Vererbung der Rechtstexte** — Impressum, Datenrichtlinie und DSGVO-Vereinbarung existieren immer; ohne eigene Überschreibung erbt eine Beratungsstelle vom Träger, ein Träger von der Plattform.
+
+## 3.2 Rollenzuordnung (fachlich → Keycloak)
+
+| Fachliche Rolle (Gesprächsbegriff) | Keycloak-Realm-Rollen | Hinweise |
+|---|---|---|
+| **Plattform-Admin / Super-Admin** | `user-admin` | Hierarchiespitze. Verantwortet Vorlagen und Träger. MFA verpflichtend. |
+| **Träger-Admin** | `tenant-admin` und / oder `single-tenant-admin` | Einer je Träger; `single-tenant-admin` ist eingeschränktere Variante. MFA verpflichtend. |
+| **Beratungsstellen-Admin** | `agency-admin`, `restricted-agency-admin`, `restricted-consultant-admin` | Verwaltet Beratungsstelle, Beratende und deren Konten. |
+| **Beratende** | `consultant`, `group-chat-consultant` | Tatsächliche Gesprächsführung. `group-chat-consultant` ist chatspezifische Variante. |
+| **Beratende (Supervisionsfunktion)** | `supervisor-consultant` | Funktionskennzeichnung einer Beratungsperson — keine getrennte Person. |
+| **Themen-Admin** | `topic-admin` | Verwaltet globale Themen- / Beratungsartenliste. |
+| **Ratsuchende (anonym)** | `anonymous` | Automatisch erstellt. Bei Verbindungsabbruch gelöscht. |
+| **Ratsuchende (registriert, geplant)** | `user` | Für künftigen registrierten Ablauf reserviert. |
+| **System- / Dienstkonten** | `technical`, `notifications-technical` | Interne Aufrufer (z. B. Dienste untereinander, Benachrichtigungsworker). |
+
+Die vollständige Aufzählung steht in:
+
+- `ORISO-UserService/src/main/java/de/caritas/cob/userservice/api/config/auth/UserRole.java`
+- `ORISO-UserService/src/main/java/de/caritas/cob/userservice/api/config/auth/Authority.java`
+- `ORISO-Keycloak/realm.json`
+
+## 3.3 Die vier Mitarbeitendenrollen im Detail
+
+### 3.3.1 Plattform-Admin (auch Super-Admin / Server-Admin)
+
+**Beschreibung** — Verantwortliche der ORISO-Plattform. Üblicherweise **ein oder zwei** je Bereitstellung. Niemals innerhalb eines Trägers, sondern *oberhalb* der Träger.
+
+**Aufgaben**
+
+- Träger aufnehmen und mit jedem die Datenrichtlinienvereinbarung unterzeichnen.
+- Plattformvorlagen für **Impressum**, **Datenrichtlinie**, **DSGVO-Vereinbarung** pflegen, die alle anderen Ebenen erben können.
+- Globale Themen konfigurieren oder an Themen-Admin delegieren.
+- Sicherheitsbetrieb ausführen (Schlüsselrotation, Prüfantworten, MFA-Wiederherstellung).
+- Träger freigeben / deaktivieren.
+
+**Berechtigungen — erlaubt**
+
+- ✅ **Träger** erstellen, lesen, ändern, löschen.
+- ✅ Übergeordnete Metadaten jedes Trägers lesen.
+- ✅ Plattformvorlagen für Impressum, Datenrichtlinie, DSGVO bearbeiten.
+- ✅ Systemweite Aktionen auslösen (z. B. veraltete anonyme Personen löschen).
+- ✅ Trägerübergreifende Prüfprotokolle lesen.
+
+**Berechtigungen — nicht erlaubt (oder nicht vorgesehen)**
+
+- ❌ **Chat-Inhalte** irgendeiner Sitzung lesen (E2EE verhindert dies technisch).
+- ❌ MFA umgehen — System erzwingt MFA bei Anmeldung.
+- ❌ Irgendetwas im `dev`-Modus produktiv betreiben.
+
+**Praxisbeispiel** — *„Nachdem ein unzuverlässiger Entwickler Keycloak im Entwicklungsmodus hinterlassen hat, meldet sich der Plattform-Admin mit MFA an, baut Keycloak aus realm.json neu auf und stellt Träger-Admin-Einladungen erneut aus. Keine Ratsuchendendaten waren gefährdet, weil die Plattform keine echten Kennungen Ratsuchender speichert.“* (Direkte Wiedergabe des Gesprächs Frank↔Nikunj, 2026-05-05.)
+
+---
+
+### 3.3.2 Träger-Admin
+
+**Beschreibung** — Verantwortet regionalen oder organisatorischen Dachverband. Im deutschen Caritas-Beispiel ist „Caritas Berlin“ ein Träger, „Caritas Hamburg“ ein anderer. Vollständig voneinander isoliert.
+
+**Aufgaben**
+
+- **Beratungsstellen** des Trägers erstellen und verwalten.
+- **Datenrichtlinienvereinbarung** zwischen Plattform und Träger unterzeichnen (vor jeder Tätigkeit einer Beratungsstelle verpflichtend).
+- Rechtstextvorlagen **auf Trägerebene** pflegen, die alle Stellen standardmäßig erben.
+- Optional Beratungsstellen-Admins oder Beratende direkt einladen.
+
+**Berechtigungen — erlaubt**
+
+- ✅ **Beratungsstellen** innerhalb des Trägers erstellen / bearbeiten / deaktivieren.
+- ✅ Beratungsstellen-Admins erstellen und einer oder mehreren Stellen zuordnen.
+- ✅ Beratende erstellen und einer Stelle zuordnen.
+- ✅ Impressum / Datenrichtlinie / DSGVO des Trägers bearbeiten.
+- ✅ Trägermetriken lesen (Stellenzahl, aktive Beratende, zusammengefasste Warteschlangengröße).
+
+**Berechtigungen — nicht erlaubt**
+
+- ❌ **Andere Träger** überhaupt sehen.
+- ❌ Chat-Inhalte lesen.
+- ❌ Datenrichtlinie der Plattform bearbeiten.
+- ❌ Ohne aktive unterzeichnete Vereinbarung mit Plattform handeln.
+
+**MFA** — **Verpflichtend** (laut Gespräch: *„NFA Must“*).
+
+**Praxisbeispiel** — *„Träger-Admin von Caritas Berlin öffnet den Adminbereich, erstellt ‚Schuldnerberatung Mitte‘, lädt Klaus als Beratungsstellen-Admin ein, und Klaus lädt zwei Schuldnerberatende ein. Der DSGVO-Text des Trägers gilt automatisch für die neue Stelle, bis Klaus ihn anpasst.“*
+
+---
+
+### 3.3.3 Beratungsstellen-Admin
+
+**Beschreibung** — Leitung einer einzelnen Beratungsstelle. Verantwortet deren täglichen Betrieb — Beratendenverwaltung, Einstellungen, Live-Chat-Konfiguration. In Keycloak Rollenfamilie `agency-admin`.
+
+**Aufgaben**
+
+- Beratende dieser Stelle einladen / entfernen.
+- **Live-Chat-Link**, **Themen**, PLZ-Zuordnungen konfigurieren.
+- Geerbte Rechtstexte optional **nur für diese Stelle** überschreiben.
+- Live-Chat auf Beratungsstellenebene ein-/ausschalten.
+- Supervisionsfunktion für Beratende aktivieren/einstellen.
+
+**Berechtigungen — erlaubt**
+
+- ✅ Beratende **ausschließlich innerhalb eigener Stelle** sehen und verwalten.
+- ✅ Live-Chat-Links für diese Stelle erzeugen (mit optionalem Thema).
+- ✅ Impressum, Datenrichtlinie, DSGVO der Stelle überschreiben (mit vollständiger Vererbung als Rückfall).
+- ✅ Live-Chat-Ticketwarteschlange dieser Stelle lesen.
+
+**Berechtigungen — nicht erlaubt**
+
+- ❌ Beratende anderer Stellen sehen.
+- ❌ Beratungsstellen erstellen oder ändern (nur Träger-Admin).
+- ❌ Chat-Inhalte lesen (E2EE).
+- ❌ Rechtstexte auf Trägerebene ändern.
+
+**Praxisbeispiel** — *„Klaus (Admin der Schuldnerberatung Mitte) bemerkt einen defekten Live-Chat-Link. Er öffnet den Adminbereich, erzeugt den Link mit Thema=`debt` neu und veröffentlicht ihn auf der Website. Fünf Minuten später erscheinen drei Live-Chat-Tickets in der Warteschlange seiner Beratenden.“*
+
+---
+
+### 3.3.4 Beratende
+
+**Beschreibung** — Personen, die Chat-Sitzungen mit Ratsuchenden durchführen. Keycloak `consultant`.
+
+**Aufgaben**
+
+- Tickets aus Live-Chat-Warteraum übernehmen.
+- Beratung schriftlich oder per Video (LiveKit) im verschlüsselten Raum durchführen.
+- Sitzungen abschließen oder eskalieren.
+- (Funktion) **Supervision** — bei Kennzeichnung andere Beratungssitzungen zur Qualitätssicherung prüfen.
+
+**Berechtigungen — erlaubt**
+
+- ✅ Live-Chat-**Tickets eigener Beratungsstellen** sehen, älteste zuerst.
+- ✅ Jedes sichtbare Ticket annehmen.
+- ✅ Nachrichten in eigenen Chaträumen senden/empfangen.
+- ✅ Persönliche Verfügbarkeit „Live-Chat an / aus“ umschalten.
+- ✅ Eigene Sprache und Benachrichtigungswünsche einstellen.
+
+**Berechtigungen — nicht erlaubt**
+
+- ❌ Tickets anderer Stellen sehen.
+- ❌ Andere Beratende / Stellen erstellen oder ändern.
+- ❌ Rechtstexte bearbeiten.
+- ❌ Echte Identität Ratsuchender sehen (es gibt keine — nur Pseudonym).
+
+**Supervisionsfunktion** — Beratende können zusätzlich `supervisor-consultant` besitzen. Laut Gespräch **keine eigene Rolle**, sondern *Funktion*, die `VIEW_AGENCY_CONSULTANTS` gewährt, um Kolleginnen und Kollegen zu prüfen.
+
+**Ausbildungsfunktion (geplant)** — Frank nannte eine künftige Funktion für Beratende unter angeleiteter Supervision. Backlog-Eintrag, noch kein Code.
+
+**Praxisbeispiel** — *„Anja von Schuldnerberatung Mitte meldet sich an. Sie sieht drei Wartende (älteste Wartezeit zwölf Minuten). Sie klickt die älteste Person. Diese erhält eine DSGVO-Abfrage. Nach Bestätigung öffnet sich ein verschlüsselter Matrix-Raum und Anja beginnt den Chat.“*
+
+---
+
+### 3.3.5 Ratsuchende (anonym)
+
+**Beschreibung** — Personen, die Beratung suchen. **In v3 immer anonym.** Keycloak `anonymous`. Rolle `user` für künftigen registrierten Ablauf vorhanden, im Live-Chat ungenutzt.
+
+**Aufgaben**
+
+- Informierte DSGVO-Einwilligung erteilen (zweimal — Plattformstandard und Beratungsstellenebene).
+- Am Chat teilnehmen.
+
+**Berechtigungen — erlaubt**
+
+- ✅ Warteraum ohne Registrierung betreten.
+- ✅ Eigene Position, Systemnachrichten und DSGVO-/Impressumstext sehen.
+- ✅ Nachrichten im eigenen E2EE-Raum senden/empfangen.
+- ✅ Jederzeit gehen; löst Löschung aus.
+
+**Berechtigungen — nicht erlaubt**
+
+- ❌ Dauerhafte Kontodaten anlegen.
+- ❌ Außerhalb der Themen-/PLZ-Zuordnung auswählen oder ausgewählt werden.
+- ❌ Echte Identität Beratender sehen (nur Anzeigename).
+- ❌ Nach Verbindungsabbruch denselben Raum erneut betreten (Tombstone und Löschung).
+
+**Erfasste Angaben (ausschließlich diese)**:
+
+- Serverseitig erzeugtes **Pseudonym** (z. B. *„geschmeidiges Kanninchen Kim“*).
+- Kurzlebiges Sitzungs-**Cookie**.
+- **Warteschlangenpositionszähler**.
+- Gewähltes **Thema** (aus Live-Chat-Link).
+- Optional künftig eingegebene **PLZ**.
+
+Alles Weitere — IP-Adressen, Geräte-IDs, echte Namen — darf produktiv **niemals** dauerhaft gespeichert werden.
+
+**Praxisbeispiel** — *„Ein 19-jähriger Student ist von Schulden überfordert. Er klickt einen Instagram-Link der Schuldnerberatung Mitte, landet als ‚geschmeidiges Kanninchen Kim‘ im Warteraum, stimmt zu, spricht 20 Minuten mit Anja und schließt den Tab. Binnen etwa 30 Sekunden hat das System Pseudonym gelöscht, Raum mit Tombstone geschlossen und seine Anwesenheit entfernt.“*
+
+## 3.4 Berechtigungsmatrix
+
+| Möglichkeit | Plattform-Admin | Träger-Admin | Beratungsstellen-Admin | Beratende | Ratsuchende |
+|---|---|---|---|---|---|
+| Träger erstellen | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Beratungsstellen erstellen | ❌ | ✅ | ❌ | ❌ | ❌ |
+| Beratende erstellen | ✅ | ✅ | ✅ | ❌ | ❌ |
+| Daten eigenen Trägers sehen | nicht anwendbar | ✅ | ✅ (nur eigene Stelle) | ✅ (nur eigene Stelle) | ❌ |
+| Daten anderer Träger sehen | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Plattform-Rechtstextvorlagen bearbeiten | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Träger-Rechtstextvorlagen bearbeiten | ❌ | ✅ | ❌ | ❌ | ❌ |
+| Beratungsstellen-Rechtstextvorlagen bearbeiten | ❌ | ✅ | ✅ | ❌ | ❌ |
+| Live-Chat-Links erzeugen | ❌ | ✅ | ✅ | ❌ | ❌ |
+| Live-Chat-Ticket auswählen | ❌ | ❌ | ❌ | ✅ | ❌ |
+| Persönlichen Live-Chat an/aus schalten | ❌ | ❌ | ❌ | ✅ | ❌ |
+| Chat-**Inhalte** lesen | ❌ (E2EE) | ❌ (E2EE) | ❌ (E2EE) | ✅ (eigene Sitzung) | ✅ (eigene Sitzung) |
+| Bei Verbindungsabbruch gelöscht werden | ❌ | ❌ | ❌ | ❌ | ✅ |
+| MFA erzwungen | ✅ | ✅ | empfohlen | empfohlen | nicht anwendbar |
+
+## 3.5 Vererbung von Rechtstexten
+
+```mermaid
+flowchart LR
+  P[Platform<br/>Imprint / Data Policy / GDPR<br/>defaults]:::p
+  T[Tenant overrides<br/>or inherits]:::t
+  C[Counseling Center overrides<br/>or inherits]:::c
+  CL((Client sees<br/>the most-specific version))
+
+  P -->|inherit| T --> |inherit| C --> CL
+  P -.->|fallback| CL
+  T -.->|fallback| CL
+
+  classDef p fill:#ffebee,stroke:#c62828
+  classDef t fill:#fff3e0,stroke:#ef6c00
+  classDef c fill:#e8f5e8,stroke:#2e7d32
+```
+
+**Bedeutung der Vererbung**: ORISO muss Ratsuchenden immer *einen* Rechtstext zeigen können. Hat eine Stelle kein Impressum gesetzt, muss das des Trägers erscheinen; hat der Träger keines, das der Plattform. Im Gespräch „die dumme, aber sichere Rückfallebene“ genannt.
+
+## 3.7 Berechtigungsmatrix je Chat-Typ
+
+Figma vom Mai 2026 bestätigt eine eigene Adminseite **Berechtigungen** — eine zweidimensionale Matrix für Möglichkeiten je Chat-Typ. Die klarste Produktabstraktion: Alle anderen Werkzeuge, Schaltflächen und Menüs dieser Dokumentation werden dadurch gesteuert.
+
+### 3.7.1 Aufbau der Matrix
+
+| Möglichkeit (Zeilen) | Anonyme Chats | 1-zu-1 Chats | Gruppenchats | Supervision |
+|---|:-:|:-:|:-:|:-:|
+| **Anonyme Beratung erlauben** | ✅ | – | – | – |
+| **Anrufe erlauben** (Hauptschalter) | ✅ | ✅ | ✅ | ✅ |
+| **Audio-Anrufe erlauben** | ✅ | ✅ | ✅ | ✅ |
+| **Video-Anrufe erlauben** | ✅ | ✅ | ✅ | ✅ |
+| **Threads erlauben** (Antwort im Thread) | ✅ | ✅ | ✅ | ✅ |
+| **Sprachnachrichten erlauben** | ✅ | ✅ | ✅ | ✅ |
+| **Supervision erlauben** | – | ✅ | ✅ | ✅ |
+| **Versand an mehrere Empfänger** ([4.5.4](/product/features/group-chats#4-5-4-multi-recipient-send-w%C3%A4hle-wer-diese-nachricht-sehen-soll)) | – | – | ✅ | ✅ |
+| **Textmarkierung und PII-Unkenntlichmachung** ([4.6](/product/features/ai-tools)) | ✅ nur Beratende | ✅ nur Beratende | ✅ nur Beratende | ✅ nur Beratende |
+| **KI-Chat-Zusammenfassung** ([4.6.2](/product/features/ai-tools#4-6-2-chat-summary)) | ✅ nur Beratende | ✅ nur Beratende | ✅ nur Beratende | ✅ nur Beratende |
+| **Hilfsanfragen / Eskalation** ([4.8.3](/product/features/notifications#4-8-3-help-requests-internal-escalation)) | ✅ nur Beratende | ✅ nur Beratende | ✅ nur Beratende | ✅ nur Beratende |
+| **Nachrichten weiterleiten / löschen** | ✅ nur Beratende | ✅ nur Beratende | ✅ nur Beratende | ✅ nur Beratende |
+| **Datei-Upload** ([4.5.7](/product/features/group-chats#4-5-7-file-upload)) | einstellbar | einstellbar | einstellbar | einstellbar |
+| **Tags** ([4.5.9](/product/features/group-chats#4-5-9-filters-phases-list-views)) | einstellbar | einstellbar | einstellbar | einstellbar |
+
+✅ = standardmäßig an · – = nicht anwendbar · „einstellbar“ = Administration kann ein-/ausschalten.
+
+### 3.7.2 Vererbung der Matrix
+
+Berechtigungen fließen von **Plattform → Träger → Beratungsstelle → Chat-Typ**:
+
+```mermaid
+flowchart LR
+  P[Platform Default<br/>(Berechtigungen)]:::p --> T[Tenant Override]:::t --> A[Agency Override]:::a --> R[Effective per Chat-Type]:::r
+
+  classDef p fill:#ffebee,stroke:#c62828
+  classDef t fill:#fff3e0,stroke:#ef6c00
+  classDef a fill:#e8f5e8,stroke:#2e7d32
+  classDef r fill:#e3f2fd,stroke:#1565c0
+```
+
+- Effektive Berechtigung ist die **UND-Verknüpfung** aller übergeordneten Ebenen: Abschalten oben hat Vorrang vor Anschalten unten.
+- Träger können keine von der Plattform deaktivierte Funktion **aktivieren**.
+- Beratungsstellen können keine vom Träger deaktivierte Funktion **aktivieren**.
+- Client-seitig durchgesetzt (Oberfläche blendet Werkzeuge aus) und serverseitig (API weist mit HTTP 403 ab).
+
+### 3.7.3 Wer die Matrix bearbeiten darf
+
+| Ebene | Bearbeitung |
+|---|---|
+| **Plattformstandard** | Nur Plattform-Admins |
+| **Trägerüberschreibung** | Träger-Admins |
+| **Beratungsstellenüberschreibung** | Beratungsstellen-Admins |
+| **Je Chat-Typ** | Wie Beratungsstellenebene; keine Rechteausweitung. |
+
+### 3.7.4 Sonderberechtigung: Werkzeuge ausschließlich für Beratende
+
+Auch bei aktivierten Funktionen für anonyme/1-zu-1/Gruppenchats sind bestimmte Werkzeuge **immer nur für Beratende**, unabhängig von der Matrix:
+
+- Versand an mehrere Empfänger (für Ratsuchende immer unsichtbar)
+- Textmarkierung und PII-Unkenntlichmachung (Ratsuchende dürfen Beratungstext nicht markieren)
+- KI-Chat-Zusammenfassung (Fallnotizen der Beratenden)
+- Hilfsanfragen / Eskalation
+- Nachrichten weiterleiten / löschen
+- Fallübergabe
+- Weitere Personen einladen
+- Supervisionssteuerung
+
+Dies gilt unabhängig von der Matrix; diese steuert nur, ob die Funktion in dem Chat-Typ **überhaupt** verfügbar ist.
+
+### 3.7.5 Optionale Symbole (durch Administration schaltbar)
+
+Figma-Hinweis *„Optionale Symbole sollten im Adminbereich aktiviert oder deaktiviert werden“* meint Funktionen, die **nur** bei ausdrücklicher Aktivierung sichtbar sind:
+
+- Sprachnachrichtsymbol
+- Audioanrufsymbol
+- Videoanrufsymbol
+- Datei-Upload-Symbol
+- Tag-Auswahlsymbol
+
+Sie erscheinen im Eingabebereich / Raumkopf jedes Chat-Typs, dessen Matrix sie erlaubt.
+
+## 3.8 Sonderverhalten der Rollen
+
+- **Beratende ohne Beratungsstelle** sind in der App unsichtbar. Ihr Keycloak-Profil existiert, aber sie erhalten erst nach Zuordnung Tickets.
+- **Beratungsstellen ohne Beratende** können nicht aktiviert werden. AgencyService weist mit klarem Fehler ab.
+- **Träger ohne unterzeichnete Datenrichtlinie** können keine Stellen erstellen. „Stelle erstellen“ ist im Adminbereich deaktiviert.
+- **Plattform-Admins ohne alle drei Dokumente** (Impressum, Datenrichtlinie, DSGVO) können Verwaltungsbereich nicht betreten — Routensperre.
+- **Anonyme Ratsuchende** besitzen nur `ANONYMOUS_DEFAULT` — ausreichend zum Senden/Empfangen im eigenen Raum, sonst nichts.

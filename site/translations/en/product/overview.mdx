@@ -1,0 +1,106 @@
+---
+title: "Product Overview"
+description: "What ORISO is, who it serves, and the problems it solves as a privacy-first online counseling platform."
+---
+
+<Info>
+**Product**: ORISO (Online Beratung)
+**Category**: Anonymous online counseling and live-chat platform
+**Status**: Production (multi-tenant, Kubernetes-deployed, GDPR-aligned)
+**Source of truth**: Frank & Nikunj huddle (2026-05-05), Figma flows, Keycloak realm, Spring Boot services.
+</Info>
+
+## 1.1 What ORISO Is
+
+ORISO is a **multi-tenant online counseling platform** that lets accredited counseling organizations offer text-based and live-chat counseling to clients **anonymously, GDPR-correctly, and at hospital-grade privacy**.
+
+It is *not* a generic note-taking app. It is a regulated, privacy-first counseling product where:
+
+- A **client** can ask for help without giving their real name.
+- A **counselor** at a registered counseling center can pick up that request and chat in a secure, encrypted room.
+- A **platform owner**, **tenant** (regional cluster of organizations), and **counselor admin** all live in a clean, isolated hierarchy so one organization can never see another's data.
+
+Think of it as **"a hospital triage desk on the internet for counseling — but the patient never has to give their name, and the system is built to forget them as soon as they leave."**
+
+## 1.2 Core Purpose
+
+| Goal | What it means in product terms |
+|---|---|
+| **Anonymous help** | Clients enter with a generated pseudonym. No real identity is ever required. |
+| **Regulated trust** | Every level (platform → tenant → counseling center) carries an enforceable Imprint, Data Policy Agreement, and GDPR Agreement. |
+| **Real-time conversation** | A live-chat queue (waiting room → counselor pickup → consented chat) backed by Matrix Synapse. |
+| **Hierarchical isolation** | One tenant cannot see another tenant's data. One counseling center cannot see another counseling center's clients. |
+| **Disposable data** | If a client leaves the waiting room or closes the chat, their account and traces are wiped server-side within seconds to minutes. |
+
+## 1.3 Target Users
+
+### Primary users (people who use the app)
+
+| User | Who they are in the real world | Why they use ORISO |
+|---|---|---|
+| **Client** | A person in distress (debt, family, addiction, health, etc.) seeking help | Wants quick, anonymous, no-registration counseling |
+| **Counselor** | A trained counselor / advisor at a counseling center (e.g., Caritas Berlin) | Picks up tickets from the live-chat waiting room and runs sessions |
+| **Counselor Admin** | The lead at a single counseling center | Manages counselors, configures the center's imprint/GDPR text, enables/disables live chat |
+| **Tenant Admin** | Regional umbrella organization (e.g., "Caritas Germany") | Creates counseling centers under its tenant, signs the platform-tenant data policy agreement |
+| **Platform Admin** | The ORISO platform operator | Onboards tenants, owns the master Imprint / GDPR / Data Policy templates, runs MFA-protected operations |
+
+### Secondary users (people who reason about the system)
+
+- **Developers** (frontend / backend) building ORISO and integrating with Keycloak, Matrix, LiveKit.
+- **Designers** working on the live-chat onboarding, waiting-room and consent screens (see [UI/UX](/product/ui-ux)).
+- **Product managers / business stakeholders** evaluating, pitching, or auditing the platform.
+- **Security auditors** running yearly external audits (a stated requirement after the 2026 incident).
+
+## 1.4 Key Problems It Solves
+
+<CardGroup cols={2}>
+<Card title="The 'I don't want to register' problem" icon="user-secret">
+Most counseling tools force registration. ORISO lets a client enter the waiting room with just a generated pseudonym (e.g., *"geschmeidiges Kanninchen Kim"*) and a server-issued cookie — no email, no phone, no real name.
+</Card>
+
+<Card title="The GDPR-cascade problem" icon="scale-balanced">
+Different organizations want different legal texts. ORISO uses **inheritance**: every counseling center inherits the Imprint, Data Policy and GDPR Agreement from its tenant (and ultimately from the platform), but can override them locally.
+</Card>
+
+<Card title="The multi-tenant isolation problem" icon="shield-halved">
+Hospitals don't share patient lists. Tenants and counseling centers must not see each other. ORISO enforces this through Keycloak roles, tenant-scoped APIs, and per-center Matrix rooms.
+</Card>
+
+<Card title="The 'forget me' problem" icon="trash-can">
+If a client gives up in the waiting room, their pseudonymous user must be **wiped**, not archived. ORISO's design rule is "delete fast, archive never" — auto-delete on disconnect, encrypted-only message storage, scheduled purge of stale rooms.
+</Card>
+
+<Card title="The pin/zip-code routing problem" icon="map-pin">
+Different counselors serve different German postal-code regions and topics. ORISO routes inquiries by zip code (long term) and topic-attached live-chat links (short term) so a Berlin debt-counseling client lands on a Berlin debt counselor.
+</Card>
+
+<Card title="The 'live-chat off' UX problem" icon="toggle-on">
+Hiding inactive features confuses counselors. ORISO instead shows the live-chat section in a **deactivated state** with a hint to enable it (so 95% of counselors who never use live chat aren't lost when the 5% turn it on).
+</Card>
+</CardGroup>
+
+## 1.5 What ORISO Is Not
+
+To prevent confusion, the product **does not**:
+
+- Record audio/video of client sessions to build searchable transcripts (no AI note-taking; LiveKit handles WebRTC video, but recordings are out of scope).
+- Persist client identity past the session (no "user history" for clients).
+- Allow cross-tenant search, analytics, or reporting (isolation is enforced).
+- Run any service in `dev` mode in production (a hard rule after the 2026 Keycloak incident).
+
+## 1.6 Where to Go Next
+
+<CardGroup cols={2}>
+<Card title="System Architecture" icon="diagram-project" href="/product/architecture">
+High-level flow, services, integration points
+</Card>
+<Card title="Roles & Permissions" icon="users-gear" href="/product/roles-permissions">
+The 4-tier hierarchy (Platform → Tenant → Counselor Admin → Counselor) plus Client
+</Card>
+<Card title="Core Features" icon="bolt" href="/product/features">
+Live chat, pin-code routing, sessions, transcript handling
+</Card>
+<Card title="User Flows" icon="route" href="/product/user-flows">
+Step-by-step: admin onboarding, counselor setup, client joining
+</Card>
+</CardGroup>

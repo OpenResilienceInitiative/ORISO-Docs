@@ -24,6 +24,7 @@ re-derives the decision from the generation's own manifest.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import mimetypes
 import os
@@ -31,12 +32,39 @@ import subprocess
 import sys
 import urllib.error
 import urllib.request
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'tools/understand-anything'))
+from bundle.contract import validate as validate_generation
+from bundle.release_inputs import verify_release
 
 API = "https://api.github.com"
 
 # Aggregates merge every input in the generation, so they carry the union of
 # all source visibilities and can never be published from a mixed generation.
 AGGREGATES = ("ORISO-Supergraph", "ORISO-Platform")
+
+
+def require_release_generation(generation):
+    manifest = json.loads(Path(generation, 'manifest.json').read_text())
+    record = manifest.get('release')
+    if not isinstance(record, dict) or record.get('evidenceScope') != 'published-github-release-and-source-refs':
+        raise ValueError('Public graph upload requires an exact published platform release; Dev previews cannot be uploaded')
+    validated = validate_generation(generation)
+    actual = verify_release(record.get('lock'))
+    if actual['sha256'] != validated['release']['sha256']:
+        raise ValueError('Published release binding differs from the graph generation')
+    return validated
+
+
+def packed_inventory(out_dir, generation_id, names):
+    return {'generationId': generation_id, 'files': {name + '.tar.gz': hashlib.sha256(Path(out_dir, name + '.tar.gz').read_bytes()).hexdigest() for name in names}}
+
+
+def verify_packed_inventory(out_dir, generation_id, names):
+    stored = json.loads(Path(out_dir, 'packed-release.json').read_text())
+    if stored != packed_inventory(out_dir, generation_id, names):
+        raise ValueError('Packed/attested release assets changed or have a different generation')
 
 
 def request(method, url, token, data=None, content_type=None):
@@ -211,6 +239,7 @@ def main() -> int:
         print("::error::GITHUB_TOKEN is required, including for the visibility check.")
         return 1
 
+    release_manifest = require_release_generation(args.generation)
     allowed, withheld, private = publishable(args.generation, args.owner, token)
     for name in withheld:
         reason = (
@@ -224,6 +253,7 @@ def main() -> int:
         return 1
 
     if args.upload_only:
+        verify_packed_inventory(args.out, release_manifest['generationId'], allowed)
         # Re-derive `allowed` above rather than trusting the directory: a file
         # that appeared in out/ between the two calls must not be published
         # just because it is there.
@@ -237,6 +267,7 @@ def main() -> int:
             return 1
     else:
         packed = pack(args.generation, args.out, allowed)
+        Path(args.out, 'packed-release.json').write_text(json.dumps(packed_inventory(args.out, release_manifest['generationId'], allowed), sort_keys=True) + '\n')
         total = sum(os.path.getsize(p) for p in packed)
         print(f"PACKED {len(packed)} assets, {total / 1024 / 1024:.1f} MiB")
 

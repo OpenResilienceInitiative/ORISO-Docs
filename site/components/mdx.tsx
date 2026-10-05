@@ -5,10 +5,14 @@ import { Card, Cards } from 'fumadocs-ui/components/card';
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Mermaid } from '@/components/mermaid';
 
 export function getMDXComponents(components?: MDXComponents) {
   return {
     ...defaultMdxComponents,
+    // ```mermaid fences are turned into <Mermaid/> by scripts/sync-content.mjs — the sources keep
+    // the fence so that GitHub renders the same diagram natively.
+    Mermaid,
     // Entsprechungen der Mintlify-Komponenten aus der Alt-Doku (siehe scripts/sync-content.mjs)
     Callout,
     Card,

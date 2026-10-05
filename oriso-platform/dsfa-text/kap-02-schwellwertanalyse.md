@@ -1,5 +1,7 @@
 # 2 Schwellwertanalyse
 
+:::technisch Ergebnisabsatz 2.3 ist organisatorisch
+
 Vor der Durchführung einer Datenschutz-Folgenabschätzung (nachfolgend „DSFA") ist zu prüfen, ob
 die Verarbeitungstätigkeit voraussichtlich ein hohes Risiko für die Rechte und Freiheiten
 natürlicher Personen zur Folge hat und die DSFA damit nach § 35 KDG (Art. 35 DSGVO) verpflichtend

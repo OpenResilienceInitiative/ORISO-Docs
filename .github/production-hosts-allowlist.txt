@@ -1,0 +1,120 @@
+# Files that may name ORISO's own hosts. Checked by .github/scripts/check_production_hosts.py.
+#
+# Everything else must use placeholders (app.example.org, auth.example.org, ...): a generic
+# instruction that names a real host gets copied into another installation's config.
+# Add a file here only when it documents ORISO's own installation, and give the reason.
+# One glob per line; "*" also matches "/". An entry that matches no tracked file fails the check.
+
+# Build output and graph data, regenerated from sources; never edited by hand.
+site/out-docs-domain/*                       # committed static export of the docs site (stale build output)
+.understand-anything/*                       # Understand-Anything graph data produced by the graph pipeline
+
+# The documentation and graph sites themselves (their real public addresses).
+site/README.md                               # how ORISO's own docs site is built and deployed
+site/lib/shared.ts                           # canonical origin of the hosted graph site
+site/scripts/sync-content.mjs                # comment pointing at the hosted DPIA page
+oriso-platform/dsfa-analysis/README.md       # link to the published DPIA
+tools/understand-anything/README.md          # ORISO's own graph dashboard host
+tools/understand-anything/provenance/local-guidance-migration.md  # same
+tools/understand-anything/skills/oriso-graph/SKILL.md             # same
+
+# Decision records naming ORISO's own environment-specific Matrix identity (marked in the text).
+oriso-platform/decisions/ADR-005-matrix-federation-off-dns-server-name.md
+oriso-platform/decisions/ADR-012-self-help-group-chat-extend-not-rebuild-future-timeline.md
+
+# Approved ORISO site references, exact regression fixtures and Dev delivery policy.
+# Generated and translated entries mirror the reviewed canonical source; generic instructions still use example.org.
+docs/platform/graph-validation-report.md # ORISO own-site reference or counterpart of reviewed project-specific source
+docs/platform/overview.md # ORISO own-site reference or counterpart of reviewed project-specific source
+docs/platform/reports/devdocs-audit-2026-09-05.md # ORISO own-site reference or counterpart of reviewed project-specific source
+docs/platform/repository-map.md # ORISO own-site reference or counterpart of reviewed project-specific source
+docs/platform/super-graph-detailed.md # ORISO own-site reference or counterpart of reviewed project-specific source
+docs/platform/super-graph-explorer.md # ORISO own-site reference or counterpart of reviewed project-specific source
+docs/platform/super-graph-index.md # ORISO own-site reference or counterpart of reviewed project-specific source
+docs/platform/understand-anything.md # ORISO own-site reference or counterpart of reviewed project-specific source
+index.mdx # ORISO own-site reference or counterpart of reviewed project-specific source
+oriso-platform/coding-standards.mdx # ORISO own-site reference or counterpart of reviewed project-specific source
+site/app/[[]lang]/layout.tsx # ORISO own-site reference or counterpart of reviewed project-specific source
+site/content/docs/betrieb/getting-started/index.de.mdx # ORISO own-site reference or counterpart of reviewed project-specific source
+site/content/docs/betrieb/getting-started/index.en.mdx # ORISO own-site reference or counterpart of reviewed project-specific source
+site/content/docs/betrieb/operations/coding-standards.de.mdx # ORISO own-site reference or counterpart of reviewed project-specific source
+site/content/docs/betrieb/operations/coding-standards.en.mdx # ORISO own-site reference or counterpart of reviewed project-specific source
+site/content/docs/index.de.mdx # ORISO own-site reference or counterpart of reviewed project-specific source
+site/content/docs/index.en.mdx # ORISO own-site reference or counterpart of reviewed project-specific source
+site/content/docs/plattform/archive/graph-validation-report.de.md # ORISO own-site reference or counterpart of reviewed project-specific source
+site/content/docs/plattform/archive/graph-validation-report.en.md # ORISO own-site reference or counterpart of reviewed project-specific source
+site/content/docs/plattform/archive/super-graph-detailed.de.md # ORISO own-site reference or counterpart of reviewed project-specific source
+site/content/docs/plattform/archive/super-graph-detailed.en.md # ORISO own-site reference or counterpart of reviewed project-specific source
+site/content/docs/plattform/archive/super-graph-explorer.de.md # ORISO own-site reference or counterpart of reviewed project-specific source
+site/content/docs/plattform/archive/super-graph-explorer.en.md # ORISO own-site reference or counterpart of reviewed project-specific source
+site/content/docs/plattform/archive/super-graph-index.de.md # ORISO own-site reference or counterpart of reviewed project-specific source
+site/content/docs/plattform/archive/super-graph-index.en.md # ORISO own-site reference or counterpart of reviewed project-specific source
+site/content/docs/plattform/flows-und-reference/repository-map.de.md # ORISO own-site reference or counterpart of reviewed project-specific source
+site/content/docs/plattform/flows-und-reference/repository-map.en.md # ORISO own-site reference or counterpart of reviewed project-specific source
+site/content/docs/plattform/knowledge-graphs/understand-anything.de.mdx # ORISO own-site reference or counterpart of reviewed project-specific source
+site/content/docs/plattform/knowledge-graphs/understand-anything.en.mdx # ORISO own-site reference or counterpart of reviewed project-specific source
+site/content/docs/plattform/start-here/overview.de.md # ORISO own-site reference or counterpart of reviewed project-specific source
+site/content/docs/plattform/start-here/overview.en.md # ORISO own-site reference or counterpart of reviewed project-specific source
+site/home.mdx # ORISO own-site reference or counterpart of reviewed project-specific source
+site/nginx/README.md # ORISO own-site reference or counterpart of reviewed project-specific source
+site/scripts/page-catalog.test.mjs # ORISO own-site reference or counterpart of reviewed project-specific source
+site/translations/de/docs/platform/overview.md # ORISO own-site reference or counterpart of reviewed project-specific source
+site/translations/de/docs/platform/repository-map.md # ORISO own-site reference or counterpart of reviewed project-specific source
+site/translations/de/docs/platform/understand-anything.md # ORISO own-site reference or counterpart of reviewed project-specific source
+site/translations/de/index.mdx # ORISO own-site reference or counterpart of reviewed project-specific source
+site/translations/de/oriso-platform/coding-standards.mdx # ORISO own-site reference or counterpart of reviewed project-specific source
+site/translations/de/oriso-platform/decisions/ADR-005-matrix-federation-off-dns-server-name.md # ORISO own-site reference or counterpart of reviewed project-specific source
+site/translations/de/oriso-platform/decisions/ADR-012-self-help-group-chat-extend-not-rebuild-future-timeline.md # ORISO own-site reference or counterpart of reviewed project-specific source
+site/translations/de/site/home.mdx # ORISO own-site reference or counterpart of reviewed project-specific source
+site/translations/en/docs/platform/overview.md # ORISO own-site reference or counterpart of reviewed project-specific source
+site/translations/en/docs/platform/repository-map.md # ORISO own-site reference or counterpart of reviewed project-specific source
+site/translations/en/docs/platform/understand-anything.md # ORISO own-site reference or counterpart of reviewed project-specific source
+site/translations/en/index.mdx # ORISO own-site reference or counterpart of reviewed project-specific source
+site/translations/en/oriso-platform/coding-standards.mdx # ORISO own-site reference or counterpart of reviewed project-specific source
+site/translations/en/oriso-platform/decisions/ADR-005-matrix-federation-off-dns-server-name.md # ORISO own-site reference or counterpart of reviewed project-specific source
+site/translations/en/oriso-platform/decisions/ADR-012-self-help-group-chat-extend-not-rebuild-future-timeline.md # ORISO own-site reference or counterpart of reviewed project-specific source
+site/translations/en/site/home.mdx # ORISO own-site reference or counterpart of reviewed project-specific source
+
+# Reviewed DPIA source and review artifacts linking ORISO public documentation (exact files).
+oriso-platform/dsfa-text/README.md # DPIA own public documentation reference or exact regression fixture
+oriso-platform/dsfa-text/drafts/2026-09-30-v5-draft/artifacts/dsfa-v5-draft-de.html # DPIA own public documentation reference or exact regression fixture
+oriso-platform/dsfa-text/drafts/2026-09-30-v5-draft/artifacts/dsfa-v5-draft-de.input.json # DPIA own public documentation reference or exact regression fixture
+oriso-platform/dsfa-text/drafts/2026-09-30-v5-draft/artifacts/dsfa-v5-draft-en.html # DPIA own public documentation reference or exact regression fixture
+oriso-platform/dsfa-text/drafts/2026-09-30-v5-draft/artifacts/dsfa-v5-draft-en.input.json # DPIA own public documentation reference or exact regression fixture
+oriso-platform/dsfa-text/drafts/2026-09-30-v5-draft/de/chapter-6.md # DPIA own public documentation reference or exact regression fixture
+oriso-platform/dsfa-text/drafts/2026-09-30-v5-draft/en/chapter-6.md # DPIA own public documentation reference or exact regression fixture
+oriso-platform/dsfa-text/drafts/2026-09-30-v5-draft/manifest.json # DPIA own public documentation reference or exact regression fixture
+oriso-platform/dsfa-text/evidence-map-v2.json # DPIA own public documentation reference or exact regression fixture
+oriso-platform/dsfa-text/evidence-map.yaml # DPIA own public documentation reference or exact regression fixture
+oriso-platform/dsfa-text/kap-06-verfahren-und-technik.md # DPIA own public documentation reference or exact regression fixture
+tools/audit/dsfa-status-2026-09-05.md # DPIA own public documentation reference or exact regression fixture
+tools/dsfa_draft.py # DPIA own public documentation reference or exact regression fixture
+tools/test_dsfa_draft.py # DPIA own public documentation reference or exact regression fixture
+
+# Reviewed technical/legal cross-links and ORISO public publication tooling (exact files).
+.github/workflows/docs-publication.yml # ORISO own public host, artifact origin or deliberate publication regression fixture
+docs/platform/dpia-publication.md # ORISO own public host, artifact origin or deliberate publication regression fixture
+site/content/docs/plattform/knowledge-graphs/dpia-publication.de.md # ORISO own public host, artifact origin or deliberate publication regression fixture
+site/content/docs/plattform/knowledge-graphs/dpia-publication.en.md # ORISO own public host, artifact origin or deliberate publication regression fixture
+site/translations/de/docs/platform/dpia-publication.md # ORISO own public host, artifact origin or deliberate publication regression fixture
+site/translations/en/docs/platform/dpia-publication.md # ORISO own public host, artifact origin or deliberate publication regression fixture
+tools/docs-publication/README.md # ORISO own public host, artifact origin or deliberate publication regression fixture
+tools/docs-publication/publication.mjs # ORISO own public host, artifact origin or deliberate publication regression fixture
+tools/docs-publication/test/publication.test.mjs # ORISO own public host, artifact origin or deliberate publication regression fixture
+tools/docs-publication/test/release.test.mjs # ORISO own public host, artifact origin or deliberate publication regression fixture
+tools/truth-chain/lib/generate-pages.mjs # ORISO own public host, artifact origin or deliberate publication regression fixture
+tools/understand-anything/hosted-viewer/README.md # ORISO own public host, artifact origin or deliberate publication regression fixture
+tools/understand-anything/site/hub/assets/lang.js # ORISO own public host, artifact origin or deliberate publication regression fixture
+tools/understand-anything/site/hub/features/de.html # ORISO own public host, artifact origin or deliberate publication regression fixture
+tools/understand-anything/site/hub/features/en.html # ORISO own public host, artifact origin or deliberate publication regression fixture
+tools/understand-anything/site/hub/features/index.html # ORISO own public host, artifact origin or deliberate publication regression fixture
+tools/understand-anything/site/hub/index.html # ORISO own public host, artifact origin or deliberate publication regression fixture
+tools/understand-anything/site/hub/render-features.mjs # ORISO own public host, artifact origin or deliberate publication regression fixture
+tools/understand-anything/site/hub/test/hub.test.mjs # ORISO own public host, artifact origin or deliberate publication regression fixture
+.github/workflows/ua-public-site.yml # ORISO own public installation binding or deliberate publication regression fixture
+tools/truth-chain/requirements-reconciliation.json # ORISO own public installation binding or deliberate publication regression fixture
+tools/understand-anything/hosted-viewer/configure-source-mounts.py # ORISO own public installation binding or deliberate publication regression fixture
+tools/understand-anything/hosted-viewer/consumer_test.py # ORISO own public installation binding or deliberate publication regression fixture
+tools/understand-anything/hosted-viewer/readback.py # ORISO own public installation binding or deliberate publication regression fixture
+tools/docs-publication/test/workflow-release.test.mjs # ORISO own public installation binding or deliberate publication regression fixture
+tools/docs-publication/test/release-fixture.mjs # Exact released source-vector fixture for ORISO public publication regression tests

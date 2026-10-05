@@ -1,0 +1,350 @@
+---
+title: "Sonderfälle und Szenarien"
+description: "Fehlerfälle, Wettlaufsituationen und Missbrauchsszenarien für Live-Chat, Sitzungen, Links und Administration — und ORISOs vorgesehener Umgang damit."
+---
+
+<Info>
+Jeder Sonderfall beschreibt **Auslöser**, **erwartetes Verhalten** und **Risiko bei Fehlbehandlung**. Die meisten greifen unmittelbar Probleme aus dem Gespräch Frank↔Nikunj auf.
+</Info>
+
+## 9.1 Sonderfälle Ratsuchender
+
+### 9.1.1 Ratsuchende schließen Tab im Warteraum
+
+| | |
+|---|---|
+| **Auslöser** | Tab schließen, wegnavigieren, Netzverlust, Betriebssystemschlaf über Heartbeat-Grenze |
+| **Erwartet** | Heartbeat läuft ab (~90 Sekunden) → Ticket → `Abandoned` → anonyme Keycloak-Person **gelöscht** → Ticketzeile gelöscht → Zähler für alle Nachfolgenden vermindert |
+| **Risiko** | Ansammlung von „Phantompersonen“ (Franks beschriebener Fehler). Beratende sehen leere Anfragen, Warteschlange stimmt nicht. |
+| **Test** | Warteraum öffnen, Tab schließen; Ticket verschwindet binnen etwa zwei Minuten aus Beratendensicht. |
+
+### 9.1.2 Ratsuchende schließen aktiven Chat
+
+| | |
+|---|---|
+| **Auslöser** | Tab während aktivem Chat schließen |
+| **Erwartet** | Heartbeat verloren → Sitzung → `Paused`; ohne Fortsetzung in fünf Minuten → `Ended`; Megolm-Schlüssel Ratsuchender verloren; Beratende sehen Verlauf weiter (≤ 48 Stunden); Metadaten anonymisiert; kein erneuter Beitritt |
+| **Risiko** | Beratende mit „Geistersitzung“ blockiert |
+| **Test** | Aktiver Chat → Tab schließen → Beratende sehen binnen fünf Minuten „Verbindung der Ratsuchenden getrennt“ |
+
+### 9.1.3 Ratsuchende laden Tab neu
+
+| | |
+|---|---|
+| **Auslöser** | F5 / Herunterziehen zum Aktualisieren im Warteraum oder Chat |
+| **Erwartet** | Neues Cookie, neues Pseudonym, neues Ticket. Altes verwaist und wird bei Heartbeat-Ablauf gelöscht. Frühere Sitzung nicht erneut betretbar. |
+| **Risiko** | Identität bleibt nach Neuladen bestehen (Datenschutzverletzung) |
+| **Test** | F5 im Warteraum → Pseudonym ändert sich; altes Ticket binnen ~90 Sekunden weg |
+
+### 9.1.4 Ungültiger Live-Chat-Link (Kennung / Thema)
+
+| | |
+|---|---|
+| **Auslöser** | URL manuell geändert; Stelle gelöscht; Thema deaktiviert |
+| **Erwartet** | Freundliche Seite „derzeit nicht verfügbar“ mit plattformweiter Anfrage; keine anonyme Person erstellt; kein Fehlerrauschen im Protokoll |
+| **Risiko** | Verwirrende 500 / 404 / leere Seite; möglicher Backend-Absturz |
+| **Test** | `/live-chat/no-such-agency` aufrufen; verständliche Seite erscheint |
+
+### 9.1.5 DSGVO-Einwilligung Nr. 2 abgelehnt
+
+| | |
+|---|---|
+| **Auslöser** | Beratende nehmen an; Ratsuchende klicken „Ablehnen“ bei DSGVO der Stelle |
+| **Erwartet** | Ticket → `Abandoned`; anonyme Person gelöscht; Matrix-Raum nie fertiggestellt; Beratende sehen „Ratsuchende haben abgelehnt“ |
+| **Risiko** | Chat ohne Einwilligung → rechtliche Haftung |
+| **Test** | Annahme → DSGVO ablehnen → Warteschlange binnen Sekunden aktualisiert |
+
+### 9.1.7 Selbstlöschung während aktivem Videoanruf
+
+> *Direkte Figma-Frage: „Was passiert, wenn sich eine Person während eines Videoanrufs löscht (wenn sie ihn gestartet hat)?“*
+
+| | |
+|---|---|
+| **Auslöser** | Ratsuchende haben aktiven LiveKit-Anruf gestartet und klicken „Konto löschen“ / schließen Tab |
+| **Erwartet** | (1) Anruf für verbleibende Beratende fortgesetzt. (2) Startrolle an nächste Beratungsperson nach `joined_at` ASC. (3) Pseudonym binnen ~90 Sekunden gelöscht. (4) Systemnachricht: *„Ein Teilnehmer hat das Gespräch verlassen.“* (5) Ohne verbleibende Beratende beendet LiveKit kontrolliert; Chat zurück auf Text. |
+| **Risiko** | Eingefrorener Anruf; Identität bleibt; LiveKit-Raum verursacht unnötige Kosten. |
+| **Test** | E2E: Ratsuchende starten Anruf → löschen sich → Anruf unter Beratenden bleibt; letzte Person geht → Anruf endet; Identität gelöscht. |
+
+### 9.1.8 Selbstlöschung aus Gruppenchat
+
+> *Direkte Figma-Frage: „Was passiert, wenn sich Ratsuchende aus einem Gruppenchat löschen?“*
+
+| | |
+|---|---|
+| **Auslöser** | „Gruppe verlassen“ oder Kontolöschung im Gruppenraum |
+| **Erwartet** | (1) Pseudonym sofort gelöscht. (2) Nachrichten bleiben mit *„Ehemaliger Teilnehmer“* — Inhalte E2EE, Pseudonym nicht mehr mit Keycloak verknüpft. (3) *„{pseudonym} hat den Chat verlassen.“* (4) Bei **letzter** ratsuchender Person automatische Archivierung und Information Beratender. (5) Bei weiteren Ratsuchenden normal weiter. |
+| **Risiko** | Identität bleibt in Gruppe; oder Nachrichten verschwinden und Kontext wird unverständlich. |
+| **Test** | E2E: eine ratsuchende Person und zwei Beratende → Ratsuchende gehen → Systemnachricht und Autorenänderung sichtbar; Gruppe bleibt. |
+
+### 9.1.9 E-Mail-Zustimmung während Sitzung
+
+| | |
+|---|---|
+| **Auslöser** | Ratsuchende ergänzen E-Mail nach Chatbeginn |
+| **Erwartet** | Verschlüsselt gespeichert, nur Plattform-Admin sieht sie; Beratende nicht; erste Bestätigungsmail; künftige Benachrichtigungen als E-Mail-Kopie |
+| **Risiko** | Beratende sehen Adresse irgendwo in Oberfläche |
+
+### 9.1.10 Mehrfachversand: gelöschte Empfänger
+
+| | |
+|---|---|
+| **Auslöser** | Beratende senden an „+ Sasha (ratsuchend)“, aber Sasha hat gerade getrennt |
+| **Erwartet** | Server-Relay weist mit „Person nicht mehr im Raum“ ab; Kennzeichnung „Zustellung übersprungen: eine Person“. |
+| **Risiko** | Inhalt bis Sashas Rückkehr zwischengespeichert → Datenschutzverletzung |
+
+### 9.1.11 Unkenntlichmachung versehentlich entfernt
+
+| | |
+|---|---|
+| **Auslöser** | Beratende klicken Augenschalter und senden ohne erneute Unkenntlichmachung |
+| **Erwartet** | Vor Abschluss Bestätigung „PII-Unkenntlichmachung deaktiviert — trotzdem senden?“ |
+| **Risiko** | Ratsuchende sehen auszublendenden Inhalt |
+
+### 9.1.6 Browser ohne Cookies / stark eingeschränkter Privatmodus
+
+| | |
+|---|---|
+| **Auslöser** | Cookies deaktiviert |
+| **Erwartet** | Klare Anleitung: „ORISO benötigt ein Sitzungscookie. Cookies werden mit Ihnen gelöscht, wenn Sie gehen.“ |
+| **Risiko** | Stiller Fehler; Ratsuchende halten System für defekt |
+
+## 9.2 Sonderfälle Beratender
+
+### 9.2.1 Während Übernahme offline
+
+| | |
+|---|---|
+| **Auslöser** | Ticket angenommen, vor Einwilligung Nr. 2 getrennt |
+| **Erwartet** | Heartbeat-Ablauf → Ticket zurück zu `Waiting`; erneut übernommen oder Ratsuchende bei zu langer Dauer gelöscht |
+| **Risiko** | Verlorenes Ticket, verlorene ratsuchende Person |
+| **Test** | Annehmen → Browser Beratender beenden → Ticket wieder in Warteschlange |
+
+### 9.2.2 Zwei Beratende nehmen gleichzeitig an
+
+| | |
+|---|---|
+| **Auslöser** | Dasselbe Ticket innerhalb von Millisekunden angeklickt |
+| **Erwartet** | Datenbank-Zeilensperre; erste Person gewinnt → `Accepted`; zweite sieht „bereits übernommen“; kein Doppelraum |
+| **Risiko** | Doppelte Matrix-Räume und Einwilligungsabfragen |
+| **Test** | Nebenläufigkeit: zwei Clients rufen `POST /live-chat/accept` für dieselbe ID → einmal HTTP 200, einmal HTTP 409 |
+
+### 9.2.3 Live-Chat während Sitzung ausschalten
+
+| | |
+|---|---|
+| **Auslöser** | Verfügbarkeit während aktiver Sitzung ausgeschaltet |
+| **Erwartet** | Sitzung läuft zu Ende; keine neuen Tickets; Schalter zeigt „AUS nach Ende des aktuellen Chats“ |
+| **Risiko** | Ratsuchende mitten im Gespräch verwaist |
+
+### 9.2.4 Keine Beratungsstellenzuordnung
+
+| | |
+|---|---|
+| **Auslöser** | Keycloak `consultant`, aber keine `ConsultantAgency`-Zeile |
+| **Erwartet** | In App **unsichtbar** (Gespräch: „ohne Beratungsstelle nicht sichtbar“); Dashboard bittet im Hinweis um Zuordnung |
+| **Risiko** | Tickets erreichen Person nie; oder erscheinen, können aber nicht angenommen werden |
+
+### 9.2.5 Supervision tritt bei
+
+| | |
+|---|---|
+| **Auslöser** | `supervisor-consultant` lädt sich in kollegialen Raum ein |
+| **Erwartet** | Für alle sichtbare Systemnachricht *„Supervision X zur Qualitätssicherung beigetreten“*; Prüfeintrag; Lesen erlaubt, Person in Mitgliederliste |
+| **Risiko** | Stille Beobachtung → Datenschutzverletzung |
+
+## 9.3 Sonderfälle Administration / Träger
+
+### 9.3.1 Stelle vor Datenrichtlinienunterschrift erstellen
+
+| | |
+|---|---|
+| **Auslöser** | Träger-Admin klickt „Stelle erstellen“ ohne `tenant.data_policy_signed_at` |
+| **Erwartet** | Deaktiviert mit Hinweis „Zuerst Plattform-Datenrichtlinie unterzeichnen“; erzwungener Routenaufruf HTTP 403 |
+| **Risiko** | Stellen ohne rechtliche Grundlage |
+
+### 9.3.2 Zugriff auf fremde Trägerdaten
+
+| | |
+|---|---|
+| **Auslöser** | URL-/API-Manipulation, JWT-Wiederverwendung |
+| **Erwartet** | Trägerfilter weist auf Speicherungsebene ab (HTTP 404, **nicht** 403, gegen Informationsleck); Versuch protokolliert |
+| **Risiko** | Trägerübergreifendes Datenleck — katastrophal |
+
+### 9.3.3 Plattform-Admin deaktiviert Träger
+
+| | |
+|---|---|
+| **Auslöser** | Plattform-Admin setzt `tenant.disabled_at` |
+| **Erwartet** | Alle Stellen nur lesend; keine Ticketannahme; aktive Sitzungen dürfen enden; Links „derzeit nicht verfügbar“; Daten erhalten, nicht gelöscht |
+| **Risiko** | Harte Abbrüche mitten im Gespräch |
+
+### 9.3.4 Magic Link erneut verwendet
+
+| | |
+|---|---|
+| **Auslöser** | Link zweimal angeklickt |
+| **Erwartet** | Erstes Mal Registrierung erfolgreich, `consumed_at` in Redis; zweites Mal HTTP 410 „Link bereits verwendet“ |
+| **Risiko** | Zwei Personen beanspruchen dieselbe Rolle |
+
+### 9.3.5 Magic Link abgelaufen
+
+| | |
+|---|---|
+| **Auslöser** | Klick nach 24 Stunden |
+| **Erwartet** | Freundliche Ablaufseite; „Neue Einladung anfordern“ verweist auf Einladende |
+| **Risiko** | Verwirrender JWT-Fehler |
+
+## 9.4 Sonderfälle Live-Chat-Link / Pincode
+
+### 9.4.1 Link während Seitenbesuch deaktiviert
+
+| | |
+|---|---|
+| **Auslöser** | Beratungsstellen-Admin deaktiviert während Sitzung |
+| **Erwartet** | Aktive Sitzungen weiter; neue Besuche „derzeit nicht verfügbar“ |
+| **Risiko** | Aktive Sitzungen hart abgeschnitten |
+
+### 9.4.2 Thema fehlt im Link
+
+| | |
+|---|---|
+| **Auslöser** | Alter Link ohne `?topic=` |
+| **Erwartet** | Allgemeine Stellenwarteschlange; milde Warnung; gegebenenfalls Thema erfragen |
+| **Risiko** | 500 oder still falsche Zuordnung |
+
+### 9.4.3 PLZ passt zu mehreren Stellen
+
+| | |
+|---|---|
+| **Auslöser** | `10115` eingegeben; drei Stellen zuständig |
+| **Erwartet** | Liste mit Beschreibungen, Ratsuchende wählen; bei Thema gefiltert |
+| **Risiko** | Zufallszuordnung → falsche Beratende / Sprache |
+
+### 9.4.4 Bot überflutet Link
+
+| | |
+|---|---|
+| **Auslöser** | Curl-Schleife, Scraper, versehentliche Wiederholung |
+| **Erwartet** | Ingress-Ratenbegrenzung; HTTP 429; keine Bot-Tickets für Beratende; IP-Zähler nur Arbeitsspeicher |
+| **Risiko** | Echte Ratsuchende aus Warteschlange verdrängt |
+
+### 9.4.5 Trägerübergreifender Kennungskonflikt
+
+| | |
+|---|---|
+| **Auslöser** | Zwei Träger beanspruchen dieselbe Beratungsstellenkennung |
+| **Erwartet** | Kennungen je Träger eindeutig; öffentliche URL enthält nur Stellenkennung; Server ermittelt Träger anhand der zugehörigen Stelle |
+
+## 9.5 Sonderfälle Chat / Echtzeit
+
+### 9.5.1 Netzunterbrechung während Nachricht
+
+| | |
+|---|---|
+| **Auslöser** | Kurzer Ausfall bei laufender Übertragung |
+| **Erwartet** | Matrix-Client versucht exponentiell verzögert erneut; nach Verbindung geordnete Ankunft; Oberfläche „wird gesendet…“ |
+
+### 9.5.2 Schlüsselverlust (Megolm)
+
+| | |
+|---|---|
+| **Auslöser** | Beratende leeren Browsercache; alte Nachrichten nicht entschlüsselbar |
+| **Erwartet** | Platzhalter „verschlüsselte Nachricht — Schlüssel fehlt“; **erwartetes Verhalten** gemäß Datenschutzmodell |
+| **Risiko** | System erscheint defekt; keine serverseitige Schlüsselhinterlegung erfinden |
+
+### 9.5.3 Massive Warteschlangenüberlastung
+
+| | |
+|---|---|
+| **Auslöser** | 500 gleichzeitige Ratsuchende im Warteraum |
+| **Erwartet** | Redis-Zähler skaliert; Löschungen pünktlich; realistische Wartezeithinweise |
+| **Risiko** | Datenbankzeilen explodieren; Bereinigung hängt; Zähler veraltet |
+
+### 9.5.4 Matrix-Raumerstellung fehlgeschlagen
+
+| | |
+|---|---|
+| **Auslöser** | Synapse vorübergehend gestört |
+| **Erwartet** | UserService versucht dreimal mit Verzögerung; bei Dauerfehler Ticket zurück und klare Meldung |
+| **Risiko** | Ticket aktiv ohne Raum; Ratsuchende hängen fest |
+
+## 9.6 Fehler im Transkriptions- / KI-Weg (geplant)
+
+Obwohl noch nicht gebaut, bei Entwurf zu berücksichtigen:
+
+| Auslöser | Erwartet |
+|---|---|
+| KI-Zusammenfassung ausgefallen | Manuelle Notiz; Oberfläche fällt verständlich zurück |
+| Verdächtiges KI-Ergebnis (personenbezogene Daten) | Detektor blockiert vor Anzeige |
+| Beratende bearbeiten KI-Notiz | Nur **bearbeitete** Version speichern; ursprüngliche KI-Ausgabe nicht behalten |
+| Netzverlust bei Zusammenfassung | Einmal wiederholen; bei zweitem Fehler manuell |
+
+## 9.7 Betriebs- / Sicherheitsfälle
+
+| Szenario | Erwartet |
+|---|---|
+| Keycloak im Entwicklungsmodus | **Harter Alarm.** Bereitstellung per CI-Sperre blockieren. Nach Vorfall 2026 bekräftigt. |
+| Externer Penetrationstest zählt Sitzungen auf | IDs UUIDv4; Trägerbegrenzung macht Aufzählen nutzlos |
+| Sicherungsdatei offengelegt | Pseudonyme keine personenbezogenen Informationen; Nachrichten E2EE; Mitarbeitendendaten spaltenverschlüsselt; Wirkung begrenzt |
+| Realm.json weicht zwischen Entwicklung und Produktivbetrieb ab | Jährliche externe Prüfung und CI-Differenzalarm |
+| MFA-Faktor verloren (Admin) | Wiederherstellung getrennt über Plattform-Admin; kein eigenständiges Zurücksetzen |
+
+## 9.10 Übergabefälle
+
+| Auslöser | Erwartet |
+|---|---|
+| B lehnt Übergabe ab | Ticket zurück in Stellenpool mit „Übergabe erforderlich“ |
+| Ratsuchende lehnen ab | Sitzung kontrolliert beendet; Ratsuchende gelöscht |
+| Grund `law_violation` versehentlich gewählt | Für Beratende unumkehrbar; nur Plattform-Admin kann protokolliert zurückrufen |
+| Übergabe im aktiven Gruppenchat | Nur Platz A ersetzt; übrige unverändert |
+| Übergabe zwischen Stellen versucht | API 403 „außerhalb Geltungsbereich“ |
+| Videoanruf aktiv | Zuerst kontrolliert beenden, dann Übergabe |
+| DSGVO-Einwilligung Nr. 2 ausstehend | Übergabe verweigert; Ticket zurück in Warteschlange |
+
+## 9.11 Gruppenchatfälle
+
+| Auslöser | Erwartet |
+|---|---|
+| Mitgliedergrenze der Adminrichtlinie überschritten | Hinweis; API 403 |
+| Nicht erlaubte Person eingeladen (z. B. fremde Stelle) | API 403 |
+| Gruppen plattformweit bei aktivem Chat deaktiviert | Bestehende Gruppen nur lesend; keine neuen |
+| Terminkonflikt bei Live-Runde (`live Mo 9.Sep 2026 um 18:00 Uhr`) | Neuplanung abfragen; Erinnerungen 24 Stunden, eine Stunde, fünf Minuten vorher |
+| Gruppe versehentlich gelöscht | Standard weiche Löschung (Archiv); endgültig nur Plattform-Admin mit Prüfeintrag |
+
+## 9.12 KI- / Annotationsfälle
+
+| Auslöser | Erwartet |
+|---|---|
+| KI-Zusammenfassung ausgefallen | Schaltfläche ausgegraut; manuelle Notiz |
+| KI-Ergebnis mit restlichen personenbezogenen Informationen | Browser-Nachfilter bereinigt vor Anzeige; Entwicklung markieren |
+| Markierung auf redigierter Nachricht | Verwaiste Annotation bei nächster Darstellung bereinigt |
+| Empfänger-Client zu alt für Annotationen | Banner: „Diese Nachricht enthält Inhalte, die die Beratungsperson unkenntlich machen wollte — bitte nicht beachten“ |
+
+## 9.13 Benachrichtigungs- und Eskalationsfälle
+
+| Auslöser | Erwartet |
+|---|---|
+| Benachrichtigung für gelöschtes Pseudonym | Still verworfen |
+| E-Mail-Kopie ohne erfasste Adresse angefragt | Erklärung: erst nach Hinzufügen möglich |
+| Externe Eskalation abgelaufen (24 Stunden) | Still abgebrochen; nichts verlässt System; Beratende informiert |
+| Hilfe an Beratende im Urlaub | Nächste verfügbare Supervision der Stelle |
+
+## 9.8 Kurzübersicht „Was passiert, wenn…“
+
+| Wenn… | Dann… |
+|---|---|
+| Ratsuchende verlassen Warteraum | Binnen ~90 Sekunden gelöscht |
+| Ratsuchende schließen Chat | Pause; nach fünf Minuten Inaktivität Ende |
+| Beratende trennen vor Einwilligung | Ticket zurück in Warteschlange |
+| Zwei nehmen dasselbe Ticket an | Eine Person gewinnt, andere „bereits übernommen“ |
+| Link während Sitzung deaktiviert | Aktive weiter, neue Besuche blockiert |
+| Träger deaktiviert | Nur lesend; aktive Sitzungen enden regulär |
+| Magic Link erneut genutzt | HTTP 410 |
+| Cookies aus | Freundliche Erklärung |
+| Warteschlangenzähler widersprüchlich | Redis Pub/Sub leitet bei nächstem Ereignis erneut aus Datenbank ab |
+| Ratsuchende löschen sich als Anrufstartende | Anruf unter Beratenden bleibt; Startrolle wechselt; Ratsuchende gelöscht |
+| Ratsuchende löschen sich aus Gruppe | Pseudonym weg; Nachrichten als „Ehemaliger Teilnehmer“; bei letzter Person automatisch archiviert |
+| Beratende entfernen Unkenntlichmachung versehentlich | Bestätigung vor Senden |
+| Mehrfachversand an gelöschte Person | „Zustellung übersprungen“; kein Inhalt zwischengespeichert |
+| E-Mail-Zustimmung während Sitzung | Nur privilegiert gespeichert; Beratende sehen nie |
+| B lehnt Übergabe ab | Ticket zurück in Pool, „Übergabe erforderlich“ |

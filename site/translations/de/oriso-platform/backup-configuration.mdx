@@ -1,0 +1,227 @@
+---
+title: "Sicherung konfigurieren"
+description: "Datenbanksicherungen mit ORISO-Database-Skripten und Kubernetes CronJobs einrichten"
+---
+
+# Sicherung konfigurieren
+
+Konfigurieren Sie automatische Sicherungen für Datenbanken und Kubernetes-Konfigurationen. Sicherungen werden über Skripte aus dem Repository ORISO-Database und Kubernetes CronJobs verwaltet.
+
+<Info>
+Sicherungsskripte befinden sich in `ORISO-Database/scripts/backup/`. Matrix-Sicherungen werden über Kubernetes CronJobs automatisiert.
+</Info>
+
+<Steps>
+<Step title="ORISO-Database-Sicherungsskripte verwenden">
+
+Verwenden Sie die zentralen Sicherungsskripte aus dem Repository ORISO-Database.
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Database/scripts/backup
+
+# Make scripts executable
+chmod +x *.sh
+
+# Backup all databases
+./backup-all.sh
+
+# Or backup individually
+./backup-mariadb.sh
+./backup-mongodb.sh
+```
+
+<Info>
+Sicherungsskripte:
+- `backup-all.sh` – Alle Datenbanken sichern
+- `backup-mariadb.sh` – Nur MariaDB sichern
+- `backup-mongodb.sh` – Nur MongoDB sichern
+- Sicherungen werden gespeichert in: `ORISO-Database/backups/`
+</Info>
+
+<Check>
+Prüfen Sie, ob Sicherungen erstellt wurden:
+```bash
+ls -lh ~/online-beratung/caritas-workspace/ORISO-Database/backups/
+```
+</Check>
+
+</Step>
+
+<Step title="Automatische Matrix-Sicherungen">
+
+Matrix-PostgreSQL-Sicherungen werden über einen Kubernetes CronJob automatisiert.
+
+```bash
+# Check CronJob
+kubectl get cronjobs -n caritas | grep matrix
+
+# Check backup job history
+kubectl get jobs -n caritas | grep matrix-backup
+
+# View CronJob configuration
+kubectl get cronjob matrix-postgres-backup -n caritas -o yaml
+```
+
+<Info>
+Matrix-Sicherungs-CronJob:
+- **Zeitplan:** Täglich um 02:00 Uhr
+- **Speicherort:** `ORISO-Matrix/matrix-cronjobs.yaml`
+- **Sicherung:** PostgreSQL-Datenbankdump
+</Info>
+
+</Step>
+
+<Step title="Kubernetes-Konfigurationen sichern">
+
+Exportieren und sichern Sie alle Kubernetes-Ressourcen.
+
+```bash
+# Create backup directory
+mkdir -p ~/backups/k8s-configs
+
+# Export Helm release
+helm get manifest oriso-platform -n caritas > ~/backups/k8s-configs/helm-manifest.yaml
+helm get values oriso-platform -n caritas > ~/backups/k8s-configs/helm-values.yaml
+
+# Export all resources
+kubectl get all -n caritas -o yaml > ~/backups/k8s-configs/all-resources.yaml
+kubectl get configmaps -n caritas -o yaml > ~/backups/k8s-configs/configmaps.yaml
+kubectl get secrets -n caritas -o yaml > ~/backups/k8s-configs/secrets.yaml
+kubectl get pvc -n caritas -o yaml > ~/backups/k8s-configs/pvcs.yaml
+kubectl get ingress -n caritas -o yaml > ~/backups/k8s-configs/ingress.yaml
+
+# Create archive
+cd ~/backups
+tar -czf k8s-configs-$(date +%Y%m%d).tar.gz k8s-configs/
+
+echo "Kubernetes configs backed up"
+```
+
+<Check>
+Das Archiv sollte im Verzeichnis `~/backups/` erstellt werden.
+</Check>
+
+</Step>
+
+<Step title="Automatische Sicherungen einrichten (optional)">
+
+Konfigurieren Sie automatische Sicherungen mit cron oder Kubernetes CronJobs.
+
+**Option A: System-Cron**
+
+```bash
+# Add to crontab
+crontab -e
+
+# Add daily backup at 2 AM
+0 2 * * * cd ~/online-beratung/caritas-workspace/ORISO-Database/scripts/backup && ./backup-all.sh >> ~/backups/backup.log 2>&1
+```
+
+**Option B: Kubernetes CronJob**
+
+```yaml
+# Create backup-cronjob.yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: database-backup
+  namespace: caritas
+spec:
+  schedule: "0 2 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: backup
+            image: mysql:8.0
+            command:
+            - /bin/bash
+            - -c
+            - |
+              mysqldump -h oriso-platform-mariadb.caritas.svc.cluster.local \
+                -u root -p${MYSQL_ROOT_PASSWORD} \
+                --all-databases > /backup/mariadb-$(date +%Y%m%d).sql
+            volumeMounts:
+            - name: backup-storage
+              mountPath: /backup
+          volumes:
+          - name: backup-storage
+            persistentVolumeClaim:
+              claimName: backup-pvc
+          restartPolicy: OnFailure
+```
+
+</Step>
+</Steps>
+
+## Wiederherstellungsverfahren
+
+### MariaDB wiederherstellen
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Database/scripts/restore
+./restore-mariadb.sh <backup-file>
+```
+
+### MongoDB wiederherstellen
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Database/scripts/restore
+./restore-mongodb.sh <backup-file>
+```
+
+### Matrix wiederherstellen
+```bash
+# Get Matrix PostgreSQL pod
+MATRIX_PG_POD=$(kubectl get pods -n caritas -l app=matrix-postgres -o jsonpath="{.items[0].metadata.name}")
+
+# Restore from backup
+kubectl exec -i -n caritas $MATRIX_PG_POD -- \
+  psql -U synapse_user synapse < matrix-backup.sql
+```
+
+## Speicherorte der Sicherungen
+
+- **Datenbanksicherungen:** `ORISO-Database/backups/`
+- **Matrix-Sicherungen:** Automatisch über CronJob (Speicherort in den Job-Protokollen prüfen)
+- **Kubernetes-Konfigurationen:** `~/backups/k8s-configs/`
+- **SignOZ-Daten:** Bleiben im ClickHouse-PVC erhalten (Metriken 30 Tage, Traces 7 Tage)
+
+## Datenaufbewahrung
+
+- **MariaDB-Sicherungen:** Letzte 30 Tage aufbewahren
+- **MongoDB-Sicherungen:** Letzte 30 Tage aufbewahren
+- **Matrix-Sicherungen:** Letzte 30 Tage aufbewahren
+- **Kubernetes-Konfigurationen:** Letzte 7 Tage aufbewahren
+- **SignOZ:** Metriken 30 Tage, Traces 7 Tage (in Helm-Werten konfiguriert)
+
+## Fehlerbehebung
+
+### Sicherungsskript schlägt fehl
+```bash
+# Check script permissions
+ls -la ~/online-beratung/caritas-workspace/ORISO-Database/scripts/backup/*.sh
+
+# Run script with verbose output
+bash -x ~/online-beratung/caritas-workspace/ORISO-Database/scripts/backup/backup-all.sh
+
+# Check database connectivity
+kubectl exec -n caritas deployment/oriso-platform-mariadb -- \
+  mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "SELECT 1;"
+```
+
+### CronJob läuft nicht
+```bash
+# Check CronJob
+kubectl get cronjobs -n caritas
+
+# Check job history
+kubectl get jobs -n caritas
+
+# Check job logs
+kubectl logs -n caritas job/<job-name>
+```
+
+## Nächste Schritte
+
+- [Sicherheit verbessern](/oriso-platform/security-hardening) – Sicherheitsmaßnahmen anwenden
+- [Fehlerbehebung](/oriso-platform/troubleshooting) – Häufige Probleme und Lösungen

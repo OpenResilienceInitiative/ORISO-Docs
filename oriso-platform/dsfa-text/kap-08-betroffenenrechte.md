@@ -1,5 +1,7 @@
 # 8 Schutz der Betroffenen — Betroffenenrechte 8.4 bis 8.10
 
+:::technisch Abschnitte 8.1, 8.3 und 8.11 sind organisatorisch
+
 Die Betroffenenrechte nach §§ 14 ff. KDG (Art. 12 ff. DSGVO) können bei jedem gemeinsam
 Verantwortlichen geltend gemacht werden; die interne Zuteilung regelt die Vereinbarung über die
 gemeinsame Verantwortlichkeit. Die nachfolgenden Abschnitte beschreiben je Recht, **was technisch

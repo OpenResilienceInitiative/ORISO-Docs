@@ -16,7 +16,7 @@ ADMIN_PORT="${ORISO_ADMIN_PORT:-9000}"
 FRONTEND_PORT="${ORISO_FRONTEND_PORT:-9002}"
 FRONTEND_NODE_BIN="${ORISO_FRONTEND_NODE_BIN:-${HOME}/.nvm/versions/node/v18.20.8/bin}"
 ORISO_MODE="${ORISO_MODE:-local}"
-ORISO_DEV_KEYCLOAK_URL="${ORISO_DEV_KEYCLOAK_URL:-https://auth.oriso.org}"
+ORISO_DEV_KEYCLOAK_URL="${ORISO_DEV_KEYCLOAK_URL:-}"
 ORISO_FORCE_ENV="${ORISO_FORCE_ENV:-0}"
 KEYCLOAK_URL="${ORISO_KEYCLOAK_URL:-http://localhost:8080}"
 KEYCLOAK_URL="${KEYCLOAK_URL%/}"
@@ -65,7 +65,7 @@ Environment:
   ORISO_ADMIN_PORT=9000                             Admin Vite port.
   ORISO_FRONTEND_PORT=9002                          ORISO-Frontend dev server port.
   ORISO_FRONTEND_NODE_BIN=~/.nvm/.../bin             Optional Node bin dir for ORISO-Frontend.
-  ORISO_DEV_KEYCLOAK_URL=https://auth.oriso.org     Dev Keycloak URL used in hybrid mode.
+  ORISO_DEV_KEYCLOAK_URL=https://auth.example.org   Dev Keycloak URL, required in hybrid mode (no default).
   ORISO_KEYCLOAK_URL=http://localhost:8080           Keycloak base URL (local mode default).
   ORISO_KEYCLOAK_REALM=online-beratung              Keycloak realm.
   ORISO_KEYCLOAK_CLIENT_ID=app                       Keycloak client id for Admin/Frontend.
@@ -111,6 +111,8 @@ is_hybrid_mode() {
 resolve_mode_defaults() {
   if is_hybrid_mode; then
     if [[ -z "${ORISO_KEYCLOAK_URL:-}" || "${KEYCLOAK_URL}" == "http://localhost:8080" || "${KEYCLOAK_URL}" == "http://127.0.0.1:8080" ]]; then
+      # No default host: hybrid mode must never silently authenticate against a real installation.
+      [[ -n "${ORISO_DEV_KEYCLOAK_URL}" ]] || die "Hybrid mode needs ORISO_DEV_KEYCLOAK_URL (e.g. https://auth.example.org)."
       KEYCLOAK_URL="${ORISO_DEV_KEYCLOAK_URL%/}"
     fi
   fi

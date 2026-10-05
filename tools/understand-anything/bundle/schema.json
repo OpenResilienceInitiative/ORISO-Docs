@@ -306,7 +306,7 @@
         },
         "ref": {
           "type": "string",
-          "pattern": "^refs/heads/"
+          "pattern": "^(refs/(heads|tags)/[A-Za-z0-9_.+/-]+|[a-f0-9]{40})$"
         },
         "sourceSHA": {
           "type": "string",
@@ -463,6 +463,24 @@
         "files": {
           "type": "array",
           "minItems": 1
+        },
+        "release": {
+          "type": "object",
+          "required": [
+            "lock",
+            "sha256",
+            "publishedAt",
+            "evidenceScope"
+          ],
+          "properties": {
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "evidenceScope": {
+              "const": "published-github-release-and-source-refs"
+            }
+          }
         }
       },
       "additionalProperties": true
