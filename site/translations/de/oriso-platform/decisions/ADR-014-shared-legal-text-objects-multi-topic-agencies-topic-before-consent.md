@@ -7,6 +7,8 @@
 
 > **Am 2026-08-16 durch `ADR-021` erweitert.** Nichts wird umgekehrt. ADR-021 ergänzt die hier fehlende **Plattformebene über dem Träger**, **allgemeine Versionshistorie** für Rechtstexte, heute nur für AVV vorhanden, und **Einwilligungssatz als Feld der Datenschutzerklärung**. Themenwahl vor Einwilligung bleibt gültig und ermöglicht überhaupt die Fachbereichsdokumentauflösung an Schranke 2 aus `ADR-022`.
 
+> **Am 2026-09-25 ergänzt, am 2026-09-26 angenommen (ORISO-UserService#1264).** Ein globaler Plattformschalter kann jede Beratungsstelle auf ein Thema beschränken (Caritas). Das Datenmodell bleibt mehrthemig; siehe `ADR-014-amendment-2026-09-25-one-topic-per-agency-policy.md`.
+
 - **Entscheider:** Frank und KI
 - **Verwandt:** `ADR-003` (Fachbereich = eindeutige Beratungsstelle × Thema, **teilweise hierdurch ersetzt**); `ADR-021` (Hierarchie, Versionierung, Einwilligungstext, erweitert diesen Eintrag); `ADR-022` (Einwilligungsschranken); `ADR-009` (globale Themenzuständigkeit); `CONTEXT-topics-categories-departments.md`; `CONTEXT-domain-caritas-diakonie-online-counselling.md` (Organisation→Mandant); QDL-Epic ORISO-Frontend#181 (QR-Codes und Direktlinks)
 
