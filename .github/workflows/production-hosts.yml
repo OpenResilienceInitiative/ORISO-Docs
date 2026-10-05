@@ -1,0 +1,34 @@
+name: No production hosts in docs
+
+# Generic instructions use placeholder hosts (app.example.org). A real ORISO host in a
+# copy-paste command or config example ends up in another installation's setup.
+# Pages that document ORISO's own installation are listed in
+# .github/production-hosts-allowlist.txt.
+
+on:
+  pull_request:
+  push:
+    branches: [dev, main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-hosts-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Production host check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Guard unit tests
+        run: python3 -m unittest discover -v -s .github/scripts -p 'test_check_production_hosts.py'
+
+      - name: Fail on ORISO hosts outside the allowlist
+        run: python3 .github/scripts/check_production_hosts.py

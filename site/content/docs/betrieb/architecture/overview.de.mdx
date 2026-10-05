@@ -1,0 +1,138 @@
+---
+title: "Überblick über die ORISO-Architektur"
+description: "Vollständiger Architekturüberblick der ORISO-Plattform v3.0.0 auf Kubernetes mit Helm-Charts."
+source: "oriso-platform/architecture/overview.mdx"
+---
+
+## Überblick über die Systemarchitektur
+
+Die ORISO-Plattform v3.0.0 ist eine umfassende Plattform für Online-Beratung, die auf Kubernetes mit Helm-Charts bereitgestellt wird. Die Plattform besteht aus 21 Diensten, die in Bereitstellungsphasen gegliedert sind.
+
+![ORISO-Systemarchitektur](/oriso-platform/assets/architecture-overview.png)
+
+> Wenn das Diagramm groß erscheint, scrollen Sie auf kleineren Bildschirmen horizontal.
+
+## Architekturmerkmale
+
+### Bereitstellungsmodell
+- **Plattform:** Kubernetes (k3s empfohlen)
+- **Paketmanager:** Helm 3.x
+- **Bereitstellungsverfahren:** Übergeordnetes Helm-Chart (`oriso-platform`)
+- **Namespace:** `caritas`
+- **Diensterkennung:** Kubernetes-DNS (`.svc.cluster.local`)
+
+### Namenskonvention für Dienste
+Alle Dienste verwenden das Präfix `oriso-platform-*`:
+- `oriso-platform-userservice.caritas.svc.cluster.local:8082`
+- `oriso-platform-agencyservice.caritas.svc.cluster.local:8084`
+- `oriso-platform-mariadb.caritas.svc.cluster.local:3306`
+
+## Bereitstellungsphasen
+
+Die Plattform wird in folgender Reihenfolge bereitgestellt:
+
+### Phase 1: Infrastruktur
+- MariaDB (7 Datenbanken)
+- MongoDB (consulting_types)
+- PostgreSQL (Matrix Synapse)
+- Redis (Caching/Sitzungen)
+- RabbitMQ (Nachrichtenverarbeitung)
+
+### Phase 2: Authentifizierung
+- Keycloak (OIDC/OAuth2)
+
+### Phase 3: Kommunikation
+- Matrix Synapse (Chatserver)
+- Matrix Discovery Service
+- Element.io (Webclient)
+
+### Phase 4: WebRTC
+- LiveKit (Videoanrufe)
+
+### Phase 5: Backend-Dienste
+- TenantService (Port 8081)
+- UserService (Port 8082)
+- ConsultingTypeService (Port 8083)
+- AgencyService (Port 8084)
+
+### Phase 6: Frontend
+- ORISO-Frontend (Benutzerportal)
+- ORISO-Admin (Administrationsoberfläche)
+
+### Phase 7: Überwachung
+- SignOZ (Observability)
+- Health Dashboard
+- Statusseite
+
+## Dienstkommunikation
+
+### Interne Kommunikation
+Alle Dienste kommunizieren über Kubernetes-DNS:
+```
+oriso-platform-<service-name>.caritas.svc.cluster.local:<port>
+```
+
+### Externer Zugriff
+Externer Zugriff wird über Kubernetes-Ingress bereitgestellt:
+- **Ingress Controller:** Nginx Ingress Controller
+- **TLS:** Cert-Manager mit Let's Encrypt
+- **Domainmuster:** `*.<your-domain>` (`global.domainName`; die Beispiele in diesen Anleitungen verwenden `example.org`)
+
+## Netzwerkarchitektur
+
+### Kubernetes-Dienste
+- **Typ:** ClusterIP (nur intern)
+- **Erkennung:** Automatische DNS-Auflösung
+- **Lastverteilung:** Kubernetes-Service-Proxy
+
+### Ingress-Ressourcen
+- **Gesamt:** 33 Ingress-Ressourcen in 22 YAML-Dateien
+- **Funktionen:** Umschreiben von Pfaden, CORS-Unterstützung, TLS-Automatisierung
+- **Zertifikate:** Automatisch über cert-manager
+
+## Datenarchitektur
+
+### Datenbankverwaltung
+- **Schemaverwaltung:** Zentral im Repository ORISO-Database
+- **Liquibase:** In allen Diensten DEAKTIVIERT
+- **Migration:** Manuell über ORISO-Database-Skripte
+- **Sicherung:** Automatisch über CronJobs
+
+### Datenbanktypen
+- **MariaDB:** 7 Datenbanken für Backend-Dienste
+- **MongoDB:** Collection consulting_types
+- **PostgreSQL:** Nur Matrix Synapse
+- **Redis:** Caching und Sitzungsspeicherung
+- **RabbitMQ:** Nachrichtenwarteschlange
+
+## Wichtige Architekturentscheidungen
+
+1. **Übergeordnetes Helm-Chart:** Ein Bereitstellungsbefehl für die gesamte Plattform
+2. **Kubernetes-DNS:** Keine fest eingetragenen IPs; gesamte Diensterkennung über DNS
+3. **Zentrale Schemata:** Alle Datenbankschemata im Repository ORISO-Database
+4. **Liquibase deaktiviert:** Schemata werden getrennt verwaltet, nicht von Diensten.
+5. **Routing über Ingress:** Keine manuelle Nginx-Konfiguration
+6. **TLS-Automatisierung:** Cert-Manager verwaltet alle SSL-Zertifikate.
+
+## Komponentenüberblick
+
+| Komponente | Anzahl | Zweck |
+|-----------|-------|---------|
+| Backend-Dienste | 4 | Microservices für Geschäftslogik |
+| Frontend-Anwendungen | 2 | Benutzer- und Administrationsoberflächen |
+| Datenbanken | 3 Typen | Datenpersistenz |
+| Cache/Warteschlange | 2 | Redis, RabbitMQ |
+| Authentifizierung | 1 | Keycloak |
+| Kommunikation | 3 | Matrix, Element, Discovery |
+| WebRTC | 1 | LiveKit |
+| Überwachung | 3 | SignOZ, Health Dashboard, Status |
+| **Gesamt** | **21** | **Vollständige Plattform** |
+
+## Nächste Schritte
+
+- [Architektur: Backend-Dienste](/de/betrieb/architecture/backend) – Ausführliche Backend-Architektur
+- [Architektur: Frontend](/de/betrieb/architecture/frontend) – Frontend-Architektur
+- [Architektur: Datenschicht](/de/betrieb/architecture/data) – Datenbankarchitektur
+- [Architektur: Infrastruktur](/de/betrieb/architecture/infra) – Einzelheiten zur Infrastruktur
+
+
