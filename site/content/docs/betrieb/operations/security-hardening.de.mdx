@@ -1,0 +1,226 @@
+---
+title: "Sicherheit verbessern"
+description: "Standardpasswörter ändern, Fail2Ban einrichten, SSH als root deaktivieren und Sicherheitsfunktionen aktivieren"
+source: "oriso-platform/security-hardening.mdx"
+---
+
+Wenden Sie bewährte Sicherheitsmaßnahmen an, um die Bereitstellung Ihrer ORISO-Plattform v3.0.0 auf Kubernetes abzusichern.
+
+<Callout type="warn">
+Diese Sicherheitsmaßnahmen sollten vor dem Zulassen produktiven Datenverkehrs angewendet werden.
+</Callout>
+
+<Callout>
+Kubernetes bietet zusätzliche Sicherheitsebenen:
+- RBAC zur Zugriffskontrolle
+- Network Policies zur Netzwerksegmentierung
+- Verwaltung von Secrets für vertrauliche Daten
+- TLS-Automatisierung über cert-manager
+</Callout>
+
+<Steps>
+<Step title="Standardpasswörter ändern">
+
+Ändern Sie alle Standardpasswörter in starke, einzigartige Passwörter.
+
+**Keycloak-Admin-Passwort ändern:**
+
+```bash
+KEYCLOAK_POD=$(kubectl get pods -n caritas -l app=keycloak -o jsonpath="{.items[0].metadata.name}")
+
+kubectl exec -n caritas $KEYCLOAK_POD -- \
+  /opt/keycloak/bin/kcadm.sh config credentials \
+  --server http://localhost:8080 \
+  --realm master \
+  --user admin \
+  --password admin
+
+kubectl exec -n caritas $KEYCLOAK_POD -- \
+  /opt/keycloak/bin/kcadm.sh update users/$(kubectl exec -n caritas $KEYCLOAK_POD -- \
+  /opt/keycloak/bin/kcadm.sh get users -r master -q username=admin --fields id --format csv | tail -n 1) \
+  -r master -s 'credentials=[{"type":"password","value":"NEW_STRONG_PASSWORD","temporary":false}]'
+```
+
+**MariaDB-Root-Passwort ändern:**
+
+```bash
+# Update Kubernetes secret
+kubectl create secret generic mariadb-secrets -n caritas \
+  --from-literal=MYSQL_ROOT_PASSWORD=NEW_STRONG_PASSWORD \
+  --from-literal=MYSQL_PASSWORD=NEW_STRONG_PASSWORD \
+  --dry-run=client -o yaml | kubectl apply -f -
+
+# Restart MariaDB to pick up new password
+kubectl rollout restart deployment/oriso-platform-mariadb -n caritas
+```
+
+<Callout type="warn">
+Aktualisieren Sie die Helm-Werte mit dem neuen Passwort und starten Sie alle Dienste neu, die MariaDB verwenden.
+</Callout>
+
+</Step>
+
+<Step title="Fail2Ban einrichten (SSH-Schutz)">
+
+Installieren und konfigurieren Sie Fail2Ban zum Schutz vor Brute-Force-Angriffen.
+
+```bash
+# Install Fail2Ban
+sudo apt install -y fail2ban
+
+# Configure Fail2Ban
+sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+
+# Edit jail.local
+sudo nano /etc/fail2ban/jail.local
+
+# Add/modify:
+# [sshd]
+# enabled = true
+# port = ssh
+# filter = sshd
+# logpath = /var/log/auth.log
+# maxretry = 3
+# bantime = 3600
+
+# Start Fail2Ban
+sudo systemctl enable fail2ban
+sudo systemctl start fail2ban
+
+# Check status
+sudo fail2ban-client status
+sudo fail2ban-client status sshd
+```
+
+<Callout type="success">
+Fail2Ban sollte aktiv sein und SSH überwachen.
+</Callout>
+
+</Step>
+
+<Step title="SSH-Anmeldung als root deaktivieren">
+
+Deaktivieren Sie die SSH-Anmeldung als root für bessere Sicherheit.
+
+```bash
+# Edit SSH config
+sudo nano /etc/ssh/sshd_config
+
+# Change:
+PermitRootLogin no
+PasswordAuthentication no  # Use SSH keys only
+PubkeyAuthentication yes
+
+# Restart SSH
+sudo systemctl restart sshd
+```
+
+<Callout type="warn">
+Stellen Sie sicher, dass Sie Zugriff über SSH-Schlüssel haben, bevor Sie die Passwortauthentifizierung deaktivieren. Andernfalls können Sie sich aussperren!
+</Callout>
+
+</Step>
+
+<Step title="Automatische Sicherheitsaktualisierungen einrichten">
+
+Aktivieren Sie automatische Sicherheitsaktualisierungen.
+
+```bash
+# Install unattended-upgrades
+sudo apt install -y unattended-upgrades
+
+# Configure
+sudo dpkg-reconfigure -plow unattended-upgrades
+
+# Edit config
+sudo nano /etc/apt/apt.conf.d/50unattended-upgrades
+
+# Enable automatic updates
+echo 'APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "1";
+APT::Periodic::AutocleanInterval "7";' | sudo tee /etc/apt/apt.conf.d/20auto-upgrades
+```
+
+</Step>
+
+<Step title="Audit-Protokollierung aktivieren">
+
+Aktivieren Sie Audit-Protokollierung zur Sicherheitsüberwachung.
+
+```bash
+# Install auditd
+sudo apt install -y auditd
+
+# Enable auditd
+sudo systemctl enable auditd
+sudo systemctl start auditd
+
+# Check status
+sudo systemctl status auditd
+```
+
+<Callout type="success">
+Der Audit-Daemon sollte aktiv sein und laufen.
+</Callout>
+
+</Step>
+</Steps>
+
+## Kubernetes-Sicherheit
+
+### RBAC-Konfiguration
+```bash
+# Review RBAC policies
+kubectl get role -n caritas
+kubectl get rolebinding -n caritas
+
+# Limit service account permissions
+# Use least-privilege principle
+```
+
+### Netzwerkrichtlinien
+```bash
+# Create NetworkPolicy to restrict pod-to-pod communication
+# Example: Only allow backend services to access databases
+kubectl apply -f network-policies.yaml
+```
+
+### Verwaltung von Secrets
+```bash
+# Rotate secrets regularly
+kubectl create secret generic <secret-name> -n caritas \
+  --from-literal=key=new-value \
+  --dry-run=client -o yaml | kubectl apply -f -
+
+# Use external secret management (e.g., Sealed Secrets, External Secrets Operator)
+```
+
+### TLS überall
+- Gesamter externer Zugriff über Ingress mit TLS
+- Cert-manager verwaltet Zertifikate automatisch.
+- Interne Dienste verwenden ClusterIP (nicht extern erreichbar).
+
+### Datenbanksicherheit
+- Datenbanken verwenden ClusterIP (nur intern).
+- Kein direkter externer Datenbankzugriff
+- Starke Passwörter in Kubernetes Secrets
+- Regelmäßiger Passwortwechsel
+
+## Weitere Empfehlungen
+
+- Sicherheitsprotokolle regelmäßig prüfen
+- Alle Pakete aktuell halten
+- Fehlgeschlagene Anmeldeversuche überwachen
+- Zugriff mit Firewall-Regeln beschränken (nur Ports 80/443)
+- Netzwerksegmentierung mit Kubernetes Network Policies umsetzen
+- Regelmäßige Sicherheitsprüfungen
+- Kubernetes-Secrets regelmäßig wechseln
+- Sicherheitskontexte der Pods überwachen
+- Pod Security Standards verwenden
+- Audit-Protokollierung für die Kubernetes API aktivieren
+
+## Nächste Schritte
+
+- [Fehlerbehebung](/de/betrieb/operations/troubleshooting) – Häufige Probleme und Lösungen
+- [Kurzreferenz](/de/betrieb/operations/quick-reference) – Wichtige Befehle
+

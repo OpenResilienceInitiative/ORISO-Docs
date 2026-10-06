@@ -1,0 +1,6 @@
+<svg width="280" height="32" viewBox="0 0 280 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="32" height="32" rx="6" fill="#FCD34D"/>
+  <circle cx="16" cy="16" r="10" fill="#60A5FA"/>
+  <text x="16" y="21" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#FCD34D">O</text>
+  <text x="42" y="20" font-family="Arial, sans-serif" font-size="14" font-weight="600" fill="#F1F5F9">Open Resilience Initiatives</text>
+</svg>

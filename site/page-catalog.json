@@ -1,0 +1,2407 @@
+{
+  "version": 1,
+  "pages": [
+    {
+      "id": "docs/platform/architecture",
+      "source": "docs/platform/architecture.md",
+      "route": "plattform/start-here/architecture",
+      "aliases": [
+        "docs/platform/architecture",
+        "docs/platform/architecture.md",
+        "docs/platform/architecture.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/docs/platform/architecture.md",
+          "sourceHash": "23e88344ee5ff6c30b74f1fe67f2f3a3f3983aa7ebc39a8d1c040c4c6c0cbbfa",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/docs/platform/architecture.md",
+          "sourceHash": "23e88344ee5ff6c30b74f1fe67f2f3a3f3983aa7ebc39a8d1c040c4c6c0cbbfa",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "docs/platform/authentication-and-keycloak",
+      "source": "docs/platform/authentication-and-keycloak.md",
+      "route": "plattform/core-systems/authentication-and-keycloak",
+      "aliases": [
+        "docs/platform/authentication-and-keycloak",
+        "docs/platform/authentication-and-keycloak.md",
+        "docs/platform/authentication-and-keycloak.mdx",
+        "plattform/platform-flows/local-development/authentication-and-keycloak.md"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/docs/platform/authentication-and-keycloak.md",
+          "sourceHash": "7b80ffc524d2d9e8d7d5643c97f31a63ab38a38124d57554b365ad106569e0ea",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/docs/platform/authentication-and-keycloak.md",
+          "sourceHash": "7b80ffc524d2d9e8d7d5643c97f31a63ab38a38124d57554b365ad106569e0ea",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "docs/platform/backend-services",
+      "source": "docs/platform/backend-services.md",
+      "route": "plattform/core-systems/backend-services",
+      "aliases": [
+        "docs/platform/backend-services",
+        "docs/platform/backend-services.md",
+        "docs/platform/backend-services.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/docs/platform/backend-services.md",
+          "sourceHash": "411810af36b37166511d81391e66fc09b3f0f1178baaa430eb66f2709a46af3c",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/docs/platform/backend-services.md",
+          "sourceHash": "411810af36b37166511d81391e66fc09b3f0f1178baaa430eb66f2709a46af3c",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "docs/platform/database-and-data-model",
+      "source": "docs/platform/database-and-data-model.md",
+      "route": "plattform/core-systems/database-and-data-model",
+      "aliases": [
+        "docs/platform/database-and-data-model",
+        "docs/platform/database-and-data-model.md",
+        "docs/platform/database-and-data-model.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/docs/platform/database-and-data-model.md",
+          "sourceHash": "eb82ce6dac9a1467b53ec2023cff1db15398bb476afc503c2c9fbb6498039ed3",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/docs/platform/database-and-data-model.md",
+          "sourceHash": "eb82ce6dac9a1467b53ec2023cff1db15398bb476afc503c2c9fbb6498039ed3",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "docs/platform/diagrams",
+      "source": "docs/platform/diagrams.md",
+      "route": "plattform/flows-und-reference/diagrams",
+      "aliases": [
+        "docs/platform/diagrams",
+        "docs/platform/diagrams.md",
+        "docs/platform/diagrams.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/docs/platform/diagrams.md",
+          "sourceHash": "2015e423a17e8d8d794b0b939eca03107e6380f18e4f4802129c5ae18b62e466",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/docs/platform/diagrams.md",
+          "sourceHash": "2015e423a17e8d8d794b0b939eca03107e6380f18e4f4802129c5ae18b62e466",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "docs/platform/frontend-admin-overview",
+      "source": "docs/platform/frontend-admin-overview.md",
+      "route": "plattform/core-systems/frontend-admin-overview",
+      "aliases": [
+        "docs/platform/frontend-admin-overview",
+        "docs/platform/frontend-admin-overview.md",
+        "docs/platform/frontend-admin-overview.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/docs/platform/frontend-admin-overview.md",
+          "sourceHash": "3d8c4794a180f6de37bf3ab9d940a75357aeb94f4d800e132389ab8dcef85e01",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/docs/platform/frontend-admin-overview.md",
+          "sourceHash": "3d8c4794a180f6de37bf3ab9d940a75357aeb94f4d800e132389ab8dcef85e01",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "docs/platform/graph-validation-report",
+      "source": "docs/platform/graph-validation-report.md",
+      "route": "plattform/archive/graph-validation-report",
+      "aliases": [
+        "docs/platform/graph-validation-report",
+        "docs/platform/graph-validation-report.md",
+        "docs/platform/graph-validation-report.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "archived",
+      "translations": {}
+    },
+    {
+      "id": "docs/platform/install-and-run-locally",
+      "source": "docs/platform/install-and-run-locally.md",
+      "route": "plattform/start-here/install-and-run-locally",
+      "aliases": [
+        "docs/platform/install-and-run-locally",
+        "docs/platform/install-and-run-locally.md",
+        "docs/platform/install-and-run-locally.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/docs/platform/install-and-run-locally.md",
+          "sourceHash": "7092b9a979675c3f84702deac841f4a3ee1b4e6f60048ca79ef2fe4207a55e30",
+          "reviewedAt": "2026-10-01"
+        },
+        "en": {
+          "path": "site/translations/en/docs/platform/install-and-run-locally.md",
+          "sourceHash": "7092b9a979675c3f84702deac841f4a3ee1b4e6f60048ca79ef2fe4207a55e30",
+          "reviewedAt": "2026-10-01"
+        }
+      }
+    },
+    {
+      "id": "docs/platform/kubernetes-deployment",
+      "source": "docs/platform/kubernetes-deployment.md",
+      "route": "plattform/core-systems/kubernetes-deployment",
+      "aliases": [
+        "docs/platform/kubernetes-deployment",
+        "docs/platform/kubernetes-deployment.md",
+        "docs/platform/kubernetes-deployment.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/docs/platform/kubernetes-deployment.md",
+          "sourceHash": "4070987fd25f1beb49dcef5625d47c4fa3d11fcb5aec5b2eea907b1fbbb36411",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/docs/platform/kubernetes-deployment.md",
+          "sourceHash": "4070987fd25f1beb49dcef5625d47c4fa3d11fcb5aec5b2eea907b1fbbb36411",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "docs/platform/local-development",
+      "source": "docs/platform/local-development.md",
+      "route": "plattform/platform-flows/local-development",
+      "aliases": [
+        "docs/platform/local-development",
+        "docs/platform/local-development.md",
+        "docs/platform/local-development.mdx",
+        "plattform/archive/local-development",
+        "plattform/start-here/local-development"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/docs/platform/local-development.md",
+          "sourceHash": "6ae55d59c2551c95f651e392add04b27b775108c1f6d298946ffc9b0ebfed3f9",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/docs/platform/local-development.md",
+          "sourceHash": "6ae55d59c2551c95f651e392add04b27b775108c1f6d298946ffc9b0ebfed3f9",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "docs/platform/onboarding-guide",
+      "source": "docs/platform/onboarding-guide.md",
+      "route": "plattform/archive/onboarding-guide",
+      "aliases": [
+        "docs/platform/onboarding-guide",
+        "docs/platform/onboarding-guide.md",
+        "docs/platform/onboarding-guide.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "archived",
+      "translations": {}
+    },
+    {
+      "id": "docs/platform/overview",
+      "source": "docs/platform/overview.md",
+      "route": "plattform/start-here/overview",
+      "aliases": [
+        "docs/platform/overview",
+        "docs/platform/overview.md",
+        "docs/platform/overview.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/docs/platform/overview.md",
+          "sourceHash": "0123454c4dab9172ae9f8bbd5f1c7e110da77b606c6c2438e107237f8ee41141",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/docs/platform/overview.md",
+          "sourceHash": "0123454c4dab9172ae9f8bbd5f1c7e110da77b606c6c2438e107237f8ee41141",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "docs/platform/repo-graphs/ORISO-Admin",
+      "source": "docs/platform/repo-graphs/ORISO-Admin.md",
+      "route": "plattform/archive/ORISO-Admin",
+      "aliases": [
+        "docs/platform/repo-graphs/ORISO-Admin",
+        "docs/platform/repo-graphs/ORISO-Admin.md",
+        "docs/platform/repo-graphs/ORISO-Admin.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "archived",
+      "translations": {}
+    },
+    {
+      "id": "docs/platform/repo-graphs/ORISO-AgencyService",
+      "source": "docs/platform/repo-graphs/ORISO-AgencyService.md",
+      "route": "plattform/archive/ORISO-AgencyService",
+      "aliases": [
+        "docs/platform/repo-graphs/ORISO-AgencyService",
+        "docs/platform/repo-graphs/ORISO-AgencyService.md",
+        "docs/platform/repo-graphs/ORISO-AgencyService.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "archived",
+      "translations": {}
+    },
+    {
+      "id": "docs/platform/repo-graphs/ORISO-ConsultingTypeService",
+      "source": "docs/platform/repo-graphs/ORISO-ConsultingTypeService.md",
+      "route": "plattform/archive/ORISO-ConsultingTypeService",
+      "aliases": [
+        "docs/platform/repo-graphs/ORISO-ConsultingTypeService",
+        "docs/platform/repo-graphs/ORISO-ConsultingTypeService.md",
+        "docs/platform/repo-graphs/ORISO-ConsultingTypeService.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "archived",
+      "translations": {}
+    },
+    {
+      "id": "docs/platform/repo-graphs/ORISO-Database",
+      "source": "docs/platform/repo-graphs/ORISO-Database.md",
+      "route": "plattform/archive/ORISO-Database",
+      "aliases": [
+        "docs/platform/repo-graphs/ORISO-Database",
+        "docs/platform/repo-graphs/ORISO-Database.md",
+        "docs/platform/repo-graphs/ORISO-Database.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "archived",
+      "translations": {}
+    },
+    {
+      "id": "docs/platform/repo-graphs/ORISO-Frontend",
+      "source": "docs/platform/repo-graphs/ORISO-Frontend.md",
+      "route": "plattform/archive/ORISO-Frontend",
+      "aliases": [
+        "docs/platform/repo-graphs/ORISO-Frontend",
+        "docs/platform/repo-graphs/ORISO-Frontend.md",
+        "docs/platform/repo-graphs/ORISO-Frontend.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "archived",
+      "translations": {}
+    },
+    {
+      "id": "docs/platform/repo-graphs/ORISO-Helm",
+      "source": "docs/platform/repo-graphs/ORISO-Helm.md",
+      "route": "plattform/archive/ORISO-Helm",
+      "aliases": [
+        "docs/platform/repo-graphs/ORISO-Helm",
+        "docs/platform/repo-graphs/ORISO-Helm.md",
+        "docs/platform/repo-graphs/ORISO-Helm.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "archived",
+      "translations": {}
+    },
+    {
+      "id": "docs/platform/repo-graphs/ORISO-Keycloak",
+      "source": "docs/platform/repo-graphs/ORISO-Keycloak.md",
+      "route": "plattform/archive/ORISO-Keycloak",
+      "aliases": [
+        "docs/platform/repo-graphs/ORISO-Keycloak",
+        "docs/platform/repo-graphs/ORISO-Keycloak.md",
+        "docs/platform/repo-graphs/ORISO-Keycloak.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "archived",
+      "translations": {}
+    },
+    {
+      "id": "docs/platform/repo-graphs/ORISO-Kubernetes",
+      "source": "docs/platform/repo-graphs/ORISO-Kubernetes.md",
+      "route": "plattform/archive/ORISO-Kubernetes",
+      "aliases": [
+        "docs/platform/repo-graphs/ORISO-Kubernetes",
+        "docs/platform/repo-graphs/ORISO-Kubernetes.md",
+        "docs/platform/repo-graphs/ORISO-Kubernetes.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "archived",
+      "translations": {}
+    },
+    {
+      "id": "docs/platform/repo-graphs/ORISO-TenantService",
+      "source": "docs/platform/repo-graphs/ORISO-TenantService.md",
+      "route": "plattform/archive/ORISO-TenantService",
+      "aliases": [
+        "docs/platform/repo-graphs/ORISO-TenantService",
+        "docs/platform/repo-graphs/ORISO-TenantService.md",
+        "docs/platform/repo-graphs/ORISO-TenantService.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "archived",
+      "translations": {}
+    },
+    {
+      "id": "docs/platform/repo-graphs/ORISO-UserService",
+      "source": "docs/platform/repo-graphs/ORISO-UserService.md",
+      "route": "plattform/archive/ORISO-UserService",
+      "aliases": [
+        "docs/platform/repo-graphs/ORISO-UserService",
+        "docs/platform/repo-graphs/ORISO-UserService.md",
+        "docs/platform/repo-graphs/ORISO-UserService.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "archived",
+      "translations": {}
+    },
+    {
+      "id": "docs/platform/repository-map",
+      "source": "docs/platform/repository-map.md",
+      "route": "plattform/flows-und-reference/repository-map",
+      "aliases": [
+        "docs/platform/repository-map",
+        "docs/platform/repository-map.md",
+        "docs/platform/repository-map.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/docs/platform/repository-map.md",
+          "sourceHash": "8344d8cd2f4f02401dbbe5e130d4720d00ee4ba0ebfb32dffc8e5b76857f7ea3",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/docs/platform/repository-map.md",
+          "sourceHash": "8344d8cd2f4f02401dbbe5e130d4720d00ee4ba0ebfb32dffc8e5b76857f7ea3",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "docs/platform/super-graph-detailed",
+      "source": "docs/platform/super-graph-detailed.md",
+      "route": "plattform/archive/super-graph-detailed",
+      "aliases": [
+        "docs/platform/super-graph-detailed",
+        "docs/platform/super-graph-detailed.md",
+        "docs/platform/super-graph-detailed.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "archived",
+      "translations": {}
+    },
+    {
+      "id": "docs/platform/super-graph-explorer",
+      "source": "docs/platform/super-graph-explorer.md",
+      "route": "plattform/archive/super-graph-explorer",
+      "aliases": [
+        "docs/platform/super-graph-explorer",
+        "docs/platform/super-graph-explorer.md",
+        "docs/platform/super-graph-explorer.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "archived",
+      "translations": {}
+    },
+    {
+      "id": "docs/platform/super-graph-index",
+      "source": "docs/platform/super-graph-index.md",
+      "route": "plattform/archive/super-graph-index",
+      "aliases": [
+        "docs/platform/super-graph-index",
+        "docs/platform/super-graph-index.md",
+        "docs/platform/super-graph-index.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "archived",
+      "translations": {}
+    },
+    {
+      "id": "docs/platform/tenant-lifecycle",
+      "source": "docs/platform/tenant-lifecycle.md",
+      "route": "plattform/flows-und-reference/tenant-lifecycle",
+      "aliases": [
+        "docs/platform/tenant-lifecycle",
+        "docs/platform/tenant-lifecycle.md",
+        "docs/platform/tenant-lifecycle.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/docs/platform/tenant-lifecycle.md",
+          "sourceHash": "c2bcb2849e460677704f75db2233d5caee33ae12db75686186be7fa6915a9b55",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/docs/platform/tenant-lifecycle.md",
+          "sourceHash": "c2bcb2849e460677704f75db2233d5caee33ae12db75686186be7fa6915a9b55",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "docs/platform/troubleshooting",
+      "source": "docs/platform/troubleshooting.md",
+      "route": "plattform/flows-und-reference/troubleshooting",
+      "aliases": [
+        "docs/platform/troubleshooting",
+        "docs/platform/troubleshooting.md",
+        "docs/platform/troubleshooting.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/docs/platform/troubleshooting.md",
+          "sourceHash": "9b906cdfe0067ccab78cdf94ffe3a40751df8ca9551396c8ed4b153a10cb9d04",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/docs/platform/troubleshooting.md",
+          "sourceHash": "9b906cdfe0067ccab78cdf94ffe3a40751df8ca9551396c8ed4b153a10cb9d04",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "docs/platform/understand-anything",
+      "source": "docs/platform/understand-anything.md",
+      "route": "plattform/knowledge-graphs/understand-anything",
+      "aliases": [
+        "docs/platform/understand-anything",
+        "docs/platform/understand-anything.md",
+        "docs/platform/understand-anything.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/docs/platform/understand-anything.md",
+          "sourceHash": "9fbf8b9743b7d5f776db645c2406652af8df51657e16ae3ac4093367e9789d38",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/docs/platform/understand-anything.md",
+          "sourceHash": "9fbf8b9743b7d5f776db645c2406652af8df51657e16ae3ac4093367e9789d38",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "docs/platform/understand-anything-inventory",
+      "source": "docs/platform/understand-anything-inventory.md",
+      "route": "plattform/archive/understand-anything-inventory",
+      "aliases": [
+        "docs/platform/understand-anything-inventory",
+        "docs/platform/understand-anything-inventory.md",
+        "docs/platform/understand-anything-inventory.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "archived",
+      "translations": {}
+    },
+    {
+      "id": "docs/platform/user-management-flow",
+      "source": "docs/platform/user-management-flow.md",
+      "route": "plattform/archive/user-management-flow",
+      "aliases": [
+        "docs/platform/user-management-flow",
+        "docs/platform/user-management-flow.md",
+        "docs/platform/user-management-flow.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "archived",
+      "translations": {}
+    },
+    {
+      "id": "index",
+      "source": "index.mdx",
+      "route": "betrieb/getting-started",
+      "aliases": [
+        "index",
+        "index.md",
+        "index.mdx",
+        "betrieb/getting-started/index"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/index.mdx",
+          "sourceHash": "465d58883b9bcb6da1758bff426bcf1041224fe257c280d5fb97251534b5b569",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/index.mdx",
+          "sourceHash": "465d58883b9bcb6da1758bff426bcf1041224fe257c280d5fb97251534b5b569",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/architecture/backend",
+      "source": "oriso-platform/architecture/backend.mdx",
+      "route": "betrieb/architecture/backend",
+      "aliases": [
+        "oriso-platform/architecture/backend",
+        "oriso-platform/architecture/backend.md",
+        "oriso-platform/architecture/backend.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/architecture/backend.mdx",
+          "sourceHash": "180f2bc2193075ec8c100069e5407b595b157261e443b51e0b88d6543c5388af",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/architecture/backend.mdx",
+          "sourceHash": "180f2bc2193075ec8c100069e5407b595b157261e443b51e0b88d6543c5388af",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/architecture/data",
+      "source": "oriso-platform/architecture/data.mdx",
+      "route": "betrieb/architecture/data",
+      "aliases": [
+        "oriso-platform/architecture/data",
+        "oriso-platform/architecture/data.md",
+        "oriso-platform/architecture/data.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/architecture/data.mdx",
+          "sourceHash": "32bb2e3ea9adadfc2f37ce53636925ae107e733b6716ac559420c846acadb632",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/architecture/data.mdx",
+          "sourceHash": "32bb2e3ea9adadfc2f37ce53636925ae107e733b6716ac559420c846acadb632",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/architecture/frontend",
+      "source": "oriso-platform/architecture/frontend.mdx",
+      "route": "betrieb/architecture/frontend",
+      "aliases": [
+        "oriso-platform/architecture/frontend",
+        "oriso-platform/architecture/frontend.md",
+        "oriso-platform/architecture/frontend.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/architecture/frontend.mdx",
+          "sourceHash": "bb7ddd4a22bf34bfaf2b8bcd87cda54a5f508564a29fba5f6368a8eeee468cb2",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/architecture/frontend.mdx",
+          "sourceHash": "bb7ddd4a22bf34bfaf2b8bcd87cda54a5f508564a29fba5f6368a8eeee468cb2",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/architecture/infra",
+      "source": "oriso-platform/architecture/infra.mdx",
+      "route": "betrieb/architecture/infra",
+      "aliases": [
+        "oriso-platform/architecture/infra",
+        "oriso-platform/architecture/infra.md",
+        "oriso-platform/architecture/infra.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/architecture/infra.mdx",
+          "sourceHash": "24111581db62937427125d6b62fd9189ffb19c7a4d62695a9f59c354135eb664",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/architecture/infra.mdx",
+          "sourceHash": "24111581db62937427125d6b62fd9189ffb19c7a4d62695a9f59c354135eb664",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/architecture/overview",
+      "source": "oriso-platform/architecture/overview.mdx",
+      "route": "betrieb/architecture/overview",
+      "aliases": [
+        "oriso-platform/architecture/overview",
+        "oriso-platform/architecture/overview.md",
+        "oriso-platform/architecture/overview.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/architecture/overview.mdx",
+          "sourceHash": "63aea765f7310f12c9742bc0001b12f4bb467775bbe3e5ad9e5ef85eb6061680",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/architecture/overview.mdx",
+          "sourceHash": "63aea765f7310f12c9742bc0001b12f4bb467775bbe3e5ad9e5ef85eb6061680",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/backup-configuration",
+      "source": "oriso-platform/backup-configuration.mdx",
+      "route": "betrieb/operations/backup-configuration",
+      "aliases": [
+        "oriso-platform/backup-configuration",
+        "oriso-platform/backup-configuration.md",
+        "oriso-platform/backup-configuration.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/oriso-platform/backup-configuration.mdx",
+          "sourceHash": "3beefec7e1191570de8db450d77f5619821b1c0421055dc39b2810bf3427df4d",
+          "reviewedAt": "2026-09-30"
+        },
+        "de": {
+          "path": "site/translations/de/oriso-platform/backup-configuration.mdx",
+          "sourceHash": "3beefec7e1191570de8db450d77f5619821b1c0421055dc39b2810bf3427df4d",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/clone-repositories",
+      "source": "oriso-platform/clone-repositories.mdx",
+      "route": "betrieb/getting-started/clone-repositories",
+      "aliases": [
+        "oriso-platform/clone-repositories",
+        "oriso-platform/clone-repositories.md",
+        "oriso-platform/clone-repositories.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/clone-repositories.mdx",
+          "sourceHash": "cae0d125e86ff0a3a6e801e606fdcf4afc464286ae9f87f5d1b6d78bce1a27f0",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/clone-repositories.mdx",
+          "sourceHash": "cae0d125e86ff0a3a6e801e606fdcf4afc464286ae9f87f5d1b6d78bce1a27f0",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/coding-standards",
+      "source": "oriso-platform/coding-standards.mdx",
+      "route": "betrieb/operations/coding-standards",
+      "aliases": [
+        "oriso-platform/coding-standards",
+        "oriso-platform/coding-standards.md",
+        "oriso-platform/coding-standards.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/oriso-platform/coding-standards.mdx",
+          "sourceHash": "22867d0faf289afd230f7ac2a177991371a6c83fb18efaeeb56bd5cf15b6286f",
+          "reviewedAt": "2026-09-30"
+        },
+        "de": {
+          "path": "site/translations/de/oriso-platform/coding-standards.mdx",
+          "sourceHash": "22867d0faf289afd230f7ac2a177991371a6c83fb18efaeeb56bd5cf15b6286f",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/configure-keycloak",
+      "source": "oriso-platform/configure-keycloak.mdx",
+      "route": "betrieb/deployment/configure-keycloak",
+      "aliases": [
+        "oriso-platform/configure-keycloak",
+        "oriso-platform/configure-keycloak.md",
+        "oriso-platform/configure-keycloak.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/configure-keycloak.mdx",
+          "sourceHash": "e6bb310d8d9b28527cdd5934fd3b4cca2a2ad9e528ff92596935ea28379962d7",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/configure-keycloak.mdx",
+          "sourceHash": "e6bb310d8d9b28527cdd5934fd3b4cca2a2ad9e528ff92596935ea28379962d7",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/decisions/ADR-001-counselling-modalities-as-modules",
+      "source": "oriso-platform/decisions/ADR-001-counselling-modalities-as-modules.md",
+      "route": "decisions/adr-001",
+      "aliases": [
+        "oriso-platform/decisions/ADR-001-counselling-modalities-as-modules",
+        "oriso-platform/decisions/ADR-001-counselling-modalities-as-modules.md"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/decisions/ADR-001-counselling-modalities-as-modules.md",
+          "sourceHash": "143e02e2a3b4be54c799b5daba15ae6e73db5bfca6d509e887553a83015e4f33",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/decisions/ADR-001-counselling-modalities-as-modules.md",
+          "sourceHash": "143e02e2a3b4be54c799b5daba15ae6e73db5bfca6d509e887553a83015e4f33",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/decisions/ADR-002-silent-room-membership-and-access-control-curtain",
+      "source": "oriso-platform/decisions/ADR-002-silent-room-membership-and-access-control-curtain.md",
+      "route": "decisions/adr-002",
+      "aliases": [
+        "oriso-platform/decisions/ADR-002-silent-room-membership-and-access-control-curtain",
+        "oriso-platform/decisions/ADR-002-silent-room-membership-and-access-control-curtain.md"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/decisions/ADR-002-silent-room-membership-and-access-control-curtain.md",
+          "sourceHash": "bcbc03e27b5a0a5a7beb919e3d2446e71fd35a054caf8ed4bdc05b91c188ff29",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/decisions/ADR-002-silent-room-membership-and-access-control-curtain.md",
+          "sourceHash": "bcbc03e27b5a0a5a7beb919e3d2446e71fd35a054caf8ed4bdc05b91c188ff29",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/decisions/ADR-003-department-as-unique-agency-topic-with-imprint-dpp",
+      "source": "oriso-platform/decisions/ADR-003-department-as-unique-agency-topic-with-imprint-dpp.md",
+      "route": "decisions/adr-003",
+      "aliases": [
+        "oriso-platform/decisions/ADR-003-department-as-unique-agency-topic-with-imprint-dpp",
+        "oriso-platform/decisions/ADR-003-department-as-unique-agency-topic-with-imprint-dpp.md"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/decisions/ADR-003-department-as-unique-agency-topic-with-imprint-dpp.md",
+          "sourceHash": "6d53c0bd5ca5add81de147b6c01e83719693f6ca1a46ec218b60f7a297adc169",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/decisions/ADR-003-department-as-unique-agency-topic-with-imprint-dpp.md",
+          "sourceHash": "6d53c0bd5ca5add81de147b6c01e83719693f6ca1a46ec218b60f7a297adc169",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/decisions/ADR-004-chat-keep-custom-ui-adopt-matrix-sdk-megolm",
+      "source": "oriso-platform/decisions/ADR-004-chat-keep-custom-ui-adopt-matrix-sdk-megolm.md",
+      "route": "decisions/adr-004",
+      "aliases": [
+        "oriso-platform/decisions/ADR-004-chat-keep-custom-ui-adopt-matrix-sdk-megolm",
+        "oriso-platform/decisions/ADR-004-chat-keep-custom-ui-adopt-matrix-sdk-megolm.md"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/decisions/ADR-004-chat-keep-custom-ui-adopt-matrix-sdk-megolm.md",
+          "sourceHash": "7142c1c6b9d038957cff1867bdba485de1a51d064163f6b7f2e4181f027f4e3e",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/decisions/ADR-004-chat-keep-custom-ui-adopt-matrix-sdk-megolm.md",
+          "sourceHash": "7142c1c6b9d038957cff1867bdba485de1a51d064163f6b7f2e4181f027f4e3e",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/decisions/ADR-005-matrix-federation-off-dns-server-name",
+      "source": "oriso-platform/decisions/ADR-005-matrix-federation-off-dns-server-name.md",
+      "route": "decisions/adr-005",
+      "aliases": [
+        "oriso-platform/decisions/ADR-005-matrix-federation-off-dns-server-name",
+        "oriso-platform/decisions/ADR-005-matrix-federation-off-dns-server-name.md"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/decisions/ADR-005-matrix-federation-off-dns-server-name.md",
+          "sourceHash": "1dac5804fb32bdc08fb19f3b4e266c66fff753b091b9dfd0a732c9ff26bcba0d",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/decisions/ADR-005-matrix-federation-off-dns-server-name.md",
+          "sourceHash": "1dac5804fb32bdc08fb19f3b4e266c66fff753b091b9dfd0a732c9ff26bcba0d",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/decisions/ADR-006-conversation-type-as-persisted-modality",
+      "source": "oriso-platform/decisions/ADR-006-conversation-type-as-persisted-modality.md",
+      "route": "decisions/adr-006",
+      "aliases": [
+        "oriso-platform/decisions/ADR-006-conversation-type-as-persisted-modality",
+        "oriso-platform/decisions/ADR-006-conversation-type-as-persisted-modality.md"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/decisions/ADR-006-conversation-type-as-persisted-modality.md",
+          "sourceHash": "7fc155cfd9055a091c8d4aeda620aabfc7d93acc55958dad8cce468ae9d48d57",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/decisions/ADR-006-conversation-type-as-persisted-modality.md",
+          "sourceHash": "7fc155cfd9055a091c8d4aeda620aabfc7d93acc55958dad8cce468ae9d48d57",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/decisions/ADR-007-live-chat-availability-and-liveness",
+      "source": "oriso-platform/decisions/ADR-007-live-chat-availability-and-liveness.md",
+      "route": "decisions/adr-007",
+      "aliases": [
+        "oriso-platform/decisions/ADR-007-live-chat-availability-and-liveness",
+        "oriso-platform/decisions/ADR-007-live-chat-availability-and-liveness.md"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/decisions/ADR-007-live-chat-availability-and-liveness.md",
+          "sourceHash": "a73ae9a2dceed69b9824dda325b27f29c21b852dea3929917f8b5ce20992cd2a",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/decisions/ADR-007-live-chat-availability-and-liveness.md",
+          "sourceHash": "a73ae9a2dceed69b9824dda325b27f29c21b852dea3929917f8b5ce20992cd2a",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/decisions/ADR-008-supervision-role-and-side-channel-confidentiality",
+      "source": "oriso-platform/decisions/ADR-008-supervision-role-and-side-channel-confidentiality.md",
+      "route": "decisions/adr-008",
+      "aliases": [
+        "oriso-platform/decisions/ADR-008-supervision-role-and-side-channel-confidentiality",
+        "oriso-platform/decisions/ADR-008-supervision-role-and-side-channel-confidentiality.md"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/decisions/ADR-008-supervision-role-and-side-channel-confidentiality.md",
+          "sourceHash": "1a4b13f53d710106beb8fdeae50f2ea7cf2a66724dd1bb648e5848f3835c46ab",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/decisions/ADR-008-supervision-role-and-side-channel-confidentiality.md",
+          "sourceHash": "1a4b13f53d710106beb8fdeae50f2ea7cf2a66724dd1bb648e5848f3835c46ab",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/decisions/ADR-009-global-topic-category-ownership-and-ai-assisted-translation",
+      "source": "oriso-platform/decisions/ADR-009-global-topic-category-ownership-and-ai-assisted-translation.md",
+      "route": "decisions/adr-009",
+      "aliases": [
+        "oriso-platform/decisions/ADR-009-global-topic-category-ownership-and-ai-assisted-translation",
+        "oriso-platform/decisions/ADR-009-global-topic-category-ownership-and-ai-assisted-translation.md"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/decisions/ADR-009-global-topic-category-ownership-and-ai-assisted-translation.md",
+          "sourceHash": "ee942ef7848f0a45b83ff2e8684aed45016a89174f3c6a86c64005c58b6a91c1",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/decisions/ADR-009-global-topic-category-ownership-and-ai-assisted-translation.md",
+          "sourceHash": "ee942ef7848f0a45b83ff2e8684aed45016a89174f3c6a86c64005c58b6a91c1",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/decisions/ADR-010-platform-controlled-per-tenant-appearance-allowlist",
+      "source": "oriso-platform/decisions/ADR-010-platform-controlled-per-tenant-appearance-allowlist.md",
+      "route": "decisions/adr-010",
+      "aliases": [
+        "oriso-platform/decisions/ADR-010-platform-controlled-per-tenant-appearance-allowlist",
+        "oriso-platform/decisions/ADR-010-platform-controlled-per-tenant-appearance-allowlist.md"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/decisions/ADR-010-platform-controlled-per-tenant-appearance-allowlist.md",
+          "sourceHash": "72884c967f4fa89a83e965d51aa84e7c027f6309b09376ebe1895247b4ad2bab",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/decisions/ADR-010-platform-controlled-per-tenant-appearance-allowlist.md",
+          "sourceHash": "72884c967f4fa89a83e965d51aa84e7c027f6309b09376ebe1895247b4ad2bab",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/decisions/ADR-011-helm-only-deployment-single-domain-path-routing",
+      "source": "oriso-platform/decisions/ADR-011-helm-only-deployment-single-domain-path-routing.md",
+      "route": "decisions/adr-011",
+      "aliases": [
+        "oriso-platform/decisions/ADR-011-helm-only-deployment-single-domain-path-routing",
+        "oriso-platform/decisions/ADR-011-helm-only-deployment-single-domain-path-routing.md"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/decisions/ADR-011-helm-only-deployment-single-domain-path-routing.md",
+          "sourceHash": "7efcbb7711a976dba65d97284dd2496e29784c7ddd7caeeb8daa3e7657b7af5c",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/decisions/ADR-011-helm-only-deployment-single-domain-path-routing.md",
+          "sourceHash": "7efcbb7711a976dba65d97284dd2496e29784c7ddd7caeeb8daa3e7657b7af5c",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/decisions/ADR-012-self-help-group-chat-extend-not-rebuild-future-timeline",
+      "source": "oriso-platform/decisions/ADR-012-self-help-group-chat-extend-not-rebuild-future-timeline.md",
+      "route": "decisions/adr-012",
+      "aliases": [
+        "oriso-platform/decisions/ADR-012-self-help-group-chat-extend-not-rebuild-future-timeline",
+        "oriso-platform/decisions/ADR-012-self-help-group-chat-extend-not-rebuild-future-timeline.md"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/decisions/ADR-012-self-help-group-chat-extend-not-rebuild-future-timeline.md",
+          "sourceHash": "92d659210675ba10efd1567d9d9f99c9e678b91a11026b888e0084d4ea47751e",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/decisions/ADR-012-self-help-group-chat-extend-not-rebuild-future-timeline.md",
+          "sourceHash": "92d659210675ba10efd1567d9d9f99c9e678b91a11026b888e0084d4ea47751e",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/decisions/ADR-013-2fa-via-vendored-otp-config-spi",
+      "source": "oriso-platform/decisions/ADR-013-2fa-via-vendored-otp-config-spi.md",
+      "route": "decisions/adr-013",
+      "aliases": [
+        "oriso-platform/decisions/ADR-013-2fa-via-vendored-otp-config-spi",
+        "oriso-platform/decisions/ADR-013-2fa-via-vendored-otp-config-spi.md"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/decisions/ADR-013-2fa-via-vendored-otp-config-spi.md",
+          "sourceHash": "baa6181b7eed94ae3e1f54f3e59ce9ef31fcb5e25efc4cd59b7c84cda40cef04",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/decisions/ADR-013-2fa-via-vendored-otp-config-spi.md",
+          "sourceHash": "baa6181b7eed94ae3e1f54f3e59ce9ef31fcb5e25efc4cd59b7c84cda40cef04",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/decisions/ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent",
+      "source": "oriso-platform/decisions/ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent.md",
+      "route": "decisions/adr-014",
+      "aliases": [
+        "oriso-platform/decisions/ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent",
+        "oriso-platform/decisions/ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent.md"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/decisions/ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent.md",
+          "sourceHash": "2e2b95153271e550dd19d12e0b6293bbba908130f0b273668a2dde829cd7de91",
+          "reviewedAt": "2026-10-05"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/decisions/ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent.md",
+          "sourceHash": "2e2b95153271e550dd19d12e0b6293bbba908130f0b273668a2dde829cd7de91",
+          "reviewedAt": "2026-10-05"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/decisions/ADR-015-per-chat-type-media-flag-families-replace-attachment-toggle",
+      "source": "oriso-platform/decisions/ADR-015-per-chat-type-media-flag-families-replace-attachment-toggle.md",
+      "route": "decisions/adr-015",
+      "aliases": [
+        "oriso-platform/decisions/ADR-015-per-chat-type-media-flag-families-replace-attachment-toggle",
+        "oriso-platform/decisions/ADR-015-per-chat-type-media-flag-families-replace-attachment-toggle.md"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/decisions/ADR-015-per-chat-type-media-flag-families-replace-attachment-toggle.md",
+          "sourceHash": "e9931c0b3f86b68b724bc34c5491e74c216ee4a8d88dc38232ee03815f5ea9dc",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/decisions/ADR-015-per-chat-type-media-flag-families-replace-attachment-toggle.md",
+          "sourceHash": "e9931c0b3f86b68b724bc34c5491e74c216ee4a8d88dc38232ee03815f5ea9dc",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept",
+      "source": "oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md",
+      "route": "decisions/adr-016",
+      "aliases": [
+        "oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept",
+        "oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md",
+          "sourceHash": "f37a8ec5a53c64cdde6e7348c21817ca69e92eb7256d9558c5c9b3c1553568b8",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md",
+          "sourceHash": "f37a8ec5a53c64cdde6e7348c21817ca69e92eb7256d9558c5c9b3c1553568b8",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/decisions/ADR-017-native-matrix-threads-hard-cut",
+      "source": "oriso-platform/decisions/ADR-017-native-matrix-threads-hard-cut.md",
+      "route": "decisions/adr-017",
+      "aliases": [
+        "oriso-platform/decisions/ADR-017-native-matrix-threads-hard-cut",
+        "oriso-platform/decisions/ADR-017-native-matrix-threads-hard-cut.md"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/decisions/ADR-017-native-matrix-threads-hard-cut.md",
+          "sourceHash": "0a9447fc98f069da730898973726878174d0f35fd58fc24d1691ffc06990ac52",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/decisions/ADR-017-native-matrix-threads-hard-cut.md",
+          "sourceHash": "0a9447fc98f069da730898973726878174d0f35fd58fc24d1691ffc06990ac52",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/decisions/ADR-018-erstantwort-as-one-persisted-event-rendered-as-carimat-bubbles",
+      "source": "oriso-platform/decisions/ADR-018-erstantwort-as-one-persisted-event-rendered-as-carimat-bubbles.md",
+      "route": "decisions/adr-018",
+      "aliases": [
+        "oriso-platform/decisions/ADR-018-erstantwort-as-one-persisted-event-rendered-as-carimat-bubbles",
+        "oriso-platform/decisions/ADR-018-erstantwort-as-one-persisted-event-rendered-as-carimat-bubbles.md"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/decisions/ADR-018-erstantwort-as-one-persisted-event-rendered-as-carimat-bubbles.md",
+          "sourceHash": "b8338eef066e17f86a42abfca747f36057d9aee477397040df98c93acb345129",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/decisions/ADR-018-erstantwort-as-one-persisted-event-rendered-as-carimat-bubbles.md",
+          "sourceHash": "b8338eef066e17f86a42abfca747f36057d9aee477397040df98c93acb345129",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/decisions/ADR-019-media-scanning-via-matrix-content-scanner-fail-closed",
+      "source": "oriso-platform/decisions/ADR-019-media-scanning-via-matrix-content-scanner-fail-closed.md",
+      "route": "decisions/adr-019",
+      "aliases": [
+        "oriso-platform/decisions/ADR-019-media-scanning-via-matrix-content-scanner-fail-closed",
+        "oriso-platform/decisions/ADR-019-media-scanning-via-matrix-content-scanner-fail-closed.md"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/decisions/ADR-019-media-scanning-via-matrix-content-scanner-fail-closed.md",
+          "sourceHash": "aa74867ec3bb4c977bbcd72a78ba7fb32389a743394e68a9c405ada22625d329",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/decisions/ADR-019-media-scanning-via-matrix-content-scanner-fail-closed.md",
+          "sourceHash": "aa74867ec3bb4c977bbcd72a78ba7fb32389a743394e68a9c405ada22625d329",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/decisions/ADR-020-scheduled-calls-secure-invitations-and-unified-contact-calendar",
+      "source": "oriso-platform/decisions/ADR-020-scheduled-calls-secure-invitations-and-unified-contact-calendar.md",
+      "route": "decisions/adr-020",
+      "aliases": [
+        "oriso-platform/decisions/ADR-020-scheduled-calls-secure-invitations-and-unified-contact-calendar",
+        "oriso-platform/decisions/ADR-020-scheduled-calls-secure-invitations-and-unified-contact-calendar.md"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/decisions/ADR-020-scheduled-calls-secure-invitations-and-unified-contact-calendar.md",
+          "sourceHash": "637b998f140cd76e5ffa9c990669bccd3afbe24cbfb77c74ea53930741256b1e",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/decisions/ADR-020-scheduled-calls-secure-invitations-and-unified-contact-calendar.md",
+          "sourceHash": "637b998f140cd76e5ffa9c990669bccd3afbe24cbfb77c74ea53930741256b1e",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/decisions/ADR-021-legal-text-hierarchy-versioning-and-consent-text",
+      "source": "oriso-platform/decisions/ADR-021-legal-text-hierarchy-versioning-and-consent-text.md",
+      "route": "decisions/adr-021",
+      "aliases": [
+        "oriso-platform/decisions/ADR-021-legal-text-hierarchy-versioning-and-consent-text",
+        "oriso-platform/decisions/ADR-021-legal-text-hierarchy-versioning-and-consent-text.md"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/decisions/ADR-021-legal-text-hierarchy-versioning-and-consent-text.md",
+          "sourceHash": "a53eb190f22fe95d1326d1fd5b15952ed9cfb92285c0c23a49564956a96075ec",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/decisions/ADR-021-legal-text-hierarchy-versioning-and-consent-text.md",
+          "sourceHash": "a53eb190f22fe95d1326d1fd5b15952ed9cfb92285c0c23a49564956a96075ec",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions",
+      "source": "oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
+      "route": "decisions/adr-022",
+      "aliases": [
+        "oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions",
+        "oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
+          "sourceHash": "e17116ebfdd73c6a16d2c267c1c999e6aee91fd12c5a411b9a8eacd9def3da0b",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
+          "sourceHash": "e17116ebfdd73c6a16d2c267c1c999e6aee91fd12c5a411b9a8eacd9def3da0b",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance",
+      "source": "oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
+      "route": "decisions/adr-023",
+      "aliases": [
+        "oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance",
+        "oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
+          "sourceHash": "6592caa757811e78c6c4213e453556a7e76bb4f2caa097b13979d3a238541e2e",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
+          "sourceHash": "6592caa757811e78c6c4213e453556a7e76bb4f2caa097b13979d3a238541e2e",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/decisions/ADR-024-notification-matrix-two-lists-not-one-filtered",
+      "source": "oriso-platform/decisions/ADR-024-notification-matrix-two-lists-not-one-filtered.md",
+      "route": "decisions/adr-024",
+      "aliases": [
+        "oriso-platform/decisions/ADR-024-notification-matrix-two-lists-not-one-filtered",
+        "oriso-platform/decisions/ADR-024-notification-matrix-two-lists-not-one-filtered.md"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/decisions/ADR-024-notification-matrix-two-lists-not-one-filtered.md",
+          "sourceHash": "8e76843785c65229ca1ea5857ca873b466cc03aa317871d21d984aa9b8f1760e",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/decisions/ADR-024-notification-matrix-two-lists-not-one-filtered.md",
+          "sourceHash": "8e76843785c65229ca1ea5857ca873b466cc03aa317871d21d984aa9b8f1760e",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/decisions/ADR-025-design-system-replaces-mailservice-rather-than-forking-it",
+      "source": "oriso-platform/decisions/ADR-025-design-system-replaces-mailservice-rather-than-forking-it.md",
+      "route": "decisions/adr-025",
+      "aliases": [
+        "oriso-platform/decisions/ADR-025-design-system-replaces-mailservice-rather-than-forking-it",
+        "oriso-platform/decisions/ADR-025-design-system-replaces-mailservice-rather-than-forking-it.md"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/decisions/ADR-025-design-system-replaces-mailservice-rather-than-forking-it.md",
+          "sourceHash": "b29374e51953fd44be15ce45f154d041a4f2fab51944851920b9061f2aaaca5e",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/decisions/ADR-025-design-system-replaces-mailservice-rather-than-forking-it.md",
+          "sourceHash": "b29374e51953fd44be15ce45f154d041a4f2fab51944851920b9061f2aaaca5e",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/decisions/ADR-026-tenant-branding-contract-for-email",
+      "source": "oriso-platform/decisions/ADR-026-tenant-branding-contract-for-email.md",
+      "route": "decisions/adr-026",
+      "aliases": [
+        "oriso-platform/decisions/ADR-026-tenant-branding-contract-for-email",
+        "oriso-platform/decisions/ADR-026-tenant-branding-contract-for-email.md"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/decisions/ADR-026-tenant-branding-contract-for-email.md",
+          "sourceHash": "0dc8ec32b21d31847343babc2b806c7a1a2b2389a44ea4ed4dc3771f9361a2a9",
+          "reviewedAt": "2026-10-04"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/decisions/ADR-026-tenant-branding-contract-for-email.md",
+          "sourceHash": "0dc8ec32b21d31847343babc2b806c7a1a2b2389a44ea4ed4dc3771f9361a2a9",
+          "reviewedAt": "2026-10-04"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/decisions/README",
+      "source": "oriso-platform/decisions/README.md",
+      "route": "decisions",
+      "aliases": [
+        "oriso-platform/decisions",
+        "oriso-platform/decisions/README.md"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/decisions/README.md",
+          "sourceHash": "c3f2fc53454bb3c341dfb119ef7c217f1cdd84cb3fd2e9279cec85b810b28800",
+          "reviewedAt": "2026-10-05"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/decisions/README.md",
+          "sourceHash": "c3f2fc53454bb3c341dfb119ef7c217f1cdd84cb3fd2e9279cec85b810b28800",
+          "reviewedAt": "2026-10-05"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/deploy-backend-services",
+      "source": "oriso-platform/deploy-backend-services.mdx",
+      "route": "betrieb/deployment/deploy-backend-services",
+      "aliases": [
+        "oriso-platform/deploy-backend-services",
+        "oriso-platform/deploy-backend-services.md",
+        "oriso-platform/deploy-backend-services.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/deploy-backend-services.mdx",
+          "sourceHash": "3a67584b2d38d9f37794f532e31eb55e2d63ff73f71876fc538db1031e51dfbb",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/deploy-backend-services.mdx",
+          "sourceHash": "3a67584b2d38d9f37794f532e31eb55e2d63ff73f71876fc538db1031e51dfbb",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/deploy-frontend",
+      "source": "oriso-platform/deploy-frontend.mdx",
+      "route": "betrieb/deployment/deploy-frontend",
+      "aliases": [
+        "oriso-platform/deploy-frontend",
+        "oriso-platform/deploy-frontend.md",
+        "oriso-platform/deploy-frontend.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/oriso-platform/deploy-frontend.mdx",
+          "sourceHash": "e24cb06ff959879b1ce8697999678f1bec1ddd5c203f87ad90022ee2e569eb09",
+          "reviewedAt": "2026-09-30"
+        },
+        "de": {
+          "path": "site/translations/de/oriso-platform/deploy-frontend.mdx",
+          "sourceHash": "e24cb06ff959879b1ce8697999678f1bec1ddd5c203f87ad90022ee2e569eb09",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/deploy-infrastructure",
+      "source": "oriso-platform/deploy-infrastructure.mdx",
+      "route": "betrieb/deployment/deploy-infrastructure",
+      "aliases": [
+        "oriso-platform/deploy-infrastructure",
+        "oriso-platform/deploy-infrastructure.md",
+        "oriso-platform/deploy-infrastructure.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/deploy-infrastructure.mdx",
+          "sourceHash": "cbecf90cda44dff237557ed846a0260d1a56d92e166950bc987a7b394d6ff317",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/deploy-infrastructure.mdx",
+          "sourceHash": "cbecf90cda44dff237557ed846a0260d1a56d92e166950bc987a7b394d6ff317",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/deploy-matrix",
+      "source": "oriso-platform/deploy-matrix.mdx",
+      "route": "betrieb/deployment/deploy-matrix",
+      "aliases": [
+        "oriso-platform/deploy-matrix",
+        "oriso-platform/deploy-matrix.md",
+        "oriso-platform/deploy-matrix.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/oriso-platform/deploy-matrix.mdx",
+          "sourceHash": "2b7ba7b3b6f61235a27da44352542c72dec539a4d6983e7cb4e40752bb6e587f",
+          "reviewedAt": "2026-09-30"
+        },
+        "de": {
+          "path": "site/translations/de/oriso-platform/deploy-matrix.mdx",
+          "sourceHash": "2b7ba7b3b6f61235a27da44352542c72dec539a4d6983e7cb4e40752bb6e587f",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/deploy-monitoring",
+      "source": "oriso-platform/deploy-monitoring.mdx",
+      "route": "betrieb/deployment/deploy-monitoring",
+      "aliases": [
+        "oriso-platform/deploy-monitoring",
+        "oriso-platform/deploy-monitoring.md",
+        "oriso-platform/deploy-monitoring.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/oriso-platform/deploy-monitoring.mdx",
+          "sourceHash": "42b92e80d57454cd328db24413e2bfb39e0b28d5367c2e0c526ee90e4434cbcc",
+          "reviewedAt": "2026-09-30 AI editorial credential removal checked"
+        },
+        "de": {
+          "path": "site/translations/de/oriso-platform/deploy-monitoring.mdx",
+          "sourceHash": "42b92e80d57454cd328db24413e2bfb39e0b28d5367c2e0c526ee90e4434cbcc",
+          "reviewedAt": "2026-09-30 AI editorial credential removal checked"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/deploy-nginx",
+      "source": "oriso-platform/deploy-nginx.mdx",
+      "route": "betrieb/deployment/deploy-nginx",
+      "aliases": [
+        "oriso-platform/deploy-nginx",
+        "oriso-platform/deploy-nginx.md",
+        "oriso-platform/deploy-nginx.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/oriso-platform/deploy-nginx.mdx",
+          "sourceHash": "b1da6bb821cd8adcfadc17b38386001f068d2469b651071ab256eb3b1049cdb2",
+          "reviewedAt": "2026-09-30"
+        },
+        "de": {
+          "path": "site/translations/de/oriso-platform/deploy-nginx.mdx",
+          "sourceHash": "b1da6bb821cd8adcfadc17b38386001f068d2469b651071ab256eb3b1049cdb2",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/dns-ssl",
+      "source": "oriso-platform/dns-ssl.mdx",
+      "route": "betrieb/configuration-und-testing/dns-ssl",
+      "aliases": [
+        "oriso-platform/dns-ssl",
+        "oriso-platform/dns-ssl.md",
+        "oriso-platform/dns-ssl.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/oriso-platform/dns-ssl.mdx",
+          "sourceHash": "a728333a34aed99829b9717729a6a2dce838b9bf93790fc388f69848e61a20ad",
+          "reviewedAt": "2026-09-30"
+        },
+        "de": {
+          "path": "site/translations/de/oriso-platform/dns-ssl.mdx",
+          "sourceHash": "a728333a34aed99829b9717729a6a2dce838b9bf93790fc388f69848e61a20ad",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/initial-setup",
+      "source": "oriso-platform/initial-setup.mdx",
+      "route": "betrieb/getting-started/initial-setup",
+      "aliases": [
+        "oriso-platform/initial-setup",
+        "oriso-platform/initial-setup.md",
+        "oriso-platform/initial-setup.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/initial-setup.mdx",
+          "sourceHash": "8386298418ed06741c190bb4afdcd446840429b5de1ccff049267a540f081094",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/initial-setup.mdx",
+          "sourceHash": "8386298418ed06741c190bb4afdcd446840429b5de1ccff049267a540f081094",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/install-software",
+      "source": "oriso-platform/install-software.mdx",
+      "route": "betrieb/getting-started/install-software",
+      "aliases": [
+        "oriso-platform/install-software",
+        "oriso-platform/install-software.md",
+        "oriso-platform/install-software.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/install-software.mdx",
+          "sourceHash": "94b9b56079a6cf28241cb7c4412d79d57027c5bb5f62a044a2744691cf22c25f",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/install-software.mdx",
+          "sourceHash": "94b9b56079a6cf28241cb7c4412d79d57027c5bb5f62a044a2744691cf22c25f",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/network-firewall",
+      "source": "oriso-platform/network-firewall.mdx",
+      "route": "betrieb/getting-started/network-firewall",
+      "aliases": [
+        "oriso-platform/network-firewall",
+        "oriso-platform/network-firewall.md",
+        "oriso-platform/network-firewall.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/network-firewall.mdx",
+          "sourceHash": "de864044ba4a3a689b85e0d65048cb75f7e7771dd3d585b7514cbaea4e985ecd",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/network-firewall.mdx",
+          "sourceHash": "de864044ba4a3a689b85e0d65048cb75f7e7771dd3d585b7514cbaea4e985ecd",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/overview",
+      "source": "oriso-platform/overview.mdx",
+      "route": "betrieb/getting-started/overview",
+      "aliases": [
+        "oriso-platform/overview",
+        "oriso-platform/overview.md",
+        "oriso-platform/overview.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/overview.mdx",
+          "sourceHash": "63222c23c8f096390a8f902c5adc7d15ca3db0f5cbf7119dad535ffc7bb01842",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/overview.mdx",
+          "sourceHash": "63222c23c8f096390a8f902c5adc7d15ca3db0f5cbf7119dad535ffc7bb01842",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/post-deployment",
+      "source": "oriso-platform/post-deployment.mdx",
+      "route": "betrieb/configuration-und-testing/post-deployment",
+      "aliases": [
+        "oriso-platform/post-deployment",
+        "oriso-platform/post-deployment.md",
+        "oriso-platform/post-deployment.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/oriso-platform/post-deployment.mdx",
+          "sourceHash": "b7675d4d91f12417c5d6b0d54f3f6bdb235863c388f02d52a946c30a888103ea",
+          "reviewedAt": "2026-09-30"
+        },
+        "de": {
+          "path": "site/translations/de/oriso-platform/post-deployment.mdx",
+          "sourceHash": "b7675d4d91f12417c5d6b0d54f3f6bdb235863c388f02d52a946c30a888103ea",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/quick-reference",
+      "source": "oriso-platform/quick-reference.mdx",
+      "route": "betrieb/operations/quick-reference",
+      "aliases": [
+        "oriso-platform/quick-reference",
+        "oriso-platform/quick-reference.md",
+        "oriso-platform/quick-reference.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/oriso-platform/quick-reference.mdx",
+          "sourceHash": "9308f1c787eb52d66ea18c5c9ccb9de18b0746726a6150f320e58a1dccb6bdec",
+          "reviewedAt": "2026-09-30"
+        },
+        "de": {
+          "path": "site/translations/de/oriso-platform/quick-reference.mdx",
+          "sourceHash": "9308f1c787eb52d66ea18c5c9ccb9de18b0746726a6150f320e58a1dccb6bdec",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/security-hardening",
+      "source": "oriso-platform/security-hardening.mdx",
+      "route": "betrieb/operations/security-hardening",
+      "aliases": [
+        "oriso-platform/security-hardening",
+        "oriso-platform/security-hardening.md",
+        "oriso-platform/security-hardening.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/oriso-platform/security-hardening.mdx",
+          "sourceHash": "6eea0e47c8d7ee6061ee495b5b249fd5ead7d4fef137eb60ddfe7db586fbb352",
+          "reviewedAt": "2026-09-30"
+        },
+        "de": {
+          "path": "site/translations/de/oriso-platform/security-hardening.mdx",
+          "sourceHash": "6eea0e47c8d7ee6061ee495b5b249fd5ead7d4fef137eb60ddfe7db586fbb352",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/setup-databases",
+      "source": "oriso-platform/setup-databases.mdx",
+      "route": "betrieb/deployment/setup-databases",
+      "aliases": [
+        "oriso-platform/setup-databases",
+        "oriso-platform/setup-databases.md",
+        "oriso-platform/setup-databases.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/setup-databases.mdx",
+          "sourceHash": "06024541142c49c38028c1d44fe991bc2f3d6a585012029dda7724e7a9dddd0a",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/setup-databases.mdx",
+          "sourceHash": "06024541142c49c38028c1d44fe991bc2f3d6a585012029dda7724e7a9dddd0a",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/setup-kubernetes",
+      "source": "oriso-platform/setup-kubernetes.mdx",
+      "route": "betrieb/getting-started/setup-kubernetes",
+      "aliases": [
+        "oriso-platform/setup-kubernetes",
+        "oriso-platform/setup-kubernetes.md",
+        "oriso-platform/setup-kubernetes.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/setup-kubernetes.mdx",
+          "sourceHash": "e3651da566f91351f6fcfac771fe29667f413e509aed00c84a38f59bf1975350",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/setup-kubernetes.mdx",
+          "sourceHash": "e3651da566f91351f6fcfac771fe29667f413e509aed00c84a38f59bf1975350",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/troubleshooting",
+      "source": "oriso-platform/troubleshooting.mdx",
+      "route": "betrieb/operations/troubleshooting",
+      "aliases": [
+        "oriso-platform/troubleshooting",
+        "oriso-platform/troubleshooting.md",
+        "oriso-platform/troubleshooting.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/oriso-platform/troubleshooting.mdx",
+          "sourceHash": "2fabddae073015bb5622100aff5f2d6d7018a76864ccefb5df2d6fec1d97e8b1",
+          "reviewedAt": "2026-09-30"
+        },
+        "de": {
+          "path": "site/translations/de/oriso-platform/troubleshooting.mdx",
+          "sourceHash": "2fabddae073015bb5622100aff5f2d6d7018a76864ccefb5df2d6fec1d97e8b1",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "oriso-platform/verification-testing",
+      "source": "oriso-platform/verification-testing.mdx",
+      "route": "betrieb/configuration-und-testing/verification-testing",
+      "aliases": [
+        "oriso-platform/verification-testing",
+        "oriso-platform/verification-testing.md",
+        "oriso-platform/verification-testing.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/oriso-platform/verification-testing.mdx",
+          "sourceHash": "69a1212650d4387af8978bbad7fb4062cf7a1730f668d5a0689d317b5f1e8b1d",
+          "reviewedAt": "2026-09-30"
+        },
+        "de": {
+          "path": "site/translations/de/oriso-platform/verification-testing.mdx",
+          "sourceHash": "69a1212650d4387af8978bbad7fb4062cf7a1730f668d5a0689d317b5f1e8b1d",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "product/architecture",
+      "source": "product/architecture.mdx",
+      "route": "produkt/architecture-und-roles/architecture",
+      "aliases": [
+        "product/architecture",
+        "product/architecture.md",
+        "product/architecture.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/product/architecture.mdx",
+          "sourceHash": "b75f0cfc65de6965fa4b59491a64ae158e5e8ae87673a1a2de8b84b6f1f9ef6c",
+          "reviewedAt": "2026-09-30"
+        },
+        "de": {
+          "path": "site/translations/de/product/architecture.mdx",
+          "sourceHash": "b75f0cfc65de6965fa4b59491a64ae158e5e8ae87673a1a2de8b84b6f1f9ef6c",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "product/assumptions",
+      "source": "product/assumptions.mdx",
+      "route": "produkt/design-und-quality/assumptions",
+      "aliases": [
+        "product/assumptions",
+        "product/assumptions.md",
+        "product/assumptions.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/product/assumptions.mdx",
+          "sourceHash": "02a62a74eea33050e3b633775b9632f012e398aae88d90400e0754ad84c9852c",
+          "reviewedAt": "2026-09-30"
+        },
+        "de": {
+          "path": "site/translations/de/product/assumptions.mdx",
+          "sourceHash": "02a62a74eea33050e3b633775b9632f012e398aae88d90400e0754ad84c9852c",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "product/data-model",
+      "source": "product/data-model.mdx",
+      "route": "produkt/flows-und-internals/data-model",
+      "aliases": [
+        "product/data-model",
+        "product/data-model.md",
+        "product/data-model.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/product/data-model.mdx",
+          "sourceHash": "72728cf9f50ef1b7371a8b7c6cd0e41abbf46babb6e76bb7a17fd2d380038d2c",
+          "reviewedAt": "2026-09-30"
+        },
+        "de": {
+          "path": "site/translations/de/product/data-model.mdx",
+          "sourceHash": "72728cf9f50ef1b7371a8b7c6cd0e41abbf46babb6e76bb7a17fd2d380038d2c",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "product/edge-cases",
+      "source": "product/edge-cases.mdx",
+      "route": "produkt/design-und-quality/edge-cases",
+      "aliases": [
+        "product/edge-cases",
+        "product/edge-cases.md",
+        "product/edge-cases.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/product/edge-cases.mdx",
+          "sourceHash": "c310a304a70eb0a8c71c52adf80eb886f1dd01e3999d6df11c96fa5b0e818b07",
+          "reviewedAt": "2026-10-06"
+        },
+        "de": {
+          "path": "site/translations/de/product/edge-cases.mdx",
+          "sourceHash": "c310a304a70eb0a8c71c52adf80eb886f1dd01e3999d6df11c96fa5b0e818b07",
+          "reviewedAt": "2026-10-06"
+        }
+      }
+    },
+    {
+      "id": "product/features/ai-tools",
+      "source": "product/features/ai-tools.mdx",
+      "route": "produkt/core-features/ai-tools",
+      "aliases": [
+        "product/features/ai-tools",
+        "product/features/ai-tools.md",
+        "product/features/ai-tools.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/product/features/ai-tools.mdx",
+          "sourceHash": "000bb28925913500b3b502a5afaa5b9cb85412e65f244a31584e4c7b68cc71ae",
+          "reviewedAt": "2026-09-30"
+        },
+        "de": {
+          "path": "site/translations/de/product/features/ai-tools.mdx",
+          "sourceHash": "000bb28925913500b3b502a5afaa5b9cb85412e65f244a31584e4c7b68cc71ae",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "product/features/case-handover",
+      "source": "product/features/case-handover.mdx",
+      "route": "produkt/core-features/case-handover",
+      "aliases": [
+        "product/features/case-handover",
+        "product/features/case-handover.md",
+        "product/features/case-handover.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/product/features/case-handover.mdx",
+          "sourceHash": "23bc22c247858966279d52966b626be71221ba74960660d9b0187bcdb808661f",
+          "reviewedAt": "2026-09-30"
+        },
+        "de": {
+          "path": "site/translations/de/product/features/case-handover.mdx",
+          "sourceHash": "23bc22c247858966279d52966b626be71221ba74960660d9b0187bcdb808661f",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "product/features/group-chats",
+      "source": "product/features/group-chats.mdx",
+      "route": "produkt/core-features/group-chats",
+      "aliases": [
+        "product/features/group-chats",
+        "product/features/group-chats.md",
+        "product/features/group-chats.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/product/features/group-chats.mdx",
+          "sourceHash": "873c5c15d4d1fe8bc49514af11e236ff11f19b37436d54a1a6388be5a8d1fbd5",
+          "reviewedAt": "2026-09-30"
+        },
+        "de": {
+          "path": "site/translations/de/product/features/group-chats.mdx",
+          "sourceHash": "873c5c15d4d1fe8bc49514af11e236ff11f19b37436d54a1a6388be5a8d1fbd5",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "product/features/handover",
+      "source": "product/features/handover.mdx",
+      "route": "produkt/core-features/handover",
+      "aliases": [
+        "product/features/handover",
+        "product/features/handover.md",
+        "product/features/handover.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/product/features/handover.mdx",
+          "sourceHash": "bb7bac58093c4be0aa62d8562c03216f28cf1a901952c4d1d330733404a0a2cc",
+          "reviewedAt": "2026-09-30"
+        },
+        "de": {
+          "path": "site/translations/de/product/features/handover.mdx",
+          "sourceHash": "bb7bac58093c4be0aa62d8562c03216f28cf1a901952c4d1d330733404a0a2cc",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "product/features/index",
+      "source": "product/features/index.mdx",
+      "route": "produkt/core-features",
+      "aliases": [
+        "product/features/index",
+        "product/features/index.md",
+        "product/features/index.mdx",
+        "produkt/core-features/index"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/product/features/index.mdx",
+          "sourceHash": "5d61551d859eeae8947aece8c094a049d0e829be240a292535bb7a08cc832cad",
+          "reviewedAt": "2026-09-30"
+        },
+        "de": {
+          "path": "site/translations/de/product/features/index.mdx",
+          "sourceHash": "5d61551d859eeae8947aece8c094a049d0e829be240a292535bb7a08cc832cad",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "product/features/live-chat",
+      "source": "product/features/live-chat.mdx",
+      "route": "produkt/core-features/live-chat",
+      "aliases": [
+        "product/features/live-chat",
+        "product/features/live-chat.md",
+        "product/features/live-chat.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/product/features/live-chat.mdx",
+          "sourceHash": "3d7f5e56bda0d596c9bd4dcb898b67c8df5aaf0a16db52f8581ed34d603d0cb5",
+          "reviewedAt": "2026-09-30"
+        },
+        "de": {
+          "path": "site/translations/de/product/features/live-chat.mdx",
+          "sourceHash": "3d7f5e56bda0d596c9bd4dcb898b67c8df5aaf0a16db52f8581ed34d603d0cb5",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "product/features/notifications",
+      "source": "product/features/notifications.mdx",
+      "route": "produkt/core-features/notifications",
+      "aliases": [
+        "product/features/notifications",
+        "product/features/notifications.md",
+        "product/features/notifications.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/product/features/notifications.mdx",
+          "sourceHash": "ca5b1a0990ee52baed9f1515eaf2e03663bf9eb8dfd84f35114a4d5433319029",
+          "reviewedAt": "2026-09-30"
+        },
+        "de": {
+          "path": "site/translations/de/product/features/notifications.mdx",
+          "sourceHash": "ca5b1a0990ee52baed9f1515eaf2e03663bf9eb8dfd84f35114a4d5433319029",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "product/features/pincode-chat",
+      "source": "product/features/pincode-chat.mdx",
+      "route": "produkt/core-features/pincode-chat",
+      "aliases": [
+        "product/features/pincode-chat",
+        "product/features/pincode-chat.md",
+        "product/features/pincode-chat.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/product/features/pincode-chat.mdx",
+          "sourceHash": "5dac9b6a1cdad71c23a0ba0e1c14e029c94b4635be517d470eaae8623f7e8bfd",
+          "reviewedAt": "2026-09-30"
+        },
+        "de": {
+          "path": "site/translations/de/product/features/pincode-chat.mdx",
+          "sourceHash": "5dac9b6a1cdad71c23a0ba0e1c14e029c94b4635be517d470eaae8623f7e8bfd",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "product/features/session-management",
+      "source": "product/features/session-management.mdx",
+      "route": "produkt/core-features/session-management",
+      "aliases": [
+        "product/features/session-management",
+        "product/features/session-management.md",
+        "product/features/session-management.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/product/features/session-management.mdx",
+          "sourceHash": "55fe28183c6fe604843827d92117fde45087b6c02b6dcb0d325ec1c390d6e337",
+          "reviewedAt": "2026-09-30"
+        },
+        "de": {
+          "path": "site/translations/de/product/features/session-management.mdx",
+          "sourceHash": "55fe28183c6fe604843827d92117fde45087b6c02b6dcb0d325ec1c390d6e337",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "product/features/transcription",
+      "source": "product/features/transcription.mdx",
+      "route": "produkt/core-features/transcription",
+      "aliases": [
+        "product/features/transcription",
+        "product/features/transcription.md",
+        "product/features/transcription.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/product/features/transcription.mdx",
+          "sourceHash": "393a0d62429677f97010e820a0fe31cd4b3318daacccf125a4a937277a5ac7cb",
+          "reviewedAt": "2026-09-30"
+        },
+        "de": {
+          "path": "site/translations/de/product/features/transcription.mdx",
+          "sourceHash": "393a0d62429677f97010e820a0fe31cd4b3318daacccf125a4a937277a5ac7cb",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "product/figma-analysis-2026-05",
+      "source": "product/figma-analysis-2026-05.mdx",
+      "route": "produkt/design-und-quality/figma-analysis-2026-05",
+      "aliases": [
+        "product/figma-analysis-2026-05",
+        "product/figma-analysis-2026-05.md",
+        "product/figma-analysis-2026-05.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/product/figma-analysis-2026-05.mdx",
+          "sourceHash": "6ca058d1c4b76c055d0724923fd5f963ab7dd10bf87ce6ed06844b4157e9181b",
+          "reviewedAt": "2026-09-30"
+        },
+        "de": {
+          "path": "site/translations/de/product/figma-analysis-2026-05.mdx",
+          "sourceHash": "6ca058d1c4b76c055d0724923fd5f963ab7dd10bf87ce6ed06844b4157e9181b",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "product/internal-functionality",
+      "source": "product/internal-functionality.mdx",
+      "route": "produkt/flows-und-internals/internal-functionality",
+      "aliases": [
+        "product/internal-functionality",
+        "product/internal-functionality.md",
+        "product/internal-functionality.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/product/internal-functionality.mdx",
+          "sourceHash": "819772ffdf8b3e4be103b1c288fc8aa209af5a904db84a2eb2cb75cff14b54d1",
+          "reviewedAt": "2026-09-30"
+        },
+        "de": {
+          "path": "site/translations/de/product/internal-functionality.mdx",
+          "sourceHash": "819772ffdf8b3e4be103b1c288fc8aa209af5a904db84a2eb2cb75cff14b54d1",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "product/overview",
+      "source": "product/overview.mdx",
+      "route": "produkt/overview/overview",
+      "aliases": [
+        "product/overview",
+        "product/overview.md",
+        "product/overview.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/product/overview.mdx",
+          "sourceHash": "0119a842f9a7d12eb0fd1496408be83a7d740f200661313d3d83aa81b3325a2f",
+          "reviewedAt": "2026-09-30"
+        },
+        "de": {
+          "path": "site/translations/de/product/overview.mdx",
+          "sourceHash": "0119a842f9a7d12eb0fd1496408be83a7d740f200661313d3d83aa81b3325a2f",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "product/roles-permissions",
+      "source": "product/roles-permissions.mdx",
+      "route": "produkt/architecture-und-roles/roles-permissions",
+      "aliases": [
+        "product/roles-permissions",
+        "product/roles-permissions.md",
+        "product/roles-permissions.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/product/roles-permissions.mdx",
+          "sourceHash": "9f144400c144ff7d99ca6c9bf157adc15d26481d6075a81620c8c2d09d0e3574",
+          "reviewedAt": "2026-09-30"
+        },
+        "de": {
+          "path": "site/translations/de/product/roles-permissions.mdx",
+          "sourceHash": "9f144400c144ff7d99ca6c9bf157adc15d26481d6075a81620c8c2d09d0e3574",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "product/summary",
+      "source": "product/summary.mdx",
+      "route": "produkt/overview/summary",
+      "aliases": [
+        "product/summary",
+        "product/summary.md",
+        "product/summary.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/product/summary.mdx",
+          "sourceHash": "babf8617cbb63d052a8b7deec3fb3892e28a7aa68e1346e2a78ffbd46dd2d521",
+          "reviewedAt": "2026-09-30"
+        },
+        "de": {
+          "path": "site/translations/de/product/summary.mdx",
+          "sourceHash": "babf8617cbb63d052a8b7deec3fb3892e28a7aa68e1346e2a78ffbd46dd2d521",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "product/ui-ux",
+      "source": "product/ui-ux.mdx",
+      "route": "produkt/design-und-quality/ui-ux",
+      "aliases": [
+        "product/ui-ux",
+        "product/ui-ux.md",
+        "product/ui-ux.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/product/ui-ux.mdx",
+          "sourceHash": "5b8527da68ebe82fc3ccc3d582d25fc6bf193032af3c18076e5422abd544ce82",
+          "reviewedAt": "2026-09-30"
+        },
+        "de": {
+          "path": "site/translations/de/product/ui-ux.mdx",
+          "sourceHash": "5b8527da68ebe82fc3ccc3d582d25fc6bf193032af3c18076e5422abd544ce82",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "product/user-flows",
+      "source": "product/user-flows.mdx",
+      "route": "produkt/flows-und-internals/user-flows",
+      "aliases": [
+        "product/user-flows",
+        "product/user-flows.md",
+        "product/user-flows.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/product/user-flows.mdx",
+          "sourceHash": "04b716c3cde06045791ec47f408d666b0555e7297f8f87b22921b79a5ee1c16a",
+          "reviewedAt": "2026-09-30"
+        },
+        "de": {
+          "path": "site/translations/de/product/user-flows.mdx",
+          "sourceHash": "04b716c3cde06045791ec47f408d666b0555e7297f8f87b22921b79a5ee1c16a",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "site/content/docs/index",
+      "source": "site/home.mdx",
+      "route": "",
+      "aliases": [],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/site/home.mdx",
+          "sourceHash": "a6870b1d7e8e60428786f63aabc9da01e751011d178d900a5ae9d17efdc60bb5",
+          "reviewedAt": "2026-09-30 AI source/translation alignment; human legal approval separate"
+        },
+        "en": {
+          "path": "site/translations/en/site/home.mdx",
+          "sourceHash": "a6870b1d7e8e60428786f63aabc9da01e751011d178d900a5ae9d17efdc60bb5",
+          "reviewedAt": "2026-09-30 AI source/translation alignment; human legal approval separate"
+        }
+      }
+    },
+    {
+      "id": "docs/platform/dpia-publication",
+      "source": "docs/platform/dpia-publication.md",
+      "route": "plattform/knowledge-graphs/dpia-publication",
+      "aliases": [
+        "docs/platform/dpia-publication",
+        "docs/platform/dpia-publication.md"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/docs/platform/dpia-publication.md",
+          "sourceHash": "cf1df70b2ec9ae6efa8e04f68fc7086633f296354bd24c522c92642f9485fc93",
+          "reviewedAt": "2026-09-30"
+        },
+        "en": {
+          "path": "site/translations/en/docs/platform/dpia-publication.md",
+          "sourceHash": "cf1df70b2ec9ae6efa8e04f68fc7086633f296354bd24c522c92642f9485fc93",
+          "reviewedAt": "2026-09-30"
+        }
+      }
+    }
+  ]
+}

@@ -5,9 +5,7 @@ description: Five-day onboarding plan using enriched repository summaries.
 
 # ORISO Onboarding Guide
 
-## Platform Navigation
-
-- [Overview](./overview.md)
+> **Superseded as an entry point.** The reading order for a new developer is now [Platform overview](./overview.md) → [Install and run locally](./install-and-run-locally.md) → [Architecture](./architecture.md). This five-day plan is kept as one possible schedule.
 - [Repository map](./repository-map.md)
 - [Architecture](./architecture.md)
 - [Authentication and Keycloak](./authentication-and-keycloak.md)

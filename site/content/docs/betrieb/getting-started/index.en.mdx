@@ -1,0 +1,36 @@
+---
+title: "Installation and operations"
+description: "Choose local development or an operator deployment, then verify the target environment."
+source: "index.mdx"
+---
+
+ORISO supports online counselling across multiple tenants. This technical documentation explains how its services are developed, configured and operated. [Understand](https://understand.oriso.org/) explains roles, functional flows and the published graph. The canonical [data protection impact assessment](https://understand.oriso.org/legal/dsfa/) stays on Understand.
+
+## Choose the supported starting point
+
+<Cards>
+<Card title="Local development" href="/en/plattform/start-here/install-and-run-locally">
+Use the current repository-based local setup and its documented checks.
+</Card>
+<Card title="Platform architecture" href="/en/plattform/start-here/overview">
+Find service ownership, authentication, data flows and repository references.
+</Card>
+<Card title="Operator setup" href="/en/betrieb/getting-started/overview">
+Review requirements and deployment instructions for the actual target environment.
+</Card>
+<Card title="Troubleshooting" href="/en/plattform/flows-und-reference/troubleshooting">
+Compare symptoms with the documented source paths and checks.
+</Card>
+</Cards>
+
+## Development and deployment are different checks
+
+Start local development with [Install and run locally](/en/plattform/start-here/install-and-run-locally) and the active [Local Development](/en/plattform/platform-flows/local-development) entry. Review the [development flow](/en/betrieb/operations/coding-standards) before opening changes: feature branches and pull requests target `dev`; human reviewers decide what gets merged. Verify the deployed revision on Dev after the merge.
+
+The operator pages cover server prerequisites, Kubernetes and Helm, databases, authentication, monitoring, backup and security. Match their configuration to the selected environment before running commands. An example configuration or successful documentation build is not evidence that a service is installed or healthy. Record the actual configuration, deployed version and observed result when verifying an installation.
+
+## Source and publication status
+
+Each article records its source owner and revision. Technical documentation may describe newer `dev` source than the published Understand graph, which identifies its own released revision. Compare those revisions before treating a difference as a fault. Translation checks bind German and English text to the same source; runtime checks and legal approvals remain separate.
+
+Use [Overview and requirements](/en/betrieb/getting-started/overview) for an operator installation, [Verification and testing](/en/betrieb/configuration-und-testing/verification-testing) for deployment checks, and [Quick reference](/en/betrieb/operations/quick-reference) for commands. Full publication requires complete current translations and an artifact whose public bytes can be verified after deployment.

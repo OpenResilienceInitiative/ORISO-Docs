@@ -1,0 +1,140 @@
+{
+  "tour": [
+    {
+      "order": 1,
+      "title": "Start here: the Spring Boot entry point",
+      "description": "TenantServiceApplication is the whole runtime bootstrap. Read the README and AGENTS document next to it to learn the conventions the repository expects. Everything else in the tour hangs off the com.vi.tenantservice package this class boots.",
+      "nodeIds": [
+        "file:src/main/java/com/vi/tenantservice/TenantServiceApplication.java",
+        "document:README.md",
+        "document:AGENTS.md"
+      ]
+    },
+    {
+      "order": 2,
+      "title": "The contract: OpenAPI first",
+      "description": "The service is contract-first. api/tenantservice.yaml declares the /tenant, /tenantadmin, /media and /settings operations, and the generated interfaces are what TenantController implements. Skim the tenant-admin write operation and the anonymous public read operation to see the two halves of the API.",
+      "nodeIds": [
+        "concept:openapi-contract",
+        "endpoint:api/tenantservice.yaml:PUT /tenantadmin/{id}",
+        "endpoint:api/tenantservice.yaml:GET /tenant/public/{subdomain}"
+      ]
+    },
+    {
+      "order": 3,
+      "title": "The tenant record itself",
+      "description": "TenantEntity is the canonical Träger row and TenantRepository its Spring Data access point. TenantConverter maps between the entity and the generated DTOs, and it is by far the largest mapping class in the repository — most field-level surprises are explained here.",
+      "nodeIds": [
+        "concept:tenant-registry",
+        "file:src/main/java/com/vi/tenantservice/api/model/TenantEntity.java",
+        "file:src/main/java/com/vi/tenantservice/api/repository/TenantRepository.java",
+        "file:src/main/java/com/vi/tenantservice/api/converter/TenantConverter.java"
+      ]
+    },
+    {
+      "order": 4,
+      "title": "Who am I and which tenant is this?",
+      "description": "Two questions are answered before any handler runs. WebSecurityConfig and JwtAuthConverter turn the Keycloak token into authorities; TenantResolverService then picks the tenant from the token claim, the subdomain or a cookie. Read the resolver chain before debugging any cross-tenant issue.",
+      "nodeIds": [
+        "concept:jwt-authorization",
+        "concept:tenant-context-resolution",
+        "file:src/main/java/com/vi/tenantservice/config/security/WebSecurityConfig.java",
+        "file:src/main/java/com/vi/tenantservice/api/tenant/TenantResolverService.java",
+        "file:src/main/java/com/vi/tenantservice/api/tenant/AccessTokenTenantResolver.java"
+      ]
+    },
+    {
+      "order": 5,
+      "title": "The controller and the facade seam",
+      "description": "TenantController is thin: 48 handlers that immediately delegate. TenantServiceFacade holds the orchestration, TenantFacadeAuthorisationService the tenant-scope rules, and ExceptionHandlerAdvice turns the domain exceptions into HTTP responses. This is the seam to trace any request through.",
+      "nodeIds": [
+        "file:src/main/java/com/vi/tenantservice/api/controller/TenantController.java",
+        "file:src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java",
+        "file:src/main/java/com/vi/tenantservice/api/facade/TenantFacadeAuthorisationService.java",
+        "file:src/main/java/com/vi/tenantservice/api/controller/ExceptionHandlerAdvice.java"
+      ]
+    },
+    {
+      "order": 6,
+      "title": "Writing a tenant safely",
+      "description": "On the write path TenantInputSanitizer scrubs incoming HTML, TenantFacadeChangeDetectionService works out what actually changed, and TenantFacadeDependentSettingsOverrideService forces dependent settings off when their prerequisite is disabled. TenantService then performs the persistence.",
+      "nodeIds": [
+        "flow:tenant-crud",
+        "file:src/main/java/com/vi/tenantservice/api/validation/TenantInputSanitizer.java",
+        "file:src/main/java/com/vi/tenantservice/api/facade/TenantFacadeChangeDetectionService.java",
+        "file:src/main/java/com/vi/tenantservice/api/facade/TenantFacadeDependentSettingsOverrideService.java",
+        "file:src/main/java/com/vi/tenantservice/api/service/TenantService.java"
+      ]
+    },
+    {
+      "order": 7,
+      "title": "Settings, admin controls and the toggle allowlist",
+      "description": "TenantSettings are the per-tenant switches; TenantAdminControlsEntity and TenantAdminControlsService define which of them a tenant admin may touch at all. Treat the allowlist as the authority: a switch missing from it cannot be changed from the Admin Panel.",
+      "nodeIds": [
+        "file:src/main/java/com/vi/tenantservice/api/model/TenantSettings.java",
+        "file:src/main/java/com/vi/tenantservice/api/model/TenantAdminControlsEntity.java",
+        "file:src/main/java/com/vi/tenantservice/api/service/TenantAdminControlsService.java",
+        "endpoint:api/tenantservice.yaml:PUT /tenantadmin/controls"
+      ]
+    },
+    {
+      "order": 8,
+      "title": "Permission policies, the newer model",
+      "description": "Permissions moved from plain booleans to policies. PermissionPolicyResolver folds stored TenantPermissionPolicyEntity rows with the legacy settings mapped by LegacyPermissionPolicyMapper, and EffectivePermissionSettingsApplier stamps the outcome onto responses. Read this before adding a new feature toggle.",
+      "nodeIds": [
+        "file:src/main/java/com/vi/tenantservice/api/policy/PermissionPolicyResolver.java",
+        "file:src/main/java/com/vi/tenantservice/api/policy/LegacyPermissionPolicyMapper.java",
+        "file:src/main/java/com/vi/tenantservice/api/service/TenantPermissionPolicyService.java",
+        "file:src/main/java/com/vi/tenantservice/api/converter/EffectivePermissionSettingsApplier.java"
+      ]
+    },
+    {
+      "order": 9,
+      "title": "Theming, branding and media",
+      "description": "EffectiveThemingApplier computes the theme a tenant actually gets, InheritedBrandingEchoStripper prevents inherited values being saved as local overrides, and TenantMediaService stores logos as database rows served back by media id. This is what the anonymous frontend renders.",
+      "nodeIds": [
+        "file:src/main/java/com/vi/tenantservice/api/converter/EffectiveThemingApplier.java",
+        "file:src/main/java/com/vi/tenantservice/api/converter/InheritedBrandingEchoStripper.java",
+        "file:src/main/java/com/vi/tenantservice/api/service/PublicBrandingAssetService.java",
+        "file:src/main/java/com/vi/tenantservice/api/service/TenantMediaService.java",
+        "endpoint:api/tenantservice.yaml:GET /media/{mediaId}"
+      ]
+    },
+    {
+      "order": 10,
+      "title": "Legal: the DPA/AVV lifecycle",
+      "description": "The largest domain area after the tenant itself. TenantDpaService and TenantDpaStatusService own the version and signature state machine, GoverningDpaResolver decides which version binds now, and TenantDpaFacade exposes it. The gate endpoint is what the Admin Panel blocks on.",
+      "nodeIds": [
+        "file:src/main/java/com/vi/tenantservice/api/service/TenantDpaService.java",
+        "file:src/main/java/com/vi/tenantservice/api/service/TenantDpaStatusService.java",
+        "file:src/main/java/com/vi/tenantservice/api/service/GoverningDpaResolver.java",
+        "file:src/main/java/com/vi/tenantservice/api/facade/TenantDpaFacade.java",
+        "endpoint:api/tenantservice.yaml:GET /tenantadmin/{id}/dpa/gate"
+      ]
+    },
+    {
+      "order": 11,
+      "title": "Signing without an account, and platform DPIA data",
+      "description": "DpaSignToken plus DpaSignatureOwnership let a forwarded DPA be confirmed by someone with no login, through the public confirm endpoints. Separately, PlatformDpiaMasterDataService holds the DSFA master data that is identical for the whole platform rather than per tenant.",
+      "nodeIds": [
+        "file:src/main/java/com/vi/tenantservice/api/service/DpaSignToken.java",
+        "file:src/main/java/com/vi/tenantservice/api/service/DpaSignatureOwnership.java",
+        "file:src/main/java/com/vi/tenantservice/api/service/PlatformDpiaMasterDataService.java",
+        "endpoint:api/tenantservice.yaml:POST /tenant/public/dpa/confirm/{token}",
+        "endpoint:api/tenantservice.yaml:GET /tenant/public/dpia"
+      ]
+    },
+    {
+      "order": 12,
+      "title": "Secrets, downstream calls and the database",
+      "description": "SmtpPasswordEncryptionService and TranslationApiKeyEncryptionService keep per-tenant credentials encrypted at rest, with startup migrations re-encrypting older rows. Outgoing calls to the consulting-type and user-admin services carry the tenant and auth headers, and the schema itself is owned by Liquibase changesets under db/changelog.",
+      "nodeIds": [
+        "file:src/main/java/com/vi/tenantservice/api/service/SmtpPasswordEncryptionService.java",
+        "file:src/main/java/com/vi/tenantservice/api/service/translation/TranslationApiKeyEncryptionService.java",
+        "file:src/main/java/com/vi/tenantservice/api/service/consultingtype/ConsultingTypeService.java",
+        "file:src/main/java/com/vi/tenantservice/api/service/httpheader/SecurityHeaderSupplier.java",
+        "concept:mariadb-persistence"
+      ]
+    }
+  ]
+}

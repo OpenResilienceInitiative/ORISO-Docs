@@ -1,0 +1,156 @@
+{
+  "version": 1,
+  "evidence": "canonical-source-summary-not-runtime-verification",
+  "features": [
+    {
+      "id": "product/features/ai-tools",
+      "source": "product/features/ai-tools.mdx",
+      "route": "produkt/core-features/ai-tools",
+      "sourceHash": "000bb28925913500b3b502a5afaa5b9cb85412e65f244a31584e4c7b68cc71ae",
+      "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
+      "de": {
+        "title": "4.6 KI-Werkzeuge (Zusammenfassung, Markierung, PII-Unkenntlichmachung)",
+        "summary": "KI- und Annotationswerkzeuge für Beratende: Chat-Zusammenfassung, Textmarkierung, PII-Unkenntlichmachung und wie alle die Regel wahren, dass der Server keine Inhalte sieht."
+      },
+      "en": {
+        "title": "4.6 AI Tools (Summary, Mark, PII Blur)",
+        "summary": "Counselor-side AI and annotation tools: Chat Summarisation, Mark-Text, PII Blur, and how all of them respect the no-server-sees-content rule."
+      }
+    },
+    {
+      "id": "product/features/case-handover",
+      "source": "product/features/case-handover.mdx",
+      "route": "produkt/core-features/case-handover",
+      "sourceHash": "23bc22c247858966279d52966b626be71221ba74960660d9b0187bcdb808661f",
+      "sourceRevision": "796a8390b17a60725600215a61557f903e3e2212",
+      "de": {
+        "title": "4.9 Fallübergabe — einen Fall holen und abgeben",
+        "summary": "Wie ein Beratungsfall zwischen Kolleginnen und Kollegen wechselt: einen Fall holen, einen Fall anbieten, die Gründe, die erforderliche Zustimmung und der Unterschied zwischen Einsichtnahme und Übernahme."
+      },
+      "en": {
+        "title": "4.9 Case Handover — Getting and Giving a Case",
+        "summary": "How a counselling case moves between colleagues: pulling a case, offering a case, the reasons, who has to agree, and the difference between a look-in and a takeover."
+      }
+    },
+    {
+      "id": "product/features/group-chats",
+      "source": "product/features/group-chats.mdx",
+      "route": "produkt/core-features/group-chats",
+      "sourceHash": "873c5c15d4d1fe8bc49514af11e236ff11f19b37436d54a1a6388be5a8d1fbd5",
+      "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
+      "de": {
+        "title": "4.5 Gruppenchats und Versand an mehrere Empfänger",
+        "summary": "Gruppengespräche (Selbsthilfe, Teamberatung, Familie, interne Runden), Versand an mehrere Empfänger, Antworten im Thread und Regeln für ausschließlich Beratenden vorbehaltene Werkzeuge."
+      },
+      "en": {
+        "title": "4.5 Group Chats & Multi-Recipient Send",
+        "summary": "Group conversations (peer-support, team consult, family, internal rounds), the multi-recipient send tool, reply-in-thread, and the rules that gate counselor-only tools."
+      }
+    },
+    {
+      "id": "product/features/handover",
+      "source": "product/features/handover.mdx",
+      "route": "produkt/core-features/handover",
+      "sourceHash": "bb7bac58093c4be0aa62d8562c03216f28cf1a901952c4d1d330733404a0a2cc",
+      "sourceRevision": "73ab42b6f6895f827284063b0484f4d4f5fd39a1",
+      "de": {
+        "title": "4.7 Fallübergabe",
+        "summary": "Übertragung eines aktiven Falls von einer Beratungsperson auf eine andere — Systematik der Gründe, Einwilligungsmatrix, Systemnachrichten und Zusammenspiel mit E2EE."
+      },
+      "en": {
+        "title": "4.7 Case Handover",
+        "summary": "Transferring an active case from one counselor to another — reason taxonomy, consent matrix, system messages, and how it interacts with E2EE."
+      }
+    },
+    {
+      "id": "product/features/index",
+      "source": "product/features/index.mdx",
+      "route": "produkt/core-features",
+      "sourceHash": "5d61551d859eeae8947aece8c094a049d0e829be240a292535bb7a08cc832cad",
+      "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
+      "de": {
+        "title": "Kernfunktionen",
+        "summary": "Die acht Funktionssäulen von ORISO — Live-Chat, Gruppengespräche, KI-Werkzeuge, Übergabe, Benachrichtigungen, Sitzungen, Pincode-Zugang und Transkripte."
+      },
+      "en": {
+        "title": "Core Features",
+        "summary": "The eight feature pillars of ORISO — covering live chat, group conversations, AI tools, handover, notifications, sessions, pincode access and transcripts."
+      }
+    },
+    {
+      "id": "product/features/live-chat",
+      "source": "product/features/live-chat.mdx",
+      "route": "produkt/core-features/live-chat",
+      "sourceHash": "3d7f5e56bda0d596c9bd4dcb898b67c8df5aaf0a16db52f8581ed34d603d0cb5",
+      "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
+      "de": {
+        "title": "4.2 Live-Chat",
+        "summary": "Der vollständige Ablauf des anonymen ORISO-Live-Chats: Aktivierung, Warteraum und Einwilligung, Übernahme durch Beratende und verschlüsselte Sitzung."
+      },
+      "en": {
+        "title": "4.2 Live Chat",
+        "summary": "The end-to-end mechanics of ORISO's anonymous live chat: how it activates, the waiting-room and consent flow, the counselor pickup and the encrypted session."
+      }
+    },
+    {
+      "id": "product/features/notifications",
+      "source": "product/features/notifications.mdx",
+      "route": "produkt/core-features/notifications",
+      "sourceHash": "ca5b1a0990ee52baed9f1515eaf2e03663bf9eb8dfd84f35114a4d5433319029",
+      "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
+      "de": {
+        "title": "4.8 Benachrichtigungen und Hilfsanfragen",
+        "summary": "Der Benachrichtigungseingang für Mitarbeitende und optional Ratsuchende, der Ablauf für Hilfsanfragen und Eskalation im Chat sowie die Systematik der Systemnachrichten."
+      },
+      "en": {
+        "title": "4.8 Notifications & Help Requests",
+        "summary": "The Notifications inbox for staff and (optional) clients, the in-chat Help-Request / Escalation flow, and the system-message taxonomy."
+      }
+    },
+    {
+      "id": "product/features/pincode-chat",
+      "source": "product/features/pincode-chat.mdx",
+      "route": "produkt/core-features/pincode-chat",
+      "sourceHash": "5dac9b6a1cdad71c23a0ba0e1c14e029c94b4635be517d470eaae8623f7e8bfd",
+      "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
+      "de": {
+        "title": "4.3 Pincode-basierter Chat und Zugang",
+        "summary": "Wie Ratsuchende über einen öffentlichen Live-Chat-Link, einen an eine Beratungsstelle und ein Thema gebundenen Link oder eine ältere deutsche Postleitzahl-Suche Beratende erreichen — und die Folgen für die Sicherheit."
+      },
+      "en": {
+        "title": "4.3 Pincode-Based Chat & Access",
+        "summary": "How clients reach a counselor via a public live-chat link, an agency-bound link with a topic, or (legacy) a German postal-zip-code lookup — and the security implications."
+      }
+    },
+    {
+      "id": "product/features/session-management",
+      "source": "product/features/session-management.mdx",
+      "route": "produkt/core-features/session-management",
+      "sourceHash": "55fe28183c6fe604843827d92117fde45087b6c02b6dcb0d325ec1c390d6e337",
+      "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
+      "de": {
+        "title": "4.4 Sitzungsverwaltung",
+        "summary": "Wie Beratungssitzungen entstehen, betreten, durchgeführt und abgebaut werden — einschließlich Zustandswechseln, Aufbewahrung, Löschung bei Verbindungsabbruch und Supervisionsprüfung."
+      },
+      "en": {
+        "title": "4.4 Session Management",
+        "summary": "How counseling sessions are created, joined, lived, and torn down — including state transitions, retention, wipe-on-disconnect, and the supervisor-review flow."
+      }
+    },
+    {
+      "id": "product/features/transcription",
+      "source": "product/features/transcription.mdx",
+      "route": "produkt/core-features/transcription",
+      "sourceHash": "393a0d62429677f97010e820a0fe31cd4b3318daacccf125a4a937277a5ac7cb",
+      "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
+      "de": {
+        "title": "4.1 KI-Notizen und Transkripte",
+        "summary": "Wie ORISO heute mit Chat-Inhalten umgeht, die geplante KI-gestützte Notizebene und die Datenschutzgarantien, die ihr Grenzen setzen."
+      },
+      "en": {
+        "title": "4.1 AI Note-Taking & Transcripts",
+        "summary": "What ORISO does with chat content today, the planned AI-assisted note-taking layer, and the privacy guarantees that constrain it."
+      }
+    }
+  ]
+}

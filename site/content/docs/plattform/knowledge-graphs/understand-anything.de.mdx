@@ -1,0 +1,75 @@
+---
+title: "Wie wir die Dokumentation verlässlich halten: Understand Anything"
+description: "Ein automatisch erneuerter Wissensgraph je Repository und ein serviceübergreifender Plattformgraph: ihr Aufbau, Nutzen und die Ableitung von Dokumentationsseiten."
+source: "docs/platform/understand-anything.md"
+---
+
+Die Dokumentation eines Systems mit siebzehn veränderlichen Teilen veraltet mit jedem Merge. Deshalb verwenden wir eine maschinell erzeugte Übersicht direkt aus dem Code. Seiten dieses Abschnitts werden *anhand dieser Übersicht* statt aus dem Gedächtnis geschrieben.
+
+Öffentliche Dashboards: **[understand.oriso.org](https://understand.oriso.org/)**
+
+## Was das ist
+
+Zwei Graph-Ebenen, mit unterschiedlichen Verfahren erstellt und für unterschiedliche Fragen geeignet.
+
+<Mermaid chart={"flowchart LR\n  subgraph SRC[\"Source of truth\"]\n    R1[\"ORISO-Frontend\"]\n    R2[\"ORISO-Admin\"]\n    R3[\"4 Spring services\"]\n    R4[\"Keycloak / Database / Helm\"]\n  end\n\n  subgraph REPO[\"Per-repository graph\"]\n    G[\"files, classes, functions<br/>imports and calls<br/>layers and a guided tour\"]\n  end\n\n  subgraph PLAT[\"Platform graph\"]\n    P[\"services, endpoints, callers<br/>table ownership<br/>ADR and doc governance\"]\n  end\n\n  DASH[\"understand.oriso.org<br/>one dashboard per repository<br/>+ the cross-service view\"]\n  DOCS[\"docs.oriso.org<br/>these pages\"]\n\n  R1 --> G\n  R2 --> G\n  R3 --> G\n  R4 --> G\n  G --> P\n  G --> DASH\n  P --> DASH\n  P -. \"facts, counts, call directions\" .-> DOCS"} />
+
+**Der Graph je Repository** wird deterministisch aus allen von Git erfassten Dateien erstellt: tree-sitter verarbeitet Code, spezielle Parser verarbeiten YAML, Markdown, SQL und Shell. Daraus entstehen Knoten für Dateien, Klassen und Funktionen sowie `contains`-/`imports`-/`calls`-Kanten, eine heuristische Schichtenzuordnung und eine geführte Repository-Tour. Kein Sprachmodell ist beteiligt; derselbe Commit erzeugt daher immer denselben Graphen. Eine von Hand geschriebene Ergänzungsdatei pro Repository fügt fachliche Konzepte und Abläufe hinzu, die kein Parser ableiten kann.
+
+**Der Plattformgraph** baut darauf auf und beantwortet Fragen, die ein einzelnes Repository nicht beantworten kann. Er konzentriert sich bewusst auf wesentliche Informationen: **17 Services, 372 Endpunktknoten, 126 Datenbanktabellen und 74 Dokumente**, verbunden durch `exposes`-, `consumes`-, `calls`-, `owns`-, `governs`- und `deploys`-Kanten. Seine sechs Schichten sind Services, API-Endpunkte, Frontend-Aufrufer, Admin-Aufrufer, Daten sowie Entscheidungen und Dokumentation.
+
+## Was uns das bringt
+
+**Ein aktuelles Strukturbild.** Die Graphen werden automatisch neu erstellt. Die Übersicht liegt daher höchstens einige Stunden hinter dem verfolgten Branch. Vor dem Schreiben einer Seite muss niemand an eine manuelle Neuerstellung denken.
+
+**Ein Blick über Servicegrenzen.** Die interessanten Fehler entstehen zwischen Repositories. Der Plattformgraph zeigt diese Verbindungen ausdrücklich und macht auch die *fehlenden* Verbindungen sichtbar:
+
+| Frage an den Graphen | Aktuelle Antwort |
+| --- | --- |
+| Welche Backend-Endpunkte ruft das Frontend tatsächlich auf? | 55 von 80 Schlüsseln der Endpunktzuordnung passen zu einem vorhandenen Endpunkt |
+| … und die Admin-Oberfläche? | 78 von 114 Endpunktkonstanten lassen sich zuordnen |
+| Wie viele Backend-Endpunkte haben mindestens einen bestätigten Aufrufer? | 110 von 297 |
+| Welche Frontend-Aufrufe treffen auf keinen Endpunkt? | 16 Aufrufe ohne Ziel, nach Datei aufgelistet |
+| Welcher Service ist für welche Tabelle zuständig? | 126 `owns`-Kanten, beginnend mit den 54 Tabellen von UserService |
+| Welcher ADR gilt für welchen Codebereich? | 61 `governs`-Kanten |
+
+Diese Zahlen haben einen praktischen Nutzen. „187 eigene Endpunkte haben keinen Aufrufer im Graphen“ liefert eine konkrete Prüfliste für das Entfernen von Code. „16 Frontend-Aufrufe verweisen auf nicht vorhandene Endpunkte“ liefert eine Fehlerliste für einen Sprint.
+
+**Lesbare Texte ergänzen die Diagramme.** Zusätzlich zur Strukturanalyse beschreibt ein vertiefter Durchlauf die Aufgaben von Komponenten und ihre Beteiligung an Abläufen. Tausende Knoten in den Repositories erhalten solche Beschreibungen. Dadurch lassen sich die Dashboards gut erkunden.
+
+## Wo du die Dashboards findest
+
+[understand.oriso.org](https://understand.oriso.org/) enthält ein Dashboard pro Repository sowie die serviceübergreifende Ansicht. In jedem Dashboard kannst du:
+
+- die Schichten eines Repositories durchgehen und jeden Knoten mit Zusammenfassung und Nachbarn öffnen;
+- `calls`- und `imports`-Kanten verfolgen, um Abhängigkeiten des zu ändernden Codes zu sehen;
+- bei einem neuen Repository die geführte Tour verwenden;
+- in der serviceübergreifenden Ansicht von einem Endpunkt zur aufrufenden Frontend- oder Admin-Funktion springen.
+
+Nutze es vor einem Refactoring für die Frage „Wer verwendet das noch?“ und als Einstieg in ein bisher unbekanntes Repository.
+
+## Wie daraus eine Dokumentationsseite entsteht
+
+Die Seiten dieses Abschnitts beruhen auf einem festen Arbeitsverfahren:
+
+1. **Stelle dem Graphen die Strukturfrage:** Welche Services gibt es, welche Endpunkte bieten sie an, wer ruft sie auf, welche Tabellen verwalten sie? Daraus ergeben sich die Gliederung und die Zahlen.
+2. **Prüfe jede Aussage am Branch.** Der Graph zeigt, *dass* eine Verbindung existiert. Das Repository zeigt den aktuellen Code. Jeder Dateipfad auf einer Seite wird zu einem Link auf `dev` mit genauem Pfad und, wo nötig, Zeilenbereich.
+3. **Prüfe die Links automatisch.** Jeder interne Link, Anker und GitHub-Codelink dieser Website wird offline gegen die erzeugte Seitenstruktur und die lokalen Repository-Checkouts geprüft, mit
+   [`tools/audit/docs-link-check.mjs`](https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/dev/tools/audit/docs-link-check.mjs).
+   Ein verschobener Pfad, ein Zeilenbereich über das Dateiende hinaus oder ein nicht mehr vorhandener Branch lässt die Prüfung scheitern, statt unbemerkt zu veralten.
+4. **Halte die Entscheidungsdokumentation getrennt.** Eine *Entscheidung* statt einer Tatsache gehört in einen [ADR](/de/decisions), und die Seite verlinkt darauf, statt die Entscheidung erneut auszuführen.
+
+Für Beiträge gilt daher eine einfache Regel: **Behaupte nichts, das du nicht verlinken kannst.** Der Code, der eine Aussage über das System belegt, sollte genau einen Klick entfernt sein.
+
+## Wichtige Grenzen
+
+- Der Graph ordnet Aufrufe anhand wörtlicher Pfadübereinstimmungen zu. Zur Laufzeit zusammengesetzte Aufrufe oder Vorlagen mit Parametern im Pfad bleiben „unbestätigt“, statt eine `calls`-Kante zu erzeugen — derzeit 44. Eine fehlende Kante beweist keinen fehlenden Aufruf.
+- Endpunkte werden aus OpenAPI-Verträgen und Spring-Annotationen ermittelt. Eine anders registrierte Route erscheint nicht.
+- Die Repository-Graphen verfolgen einen Integrationsbranch. Dieser kann etwas vor oder hinter deinem ausgecheckten Branch liegen.
+- Der Graph beschreibt Struktur, nicht Verhalten. Er zeigt, dass `AgencyService` den `TenantService` aufruft. Ob der Aufruf korrekt ist, zeigt er nicht.
+
+## Weiterführendes
+
+- [Architektur](/de/plattform/start-here/architecture) — die Services, die der Plattformgraph beschreibt.
+- [Backend-Services](/de/plattform/core-systems/backend-services) — die für Endpunkte zuständigen Services.
+- [Architekturentscheidungen](/de/decisions) — die `governs`-Kanten als Text.

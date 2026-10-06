@@ -1,0 +1,49 @@
+---
+title: "Kernfunktionen"
+description: "Die acht Funktionssäulen von ORISO — Live-Chat, Gruppengespräche, KI-Werkzeuge, Übergabe, Benachrichtigungen, Sitzungen, Pincode-Zugang und Transkripte."
+source: "product/features/index.mdx"
+---
+
+Die Produktoberfläche von ORISO wurde mit der Figma-Ausgabe vom Mai 2026 erweitert. Es gibt jetzt acht Funktionssäulen; alles Weitere (Adminbereich, Einstellungen, Bereitstellungen) unterstützt sie.
+
+<Cards>
+<Card title="4.2 Live-Chat" href="/de/produkt/core-features/live-chat">
+Die zentrale Funktion. Anonymer Warteraum, Übernahme durch Beratende, Einstieg nach DSGVO-Einwilligung, verschlüsselter Matrix-Raum.
+</Card>
+
+<Card title="4.5 Gruppenchats und Versand an mehrere Empfänger" href="/de/produkt/core-features/group-chats">
+**[NEU]** Team-, Familien-, Selbsthilfe- und interne Runden. Versand an mehrere Empfänger, Antworten im Thread, Datei-Upload, Gruppenlebenszyklus.
+</Card>
+
+<Card title="4.6 KI-Werkzeuge" href="/de/produkt/core-features/ai-tools">
+**[NEU]** Chat-Zusammenfassung (`⇧Ü`), Textmarkierung, Unkenntlichmachung personenbezogener Informationen. Auf der Seite der Beratenden, im Browser entschlüsselt, selbst betriebene KI.
+</Card>
+
+<Card title="4.7 Fallübergabe" href="/de/produkt/core-features/handover">
+**[NEU]** Fälle zwischen Beratenden übergeben, mit einer Systematik der Gründe und Einwilligungsregeln.
+</Card>
+
+<Card title="4.8 Benachrichtigungen und Hilfsanfragen" href="/de/produkt/core-features/notifications">
+**[NEU]** Benachrichtigungseingang, Systemnachrichten, interne/externe Eskalation, skriptgesteuerter Carimat-Bot.
+</Card>
+
+<Card title="4.3 Pincode-basierter Chat und Zugang" href="/de/produkt/core-features/pincode-chat">
+Wie Ratsuchende über einen öffentlichen Live-Chat-Link mit Thema und optionaler Postleitzahl Beratende erreichen.
+</Card>
+
+<Card title="4.4 Sitzungsverwaltung" href="/de/produkt/core-features/session-management">
+Der Lebenszyklus einer Beratungssitzung — Erstellung, Beitritt, Zustandswechsel, Löschung bei Verbindungsabbruch.
+</Card>
+
+<Card title="4.1 Transkripte (älterer Stand)" href="/de/produkt/core-features/transcription">
+Die ursprüngliche Transkriptseite; durch [KI-Werkzeuge](/de/produkt/core-features/ai-tools) abgelöst — als historischer Kontext beibehalten.
+</Card>
+</Cards>
+
+<Callout>
+Den vollständigen Hintergrund zu den Neuerungen vom Mai 2026 beschreibt die [Figma-Analyse (Mai 2026)](/de/produkt/design-und-quality/figma-analysis-2026-05).
+</Callout>
+
+## Wie die Funktionen zusammenspielen
+
+<Mermaid chart={"%%{init: { 'theme':'base', 'themeVariables':{ 'fontSize':'14px' } }}%%\nflowchart LR\n  L[Live-Chat Link<br/>topic + agency]:::link --> WR[Waiting Room]:::flow\n  WR --> Pick[Counselor picks ticket]:::flow\n  Pick --> Consent[GDPR consent #2]:::flow\n  Consent --> Sess[Session active<br/>Matrix room]:::flow\n  Sess --> End[End / disconnect]:::flow\n  End --> Wipe[Wipe + tombstone]:::flow\n\n  Sess -.->|optional, planned| Tx[Transcript / AI notes]:::aux\n\n  classDef link fill:#fff3e0,stroke:#ef6c00\n  classDef flow fill:#e3f2fd,stroke:#1565c0\n  classDef aux fill:#f3e5f5,stroke:#6a1b9a"} />

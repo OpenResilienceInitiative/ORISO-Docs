@@ -1,0 +1,243 @@
+---
+title: "DNS- und SSL-Konfiguration"
+description: "DNS-Einträge und automatische TLS-Zertifikate über cert-manager konfigurieren"
+source: "oriso-platform/dns-ssl.mdx"
+---
+
+Konfigurieren Sie DNS-Einträge und automatische TLS-Zertifikatsverwaltung für die ORISO-Plattform. TLS-Zertifikate werden automatisch von cert-manager mit Let's Encrypt verwaltet.
+
+<Callout>
+Die ORISO-Plattform v3.0.0 nutzt cert-manager zur automatischen TLS-Zertifikatsverwaltung. Eine manuelle Zertifikatsinstallation ist nicht erforderlich.
+</Callout>
+
+<Steps>
+<Step title="DNS-Einträge konfigurieren">
+
+Richten Sie DNS-Einträge aller erforderlichen Subdomains auf die IP Ihres Servers aus.
+
+```bash
+# Get server IP
+SERVER_IP=$(kubectl get nodes -o jsonpath="{.items[0].status.addresses[?(@.type=='InternalIP')].address}")
+echo "Server IP: $SERVER_IP"
+```
+
+**Erforderliche DNS-Einträge:**
+
+Erstellen Sie bei Ihrem DNS-Anbieter folgende A-Einträge:
+
+| Subdomain | Ziel | Zweck |
+|-----------|-----------|---------|
+| `api.example.org` | `$SERVER_IP` | Backend API |
+| `app.example.org` | `$SERVER_IP` | Frontend-Anwendung |
+| `admin.example.org` | `$SERVER_IP` | Administrationsoberfläche |
+| `auth.example.org` | `$SERVER_IP` | Keycloak-Authentifizierung |
+| `matrix.example.org` | `$SERVER_IP` | Matrix Synapse |
+| `element.example.org` | `$SERVER_IP` | Element.io-Client (optional) |
+| `status.example.org` | `$SERVER_IP` | Statusseite (optional) |
+
+<Callout>
+`example.org` ist ein Platzhalter. Ersetzen Sie ihn durch Ihre eigene Domain (Helm `global.domainName`). Die DNS-Verbreitung kann wenige Minuten bis mehrere Stunden dauern.
+</Callout>
+
+<Callout type="success">
+Prüfen Sie die DNS-Auflösung:
+```bash
+dig api.example.org
+nslookup app.example.org
+```
+Beide sollten die IP Ihres Servers zurückgeben.
+</Callout>
+
+</Step>
+
+<Step title="Cert-Manager-Einrichtung prüfen">
+
+Stellen Sie sicher, dass cert-manager und ClusterIssuer konfiguriert sind.
+
+```bash
+# Check cert-manager pods
+kubectl get pods -n cert-manager
+
+# Check ClusterIssuer
+kubectl get clusterissuer letsencrypt-prod
+
+# Verify ClusterIssuer is ready
+kubectl describe clusterissuer letsencrypt-prod
+```
+
+<Callout type="success">
+- cert-manager-Pods sollten `Running` sein.
+- ClusterIssuer sollte `Ready=True` anzeigen.
+</Callout>
+
+<Callout>
+Wenn ClusterIssuer nicht konfiguriert ist, lesen Sie [Kubernetes einrichten](/de/betrieb/getting-started/setup-kubernetes).
+</Callout>
+
+</Step>
+
+<Step title="Ingress-Ressourcen bereitstellen">
+
+Stellen Sie Ingress-Ressourcen mit TLS-Annotationen bereit. Zertifikate werden automatisch ausgestellt.
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes/ingress
+
+# Deploy all Ingress resources
+kubectl apply -f .
+
+# Check Ingress resources
+kubectl get ingress -n caritas
+
+# Check certificate requests
+kubectl get certificaterequest -n caritas
+```
+
+<Callout>
+Wenn Ingress-Ressourcen mit der Annotation `cert-manager.io/cluster-issuer: letsencrypt-prod` erstellt werden, führt cert-manager automatisch Folgendes aus:
+1. Erstellt CertificateRequest
+2. Stellt das Zertifikat über die HTTP-01-Challenge von Let's Encrypt aus
+3. Speichert das Zertifikat in einem Kubernetes Secret
+4. Ingress verwendet das Zertifikat für TLS.
+</Callout>
+
+<Callout type="success">
+Nach wenigen Minuten sollten die Zertifikate ausgestellt sein:
+```bash
+kubectl get certificate -n caritas
+```
+Alle Zertifikate sollten `Ready=True` anzeigen.
+</Callout>
+
+</Step>
+
+<Step title="TLS-Zertifikate prüfen">
+
+Prüfen Sie, ob Zertifikate ausgestellt wurden und funktionieren.
+
+```bash
+# Check certificates
+kubectl get certificate -n caritas
+
+# Check certificate details
+kubectl describe certificate <cert-name> -n caritas
+
+# Test HTTPS endpoints
+curl -I https://app.example.org
+curl -I https://api.example.org
+curl -I https://auth.example.org
+
+# Check certificate validity
+echo | openssl s_client -servername app.example.org -connect app.example.org:443 2>/dev/null | openssl x509 -noout -dates
+```
+
+<Callout type="success">
+- Zertifikate sollten `Ready=True` sein.
+- HTTPS-Endpunkte sollten HTTP 200 zurückgeben.
+- Das Zertifikat sollte gültig sein (nicht abgelaufen).
+</Callout>
+
+</Step>
+</Steps>
+
+## Verwaltung von TLS-Zertifikaten
+
+### Automatische Ausstellung
+Cert-manager stellt Zertifikate automatisch aus, wenn:
+1. Eine Ingress-Ressource mit der Annotation `cert-manager.io/cluster-issuer` erstellt wird.
+2. DNS-Einträge auf die Server-IP zeigen.
+3. Die HTTP-01-Challenge abgeschlossen werden kann (Port 80 erreichbar).
+
+### Zertifikatserneuerung
+Zertifikate werden von cert-manager vor ihrem Ablauf automatisch erneuert:
+- **Erneuerung:** 30 Tage vor Ablauf
+- **Automatisch:** Kein manueller Eingriff erforderlich
+- **Überwachung:** Zertifikatsstatus regelmäßig prüfen
+
+### Zertifikatsstatus
+```bash
+# Check all certificates
+kubectl get certificate -n caritas
+
+# Check certificate age
+kubectl get certificate -n caritas -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.status.notAfter}{"\n"}{end}'
+
+# Check certificate requests
+kubectl get certificaterequest -n caritas
+```
+
+## Fehlerbehebung
+
+### DNS wird nicht aufgelöst
+```bash
+# Test DNS resolution
+dig api.example.org
+nslookup app.example.org
+
+# Check DNS propagation
+# Use online tools: https://dnschecker.org
+
+# Verify DNS points to correct IP
+curl -I http://api.example.org
+```
+
+### Zertifikat wird nicht ausgestellt
+```bash
+# Check certificate request
+kubectl get certificaterequest -n caritas
+kubectl describe certificaterequest <name> -n caritas
+
+# Check cert-manager logs
+kubectl logs -n cert-manager -l app=cert-manager
+
+# Check ClusterIssuer
+kubectl describe clusterissuer letsencrypt-prod
+
+# Verify HTTP-01 challenge
+curl http://api.example.org/.well-known/acme-challenge/test
+```
+
+### Zertifikat abgelaufen
+```bash
+# Check certificate expiration
+kubectl get certificate -n caritas -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.status.notAfter}{"\n"}{end}'
+
+# Force renewal (delete certificate, cert-manager will recreate)
+kubectl delete certificate <cert-name> -n caritas
+kubectl get certificate -n caritas  # Should recreate automatically
+```
+
+### HTTPS funktioniert nicht
+```bash
+# Check Ingress TLS configuration
+kubectl get ingress -n caritas -o yaml | grep -A 5 tls
+
+# Check certificate secret
+kubectl get secret -n caritas | grep tls
+
+# Check Ingress Controller logs
+kubectl logs -n ingress-nginx -l app.kubernetes.io/component=controller | grep tls
+```
+
+## Beispiele für DNS-Konfiguration
+
+### Cloudflare
+1. Fügen Sie A-Einträge in Cloudflare DNS hinzu.
+2. Legen Sie den Proxy-Status fest (orange Wolke), wenn Sie den Cloudflare-Proxy verwenden.
+3. SSL-/TLS-Modus: Full (strict) für HTTPS
+
+### Route53
+1. Erstellen Sie A-Einträge in der gehosteten Route53-Zone.
+2. Richten Sie sie auf die Server-IP aus.
+3. TTL: 300 Sekunden (5 Minuten)
+
+### Andere Anbieter
+1. Fügen Sie A-Einträge hinzu, die auf die Server-IP zeigen.
+2. Warten Sie auf die DNS-Verbreitung.
+3. Prüfen Sie mit `dig` oder `nslookup`.
+
+## Nächste Schritte
+
+- [Nach der Bereitstellung](/de/betrieb/configuration-und-testing/post-deployment) – Gesamte Bereitstellung prüfen
+- [Überprüfung und Tests](/de/betrieb/configuration-und-testing/verification-testing) – HTTPS-Endpunkte testen
+- [Sicherheit verbessern](/de/betrieb/operations/security-hardening) – Zusätzliche Sicherheitsmaßnahmen
