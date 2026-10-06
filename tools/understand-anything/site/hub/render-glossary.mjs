@@ -31,20 +31,25 @@ function publicURL(value, {relative = false} = {}) {
   return escape(url.href);
 }
 
-function evidenceLink(source) {
+function evidenceLink(source, binding) {
+  if (source.binding === 'input-snapshot' && binding?.state === 'verified' && binding.href) {
+    const name = /^tools\/understand-anything\/glossary\/sources\/([a-z0-9][a-z0-9-]*\.md)$/.exec(source.path)?.[1];
+    if (!name || binding.href !== `/glossary/sources/${name}`) throw new Error('Invalid verified snapshot link');
+    return `<a href="${publicURL(binding.href, {relative: true})}">${escape(source.title)}</a><p class="sub2">${bilingual('Snapshot in diesem quellgebundenen Artefakt.', 'Snapshot in this source-bound artifact.')}</p>`;
+  }
   if (source.url) return `<a href="${publicURL(source.url)}">${escape(source.title)}</a>`;
   if (source.sourceRevision) {
     const href = `https://github.com/OpenResilienceInitiative/${encodeURIComponent(source.repository)}/blob/${source.sourceRevision}/${urlPath(source.path)}${source.line ? `#L${source.line}` : ''}`;
     return `<a href="${publicURL(href)}">${escape(source.title || source.path)}</a>`;
   }
-  return `<span>${escape(source.title || source.path)}</span><p class="sub2">${bilingual('Die Eingabe ist als Snapshot im Release enthalten; kein historischer Commit-Link verfügbar.', 'The input is included as a release snapshot; no historical commit link is available.')}</p>`;
+  return `<span>${escape(source.title || source.path)}</span><p class="sub2">${bilingual('Redaktioneller Eingabe-Snapshot mit dokumentiertem Hash; kein historischer Commit-Link. Release-Bindung unten prüfen.', 'Editorial input snapshot with recorded hash; no historical commit link. Check release binding below.')}</p>`;
 }
 
 function renderSources(concept, bindings) {
   return `<details class="glossary-evidence"><summary>${bilingual('Quellen und Quellstand', 'Sources and source state')}</summary><p class="sub2">${bilingual('Entscheidungsstatus und Veröffentlichungsstand sind getrennt. Ein geprüfter Quelltext bestätigt keine laufende Bereitstellung.', 'Decision status and publication state are separate. Verified source text does not confirm a running deployment.')}</p><ul class="glossary-evidence-list">${concept.sources.map((source, index) => {
     const binding = bindings.find(item => item.conceptId === concept.id && item.sourceIndex === index);
     if (binding && !['verified', 'historical', 'stale', 'unavailable', 'external'].includes(binding.state)) throw new Error(`Invalid source binding state for ${concept.id}`);
-    return `<li>${evidenceLink(source)}<div class="glossary-badges">${badge(source.state)} ${badge(binding?.state || 'unverified')}</div>
+    return `<li>${evidenceLink(source, binding)}<div class="glossary-badges">${badge(source.state)} ${badge(binding?.state || 'unverified')}</div>
 <p>${bilingual('Redaktionell geprüft', 'Editorially reviewed')}: <time>${escape(source.reviewedAt)}</time></p>
 ${source.sourceRevision ? `<p>${bilingual('Ursprünglich geprüfte Revision', 'Originally reviewed revision')}: <code>${escape(source.sourceRevision)}</code></p>` : ''}
 ${source.sourceHash ? `<p>SHA-256: <code>${escape(source.sourceHash)}</code></p>` : ''}
@@ -59,7 +64,7 @@ function renderTechnical(concept, outcomes) {
     const outcome = outcomes.find(item => item.conceptId === concept.id && item.repository === mapping.repository && item.nodeId === mapping.nodeId && item.mode === mapping.mode);
     if (outcome && !['verified', 'historical', 'stale', 'unavailable'].includes(outcome.state)) throw new Error(`Invalid graph mapping state for ${concept.id}`);
     const link = outcome?.state === 'verified' && outcome.href ? `<a href="${publicURL(outcome.href, {relative: true})}">${bilingual('Graph öffnen', 'Open graph')}</a>` : '';
-    return `<li><strong>${bilingual('Graph-Zuordnung', 'Graph mapping')}</strong>: ${escape(mapping.repository)}<p><code>${escape(mapping.mode)} · ${escape(mapping.nodeId)}</code></p>${badge(outcome?.state || 'unverified')}${link ? `<p>${link}</p>` : ''}<p class="sub2">${outcome ? escape(outcome.reason || '') : bilingual('Das Graph-Ziel wurde für den gewählten Release nicht geprüft.', 'Graph target has not been verified for the selected release.')}</p>${outcome?.selectedRevision ? `<p>${bilingual('Gewählte Quellrevision', 'Selected source revision')}: <code>${escape(outcome.selectedRevision)}</code></p>` : ''}</li>`;
+    return `<li><strong>${bilingual('Graph-Zuordnung', 'Graph mapping')}</strong>: ${escape(mapping.repository)}<p><code>${escape(mapping.mode)} · ${escape(mapping.nodeId)}</code></p>${outcome?.viewerNodeId ? `<p>${bilingual('Knoten-ID in diesem Viewer', 'Node ID in this viewer')}: <code>${escape(outcome.viewerNodeId)}</code></p>` : ''}${badge(outcome?.state || 'unverified')}${link ? `<p>${link}</p>` : ''}<p class="sub2">${outcome ? escape(outcome.reason || '') : bilingual('Das Graph-Ziel wurde für den gewählten Release nicht geprüft.', 'Graph target has not been verified for the selected release.')}</p>${outcome?.selectedRevision ? `<p>${bilingual('Gewählte Quellrevision', 'Selected source revision')}: <code>${escape(outcome.selectedRevision)}</code></p>` : ''}</li>`;
   }).join('\n');
   return `<details class="glossary-evidence"><summary>${bilingual('Technische Zuordnungen — für Entwicklung und Code-Audit', 'Technical mappings — for engineering and code audit')}</summary><p class="sub2">${bilingual('Bestehende Tabellen, Schnittstellen und Kennungen bleiben kompatibel. Die Klasse beschreibt den einzelnen belegten Fund; sie ist keine globale Umbenennung.', 'Existing tables, APIs and identifiers remain compatible. The classification describes the specific evidenced finding; it is not a global rename.')}</p>${mappings || graphs ? `<ul class="glossary-evidence-list">${mappings}${graphs}</ul>` : `<p>${bilingual('Keine technische Zuordnung dokumentiert.', 'No technical mapping is documented.')}</p>`}</details>`;
 }
