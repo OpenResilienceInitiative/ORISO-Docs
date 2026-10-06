@@ -28,3 +28,41 @@ or pass public readback. Installation and readback validate `releaseBinding`;
 readback also fetches the complete public manifest byte-for-byte. Age alone does
 not make a release stale. See [release inputs](../../bundle/RELEASE-INPUTS.md) for
 the source verification contract.
+
+## Shared vocabulary and immutable graph projection
+
+The hub now consumes the maintained `glossary/catalog.json` beside the producer.
+The glossary gate requires complete DE/EN content, exact hashes of all reviewed ADR
+and input-snapshot bytes from the selected Docs commit, and byte-for-byte equality
+with `renderGlossary(data)`. An unchanged ADR in a later selected commit retains its
+original reviewed revision; changed or missing authority bytes fail before output.
+The original code audit stays historical and never becomes current from a path match.
+
+`ua-glossary-project.mjs --generation STAGE --sources PINNED_SOURCE_CHECKOUTS
+--authored-root PINNED_DOCS_CHECKOUT` runs after repository enrichment and before
+aggregation/sealing. It reads the catalogue from the pinned Docs checkout, checks
+its authoritative source bindings, adds bilingual preferred terms and legacy aliases
+to the viewer's real searchable tags, and updates only explicit curated business
+concept names. File names, node IDs, source summaries and semantic claims remain
+unchanged. Shared labels must agree; missing, ambiguous and wrong-type nodes have
+explicit unavailable outcomes. Different audited/selected revisions stay historical;
+no existing DPA concept is relabelled as the entire Platform Services Agreement.
+
+The generation manifest binds `glossary/catalog.json` and `glossary/bindings.json`
+to its complete selected source vector and Docs revision. Coverage and semantic
+binding checks reject omitted authority/mapping records or rewritten selected
+revisions, even if a caller recomputes the general byte inventory.
+
+Hub artifacts explicitly allow the glossary page, client script, canonical catalogue,
+binding outcomes and the three original input snapshots. All bytes enter the hub
+manifest and immutable installation/public readback checks. Build checks actual
+mapped nodes against the generation before adding links to existing viewer routes.
+The installed viewer has no confirmed selected-node query contract: links say
+"Open graph" and expose the exact node ID; Docs IDs use the existing Supergraph
+prefix. Historical, stale and unavailable targets receive no current graph link.
+A preview carries these same source checks but remains non-activatable.
+
+Run the producer's full test command in the repository checkout (`npm ci && npm test`
+from `tools/understand-anything`) with `UA_CORE` pointing to the installed pinned
+patched consumer. Source-bound hub tests need both tracked ADR bytes and Git history;
+a copied installed tooling directory alone does not provide that context.

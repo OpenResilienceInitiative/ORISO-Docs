@@ -30,7 +30,7 @@ jobs:
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
       - run: python3 -m pip install PyYAML==6.0.2
-      - run: node --test tools/understand-anything/site/hub/test/*.test.mjs tools/understand-anything/hosted-viewer/*.test.mjs
+      - run: node --test tools/understand-anything/glossary/test/*.test.mjs tools/understand-anything/site/hub/test/*.test.mjs tools/understand-anything/hosted-viewer/*.test.mjs
       - run: PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tools/understand-anything/hosted-viewer -p "*_test.py"
       - run: python3 tools/understand-anything/install.py --runtime-root "$RUNNER_TEMP/ua-contract-runtime"
       - run: node tools/understand-anything/hosted-viewer/runtime-test.mjs --upstream "$RUNNER_TEMP/ua-contract-runtime/current/upstream"
@@ -87,7 +87,7 @@ jobs:
       - run: python3 tools/understand-anything/install.py --runtime-root "$RUNNER_TEMP/ua-runtime"
       - run: node tools/understand-anything/hosted-viewer/runtime-test.mjs --upstream "$RUNNER_TEMP/ua-runtime/current/upstream"
       - run: PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tools/understand-anything/hosted-viewer -p "*_test.py"
-      - run: node --test tools/understand-anything/site/hub/test/*.test.mjs tools/understand-anything/hosted-viewer/*.test.mjs
+      - run: node --test tools/understand-anything/glossary/test/*.test.mjs tools/understand-anything/site/hub/test/*.test.mjs tools/understand-anything/hosted-viewer/*.test.mjs
       - name: Produce public-only validated generation
         env:
           UA_MOUNT_ROOT: ${{ runner.temp }}

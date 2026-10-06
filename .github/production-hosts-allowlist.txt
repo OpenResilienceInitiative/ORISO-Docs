@@ -118,3 +118,7 @@ tools/understand-anything/hosted-viewer/consumer_test.py # ORISO own public inst
 tools/understand-anything/hosted-viewer/readback.py # ORISO own public installation binding or deliberate publication regression fixture
 tools/docs-publication/test/workflow-release.test.mjs # ORISO own public installation binding or deliberate publication regression fixture
 tools/docs-publication/test/release-fixture.mjs # Exact released source-vector fixture for ORISO public publication regression tests
+tools/understand-anything/glossary/sources/naming-audit.md # Dated audit documents ORISO own Understand hub as observed source provenance
+tools/understand-anything/site/hub/glossary/index.html # Generated glossary retains canonical ORISO Docs navigation
+tools/understand-anything/site/hub/render-glossary.mjs # Glossary renderer links ORISO own canonical public documentation
+tools/understand-anything/site/hub/test/language.test.mjs # Regression fixture verifies canonical ORISO Docs navigation across DE and EN

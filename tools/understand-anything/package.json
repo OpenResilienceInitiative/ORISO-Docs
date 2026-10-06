@@ -4,6 +4,6 @@
   "private": true,
   "type": "module",
   "engines": {"node": ">=22.0.0"},
-  "scripts": {"test": "node --test test/*.test.mjs platform/test/*.test.mjs"},
+  "scripts": {"test": "node --test test/*.test.mjs platform/test/*.test.mjs glossary/test/*.test.mjs site/hub/test/*.test.mjs"},
   "dependencies": {"typescript": "5.9.3"}
 }
