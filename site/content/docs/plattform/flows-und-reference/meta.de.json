@@ -1,0 +1,9 @@
+{
+  "title": "Abläufe und Referenz",
+  "pages": [
+    "diagrams",
+    "repository-map",
+    "tenant-lifecycle",
+    "troubleshooting"
+  ]
+}

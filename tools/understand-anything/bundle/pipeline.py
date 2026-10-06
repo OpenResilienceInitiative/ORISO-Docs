@@ -4,6 +4,7 @@ from __future__ import annotations
 import collections
 import datetime as dt
 import json
+import hashlib
 import os
 import re
 from pathlib import Path
@@ -97,35 +98,52 @@ def validate_narrative_report(output):
         )
 
 
-def fetch_source(repository, ref):
-    branch = ref.removeprefix("refs/heads/")
-    require(
-        ref.startswith("refs/heads/") and branch and not branch.startswith("-"),
-        "expected branch ref required",
-    )
-    run(
-        [
-            "git",
-            "-C",
-            str(repository),
-            "fetch",
-            "--no-tags",
-            "origin",
-            f"+{ref}:refs/remotes/origin/{branch}",
-        ],
-        timeout=90,
-    )
-    return run(
-        [
-            "git",
-            "-C",
-            str(repository),
-            "rev-parse",
-            "--verify",
-            f"refs/remotes/origin/{branch}^{{commit}}",
-        ],
-        timeout=10,
-    )
+def exclude_unbound_platform_narrative(graph_path, enrichment_path):
+    """Retain historical source bytes, disclose the review gap, never apply it."""
+    raw = Path(enrichment_path).read_bytes()
+    enrichment = json.loads(raw)
+    require(isinstance(enrichment, dict), "platform narrative input must be an object")
+    # No aggregate reviewed-vector evaluator exists in the current applier.
+    # Only its explicit legacy shape can be excluded; claimed bindings fail closed.
+    require(set(enrichment) <= {"meta", "serviceSummaries", "layerDescriptions", "concepts", "tour"}, "reviewed platform narrative method unsupported or unknown input fields")
+    meta = enrichment.get("meta", {})
+    require(isinstance(meta, dict) and set(meta) <= {"generatedAt", "generatedBy"}, "reviewed platform narrative vector verification unsupported")
+    def review_claim(value):
+        if isinstance(value, dict):
+            return any(key in {"claim", "reviewedAt", "sourceCommit", "sourceSHA", "releaseBinding", "evidence", "confidence", "generationId", "sourceRepositories"} or key == "status" and item != "unbound" or review_claim(item) for key, item in value.items())
+        return isinstance(value, list) and any(review_claim(item) for item in value)
+    require(not review_claim(enrichment), "reviewed platform narrative vector verification unsupported")
+    for field in ("serviceSummaries", "layerDescriptions"):
+        entries = enrichment.get(field, {})
+        require(isinstance(entries, dict) and all(isinstance(value, str) for value in entries.values()), "reviewed platform narrative values unsupported")
+    for field, allowed in [("concepts", {"id", "name", "summary", "tags", "related"}), ("tour", {"order", "title", "description", "nodeIds"})]:
+        entries = enrichment.get(field, [])
+        require(isinstance(entries, list) and all(isinstance(value, dict) and set(value) <= allowed for value in entries), "reviewed platform narrative item fields unsupported")
+    graph = read_json(graph_path)
+    graph.setdefault("metadata", {})["narrativeCoverage"] = {
+        "status": "excluded-unbound", "reason": "missing-review",
+        "input": {"path": "platform/narrative/platform-enrich.json", "sha256": hashlib.sha256(raw).hexdigest(), "generatedAt": meta.get("generatedAt"), "generatedBy": meta.get("generatedBy")},
+        "appliedReviewedClaims": 0, "runtimeVerified": False,
+    }
+    write_json(graph_path, graph)
+    return graph["metadata"]["narrativeCoverage"]
+
+
+def normalize_ref(ref):
+    if ref.startswith(('refs/heads/', 'refs/tags/')) or re.fullmatch(r'[a-f0-9]{40}', ref):return ref
+    require(bool(re.fullmatch(r'[A-Za-z0-9_.+/-]+', ref)) and not ref.startswith('-') and '..' not in ref, 'invalid input ref')
+    return 'refs/heads/'+ref
+
+def fetch_source(repository, ref, expected_sha=None):
+    ref=normalize_ref(ref)
+    require(bool(re.fullmatch(r'(refs/(heads|tags)/[A-Za-z0-9_.+/-]+|[a-f0-9]{40})',ref)) and '..' not in ref, 'exact source ref required')
+    # Separate private tracking ref avoids silently reusing a stale local tag.
+    import hashlib
+    target='refs/oriso-inputs/'+hashlib.sha256(ref.encode()).hexdigest()
+    run(['git','-C',str(repository),'fetch','--no-tags','origin',f'+{ref}:{target}'],timeout=90)
+    sha=run(['git','-C',str(repository),'rev-parse','--verify',target+'^{commit}'],timeout=10)
+    if expected_sha is not None:require(sha==expected_sha,'released source SHA differs from fetched exact ref')
+    return sha
 
 
 def aggregate_coverage(path, repo_graphs):
@@ -150,11 +168,22 @@ def aggregate_coverage(path, repo_graphs):
     write_json(path, graph)
 
 
-def refresh(base, tools, publish_root, specs=None):
+def internal_report_directory(destination, publish_root):
+    destination = Path(destination).resolve()
+    public = Path(publish_root).resolve()
+    require(destination != public and public not in destination.parents,
+            "internal report must be outside public root")
+    return destination
+
+
+def refresh(base, tools, publish_root, specs=None, release_evidence=None, internal_report_root=None):
     base = Path(base).resolve()
     tools = Path(tools).resolve()
     publish_root = Path(publish_root).resolve()
     specs = specs or REPOS
+    report_root = internal_report_directory(internal_report_root, publish_root) if internal_report_root is not None else None
+    if report_root is not None:
+        require("ORISO-Docs" in {name for name, _, _ in specs}, "pinned Docs authored source required for internal report")
     env = os.environ.copy()
     with locked(publish_root):
         with tempfile.TemporaryDirectory(prefix=".build-", dir=publish_root) as tmp:
@@ -164,11 +193,12 @@ def refresh(base, tools, publish_root, specs=None):
             stage.mkdir()
             source_root.mkdir()
             sources = []
-            expected = {name: f"refs/heads/{branch}" for name, branch, _ in specs}
+            expected = {name: normalize_ref(branch) for name, branch, _ in specs}
+            released_shas = {s["repository"]:s["sourceSHA"] for s in release_evidence["lock"]["sources"]} if release_evidence else {}
             # Fetch ALL inputs before any analysis; a failed archived fetch is still a failure.
             for name, branch, _ in specs:
                 repository = base / name
-                sha = fetch_source(repository, expected[name])
+                sha = fetch_source(repository, expected[name], expected_sha=released_shas.get(name))
                 fetched = now_utc().isoformat()
                 sources.append(
                     dict(
@@ -301,23 +331,30 @@ def refresh(base, tools, publish_root, specs=None):
                 cwd=tools,
                 env=env,
             )
-            narrative_output = run(
-                [
-                    str(runner),
-                    str(tools / "platform/narrative/apply-platform-enrich.mjs"),
-                    str(platform_dir / "knowledge-graph.json"),
-                    str(tools / "platform/narrative/platform-enrich.json"),
-                ],
-                cwd=tools,
-                env=env,
+            narrative_coverage = exclude_unbound_platform_narrative(
+                platform_dir / "knowledge-graph.json",
+                tools / "platform/narrative/platform-enrich.json",
             )
-            validate_narrative_report(narrative_output)
-            manifest = seal(stage, sources, expected_refs=expected)
+            print("PLATFORM-NARRATIVE " + json.dumps(narrative_coverage, sort_keys=True), flush=True)
+            if release_evidence:
+                for name, ref, _ in specs:fetch_source(base/name, normalize_ref(ref), expected_sha=released_shas[name])
+            manifest = seal(stage, sources, expected_refs=expected, release=release_evidence)
             run(
                 [str(runner), str(tools / "ua-validate-consumer.mjs"), str(stage)],
                 cwd=tools,
                 env=env,
             )
+            if report_root is not None:
+                # Fresh immutable source checkouts still exist here. Historical
+                # authored bytes come from the pinned Docs input, never dirty tooling.
+                run([
+                    str(runner), str(tools / "ua-claim-candidates.mjs"),
+                    "--generation", str(stage), "--public-root", str(publish_root),
+                    "--sources", str(source_root),
+                    "--inputs", str(tools / "review/claim-packages.json"),
+                    "--authored-root", str(source_root / "ORISO-Docs"),
+                    "--out", str(report_root / (manifest["generationId"] + ".json")),
+                ], cwd=tools, env=env)
             _publish(stage, publish_root)
             print(
                 f'PUBLISHED {manifest["generationId"]} ({len(sources)} sources, complete generation)',

@@ -5,9 +5,7 @@ description: Enriched registration, login, user admin, session and chat flow.
 
 # User Management Flow
 
-## Platform Navigation
-
-- [Overview](./overview.md)
+> **Outdated — archived.** This page describes a Rocket.Chat-based flow that the codebase no longer contains; chat runs on Matrix ([ADR-004](/decisions/adr-004), [ADR-017](/decisions/adr-017)). Use [Backend services](./backend-services.md) and [Authentication and Keycloak](./authentication-and-keycloak.md) instead. Kept for history only.
 - [Repository map](./repository-map.md)
 - [Architecture](./architecture.md)
 - [Authentication and Keycloak](./authentication-and-keycloak.md)
