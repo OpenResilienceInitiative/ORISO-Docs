@@ -1,0 +1,175 @@
+---
+title: "4.4 Sitzungsverwaltung"
+description: "Wie Beratungssitzungen entstehen, betreten, durchgeführt und abgebaut werden — einschließlich Zustandswechseln, Aufbewahrung, Löschung bei Verbindungsabbruch und Supervisionsprüfung."
+---
+
+<Info>
+Eine **Sitzung** in ORISO umfasst die Lebensdauer eines einzelnen Gesprächs zwischen Beratenden und Ratsuchenden. Sie ist an einen Matrix-Raum gebunden, besitzt einen UserService-Datenbankeintrag und unterliegt strengen Regeln für Erstellung und Abbau.
+</Info>
+
+## 4.4.1 Was eine Sitzung ist
+
+| Eigenschaft | Wert |
+|---|---|
+| **Identität** | Eine von UserService ausgestellte `session_id` (UUID) |
+| **Verankerung** | Eine bei Annahme erzeugte Matrix-Raum-ID (E2EE) |
+| **Mitglieder** | Genau zwei Plätze: eine beratende Person (Keycloak `consultant`), eine ratsuchende Person (Keycloak `anonymous`); optional Supervision (nur lesend) |
+| **Thema** | Vom Live-Chat-Link oder der Anfrage übernommen |
+| **Zuständige Beratungsstelle** | Bei Erstellung festgelegt; unveränderlich |
+| **Lebensdauer** | Sekunden bis ungefähr Stunden; niemals länger als 48 Stunden |
+
+Sitzungen sind kein „Benutzerverlauf“. Sie sind kurzlebige Gesprächscontainer.
+
+## 4.4.2 Wie eine Sitzung entsteht
+
+Eine Sitzung entsteht **immer** aus einem Ticket:
+
+```mermaid
+flowchart TB
+  T1[Ticket created<br/>POST /live-chat/anonymous]:::t
+  T2{Counselor accepts}:::t
+  T3[Session created<br/>UserService DB row]:::s
+  T4[Matrix room provisioned<br/>both invited]:::s
+  T5{Client GDPR consent}:::g
+  T6[Session active]:::s
+
+  T1 --> T2 -->|yes| T3 --> T4 --> T5 -->|granted| T6
+  T2 -->|timeout, returned to queue| T1
+  T5 -->|declined| Wipe[Session aborted, wipe]:::w
+
+  classDef t fill:#fff3e0,stroke:#ef6c00
+  classDef s fill:#e3f2fd,stroke:#1565c0
+  classDef g fill:#e8f5e8,stroke:#2e7d32
+  classDef w fill:#ffebee,stroke:#c62828
+```
+
+Auslösende Abfolge:
+
+1. **Beratende klicken „Annehmen“** in der Live-Chat-Warteschlange.
+2. UserService führt in einer Transaktion aus:
+   - Markiert das Ticket atomar als `accepted` (Zeilensperre; verliert, wenn eine andere Person zuerst angenommen hat).
+   - Erstellt eine `session`-Zeile mit `agency_id`, `consultant_id`, `client_pseudonym`, `topic`, `started_at`.
+   - Ruft die Matrix-Admin-API auf, um einen privaten verschlüsselten Raum zu erstellen.
+   - Lädt beide Mitglieder ein.
+3. UserService übermittelt eine **DSGVO-Einwilligungsabfrage** an die ratsuchende Person.
+4. Nach Einwilligung wechselt die Sitzung zu `active`.
+
+## 4.4.3 Wie Nutzende beitreten
+
+| Mitglied | Beitritt |
+|---|---|
+| **Beratende** | Bereits in der Admin-App; die Sitzung öffnet sich automatisch im Live-Chat-Tab. |
+| **Ratsuchende** | Bereits im Warteraum; nach Annahme zeigt die Oberfläche zunächst „Ihre Beratungsperson verbindet sich“, dann die Einwilligungsabfrage und schließlich den Chat. |
+| **Supervision (Funktion)** | Ein `supervisor-consultant` kann **auf Anfrage und protokolliert** eingeladen werden, niemals stillschweigend. Beim Beitritt erscheint eine Systemnachricht: *„Supervision X ist zur Qualitätssicherung beigetreten“*. |
+
+Ratsuchende können einer früheren Sitzung nicht erneut beitreten — Sitzungen sind einmalige Gespräche.
+
+## 4.4.4 Zustandsautomat der Sitzung
+
+```mermaid
+stateDiagram-v2
+  [*] --> Waiting: ticket created
+  Waiting --> Accepted: counselor.accept
+  Accepted --> Consented: client.gdpr_ok
+  Consented --> Active: both joined room
+  Active --> Paused: idle / heartbeat lost
+  Paused --> Active: heartbeat resumes
+  Paused --> Ended: timeout
+  Active --> Ended: user.end / counselor.end
+  Waiting --> Abandoned: client.close / timeout
+  Accepted --> Abandoned: counselor.timeout / client.close
+  Ended --> Purged: 48h auto-cleanup
+  Abandoned --> Purged: immediate cleanup
+  Purged --> [*]
+```
+
+### Zustandsdefinitionen
+
+| Zustand | Bedeutung |
+|---|---|
+| `Waiting` | Ticket vorhanden, noch keine Annahme durch Beratende. Die ratsuchende Person ist im Warteraum. |
+| `Accepted` | Beratende haben auf Annehmen geklickt, aber die DSGVO-Einwilligung fehlt noch. |
+| `Consented` | Ratsuchende haben die DSGVO-Einwilligung bestätigt; der Raum wird fertiggestellt. |
+| `Active` | Beide Mitglieder befinden sich im verschlüsselten Raum und tauschen Nachrichten aus. |
+| `Paused` | Ein Heartbeat fehlt; die Oberfläche zeigt „Verbindung wird wiederhergestellt“; Daten bleiben erhalten. |
+| `Ended` | Eine Seite hat regulär geschlossen. Der Raum besteht für ≤ 48 Stunden. |
+| `Abandoned` | Ratsuchende haben vor Übernahme aufgegeben oder die Übernahme ist abgelaufen. |
+| `Purged` | Aller verschlüsselter Text gelöscht, alle personenbezogenen Informationen (= Pseudonym) entfernt; nur eine nicht aussagekräftige session_id bleibt. |
+
+## 4.4.5 Aufbewahrungsregeln
+
+Die wichtigste Tabelle dieses Produkts:
+
+| Daten | Ort | Aufbewahrung |
+|---|---|---|
+| Anonyme Person (Keycloak) | Keycloak-Realm | Innerhalb von Sekunden bis Minuten nach Verbindungsabbruch gelöscht |
+| Sitzungszeile | UserService MariaDB | Bis `Purged`; danach anonymisiert (Pseudonym geleert, `session_id` erhalten) |
+| Matrix-Raum-Metadaten | Synapse PostgreSQL | Bis `Purged`; bei Tombstone gelöscht |
+| Verschlüsselte Matrix-Nachrichteninhalte | Synapse PostgreSQL | ≤ 48 Stunden nach `Ended`, danach gelöscht |
+| Megolm-Sitzungsschlüssel | Browser (Beratende und Ratsuchende) | Beim Schließen des Tabs / ausdrücklicher Abmeldung gelöscht |
+| Fallnotizen der Beratenden (geplant) | UserService MariaDB | Gehören den Beratenden; nach Löschung nicht mit der Identität der Ratsuchenden verknüpft |
+| Prüfprotokoll „Sitzung hat stattgefunden“ | Nur ergänzbares Protokoll | Ein Jahr, ausschließlich nicht aussagekräftige Sitzungs-ID |
+
+**Zentrale Regel aus dem Gespräch**: *Keine Archivierung, nur Löschung.* Eine „weiche Löschung“ / Archivierung des Pseudonyms einer ratsuchenden Person ist **nicht erlaubt**.
+
+## 4.4.6 Mechanismus zur Löschung bei Verbindungsabbruch
+
+So verhindert ORISO, dass sich Ratsuchende unbegrenzt ansammeln:
+
+1. Das Frontend sendet für jede aktive Person im Warteraum oder in einer Sitzung regelmäßig einen Heartbeat an UserService (z. B. alle 30 Sekunden).
+2. UserService führt je Person ein `last_seen_at`.
+3. Ein **geplanter Job** (durch RabbitMQ gesteuert, etwa alle 15 Sekunden) findet anonyme Personen, deren `last_seen_at` älter als der Grenzwert ist:
+   - Bei Zustand = `Waiting`: Zustand → `Abandoned`; Keycloak-Person gelöscht; Ticketzeile gelöscht.
+   - Bei Zustand = `Active`: Zustand → `Paused`; bleibt sie nach einem längeren Grenzwert veraltet, Zustand → `Ended`.
+4. Die Bereinigung ist idempotent und protokolliert nur nicht aussagekräftige Sitzungs-IDs.
+
+<Tip>
+Die Grenzwerte sind einstellbar. Sinnvolle Standardwerte: Heartbeat = 30 Sekunden, Aufgabe nach = 90 Sekunden, Pausiert zu Beendet = 5 Minuten, Raumlöschung = 48 Stunden.
+</Tip>
+
+## 4.4.7 Berührungspunkte der Backend-Logik
+
+```
+POST /live-chat/anonymous           creates Waiting ticket + anonymous user
+POST /live-chat/accept              Waiting → Accepted (row-lock!)
+POST /live-chat/consent             Accepted → Consented (then Active)
+POST /sessions/{id}/heartbeat       updates last_seen_at
+POST /sessions/{id}/end             Active → Ended
+POST /sessions/{id}/supervisor      invite supervisor (audited)
+DELETE /sessions/{id}               admin-only forced teardown
+```
+
+Nebenläufigkeitskritische Operationen (`accept`, `end`, `purge`) verwenden entweder eine Datenbanksperre auf Zeilenebene oder eine idempotente Zustandsprüfung, damit zwei Klicks den Zustand nicht beschädigen.
+
+## 4.4.8 Besondere Abläufe
+
+### Chat zu Video erweitern
+
+Beratende können während des Chats „zu Video wechseln“ anbieten. UserService stellt für beide Mitglieder einen LiveKit-JWT aus; ein LiveKit-Raum wird erstellt (getrennt vom Matrix-Raum) und innerhalb desselben Sitzungscontainers betreten. Der Matrix-Raum bleibt die maßgebliche Quelle für den Textverlauf.
+
+### Supervisionsprüfung
+
+Ein `supervisor-consultant` fordert Zugriff auf eine Sitzung an. UserService:
+1. Prüft, dass die Person zur selben Beratungsstelle gehört.
+2. Erstellt einen Prüfdatensatz: `supervisor_join { session_id, supervisor_id, started_at }`.
+3. Lädt sie als drittes Mitglied in den Matrix-Raum ein; eine Systemnachricht kündigt dies an.
+4. Beim Verlassen wird der Prüfdatensatz geschlossen.
+
+### Sitzungsabbruch
+
+Ratsuchende können jederzeit schließen (oben rechts ✕). Beratende können mit „Sitzung beenden“ abschließen. Beide Wege führen zum selben Zustand `Ended`.
+
+## 4.4.9 Sonderfälle
+
+- **Laptop der Beratungsperson fällt während aktiver Sitzung aus** → Sitzung pausiert; Ratsuchende sehen „Beratungsperson verbindet sich erneut…“; ohne Fortsetzung innerhalb von fünf Minuten endet die Sitzung.
+- **Ratsuchende laden den Tab neu** → Neues Cookie, neues Pseudonym; alte Sitzung verwaist und wird gelöscht. Erneuter Beitritt ist ausgeschlossen (Datenschutz durch Gestaltung).
+- **Zwei Beratende nehmen gleichzeitig an** → Die erste Person gewinnt über die Zeilensperre; die zweite sieht „Ticket bereits übernommen“.
+- **Netzwerkunterbrechung während einer Nachricht** → Matrix-Client versucht die Übertragung erneut; nach Wiederverbindung trifft die Nachricht in Reihenfolge ein.
+- **Löschjob hängt zurück** → Rückstand in Metriken sichtbar; Alarm bei >5 Minuten Verzögerung. Löschungen sind idempotent und können sicher wiederholt werden.
+
+## 4.4.10 Verwandte Seiten
+
+- [Live-Chat (4.2)](/product/features/live-chat)
+- [Pincode-basierter Chat (4.3)](/product/features/pincode-chat)
+- [Datenmodell](/product/data-model)
+- [Sonderfälle](/product/edge-cases)

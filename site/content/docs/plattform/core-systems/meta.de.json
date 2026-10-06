@@ -1,0 +1,10 @@
+{
+  "title": "Kernsysteme",
+  "pages": [
+    "authentication-and-keycloak",
+    "backend-services",
+    "database-and-data-model",
+    "frontend-admin-overview",
+    "kubernetes-deployment"
+  ]
+}

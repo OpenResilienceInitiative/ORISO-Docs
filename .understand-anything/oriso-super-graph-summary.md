@@ -1,37 +1,18 @@
-# ORISO Enriched Super Graph Summary
+# ORISO Super-Graph
 
-Generated: 2026-05-28T17:04:27.271Z
+Rebuilt 2026-08-14T01:08:36.463Z by ua-build-supergraph.mjs (deterministic).
 
-This graph combines existing Understand-Anything graphs with direct source/config inspection of all nine target repositories.
+- ORISO-Frontend: 4038 nodes / 3871 edges @ 41e53197
+- ORISO-Admin: 2337 nodes / 2114 edges @ 9fdb4a7e
+- ORISO-UserService: 11567 nodes / 15922 edges @ e4cdd964
+- ORISO-AgencyService: 2230 nodes / 2610 edges @ d4397c4c
+- ORISO-ConsultingTypeService: 1075 nodes / 1145 edges @ 50192e7d
+- ORISO-TenantService: 1545 nodes / 1780 edges @ 9dd37621
+- ORISO-Database: 89 nodes / 87 edges @ c9630a93
+- ORISO-Keycloak: 356 nodes / 348 edges @ 367e488d
+- ORISO-Kubernetes: 147 nodes / 13 edges @ 10232408
+- ORISO-Helm: 480 nodes / 298 edges @ c45eaaab
+- ORISO-E2E: 208 nodes / 231 edges @ 2a90b0cc
+- ORISO-Infra: 19 nodes / 24 edges @ 8d3acd2f
 
-## Outputs
-
-- .understand-anything/oriso-super-graph.json
-- .understand-anything/knowledge-graph.json
-- .understand-anything/oriso-super-graph-summary.md
-- docs/platform/graph-validation-report.md
-- docs/platform/repo-graphs/*.md
-
-## Graph Size
-
-- Nodes: 95
-- Edges: 128
-
-## Inputs
-
-- ORISO-Frontend: graph found, direct inspection completed
-- ORISO-Admin: graph found, direct inspection completed
-- ORISO-UserService: graph found, direct inspection completed
-- ORISO-AgencyService: graph found, direct inspection completed
-- ORISO-ConsultingTypeService: graph found, direct inspection completed
-- ORISO-TenantService: graph found, direct inspection completed
-- ORISO-Database: graph found, direct inspection completed
-- ORISO-Keycloak: graph found, direct inspection completed
-- ORISO-Kubernetes: graph found, direct inspection completed
-
-## Major Gaps
-
-- TenantId claim generation in Keycloak needs verification.
-- UploadService and Rocket.Chat are referenced by infrastructure/config but are not included as analyzed repos.
-- Kubernetes lacks verified HPA, NetworkPolicy and PDB coverage.
-- Active production/staging values may differ from committed examples.
+Cross-repo dependency edges: 40 (keyword inference, evidence-count >= 2).

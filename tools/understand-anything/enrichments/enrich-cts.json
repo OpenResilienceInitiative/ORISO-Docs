@@ -1,33 +1,258 @@
 {
+  "meta": {
+    "generatedAt": "2026-09-04T00:00:00Z",
+    "generatedBy": "claude-opus-deep-run-2026-09",
+    "repo": "ORISO-ConsultingTypeService"
+  },
   "concepts": [
     {
       "id": "concept:consulting-types",
       "name": "Consulting Type Configurations",
-      "summary": "Spring Boot service managing consulting type configurations: the per-consulting-type settings that drive registration, session behavior, and feature toggles across the platform.",
-      "tags": ["domain", "core"],
-      "related": ["ConsultingTypeController.java", "ConsultingTypeAdminController.java", "README.md"]
+      "summary": "A consulting type is the per-offering configuration bundle (slug, welcome message, registration and session settings) that the platform reads before a counselling session exists. It is modelled by api/model/ConsultingTypeEntity.java, served by api/service/ConsultingTypeService.java, and persisted through api/consultingtypes/ConsultingTypeMongoRepositoryService.java in MongoDB. Three response shapes exist (basic, extended, full), produced by the mappers in api/mapper/.",
+      "tags": ["domain", "configuration", "mongodb"],
+      "related": [
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/model/ConsultingTypeEntity.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/service/ConsultingTypeService.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoRepositoryService.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/FullConsultingTypeMapper.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/BasicConsultingTypeMapper.java"
+      ]
     },
     {
       "id": "concept:topics",
       "name": "Topics & Topic Groups",
-      "summary": "TopicController, TopicAdminController, and TopicGroupsController with TopicServiceFacade manage counseling topics and their grouping — the taxonomy agencies and consultants are matched against.",
-      "tags": ["taxonomy"],
-      "related": ["TopicController.java", "TopicAdminController.java", "TopicGroupsController.java", "TopicServiceFacade.java"]
+      "summary": "Topics (Themen) are the counselling subjects a help seeker picks; topic groups bundle them into categories for display. Unlike consulting types they live in a relational schema (topic, topic_group, topic_group_x_topic) driven by the Liquibase changesets under src/main/resources/db/changelog, and are accessed via api/repository/TopicRepository.java and api/repository/TopicGroupRepository.java. api/model/TopicStatus.java separates ACTIVE topics from inactive ones so drafts stay out of the public list.",
+      "tags": ["domain", "topics", "relational"],
+      "related": [
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/model/TopicEntity.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/model/TopicGroupEntity.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/model/TopicStatus.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/repository/TopicRepository.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/repository/TopicGroupRepository.java",
+        "schema:src/main/resources/db/changelog/changeset/0004_topic_groups/topicGroups.sql"
+      ]
     },
     {
       "id": "concept:application-settings",
       "name": "Application Settings",
-      "summary": "ApplicationSettingsController and ApplicationSettingsServiceFacade expose platform-wide application settings consumed by other services and the frontends.",
-      "tags": ["configuration"],
-      "related": ["ApplicationSettingsController.java", "ApplicationSettingsServiceFacade.java"]
+      "summary": "A single global settings document (api/model/ApplicationSettingsEntity.java) carries platform-wide toggles such as multitenancy and release flags, plus the global SMTP credentials. api/service/ApplicationSettingsServiceFacade.java owns reads and PATCH merges, and api/service/DefaultApplicationSettingsInitializer.java seeds defaults at startup. The public GET /settings response deliberately withholds credential fields.",
+      "tags": ["configuration", "feature-toggles", "settings"],
+      "related": [
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/model/ApplicationSettingsEntity.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/service/ApplicationSettingsServiceFacade.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/service/ApplicationSettingsService.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/service/DefaultApplicationSettingsInitializer.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/repository/ApplicationSettingsRepository.java"
+      ]
+    },
+    {
+      "id": "concept:tenant-context",
+      "name": "Per-Request Tenant Context",
+      "summary": "Every request runs inside a tenant scope held in api/tenant/TenantContext.java (a thread-local). api/tenant/TenantResolver.java derives the tenant from the subdomain (filter/SubdomainExtractor.java) and from the tenant header or access token, and rejects the request when header and subdomain disagree or neither is present. filter/HttpTenantFilter.java installs the context, api/tenant/TenantAspect.java and api/service/TenantHibernateInterceptor.java keep repository access tenant-scoped.",
+      "tags": ["multitenancy", "middleware", "security"],
+      "related": [
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/tenant/TenantContext.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/tenant/TenantResolver.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/tenant/TenantAspect.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/filter/HttpTenantFilter.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/filter/SubdomainExtractor.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/service/TenantHibernateInterceptor.java"
+      ]
+    },
+    {
+      "id": "concept:topic-feature-toggle",
+      "name": "Topic Feature Toggle",
+      "summary": "The topic feature is not always on: api/service/TopicFeatureAuthorisationService.java decides per deployment mode (plain multitenancy vs. single-domain multitenancy) whether topics are enabled, and throws when they are not. api/admin/controller/TopicFeatureAssertionAspect.java applies that check around admin endpoints, so a disabled toggle yields 403 rather than an empty list.",
+      "tags": ["feature-toggle", "authorisation", "topics"],
+      "related": [
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicFeatureAuthorisationService.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/admin/controller/TopicFeatureAssertionAspect.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/exception/TopicAccessDeniedException.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicAdminController.java"
+      ]
+    },
+    {
+      "id": "concept:consulting-type-bootstrap",
+      "name": "Consulting Type Bootstrap from JSON Files",
+      "summary": "Consulting types are not only created over HTTP; api/consultingtypes/ConsultingTypeLoader.java reads the JSON files under consulting-type-settings/ at startup (@PostConstruct init), validates each against src/main/resources/schemas/consulting-type.json via api/consultingtypes/ConsultingTypeValidator.java, and writes them into the repositories under a technical tenant context. A broken or unreadable settings path aborts startup with UnexpectedErrorException.",
+      "tags": ["bootstrap", "configuration", "validation"],
+      "related": [
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeLoader.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeValidator.java",
+        "config:src/main/resources/schemas/consulting-type.json",
+        "config:consulting-type-settings/consulting-type-0.json",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/exception/UnexpectedErrorException.java"
+      ]
+    },
+    {
+      "id": "concept:multilingual-topics",
+      "name": "Multilingual Topic Content",
+      "summary": "Topic names and descriptions are stored as translation maps rather than single strings; changesets 0003 and 0010 migrated the tables to that i18n-aware shape. api/service/TranslationService.java resolves the current language from the request context (language cookie), api/util/TranslationUtils.java and api/converter/TopicConverter.java project the map down to one language for public responses, while admin responses keep all translations.",
+      "tags": ["i18n", "topics", "conversion"],
+      "related": [
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/service/TranslationService.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/util/TranslationUtils.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/converter/TopicConverter.java",
+        "schema:src/main/resources/db/changelog/changeset/0010_change_topic_and_topic_groups_to_be_i18n_aware/0010_change_topic_and_topic_groups_to_be_i18n_aware.sql"
+      ]
+    },
+    {
+      "id": "concept:topic-input-hardening",
+      "name": "Topic Input Sanitising and Validation",
+      "summary": "Admin-supplied topic payloads pass two guards before persistence: api/validation/TopicInputSanitizer.java (built on api/validation/InputSanitizer.java) strips unsafe markup from free-text fields, and api/validation/TopicValidationService.java checks the status value and the translation keys, raising TopicValidationException or BadRequestException. config/StrictRequestBodyConfig.java additionally controls how unknown payload fields are treated.",
+      "tags": ["security", "validation", "topics"],
+      "related": [
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/validation/TopicInputSanitizer.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/validation/InputSanitizer.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/validation/TopicValidationService.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/exception/TopicValidationException.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/config/StrictRequestBodyConfig.java"
+      ]
+    },
+    {
+      "id": "concept:dpa-signing-mail",
+      "name": "DPA Signing Mail and SMTP Secrets",
+      "summary": "The service can invite a Träger to sign the data processing agreement by e-mail: api/service/DpaSigningEmailService.java builds the HTML, checks that the confirmation link has the same origin as the configured base URI, and hands it to api/service/JakartaDpaMailTransport.java. The SMTP password kept in the application settings is encrypted at rest by api/service/SmtpPasswordEncryptionService.java and only ever decrypted for the transport.",
+      "tags": ["email", "dpa", "secrets"],
+      "related": [
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/service/DpaSigningEmailService.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/service/JakartaDpaMailTransport.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/service/SmtpPasswordEncryptionService.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/controller/DpaSigningEmailController.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/exception/SmtpSendException.java"
+      ]
+    },
+    {
+      "id": "concept:contract-first-api",
+      "name": "Contract-First REST Surface",
+      "summary": "Controllers implement interfaces generated from OpenAPI specs rather than declaring routes by hand: api/consultingtypeservice.yml, api/topicservice.yml, api/applicationsettingsservice.yml and api/consultingtypeadminservice.yml define the 22 own endpoints, and services/tenantservice.yaml describes the tenant service the client in config/apiclient/TenantServiceApiClient.java talks to. scripts/contracts/ hold the publish and verify steps for those contracts.",
+      "tags": ["api", "openapi", "contracts"],
+      "related": [
+        "config:api/consultingtypeservice.yml",
+        "config:api/topicservice.yml",
+        "config:api/applicationsettingsservice.yml",
+        "config:services/tenantservice.yaml",
+        "src/main/java/de/caritas/cob/consultingtypeservice/config/apiclient/TenantServiceApiClient.java",
+        "scripts/contracts/verify-provider-compatibility.sh"
+      ]
     }
   ],
   "flows": [
     {
       "id": "flow:topic-administration",
-      "name": "Topic Administration",
-      "summary": "Admin creates or updates topics/topic groups (TopicAdminController) → TopicServiceFacade validates and persists → topics become available for agency/consultant matching and registration.",
-      "related": ["TopicAdminController.java", "TopicServiceFacade.java", "TopicGroupsController.java"]
+      "name": "Topic Admin Creates or Updates a Topic → Persisted Multilingual Topic",
+      "summary": "POST /topicadmin and PUT /topicadmin/{id} reach api/controller/TopicAdminController.java, where TopicFeatureAssertionAspect asserts the topic feature is enabled and the topic-admin authority is required. TopicInputSanitizer cleans the payload, api/service/TopicServiceFacade.java converts it and calls api/service/TopicService.java createTopic/updateTopic, which validates via TopicValidationService and saves through api/repository/TopicRepository.java.",
+      "tags": ["admin", "topics", "write"],
+      "related": [
+        "endpoint:api/topicservice.yml:POST /topicadmin",
+        "endpoint:api/topicservice.yml:PUT /topicadmin/{id}",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicAdminController.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicServiceFacade.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicService.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/repository/TopicRepository.java"
+      ]
+    },
+    {
+      "id": "flow:public-topic-listing",
+      "name": "Help Seeker Loads Topic Choices → Active Topics in One Language",
+      "summary": "GET /topic/public and GET /topic-groups are served by api/controller/TopicController.java (getAllActiveTopics) and api/controller/TopicGroupsController.java. TopicServiceFacade.getAllActiveTopics filters on TopicStatus, api/converter/TopicConverter.java and api/converter/TopicGroupConverter.java reduce the translation maps to the language TranslationService resolved for the request.",
+      "tags": ["public", "topics", "read"],
+      "related": [
+        "endpoint:api/topicservice.yml:GET /topic/public",
+        "endpoint:api/topicservice.yml:GET /topic-groups",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicController.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicGroupsController.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/converter/TopicGroupConverter.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/service/TranslationService.java"
+      ]
+    },
+    {
+      "id": "flow:consulting-type-lookup",
+      "name": "Frontend Resolves a Consulting Type → Full Settings Payload",
+      "summary": "GET /consultingtypes/byslug/{slug}/full and GET /consultingtypes/bytenant/{tenantId}/full enter api/controller/ConsultingTypeController.java, which calls fetchFullConsultingTypeSettingsBySlug / fetchFullConsultingTypeSettingsByTenantId in api/service/ConsultingTypeService.java. The lookup goes through api/consultingtypes/ConsultingTypeRepositoryService.java to the Mongo implementation and is mapped by api/mapper/FullConsultingTypeMapper.java; a miss becomes NotFoundException.",
+      "tags": ["read", "consulting-types", "public"],
+      "related": [
+        "endpoint:api/consultingtypeservice.yml:GET /consultingtypes/byslug/{slug}/full",
+        "endpoint:api/consultingtypeservice.yml:GET /consultingtypes/bytenant/{tenantId}/full",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ConsultingTypeController.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeRepositoryService.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/mapper/FullConsultingTypeMapper.java"
+      ]
+    },
+    {
+      "id": "flow:consulting-type-patch",
+      "name": "Tenant Admin Patches a Consulting Type → Permission-Limited Update",
+      "summary": "PATCH /consultingtypes/{id} lands in ConsultingTypeController.patchConsultingType. api/service/ConsultingTypeService.java runs assertChangesAreAllowedForUsersWithLimitedPatchPermission, comparing the incoming DTO field by field against the stored entity so a single-tenant admin may only change the subset allowed to that role; anything else is rejected as forbidden. The accepted change is written by ConsultingTypeMongoRepositoryService.update.",
+      "tags": ["admin", "authorisation", "write"],
+      "related": [
+        "endpoint:api/consultingtypeservice.yml:PATCH /consultingtypes/{id}",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ConsultingTypeController.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/service/ConsultingTypeService.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoRepositoryService.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/auth/Authority.java"
+      ]
+    },
+    {
+      "id": "flow:application-settings-patch",
+      "name": "Super Admin Patches Settings → Encrypted SMTP Credentials Stored",
+      "summary": "PATCH /settingsadmin reaches api/controller/ApplicationSettingsController.java and ApplicationSettingsServiceFacade.patchApplicationSettings, which merges only supported keys, keeps the stored username and password when the patch carries blank or masked values, and encrypts a real new password with SmtpPasswordEncryptionService before saving. GET /settingsadmin/smtp-credentials decrypts them again and is restricted to the super admin checked in api/auth/AuthorisationService.java.",
+      "tags": ["settings", "secrets", "admin"],
+      "related": [
+        "endpoint:api/applicationsettingsservice.yml:PATCH /settingsadmin",
+        "endpoint:api/applicationsettingsservice.yml:GET /settingsadmin/smtp-credentials",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ApplicationSettingsController.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/service/ApplicationSettingsServiceFacade.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/service/SmtpPasswordEncryptionService.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/auth/AuthorisationService.java"
+      ]
+    },
+    {
+      "id": "flow:tenant-resolution",
+      "name": "Request Arrives → Tenant Context Established or Access Denied",
+      "summary": "filter/HttpTenantFilter.java runs early in the chain configured by config/SecurityConfig.java, uses filter/SubdomainExtractor.java and api/tenant/TenantResolver.java to determine the tenant from subdomain, tenant header or access token, and stores it in TenantContext. Contradiction between header and subdomain, or the absence of both, ends the request with access denied; api/service/TenantHibernateInterceptor.java then scopes topic queries to that tenant.",
+      "tags": ["multitenancy", "middleware", "security"],
+      "related": [
+        "src/main/java/de/caritas/cob/consultingtypeservice/filter/HttpTenantFilter.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/filter/SubdomainExtractor.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/tenant/TenantResolver.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/tenant/TenantContext.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/config/SecurityConfig.java"
+      ]
+    },
+    {
+      "id": "flow:startup-consulting-type-load",
+      "name": "Service Boots → JSON Consulting Types Loaded into Mongo",
+      "summary": "ConsultingTypeServiceApplication starts, and ConsultingTypeLoader.init (@PostConstruct) determines the configuration files, deserialises each with api/util/JsonConverter.java, validates it against the JSON schema through ConsultingTypeValidator, sets a technical tenant context and calls addConsultingTypeToRepositories, which delegates to the Mongo and tenant-aware repository services.",
+      "tags": ["bootstrap", "consulting-types", "startup"],
+      "related": [
+        "src/main/java/de/caritas/cob/consultingtypeservice/ConsultingTypeServiceApplication.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeLoader.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/util/JsonConverter.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoTenantAwareRepositoryService.java",
+        "config:src/main/resources/schemas/consulting-type.json"
+      ]
+    },
+    {
+      "id": "flow:dpa-signing-invitation",
+      "name": "Admin Invites a Träger to Sign the DPA → Mail Sent or Error Surfaced",
+      "summary": "api/controller/DpaSigningEmailController.java accepts the invitation request and calls DpaSigningEmailService.send, which reads the mail settings (DpaMailSettings), rejects a confirmation link whose origin differs from the configured base URI before touching credentials, decrypts the SMTP password and delivers through JakartaDpaMailTransport. A transport failure raises SmtpSendException instead of reporting silent success.",
+      "tags": ["dpa", "email", "admin"],
+      "related": [
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/controller/DpaSigningEmailController.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/service/DpaSigningEmailService.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/service/DpaMailSettings.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/service/JakartaDpaMailTransport.java",
+        "src/main/java/de/caritas/cob/consultingtypeservice/api/exception/SmtpSendException.java"
+      ]
     }
-  ]
+  ],
+  "layerDescriptions": {
+    "Domain Concepts": "The coarse business vocabulary of the service: consulting types, topics and topic groups, application settings, and the flows that administer them.",
+    "API Endpoints": "The 49 REST operations extracted from the OpenAPI specs — 22 owned by this service (consulting types, topics, topic admin, settings) plus the tenant service contract it consumes.",
+    "API Layer": "Spring controllers, the generated API interfaces, DTO mappers and converters, services, repositories and exception handling under de.caritas.cob.consultingtypeservice.api.",
+    "Middleware Layer": "Servlet filters and aspects that run around every request: tenant resolution, correlation id, stateless CSRF, trailing slash handling and the topic feature assertion.",
+    "Core": "Application entry point and cross-cutting helpers that the rest of the service builds on, including the Spring Boot bootstrap class.",
+    "Configuration Layer": "Spring configuration and external configuration artefacts: security, CORS, caching, REST templates, the tenant service API client, OpenAPI specs, JSON schemas and consulting-type settings files.",
+    "Test Layer": "Unit, integration and contract tests plus CI helper scripts that assert coverage and OpenAPI contract compatibility."
+  }
 }

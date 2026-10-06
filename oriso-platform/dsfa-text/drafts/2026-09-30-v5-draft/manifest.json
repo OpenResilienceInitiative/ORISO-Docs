@@ -1,0 +1,209 @@
+{
+  "schemaVersion": 1,
+  "version": "v5-draft",
+  "date": "2026-09-30",
+  "approval": {
+    "technical": "pending",
+    "operator": "pending",
+    "legal": "pending"
+  },
+  "source": "PR119 chapter sources assembled with historical v2 frame; all chapters retained; internal notes/scripts stripped",
+  "locales": [
+    "de",
+    "en"
+  ],
+  "chapters": [
+    {
+      "id": "1",
+      "de": "de/chapter-1.md",
+      "en": "en/chapter-1.md",
+      "sourceHash": "9b9634b04b9eecbb2037807173cdd13e47954985238c142bc6af8c471598989c",
+      "hashes": {
+        "de": "9b9634b04b9eecbb2037807173cdd13e47954985238c142bc6af8c471598989c",
+        "en": "619756ecc5e67d378b57d0e6ccdaf27bcaafe0d2531dd75824a067757ee36fcc"
+      },
+      "translationSourceHash": "9b9634b04b9eecbb2037807173cdd13e47954985238c142bc6af8c471598989c"
+    },
+    {
+      "id": "2",
+      "de": "de/chapter-2.md",
+      "en": "en/chapter-2.md",
+      "sourceHash": "3f31d25984b716167efbe581742d24d0213e467a22a44aa50ac06306533fbbe3",
+      "hashes": {
+        "de": "3f31d25984b716167efbe581742d24d0213e467a22a44aa50ac06306533fbbe3",
+        "en": "869589d5ef7ffe08e041cdaa459044d85b3926b94612a6b093ff0e5805ea4a14"
+      },
+      "translationSourceHash": "3f31d25984b716167efbe581742d24d0213e467a22a44aa50ac06306533fbbe3"
+    },
+    {
+      "id": "3",
+      "de": "de/chapter-3.md",
+      "en": "en/chapter-3.md",
+      "sourceHash": "30057d7fda28ad7b4635996100fedffd1d02133ff6d796f9b9de45dd4beb6b5f",
+      "hashes": {
+        "de": "30057d7fda28ad7b4635996100fedffd1d02133ff6d796f9b9de45dd4beb6b5f",
+        "en": "9e5bcc73602791977035fb7042391d7af1eaefa909121ea274b948315c220b24"
+      },
+      "translationSourceHash": "30057d7fda28ad7b4635996100fedffd1d02133ff6d796f9b9de45dd4beb6b5f"
+    },
+    {
+      "id": "4",
+      "de": "de/chapter-4.md",
+      "en": "en/chapter-4.md",
+      "sourceHash": "dc4130004fcb02e5e01e9a407f058e63c982a129d0e2c94f5bcace73bad3b859",
+      "hashes": {
+        "de": "dc4130004fcb02e5e01e9a407f058e63c982a129d0e2c94f5bcace73bad3b859",
+        "en": "445fb6f24989ed2d4a9777b0ffced28594d5cded0f62d6b33895688ce5b6ae40"
+      },
+      "translationSourceHash": "dc4130004fcb02e5e01e9a407f058e63c982a129d0e2c94f5bcace73bad3b859"
+    },
+    {
+      "id": "5",
+      "de": "de/chapter-5.md",
+      "en": "en/chapter-5.md",
+      "sourceHash": "d01181e7d04892a3063f22ae3a2a5405a23167cde1a316bcd3022139489240ff",
+      "hashes": {
+        "de": "d01181e7d04892a3063f22ae3a2a5405a23167cde1a316bcd3022139489240ff",
+        "en": "bae5f1a2b5a4031646de1d4de1f92cb3e05d2fd4f923a4e08ca2a01a6e098039"
+      },
+      "translationSourceHash": "d01181e7d04892a3063f22ae3a2a5405a23167cde1a316bcd3022139489240ff"
+    },
+    {
+      "id": "6",
+      "de": "de/chapter-6.md",
+      "en": "en/chapter-6.md",
+      "sourceHash": "75d3439daf3b631c1a32aa80dab2010487486f97f85c6ecc14e915d1e39b98b4",
+      "hashes": {
+        "de": "75d3439daf3b631c1a32aa80dab2010487486f97f85c6ecc14e915d1e39b98b4",
+        "en": "bda1036ce0a1968956726cbb5212d518f3e47be45e445da6bc02cc903430b6c0"
+      },
+      "translationSourceHash": "75d3439daf3b631c1a32aa80dab2010487486f97f85c6ecc14e915d1e39b98b4"
+    },
+    {
+      "id": "7",
+      "de": "de/chapter-7.md",
+      "en": "en/chapter-7.md",
+      "sourceHash": "3368ba0db8f81879e254dc85adfe2dc673ad64fc806a7261174bb5b82145cb96",
+      "hashes": {
+        "de": "3368ba0db8f81879e254dc85adfe2dc673ad64fc806a7261174bb5b82145cb96",
+        "en": "871a77b6f164c2745a7008d651a1a709a97549a81d389d247d5e226b6f75163b"
+      },
+      "translationSourceHash": "3368ba0db8f81879e254dc85adfe2dc673ad64fc806a7261174bb5b82145cb96"
+    },
+    {
+      "id": "8",
+      "de": "de/chapter-8.md",
+      "en": "en/chapter-8.md",
+      "sourceHash": "e50ff7c931347d3dbab5b1768f8b985984ac3937a0c6aa7071de32be5303bcf0",
+      "hashes": {
+        "de": "e50ff7c931347d3dbab5b1768f8b985984ac3937a0c6aa7071de32be5303bcf0",
+        "en": "b7f9b7eec0986ca3a2caaf067ea595213e7b20b204d44a23f0ba32873ce8ce74"
+      },
+      "translationSourceHash": "e50ff7c931347d3dbab5b1768f8b985984ac3937a0c6aa7071de32be5303bcf0"
+    },
+    {
+      "id": "9",
+      "de": "de/chapter-9.md",
+      "en": "en/chapter-9.md",
+      "sourceHash": "bd74fc895b0d4e5fdf6aa5186ef5db2761f0c5fa493a66cd4db6faefdc516e68",
+      "hashes": {
+        "de": "bd74fc895b0d4e5fdf6aa5186ef5db2761f0c5fa493a66cd4db6faefdc516e68",
+        "en": "70d0b39af3c9defec9f7f7411b197fdf1439eea836e6eb5859d49e65fe730086"
+      },
+      "translationSourceHash": "bd74fc895b0d4e5fdf6aa5186ef5db2761f0c5fa493a66cd4db6faefdc516e68"
+    },
+    {
+      "id": "10",
+      "de": "de/chapter-10.md",
+      "en": "en/chapter-10.md",
+      "sourceHash": "968ccb07a5fc743feb2da89a770a6c654c4c96783e21bc4629f0741d5ec853db",
+      "hashes": {
+        "de": "968ccb07a5fc743feb2da89a770a6c654c4c96783e21bc4629f0741d5ec853db",
+        "en": "55f7a5607afcad72b252f8b2eec5487bded45a11368e3bac8848c1c2e6a1387f"
+      },
+      "translationSourceHash": "968ccb07a5fc743feb2da89a770a6c654c4c96783e21bc4629f0741d5ec853db"
+    },
+    {
+      "id": "A1",
+      "de": "de/chapter-A1.md",
+      "en": "en/chapter-A1.md",
+      "sourceHash": "a74160523928cae7ae7ee211196d0da1d7b8a64f5a21b0c209a9acef2e9a59fa",
+      "hashes": {
+        "de": "a74160523928cae7ae7ee211196d0da1d7b8a64f5a21b0c209a9acef2e9a59fa",
+        "en": "a3ac83b326823579c87ac8fbe5ce5c4ffedd935714fdbd85290fc18f8bc4c2d6"
+      },
+      "translationSourceHash": "a74160523928cae7ae7ee211196d0da1d7b8a64f5a21b0c209a9acef2e9a59fa"
+    },
+    {
+      "id": "A",
+      "de": "de/chapter-A.md",
+      "en": "en/chapter-A.md",
+      "sourceHash": "4f39962b809709fd86a62786ca13e1750ee3bac071640861725ed273063c59a0",
+      "hashes": {
+        "de": "4f39962b809709fd86a62786ca13e1750ee3bac071640861725ed273063c59a0",
+        "en": "462e85345672d1d4b0d4fd84354ef60ea218a24fcb2ba6ae32d6e0c2fc7a3bc3"
+      },
+      "translationSourceHash": "4f39962b809709fd86a62786ca13e1750ee3bac071640861725ed273063c59a0"
+    }
+  ],
+  "missingAnnexes": [
+    "A2"
+  ],
+  "historicalReleases": "unchanged",
+  "publication": "not authorized by this draft",
+  "sourceWarnings": [
+    "Historical frame retains illustrative operator/master data; owner verification pending",
+    "Source technical claims reflect the 2026-09-05 baseline, not verified live state",
+    "Annex 2 absent; no deletion concept fabricated"
+  ],
+  "upstreamInputs": {
+    "oriso-platform/dsfa-text/kap-02-schwellwertanalyse.md": "4159799eb09072258be72c1d40b4f5f848401ee7745fcfdbf640e641567c2a9e",
+    "oriso-platform/dsfa-text/kap-06-verfahren-und-technik.md": "a210a0a255203ad54052ff1226166f1872576bebf82d848b3ab68692059be728",
+    "oriso-platform/dsfa-text/kap-07-rechtsgrundlagen.md": "36e32fa589c51f0bd2881067214d76034cf3a131cc8e562f267ddcbf2ea661c9",
+    "oriso-platform/dsfa-text/kap-08-betroffenenrechte.md": "015f781f9fb26aea544461a7d3283697e055d2661f91127e1fcc0ffa5de7a2f3",
+    "oriso-platform/dsfa-text/kap-10-ergebnis.md": "0c889a7d1eed75b0919a2a61ace7d3f4c4e2764a8e56cf51a3467b75edafef26",
+    "oriso-platform/dsfa-text/vorlagen-betreiber.md": "163f21a11ecb7dea06d6f86d3644b4ea8f99a3e566023ff6b75e61df1cf73609"
+  },
+  "liveObservation": {
+    "url": "https://understand.oriso.org/legal/dsfa/",
+    "observedDate": "2026-09-30",
+    "version": "v0.1-draft",
+    "documentDate": "2026-08-14",
+    "pdfLabelDate": "2026-08-17",
+    "status": "read-only; not modified"
+  },
+  "baselineCommit": "cf1bd40a8a8fed129c2c1dea7354b27bf7a3f1df",
+  "sourceState": "New uncommitted v5-draft sources derived from captured PR119 worktree inputs; per-file hashes are authoritative, baselineCommit is provenance only",
+  "historicalSnapshotHashes": {
+    "oriso-platform/dsfa-text/README.md": "b0199e0549499f07e1d93030d3817466586646e2f7470a1e733a9b2a21f1be2b",
+    "oriso-platform/dsfa-text/dsfa-editor-defaults.ts": "015a89e1c940f8d0ab7cebeba262dbffa9771fbbbad12bc88aa2e91b71e62434",
+    "oriso-platform/dsfa-text/evidence-map.yaml": "97c26fcb005a0d2fa389893b424a69a931cc6f9703613dc79eac5f5368e7d052",
+    "oriso-platform/dsfa-text/kap-02-schwellwertanalyse.md": "4159799eb09072258be72c1d40b4f5f848401ee7745fcfdbf640e641567c2a9e",
+    "oriso-platform/dsfa-text/kap-06-verfahren-und-technik.md": "a210a0a255203ad54052ff1226166f1872576bebf82d848b3ab68692059be728",
+    "oriso-platform/dsfa-text/kap-07-rechtsgrundlagen.md": "36e32fa589c51f0bd2881067214d76034cf3a131cc8e562f267ddcbf2ea661c9",
+    "oriso-platform/dsfa-text/kap-08-betroffenenrechte.md": "015f781f9fb26aea544461a7d3283697e055d2661f91127e1fcc0ffa5de7a2f3",
+    "oriso-platform/dsfa-text/kap-10-ergebnis.md": "0c889a7d1eed75b0919a2a61ace7d3f4c4e2764a8e56cf51a3467b75edafef26",
+    "oriso-platform/dsfa-text/versions.yaml": "ba43b5b301135ee3645409a89b651df7dbcc57ebf54343f9f80d45e62041f23e",
+    "oriso-platform/dsfa-text/vorlagen-betreiber.md": "163f21a11ecb7dea06d6f86d3644b4ea8f99a3e566023ff6b75e61df1cf73609",
+    "tools/build-dsfa-page.py": "e169161d7b89499a7922a0e5e5a6a0e2e9480f6464c4a441bab0bf98dc38b510"
+  },
+  "operatorFieldsConfirmed": false,
+  "unconfirmedOperatorFields": [
+    "controller identity",
+    "governance and decision bodies",
+    "rights request procedures",
+    "proportionality assessment",
+    "annex register dates"
+  ],
+  "annexReadiness": {
+    "A1": {
+      "state": "pending",
+      "files": {}
+    },
+    "A2": {
+      "state": "missing",
+      "files": {}
+    }
+  },
+  "releaseVersion": null
+}

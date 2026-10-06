@@ -1,0 +1,140 @@
+---
+title: "4.2 Live-Chat"
+description: "Der vollständige Ablauf des anonymen ORISO-Live-Chats: Aktivierung, Warteraum und Einwilligung, Übernahme durch Beratende und verschlüsselte Sitzung."
+source: "product/features/live-chat.mdx"
+---
+
+<Callout>
+Live-Chat ist die **zentrale Funktion** von ORISO. Der Großteil des Systems dient dazu, ihn sicher, anonym und in größerem Maßstab zu ermöglichen.
+</Callout>
+
+## 4.2.1 Was Live-Chat ist
+
+Ein anonymer Echtzeit-Textchat ohne Registrierung zwischen einer **ratsuchenden Person in Not** und **verfügbaren Beratenden** einer Beratungsstelle. Optional zu einem Videoanruf erweiterbar (LiveKit). Die Sitzung ist Ende-zu-Ende-verschlüsselt und wird unmittelbar nach Gesprächsende bereinigt.
+
+Das Produkt unterscheidet Live-Chat vom älteren **Anfrage-Chat** (PLZ-basiert, registriert, asynchron) — beide Abläufe existieren im Code, Live-Chat ist jedoch der moderne Weg mit Vorrang für Anonymität.
+
+<Callout>
+**Live-Chat ist der Einstieg als Einzelgespräch**, aber eine Sitzung bleibt nicht dauerhaft zu zweit. Beratende können im aktiven Raum **Weitere Personen einladen** (`⇧I`) anklicken, um Kolleginnen und Kollegen, Supervision oder weitere Ratsuchende hinzuzufügen — der Raum wird dann zum [Gruppenchat](/de/produkt/core-features/group-chats). Die Figma-Ausgabe vom Mai 2026 bestätigt außerdem, dass **Videoanrufe** (LiveKit) in denselben Raum eingebettet werden, statt eine getrennte Sitzung zu erzeugen.
+</Callout>
+
+## 4.2.2 Aktivierung
+
+Zwei Aktivierungen müssen vorliegen, damit Ratsuchende den Live-Chat mit echten Beratenden betreten können:
+
+### A. **Aktivierung der Beratungsstelle** (Administration)
+
+- Beratungsstellen-Admins (oder Träger-Admins) öffnen den Adminbereich.
+- Erzeugen einen **Live-Chat-Link** für die Beratungsstelle mit optionalem **Themenparameter** (z. B. `?topic=debt`).
+- Setzen den Schalter **Live-Chat aktiviert** der Beratungsstelle.
+
+### B. **Aktivierung der Beratungsperson** (je Person)
+
+- Die Beratungsperson meldet sich im Adminbereich an.
+- Schaltet persönlich **Live-Chat: AN**.
+- Ist nun in der Live-Chat-Ticketwarteschlange ihrer Beratungsstelle sichtbar.
+
+<Callout>
+**Wichtige UX-Regel** (Gespräch vom 2026-05-05): Wenn Beratende auf **Live-Chat: AUS** schalten, muss der Live-Chat-Bereich **sichtbar, aber deaktiviert bleiben**, mit Hinweis zur erneuten Aktivierung. Er darf **nicht** aus der Navigation verschwinden. Dies verhindert die in früheren Versionen entstandene Verwirrung „Eine Funktion ist verschwunden“.
+</Callout>
+
+## 4.2.3 Echtzeitablauf (Schritt für Schritt)
+
+<Mermaid chart={"sequenceDiagram\n  autonumber\n  participant Cl as Client\n  participant FE as ORISO-Frontend\n  participant US as UserService\n  participant AS as AgencyService\n  participant KC as Keycloak\n  participant MX as Matrix Synapse\n  participant Co as Counselor\n\n  Cl->>FE: Open live-chat link (agency + topic)\n  FE->>AS: Resolve agency + topic\n  AS-->>FE: Active counselors, live-chat enabled?\n  alt live-chat disabled\n    FE-->>Cl: Show \"currently unavailable\" + opt to file an enquiry\n  else live-chat enabled\n    FE->>US: POST /live-chat/anonymous\n    US->>KC: Create anonymous user, role=anonymous\n    KC-->>US: token + pseudonym\n    US-->>FE: cookie session, ticket id, queue position\n    FE-->>Cl: Render Waiting Room (queue pos, GDPR popup #1, breathing-game animation)\n    Note over Cl,US: Client may leave at any time → wipe job\n  end\n\n  loop until accepted\n    FE->>US: GET /live-chat/queue/{ticketId} (heartbeat)\n    US-->>FE: queue position, ETA hint\n  end\n\n  Co->>FE: Accept oldest ticket\n  FE->>US: POST /live-chat/accept?ticketId\n  US->>MX: Create encrypted room, invite Cl + Co\n  US-->>FE: Room id, push consent prompt\n  FE-->>Cl: Show GDPR consent popup #2 (counseling-center version)\n  Cl->>FE: Click \"Bestätigen\"\n  FE->>US: POST /live-chat/consent\n  US-->>Co: Ticket promoted to active session\n  Cl<<->>MX: E2EE chat\n  Co<<->>MX: E2EE chat\n  alt client leaves\n    Cl->>FE: Close tab\n    FE->>US: DELETE /live-chat/session\n    US->>MX: Tombstone room\n    US->>KC: Wipe anonymous user\n  else counselor ends\n    Co->>FE: End session\n    FE->>US: POST /live-chat/end\n    US->>MX: Schedule purge in 48 h\n  end"} />
+
+## 4.2.4 Interaktion nach Rolle
+
+### Ratsuchende (anonym)
+
+- Rufen den Live-Chat-Link auf.
+- Erhalten automatisch ein **Pseudonym** (z. B. *„geschmeidiges Kanninchen Kim“* — eine deutsche Tier-Adjektiv-Kombination).
+- Sehen den **Warteraum** mit Warteschlangenposition („23 Noch vor Ihnen“), einer animierten Atemspiel-Ablenkung und einem Banner: *„Nachrichten sind Ende-zu-Ende-verschlüsselt und werden nach 48 Stunden automatisch gelöscht“*.
+- Erhalten das **erste DSGVO-Popup** („Bestätigen“) zur allgemeinen Datenrichtlinie der Plattform.
+- Nach Übernahme durch Beratende sehen sie das **zweite DSGVO-Popup** mit den Bedingungen der jeweiligen Beratungsstelle.
+- Nach Einwilligung öffnet sich der Chat.
+
+### Beratende
+
+- Sehen eine **Ticketwarteschlange** im Live-Chat-Tab, **älteste zuerst** (bewusst — priorisiert die am längsten wartende Person).
+- Jedes Ticket zeigt Pseudonym, „Vor N Minuten beigetreten“, Thema.
+- Wählen ein beliebiges sichtbares Ticket (bewusst keine automatische Zuweisung — um spätere PLZ-Berücksichtigung zu ermöglichen).
+- Sehen den geöffneten Chatraum mit Systemnachricht „DSGVO-Einwilligung der ratsuchenden Person ausstehend“.
+- Nach Bestätigung wird der vollständige Chat freigeschaltet.
+
+### Beratungsstellen-Admins (Leitung)
+
+- Beobachten gesamte Warteschlangengröße und aktive Beratende der Stelle.
+- Können deren Live-Chat-Schalter umstellen.
+- Konfigurieren den Live-Chat-Link (Thema und linkbezogene Überschreibung).
+
+### Plattform-/Träger-Admins
+
+- Können keine Ticketinhalte sehen.
+- Sehen zusammengefasste Metriken (Anzahl Wartender, durchschnittliche Wartezeit).
+- Legen Vorlagen für Rechtstexte fest, die entlang der Vererbungskette weitergegeben werden.
+
+## 4.2.5 Die zwei DSGVO-Einwilligungen (warum zwei?)
+
+Dies ist **das** Detail, das Frank im Gespräch betont hat. Es gibt **zwei** Einwilligungszeitpunkte, weil sie **zwei** unterschiedliche Datenbereiche abdecken:
+
+| Zeitpunkt | Abdeckung | Verantwortlich | Umfang erhobener Daten |
+|---|---|---|---|
+| **Nr. 1 — beim Betreten des Warteraums** | Allgemeine Datenrichtlinie und Impressum der Plattform | Plattform-Admins | Pseudonym, Cookie, Warteschlangenzähler, optional Thema und PLZ |
+| **Nr. 2 — bei Übernahme durch Beratende** | DSGVO-Vereinbarung der **Beratungsstelle** | Beratungsstellen-Admins / vom Träger / von der Plattform geerbt | Alles, was Ratsuchende und Beratende im Chat austauschen |
+
+Lehnen Ratsuchende Nr. 2 ab, öffnet sich der Chat **niemals** — Beratende erhalten „Ratsuchende haben abgelehnt“ und das Pseudonym wird gelöscht.
+
+## 4.2.6 Backend-Logik (aus Code und Gespräch abgeleitet)
+
+Routen (UserService, REST):
+
+```
+POST   /live-chat/anonymous         create pseudonymous user + ticket
+GET    /live-chat/queue/{ticketId}  long-poll / WS heartbeat
+POST   /live-chat/accept            counselor accepts ticket
+POST   /live-chat/consent           client confirms GDPR #2
+POST   /live-chat/end               either side closes
+DELETE /live-chat/session           explicit teardown + wipe
+```
+
+Zustandsautomat eines Tickets:
+
+<Mermaid chart={"stateDiagram-v2\n  [*] --> Waiting\n  Waiting --> Accepted: counselor.pick\n  Accepted --> Consented: client.confirms_gdpr\n  Consented --> Active: room ready, both joined\n  Active --> Ended: either party closes\n  Waiting --> Abandoned: client closes / heartbeat lost\n  Ended --> Wiped: scheduled cleanup\n  Abandoned --> Wiped: immediate cleanup\n  Wiped --> [*]"} />
+
+Nebenwirkungen bei Zustandswechsel:
+
+- `Waiting → Abandoned`: Keycloak-Person gelöscht; Ticketzeile gelöscht; Cookie ungültig.
+- `Active → Ended`: Matrix-Raum bleibt für ≤ 48 Stunden und wird dann gelöscht; Sitzungsmetadaten anonymisiert.
+- Beliebig → `Wiped`: Pseudonym aus allen Speichern entfernt; nur eine nicht aussagekräftige, nicht identifizierende session_id darf für Prüfzwecke bleiben.
+
+## 4.2.7 Sonderfälle (live-chatspezifisch)
+
+- **Beratende gehen während Übernahme offline** → Ticket nach Heartbeat-Zeitüberschreitung automatisch zurück in Warteschlange.
+- **Beratende nehmen an, aber Tab der Ratsuchenden ist weg** → System wiederholt Einwilligungsabfrage mit Zeitlimit; bei Ablauf kehrt Ticket in Warteschlange zurück und ratsuchende Person wird gelöscht.
+- **Mehrere Beratende nehmen gleichzeitig an** → AgencyService verwendet Zeilensperre; zweiter Klick zeigt „bereits übernommen“.
+- **Live-Chat-Link für deaktivierte Beratungsstelle erzeugt** → Freundliche Seite „derzeit nicht verfügbar“ mit alternativer Anfragemöglichkeit.
+- **Thema im Link fehlt** → Rückfall auf allgemeine Warteschlange der Beratungsstelle (beliebiges Thema).
+- **Browserspracherkennung** → Beim ersten Anzeigen lädt die Oberfläche die bevorzugte Browsersprache; Rückfall ist Englisch (nicht Deutsch). Franks ausdrückliche Anforderung.
+
+Der vollständige Katalog steht unter [Sonderfälle](/de/produkt/design-und-quality/edge-cases).
+
+## 4.2.8 Fehlmuster (was ORISO nicht tun darf)
+
+- ❌ Ratsuchende automatisch den nächsten Beratenden in der Warteschlange zuweisen (verliert PLZ-/Themenflexibilität).
+- ❌ Live-Chat-Bereich bei Ausschalten ausblenden (stattdessen *deaktivierten Zustand* verwenden).
+- ❌ IP-Adressen Ratsuchender in Protokolle oder Datenbank schreiben.
+- ❌ Nicht angenommene Tickets unbegrenzt behalten (war ein echter Fehler — Ratsuchende sammelten sich dauerhaft an).
+- ❌ Einwilligung Nr. 2 überspringen, weil Nr. 1 erteilt wurde.
+- ❌ Live-Chat im Entwicklungsmodus wieder online bringen.
+
+## 4.2.9 Verwandte Seiten
+
+- [Gruppenchats und Versand an mehrere Empfänger (4.5)](/de/produkt/core-features/group-chats) — was aus einem Einzelchat nach `Invite more people` wird.
+- [KI-Werkzeuge (4.6)](/de/produkt/core-features/ai-tools) — Markierung, Unkenntlichmachung, Zusammenfassung im Chat.
+- [Fallübergabe (4.7)](/de/produkt/core-features/handover) — diesen Chat an andere Beratende übergeben.
+- [Benachrichtigungen und Hilfsanfragen (4.8)](/de/produkt/core-features/notifications) — Eskalation aus dem Chat.
+- [Pincode-basierter Chat und Zugang](/de/produkt/core-features/pincode-chat)
+- [Sitzungsverwaltung](/de/produkt/core-features/session-management)
+- [Nutzungsablauf: Live-Chat-Aktivierung](/de/produkt/flows-und-internals/user-flows#55-live-chat-activation)
+- [UI/UX-Auslegung](/de/produkt/design-und-quality/ui-ux)
+- [Figma-Analyse (Mai 2026)](/de/produkt/design-und-quality/figma-analysis-2026-05)
