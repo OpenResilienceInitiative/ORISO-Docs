@@ -110,5 +110,6 @@ export function validateGlossary(data) {
   }
   if(!data.audit || !data.audit.sourceVector) fail('audit','expected exact source inventory');
   for (const [repo,revision] of Object.entries(data.audit.sourceVector)) {text(repo,'audit.sourceVector.repository');if(!SHA.test(revision)) fail(`audit.sourceVector.${repo}`,'expected exact audited revision');}
+  text(JSON.stringify(data),'content');
   return data;
 }
