@@ -329,6 +329,56 @@ Obwohl noch nicht gebaut, bei Entwurf zu berücksichtigen:
 | Externe Eskalation abgelaufen (24 Stunden) | Still abgebrochen; nichts verlässt System; Beratende informiert |
 | Hilfe an Beratende im Urlaub | Nächste verfügbare Supervision der Stelle |
 
+## 9.14 Sonderfälle bei der Kontowiederherstellung
+
+### 9.14.1 Die ratsuchende Person hat ihr Passwort vergessen und keine E-Mail-Adresse hinterlegt
+
+<Warning>
+**Eine Wiederherstellung ist nicht möglich. Der Zugang zum Konto ist dauerhaft verloren.** Das
+folgt aus dem Anonymitätsmodell und ist kein technischer Defekt. Bis zum 08.08.2026 war diese
+Folge jedoch nirgends dokumentiert (OpenResilienceInitiative/ORISO-UserService#928).
+</Warning>
+
+| | |
+|---|---|
+| **Auslöser** | Anonyme Registrierung ohne E-Mail-Adresse; später kann sich die Person nicht mehr anmelden |
+| **Erwartetes Verhalten** | Es gibt keinen Weg zurück in das Konto. Der `userName` (Anmeldename) ist das einzige Kennzeichen und unveränderlich; das erzeugte 16-stellige Passwort wird nach der Registrierung nicht erneut angezeigt |
+| **Tatsächliche Anzeige** | Nichts erklärt diesen Umstand. Die bereitgestellte Anmeldeseite des Realms `online-beratung` zeigt keinen Link „Passwort vergessen“ (`resetPasswordAllowed: false`). Ein direkter `GET /realms/online-beratung/login-actions/reset-credentials` liefert bei einer neuen Sitzung eine Fehlerseite mit Status 400 |
+| **Risiko bei falscher Behandlung** | Eine Person in einer Belastungssituation verliert unbemerkt den Zugang zu einer bereits begonnenen Beratung |
+| **Test** | Anonym und ohne E-Mail-Adresse registrieren, abmelden und mit falschem Passwort erneut anmelden: Auf der Seite gibt es keinen Link zum Zurücksetzen |
+
+**Drei Wege, die den Kontozugang nicht wiederherstellen.** Sie scheitern auf unterschiedliche
+Weise. Nur der erste Weg bleibt absichtlich ohne erkennbare Wirkung:
+
+1. **Passwortzurücksetzung — ohne sichtbare Wirkung.** `PasswordResetService` versendet nichts,
+   wenn die Adresse leer ist oder auf das Suffix einer künstlichen Platzhalteradresse endet.
+   Genau das trifft auf anonyme Ratsuchende zu (`UserHelper`, `identity.email-dummy-suffix`).
+   Die Person sieht „E-Mail wurde versendet“, erhält aber keine Nachricht. **Dieses Verhalten
+   schützt bewusst davor, Konten anhand der Antwort zu ermitteln**: asynchroner Versand mit
+   konstanter Laufzeit, gleiche Antwort selbst bei voller Warteschlange, keine personenbezogenen
+   Daten in Logs. Es darf nicht durch eine verräterische Fehlermeldung „behoben“ werden.
+2. **Magic Link — wird abgelehnt.** `validateMagicLinkTogglePrerequisites` lässt die Aktivierung
+   ohne echte Adresse nicht zu. Selbst mit funktionierendem Magic Link wäre dies eine bequemere
+   Anmeldung, keine Kontowiederherstellung.
+3. **Matrix-Wiederherstellungsschlüssel — erfüllt einen anderen Zweck.** Er stellt den
+   **Nachrichtenverlauf** wieder her, nicht den Zugang zum Konto. Beides gleichzusetzen wäre ein
+   Kategorienfehler und keine Fehlfunktion.
+
+**Ausgleichsmaßnahme und ihre Bedeutung für verschiedene Träger.** Schaltet ein Träger die
+E-Mail-Einladung ab — wie U25 —, bleibt das Speichern der Zugangsdaten als **einzige**
+Absicherung. Deshalb ist diese Funktion dort besonders wichtig: der Baustein `saveCredentials`
+der Erstantwort (ADR-018, OpenResilienceInitiative/ORISO-Frontend#825) erscheint nach dem
+Absenden der Anfrage mit einem Hinweis auf gemeinsam genutzte Geräte. Die Zugangsdaten werden
+**nicht als Datei heruntergeladen**: Eine `zugangsdaten.txt` im Downloadordner wäre eine
+dauerhafte Spur auf einem möglicherweise gemeinsam genutzten Gerät.
+
+**Aktueller Stand:** Keine Wiederherstellung; das Speichern der Zugangsdaten mindert das Risiko.
+Ein bei der Registrierung ausgegebener Wiederherstellungscode — nach dem Muster des vorhandenen
+Matrix-Wiederherstellungsschlüssels, einmalig angezeigt und mit Bestätigung „Ich habe ihn
+gespeichert“ — ist eine benannte Alternative. Er wurde **nicht inhaltlich verworfen**, aber noch
+nicht beschlossen. Die Entscheidung gehört in einen eigenen Eintrag; siehe
+ORISO-UserService#928.
+
 ## 9.8 Kurzübersicht „Was passiert, wenn…“
 
 | Wenn… | Dann… |
@@ -340,6 +390,7 @@ Obwohl noch nicht gebaut, bei Entwurf zu berücksichtigen:
 | Link während Sitzung deaktiviert | Aktive weiter, neue Besuche blockiert |
 | Träger deaktiviert | Nur lesend; aktive Sitzungen enden regulär |
 | Magic Link erneut genutzt | HTTP 410 |
+| Anonymes Konto ohne E-Mail, Passwort vergessen | **Keine Wiederherstellung — der Zugang ist verloren.** Siehe §9.14.1 |
 | Cookies aus | Freundliche Erklärung |
 | Warteschlangenzähler widersprüchlich | Redis Pub/Sub leitet bei nächstem Ereignis erneut aus Datenbank ab |
 | Ratsuchende löschen sich als Anrufstartende | Anruf unter Beratenden bleibt; Startrolle wechselt; Ratsuchende gelöscht |
