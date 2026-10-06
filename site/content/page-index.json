@@ -2806,7 +2806,7 @@
           }
         }
       },
-      "sourceRevision": "26c1323fae062c19f3e285cbd2920edf48688042",
+      "sourceRevision": "e1235df760b96a734440f3cf41c829988ab1f611",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -2977,7 +2977,7 @@
           }
         }
       },
-      "sourceRevision": "26c1323fae062c19f3e285cbd2920edf48688042",
+      "sourceRevision": "e1235df760b96a734440f3cf41c829988ab1f611",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -3136,7 +3136,7 @@
           }
         }
       },
-      "sourceRevision": "26c1323fae062c19f3e285cbd2920edf48688042",
+      "sourceRevision": "e1235df760b96a734440f3cf41c829988ab1f611",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -3236,7 +3236,7 @@
           }
         }
       },
-      "sourceRevision": "26c1323fae062c19f3e285cbd2920edf48688042",
+      "sourceRevision": "e1235df760b96a734440f3cf41c829988ab1f611",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -3286,7 +3286,7 @@
           }
         }
       },
-      "sourceRevision": "26c1323fae062c19f3e285cbd2920edf48688042",
+      "sourceRevision": "e1235df760b96a734440f3cf41c829988ab1f611",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -3336,7 +3336,7 @@
           }
         }
       },
-      "sourceRevision": "26c1323fae062c19f3e285cbd2920edf48688042",
+      "sourceRevision": "e1235df760b96a734440f3cf41c829988ab1f611",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -3433,7 +3433,7 @@
           }
         }
       },
-      "sourceRevision": "26c1323fae062c19f3e285cbd2920edf48688042",
+      "sourceRevision": "e1235df760b96a734440f3cf41c829988ab1f611",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -3521,7 +3521,7 @@
           }
         }
       },
-      "sourceRevision": "26c1323fae062c19f3e285cbd2920edf48688042",
+      "sourceRevision": "e1235df760b96a734440f3cf41c829988ab1f611",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -3612,7 +3612,7 @@
           }
         }
       },
-      "sourceRevision": "26c1323fae062c19f3e285cbd2920edf48688042",
+      "sourceRevision": "e1235df760b96a734440f3cf41c829988ab1f611",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -5572,7 +5572,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "product/edge-cases.mdx",
-      "sourceHash": "1afef05b515897daae237f14b414c7813adbe8ddff901647fe3dd0ec10cafeb3",
+      "sourceHash": "f462d8c5e4b256cab973ebaf348bc4e3f6ecf00abbf70101ab174afa17b9e0cb",
       "locales": {
         "de": {
           "available": true,
@@ -5660,6 +5660,10 @@
             "912-ki---annotationsfälle": "912-ai--annotation-edge-cases",
             "913-notification--escalation-edge-cases": "913-notification--escalation-edge-cases",
             "913-benachrichtigungs--und-eskalationsfälle": "913-notification--escalation-edge-cases",
+            "914-account-recovery-edge-cases": "914-account-recovery-edge-cases",
+            "914-sonderfälle-bei-der-kontowiederherstellung": "914-account-recovery-edge-cases",
+            "9141-the-advice-seeker-forgot-their-password-and-left-no-e-mail-address": "9141-the-advice-seeker-forgot-their-password-and-left-no-e-mail-address",
+            "9141-die-ratsuchende-person-hat-ihr-passwort-vergessen-und-keine-e-mail-adresse-hinterlegt": "9141-the-advice-seeker-forgot-their-password-and-left-no-e-mail-address",
             "98-compact-what-happens-if-cheat-sheet": "98-compact-what-happens-if-cheat-sheet",
             "98-kurzübersicht-was-passiert-wenn": "98-compact-what-happens-if-cheat-sheet"
           }
@@ -5709,11 +5713,13 @@
             "911-group-chat-edge-cases": "911-group-chat-edge-cases",
             "912-ai--annotation-edge-cases": "912-ai--annotation-edge-cases",
             "913-notification--escalation-edge-cases": "913-notification--escalation-edge-cases",
+            "914-account-recovery-edge-cases": "914-account-recovery-edge-cases",
+            "9141-the-advice-seeker-forgot-their-password-and-left-no-e-mail-address": "9141-the-advice-seeker-forgot-their-password-and-left-no-e-mail-address",
             "98-compact-what-happens-if-cheat-sheet": "98-compact-what-happens-if-cheat-sheet"
           }
         }
       },
-      "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
+      "sourceRevision": "fe99d74977258119c300bafd79d2a232d03f0f5a",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -6000,7 +6006,7 @@
           }
         }
       },
-      "sourceRevision": "796a8390b17a60725600215a61557f903e3e2212",
+      "sourceRevision": "73ab42b6f6895f827284063b0484f4d4f5fd39a1",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
