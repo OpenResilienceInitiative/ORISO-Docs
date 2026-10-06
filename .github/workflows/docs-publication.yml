@@ -107,8 +107,8 @@ jobs:
         # No private graph token is made available to this public pipeline.
         run: |
           RELEASE_ARGS=()
-          if [ -f "$RUNNER_TEMP/platform-release.json" ]; then RELEASE_ARGS=(--release-manifest "$RUNNER_TEMP/platform-release.json" --require-release --documentation-revision "$(git rev-parse HEAD)"); fi
-          python3 .github/scripts/ua_sources.py --tooling "$UA_TOOLING" --base "$RUNNER_TEMP/docs-ua-base" --inventory "$RUNNER_TEMP/docs-ua-inventory.json" --repo-args "$RUNNER_TEMP/docs-ua-args.txt" "${RELEASE_ARGS[@]}"
+          if [ -f "$RUNNER_TEMP/platform-release.json" ]; then RELEASE_ARGS=(--release-manifest "$RUNNER_TEMP/platform-release.json" --require-release); fi
+          python3 .github/scripts/ua_sources.py --tooling "$UA_TOOLING" --base "$RUNNER_TEMP/docs-ua-base" --inventory "$RUNNER_TEMP/docs-ua-inventory.json" --repo-args "$RUNNER_TEMP/docs-ua-args.txt" --documentation-revision "$(git rev-parse HEAD)" "${RELEASE_ARGS[@]}"
       - name: Produce and verify a complete source-bound generation
         env:
           UA_MOUNT_ROOT: ${{ runner.temp }}

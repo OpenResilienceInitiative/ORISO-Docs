@@ -9,6 +9,30 @@ import {immutableSource} from '../../ua-glossary-project.mjs';
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
 const allowed=p=>/^(index\.html|status\.json|operator-snapshot\.json|assets\/(hub\.css|lang\.js|status\.js|glossary\.js)|glossary\/(index\.html|catalog\.json|bindings\.json|sources\/(seed|bjorn-reconciliation|naming-audit)\.md)|features\/(index|de|en|case-handover)\.html)$/.test(p);
 function files(root){return fs.readdirSync(root,{recursive:true}).filter(p=>{const stat=fs.lstatSync(path.join(root,p));if(stat.isSymbolicLink())throw Error('Hub symlinks are forbidden');return stat.isFile();}).sort();}
+const hubSourcePrefix='tools/understand-anything/site/hub/';
+const staticInputs=['index.html','assets/hub.css','assets/lang.js','assets/status.js','assets/glossary.js','glossary/index.html','features/index.html','features/de.html','features/en.html','features/case-handover.html'];
+const producerInputs=['render-glossary.mjs','render-features.mjs','publication.mjs'].map(p=>hubSourcePrefix+p).concat([
+ 'tools/understand-anything/glossary/validate.mjs','tools/understand-anything/glossary/source-bindings.mjs','tools/understand-anything/glossary/reasons.mjs','tools/understand-anything/lib/glossary-projection.mjs','tools/understand-anything/ua-glossary-project.mjs',
+ 'tools/docs-publication/platform-release.mjs','tools/public_operator_snapshot.py','tools/truth-chain/public-repositories.json','tools/understand-anything/site/hub/features/catalog.json','site/page-catalog.json'
+]);
+function publicationSources(root) {
+ files(path.join(root,hubSourcePrefix));
+ const docs=immutableSource(root,'ORISO-Docs'),assets=new Map(staticInputs.map(p=>[p,docs.readSource(hubSourcePrefix+p)]));
+ const inputs=[...producerInputs,...execFileSync('git',['ls-tree','-r','--name-only',docs.revision,'--','tools/understand-anything/bundle'],{cwd:root,encoding:'utf8'}).trim().split('\n').filter(p=>p.endsWith('.py'))];
+ for(const relative of inputs) {
+  const selected=docs.readSource(relative);
+  // The imported producer must be the same bytes as the claimed Docs source root.
+  const loadedRoot=fileURLToPath(new URL('../../../../',import.meta.url));
+  if(!fs.readFileSync(path.join(loadedRoot,relative)).equals(selected))throw Error('Loaded hub producer differs from selected Git bytes: '+relative);
+ }
+ const features=JSON.parse(docs.readSource(hubSourcePrefix+'features/catalog.json')),pages=JSON.parse(docs.readSource('site/page-catalog.json'));
+ for(const feature of features.features) {
+  docs.readSource(feature.source);
+  const page=pages.pages.find(p=>p.id===feature.id);
+  for(const locale of ['de','en'])docs.readSource(page.translations[locale].path);
+ }
+ return assets;
+}
 function glossarySources(root) {
  const docs=immutableSource(root,'ORISO-Docs'),bytes=docs.readSource('tools/understand-anything/glossary/catalog.json'),data=JSON.parse(bytes);
  const sourceBindings=validateGlossarySources(data,[docs]);
@@ -56,6 +80,7 @@ export function validateSources(root){
 }
 export function buildHub({root,out,generation,origin,revision,releaseLock,operatorSnapshot,operatorConfirmation}){
  validateSources(root);const url=new URL(origin);if(url.username||url.password||url.search||url.hash||!['https:','http:'].includes(url.protocol))throw Error('Invalid hub origin');if(!/^[a-f0-9]{40}$/.test(revision))throw Error('Exact source revision required');if(execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim()!==revision)throw Error('Hub producer source revision mismatch');
+ const staticBytes=publicationSources(root);
  const manifest=JSON.parse(fs.readFileSync(path.join(generation,'manifest.json'))),policy=JSON.parse(fs.readFileSync(path.join(root,'tools/truth-chain/public-repositories.json'))).repositories;
  // The actual pinned bundle validates hashes, source fingerprints, inventory and age.
  execFileSync('python3',['-m','bundle','validate',generation],{cwd:path.join(root,'tools/understand-anything'),env:{...process.env,PYTHONDONTWRITEBYTECODE:'1'},stdio:'pipe'});
@@ -66,7 +91,7 @@ export function buildHub({root,out,generation,origin,revision,releaseLock,operat
  const glossary=glossaryArtifact(root,generation,manifest);
  const refs=[...new Set(manifest.sources.map(s=>s.ref.replace(/^refs\/heads\//,'')))].sort();
  fs.mkdirSync(out,{recursive:true});if(fs.readdirSync(out).length)throw Error('Hub artifact output must be empty');
- const hub=path.join(root,'tools/understand-anything/site/hub');for(const p of files(hub).filter(allowed)){fs.mkdirSync(path.dirname(path.join(out,p)),{recursive:true});fs.copyFileSync(path.join(hub,p),path.join(out,p));}
+ for(const [p,bytes] of staticBytes){fs.mkdirSync(path.dirname(path.join(out,p)),{recursive:true});fs.writeFileSync(path.join(out,p),bytes);}
  fs.mkdirSync(path.join(out,'glossary/sources'),{recursive:true});for(const filename of ['seed.md','bjorn-reconciliation.md','naming-audit.md'])fs.writeFileSync(path.join(out,'glossary/sources',filename),immutableSource(root,'ORISO-Docs').readSource('tools/understand-anything/glossary/sources/'+filename));fs.writeFileSync(path.join(out,'glossary/catalog.json'),glossary.bytes);fs.writeFileSync(path.join(out,'glossary/bindings.json'),JSON.stringify(glossary.report)+'\n');fs.writeFileSync(path.join(out,'glossary/index.html'),renderGlossary(glossary.data,glossary.report));
  fs.writeFileSync(path.join(out,'operator-snapshot.json'),JSON.stringify(operator.snapshot)+'\n');
  for(const file of ['index.html','features/index.html','features/de.html','features/en.html']){const target=path.join(out,file),locale=file==='features/en.html'?'en':'de';const section=file==='index.html'?operator.html.de+operator.html.en:operator.html[locale];fs.writeFileSync(target,fs.readFileSync(target,'utf8').replace('</body>',section+'</body>'));}
