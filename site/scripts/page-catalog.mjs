@@ -35,7 +35,7 @@ function generatedSource(page,read) {
  const policy=read('tools/truth-chain/public-repositories.json');
  if(!policy)throw Error('Generated catalog requires the public repository policy');
  const allowed=new Set(JSON.parse(policy).repositories), g=page.graphSource;
- return page.id===page.source.replace(/\.md$/,'') && page.route==='graphs/'+page.id.slice(15) && g?.scope==='declared-source-refs' && typeof g.generationId==='string' && Number.isFinite(Date.parse(g.generatedAt)) && Array.isArray(g.sources) && g.sources.length>0 && g.sources.every(p=>allowed.has(p.repository)&&/^refs\/heads\/[A-Za-z0-9_/-]+$/.test(p.ref)&&!p.ref.includes('..')&&/^[a-f0-9]{40}$/.test(p.sourceSHA));
+ return page.id===page.source.replace(/\.md$/,'') && page.route==='graphs/'+page.id.slice(15) && g?.scope==='declared-source-refs' && typeof g.generationId==='string' && Number.isFinite(Date.parse(g.generatedAt)) && Array.isArray(g.sources) && g.sources.length>0 && g.sources.every(p=>allowed.has(p.repository)&&/^(refs\/(heads|tags)\/[A-Za-z0-9_.+/-]+|[a-f0-9]{40})$/.test(p.ref)&&(!/^[a-f0-9]{40}$/.test(p.ref)||p.ref===p.sourceSHA)&&!p.ref.includes('..')&&/^[a-f0-9]{40}$/.test(p.sourceSHA));
 }
 export function buildPageIndex(catalog, read) {
  const coverage={currentPages:0,completePairs:0,missing:[],stale:[]};
