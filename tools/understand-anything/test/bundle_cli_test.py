@@ -233,6 +233,7 @@ import json,os,pathlib,subprocess,sys,datetime
 script=pathlib.Path(sys.argv[1]).name
 if os.environ.get('FAULT_STAGE')==script:sys.exit(9)
 if script=='ua-validate-consumer.mjs':sys.exit(0)
+if script=='ua-glossary-project.mjs':sys.exit(subprocess.run(['node',*sys.argv[1:]]).returncode)
 if script=='apply-platform-enrich.mjs':
  graph_path,enrichment_path=map(pathlib.Path,sys.argv[2:]);g=json.loads(graph_path.read_text());enrichment=json.loads(enrichment_path.read_text())
  assert 'generationId' not in g,'Narrative must run before seal'
@@ -244,7 +245,10 @@ else:
  name='ORISO-Supergraph'if script=='ua-build-supergraph.mjs'else'ORISO-Platform';out=sys.argv[sys.argv.index('--out')+1];sha=None
 out=pathlib.Path(out);out.mkdir(parents=True,exist_ok=True);now=datetime.datetime.now(datetime.timezone.utc).isoformat()
 g={'version':'1.0.0','metadata':{'extraction':{'diagnostics':{'unresolvedImports':{'total':0},'unresolvedCalls':{'total':0},'unsupportedInputs':{'total':2,'byRelation':{'imports':1,'calls':1}}}}},'project':{'languages':[],'frameworks':[],'description':'','name':name,'gitCommitHash':sha,'analyzedAt':now},'nodes':[{'id':'a','type':'file','name':'a','summary':'','tags':[],'complexity':'simple'}],'edges':[],'layers':[],'tour':[], 'relationCoverage':{'imports':{'emitted':0,'unresolved':0,'unsupported':1,'status':'unsupported'},'calls':{'emitted':0,'unresolved':0,'unsupported':1,'status':'unsupported'}}}
-if sha is None:g['project']['sourceCommits']={'ORISO-Test':json.loads((pathlib.Path(os.environ['UA_BASE'])/'ORISO-Test/.understand-anything/meta.json').read_text())['gitCommitHash']}
+if sha is None:
+ g['project']['sourceCommits']={repo:json.loads((pathlib.Path(os.environ['UA_BASE'])/repo/'.understand-anything/meta.json').read_text())['gitCommitHash'] for repo in os.environ['UA_REPOSITORIES'].split(',')}
+ count=len(g['project']['sourceCommits']);g['metadata']['extraction']['diagnostics']['unsupportedInputs']={'total':count*2,'byRelation':{'imports':count,'calls':count}}
+ for item in g['relationCoverage'].values():item['unsupported']=count
 (out/'knowledge-graph.json').write_text(json.dumps(g));(out/'meta.json').write_text(json.dumps({'gitCommitHash':sha,'lastAnalyzedAt':now}));(out/'fingerprints.json').write_text(json.dumps({'gitCommitHash':sha,'files':{}}))
 """
         (self.worker / "ua-node").write_text(worker)
@@ -266,6 +270,28 @@ if sha is None:g['project']['sourceCommits']={'ORISO-Test':json.loads((pathlib.P
                 }
             )
         )
+        # Genuine pinned Docs vocabulary sources; the projector is not a mocked worker.
+        docs_origin = self.root / "ORISO-Docs.git"
+        docs = self.source_base / "ORISO-Docs"
+        assert command(["git", "init", "--bare", docs_origin]).returncode == 0
+        assert command(["git", "clone", docs_origin, docs]).returncode == 0
+        git(docs, "config", "user.email", "fixture@example.invalid")
+        git(docs, "config", "user.name", "Fixture")
+        git(docs, "checkout", "-b", "dev")
+        catalog = json.loads((TOOLS / "glossary/catalog.json").read_text())
+        source_paths = {s["path"] for c in catalog["concepts"] for s in c["sources"] if s["binding"] != "external"}
+        source_paths.add("tools/understand-anything/glossary/catalog.json")
+        for relative in source_paths:
+            target = docs / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(TOOLS.parents[1] / relative, target)
+        git(docs, "add", ".")
+        git(docs, "commit", "-m", "Pinned glossary sources")
+        git(docs, "push", "origin", "dev")
+        for relative in ["ua-glossary-project.mjs", "lib/glossary-projection.mjs", "glossary/validate.mjs", "glossary/source-bindings.mjs"]:
+            target = self.worker / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(TOOLS / relative, target)
         self.output = self.root / "pipeline-published"
 
     def refresh(self, env=None):
@@ -281,10 +307,35 @@ if sha is None:g['project']['sourceCommits']={'ORISO-Test':json.loads((pathlib.P
                 self.output,
                 "--repo",
                 "ORISO-Test:dev",
+                "--repo",
+                "ORISO-Docs:dev",
             ],
             self.repo,
             env,
         )
+
+    def test_pinned_glossary_artifacts_are_sealed_and_bound_to_the_selected_source_vector(self):
+        result = self.refresh()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        manifest = validate(self.output / "current")
+        self.assertEqual(manifest["glossary"]["documentationRevision"], git(self.source_base / "ORISO-Docs", "rev-parse", "HEAD"))
+        self.assertIn("glossary/catalog.json", [f["path"] for f in manifest["files"]])
+        self.assertIn("glossary/bindings.json", [f["path"] for f in manifest["files"]])
+        bindings = json.loads((self.output / "current/glossary/bindings.json").read_text())
+        self.assertEqual(bindings["sourceVector"], {s["repository"]: s["sourceSHA"] for s in manifest["sources"]})
+        self.assertTrue(all(b["state"] in ["verified", "external"] for b in bindings["sourceBindings"]))
+
+    def test_glossary_authority_cannot_change_selected_revision_after_sealing(self):
+        result = self.refresh()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        current = (self.output / "current").resolve()
+        bindings_path = current / "glossary/bindings.json"
+        bindings = json.loads(bindings_path.read_text())
+        next(item for item in bindings["sourceBindings"] if item["state"] == "verified")["selectedRevision"] = "b" * 40
+        bindings_path.write_text(json.dumps(bindings))
+        # Recompute the generic byte inventory: semantic source bindings must still reject it.
+        with self.assertRaisesRegex(Exception, "glossary selected authority revision"):
+            seal(current, json.loads((current / "manifest.json").read_text())["sources"])
 
     def test_each_failed_stage_retains_complete_previous_generation(self):
         first = self.refresh()
@@ -294,6 +345,7 @@ if sha is None:g['project']['sourceCommits']={'ORISO-Test':json.loads((pathlib.P
         (self.repo / "README.md").write_text("uncommitted developer work")
         for stage in [
             "ua-generate.mjs",
+            "ua-glossary-project.mjs",
             "ua-build-supergraph.mjs",
             "ua-platform-graph.mjs",
             "ua-validate-consumer.mjs",
