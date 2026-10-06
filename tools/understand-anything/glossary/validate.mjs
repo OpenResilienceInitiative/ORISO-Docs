@@ -39,7 +39,7 @@ export function validateGlossary(data) {
   date(data.reviewedAt,'reviewedAt');
   array(data.categories,'categories'); array(data.concepts,'concepts');
   if (!data.concepts.length) fail('concepts','expected nonempty vocabulary');
-  const categoryIds=new Set(),ids=new Set();
+  const categoryIds=new Set(),ids=new Set(),domainLabels=new Map();
   for(const c of data.categories) {
     if(!ID.test(c.id)||categoryIds.has(c.id)) fail('categories.id',`invalid or duplicate ${c.id}`);
     categoryIds.add(c.id); bilingual(c,`categories.${c.id}`);
@@ -79,7 +79,17 @@ export function validateGlossary(data) {
       if(!Number.isInteger(m.line)||m.line<1) fail(`${mf}.line`,'expected positive source line');
     }
     array(c.graphMappings,`${f}.graphMappings`);
-    for(const m of c.graphMappings) {text(m.repository,`${f}.graphMappings.repository`);text(m.nodeId,`${f}.graphMappings.nodeId`);if(!['source-file','domain-concept'].includes(m.mode)) fail(`${f}.graphMappings.mode`,'expected source-file or domain-concept candidate');}
+    for(const m of c.graphMappings) {
+      text(m.repository,`${f}.graphMappings.repository`);text(m.nodeId,`${f}.graphMappings.nodeId`);
+      if(!['source-file','domain-concept'].includes(m.mode)) fail(`${f}.graphMappings.mode`,'expected source-file or domain-concept candidate');
+      if(m.mode==='domain-concept') {
+        if(!/^concept:[A-Za-z0-9][A-Za-z0-9:_-]*$/.test(m.nodeId)) fail(`${f}.graphMappings.nodeId`,'domain-concept mapping requires a concept-qualified node ID');
+        bilingual(m.label,`${f}.graphMappings.label`);
+        const key=`${m.repository}::${m.nodeId}`,label=JSON.stringify([m.label.de,m.label.en]);
+        if(domainLabels.has(key)&&domainLabels.get(key)!==label) fail(`${f}.graphMappings.label`,`conflicting domain-concept labels for ${key}`);
+        domainLabels.set(key,label);
+      }
+    }
   }
   array(data.reconciliation,'reconciliation');
   if(!Number.isInteger(data.inputCoverage?.bjornRows)||data.reconciliation.length!==data.inputCoverage.bjornRows) fail('reconciliation',`expected all ${data.inputCoverage?.bjornRows ?? 'declared'} partner input rows`);

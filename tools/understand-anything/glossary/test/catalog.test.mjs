@@ -44,3 +44,21 @@ test('omitting a partner input or silently preferring inherited mistranslation i
   const incorrectCopy=catalog();incorrectCopy.concepts[2].en.definition='An Agency Unit offers counselling.';
   assert.throws(()=>validateGlossary(incorrectCopy),/counselling-centre.*en.definition.*Agency Unit/);
 });
+test('curated graph concepts carry complete bilingual business labels and shared Topic/Category meaning',()=>{
+  const data=validateGlossary(catalog());
+  const provider=data.concepts.find(c=>c.id==='provider').graphMappings.find(m=>m.mode==='domain-concept');
+  assert.deepEqual(provider.label,{de:'Trägerverzeichnis',en:'Provider registry'});
+  for(const id of ['topic','category']) {
+    const mapping=data.concepts.find(c=>c.id===id).graphMappings.find(m=>m.nodeId==='concept:topics');
+    assert.ok(mapping,`${id} must be discoverable through the curated topic/category node`);
+    assert.deepEqual(mapping.label,{de:'Themen und Kategorien',en:'Topics and Categories'});
+  }
+});
+test('missing bilingual concept labels and conflicting shared-node labels block publication',()=>{
+  const missing=catalog();delete missing.concepts.find(c=>c.id==='provider').graphMappings.find(m=>m.mode==='domain-concept').label.en;
+  assert.throws(()=>validateGlossary(missing), /provider.*graphMappings.*label.en/);
+  const conflicting=catalog();conflicting.concepts.find(c=>c.id==='category').graphMappings.find(m=>m.mode==='domain-concept').label.en='Different category label';
+  assert.throws(()=>validateGlossary(conflicting), /category.*conflicting.*concept:topics/);
+  const wrongTarget=catalog();wrongTarget.concepts.find(c=>c.id==='provider').graphMappings.find(m=>m.mode==='domain-concept').nodeId='file:TenantEntity.java';
+  assert.throws(()=>validateGlossary(wrongTarget), /provider.*domain-concept.*concept-qualified/);
+});

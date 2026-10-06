@@ -269,7 +269,11 @@
         {
           "repository": "ORISO-TenantService",
           "nodeId": "concept:tenant-registry",
-          "mode": "domain-concept"
+          "mode": "domain-concept",
+          "label": {
+            "de": "Trägerverzeichnis",
+            "en": "Provider registry"
+          }
         }
       ],
       "editorialNote": {
@@ -445,7 +449,11 @@
         {
           "repository": "ORISO-AgencyService",
           "nodeId": "concept:agency-registry",
-          "mode": "domain-concept"
+          "mode": "domain-concept",
+          "label": {
+            "de": "Beratungsstellenverzeichnis",
+            "en": "Counselling Centre registry"
+          }
         }
       ],
       "editorialNote": {
@@ -557,7 +565,11 @@
         {
           "repository": "ORISO-AgencyService",
           "nodeId": "concept:department-agency-topic",
-          "mode": "domain-concept"
+          "mode": "domain-concept",
+          "label": {
+            "de": "Fachbereich = Beratungsstelle × Thema",
+            "en": "Department = Counselling Centre × Topic"
+          }
         }
       ],
       "editorialNote": {
@@ -662,6 +674,15 @@
           "repository": "ORISO-ConsultingTypeService",
           "nodeId": "file:src/main/java/de/caritas/cob/consultingtypeservice/api/model/TopicEntity.java",
           "mode": "source-file"
+        },
+        {
+          "repository": "ORISO-ConsultingTypeService",
+          "nodeId": "concept:topics",
+          "mode": "domain-concept",
+          "label": {
+            "de": "Themen und Kategorien",
+            "en": "Topics and Categories"
+          }
         }
       ],
       "editorialNote": {
@@ -751,6 +772,15 @@
           "repository": "ORISO-ConsultingTypeService",
           "nodeId": "file:src/main/java/de/caritas/cob/consultingtypeservice/api/model/TopicGroupEntity.java",
           "mode": "source-file"
+        },
+        {
+          "repository": "ORISO-ConsultingTypeService",
+          "nodeId": "concept:topics",
+          "mode": "domain-concept",
+          "label": {
+            "de": "Themen und Kategorien",
+            "en": "Topics and Categories"
+          }
         }
       ],
       "editorialNote": {
@@ -918,7 +948,11 @@
         {
           "repository": "ORISO-UserService",
           "nodeId": "concept:asker-consultant-identity",
-          "mode": "domain-concept"
+          "mode": "domain-concept",
+          "label": {
+            "de": "Identitäten von Ratsuchenden und Beratenden",
+            "en": "Help-seeker and Counsellor identities"
+          }
         }
       ],
       "editorialNote": {
@@ -1046,7 +1080,11 @@
         {
           "repository": "ORISO-UserService",
           "nodeId": "concept:asker-consultant-identity",
-          "mode": "domain-concept"
+          "mode": "domain-concept",
+          "label": {
+            "de": "Identitäten von Ratsuchenden und Beratenden",
+            "en": "Help-seeker and Counsellor identities"
+          }
         }
       ],
       "editorialNote": {

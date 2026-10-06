@@ -21,8 +21,10 @@ identifiers, database schemas, permissions and API contracts remain unchanged.
 - `codeMappings` are dated historical review evidence. `graphMappings` are candidate
   source-file links or existing curated domain concepts; missing/stale targets
   must be explained. File symbols are preserved; preferred words can be searchable
-  tags and curated concept labels. A path/node ID match alone never establishes
-  source freshness.
+  tags and curated concept labels. Domain-concept mappings require their own
+  DE/EN `label` on an exact `concept:` target; multiple glossary entries sharing
+  one node must use identical labels. The catalog is the single label source.
+  A path/node ID match alone never establishes source freshness.
 - `assessSourceBinding(source, selected)` verifies bytes of an immutable selected
   repository revision while retaining the older editorial review provenance.
   Changed bytes return stale; missing source/mutable ref returns unavailable.
