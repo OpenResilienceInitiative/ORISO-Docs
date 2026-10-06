@@ -32,8 +32,8 @@ for name in sorted(required_repositories()):
  for f in (p/name).rglob('*.json'):f.write_text(f.read_text().replace('ORISO-Test',name).replace('a'*40,sha))
  sources.append(dict(repository=name,ref='refs/tags/v2.0.7',sourceSHA=sha,fetchedAt=now.isoformat(),fetchSuccess=True))
  if name in ['ORISO-TenantService','ORISO-Docs']:
-  f=p/name/'.understand-anything/knowledge-graph.json';g=json.loads(f.read_text());node_id='concept:tenant-registry' if name=='ORISO-TenantService' else 'file:oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md'
-  g['nodes'].append(dict(id=node_id,type='concept' if name=='ORISO-TenantService' else 'file',name='Tenant Registry (Träger)' if name=='ORISO-TenantService' else 'ADR-023-platform-services-agreement-and-traeger-governance.md',summary='Historical summary',tags=[],complexity='simple'))
+  f=p/name/'.understand-anything/knowledge-graph.json';g=json.loads(f.read_text());node_id='concept:tenant-registry' if name=='ORISO-TenantService' else 'document:oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md'
+  g['nodes'].append(dict(id=node_id,type='concept' if name=='ORISO-TenantService' else 'document',name='Tenant Registry (Träger)' if name=='ORISO-TenantService' else 'ADR-023-platform-services-agreement-and-traeger-governance.md',summary='Historical summary',tags=[],complexity='simple'))
   f.write_text(json.dumps(g))
 
 shutil.rmtree(p/'ORISO-Test')

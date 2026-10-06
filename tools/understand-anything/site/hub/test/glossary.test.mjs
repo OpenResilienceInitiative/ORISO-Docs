@@ -24,8 +24,8 @@ test('rendered release evidence gives verified graph links and keeps missing or 
   const source = catalog.concepts.find(concept => concept.id === 'provider').sources[0];
   const mapping = catalog.concepts.find(concept => concept.id === 'provider').graphMappings[0];
   const options = {
-    sourceBindings: [{conceptId: 'provider', sourceIndex: 0, state: 'verified', selectedRevision: 'b'.repeat(40), reason: 'The selected immutable source bytes match the reviewed hash.'}],
-    graphMappings: [{conceptId: 'provider', ...mapping, state: 'verified', selectedRevision: source.sourceRevision, href: '/tenant-service/?token=public-graph', reason: 'Mapped source file exists in the selected graph.'}]
+    sourceBindings: [{conceptId: 'provider', sourceIndex: 0, state: 'verified', selectedRevision: 'b'.repeat(40), reasonKey: 'source-content-unchanged'}],
+    graphMappings: [{conceptId: 'provider', ...mapping, state: 'verified', selectedRevision: source.sourceRevision, href: '/tenant-service/?token=public-graph', reasonKey: 'source-review-matches'}]
   };
   const html = renderGlossary(catalog, options);
   assert.ok(html.includes('Verified against selected source'));
@@ -41,8 +41,8 @@ test('published input snapshots are readable only through their verified exact i
   const concept = catalog.concepts.find(item => item.id === 'platform-operator');
   const sourceIndex = concept.sources.findIndex(source => source.binding === 'input-snapshot');
   const mapping = concept.graphMappings[0];
-  const sourceBinding = {conceptId: concept.id, sourceIndex, state: 'verified', href: '/glossary/sources/seed.md'};
-  const graphMapping = {conceptId: concept.id, ...mapping, state: 'verified', href: '/docs/?token=oriso-docs-dashboard', viewerNodeId: `ORISO-Docs::${mapping.nodeId}`};
+  const sourceBinding = {conceptId: concept.id, sourceIndex, state: 'verified', reasonKey: 'source-content-unchanged', href: '/glossary/sources/seed.md'};
+  const graphMapping = {conceptId: concept.id, ...mapping, state: 'verified', reasonKey: 'source-content-unchanged', href: '/docs/?token=oriso-docs-dashboard', viewerNodeId: `ORISO-Docs::${mapping.nodeId}`};
   const html = renderGlossary(catalog, {sourceBindings: [sourceBinding], graphMappings: [graphMapping]});
   assert.ok(html.includes('href="/glossary/sources/seed.md"'));
   assert.ok(html.includes(`ORISO-Docs::${mapping.nodeId}`));
@@ -65,7 +65,7 @@ test('untrusted definition, label and embedded search text remain text; unsafe l
   assert.equal(JSON.parse(embedded).concepts[0].de.definition, dangerous.concepts[0].de.definition);
   assert.ok(!embedded.includes('</script>'));
   const mapping = catalog.concepts[0].graphMappings[0];
-  assert.throws(() => renderGlossary(catalog, {graphMappings: [{conceptId: catalog.concepts[0].id, ...mapping, state: 'verified', href: 'javascript:alert(1)'}]}), /Unsafe public glossary link/);
+  assert.throws(() => renderGlossary(catalog, {graphMappings: [{conceptId: catalog.concepts[0].id, ...mapping, state: 'verified', reasonKey: 'source-content-unchanged', href: 'javascript:alert(1)'}]}), /Unsafe public glossary link/);
   const incomplete = structuredClone(catalog);
   delete incomplete.concepts[0].en.definition;
   assert.throws(() => renderGlossary(incomplete), /platform-operator.*en.definition/);
@@ -85,4 +85,26 @@ test('reader sees DDD responsibility and evidence scope without treating draft t
   assert.ok(html.includes('Legacy code review'));
   assert.ok(html.includes('migration-candidate'));
   assert.ok(html.includes('GroupChatParticipant.chatId'));
+});
+
+test('actual source and graph outcomes and compatibility explanations render in both languages', async () => {
+  const {assessSourceBinding} = await import('../../../glossary/source-bindings.mjs');
+  const {projectGlossary} = await import('../../../lib/glossary-projection.mjs');
+  const concept = catalog.concepts.find(c => c.id === 'provider');
+  const source = concept.sources[0];
+  const bytes = readFileSync(new URL(`../../../../../${source.path}`, import.meta.url));
+  const binding = assessSourceBinding(source, {repository: source.repository, revision: 'b'.repeat(40), readSource: () => bytes});
+  const repository = 'ORISO-TenantService', revision = catalog.audit.sourceVector[repository];
+  const graph = {project: {name: repository, gitCommitHash: revision}, nodes: [{id: 'concept:tenant-registry', type: 'concept', name: 'Tenant Registry', tags: []}]};
+  const html = renderGlossary(catalog, {sourceBindings: [{conceptId: concept.id, sourceIndex: 0, ...binding}], graphMappings: projectGlossary(catalog, graph, {repository, revision}).outcomes});
+  assert.ok(html.includes('<span lang="de">Der Inhalt ist unverändert; die ursprüngliche Prüfrevision bleibt historische Provenienz.</span>'));
+  assert.ok(html.includes('<span lang="en">Content is unchanged; original review revision remains historical provenance.</span>'));
+  assert.ok(html.includes('<span lang="de">Die Zuordnung der Fachsprache ist redaktionell; die ursprünglichen Verhaltensbelege bleiben unverändert.</span>'));
+  assert.ok(html.includes('<span lang="de">In neuen Texten für Menschen den bevorzugten Fachbegriff verwenden.</span>'));
+  assert.ok(html.includes('<span lang="en">Use the preferred business term in new human-facing copy.</span>'));
+  assert.ok(html.includes('<span lang="de">Bestehende Kennungen, Routen, Berechtigungen und technische Kontexte bleiben unverändert.</span>'));
+  const missing = structuredClone(catalog);
+  delete missing.concepts.find(c => c.id === 'provider').deprecatedTerms[0].reason.de;
+  assert.throws(() => renderGlossary(missing), /provider.*reason.de/);
+  assert.throws(() => renderGlossary(catalog, {sourceBindings: [{conceptId: concept.id, sourceIndex: 0, ...binding, reasonKey: 'unknown'}]}), /Unknown glossary reason/);
 });

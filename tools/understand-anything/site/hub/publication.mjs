@@ -1,3 +1,4 @@
+import {graphMappingType} from '../../glossary/validate.mjs';
 import fs from 'node:fs';import path from 'node:path';import crypto from 'node:crypto';import {execFileSync} from 'node:child_process';import {fileURLToPath} from 'node:url';
 import {bindPlatformRelease,assertPlatformReleaseBinding} from '../../../docs-publication/platform-release.mjs';
 import {isDeepStrictEqual} from 'node:util';
@@ -30,7 +31,7 @@ function glossaryArtifact(root,generation,manifest) {
  const graphMappings=report.graphMappings.map(outcome=>{
   if(outcome.state==='unavailable')return outcome;
   const graph=JSON.parse(fs.readFileSync(path.join(generation,outcome.repository,'.understand-anything/knowledge-graph.json'))),nodes=graph.nodes.filter(n=>n.id===outcome.nodeId);
-  if(nodes.length!==1 || nodes[0].type!==(outcome.mode==='domain-concept'?'concept':'file') || !nodes[0].metadata?.glossary?.mappings.some(m=>m.conceptId===outcome.conceptId&&m.state===outcome.state&&m.selectedRevision===outcome.selectedRevision))throw Error('Hub glossary graph mapping differs: '+outcome.nodeId);
+  if(nodes.length!==1 || nodes[0].type!==graphMappingType(outcome) || !nodes[0].metadata?.glossary?.mappings.some(m=>m.conceptId===outcome.conceptId&&m.state===outcome.state&&m.selectedRevision===outcome.selectedRevision))throw Error('Hub glossary graph mapping differs: '+outcome.nodeId);
   if(outcome.state!=='verified')return outcome;
   if(outcome.repository==='ORISO-Docs') {
    const supergraph=JSON.parse(fs.readFileSync(path.join(generation,'ORISO-Supergraph/.understand-anything/knowledge-graph.json'))),viewerNodeId='ORISO-Docs::'+outcome.nodeId;

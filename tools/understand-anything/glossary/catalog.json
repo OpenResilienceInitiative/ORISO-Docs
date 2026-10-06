@@ -91,7 +91,7 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
           "mode": "source-file"
         }
       ],
@@ -129,14 +129,26 @@
         {
           "language": "de",
           "term": "Mandant",
-          "reason": "Use the preferred business term in new human-facing copy.",
-          "compatibilityScope": "Existing identifiers, routes, permissions and technical contexts remain unchanged."
+          "reason": {
+            "de": "In neuen Texten für Menschen den bevorzugten Fachbegriff verwenden.",
+            "en": "Use the preferred business term in new human-facing copy."
+          },
+          "compatibilityScope": {
+            "de": "Bestehende Kennungen, Routen, Berechtigungen und technische Kontexte bleiben unverändert.",
+            "en": "Existing identifiers, routes, permissions and technical contexts remain unchanged."
+          }
         },
         {
           "language": "en",
           "term": "Tenant",
-          "reason": "Use the preferred business term in new human-facing copy.",
-          "compatibilityScope": "Existing identifiers, routes, permissions and technical contexts remain unchanged."
+          "reason": {
+            "de": "In neuen Texten für Menschen den bevorzugten Fachbegriff verwenden.",
+            "en": "Use the preferred business term in new human-facing copy."
+          },
+          "compatibilityScope": {
+            "de": "Bestehende Kennungen, Routen, Berechtigungen und technische Kontexte bleiben unverändert.",
+            "en": "Existing identifiers, routes, permissions and technical contexts remain unchanged."
+          }
         }
       ],
       "related": [
@@ -238,12 +250,12 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
           "mode": "source-file"
         },
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-021-legal-text-hierarchy-versioning-and-consent-text.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-021-legal-text-hierarchy-versioning-and-consent-text.md",
           "mode": "source-file"
         },
         {
@@ -310,14 +322,26 @@
         {
           "language": "de",
           "term": "Agentur",
-          "reason": "Use the preferred business term in new human-facing copy.",
-          "compatibilityScope": "Existing identifiers, routes, permissions and technical contexts remain unchanged."
+          "reason": {
+            "de": "In neuen Texten für Menschen den bevorzugten Fachbegriff verwenden.",
+            "en": "Use the preferred business term in new human-facing copy."
+          },
+          "compatibilityScope": {
+            "de": "Bestehende Kennungen, Routen, Berechtigungen und technische Kontexte bleiben unverändert.",
+            "en": "Existing identifiers, routes, permissions and technical contexts remain unchanged."
+          }
         },
         {
           "language": "en",
           "term": "Agency Unit",
-          "reason": "Use the preferred business term in new human-facing copy.",
-          "compatibilityScope": "Existing identifiers, routes, permissions and technical contexts remain unchanged."
+          "reason": {
+            "de": "In neuen Texten für Menschen den bevorzugten Fachbegriff verwenden.",
+            "en": "Use the preferred business term in new human-facing copy."
+          },
+          "compatibilityScope": {
+            "de": "Bestehende Kennungen, Routen, Berechtigungen und technische Kontexte bleiben unverändert.",
+            "en": "Existing identifiers, routes, permissions and technical contexts remain unchanged."
+          }
         }
       ],
       "related": [
@@ -418,17 +442,17 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-003-department-as-unique-agency-topic-with-imprint-dpp.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-003-department-as-unique-agency-topic-with-imprint-dpp.md",
           "mode": "source-file"
         },
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent.md",
           "mode": "source-file"
         },
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-021-legal-text-hierarchy-versioning-and-consent-text.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-021-legal-text-hierarchy-versioning-and-consent-text.md",
           "mode": "source-file"
         },
         {
@@ -549,12 +573,12 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-003-department-as-unique-agency-topic-with-imprint-dpp.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-003-department-as-unique-agency-topic-with-imprint-dpp.md",
           "mode": "source-file"
         },
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent.md",
           "mode": "source-file"
         },
         {
@@ -574,7 +598,7 @@
       ],
       "editorialNote": {
         "de": "Eindeutiges Paar aus Beratungsstelle und Thema (ADR-003/014). Ein Fachbereich ist deshalb keine eigene juristische Person.",
-        "en": "Unique agency × topic; ADR-003/014. No inference that a department is itself a legal person."
+        "en": "Unique counselling centre × topic; ADR-003/014. No inference that a department is itself a legal person."
       }
     },
     {
@@ -662,12 +686,12 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-009-global-topic-category-ownership-and-ai-assisted-translation.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-009-global-topic-category-ownership-and-ai-assisted-translation.md",
           "mode": "source-file"
         },
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-001-counselling-modalities-as-modules.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-001-counselling-modalities-as-modules.md",
           "mode": "source-file"
         },
         {
@@ -765,7 +789,7 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-009-global-topic-category-ownership-and-ai-assisted-translation.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-009-global-topic-category-ownership-and-ai-assisted-translation.md",
           "mode": "source-file"
         },
         {
@@ -846,13 +870,13 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-003-department-as-unique-agency-topic-with-imprint-dpp.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-003-department-as-unique-agency-topic-with-imprint-dpp.md",
           "mode": "source-file"
         }
       ],
       "editorialNote": {
         "de": "Die vorhandene Postleitzahlspeicherung an der Beratungsstelle und der vorgeschlagene Geltungsbereich am Fachbereich bleiben getrennt.",
-        "en": "Existing agency postcode storage and proposed department scope must be distinguished."
+        "en": "Existing counselling centre postcode storage and proposed department scope must be distinguished."
       }
     },
     {
@@ -937,7 +961,7 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
           "mode": "source-file"
         },
         {
@@ -988,14 +1012,26 @@
         {
           "language": "en",
           "term": "counselor",
-          "reason": "Use the preferred business term in new human-facing copy.",
-          "compatibilityScope": "Existing identifiers, routes, permissions and technical contexts remain unchanged."
+          "reason": {
+            "de": "In neuen Texten für Menschen den bevorzugten Fachbegriff verwenden.",
+            "en": "Use the preferred business term in new human-facing copy."
+          },
+          "compatibilityScope": {
+            "de": "Bestehende Kennungen, Routen, Berechtigungen und technische Kontexte bleiben unverändert.",
+            "en": "Existing identifiers, routes, permissions and technical contexts remain unchanged."
+          }
         },
         {
           "language": "en",
           "term": "Consultant",
-          "reason": "Use the preferred business term in new human-facing copy.",
-          "compatibilityScope": "Existing identifiers, routes, permissions and technical contexts remain unchanged."
+          "reason": {
+            "de": "In neuen Texten für Menschen den bevorzugten Fachbegriff verwenden.",
+            "en": "Use the preferred business term in new human-facing copy."
+          },
+          "compatibilityScope": {
+            "de": "Bestehende Kennungen, Routen, Berechtigungen und technische Kontexte bleiben unverändert.",
+            "en": "Existing identifiers, routes, permissions and technical contexts remain unchanged."
+          }
         }
       ],
       "related": [
@@ -1064,7 +1100,7 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-006-conversation-type-as-persisted-modality.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-006-conversation-type-as-persisted-modality.md",
           "mode": "source-file"
         },
         {
@@ -1150,7 +1186,7 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-008-supervision-role-and-side-channel-confidentiality.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-008-supervision-role-and-side-channel-confidentiality.md",
           "mode": "source-file"
         }
       ],
@@ -1217,7 +1253,7 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-009-global-topic-category-ownership-and-ai-assisted-translation.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-009-global-topic-category-ownership-and-ai-assisted-translation.md",
           "mode": "source-file"
         }
       ],
@@ -1294,12 +1330,12 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-009-global-topic-category-ownership-and-ai-assisted-translation.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-009-global-topic-category-ownership-and-ai-assisted-translation.md",
           "mode": "source-file"
         },
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
           "mode": "source-file"
         }
       ],
@@ -1366,7 +1402,7 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-009-global-topic-category-ownership-and-ai-assisted-translation.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-009-global-topic-category-ownership-and-ai-assisted-translation.md",
           "mode": "source-file"
         }
       ],
@@ -1440,7 +1476,7 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md",
           "mode": "source-file"
         }
       ],
@@ -1528,7 +1564,7 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md",
           "mode": "source-file"
         },
         {
@@ -1603,7 +1639,7 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
           "mode": "source-file"
         }
       ],
@@ -1680,12 +1716,12 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-006-conversation-type-as-persisted-modality.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-006-conversation-type-as-persisted-modality.md",
           "mode": "source-file"
         },
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-001-counselling-modalities-as-modules.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-001-counselling-modalities-as-modules.md",
           "mode": "source-file"
         }
       ],
@@ -1762,12 +1798,12 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-006-conversation-type-as-persisted-modality.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-006-conversation-type-as-persisted-modality.md",
           "mode": "source-file"
         },
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-001-counselling-modalities-as-modules.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-001-counselling-modalities-as-modules.md",
           "mode": "source-file"
         }
       ],
@@ -1834,7 +1870,7 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-006-conversation-type-as-persisted-modality.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-006-conversation-type-as-persisted-modality.md",
           "mode": "source-file"
         }
       ],
@@ -1923,12 +1959,12 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-012-self-help-group-chat-extend-not-rebuild-future-timeline.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-012-self-help-group-chat-extend-not-rebuild-future-timeline.md",
           "mode": "source-file"
         },
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-006-conversation-type-as-persisted-modality.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-006-conversation-type-as-persisted-modality.md",
           "mode": "source-file"
         },
         {
@@ -2005,7 +2041,7 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-006-conversation-type-as-persisted-modality.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-006-conversation-type-as-persisted-modality.md",
           "mode": "source-file"
         }
       ],
@@ -2074,7 +2110,7 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md",
           "mode": "source-file"
         }
       ],
@@ -2141,7 +2177,7 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-008-supervision-role-and-side-channel-confidentiality.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-008-supervision-role-and-side-channel-confidentiality.md",
           "mode": "source-file"
         }
       ],
@@ -2211,7 +2247,7 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
           "mode": "source-file"
         }
       ],
@@ -2281,7 +2317,7 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-018-erstantwort-as-one-persisted-event-rendered-as-carimat-bubbles.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-018-erstantwort-as-one-persisted-event-rendered-as-carimat-bubbles.md",
           "mode": "source-file"
         }
       ],
@@ -2350,7 +2386,7 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-018-erstantwort-as-one-persisted-event-rendered-as-carimat-bubbles.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-018-erstantwort-as-one-persisted-event-rendered-as-carimat-bubbles.md",
           "mode": "source-file"
         }
       ],
@@ -2440,7 +2476,7 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
           "mode": "source-file"
         },
         {
@@ -2533,7 +2569,7 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
           "mode": "source-file"
         },
         {
@@ -2605,7 +2641,7 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
           "mode": "source-file"
         }
       ],
@@ -2686,7 +2722,7 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
           "mode": "source-file"
         },
         {
@@ -2762,7 +2798,7 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
           "mode": "source-file"
         }
       ],
@@ -2833,7 +2869,7 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
           "mode": "source-file"
         }
       ],
@@ -2900,7 +2936,7 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
           "mode": "source-file"
         }
       ],
@@ -2970,7 +3006,7 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
           "mode": "source-file"
         }
       ],
@@ -3059,12 +3095,12 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-021-legal-text-hierarchy-versioning-and-consent-text.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-021-legal-text-hierarchy-versioning-and-consent-text.md",
           "mode": "source-file"
         },
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
           "mode": "source-file"
         }
       ],
@@ -3134,7 +3170,7 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-021-legal-text-hierarchy-versioning-and-consent-text.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-021-legal-text-hierarchy-versioning-and-consent-text.md",
           "mode": "source-file"
         }
       ],
@@ -3268,12 +3304,12 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-021-legal-text-hierarchy-versioning-and-consent-text.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-021-legal-text-hierarchy-versioning-and-consent-text.md",
           "mode": "source-file"
         },
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
           "mode": "source-file"
         }
       ],
@@ -3350,12 +3386,12 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-021-legal-text-hierarchy-versioning-and-consent-text.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-021-legal-text-hierarchy-versioning-and-consent-text.md",
           "mode": "source-file"
         },
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
           "mode": "source-file"
         }
       ],
@@ -3489,12 +3525,12 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
           "mode": "source-file"
         },
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-006-conversation-type-as-persisted-modality.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-006-conversation-type-as-persisted-modality.md",
           "mode": "source-file"
         }
       ],
@@ -3787,12 +3823,12 @@
       "graphMappings": [
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
           "mode": "source-file"
         },
         {
           "repository": "ORISO-Docs",
-          "nodeId": "file:oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
+          "nodeId": "document:oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
           "mode": "source-file"
         }
       ],
@@ -6404,9 +6440,64 @@
         "term": "Consultant",
         "preferred": "Counsellor",
         "conceptId": "counsellor"
+      },
+      {
+        "language": "en",
+        "term": "Agency",
+        "preferred": "Counselling Centre",
+        "conceptId": "counselling-centre"
       }
     ],
-    "allowlist": [],
-    "scope": "Preferred terms, definitions and examples. Alias/source/code fields explicitly explain preserved compatibility vocabulary."
+    "allowlist": [
+      {
+        "conceptId": "provider",
+        "language": "de",
+        "field": "editorialNote.de",
+        "term": "Mandant",
+        "text": "Bevorzugte Bezeichnung aus diesem Auftrag. Organisation bleibt ein Suchalias; tenant bleibt eine technische Zuordnung. Mandant wird für neue Texte ersetzt.",
+        "reason": "This exact explanatory note identifies preserved legacy vocabulary; it does not prefer it for new human-facing terminology."
+      },
+      {
+        "conceptId": "provider",
+        "language": "en",
+        "field": "editorialNote.en",
+        "term": "Tenant",
+        "text": "Preferred wording from this request; Organisation remains alias; tenant is technical mapping; Mandant retired for human copy.",
+        "reason": "This exact explanatory note identifies preserved legacy vocabulary; it does not prefer it for new human-facing terminology."
+      },
+      {
+        "conceptId": "counsellor",
+        "language": "en",
+        "field": "editorialNote.en",
+        "term": "counselor",
+        "text": "consultant/counselor legacy mappings; British English spelling.",
+        "reason": "This exact explanatory note identifies preserved legacy vocabulary; it does not prefer it for new human-facing terminology."
+      },
+      {
+        "conceptId": "counsellor",
+        "language": "en",
+        "field": "editorialNote.en",
+        "term": "Consultant",
+        "text": "consultant/counselor legacy mappings; British English spelling.",
+        "reason": "This exact explanatory note identifies preserved legacy vocabulary; it does not prefer it for new human-facing terminology."
+      },
+      {
+        "conceptId": "counselling-centre",
+        "language": "en",
+        "field": "editorialNote.en",
+        "term": "Agency",
+        "text": "agency / AgencyService compatibility names; accepted legal-text ADR vocabulary.",
+        "reason": "This exact explanatory note identifies preserved legacy vocabulary; it does not prefer it for new human-facing terminology."
+      },
+      {
+        "conceptId": "centre-based-counselling",
+        "language": "en",
+        "field": "editorialNote.en",
+        "term": "Agency",
+        "text": "Editorial English proposal for legacy Agency Counselling; exact enum unchanged.",
+        "reason": "This exact explanatory note identifies preserved legacy vocabulary; it does not prefer it for new human-facing terminology."
+      }
+    ],
+    "scope": "Preferred labels and all authored concept prose, including context, responsibility, invariant, editorial and scope notes, compatibility explanations and curated graph labels. Alias terms and immutable source/code identifiers remain compatibility evidence. Exceptions bind one exact reviewed explanatory sentence; preferred labels cannot be excepted."
   }
 }

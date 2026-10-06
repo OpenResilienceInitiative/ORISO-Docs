@@ -33,6 +33,7 @@ function source(s,field) {
     if(!SHA.test(s.sourceRevision)) fail(`${field}.sourceRevision`,'expected exact reviewed Git revision');
   } else fail(`${field}.binding`,'unknown source binding');
 }
+export function graphMappingType(mapping) { return mapping.mode==='domain-concept'?'concept':mapping.nodeId.startsWith('document:')?'document':'file'; }
 /** Public content-validation seam. Valid content is separate from delivery evidence. */
 export function validateGlossary(data) {
   if (!data || data.schemaVersion !== 1) fail('schemaVersion','expected 1');
@@ -57,12 +58,15 @@ export function validateGlossary(data) {
     }
     if (!editorialStates.has(c.editorialState)) fail(`${f}.editorialState`,'unknown editorial state');
     for(const key of ['context','responsibility','invariant']) bilingual(c[key],`${f}.${key}`);
+    if(c.editorialNote) bilingual(c.editorialNote,`${f}.editorialNote`);
+    if(c.scopeNote) bilingual(c.scopeNote,`${f}.scopeNote`);
     array(c.related,`${f}.related`);
     for (const id of c.related) if(!ids.has(id)) fail(`${f}.related`,`unknown concept ${id}`);
     array(c.deprecatedTerms,`${f}.deprecatedTerms`);
     for(const t of c.deprecatedTerms) {
       if(!['de','en'].includes(t.language)) fail(`${f}.deprecatedTerms.language`,'expected de/en');
-      for(const key of ['term','reason','compatibilityScope']) text(t[key],`${f}.deprecatedTerms.${key}`);
+      text(t.term,`${f}.deprecatedTerms.term`);
+      for(const key of ['reason','compatibilityScope']) bilingual(t[key],`${f}.deprecatedTerms.${key}`);
       if(t.term.normalize('NFKC').toLocaleLowerCase() === c[t.language].term.normalize('NFKC').toLocaleLowerCase()) fail(`${f}.deprecatedTerms`,'preferred term cannot be deprecated');
     }
     array(c.sources,`${f}.sources`); if(!c.sources.length) fail(`${f}.sources`,'expected provenance');
@@ -82,6 +86,10 @@ export function validateGlossary(data) {
     for(const m of c.graphMappings) {
       text(m.repository,`${f}.graphMappings.repository`);text(m.nodeId,`${f}.graphMappings.nodeId`);
       if(!['source-file','domain-concept'].includes(m.mode)) fail(`${f}.graphMappings.mode`,'expected source-file or domain-concept candidate');
+      if(m.mode==='source-file') {
+        if(!/^(file|document):/.test(m.nodeId))fail(`${f}.graphMappings.nodeId`,'source-file requires a file- or document-qualified stable ID');
+        path(m.nodeId.replace(/^(file|document):/,''),`${f}.graphMappings.sourcePath`);
+      }
       if(m.mode==='domain-concept') {
         if(!/^concept:[A-Za-z0-9][A-Za-z0-9:_-]*$/.test(m.nodeId)) fail(`${f}.graphMappings.nodeId`,'domain-concept mapping requires a concept-qualified node ID');
         bilingual(m.label,`${f}.graphMappings.label`);
@@ -111,11 +119,19 @@ export function validateGlossary(data) {
     text(rule.term,'copyPolicy.term');text(rule.preferred,'copyPolicy.preferred');
     const escaped=rule.term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
     const pattern=new RegExp(`(?<![\\p{L}\\p{N}_])${escaped}(?![\\p{L}\\p{N}_])`,'iu');
-    for(const c of data.concepts) for(const field of ['term','definition','example']) {
-      if(!pattern.test(c[rule.language][field])) continue;
-      const allowed=data.copyPolicy.allowlist.find(a=>a.conceptId===c.id&&a.language===rule.language&&a.field===field&&a.term===rule.term);
-      if(!allowed) fail(`concepts.${c.id}.${rule.language}.${field}`,`deprecated human wording ${rule.term}; use ${rule.preferred} or record the explicit compatibility context`);
-      text(allowed.reason,'copyPolicy.allowlist.reason');
+    for(const c of data.concepts) {
+      const locale=rule.language;
+      const fields=[...['term','definition','example'].map(key=>[`${locale}.${key}`,c[locale][key]]),
+        ...['context','responsibility','invariant','editorialNote','scopeNote'].filter(key=>c[key]).map(key=>[`${key}.${locale}`,c[key][locale]]),
+        ...c.deprecatedTerms.flatMap((t,i)=>['reason','compatibilityScope'].map(key=>[`deprecatedTerms.${i}.${key}.${locale}`,t[key][locale]])),
+        ...c.graphMappings.flatMap((m,i)=>m.label?[[`graphMappings.${i}.label.${locale}`,m.label[locale]]]:[])];
+      for(const [field,copy] of fields) {
+        if(!pattern.test(copy))continue;
+        // A reviewed explanatory sentence can retain a legacy word; a preferred label cannot.
+        const allowed=!field.endsWith('.term')&&!field.includes('.label.')&&data.copyPolicy.allowlist.find(a=>a.conceptId===c.id&&a.language===locale&&a.field===field&&a.term===rule.term&&a.text===copy);
+        if(!allowed)fail(`concepts.${c.id}.${field}`,`deprecated human wording ${rule.term}; use ${rule.preferred} or record the exact compatibility explanation`);
+        text(allowed.reason,'copyPolicy.allowlist.reason');
+      }
     }
   }
   if(!data.audit || !data.audit.sourceVector) fail('audit','expected exact source inventory');
