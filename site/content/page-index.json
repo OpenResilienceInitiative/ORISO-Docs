@@ -3447,7 +3447,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/decisions/ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent.md",
-      "sourceHash": "75fda1712139bba88962339edf682d575a17263118fdaacad3fd6e3ed12a6e7f",
+      "sourceHash": "2e2b95153271e550dd19d12e0b6293bbba908130f0b273668a2dde829cd7de91",
       "locales": {
         "de": {
           "available": true,
@@ -3477,7 +3477,7 @@
           }
         }
       },
-      "sourceRevision": "b02af4254a944f33fb24e11c82ab6b961e4ec01b",
+      "sourceRevision": "230c20634e557604c67bb55bd4075a4534fc5a03",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -4073,7 +4073,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/decisions/README.md",
-      "sourceHash": "705d264ec3521f1c31b344aaac3104da4da21e0899f612b37e9c0914bdd04149",
+      "sourceHash": "c3f2fc53454bb3c341dfb119ef7c217f1cdd84cb3fd2e9279cec85b810b28800",
       "locales": {
         "de": {
           "available": true,
@@ -4100,7 +4100,7 @@
           }
         }
       },
-      "sourceRevision": "6f6a9734ed5e0d6681e2b8d0807304a5b3a1872f",
+      "sourceRevision": "230c20634e557604c67bb55bd4075a4534fc5a03",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
