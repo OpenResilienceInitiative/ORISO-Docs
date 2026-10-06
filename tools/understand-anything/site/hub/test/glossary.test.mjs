@@ -1,0 +1,70 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {renderGlossary} from '../render-glossary.mjs';
+
+const catalog = JSON.parse(readFileSync(new URL('../../../glossary/catalog.json', import.meta.url)));
+
+test('glossary readers can find all reviewed concepts, definitions and stable related links in both languages', () => {
+  const html = renderGlossary(catalog);
+  for (const concept of catalog.concepts) {
+    assert.ok(html.includes(`id="${concept.id}"`), `Missing stable anchor ${concept.id}`);
+    for (const locale of ['de', 'en']) {
+      assert.ok(html.includes(concept[locale].term));
+      assert.ok(html.includes(concept[locale].definition.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;')));
+    }
+    for (const related of concept.related) assert.ok(html.includes(`href="#${related}"`));
+  }
+  assert.ok(html.includes('Plattformvertrag'));
+  assert.ok(html.includes('Platform Services Agreement'));
+  assert.ok(html.includes('Data Processing Agreement'));
+});
+
+test('rendered release evidence gives verified graph links and keeps missing or historical mappings explicit', () => {
+  const source = catalog.concepts.find(concept => concept.id === 'provider').sources[0];
+  const mapping = catalog.concepts.find(concept => concept.id === 'provider').graphMappings[0];
+  const options = {
+    sourceBindings: [{conceptId: 'provider', sourceIndex: 0, state: 'verified', selectedRevision: 'b'.repeat(40), reason: 'The selected immutable source bytes match the reviewed hash.'}],
+    graphMappings: [{conceptId: 'provider', ...mapping, state: 'verified', selectedRevision: source.sourceRevision, href: '/tenant-service/?token=public-graph', reason: 'Mapped source file exists in the selected graph.'}]
+  };
+  const html = renderGlossary(catalog, options);
+  assert.ok(html.includes('Verified against selected source'));
+  assert.ok(html.includes('href="/tenant-service/?token=public-graph"'));
+  assert.ok(html.includes('Open graph'));
+  assert.ok(html.includes('Graph target has not been verified for the selected release.'));
+  assert.ok(html.includes('b'.repeat(40)));
+  const historical = renderGlossary(catalog, {...options, graphMappings: [{...options.graphMappings[0], state: 'historical'}]});
+  assert.ok(!historical.includes('href="/tenant-service/?token=public-graph"'));
+});
+
+test('untrusted definition, label and embedded search text remain text; unsafe links and missing translations fail usefully', () => {
+  const dangerous = structuredClone(catalog);
+  dangerous.concepts[0].de.definition = 'A <script>alert("unsafe")</script> & text';
+  const html = renderGlossary(dangerous);
+  assert.ok(html.includes('A &lt;script&gt;alert(&quot;unsafe&quot;)&lt;/script&gt; &amp; text'));
+  assert.ok(!html.includes('<script>alert('));
+  const embedded = /<script type="application\/json" id="glossary-data">([\s\S]*?)<\/script>/.exec(html)[1];
+  assert.equal(JSON.parse(embedded).concepts[0].de.definition, dangerous.concepts[0].de.definition);
+  assert.ok(!embedded.includes('</script>'));
+  const mapping = catalog.concepts[0].graphMappings[0];
+  assert.throws(() => renderGlossary(catalog, {graphMappings: [{conceptId: catalog.concepts[0].id, ...mapping, state: 'verified', href: 'javascript:alert(1)'}]}), /Unsafe public glossary link/);
+  const incomplete = structuredClone(catalog);
+  delete incomplete.concepts[0].en.definition;
+  assert.throws(() => renderGlossary(incomplete), /platform-operator.*en.definition/);
+});
+
+test('reader sees DDD responsibility and evidence scope without treating draft terms or legacy identifiers as current delivery', () => {
+  const html = renderGlossary(catalog);
+  assert.ok(html.includes('Verantwortung'));
+  assert.ok(html.includes('Responsibility'));
+  assert.ok(html.includes('Entwurf'));
+  assert.ok(html.includes('Draft'));
+  assert.ok(html.includes('Technische Zuordnungen'));
+  assert.ok(html.includes('Technical mappings'));
+  assert.ok(html.includes('Graph target has not been verified for the selected release.'));
+  assert.ok(!html.includes('href="/agency-service/?'));
+  assert.ok(html.includes('https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/7b544fbb0faca5ec941db4369855b4bcfa28207c/oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md'));
+  assert.ok(html.includes('Legacy code review'));
+  assert.ok(html.includes('migration-candidate'));
+  assert.ok(html.includes('GroupChatParticipant.chatId'));
+});
