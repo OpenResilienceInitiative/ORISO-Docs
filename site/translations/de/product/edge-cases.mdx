@@ -343,9 +343,9 @@ Folge jedoch nirgends dokumentiert (OpenResilienceInitiative/ORISO-UserService#9
 |---|---|
 | **Auslöser** | Anonyme Registrierung ohne E-Mail-Adresse; später kann sich die Person nicht mehr anmelden |
 | **Erwartetes Verhalten** | Es gibt keinen Weg zurück in das Konto. Der `userName` (Anmeldename) ist das einzige Kennzeichen und unveränderlich; das erzeugte 16-stellige Passwort wird nach der Registrierung nicht erneut angezeigt |
-| **Tatsächliche Anzeige** | Nichts erklärt diesen Umstand. Die bereitgestellte Anmeldeseite des Realms `online-beratung` zeigt keinen Link „Passwort vergessen“ (`resetPasswordAllowed: false`). Ein direkter `GET /realms/online-beratung/login-actions/reset-credentials` liefert bei einer neuen Sitzung eine Fehlerseite mit Status 400 |
+| **Tatsächliche Anzeige** | Nichts erklärt diesen Umstand. Die Anmeldeseite der App bietet im Passwortmodus zwar „Passwort vergessen“ an, für dieses Konto führt der Weg aber ins Leere: Nach Eingabe des Anmeldenamens erscheint „E-Mail wurde versendet“, es kommt jedoch nie eine E-Mail an (Weg 1 unten). Die eigene Keycloak-Anmeldeseite des Realms `online-beratung` hat keinen Link zum Zurücksetzen (`resetPasswordAllowed: false`), und ein direkter `GET /realms/online-beratung/login-actions/reset-credentials` liefert Status 400; Ratsuchende sehen diese Seite aber nie, weil die App eine eigene Anmeldung hat |
 | **Risiko bei falscher Behandlung** | Eine Person in einer Belastungssituation verliert unbemerkt den Zugang zu einer bereits begonnenen Beratung |
-| **Test** | Anonym und ohne E-Mail-Adresse registrieren, abmelden und mit falschem Passwort erneut anmelden: Auf der Seite gibt es keinen Link zum Zurücksetzen |
+| **Test** | Anonym und ohne E-Mail-Adresse registrieren, abmelden, in der App „Passwort vergessen“ wählen und den Anmeldenamen eingeben: Die Erfolgsmeldung erscheint, es kommt keine E-Mail an, und nichts erklärt den Grund |
 
 **Drei Wege, die den Kontozugang nicht wiederherstellen.** Sie scheitern auf unterschiedliche
 Weise. Nur der erste Weg bleibt absichtlich ohne erkennbare Wirkung:

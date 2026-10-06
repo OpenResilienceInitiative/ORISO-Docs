@@ -344,9 +344,9 @@ the anonymity model rather than a fault — but it was written down nowhere unti
 |---|---|
 | **Trigger** | Anonymous registration with no e-mail address; the person later cannot sign in |
 | **Expected** | No path back into the account exists. The `userName` (Anmeldename) is the only handle, and it is immutable; the generated 16-character password is never shown again after registration |
-| **What the person actually sees** | Nothing that explains it. The deployed login page for realm `online-beratung` renders **no** "forgot password" affordance at all (`resetPasswordAllowed: false`), and a cold `GET /realms/online-beratung/login-actions/reset-credentials` returns 400 with an error page |
+| **What the person actually sees** | Nothing that explains it. The app's login page does offer "Passwort vergessen" (in password mode), but for this account it leads nowhere: after entering the Anmeldename the person sees "E-Mail wurde versendet" and no mail ever arrives (path 1 below). Keycloak's own login page for realm `online-beratung` has no reset link (`resetPasswordAllowed: false`) and a cold `GET /realms/online-beratung/login-actions/reset-credentials` returns 400, but advice seekers never see that page because the app has its own login |
 | **Risk if mishandled** | Someone in distress is silently locked out of a counseling conversation they had already started, with no message telling them why |
-| **Test** | Register anonymously without an e-mail, sign out, attempt to sign back in with a wrong password: there is no reset link anywhere on the page |
+| **Test** | Register anonymously without an e-mail, sign out, click "Passwort vergessen" on the app login and enter that Anmeldename: the success message appears, no mail arrives, and nothing explains why |
 
 **The three paths that do not restore account access.** They fail in three different ways, and the
 difference matters — only the first is silent, and only the first is silent *on purpose*:

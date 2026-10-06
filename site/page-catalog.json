@@ -1941,12 +1941,12 @@
       "translations": {
         "en": {
           "path": "site/translations/en/product/edge-cases.mdx",
-          "sourceHash": "f462d8c5e4b256cab973ebaf348bc4e3f6ecf00abbf70101ab174afa17b9e0cb",
+          "sourceHash": "c310a304a70eb0a8c71c52adf80eb886f1dd01e3999d6df11c96fa5b0e818b07",
           "reviewedAt": "2026-10-06"
         },
         "de": {
           "path": "site/translations/de/product/edge-cases.mdx",
-          "sourceHash": "f462d8c5e4b256cab973ebaf348bc4e3f6ecf00abbf70101ab174afa17b9e0cb",
+          "sourceHash": "c310a304a70eb0a8c71c52adf80eb886f1dd01e3999d6df11c96fa5b0e818b07",
           "reviewedAt": "2026-10-06"
         }
       }
