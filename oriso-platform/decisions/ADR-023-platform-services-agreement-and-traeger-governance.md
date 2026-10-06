@@ -102,3 +102,86 @@ renamed consistently in one pass.
 - **Automatic adoption after the deadline.** Rejected — the Träger would have published a text they
   never read.
 - **Suspending logins or terminating sessions on non-compliance.** Rejected outright; see decision 5.
+
+---
+
+## Addendum — 2026-10-06: AVV renewal and new counselling
+
+**Decision provenance:** the confirmed product decisions in
+[the AVV renewal specification](https://github.com/OpenResilienceInitiative/ORISO-TenantService/issues/294),
+especially its **Further Notes**, refine the AVV renewal consequence in decision 5.
+The accepted decisions above remain the historical record. This addendum records the
+confirmed policy; it is not evidence of completed implementation, deployment or legal approval.
+
+An existing Träger needs time to review a newly published governing AVV. Its earlier
+signature is retained and shown as outdated. After the review deadline, it cannot begin
+new counselling until it confirms the current governing version. Counselling that has
+already begun continues.
+
+### Confirmed refinement
+
+1. **The publisher chooses a future date and time for each governing publication.**
+   The dialog has no preselected duration and shows the deadline before confirmation.
+   Cancellation or invalid input must leave the publication unchanged. Publication and
+   deadline are stored together and apply to every recipient governed by that version.
+   The deadline is selected for both first publication and renewal. The lifetime of an
+   external signing link is a separate matter. A future deadline does not grant a
+   first-time unsigned organisation permission to bypass its existing onboarding policy.
+
+2. **Renewal grace preserves permitted work; expiry prevents new counselling.**
+   An existing Träger affected by an AVV renewal can continue its otherwise permitted
+   work during grace. When the deadline is reached without current confirmation, new
+   individual counselling, first enquiries, acceptance and new group participation
+   must apply the same restriction. Being registered before the publication, or merely
+   having a stored session or assignment, does not establish begun counselling.
+   Commencement and continuation must be established from the counselling domain state
+   or participation evidence.
+
+   This is the AVV renewal refinement of decision 5's older **new-registration**
+   escalation. It does not replace the separate mandatory-template adoption policy
+   with an automatically adopted AVV or an editable draft-comparison workflow.
+
+3. **Begun counselling, existing login and history remain available.**
+   Existing participants retain reading, messaging and return to their begun
+   counselling under normal authentication, tenant and membership permissions.
+   Continuation does not grant first access or waive those permissions. Internal
+   colleague chats are exempt from this AVV counselling gate. The recurrence and
+   exceptional return boundaries below are not resolved by that exemption.
+
+4. **Recovery confirms the exact governing version for the affected Träger.**
+   TenantService remains the authority for the governing version and signature
+   validity. Preserve established own/legacy-AVV precedence and historical signatures;
+   an unrelated operator publication must not replace a correctly governing own AVV.
+   Keep the existing confirmation and authorised forwarding/signing paths reachable.
+   Confirmation of the current version restores permission to begin new counselling
+   without account repair or a service restart. An old signing page, a concurrent newer
+   publication or another Träger's signature/deadline cannot satisfy that requirement.
+
+5. **An unavailable verifier is a service failure, not a confirmed legal refusal.**
+   Protected new work is rejected safely when verification cannot be completed, with
+   the established dependency-failure response and sanitized diagnostics. A confirmed
+   policy denial uses the established permission response. These
+   failures must not be confused in the user-facing explanation.
+
+### Unresolved boundaries and acceptance
+
+Participation in an earlier occurrence of a recurring group has **not** been decided
+to grant or deny continuation at a later occurrence after expiry. The classification
+of that next occurrence remains **undecided**. Return after a participant explicitly
+left, and direct Matrix invitation acceptance, remain unverified boundaries; this
+addendum does not claim that either is implemented or accepted.
+
+Delivery uses the following existing issues:
+
+| Issue | Scope |
+| --- | --- |
+| [TenantService 294](https://github.com/OpenResilienceInitiative/ORISO-TenantService/issues/294) | Renewal policy and cross-repository acceptance |
+| [TenantService 295](https://github.com/OpenResilienceInitiative/ORISO-TenantService/issues/295) | Publication, deadline and recipient confirmation |
+| [UserService 1322](https://github.com/OpenResilienceInitiative/ORISO-UserService/issues/1322) | New individual counselling and preserved continuation |
+| [UserService 1323](https://github.com/OpenResilienceInitiative/ORISO-UserService/issues/1323) | New group participation, return and unresolved recurrence |
+
+Public AVV/counselling API and component tests are confirmed acceptance boundaries.
+Source, local tests, CI, human review, merge, deployment and direct-role Dev acceptance
+remain separate evidence. Dev acceptance must exercise direct Träger and Beratungsstelle
+administrators, counsellors and help-seekers; platform remote access alone is insufficient.
+The issues hold the current delivery evidence rather than this dated policy record.
