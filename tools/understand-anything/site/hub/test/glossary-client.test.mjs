@@ -22,3 +22,25 @@ test('stable concept anchors remain language independent; unknown or malformed h
   assert.equal(resolveConcept(catalog, '#unknown').id, 'provider');
   assert.equal(resolveConcept(catalog, '#%bad%E0').id, 'provider');
 });
+
+test('activating the keyboard skip link focuses DPA while preserving selection, search and category', async () => {
+  const {initGlossary} = await import('../assets/glossary.js');
+  const events = {}, windowEvents = {};
+  let focused = null;
+  const element = (id, extra = {}) => ({id, value: '', hidden: false, addEventListener: (name, handler) => { events[`${id}:${name}`] = handler; }, focus: () => { focused = id; }, ...extra});
+  const articles = catalog.concepts.map(c => element(c.id));
+  const results = catalog.concepts.map(c => element(c.id, {dataset: {conceptId: c.id}, querySelector: () => ({setAttribute() {}, removeAttribute() {}})}));
+  const nodes = Object.fromEntries([...articles, element('glossary-data', {textContent: JSON.stringify(catalog)}), element('glossary-query', {value: 'AVV'}), element('glossary-category', {value: 'legal-documents-and-flows'}), element('glossary-count'), element('glossary-empty'), element('glossary-reset')].map(e => [e.id, e]));
+  const document = {getElementById: id => nodes[id], querySelectorAll: selector => selector.startsWith('#glossary-results') ? results : articles, addEventListener: (name, handler) => { events[name] = handler; }, documentElement: {getAttribute: () => 'de', classList: {add() {}}}};
+  const window = {location: {hash: '#dpa'}, history: {pushState: (_state, _title, hash) => { window.location.hash = hash; }}, addEventListener: (name, handler) => { windowEvents[name] = handler; }};
+  initGlossary(document, window);
+  let prevented = false;
+  events.click({target: {closest: () => ({getAttribute: () => '#glossary-detail'})}, button: 0, preventDefault: () => { prevented = true; }});
+  assert.equal(prevented, true);
+  assert.equal(focused, 'dpa');
+  assert.equal(window.location.hash, '#dpa');
+  assert.equal(nodes['glossary-query'].value, 'AVV');
+  assert.equal(nodes['glossary-category'].value, 'legal-documents-and-flows');
+  assert.equal(nodes.dpa.hidden, false);
+  assert.equal(nodes.provider.hidden, true);
+});

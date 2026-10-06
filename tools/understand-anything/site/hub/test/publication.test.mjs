@@ -32,8 +32,8 @@ for name in sorted(required_repositories()):
  for f in (p/name).rglob('*.json'):f.write_text(f.read_text().replace('ORISO-Test',name).replace('a'*40,sha))
  sources.append(dict(repository=name,ref='refs/tags/v2.0.7',sourceSHA=sha,fetchedAt=now.isoformat(),fetchSuccess=True))
  if name in ['ORISO-TenantService','ORISO-Docs']:
-  f=p/name/'.understand-anything/knowledge-graph.json';g=json.loads(f.read_text());node_id='concept:tenant-registry' if name=='ORISO-TenantService' else 'file:oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md'
-  g['nodes'].append(dict(id=node_id,type='concept' if name=='ORISO-TenantService' else 'file',name='Tenant Registry (Träger)' if name=='ORISO-TenantService' else 'ADR-023-platform-services-agreement-and-traeger-governance.md',summary='Historical summary',tags=[],complexity='simple'))
+  f=p/name/'.understand-anything/knowledge-graph.json';g=json.loads(f.read_text());node_id='concept:tenant-registry' if name=='ORISO-TenantService' else 'document:oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md'
+  g['nodes'].append(dict(id=node_id,type='concept' if name=='ORISO-TenantService' else 'document',name='Tenant Registry (Träger)' if name=='ORISO-TenantService' else 'ADR-023-platform-services-agreement-and-traeger-governance.md',summary='Historical summary',tags=[],complexity='simple'))
   f.write_text(json.dumps(g))
 
 shutil.rmtree(p/'ORISO-Test')
@@ -88,4 +88,17 @@ test('hosted preflight fails named missing operator bindings before consumer sch
  const text=fs.readFileSync(path.join(root,'.github/workflows/ua-public-site.yml'),'utf8');const code=text.match(/node - <<'NODE'\n([\s\S]*?)\n          NODE/)[1].split('\n').map(x=>x.slice(10)).join('\n');
  assert.throws(()=>execFileSync(process.execPath,['-e',code],{env:{PATH:process.env.PATH},stdio:'pipe'}),error=>/UNDERSTAND_HUB_CURRENT/.test(error.stderr.toString())&&/UNDERSTAND_VIEWER_READBACK_TOKENS/.test(error.stderr.toString()));
  assert.ok(text.includes('needs: [binding, produce]'));assert.ok(text.includes('runtime-test.mjs'));assert.ok(text.includes('consumer.py'));assert.ok(text.includes('--readback'));assert.ok(!text.includes('UA_GRAPH_TOKEN'));
+});
+
+test('uncommitted client, CSS and renderer drift reject publication before output creation', t => {
+ const temp=fs.mkdtempSync(path.join(os.tmpdir(),'hub-immutable-inputs-'));t.after(()=>fs.rmSync(temp,{recursive:true,force:true}));
+ const selected=path.join(temp,'docs');execFileSync('git',['clone','--quiet','--shared',root,selected],{stdio:'pipe'});
+ const revision=execFileSync('git',['rev-parse','HEAD'],{cwd:selected,encoding:'utf8'}).trim();
+ for(const relative of ['tools/understand-anything/site/hub/assets/glossary.js','tools/understand-anything/site/hub/assets/hub.css','tools/understand-anything/site/hub/render-glossary.mjs']) {
+  const file=path.join(selected,relative),before=fs.readFileSync(file),out=path.join(temp,path.basename(relative)+'-output');
+  fs.appendFileSync(file,'\n/* UNCOMMITTED_PUBLICATION_INPUT */\n');
+  assert.throws(()=>buildHub({root:selected,out,generation:path.join(temp,'not-read'),origin:'http://localhost:3000',revision}),error=>error.message.includes('drift')&&error.message.includes(relative));
+  assert.ok(!fs.existsSync(out),'Rejected immutable input must not leave an artifact');
+  fs.writeFileSync(file,before);
+ }
 });

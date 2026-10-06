@@ -23,6 +23,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 
@@ -72,6 +73,15 @@ def reachable(owner: str, name: str, token: str | None) -> bool:
     return probe.returncode == 0
 
 
+def select_preview_entries(entries, documentation_revision):
+    """A preview uses the checked-out immutable Docs commit, preserving other source policy."""
+    if not isinstance(documentation_revision, str) or not re.fullmatch(r"[a-f0-9]{40}", documentation_revision):
+        raise ValueError("Exact documentation revision required for source previews")
+    if sum(entry["name"] == "ORISO-Docs" for entry in entries) != 1:
+        raise ValueError("Exactly one Docs source required for source previews")
+    return [{**entry, "branch": documentation_revision, "sourceSHA": documentation_revision} if entry["name"] == "ORISO-Docs" else dict(entry) for entry in entries]
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--tooling", required=True)
@@ -100,6 +110,8 @@ def main() -> int:
         enrichments={e['name']:e['enrichment'] for e in entries}
         entries=[{'name':s['repository'],'branch':s['ref'],'sourceSHA':s['sourceSHA'],'enrichment':enrichments[s['repository']]} for s in release_evidence['lock']['sources']]
         token=None # The release path is public-only; no private graph credential used.
+    else:
+        entries=select_preview_entries(entries,args.documentation_revision)
     for entry in entries:
         if entry["name"] in PRIVATE:
             # Check even with a token: a token that lacks read access would
@@ -117,11 +129,11 @@ def main() -> int:
     os.makedirs(args.base, exist_ok=True)
     for entry in included:
         target = os.path.join(args.base, entry["name"])
-        if release_evidence:
+        if release_evidence or entry.get('sourceSHA'):
             os.makedirs(target,exist_ok=False)
             for command in [['init','--quiet',target],['-C',target,'remote','add','origin',f"https://github.com/{args.owner}/{entry['name']}"]]:
                 result=git(command,None,capture_output=True,text=True,timeout=90)
-                if result.returncode:raise ValueError('Exact release source preparation failed: '+entry['name'])
+                if result.returncode:raise ValueError('Exact source preparation failed: '+entry['name'])
             from bundle.pipeline import fetch_source
             sha=fetch_source(target,entry['branch'],expected_sha=entry['sourceSHA'])
             result=git(['-C',target,'checkout','--quiet','--detach',sha],None,capture_output=True,text=True,timeout=90)

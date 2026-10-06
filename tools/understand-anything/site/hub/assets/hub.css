@@ -246,7 +246,7 @@ html[data-lang="en"] [lang="de"]{display:none !important}
 .langswitch button[aria-pressed="true"]{background:var(--brand);color:var(--on-brand)}
 .langswitch button:hover:not([aria-pressed="true"]){color:var(--ink)}
 
-/* Fachliches Glossar: dieselben Karten, Farben und Sprachzustände wie im Hub. */
+/* Domain glossary: use the same cards, colors and language states as the hub. */
 .glossary-page [hidden]{display:none !important}
 .skip-link{position:absolute;left:var(--pad);top:-100px;padding:8px 12px;background:var(--card);
   border:2px solid var(--brand);z-index:20}

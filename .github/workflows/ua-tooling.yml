@@ -25,6 +25,8 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
+      - name: Trust the checked-out workspace in the ephemeral container
+        run: git config --global --add safe.directory "${GITHUB_WORKSPACE:?missing GITHUB_WORKSPACE}"
       - name: Verify supported repositories against canonical public visibility
         run: python3 .github/scripts/ua_public_policy_test.py -v
       - name: Install the pinned producer and consumer in a clean profile

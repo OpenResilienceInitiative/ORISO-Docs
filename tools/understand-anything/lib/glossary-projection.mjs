@@ -1,4 +1,5 @@
-import {validateGlossary} from '../glossary/validate.mjs';
+import {reasonOutcome} from '../glossary/reasons.mjs';
+import {validateGlossary,graphMappingType} from '../glossary/validate.mjs';
 import {assessSourceBinding} from '../glossary/source-bindings.mjs';
 
 /** Editorial vocabulary changes supported consumer names/tags, never technical IDs or behavioral claims. */
@@ -10,22 +11,22 @@ export function projectGlossary(data, input, selected) {
   for(const concept of data.concepts) for(const mapping of concept.graphMappings.filter(m=>m.repository===repository)) {
     const matches=graph.nodes.filter(n=>n.id===mapping.nodeId);
     const outcome={conceptId:concept.id,...mapping,selectedRevision:revision,reviewedRevision:data.audit.sourceVector[repository]??null};
-    if(matches.length!==1 || matches[0].type!==(mapping.mode==='domain-concept'?'concept':'file')) {
-      outcomes.push({...outcome,state:'unavailable',reason:'Mapped node is missing, ambiguous, or has the wrong type.'});continue;
+    if(matches.length!==1 || matches[0].type!==graphMappingType(mapping)) {
+      outcomes.push({...outcome,state:'unavailable',...reasonOutcome('graph-target-unavailable')});continue;
     }
-    let state=outcome.reviewedRevision===revision?'verified':'historical',reason='Vocabulary projection is editorial; original behavioral evidence is unchanged.';
+    let state=outcome.reviewedRevision===revision?'verified':'historical',reasonKey='editorial-projection';
     if(mapping.mode==='source-file') {
-      const sourcePath=mapping.nodeId.slice('file:'.length);
+      const sourcePath=mapping.nodeId.replace(/^(file|document):/,'');
       const source=[...concept.codeMappings,...concept.sources].find(s=>s.repository===repository&&s.path===sourcePath);
       if(source) {
         const binding=assessSourceBinding(source,selected);
         outcome.reviewedRevision=source.sourceRevision;
         state=binding.state;
         if(source.binding==='historical-review' && source.sourceRevision!==revision && state==='verified')state='historical';
-        reason=binding.reason;
-      } else {state='unavailable';reason='No reviewed source-file binding is available.';}
+        reasonKey=binding.reasonKey;
+      } else {state='unavailable';reasonKey='source-binding-absent';}
     }
-    outcomes.push({...outcome,state,reason});
+    outcomes.push({...outcome,state,...reasonOutcome(reasonKey)});
     const group=groups.get(mapping.nodeId)??{node:matches[0],concepts:[],labels:[]};
     group.concepts.push(concept);
     if(mapping.mode==='domain-concept') {

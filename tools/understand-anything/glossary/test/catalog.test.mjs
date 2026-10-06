@@ -62,3 +62,22 @@ test('missing bilingual concept labels and conflicting shared-node labels block 
   const wrongTarget=catalog();wrongTarget.concepts.find(c=>c.id==='provider').graphMappings.find(m=>m.mode==='domain-concept').nodeId='file:TenantEntity.java';
   assert.throws(()=>validateGlossary(wrongTarget), /provider.*domain-concept.*concept-qualified/);
 });
+
+test('preferred terms and authored domain prose reject Agency and Tenant with narrowly recorded explanatory exceptions', () => {
+  const renamed = catalog(); renamed.concepts.find(c => c.id === 'counselling-centre').en.term = 'Agency';
+  assert.throws(() => validateGlossary(renamed), /counselling-centre.*en.term.*Agency/);
+  for (const field of ['context', 'responsibility', 'invariant', 'editorialNote']) {
+    const prose = catalog(); prose.concepts.find(c => c.id === 'provider')[field].en = 'Tenant owns the legal context';
+    assert.throws(() => validateGlossary(prose), new RegExp(`provider.*${field}.en.*Tenant`));
+  }
+  const valid = catalog();
+  assert.ok(validateGlossary(valid));
+  const excepted = valid.copyPolicy.allowlist[0];
+  assert.ok(excepted, 'technical tenancy explanation needs an explicit exception');
+  const changed = catalog();
+  const concept = changed.concepts.find(c => c.id === excepted.conceptId);
+  const parts = excepted.field.split('.');
+  let target = concept; for (const part of parts.slice(0, -1)) target = target[part];
+  target[parts.at(-1)] += ' New human wording uses Tenant and Agency.';
+  assert.throws(() => validateGlossary(changed), /deprecated human wording/);
+});

@@ -1,3 +1,4 @@
+import {reasonOutcome} from './glossary/reasons.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
@@ -24,7 +25,7 @@ export function projectSelectedGraphs({data,bytes,documentationRevision,selected
     const result=projectGlossary(data,input.graph,source);
     writes.push({repository:source.repository,graph:result.graph});graphMappings.push(...result.outcomes);
   }
-  for(const c of data.concepts)for(const m of c.graphMappings)if(!graphMappings.some(o=>o.conceptId===c.id&&o.repository===m.repository&&o.nodeId===m.nodeId))graphMappings.push({conceptId:c.id,...m,selectedRevision:null,reviewedRevision:data.audit.sourceVector[m.repository]??null,state:'unavailable',reason:'Repository graph is absent from the selected generation.'});
+  for(const c of data.concepts)for(const m of c.graphMappings)if(!graphMappings.some(o=>o.conceptId===c.id&&o.repository===m.repository&&o.nodeId===m.nodeId))graphMappings.push({conceptId:c.id,...m,selectedRevision:null,reviewedRevision:data.audit.sourceVector[m.repository]??null,state:'unavailable',...reasonOutcome('repository-graph-absent')});
   const report={schemaVersion:1,catalogHash:digest(bytes),documentationRevision:documentationRevision,sourceVector:Object.fromEntries(selected.map(s=>[s.repository,s.revision])),sourceBindings,graphMappings,evidence:'editorial-vocabulary-not-runtime-verification'};
   return {report,graphs:writes};
 }

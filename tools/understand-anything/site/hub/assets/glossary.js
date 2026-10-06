@@ -68,7 +68,13 @@ export function initGlossary(document, window) {
   window.addEventListener('hashchange', () => select(window.location.hash));
   document.addEventListener('click', event => {
     const link = event.target.closest?.('a[href^="#"]');
-    if (!link || !catalog.concepts.some(concept => link.getAttribute('href') === `#${concept.id}`) || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button > 0) return;
+    if (!link || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button > 0) return;
+    if (link.getAttribute('href') === '#glossary-detail') {
+      event.preventDefault();
+      document.getElementById(selected).focus({preventScroll: false});
+      return;
+    }
+    if (!catalog.concepts.some(concept => link.getAttribute('href') === `#${concept.id}`)) return;
     event.preventDefault();
     const hash = link.getAttribute('href');
     window.history.pushState(null, '', hash);
