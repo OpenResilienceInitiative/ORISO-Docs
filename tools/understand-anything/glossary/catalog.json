@@ -96,7 +96,7 @@
         }
       ],
       "editorialNote": {
-        "de": "ADR-023; separate from a provider and its staff accounts.",
+        "de": "ADR-023; der Plattformbetreiber ist vom Träger und von dessen persönlichen Konten getrennt.",
         "en": "ADR-023; separate from a provider and its staff accounts."
       }
     },
@@ -273,7 +273,7 @@
         }
       ],
       "editorialNote": {
-        "de": "Preferred wording from this request; Organisation remains alias; tenant is technical mapping; Mandant retired for human copy.",
+        "de": "Bevorzugte Bezeichnung aus diesem Auftrag. Organisation bleibt ein Suchalias; tenant bleibt eine technische Zuordnung. Mandant wird für neue Texte ersetzt.",
         "en": "Preferred wording from this request; Organisation remains alias; tenant is technical mapping; Mandant retired for human copy."
       }
     },
@@ -449,7 +449,7 @@
         }
       ],
       "editorialNote": {
-        "de": "agency / AgencyService compatibility names; accepted legal-text ADR vocabulary.",
+        "de": "agency und AgencyService bleiben Kompatibilitätsnamen. Die akzeptierten Rechtstextentscheidungen verwenden Beratungsstelle.",
         "en": "agency / AgencyService compatibility names; accepted legal-text ADR vocabulary."
       }
     },
@@ -561,7 +561,7 @@
         }
       ],
       "editorialNote": {
-        "de": "Unique agency × topic; ADR-003/014. No inference that a department is itself a legal person.",
+        "de": "Eindeutiges Paar aus Beratungsstelle und Thema (ADR-003/014). Ein Fachbereich ist deshalb keine eigene juristische Person.",
         "en": "Unique agency × topic; ADR-003/014. No inference that a department is itself a legal person."
       }
     },
@@ -665,7 +665,7 @@
         }
       ],
       "editorialNote": {
-        "de": "Topic vocabulary from ADR-001/009; scope/defaults need current lifecycle check.",
+        "de": "Thema gemäß ADR-001/009. Geltungsbereich und Standardwerte müssen gegen den aktuellen Entscheidungsstand geprüft werden.",
         "en": "Topic vocabulary from ADR-001/009; scope/defaults need current lifecycle check."
       }
     },
@@ -754,7 +754,7 @@
         }
       ],
       "editorialNote": {
-        "de": "TopicGroup legacy mapping.",
+        "de": "TopicGroup ist die alte technische Zuordnung.",
         "en": "TopicGroup legacy mapping."
       }
     },
@@ -821,7 +821,7 @@
         }
       ],
       "editorialNote": {
-        "de": "Existing agency postcode storage and proposed department scope must be distinguished.",
+        "de": "Die vorhandene Postleitzahlspeicherung an der Beratungsstelle und der vorgeschlagene Geltungsbereich am Fachbereich bleiben getrennt.",
         "en": "Existing agency postcode storage and proposed department scope must be distinguished."
       }
     },
@@ -922,7 +922,7 @@
         }
       ],
       "editorialNote": {
-        "de": "user/client/asker legacy contexts; avoid asserting one global role rename.",
+        "de": "user, client und asker sind alte Bezeichnungen in unterschiedlichen Kontexten; daraus folgt keine pauschale Umbenennung einer Rolle.",
         "en": "user/client/asker legacy contexts; avoid asserting one global role rename."
       }
     },
@@ -1050,7 +1050,7 @@
         }
       ],
       "editorialNote": {
-        "de": "consultant/counselor legacy mappings; British English spelling.",
+        "de": "consultant und counselor sind alte technische Bezeichnungen. Für neue englische Texte gilt die britische Schreibweise Counsellor.",
         "en": "consultant/counselor legacy mappings; British English spelling."
       }
     },
@@ -1117,7 +1117,7 @@
         }
       ],
       "editorialNote": {
-        "de": "ADR-008; exact visibility is sourced separately.",
+        "de": "ADR-008 bleibt Proposed. Die genaue Sichtbarkeit benötigt einen eigenen belegten Entscheidungsstand.",
         "en": "ADR-008; exact visibility is sourced separately."
       }
     },
@@ -1184,7 +1184,7 @@
         }
       ],
       "editorialNote": {
-        "de": "Never infer unrestricted access from the name.",
+        "de": "Die Bezeichnung allein begründet keinen uneingeschränkten Zugriff.",
         "en": "Never infer unrestricted access from the name."
       }
     },
@@ -1266,7 +1266,7 @@
         }
       ],
       "editorialNote": {
-        "de": "Organisation and account role remain separate.",
+        "de": "Die Organisation und die persönliche Kontorolle bleiben getrennt.",
         "en": "Organisation and account role remain separate."
       }
     },
@@ -1333,7 +1333,7 @@
         }
       ],
       "editorialNote": {
-        "de": "Do not infer authority from translated labels alone.",
+        "de": "Aus einer übersetzten Bezeichnung allein folgen keine Verwaltungsrechte.",
         "en": "Do not infer authority from translated labels alone."
       }
     },
@@ -1407,7 +1407,7 @@
         }
       ],
       "editorialNote": {
-        "de": "enquiry/request and legacy Session lifecycle; distinguish from case.",
+        "de": "enquiry und request stehen neben dem alten Session-Lebenszyklus. Anfrage und Beratungsfall bleiben getrennt.",
         "en": "enquiry/request and legacy Session lifecycle; distinguish from case."
       }
     },
@@ -1500,7 +1500,7 @@
         }
       ],
       "editorialNote": {
-        "de": "case versus session/message; current lifecycle states remain code mappings.",
+        "de": "Beratungsfall, Session und Nachricht sind verschiedene Begriffe; aktuelle Zustände bleiben technische Zuordnungen.",
         "en": "case versus session/message; current lifecycle states remain code mappings."
       }
     },
@@ -1570,7 +1570,7 @@
         }
       ],
       "editorialNote": {
-        "de": "Not registration, a duplicate account or a second opinion; ADR-022 decision 6.",
+        "de": "Keine Registrierung, kein doppeltes Konto und keine Zweitmeinung. ADR-022, Entscheidung 6 erlaubt mehrere Beratungsstellen auf einem Konto.",
         "en": "Not registration, a duplicate account or a second opinion; ADR-022 decision 6."
       }
     },
@@ -1652,7 +1652,7 @@
         }
       ],
       "editorialNote": {
-        "de": "Editorial English proposal for legacy Agency Counselling; exact enum unchanged.",
+        "de": "Redaktioneller englischer Vorschlag für das alte Agency Counselling. Der technische Enum-Wert bleibt unverändert.",
         "en": "Editorial English proposal for legacy Agency Counselling; exact enum unchanged."
       }
     },
@@ -1734,7 +1734,7 @@
         }
       ],
       "editorialNote": {
-        "de": "ADR-001/006/007; no-registration is not no-account.",
+        "de": "ADR-001/006/007. Ohne Registrierung bedeutet nicht ohne technische Identität.",
         "en": "ADR-001/006/007; no-registration is not no-account."
       }
     },
@@ -1801,7 +1801,7 @@
         }
       ],
       "editorialNote": {
-        "de": "Separate from team discussion attached to an enquiry.",
+        "de": "Getrennt von der Team-Besprechung zu einer offenen Anfrage.",
         "en": "Separate from team discussion attached to an enquiry."
       }
     },
@@ -1879,7 +1879,7 @@
           "classification": "migration-candidate",
           "binding": "historical-review",
           "reviewedAt": "2026-10-06",
-          "line": 42
+          "line": 51
         }
       ],
       "graphMappings": [
@@ -1900,7 +1900,7 @@
         }
       ],
       "editorialNote": {
-        "de": "ADR-012; Chat/GroupChatParticipant mappings.",
+        "de": "ADR-012; Chat und GroupChatParticipant sind technische Zuordnungen.",
         "en": "ADR-012; Chat/GroupChatParticipant mappings."
       }
     },
@@ -1972,7 +1972,7 @@
         }
       ],
       "editorialNote": {
-        "de": "Four-value ConversationType axis; ADR-006.",
+        "de": "Die vier Werte von ConversationType bilden die Gesprächsart beziehungsweise Modalität ab (ADR-006).",
         "en": "Four-value ConversationType axis; ADR-006."
       }
     },
@@ -2041,7 +2041,7 @@
         }
       ],
       "editorialNote": {
-        "de": "ADR-016; not continued post-acceptance case coordination.",
+        "de": "ADR-016; die Team-Besprechung ist keine fortgesetzte Fallkoordination nach der Annahme.",
         "en": "ADR-016; not continued post-acceptance case coordination."
       }
     },
@@ -2108,7 +2108,7 @@
         }
       ],
       "editorialNote": {
-        "de": "ADR-008; side-channel details require precise source.",
+        "de": "ADR-008 bleibt Proposed. Einzelheiten zu Nebenräumen benötigen genaue Quellen.",
         "en": "ADR-008; side-channel details require precise source."
       }
     },
@@ -2178,7 +2178,7 @@
         }
       ],
       "editorialNote": {
-        "de": "Push/Pull and Read Along/Take Over remain separately defined; reassign legacy alias.",
+        "de": "Anbieten und Holen sowie Einsichtnahme und Übernahme bleiben eigene Varianten. reassign bleibt ein alter Suchalias.",
         "en": "Push/Pull and Read Along/Take Over remain separately defined; reassign legacy alias."
       }
     },
@@ -2248,7 +2248,7 @@
         }
       ],
       "editorialNote": {
-        "de": "ADR-018; event versus visual bubbles.",
+        "de": "ADR-018; gespeichertes Ereignis und sichtbare Sprechblasen bleiben getrennt.",
         "en": "ADR-018; event versus visual bubbles."
       }
     },
@@ -2317,7 +2317,7 @@
         }
       ],
       "editorialNote": {
-        "de": "ADR-018; do not infer several persisted messages from several bubbles.",
+        "de": "ADR-018; mehrere sichtbare Bausteine bedeuten nicht mehrere gespeicherte Nachrichten.",
         "en": "ADR-018; do not infer several persisted messages from several bubbles."
       }
     },
@@ -2412,7 +2412,7 @@
         }
       ],
       "editorialNote": {
-        "de": "Accepted ADR-023; full contract, not synonym for AVV.",
+        "de": "Akzeptierte ADR-023: der gesamte Plattformvertrag, kein Synonym für die AVV.",
         "en": "Accepted ADR-023; full contract, not synonym for AVV."
       }
     },
@@ -2505,7 +2505,7 @@
         }
       ],
       "editorialNote": {
-        "de": "ADR-023; existing tenant_dpa implementation is mapped separately.",
+        "de": "ADR-023; die vorhandene tenant_dpa-Implementierung wird gesondert zugeordnet.",
         "en": "ADR-023; existing tenant_dpa implementation is mapped separately."
       }
     },
@@ -2572,7 +2572,7 @@
         }
       ],
       "editorialNote": {
-        "de": "Separate from help-seeker consent and signature record.",
+        "de": "Getrennt von der Einwilligung der ratsuchenden Person und vom Unterzeichnungsnachweis.",
         "en": "Separate from help-seeker consent and signature record."
       }
     },
@@ -2658,7 +2658,7 @@
         }
       ],
       "editorialNote": {
-        "de": "ADR-023; existing DPA signature fields versus intended agreement signature.",
+        "de": "ADR-023; vorhandene AVV-Unterschriftsfelder und beabsichtigter Plattformvertragsnachweis bleiben getrennt.",
         "en": "ADR-023; existing DPA signature fields versus intended agreement signature."
       }
     },
@@ -2729,7 +2729,7 @@
         }
       ],
       "editorialNote": {
-        "de": "ADR-023; linked references are not automatically co-signed annexes.",
+        "de": "ADR-023; verlinkte Verweise sind nicht automatisch mitunterzeichnete Anlagen.",
         "en": "ADR-023; linked references are not automatically co-signed annexes."
       }
     },
@@ -2800,7 +2800,7 @@
         }
       ],
       "editorialNote": {
-        "de": "ADR-023 Annex 2; glossary is not a legal approval.",
+        "de": "ADR-023, Anlage 2. Das Glossar ist keine rechtliche Freigabe.",
         "en": "ADR-023 Annex 2; glossary is not a legal approval."
       }
     },
@@ -2867,7 +2867,7 @@
         }
       ],
       "editorialNote": {
-        "de": "ADR-023 Annex 3; no invented current supplier list.",
+        "de": "ADR-023, Anlage 3. Hier wird keine aktuelle Lieferantenliste erfunden.",
         "en": "ADR-023 Annex 3; no invented current supplier list."
       }
     },
@@ -2937,7 +2937,7 @@
         }
       ],
       "editorialNote": {
-        "de": "ADR-022; not the provider's platform contract.",
+        "de": "ADR-022; nicht der Plattformvertrag des Trägers.",
         "en": "ADR-022; not the provider's platform contract."
       }
     },
@@ -3031,7 +3031,7 @@
         }
       ],
       "editorialNote": {
-        "de": "ADR-021/022; Data Privacy Policy/DPP legacy wording can remain alias.",
+        "de": "ADR-021/022; Data Privacy Policy und DPP können als alte Suchaliase erhalten bleiben.",
         "en": "ADR-021/022; Data Privacy Policy/DPP legacy wording can remain alias."
       }
     },
@@ -3101,7 +3101,7 @@
         }
       ],
       "editorialNote": {
-        "de": "imprint/Impressum legacy mappings; do not derive responsibility from table name.",
+        "de": "Imprint ist eine alte technische Zuordnung. Ein Tabellenname allein bestimmt keine rechtliche Verantwortung.",
         "en": "imprint/Impressum legacy mappings; do not derive responsibility from table name."
       }
     },
@@ -3156,7 +3156,7 @@
       "codeMappings": [],
       "graphMappings": [],
       "editorialNote": {
-        "de": "Björn input; separate from a signed agreement or privacy notice.",
+        "de": "Begriff aus Björns Glossar; getrennt von unterzeichnetem Vertrag und Datenschutzerklärung.",
         "en": "Björn input; separate from a signed agreement or privacy notice."
       }
     },
@@ -3240,7 +3240,7 @@
         }
       ],
       "editorialNote": {
-        "de": "ADR-021/023; editing a template does not publish governing text.",
+        "de": "ADR-021/023; das Bearbeiten einer Vorlage veröffentlicht noch keinen geltenden Rechtstext.",
         "en": "ADR-021/023; editing a template does not publish governing text."
       }
     },
@@ -3322,7 +3322,7 @@
         }
       ],
       "editorialNote": {
-        "de": "ADR-021/023; lifecycle and delivered state shown separately.",
+        "de": "ADR-021/023; Lebenszyklus und tatsächlich ausgelieferter Stand bleiben getrennt.",
         "en": "ADR-021/023; lifecycle and delivered state shown separately."
       }
     },
@@ -3375,7 +3375,7 @@
       "codeMappings": [],
       "graphMappings": [],
       "editorialNote": {
-        "de": "Björn partner spelling remains alias.",
+        "de": "Björns Schreibweise bleibt ein Suchalias. Neue englische Definitionen verwenden durchgehend britische Schreibweise.",
         "en": "Björn partner spelling remains alias."
       }
     },
@@ -3461,7 +3461,7 @@
         }
       ],
       "editorialNote": {
-        "de": "A technical identity may still exist; link exact Live Chat flow.",
+        "de": "Eine technische Identität kann bestehen. Der genaue Live-Chat-Ablauf wird gesondert belegt.",
         "en": "A technical identity may still exist; link exact Live Chat flow."
       }
     },
@@ -3516,7 +3516,7 @@
       "codeMappings": [],
       "graphMappings": [],
       "editorialNote": {
-        "de": "DRAFT: supplied practice-area context.",
+        "de": "ENTWURF: Begriff aus dem bereitgestellten Übungsbereich-Kontext; keine bestätigte Funktion.",
         "en": "DRAFT: supplied practice-area context."
       }
     },
@@ -3570,7 +3570,7 @@
       "codeMappings": [],
       "graphMappings": [],
       "editorialNote": {
-        "de": "DRAFT; separate from an automated test case.",
+        "de": "ENTWURF: getrennt von einem automatisierten Testfall.",
         "en": "DRAFT; separate from an automated test case."
       }
     },
@@ -3621,7 +3621,7 @@
       "codeMappings": [],
       "graphMappings": [],
       "editorialNote": {
-        "de": "DRAFT; not real test accounts or training logins.",
+        "de": "ENTWURF: keine realen Testkonten oder Schulungsanmeldungen.",
         "en": "DRAFT; not real test accounts or training logins."
       }
     },
@@ -3672,7 +3672,7 @@
       "codeMappings": [],
       "graphMappings": [],
       "editorialNote": {
-        "de": "DRAFT; no AI-generated counselling implied.",
+        "de": "ENTWURF: daraus folgt keine KI-generierte Beratung.",
         "en": "DRAFT; no AI-generated counselling implied."
       }
     },
@@ -3759,7 +3759,7 @@
         }
       ],
       "editorialNote": {
-        "de": "Qualify context: DPA flow, platform-contract flow, practice flow.",
+        "de": "Der Kontext muss genannt werden: alter AVV-/DPA-Flow, Plattformvertrags-Flow oder Übungs-Flow. Der alte DPA-Name beweist kein reines Anlagenmodell.",
         "en": "Qualify context: DPA flow, platform-contract flow, practice flow."
       }
     },
@@ -3810,7 +3810,7 @@
       "codeMappings": [],
       "graphMappings": [],
       "editorialNote": {
-        "de": "DRAFT; not a toast notification.",
+        "de": "ENTWURF: keine kurzzeitige Toast-Benachrichtigung.",
         "en": "DRAFT; not a toast notification."
       }
     },
@@ -6260,7 +6260,7 @@
         "classification": "migration-candidate",
         "binding": "historical-review",
         "reviewedAt": "2026-10-06",
-        "line": 42,
+        "line": 51,
         "dispositionReason": "This specific identifier references session.id; migrate only through separate compatibility review."
       }
     ],
