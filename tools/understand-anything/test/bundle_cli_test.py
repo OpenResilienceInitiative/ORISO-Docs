@@ -288,7 +288,7 @@ if sha is None:
         git(docs, "add", ".")
         git(docs, "commit", "-m", "Pinned glossary sources")
         git(docs, "push", "origin", "dev")
-        for relative in ["ua-glossary-project.mjs", "lib/glossary-projection.mjs", "glossary/validate.mjs", "glossary/source-bindings.mjs"]:
+        for relative in ["ua-glossary-project.mjs", "lib/glossary-projection.mjs", "glossary/validate.mjs", "glossary/source-bindings.mjs", "glossary/reasons.mjs"]:
             target = self.worker / relative
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(TOOLS / relative, target)
