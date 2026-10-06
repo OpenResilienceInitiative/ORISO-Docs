@@ -36,7 +36,7 @@ Admin is at http://localhost:9000, gateway at http://localhost:8088 and local au
 
 Service callback origins use the real local HTTPS app edge at https://localhost:9443. Its owned certificate stays in the runtime directory; readiness trusts that certificate explicitly without changing your system or browser certificate store. With no Frontend selected, app routes return 503. Admin remains available over local HTTP. The optional HTTPS Frontend proxy does not establish a tested browser/auth/DPA journey; never bypass browser certificate warnings to claim one.
 
-<!-- oriso-command: {"id": "readme-en-status", "environment": "local", "verification": "selected application health and infrastructure status are shown", "risk": "read-only"} -->
+<!-- oriso-command: {"id": "readme-en-status", "environment": "local", "verification": "selected applications, owned gateway/auth routing and certificate-verified HTTPS edge report ready; infrastructure status is shown", "risk": "read-only"} -->
 ```bash
 "$ORISO_LOCAL_RUNNER" status
 ```

@@ -36,7 +36,7 @@ Admin läuft auf http://localhost:9000, der Gateway auf http://localhost:8088 un
 
 Die Callback-Ursprünge der Dienste verwenden den echten lokalen HTTPS-App-Einstieg auf https://localhost:9443. Sein Zertifikat bleibt im eigenen Laufzeitordner. Die Bereitschaftsprüfung vertraut diesem Zertifikat ausdrücklich, ohne den System- oder Browser-Zertifikatsspeicher zu ändern. Ohne ausgewähltes Frontend liefern App-Routen 503. Admin bleibt über lokales HTTP erreichbar. Der optionale HTTPS-Frontend-Proxy belegt keinen geprüften Browser-, Authentifizierungs- oder DPA-Ablauf. Browser-Zertifikatswarnungen dürfen für einen solchen Nachweis nicht umgangen werden.
 
-<!-- oriso-command: {"id": "readme-de-status", "environment": "local", "verification": "Health der ausgewählten Anwendungen und Infrastrukturstatus werden angezeigt", "risk": "read-only"} -->
+<!-- oriso-command: {"id": "readme-de-status", "environment": "local", "verification": "Ausgewählte Anwendungen, eigener Gateway/Auth-Zugriff und zertifikatgeprüfter HTTPS-Zugang melden bereit; Infrastrukturstatus wird angezeigt", "risk": "read-only"} -->
 ```bash
 "$ORISO_LOCAL_RUNNER" status
 ```

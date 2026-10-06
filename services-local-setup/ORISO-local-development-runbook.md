@@ -42,7 +42,7 @@ Database initialization creates empty local service databases and a fixture user
 
 ## 3. Verify and retain evidence
 
-<!-- oriso-command: {"id": "runbook-status", "environment": "local", "verification": "all selected application health reports ready; infrastructure reports healthy", "risk": "read-only"} -->
+<!-- oriso-command: {"id": "runbook-status", "environment": "local", "verification": "selected applications, owned gateway/auth routing and certificate-verified HTTPS edge report ready; selected Frontend is reachable over HTTPS; infrastructure status is shown", "risk": "read-only"} -->
 ```bash
 "$ORISO_LOCAL_RUNNER" status
 ```

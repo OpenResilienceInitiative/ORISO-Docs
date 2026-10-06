@@ -809,6 +809,30 @@ def stop(args):
     return 0
 
 
+def routing_ready(args, name):
+    """Require the owned routing process and its HTTP/TLS forwarding boundary."""
+    try:
+        verify_owner(args)
+        record = json.loads((args.runtime / 'pids' / (name + '.json')).read_text())
+        pid = int(record['pid'])
+        cmd = output(['ps', '-p', str(pid), '-o', 'command='])
+        if (record.get('owner') != args.owner or not record.get('token') or
+                record['token'] not in cmd or str(HERE / 'local_development.py') not in cmd or
+                os.getpgid(pid) != pid):
+            return False
+    except (ContractError, OSError, ValueError, KeyError, TypeError):
+        return False
+    if name == 'gateway':
+        origin = f'http://127.0.0.1:{args.ports[name]}'
+        return (healthy(origin + '/__oriso_local_health', 'UP') and
+                healthy(origin + '/auth/realms/online-beratung/.well-known/openid-configuration',
+                        args.auth + '/realms/online-beratung', auth=True))
+    origin = app_origin(args)
+    cert = args.runtime / 'app-edge-cert.pem'
+    return (healthy(origin + '/__oriso_local_health', 'UP', cafile=cert) and
+            ('frontend' not in args.selected or healthy(origin + '/', cafile=cert)))
+
+
 def main(argv):
     if argv and argv[0] == '_run':
         child = subprocess.Popen(argv[2:])
@@ -851,6 +875,10 @@ def main(argv):
                 spec = SERVICES[service]
                 ready = healthy(f'http://127.0.0.1:{args.ports[service]}' + spec.get('health', '/actuator/health'), 'UP' if 'db' in spec else None)
                 print(service + ': ' + ('ready' if ready else 'unavailable'))
+                all_ready = all_ready and ready
+            for name in ('gateway', 'app_tls'):
+                ready = routing_ready(args, name)
+                print(name + ': ' + ('ready' if ready else 'unavailable'))
                 all_ready = all_ready and ready
             return 0 if all_ready else 1
         if args.command == 'logs':
