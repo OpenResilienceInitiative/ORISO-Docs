@@ -1,7 +1,7 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';import os from 'node:os';import crypto from 'node:crypto';import {execFileSync} from 'node:child_process';import {fileURLToPath} from 'node:url';
 const tooling=fileURLToPath(new URL('../',import.meta.url));
-test('pinned upstream applies schema, source-preview and call-relations and imports real safe resolver',()=>{
- const lock=JSON.parse(fs.readFileSync(path.join(tooling,'toolchain.lock.json')));assert.deepEqual(lock.patches.map(p=>p.path),['patches/oriso-schema-viewer-v1.patch','patches/oriso-public-source-preview-v1.patch','patches/oriso-call-relations-v1.patch']);
+test('pinned upstream applies schema, source-preview, call-relations and platform tour and imports real safe resolver',()=>{
+ const lock=JSON.parse(fs.readFileSync(path.join(tooling,'toolchain.lock.json')));assert.deepEqual(lock.patches.map(p=>p.path),['patches/oriso-schema-viewer-v1.patch','patches/oriso-public-source-preview-v1.patch','patches/oriso-call-relations-v1.patch','patches/oriso-platform-tour-v1.patch']);
  const temp=fs.mkdtempSync(path.join(os.tmpdir(),'pinned-preview-'));
  try{
  execFileSync('git',['init','-q',temp]);execFileSync('git',['-C',temp,'fetch','--quiet','--depth=1',lock.upstream.url,lock.upstream.commit],{stdio:'pipe'});execFileSync('git',['-C',temp,'checkout','--quiet','--detach','FETCH_HEAD']);

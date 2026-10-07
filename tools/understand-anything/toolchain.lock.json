@@ -17,6 +17,10 @@
     {
       "path": "patches/oriso-call-relations-v1.patch",
       "sha256": "28ce177f2758bdc5775ef04e3f054bb7244aab376b30968806bf06755c262c38"
+    },
+    {
+      "path": "patches/oriso-platform-tour-v1.patch",
+      "sha256": "3001af9e06532d38784e4b98882d212bb043228377522cad99aa9e340c6a5848"
     }
   ],
   "nodeImage": "node@sha256:8a34c4ab3ea2c5cd194f07e317b2a8f09461d3c8b05c4e34c8ccd56d56024c4d",
