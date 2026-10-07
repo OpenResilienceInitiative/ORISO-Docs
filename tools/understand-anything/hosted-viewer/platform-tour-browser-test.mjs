@@ -7,11 +7,13 @@ import assert from 'node:assert/strict';
 import { decoratePlatform } from '../platform/lib/platform-navigation.mjs';
 
 const option = key => { const i = process.argv.indexOf(key); if (i < 0 || !process.argv[i + 1]) throw Error(`${key} required`); return path.resolve(process.argv[i + 1]); };
-const upstream = option('--upstream');
+// Vite resolves imported files to physical paths. A current→release symlink as
+// its root makes real files fail the dev-server path boundary instead of load.
+const upstream = fs.realpathSync(option('--upstream'));
 const playwrightModule = option('--playwright');
 const output = option('--output');
 fs.mkdirSync(output, { recursive: true });
-const dashboard = path.join(upstream, 'understand-anything-plugin/packages/dashboard');
+const dashboard = fs.realpathSync(path.join(upstream, 'understand-anything-plugin/packages/dashboard'));
 const require = createRequire(path.join(dashboard, 'package.json'));
 const { createServer } = await import(pathToFileURL(require.resolve('vite')));
 const { chromium } = await import(pathToFileURL(playwrightModule));
