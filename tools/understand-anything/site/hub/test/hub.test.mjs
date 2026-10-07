@@ -47,3 +47,13 @@ test('repository cards show call coverage with unresolved calls in both language
  assert.equal(enText,'Calls: 20,648 confirmed · 6,023 possible · 147,611 unresolved');
  assert.deepEqual(appended[0].children.map(c=>c.attrs.lang),['de','en']);
 });
+test('reader sees exact repository revision and generation time while a failed later refresh stays separate',async()=>{
+ const script=readFileSync(new URL('../assets/status.js',import.meta.url),'utf8'),rows=[],attempt={appendChild(child){this.textContent += child.textContent;}};
+ const createElement=()=>({children:[],attrs:{},setAttribute(k,v){this.attrs[k]=v;},appendChild(v){this.children.push(v);}});
+ const source={name:'ORISO-Docs',repository:'ORISO-Docs',ref:'refs/tags/v2.0.7',sourceSHA:'a'.repeat(40),fetchedAt:'2026-10-01T08:00:00Z',nodes:10};
+ const status={generatedAt:'2026-10-01T09:00:00Z',generationId:'installed-one',branch:source.ref,releaseVersion:'v2.0.7',releasedAt:'2026-10-01T07:00:00Z',releaseSources:[source],sources:[source]};
+ vm.runInNewContext(script,{document:{createElement,querySelectorAll:()=>[],querySelector:s=>s==='[data-ua="source-list"]'?{appendChild:r=>rows.push(r)}:s==='[data-ua="attempt"]'?attempt:null},Intl,Date,Number,String,Boolean,Set,fetch:async url=>({ok:true,json:async()=>url==='/status.json'?status:{schemaVersion:'oriso.refresh-attempt/v1',state:'failed',attemptId:'123-1',attemptedAt:'2026-10-02T10:00:00Z',releaseVersion:'v2.0.8',documentationRevision:'b'.repeat(40),phase:'generation',errorCode:'GENERATION_FAILED',installed:{generationId:'installed-one',releaseVersion:'v2.0.7'}}})});
+ await new Promise(r=>setImmediate(r));await new Promise(r=>setImmediate(r));
+ assert.equal(rows.length,1);const row=rows[0];assert.equal(row.children[0].children[0].textContent,'ORISO-Docs');assert.equal(row.children[1].children[0].textContent,'a'.repeat(40));assert.equal(row.children[2].textContent,'refs/tags/v2.0.7');assert.equal(row.children[3].textContent,'2026-10-01T09:00:00Z');
+ assert.match(attempt.textContent,/v2.0.8/);assert.match(attempt.textContent,/GENERATION_FAILED/);assert.match(attempt.textContent,/v2.0.7/);
+});

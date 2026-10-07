@@ -11,6 +11,6 @@ test('pinned upstream applies schema, source-preview, call-relations and platfor
  const body=viewer.match(/function fileContentUrl[^\n]*\{\n([\s\S]*?)\n\}/)[1];const sourceUrl=new Function('filePath','token','nodeId','window',body);for(const pathname of ['/users/','/users','/users/index.html'])assert.ok(sourceUrl('example.txt','synthetic','public',{location:{pathname}}).startsWith('/users/file-content.json?'));
  const nodeInfo=fs.readFileSync(path.join(temp,'understand-anything-plugin/packages/dashboard/src/components/NodeInfo.tsx'),'utf8');assert.ok(nodeInfo.includes('<OrisoCallRelations'));assert.ok(fs.existsSync(path.join(temp,'understand-anything-plugin/packages/dashboard/src/components/orisoCallModel.ts')));
  const app=fs.readFileSync(path.join(temp,'understand-anything-plugin/packages/dashboard/src/App.tsx'),'utf8');assert.ok(app.includes('const path = `${base.endsWith')); 
- const installer=fs.readFileSync(path.join(tooling,'install.py'),'utf8');assert.ok(installer.includes('hosted-viewer/source-location.mjs'));assert.ok(installer.includes('hosted-viewer/source-location.d.mts'));assert.ok(installer.includes("['--filter', '@understand-anything/dashboard', 'build']"));
+ const installer=fs.readFileSync(path.join(tooling,'install.py'),'utf8');assert.ok(installer.includes('hosted-viewer/source-location.mjs'));assert.ok(installer.includes('hosted-viewer/source-location.d.mts'));assert.ok(installer.includes("['--filter', '@understand-anything/dashboard', 'build', '--base=./']"));
  }finally{fs.rmSync(temp,{recursive:true,force:true});}
 });
