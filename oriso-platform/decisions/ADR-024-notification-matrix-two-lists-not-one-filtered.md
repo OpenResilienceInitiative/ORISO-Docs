@@ -106,3 +106,30 @@ person can read. A counsellor works in it daily and needs the operational stream
   browser push. This ADR deliberately settles e-mail first rather than blocking on all three.
 - Two audiences means two review surfaces. A change that "simplifies" them back into one list is a
   regression, and reviewers should treat it as one.
+
+## Ordinary internal counsellor chat — implementation addendum, 2026-10-07
+
+Frank requested notification mail when one counsellor writes to another in an ordinary internal
+group, then authorized the proposed P1 implementation for v2.0.11. The independently reviewable
+delivery is [UserService #1375](https://github.com/OpenResilienceInitiative/ORISO-UserService/issues/1375).
+This adds an explicit producer contract; it does not reclassify ordinary groups as protected
+supervision feedback. The historical implementation measurements above retain their original date.
+
+| Occasion | Recipient | Independent mail preference | Rendering |
+|---|---|---|---|
+| Ordinary internal-group message | Other active, currently authorized counsellor participants in the same group and tenant | `internalChatNotificationEnabled` | Neutral counsellor message template; dedicated unsubscribe selector `interne-nachricht` |
+
+The preference follows the existing operational default: enabled unless the recipient switches it
+off. The recipient's general mail preference and the tenant's notification-mail switch still gate
+delivery. The sender, advice seekers, departed or unrelated group members and other tenants never
+receive this mail. Membership and event origin must be current when delivery is resolved, and
+replayed events must not duplicate the notification.
+
+The producer shares the existing `neue-nachricht-beratung` template because it contains only a neutral
+return-to-ORISO prompt. Sharing its rendering does not share the existing advice-seeker-message
+preference: the footer resolves to the new internal-chat switch. This is the recorded shared-template
+exception required by decision5. No decrypted message content is used.
+
+Browser choices remain independent. This mail addition does not imply a new browser-event producer,
+guaranteed background web push, or a change to retained in-app history. The notification-retention
+governance questions remain in their existing privacy workstream.
