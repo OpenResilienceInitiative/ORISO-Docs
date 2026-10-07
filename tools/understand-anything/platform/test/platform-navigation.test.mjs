@@ -1,5 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { decoratePlatform } from '../lib/platform-navigation.mjs';
 
 const sha = 'a'.repeat(40);
@@ -40,4 +41,13 @@ test('the reported 27 UserService semantic entries are individually dispositione
   sourceGraph.project.gitCommitHash = 'd'.repeat(40);
   decoratePlatform(graph, { repositoryGraphs: { 'ORISO-UserService': { graph: sourceGraph } } });
   assert.equal(graph.metadata.semanticDispositions.find(entry => entry.nodeId === 'concept:identity-authentication-2fa').status, 'stale');
+});
+
+
+test('every generated detail link follows the approved serving route catalogue', () => {
+  const routes = JSON.parse(readFileSync(new URL('../../hosted-viewer/viewer-routes.json', import.meta.url), 'utf8'));
+  const repositories = Object.keys(routes);
+  const graph = {project: {sourceCommits: Object.fromEntries(repositories.map(repository => [repository, sha]))}, nodes: repositories.map(repository => ({id: `service:${repository}`, type: 'service', name: repository})), edges: [], layers: [], tour: []};
+  decoratePlatform(graph);
+  assert.deepEqual(Object.fromEntries(graph.metadata.platformNavigation.repositories.map(item => [item.repository, item.detailHref])), routes);
 });

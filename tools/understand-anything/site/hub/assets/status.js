@@ -18,15 +18,15 @@
     if (badge) badge.className = 'badge ' + (ok ? 'ok' : 'warn');
   }
 
-  // Call coverage under each repository card: confirmed, possible (not type-checked) and
+  // Call coverage under each repository card: source-resolved, possible (not type-checked) and
   // unresolved calls, so an empty caller list is not read as "no callers" (ORISO-Docs#167).
   function calls(source, format, formatEn) {
     var c = source.calls;
     if (!c || !(c.confirmed + c.possible + (c.unresolved || 0))) return;
     var known = c.unresolved !== null && c.unresolved !== undefined;
     var text = {
-      de: 'Aufrufe: ' + format.format(c.confirmed) + ' bestätigt · ' + format.format(c.possible) + ' möglich · ' + (known ? format.format(c.unresolved) + ' nicht aufgelöst' : 'nicht aufgelöst: unbekannt'),
-      en: 'Calls: ' + formatEn.format(c.confirmed) + ' confirmed · ' + formatEn.format(c.possible) + ' possible · ' + (known ? formatEn.format(c.unresolved) + ' unresolved' : 'unresolved: unknown')
+      de: 'Aufrufe: ' + format.format(c.confirmed) + ' quellseitig aufgelöst · ' + format.format(c.possible) + ' möglich · ' + (known ? format.format(c.unresolved) + ' nicht aufgelöst' : 'nicht aufgelöst: unbekannt') + '. Enge statische Quellregeln; keine Bestätigung durch Compiler, Typprüfung oder Laufzeit.',
+      en: 'Calls: ' + formatEn.format(c.confirmed) + ' source-resolved · ' + formatEn.format(c.possible) + ' possible · ' + (known ? formatEn.format(c.unresolved) + ' unresolved' : 'unresolved: unknown') + '. Narrow static source rules; no compiler, type-checker or runtime verification.'
     };
     document.querySelectorAll('[data-ua-nodes="' + source.name + '"]').forEach(function (el) {
       var card = el.closest && el.closest('.card');
