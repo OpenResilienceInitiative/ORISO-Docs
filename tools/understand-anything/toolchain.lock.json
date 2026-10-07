@@ -16,7 +16,7 @@
     },
     {
       "path": "patches/oriso-call-relations-v1.patch",
-      "sha256": "90f6462c1766fa3ca0f31d85c100bea04c14f8f29315e08fdb892f8a4da24a51"
+      "sha256": "10d07810f9905d74ad5a2171b0334a1514e894f03c47fe679ae1924a93c84574"
     }
   ],
   "nodeImage": "node@sha256:8a34c4ab3ea2c5cd194f07e317b2a8f09461d3c8b05c4e34c8ccd56d56024c4d",
@@ -27,11 +27,11 @@
   "sourcePreviewModules": [
     {
       "path": "hosted-viewer/source-location.mjs",
-      "sha256": "8d03443309a5340669b1dc2c2f3e5a2fa31a3c5211bea014962d1a2a2f6ecc00"
+      "sha256": "35179ce879bdb5a153df436daf5f8f41a1ec5f0de1c64ce917d381a70e11f457"
     },
     {
       "path": "hosted-viewer/source-location.d.mts",
-      "sha256": "cce7c033cba7f7bc5702adeb7aefb975feeb942e766de6283fa9d1ae23277253"
+      "sha256": "c6cdb881227478a1d4d0b376b32fd80d61f16d13886972eeaa16c42cf5f2d57e"
     }
   ]
 }

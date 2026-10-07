@@ -1,5 +1,5 @@
 diff --git a/understand-anything-plugin/packages/dashboard/src/components/NodeInfo.tsx b/understand-anything-plugin/packages/dashboard/src/components/NodeInfo.tsx
-index ebbd6bc..ea8447a 100644
+index ebbd6bc..5207d5b 100644
 --- a/understand-anything-plugin/packages/dashboard/src/components/NodeInfo.tsx
 +++ b/understand-anything-plugin/packages/dashboard/src/components/NodeInfo.tsx
 @@ -1,5 +1,7 @@
@@ -10,14 +10,16 @@ index ebbd6bc..ea8447a 100644
  import { isOriso, sourceAtRevision } from "./orisoEvidenceModel";
  import { useDashboardStore } from "../store";
  import { useI18n } from "../contexts/I18nContext";
-@@ -283,6 +285,7 @@ export default function NodeInfo() {
+@@ -283,7 +285,8 @@ export default function NodeInfo() {
    const nodeHistory = useDashboardStore((s) => s.nodeHistory);
    const goBackNode = useDashboardStore((s) => s.goBackNode);
    const [languageExpanded, setLanguageExpanded] = useState(true);
+-  const { t } = useI18n();
 +  const [showPossibleCalls, setShowPossibleCalls] = useState(true);
-   const { t } = useI18n();
++  const { t, localeKey } = useI18n();
  
    const navigateToNode = useDashboardStore((s) => s.navigateToNode);
+   const navigateToHistoryIndex = useDashboardStore((s) => s.navigateToHistoryIndex);
 @@ -321,9 +324,14 @@ export default function NodeInfo() {
    const childEdges = connections.filter(
      (e) => e.type === "contains" && e.source === node.id,
@@ -34,13 +36,69 @@ index ebbd6bc..ea8447a 100644
  
    // Resolve child nodes
    const childNodes = childEdges
-@@ -528,7 +536,17 @@ export default function NodeInfo() {
+@@ -390,10 +398,10 @@ export default function NodeInfo() {
+       </div>
+ 
+       <div className="flex items-center justify-between mb-2">
+-        <h2 className="text-lg font-heading text-text-primary">{node.name}</h2>
++        <h2 className="min-w-0 flex-1 break-words text-lg font-heading text-text-primary">{node.name}</h2>
+         <button
+           onClick={() => setFocusNode(focusNodeId === node.id ? null : node.id)}
+-          className={`text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded transition-colors ${
++          className={`shrink-0 text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded transition-colors ${
+             focusNodeId === node.id
+               ? "bg-gold/20 text-gold border border-gold/40"
+               : "text-text-muted border border-border-subtle hover:text-gold hover:border-gold/30"
+@@ -411,7 +419,7 @@ export default function NodeInfo() {
+ 
+       {node.filePath && (
+         <div className="text-xs text-text-secondary mb-4 rounded-lg border border-border-subtle bg-elevated/60 p-3">
+-          <div className="flex items-start justify-between gap-3">
++          <div className="flex flex-wrap items-start justify-between gap-3">
+             <div className="min-w-0">
+               <div className="font-medium text-text-muted mb-1">{t.common.file}</div>
+               <div className="font-mono truncate" title={node.filePath}>
+@@ -423,13 +431,25 @@ export default function NodeInfo() {
+                 )}
+               </div>
+             </div>
+-            {oriso ? (revisionSource ? <a href={revisionSource.href} target="_blank" rel="noopener noreferrer" className="shrink-0 text-[10px] font-semibold px-2.5 py-1 rounded border border-accent/30 text-accent">Source at revision</a> : <span className="text-[10px] text-text-muted">Source link unavailable</span>) : <button
+-              type="button"
+-              onClick={() => openCodeViewer(node.id)}
+-              className="shrink-0 text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded border border-accent/30 text-accent hover:text-accent-bright hover:border-accent/60 transition-colors"
+-            >
+-              {t.common.openCode}
+-            </button>}
++            <div className="flex flex-wrap items-center gap-2">
++              <button
++                type="button"
++                onClick={() => openCodeViewer(node.id)}
++                className="shrink-0 text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded border border-accent/30 text-accent hover:text-accent-bright hover:border-accent/60 transition-colors"
++              >
++                {t.common.openCode}
++              </button>
++              {oriso && (revisionSource ? (
++                <a href={revisionSource.href} target="_blank" rel="noopener noreferrer"
++                  className="shrink-0 text-[10px] font-semibold px-2.5 py-1 rounded border border-accent/30 text-accent">
++                  {localeKey === "de" ? "Quelle dieser Revision" : "Source at revision"}
++                </a>
++              ) : (
++                <span className="text-[10px] text-text-muted">
++                  {localeKey === "de" ? "Quelllink nicht verfügbar" : "Source link unavailable"}
++                </span>
++              ))}
++            </div>
+           </div>
+         </div>
+       )}
+@@ -528,7 +548,18 @@ export default function NodeInfo() {
          </div>
        )}
  
 -      {/* Other connections (excluding "contains" children) */}
 +      {showCalls && (
 +        <OrisoCallRelations
++          key={node.id}
 +          relations={calls}
 +          showPossible={showPossibleCalls}
 +          onTogglePossible={() => setShowPossibleCalls((v) => !v)}
@@ -55,15 +113,34 @@ index ebbd6bc..ea8447a 100644
            <h3 className="text-[11px] font-semibold text-gold uppercase tracking-wider mb-2">
 diff --git a/understand-anything-plugin/packages/dashboard/src/components/OrisoCallRelations.tsx b/understand-anything-plugin/packages/dashboard/src/components/OrisoCallRelations.tsx
 new file mode 100644
-index 0000000..a01023a
+index 0000000..8ea440c
 --- /dev/null
 +++ b/understand-anything-plugin/packages/dashboard/src/components/OrisoCallRelations.tsx
-@@ -0,0 +1,83 @@
+@@ -0,0 +1,114 @@
++import { useState } from "react";
 +import type { CallRelation, CallRelations } from "./orisoCallModel";
 +
-+const REASONS: Record<string, string> = {
-+  "java-typechecking-unavailable": "not type-checked",
++import { useI18n } from "../contexts/I18nContext";
++
++const labels = {
++  en: { calls: "Calls", callers: "Called by", possible: "possible", include: "Include possible calls",
++    emptyCaller: "No caller found in the extracted source.", emptyCallee: "No callee found in the extracted source.",
++    onlyPossible: "Only possible calls; shown when included.", notChecked: "not type-checked",
++    explanation: "Confirmed calls are bound to one declaration; possible calls are not type-checked.",
++    emptyWarning: "An empty list is not proof of no calls.",
++    unresolved: (count: number) => `${count.toLocaleString("en")} calls in this graph could not be resolved, so an empty list is not proof of no calls.`,
++    more: (next: number, remaining: number) => `Show ${next} more (${remaining} remaining)`,
++  },
++  de: { calls: "Ruft auf", callers: "Aufgerufen von", possible: "möglich", include: "Mögliche Aufrufe einbeziehen",
++    emptyCaller: "In dieser Quellgeneration wurde kein Aufrufer gefunden.", emptyCallee: "In dieser Quellgeneration wurde kein Aufrufziel gefunden.",
++    onlyPossible: "Nur mögliche Aufrufe; sichtbar, wenn einbezogen.", notChecked: "nicht typgeprüft",
++    explanation: "Bestätigte Aufrufe sind einer Deklaration zugeordnet; mögliche Aufrufe sind nicht typgeprüft.",
++    emptyWarning: "Eine leere Liste beweist nicht, dass keine Aufrufe existieren.",
++    unresolved: (count: number) => `${count.toLocaleString("de")} Aufrufe in diesem Graphen konnten nicht aufgelöst werden. Eine leere Liste beweist nicht, dass keine Aufrufe existieren.`,
++    more: (next: number, remaining: number) => `${next} weitere anzeigen (${remaining} verbleibend)`,
++  },
 +};
++const useLabels = () => labels[useI18n().localeKey === "de" ? "de" : "en"];
 +
 +function RelationList({ title, relations, showPossible, onOpen, empty }: {
 +  title: string;
@@ -72,41 +149,52 @@ index 0000000..a01023a
 +  onOpen: (id: string) => void;
 +  empty: string;
 +}) {
++  const text = useLabels();
++  const [limit, setLimit] = useState(25);
 +  const visible = relations.filter((r) => showPossible || !r.possible);
 +  const possible = relations.filter((r) => r.possible).length;
 +  return (
 +    <section className="mb-3" aria-label={title}>
 +      <h4 className="text-[10px] font-semibold text-text-secondary uppercase tracking-wider mb-1.5">
-+        {title} ({relations.length - possible}{possible ? ` + ${possible} possible` : ""})
++        {title} ({relations.length - possible}{possible ? ` + ${possible} ${text.possible}` : ""})
 +      </h4>
 +      {visible.length === 0 ? (
-+        <p className="text-[11px] text-text-muted">{relations.length ? "Only possible calls; shown when included." : empty}</p>
++        <p className="text-[11px] text-text-muted">{relations.length ? text.onlyPossible : empty}</p>
 +      ) : (
 +        <ul className="space-y-1.5">
-+          {visible.map((r) => (
-+            <li key={r.nodeId}>
++          {visible.slice(0, limit).map((r) => (
++            <li key={`${r.nodeId}|${r.possible}`}>
 +              <button
 +                type="button"
 +                className="w-full text-left text-xs bg-elevated rounded-lg px-3 py-2 border border-border-subtle flex items-center gap-2 hover:border-gold/40 hover:bg-gold/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold transition-colors"
 +                onClick={() => onOpen(r.nodeId)}
 +                title={r.nodeId}
 +              >
-+                <span className="text-text-primary truncate min-w-0 flex-1">{r.name}</span>
++                <span className="min-w-0 flex-1">
++                  <span className="block text-text-primary break-words">{r.name}</span>
++                  <span className="block text-[10px] text-text-muted break-all">{r.nodeId}</span>
++                </span>
 +                {r.lineNumbers.length > 0 && (
 +                  <span className="text-[10px] text-text-muted font-mono shrink-0">L{r.lineNumbers.join(", ")}</span>
 +                )}
 +                {r.possible && (
 +                  <span
 +                    className="text-[9px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded border border-dashed border-gold/50 text-gold shrink-0"
-+                    title={r.reason ? REASONS[r.reason] ?? r.reason : "possible call"}
++                    title={r.reason === "java-typechecking-unavailable" ? text.notChecked : r.reason ?? text.possible}
 +                  >
-+                    possible
++                    {text.possible}
 +                  </span>
 +                )}
 +              </button>
 +            </li>
 +          ))}
 +        </ul>
++      )}
++      {visible.length > limit && (
++        <button type="button" className="w-full text-xs text-gold border border-border-subtle rounded px-3 py-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold"
++          onClick={() => setLimit(value => value + 25)}>
++          {text.more(Math.min(25, visible.length - limit), visible.length - limit)}
++        </button>
 +      )}
 +    </section>
 +  );
@@ -119,40 +207,45 @@ index 0000000..a01023a
 +  onOpen: (id: string) => void;
 +  unresolvedCalls?: number;
 +}) {
++  const text = useLabels();
 +  const possible = [...relations.callers, ...relations.callees].filter((r) => r.possible).length;
 +  return (
-+    <div className="mb-4" aria-label="Call relations">
-+      <div className="flex items-center gap-2 mb-2">
-+        <h3 className="text-[11px] font-semibold text-gold uppercase tracking-wider">Calls</h3>
++    <div className="mb-4" aria-label={text.calls}>
++      <div className="flex flex-wrap items-center gap-2 mb-2">
++        <h3 className="text-[11px] font-semibold text-gold uppercase tracking-wider">{text.calls}</h3>
 +        {possible > 0 && (
 +          <label className="ml-auto flex items-center gap-1.5 text-[10px] text-text-secondary cursor-pointer">
 +            <input type="checkbox" checked={showPossible} onChange={onTogglePossible} />
-+            Include possible calls
++            {text.include}
 +          </label>
 +        )}
 +      </div>
-+      <RelationList title="Called by" relations={relations.callers} showPossible={showPossible} onOpen={onOpen} empty="No caller found in the extracted source." />
-+      <RelationList title="Calls" relations={relations.callees} showPossible={showPossible} onOpen={onOpen} empty="No callee found in the extracted source." />
++      <RelationList title={text.callers} relations={relations.callers} showPossible={showPossible} onOpen={onOpen} empty={text.emptyCaller} />
++      <RelationList title={text.calls} relations={relations.callees} showPossible={showPossible} onOpen={onOpen} empty={text.emptyCallee} />
 +      <p className="text-[10px] text-text-muted">
-+        Confirmed calls are bound to one declaration; possible calls are not type-checked.
++        {text.explanation}
 +        {typeof unresolvedCalls === "number" && unresolvedCalls > 0
-+          ? ` ${unresolvedCalls.toLocaleString("en")} calls in this graph could not be resolved, so an empty list is not proof of no calls.`
-+          : " An empty list is not proof of no calls."}
++          ? ` ${text.unresolved(unresolvedCalls)}`
++          : ` ${text.emptyWarning}`}
 +      </p>
 +    </div>
 +  );
 +}
 diff --git a/understand-anything-plugin/packages/dashboard/src/components/__tests__/OrisoCallRelations.test.ts b/understand-anything-plugin/packages/dashboard/src/components/__tests__/OrisoCallRelations.test.ts
 new file mode 100644
-index 0000000..1df2a0d
+index 0000000..8573f09
 --- /dev/null
 +++ b/understand-anything-plugin/packages/dashboard/src/components/__tests__/OrisoCallRelations.test.ts
-@@ -0,0 +1,84 @@
+@@ -0,0 +1,119 @@
 +import { createElement } from "react";
 +import { renderToStaticMarkup } from "react-dom/server";
 +import { describe, expect, it } from "vitest";
 +import type { GraphEdge, GraphNode } from "@understand-anything/core/types";
-+import OrisoCallRelations from "../OrisoCallRelations";
++import CallRelationsPanel from "../OrisoCallRelations";
++import { I18nProvider } from "../../contexts/I18nContext";
++
++const OrisoCallRelations = (props: Parameters<typeof CallRelationsPanel>[0] & {language?: string}) =>
++  createElement(I18nProvider, {language: props.language ?? "en", children: createElement(CallRelationsPanel, props)});
 +import { callRelations } from "../orisoCallModel";
 +
 +const fn = (id: string, name: string): GraphNode => ({ id, type: "function", name, summary: "", tags: [], complexity: "simple" });
@@ -180,14 +273,13 @@ index 0000000..1df2a0d
 +    const r = callRelations(setup.id, edges, nodes);
 +    expect(r.callers.map((c) => [c.name, c.possible])).toEqual([["setUp", false], ["enable", true]]);
 +    expect(r.callers[1].reason).toBe("java-typechecking-unavailable");
-+    expect(r.callees).toHaveLength(1);
++    expect(r.callees).toHaveLength(2);
 +  });
 +
-+  it("a confirmed edge outranks a possible one to the same node, line numbers merge", () => {
-+    const [callee] = callRelations(setup.id, edges, nodes).callees;
-+    expect(callee.nodeId).toBe(client.id);
-+    expect(callee.possible).toBe(false);
-+    expect(callee.lineNumbers).toEqual([7, 9]);
++  it("retains confirmed and possible call sites separately for the same target", () => {
++    expect(callRelations(setup.id, edges, nodes).callees.map(r => [r.nodeId, r.possible, r.lineNumbers])).toEqual([
++      [client.id, false, [7]], [client.id, true, [9]],
++    ]);
 +  });
 +
 +  it("overloads keep distinct identities and containment is never a call", () => {
@@ -232,12 +324,44 @@ index 0000000..1df2a0d
 +    expect(empty).not.toContain("Include possible calls");
 +  });
 +});
++
++
++describe("reader navigation identity", () => {
++  it("shows the qualified target identity as readable text, not only a mouse tooltip", () => {
++    const html = renderToStaticMarkup(createElement(OrisoCallRelations, {
++      relations: callRelations(setup.id, edges, nodes), showPossible: true, onTogglePossible: () => {}, onOpen: () => {},
++    }));
++    expect(html.replace(/<[^>]*>/g, "")).toContain(client.id);
++  });
++});
++
++
++it("keeps long call lists bounded and offers the next page", () => {
++  const targets = Array.from({length: 60}, (_, i) => fn(`function:Target.java:Target.target${String(i).padStart(2, "0")}()`, `target${String(i).padStart(2, "0")}`));
++  const html = renderToStaticMarkup(createElement(OrisoCallRelations, {
++    relations: callRelations(setup.id, targets.map(n => edge("calls", setup.id, n.id)), [setup, ...targets]),
++    showPossible: true, onTogglePossible: () => {}, onOpen: () => {},
++  }));
++  expect((html.match(/title="function:Target/g) ?? []).length).toBe(25);
++  expect(html).toContain("Show 25 more (35 remaining)");
++});
++
++
++it("uses German relationship, uncertainty, empty and progressive controls for German readers", () => {
++  const html = renderToStaticMarkup(createElement(OrisoCallRelations, {
++    language: "de", relations: callRelations(setup.id, edges, nodes), showPossible: true, onTogglePossible: () => {}, onOpen: () => {}, unresolvedCalls: 1234,
++  }));
++  expect(html).toContain("Aufgerufen von");
++  expect(html).toContain("Mögliche Aufrufe einbeziehen");
++  expect(html).toContain("nicht typgeprüft");
++  expect(html).toContain("1.234");
++});
 diff --git a/understand-anything-plugin/packages/dashboard/src/components/orisoCallModel.ts b/understand-anything-plugin/packages/dashboard/src/components/orisoCallModel.ts
 new file mode 100644
-index 0000000..c052267
+index 0000000..cf75ee5
 --- /dev/null
 +++ b/understand-anything-plugin/packages/dashboard/src/components/orisoCallModel.ts
-@@ -0,0 +1,52 @@
+@@ -0,0 +1,51 @@
 +import type { GraphEdge, GraphNode } from "@understand-anything/core/types";
 +
 +// Call relations of one node, read straight from the loaded edges. `calls` are confirmed;
@@ -270,13 +394,12 @@ index 0000000..c052267
 +      const id = edge[other];
 +      const possible = edge.type === "calls_unconfirmed";
 +      const metadata = (edge as { metadata?: { reason?: string; lineNumber?: number } }).metadata;
-+      const existing = byNode.get(id);
++      const key = `${id}|${edge.type}`;
++      const existing = byNode.get(key);
 +      const relation = existing ?? { nodeId: id, name: names.get(id) ?? id, possible, lineNumbers: [] };
-+      // A confirmed edge to the same node outranks a possible one.
-+      if (!possible) { relation.possible = false; delete relation.reason; }
-+      else if (relation.possible && metadata?.reason) relation.reason = metadata.reason;
++      if (possible && metadata?.reason) relation.reason = metadata.reason;
 +      if (typeof metadata?.lineNumber === "number" && !relation.lineNumbers.includes(metadata.lineNumber)) relation.lineNumbers.push(metadata.lineNumber);
-+      byNode.set(id, relation);
++      byNode.set(key, relation);
 +    }
 +    return [...byNode.values()]
 +      .map((r) => ({ ...r, lineNumbers: [...r.lineNumbers].sort((a, b) => a - b) }))
@@ -290,3 +413,29 @@ index 0000000..c052267
 +}
 +
 +export { isCallEdge };
+diff --git a/understand-anything-plugin/packages/dashboard/src/locales/index.ts b/understand-anything-plugin/packages/dashboard/src/locales/index.ts
+index 27f022c..2a81cfe 100644
+--- a/understand-anything-plugin/packages/dashboard/src/locales/index.ts
++++ b/understand-anything-plugin/packages/dashboard/src/locales/index.ts
+@@ -5,11 +5,12 @@ import ja from "./ja";
+ import ko from "./ko";
+ import ru from "./ru";
+ 
+-export type LocaleKey = "en" | "zh" | "zh-TW" | "ja" | "ko" | "ru";
++export type LocaleKey = "en" | "de" | "zh" | "zh-TW" | "ja" | "ko" | "ru";
+ export type Locale = typeof en;
+ 
+ export const locales: Record<LocaleKey, Locale> = {
+   en,
++  de: { ...en, common: { ...en.common, openCode: "Code öffnen" } },
+   zh,
+   "zh-TW": zhTW,
+   ja,
+@@ -24,6 +25,7 @@ export function getLocale(key: LocaleKey): Locale {
+ export function resolveLocaleKey(lang: string | undefined): LocaleKey {
+   if (!lang) return "en";
+   const normalized = lang.toLowerCase().replace(/[_\s]/g, "-");
++  if (["de", "de-de", "german", "deutsch"].includes(normalized)) return "de";
+   if (normalized === "zh" || normalized === "chinese" || normalized === "zh-cn") return "zh";
+   if (normalized === "zh-tw" || normalized === "traditional-chinese") return "zh-TW";
+   if (normalized === "ja" || normalized === "japanese") return "ja";
