@@ -4073,7 +4073,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/decisions/README.md",
-      "sourceHash": "c3f2fc53454bb3c341dfb119ef7c217f1cdd84cb3fd2e9279cec85b810b28800",
+      "sourceHash": "e84bfa1611a8c4c5e6e7206075327f535cff02941d51ee8ea5a642301a504771",
       "locales": {
         "de": {
           "available": true,
@@ -4100,7 +4100,7 @@
           }
         }
       },
-      "sourceRevision": "230c20634e557604c67bb55bd4075a4534fc5a03",
+      "sourceRevision": "74fd6f3314b373f8bd1397d2ae1c8779bffd62fe",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
