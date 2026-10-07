@@ -219,6 +219,57 @@ let graph = {
   },
 };
 
+// Coverage belongs to the native producer as well as release orchestration.
+// Re-count emitted aggregate edges; preserve every input's measured gaps.
+const emittedCounts = new Map();
+for (const edge of graph.edges) emittedCounts.set(edge.type, (emittedCounts.get(edge.type) ?? 0) + 1);
+const inputTotals = new Map();
+const coverageInputs = [];
+const samples = { unresolvedImports: [], unresolvedCalls: [] };
+const unsupportedByRelation = { imports: 0, calls: 0 };
+const supportedRelations = new Set(c.KnowledgeGraphSchema.shape.edges.element.shape.type.options);
+for (const [repository, { graph: source }] of Object.entries(sourceGraphs)) {
+  const coverage = source.relationCoverage;
+  if (!coverage || typeof coverage !== 'object' || Array.isArray(coverage) || !coverage.imports || !coverage.calls)
+    throw new Error(`Missing required source relation coverage: ${repository}`);
+  const sourceCounts = new Map();
+  for (const edge of source.edges) sourceCounts.set(edge.type, (sourceCounts.get(edge.type) ?? 0) + 1);
+  for (const relation of sourceCounts.keys()) if (!coverage[relation]) throw new Error(`Missing emitted source relation coverage: ${repository}:${relation}`);
+  for (const [relation, item] of Object.entries(coverage)) {
+    if (!supportedRelations.has(relation) || !item || !['emitted', 'unresolved', 'unsupported'].every(key => Number.isSafeInteger(item[key]) && item[key] >= 0) || item.emitted !== (sourceCounts.get(relation) ?? 0) || !['complete', 'partial', 'unsupported'].includes(item.status) || item.status === 'complete' && (item.unresolved || item.unsupported) || item.status === 'unsupported' && (item.emitted || !item.unsupported) || item.unresolved > 0 && item.status !== 'partial')
+      throw new Error(`Malformed source relation coverage: ${repository}:${relation}`);
+    const sum = inputTotals.get(relation) ?? { unresolved: 0, unsupported: 0 };
+    sum.unresolved += item.unresolved; sum.unsupported += item.unsupported;
+    inputTotals.set(relation, sum);
+  }
+  const extraction = source.metadata?.extraction ?? {};
+  for (const [relation, key] of [['imports', 'unresolvedImports'], ['calls', 'unresolvedCalls']]) {
+    const inputSamples = extraction[key] ?? [];
+    const total = coverage[relation].unresolved;
+    if (!Array.isArray(inputSamples) || inputSamples.length > total || extraction.diagnostics?.[key] && extraction.diagnostics[key].total !== total)
+      throw new Error(`Source coverage/diagnostic mismatch: ${repository}:${relation}`);
+    samples[key].push(...inputSamples.slice(0, Math.max(0, 250 - samples[key].length)).map(sample => ({ ...sample, sourceRepo: repository, sourceCommit: source.project.gitCommitHash })));
+    const unsupported = coverage[relation].unsupported - (relation === 'calls' ? sourceCounts.get('calls_unconfirmed') ?? 0 : 0);
+    if (unsupported < 0) throw new Error(`Source coverage understates possible calls: ${repository}`);
+    unsupportedByRelation[relation] += unsupported;
+  }
+  const unsupportedDiagnostic = extraction.diagnostics?.unsupportedInputs;
+  if (unsupportedDiagnostic && (unsupportedDiagnostic.total !== coverage.imports.unsupported + coverage.calls.unsupported - (sourceCounts.get('calls_unconfirmed') ?? 0) || ['imports', 'calls'].some(relation => (unsupportedDiagnostic.byRelation?.[relation] ?? 0) !== coverage[relation].unsupported - (relation === 'calls' ? sourceCounts.get('calls_unconfirmed') ?? 0 : 0))))
+    throw new Error(`Source coverage/unsupported diagnostic mismatch: ${repository}`);
+  coverageInputs.push({ repository, sourceCommit: source.project.gitCommitHash, relationCoverage: coverage, measurementScope: source.metadata?.extraction?.measurementScope ?? null, diagnostics: extraction.diagnostics ?? null });
+}
+graph.relationCoverage = Object.fromEntries([...new Set([...emittedCounts.keys(), ...inputTotals.keys()])].map(relation => {
+  const emitted = emittedCounts.get(relation) ?? 0;
+  const { unresolved, unsupported } = inputTotals.get(relation) ?? { unresolved: 0, unsupported: 0 };
+  return [relation, { emitted, unresolved, unsupported, status: unresolved || unsupported && emitted ? 'partial' : unsupported ? 'unsupported' : 'complete' }];
+}));
+graph.metadata = { extraction: {
+  measurementScope: 'aggregate of represented repository extraction; added containment and concept links are not compiler or runtime proof',
+  ...samples,
+  diagnostics: Object.fromEntries([['imports', 'unresolvedImports'], ['calls', 'unresolvedCalls']].map(([relation, key]) => [key, { total: graph.relationCoverage[relation].unresolved, retained: samples[key].length, omitted: graph.relationCoverage[relation].unresolved - samples[key].length, sampleLimit: 250 }])),
+}, coverageProvenance: { method: 'actual emitted edges plus summed input unresolved/unsupported counters', inputs: coverageInputs, runtimeVerified: false } };
+graph.metadata.extraction.diagnostics.unsupportedInputs = { total: unsupportedByRelation.imports + unsupportedByRelation.calls, byRelation: unsupportedByRelation };
+
 decoratePlatform(graph, { repositoryGraphs: sourceGraphs, expectedRepositories: REPO_INFO.map(([repo]) => repo) });
 const v = c.validateGraph(graph);
 console.error(`validate: success=${v.success} issues=${(v.issues ?? []).length}${v.fatal ? " FATAL " + v.fatal : ""}`);
