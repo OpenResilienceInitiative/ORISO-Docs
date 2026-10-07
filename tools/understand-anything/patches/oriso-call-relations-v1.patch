@@ -113,7 +113,7 @@ index ebbd6bc..5207d5b 100644
            <h3 className="text-[11px] font-semibold text-gold uppercase tracking-wider mb-2">
 diff --git a/understand-anything-plugin/packages/dashboard/src/components/OrisoCallRelations.tsx b/understand-anything-plugin/packages/dashboard/src/components/OrisoCallRelations.tsx
 new file mode 100644
-index 0000000..8ea440c
+index 0000000..a35e423
 --- /dev/null
 +++ b/understand-anything-plugin/packages/dashboard/src/components/OrisoCallRelations.tsx
 @@ -0,0 +1,114 @@
@@ -126,7 +126,7 @@ index 0000000..8ea440c
 +  en: { calls: "Calls", callers: "Called by", possible: "possible", include: "Include possible calls",
 +    emptyCaller: "No caller found in the extracted source.", emptyCallee: "No callee found in the extracted source.",
 +    onlyPossible: "Only possible calls; shown when included.", notChecked: "not type-checked",
-+    explanation: "Confirmed calls are bound to one declaration; possible calls are not type-checked.",
++    explanation: "Source-resolved calls use narrow static source rules. Neither source-resolved nor possible calls are verified by a compiler, type checker or runtime.",
 +    emptyWarning: "An empty list is not proof of no calls.",
 +    unresolved: (count: number) => `${count.toLocaleString("en")} calls in this graph could not be resolved, so an empty list is not proof of no calls.`,
 +    more: (next: number, remaining: number) => `Show ${next} more (${remaining} remaining)`,
@@ -134,7 +134,7 @@ index 0000000..8ea440c
 +  de: { calls: "Ruft auf", callers: "Aufgerufen von", possible: "möglich", include: "Mögliche Aufrufe einbeziehen",
 +    emptyCaller: "In dieser Quellgeneration wurde kein Aufrufer gefunden.", emptyCallee: "In dieser Quellgeneration wurde kein Aufrufziel gefunden.",
 +    onlyPossible: "Nur mögliche Aufrufe; sichtbar, wenn einbezogen.", notChecked: "nicht typgeprüft",
-+    explanation: "Bestätigte Aufrufe sind einer Deklaration zugeordnet; mögliche Aufrufe sind nicht typgeprüft.",
++    explanation: "Quellseitig aufgelöste Aufrufe nutzen enge statische Quellregeln. Weder sie noch mögliche Aufrufe sind durch Compiler, Typprüfung oder Laufzeit bestätigt.",
 +    emptyWarning: "Eine leere Liste beweist nicht, dass keine Aufrufe existieren.",
 +    unresolved: (count: number) => `${count.toLocaleString("de")} Aufrufe in diesem Graphen konnten nicht aufgelöst werden. Eine leere Liste beweist nicht, dass keine Aufrufe existieren.`,
 +    more: (next: number, remaining: number) => `${next} weitere anzeigen (${remaining} verbleibend)`,
@@ -231,12 +231,83 @@ index 0000000..8ea440c
 +    </div>
 +  );
 +}
+diff --git a/understand-anything-plugin/packages/dashboard/src/components/__tests__/NodeInfo.browser.mjs b/understand-anything-plugin/packages/dashboard/src/components/__tests__/NodeInfo.browser.mjs
+new file mode 100644
+index 0000000..7ac91fb
+--- /dev/null
++++ b/understand-anything-plugin/packages/dashboard/src/components/__tests__/NodeInfo.browser.mjs
+@@ -0,0 +1,65 @@
++// Real pinned dashboard interaction seam; UA_PLAYWRIGHT supplies the explicitly pinned
++// browser runtime used by CI. No store/component mocks or fabricated source response.
++import {test} from 'node:test';
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++import path from 'node:path';
++import os from 'node:os';
++import {fileURLToPath,pathToFileURL} from 'node:url';
++import {execFileSync} from 'node:child_process';
++import {createServer} from 'vite';
++
++if (!process.env.UA_PLAYWRIGHT) throw Error('UA_PLAYWRIGHT must select the pinned playwright/index.mjs');
++const {chromium}=await import(pathToFileURL(process.env.UA_PLAYWRIGHT));
++const dashboard=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../../..');
++const temp=fs.mkdtempSync(path.join(os.tmpdir(),'node-info-browser-'));
++let server,browser;
++try {
++const sourceRoot=path.join(temp,'source');
++const graphRoot=path.join(temp,'graph','.understand-anything');
++fs.mkdirSync(path.join(sourceRoot,'src'),{recursive:true});fs.mkdirSync(graphRoot,{recursive:true});
++const content='public class Fixture {\n  void setup() {}\n}\n';
++fs.writeFileSync(path.join(sourceRoot,'src/Fixture.java'),content);
++const git=(...args)=>execFileSync('git',['-C',sourceRoot,...args],{stdio:['ignore','pipe','pipe']}).toString().trim();
++git('init','--quiet');git('config','user.name','Synthetic fixture');git('config','user.email','fixture@example.invalid');git('add','.');git('commit','--quiet','-m','Synthetic public source');
++const sha=git('rev-parse','HEAD');
++const node=(repository,name,extra={})=>({id:`${repository}::function:src/Fixture.java:Fixture.${name}()`,type:'function',name,summary:'Synthetic source navigation',tags:[],complexity:'simple',filePath:'src/Fixture.java',lineRange:[1,3],sourceRepo:repository,metadata:{sourceRepo:repository,sourceCommit:sha},...extra});
++const publicNode=node('ORISO-UserService','setup');
++const privateNode=node('ORISO-Infra','privateSetup');
++const changedNode=node('ORISO-UserService','changedSetup',{metadata:{sourceRepo:'ORISO-UserService',sourceCommit:'not-a-revision'}});
++const fileNode={id:'ORISO-UserService::file:src/Fixture.java',type:'file',name:'Fixture.java',summary:'Containing file',tags:[],complexity:'simple',filePath:'src/Fixture.java',lineRange:[1,3],sourceRepo:'ORISO-UserService',metadata:{sourceRepo:'ORISO-UserService',sourceCommit:sha}};
++const graph={version:'1.0.0',schemaVersion:'oriso.ua.graph/v1',generationId:'synthetic-node-info',kind:'oriso-platform',project:{name:'ORISO-Platform',description:'Synthetic browser contract',languages:['java'],frameworks:[],analyzedAt:'2026-10-07T00:00:00Z',gitCommitHash:null,sourceCommits:{'ORISO-UserService':sha,'ORISO-Infra':sha}},metadata:{sources:[{repo:'ORISO-UserService',gitCommitHash:sha},{repo:'ORISO-Infra',gitCommitHash:sha}]},nodes:[publicNode,privateNode,changedNode,fileNode],edges:[{source:fileNode.id,target:publicNode.id,type:'contains',direction:'forward',weight:1}],layers:[],tour:[]};
++fs.writeFileSync(path.join(graphRoot,'knowledge-graph.json'),JSON.stringify(graph));
++Object.assign(process.env,{UNDERSTAND_ACCESS_TOKEN:'synthetic-node-info',GRAPH_DIR:path.dirname(graphRoot),ORISO_SOURCE_REPOS:JSON.stringify({'ORISO-UserService':sourceRoot})});
++ server=await createServer({root:dashboard,configFile:path.join(dashboard,'vite.config.ts'),logLevel:'silent',server:{host:'127.0.0.1',port:0}});await server.listen();
++ const port=server.httpServer.address().port;
++ browser=await chromium.launch({headless:true});
++ for(const [language,width] of [['en',320],['de',412]]) {
++  for(const [selected,expectedStatus,expectedMessage] of [[publicNode,200,null],[privateNode,422,'This public graph does not include a text source preview for this node.'],[changedNode,409,'Source identity does not match this graph generation']]) {
++   await test(`${language} ${width}px: selected ${selected.name} retains inline source action and honest response`,async()=>{
++    fs.writeFileSync(path.join(graphRoot,'config.json'),JSON.stringify({outputLanguage:language}));
++    const context=await browser.newContext({viewport:{width,height:900}});const page=await context.newPage();
++    try {
++     await page.goto(`http://127.0.0.1:${port}/?token=synthetic-node-info`);
++     await page.getByRole('button',{name:'Show search'}).click();
++     await page.getByTestId('search-input').fill(selected.name);
++     const result=page.locator('button').filter({hasText:selected.name}).first();await result.waitFor({state:"visible"});await result.focus();await page.keyboard.press('Enter');
++     const pane=page.getByRole('heading',{name:selected.name,exact:true}).locator('../..');
++     const open=pane.getByRole('button',{name:language==='de'?'Code öffnen':'Open code',exact:true});await open.waitFor({state:"visible",timeout:5000});
++     if(selected===publicNode) {
++      assert.equal(await pane.getByRole('link',{name:language==='de'?'Quelle dieser Revision':'Source at revision'}).getAttribute('href'),`https://github.com/OpenResilienceInitiative/ORISO-UserService/blob/${sha}/src/Fixture.java#L1-L3`);
++      assert.ok((await pane.innerText()).includes('Fixture.java')); 
++     }
++     if(selected===changedNode) assert.ok((await pane.innerText()).includes(language==='de'?'Quelllink nicht verfügbar':'Source link unavailable'));
++     const pending=page.waitForResponse(r=>r.url().includes('/file-content.json')&&new URL(r.url()).searchParams.get('nodeId')===selected.id);
++     await open.focus();await page.keyboard.press('Enter');const response=await pending;assert.equal(response.status(),expectedStatus);const data=await response.json();
++     if(expectedStatus===200){assert.equal(data.content,content);assert.equal(data.path,'src/Fixture.java');await page.locator('pre').filter({hasText:'public class Fixture'}).waitFor({state:'visible'});assert.ok((await page.locator('pre').innerText()).includes('void setup() {}'));}
++     else {assert.ok(!('content' in data));await page.getByText(expectedMessage,{exact:true}).waitFor({state:'visible'});}
++    }finally{await context.close();}
++   });
++  }
++ }
++}finally {
++ await Promise.allSettled([browser?.close(), server?.close()]);
++ fs.rmSync(temp,{recursive:true,force:true});
++}
 diff --git a/understand-anything-plugin/packages/dashboard/src/components/__tests__/OrisoCallRelations.test.ts b/understand-anything-plugin/packages/dashboard/src/components/__tests__/OrisoCallRelations.test.ts
 new file mode 100644
-index 0000000..8573f09
+index 0000000..1d38fed
 --- /dev/null
 +++ b/understand-anything-plugin/packages/dashboard/src/components/__tests__/OrisoCallRelations.test.ts
-@@ -0,0 +1,119 @@
+@@ -0,0 +1,131 @@
 +import { createElement } from "react";
 +import { renderToStaticMarkup } from "react-dom/server";
 +import { describe, expect, it } from "vitest";
@@ -355,6 +426,18 @@ index 0000000..8573f09
 +  expect(html).toContain("Mögliche Aufrufe einbeziehen");
 +  expect(html).toContain("nicht typgeprüft");
 +  expect(html).toContain("1.234");
++});
++
++it("explains the narrow source rules without implying compiler or runtime proof in either locale", () => {
++  for (const [language, explanation] of [
++    ["en", "Source-resolved calls use narrow static source rules. Neither source-resolved nor possible calls are verified by a compiler, type checker or runtime."],
++    ["de", "Quellseitig aufgelöste Aufrufe nutzen enge statische Quellregeln. Weder sie noch mögliche Aufrufe sind durch Compiler, Typprüfung oder Laufzeit bestätigt."],
++  ]) {
++    const html = renderToStaticMarkup(createElement(OrisoCallRelations, {
++      language, relations: callRelations(setup.id, edges, nodes), showPossible: true, onTogglePossible: () => {}, onOpen: () => {},
++    }));
++    expect(html).toContain(explanation);
++  }
 +});
 diff --git a/understand-anything-plugin/packages/dashboard/src/components/orisoCallModel.ts b/understand-anything-plugin/packages/dashboard/src/components/orisoCallModel.ts
 new file mode 100644
