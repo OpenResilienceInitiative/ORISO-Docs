@@ -3929,7 +3929,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/decisions/ADR-024-notification-matrix-two-lists-not-one-filtered.md",
-      "sourceHash": "8e76843785c65229ca1ea5857ca873b466cc03aa317871d21d984aa9b8f1760e",
+      "sourceHash": "57e4dd2301245c66de8895aba66506d26e1f0fd1bf011b4da2257a2b2784f3a4",
       "locales": {
         "de": {
           "available": true,
@@ -3944,7 +3944,9 @@
             "implementation-status-measured-on-dev-2026-09-22": "implementation-status-measured-on-dev-2026-09-22",
             "implementierungsstand-auf-dev-gemessen-2026-09-22": "implementation-status-measured-on-dev-2026-09-22",
             "consequences": "consequences",
-            "folgen": "consequences"
+            "folgen": "consequences",
+            "ordinary-internal-counsellor-chat--implementation-addendum-2026-10-07": "ordinary-internal-counsellor-chat--implementation-addendum-2026-10-07",
+            "gewöhnlicher-interner-beraterchat--implementierungsergänzung-vom-2026-10-07": "ordinary-internal-counsellor-chat--implementation-addendum-2026-10-07"
           }
         },
         "en": {
@@ -3955,11 +3957,12 @@
             "context": "context",
             "decision": "decision",
             "implementation-status-measured-on-dev-2026-09-22": "implementation-status-measured-on-dev-2026-09-22",
-            "consequences": "consequences"
+            "consequences": "consequences",
+            "ordinary-internal-counsellor-chat--implementation-addendum-2026-10-07": "ordinary-internal-counsellor-chat--implementation-addendum-2026-10-07"
           }
         }
       },
-      "sourceRevision": "6f6a9734ed5e0d6681e2b8d0807304a5b3a1872f",
+      "sourceRevision": "6a1dd5af9a8f256a8f08c8e94660af672ed68a8a",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
