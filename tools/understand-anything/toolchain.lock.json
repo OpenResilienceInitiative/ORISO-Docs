@@ -16,7 +16,7 @@
     },
     {
       "path": "patches/oriso-call-relations-v1.patch",
-      "sha256": "10d07810f9905d74ad5a2171b0334a1514e894f03c47fe679ae1924a93c84574"
+      "sha256": "28ce177f2758bdc5775ef04e3f054bb7244aab376b30968806bf06755c262c38"
     }
   ],
   "nodeImage": "node@sha256:8a34c4ab3ea2c5cd194f07e317b2a8f09461d3c8b05c4e34c8ccd56d56024c4d",
