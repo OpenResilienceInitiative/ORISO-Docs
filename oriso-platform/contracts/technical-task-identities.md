@@ -69,7 +69,7 @@ operation,taskClient,taskSubject,originKind,originAction,target,tenantId,roles,
 payloadDigest. iss=oriso-userservice; aud=oriso-task-commands;
 purpose=oriso-command; exp>now, exp>iat, exp-iat<=60, now-60<=iat<=now+5; unique jti UUID.
 originKind INVITATION|REGISTRATION|ANONYMOUS|HUMAN_ADMIN|SELF_SERVICE|LIFECYCLE|IMPORT|ONBOARDING|PASSWORD_RESET.
-originAction must equal operation. target=attempt UUID for create/commit/compensate,
+originAction must equal operation. target=attempt UUID for create/commit/compensate/creation-recover,
 account ID for account operations; exact query value for email/username search.
 tenantId string or null; roles array of allowed human realm-role names.
 payloadDigest = base64url(no padding)(HMAC-SHA256(key,
@@ -84,6 +84,7 @@ Keys purpose-separated by input prefix; compare constant-time. No secrets in log
 | Operation claim | HTTP | Command body / projection |
 |---|---|---|
 | account.create | PUT /account-creations/{attemptId} | {username,email,firstName,lastName,preferredLanguage,tenantId,password,passwordTemporary,roles:[...],registrationKind} |
+| account.creation-recover | POST /account-creations/{attemptId}/recovery-claims | {registrationKind} |
 | account.commit | POST /account-creations/{attemptId}/commit | {accountId,creationProof} |
 | account.compensate | POST /account-creations/{attemptId}/compensations | {accountId,creationProof} |
 | account.read | GET /accounts/{id} | proof digest over {} |
@@ -102,6 +103,25 @@ Keys purpose-separated by input prefix; compare constant-time. No secrets in log
 Create returns HTTP201 {attemptId,accountId,creationProof,status:OPEN}, replay200 same
 receipt; commit204; compensate204 repeated legitimate tombstone remains204;
 committed compensation409; foreign/forged403; changed attempt payload409.
+OPEN accounts remain native enabled=false until the first valid OPEN commit.
+That commit atomically enables only the owned account and marks COMMITTED.
+Repeated COMMITTED commit is a no-op and never undoes a later independent disable.
+Recovery/compensation never activate an account.
+
+Recovery claims return HTTP200 {attemptId,accountId,creationProof,status}.
+OPEN atomically becomes RECOVERY_CLAIMED, retaining the exact original receipt;
+old create/commit then409. Owned compensation remains idempotent.
+Absent attempt creates an owner-bound ABANDONED tombstone with explicit null
+accountId/creationProof, fencing any delayed create409 without account mutation.
+Existing COMMITTED/COMPENSATED status is diagnostic; COMMITTED never compensates.
+Registration kind in the body is taken from the durable caller journal and bound
+by the unchanged signed payloadDigest. Provider compares original persisted
+registrationKind, tenant, initial role set, originKind, task client and subject.
+Absent tombstones validate the same createKind/role/origin policy before capture.
+No username search, foreign receipt, arbitrary deletion or new JWT claim exists.
+Concurrent ownership insertion may return409; retry reads the durable winner.
+Rows predating the origin/initial-role migration cannot be recovered by guessing
+missing authority; operational migration must explicitly drain those attempts.
 Projection HTTP200 {id,username,email,firstName,lastName,tenantId,preferredLanguage,
 enabled,emailVerified,roles:[...],passwordChangeRequired:boolean}; absent404.
 Search returns array [] or bounded matching projections (exact matches only), no
@@ -109,8 +129,9 @@ wildcards, arbitrary attrs, credentials or capability/receipt leakage.
 Maintenance204, delete absent204, SMTP200 {revision,status}; status APPLIED or DISABLED_OR_INCOMPLETE.
 
 registrationKind ASKER|ANONYMOUS|CONSULTANT|AGENCY_ADMIN|CONSULTANT_AGENCY_ADMIN|TENANT_ADMIN.
+Create/profile tenantId JSON type is string or null; caller domain Long is converted at the wire adapter before payload signing.
 Creator sets userId=created ID, username/userName decoded username, locale=language,
-optional tenantId; enabled=true,emailVerified=true matches current behavior.
+optional tenantId; enabled=false until first valid commit, emailVerified=true.
 Kinds require respectively: user; user; consultant; restricted-agency-admin+user-admin;
 consultant+restricted-agency-admin+user-admin; user-admin+agency-admin+tenant-admin.
 Optional group-chat-consultant for consultant kinds and topic-admin for TENANT_ADMIN
