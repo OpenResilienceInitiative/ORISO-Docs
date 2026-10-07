@@ -133,3 +133,45 @@ exception required by decision5. No decrypted message content is used.
 Browser choices remain independent. This mail addition does not imply a new browser-event producer,
 guaranteed background web push, or a change to retained in-app history. The notification-retention
 governance questions remain in their existing privacy workstream.
+
+
+## Required personal consent for case handover — decision addendum, 2026-10-08
+
+A request for personal consent must reach the person who needs to decide. An acknowledgement of
+an already permitted transfer does not need another email. Frank confirmed this distinction on
+8 October 2026; it is separate from the counsellor's optional handover notification.
+
+| Situation | Advice-seeker email | What the person sees |
+|---|---|---|
+| Personal consent is required and still pending; a usable current email address exists | Send a neutral consent request, subject to the existing tenant delivery and recipient access gates | A statement that consent is needed and a protected link to decide |
+| Sharing is already permitted, including the opt-out acknowledgement mode | Do not send an additional consent-request email | The existing acknowledgement and consent rules continue to apply |
+| No usable current email address, or consent is no longer pending | Do not send a stale consent request | The application remains the place to check the current request |
+
+The request names no counsellor, case, message content or other personal information. The link
+opens the protected current request. Delivery must check that the same person still owns the
+request and still needs to decide; a queued message must not redirect to a changed address or
+outlive a completed or revoked request.
+
+This required-action email has no separate advice-seeker handover switch. It must not offer an
+unsubscribe link leading to a control that does not exist. Its footer retains the ordinary
+automated-message note and privacy/imprint links. Optional confirmation email to the receiving
+counsellor keeps its existing preference and unsubscribe link.
+
+**For developers — the mode and rendering contract:**
+
+```text
+OPT_IN + PENDING_CLIENT_CONSENT: required personal-consent request.
+OPT_OUT / NONE: no additional consent-request email.
+Canonical occasion: uebergabe-angefragt; catalogue class: consent.
+emailIsUnsubscribable(consent): false; no settingsUrl/unsubscribeUrl in its footer.
+Do not reclassify this occasion as an account-access security message.
+Tenant route, notification-mail configuration, OWN setup and current recipient access
+remain separately validated. This decision does not authorize tenant-wide bypasses.
+Optional receiving-counsellor occasion: uebergabe-bestaetigt.
+```
+
+This dated addendum qualifies decisions 1, 3, 5 and 6 for required personal consent. The historical
+measurements above keep their original dates. The implementation is being reviewed in
+[Frontend #1666](https://github.com/OpenResilienceInitiative/ORISO-Frontend/pull/1666) and
+[UserService #1376](https://github.com/OpenResilienceInitiative/ORISO-UserService/pull/1376).
+Source checks, deployment and actual mail receipt remain separate evidence gates.

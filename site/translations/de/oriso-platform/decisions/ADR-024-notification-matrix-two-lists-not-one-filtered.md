@@ -99,3 +99,49 @@ Browser-Einstellungen bleiben unabhängig. Diese Mail-Ergänzung beinhaltet kein
 Browser-Ereignisse, keine zugesicherte Web-Push-Zustellung im Hintergrund und keine Änderung am
 Aufbewahren des In-App-Verlaufs. Die offenen Fragen zur Aufbewahrung von Benachrichtigungen bleiben
 im bestehenden Datenschutz-Arbeitspaket.
+
+
+## Erforderliche persönliche Zustimmung zur Fallübergabe — Entscheidung vom 2026-10-08
+
+Eine Bitte um persönliche Zustimmung muss die Person erreichen, die entscheiden soll. Für die
+Bestätigung einer bereits erlaubten Weitergabe braucht es keine zusätzliche E-Mail. Frank hat
+diesen Unterschied am 8. Oktober 2026 bestätigt. Er ist von der optionalen Übergabemail an die
+übernehmende Beratungsperson getrennt.
+
+| Situation | E-Mail an die ratsuchende Person | Sichtbarer Inhalt |
+|---|---|---|
+| Die persönliche Zustimmung ist erforderlich und noch offen; eine nutzbare aktuelle E-Mail-Adresse ist hinterlegt | Neutrale Bitte um Zustimmung unter den bestehenden Versandregeln des Trägers und Zugriffsregeln des Empfängers senden | Hinweis auf die benötigte Zustimmung und geschützter Link zur Entscheidung |
+| Die Weitergabe ist bereits erlaubt, einschließlich der Kenntnisnahme beim Opt-out-Verfahren | Keine zusätzliche E-Mail mit einer Zustimmungsanfrage senden | Die bestehenden Regeln für Kenntnisnahme und Zustimmung gelten weiter |
+| Keine nutzbare aktuelle E-Mail-Adresse oder Zustimmung nicht mehr offen | Keine veraltete Zustimmungsanfrage senden | Der aktuelle Antrag bleibt in der Anwendung prüfbar |
+
+Die Anfrage nennt weder Beratungsperson noch Fall, Nachrichteninhalt oder andere persönliche
+Informationen. Der Link öffnet den geschützten aktuellen Antrag. Beim Versand muss dieselbe
+Person weiterhin zum Antrag gehören und noch entscheiden müssen. Eine wartende Mail darf nicht
+an eine geänderte Adresse umgeleitet werden oder einen erledigten beziehungsweise widerrufenen
+Antrag überleben.
+
+Für diese erforderliche Handlung gibt es keinen zusätzlichen Übergabe-Schalter für Ratsuchende.
+Die Mail darf keinen Abmeldelink zu einer nicht vorhandenen Einstellung anbieten. Im Fuß bleiben
+der normale Hinweis auf eine automatische Nachricht sowie Datenschutz- und Impressumslinks.
+Die optionale Bestätigung an die übernehmende Beratungsperson behält ihre bisherige Einstellung
+und ihren Abmeldelink.
+
+**Für Entwickler — Vertrag für Verfahren und Darstellung:**
+
+```text
+OPT_IN + PENDING_CLIENT_CONSENT: erforderliche persönliche Zustimmungsanfrage.
+OPT_OUT / NONE: keine zusätzliche E-Mail mit Zustimmungsanfrage.
+Kanonischer Anlass: uebergabe-angefragt; Katalogklasse: consent.
+emailIsUnsubscribable(consent): false; keine settingsUrl/unsubscribeUrl im Fuß.
+Diesen Anlass nicht als Sicherheitsmail zum Kontozugriff klassifizieren.
+Versandweg, Benachrichtigungsmail-Konfiguration und OWN-Einrichtung des Trägers
+sowie aktueller Empfängerzugriff werden weiterhin getrennt geprüft.
+Diese Entscheidung erlaubt keine pauschale Umgehung der Trägereinstellungen.
+Optionaler Anlass für die übernehmende Beratungsperson: uebergabe-bestaetigt.
+```
+
+Diese datierte Ergänzung präzisiert die Entscheidungen 1, 3, 5 und 6 für erforderliche persönliche
+Zustimmung. Die historischen Messungen oben behalten ihre ursprünglichen Daten. Die Umsetzung
+wird in [Frontend #1666](https://github.com/OpenResilienceInitiative/ORISO-Frontend/pull/1666) und
+[UserService #1376](https://github.com/OpenResilienceInitiative/ORISO-UserService/pull/1376) geprüft.
+Quellcode-Prüfungen, Deployment und tatsächlicher Mail-Empfang bleiben getrennte Nachweise.
