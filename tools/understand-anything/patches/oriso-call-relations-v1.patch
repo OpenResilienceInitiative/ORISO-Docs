@@ -1,5 +1,5 @@
 diff --git a/understand-anything-plugin/packages/dashboard/src/components/NodeInfo.tsx b/understand-anything-plugin/packages/dashboard/src/components/NodeInfo.tsx
-index ebbd6bc..d3fe3c5 100644
+index ebbd6bc..cb6a5e4 100644
 --- a/understand-anything-plugin/packages/dashboard/src/components/NodeInfo.tsx
 +++ b/understand-anything-plugin/packages/dashboard/src/components/NodeInfo.tsx
 @@ -1,5 +1,7 @@
@@ -109,6 +109,35 @@ index ebbd6bc..d3fe3c5 100644
        {otherConnections.length > 0 && (
          <div>
            <h3 className="text-[11px] font-semibold text-gold uppercase tracking-wider mb-2">
+@@ -543,19 +574,21 @@ export default function NodeInfo() {
+               const arrow = isSource ? "\u2192" : "\u2190";
+ 
+               return (
+-                <div
++                <button
++                  type="button"
+                   key={i}
+-                  className="text-xs bg-elevated rounded-lg px-3 py-2 border border-border-subtle flex items-center gap-2 cursor-pointer hover:border-gold/40 hover:bg-gold/5 transition-colors"
++                  className="w-full text-left text-xs bg-elevated rounded-lg px-3 py-2 border border-border-subtle flex items-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold hover:border-gold/40 hover:bg-gold/5 transition-colors"
+                   onClick={() => {
+                     navigateToNode(otherId);
+                   }}
+                 >
+-                  <span className="text-gold font-mono">{arrow}</span>
+-                  <span className="text-text-muted">{dirLabel}</span>
+-                  <span className="text-text-primary truncate">
+-                    {otherNode?.name ?? otherId}
++                  <span className="text-gold font-mono shrink-0">{arrow}</span>
++                  <span className="text-text-muted shrink-0">{dirLabel}</span>
++                  <span className="min-w-0 flex-1">
++                    <span className="block text-text-primary break-words">{otherNode?.name ?? otherId}</span>
++                    <span className="block text-[10px] text-text-muted break-all">{otherId}</span>
+                   </span>
+-                </div>
++                </button>
+               );
+             })}
+           </div>
 diff --git a/understand-anything-plugin/packages/dashboard/src/components/OrisoCallRelations.tsx b/understand-anything-plugin/packages/dashboard/src/components/OrisoCallRelations.tsx
 new file mode 100644
 index 0000000..783bab6
@@ -215,10 +244,10 @@ index 0000000..783bab6
 +}
 diff --git a/understand-anything-plugin/packages/dashboard/src/components/__tests__/NodeInfo.browser.mjs b/understand-anything-plugin/packages/dashboard/src/components/__tests__/NodeInfo.browser.mjs
 new file mode 100644
-index 0000000..a65ff73
+index 0000000..fd244bd
 --- /dev/null
 +++ b/understand-anything-plugin/packages/dashboard/src/components/__tests__/NodeInfo.browser.mjs
-@@ -0,0 +1,87 @@
+@@ -0,0 +1,113 @@
 +// Real pinned dashboard interaction seam; UA_PLAYWRIGHT supplies the explicitly pinned
 +// browser runtime used by CI. No store/component mocks or fabricated source response.
 +import {test} from 'node:test';
@@ -249,9 +278,11 @@ index 0000000..a65ff73
 +const privateNode=node('ORISO-Infra','privateSetup');
 +const changedNode=node('ORISO-UserService','changedSetup',{metadata:{sourceRepo:'ORISO-UserService',sourceCommit:'not-a-revision'}});
 +const fileNode={id:'ORISO-UserService::file:src/Fixture.java',type:'file',name:'Fixture.java',summary:'Containing file',tags:[],complexity:'simple',filePath:'src/Fixture.java',lineRange:[1,3],sourceRepo:'ORISO-UserService',metadata:{sourceRepo:'ORISO-UserService',sourceCommit:sha}};
-+const graph={version:'1.0.0',schemaVersion:'oriso.ua.graph/v1',generationId:'synthetic-node-info',kind:'oriso-platform',project:{name:'ORISO-Platform',description:'Synthetic browser contract',languages:['java'],frameworks:[],analyzedAt:'2026-10-07T00:00:00Z',gitCommitHash:null,sourceCommits:{'ORISO-UserService':sha,'ORISO-Infra':sha}},metadata:{sources:[{repo:'ORISO-UserService',gitCommitHash:sha},{repo:'ORISO-Infra',gitCommitHash:sha}]},nodes:[publicNode,privateNode,changedNode,fileNode],edges:[{source:fileNode.id,target:publicNode.id,type:'contains',direction:'forward',weight:1},{id:'call-site-1',source:publicNode.id,target:privateNode.id,type:'calls_unconfirmed',direction:'forward',weight:1,metadata:{reason:'ambiguous-overload',lineNumber:4}},{id:'call-site-2',source:publicNode.id,target:privateNode.id,type:'calls_unconfirmed',direction:'forward',weight:1,metadata:{reason:'java-typechecking-unavailable',lineNumber:8}}],layers:[],tour:[]};
++const conceptNode={id:'ORISO-UserService::concept:two-factor',type:'concept',name:'Two factor concept',summary:'Synthetic source-discovery concept',tags:[],complexity:'simple'};
++const classNode={id:'ORISO-Keycloak::class:src/Fixture.java:Fixture',type:'class',name:'Fixture',summary:'Synthetic owning class',tags:[],complexity:'simple',filePath:'src/Fixture.java',lineRange:[1,3],sourceRepo:'ORISO-Keycloak',metadata:{sourceRepo:'ORISO-Keycloak',sourceCommit:sha}};
++const graph={version:'1.0.0',schemaVersion:'oriso.ua.graph/v1',generationId:'synthetic-node-info',kind:'oriso-platform',project:{name:'ORISO-Platform',description:'Synthetic browser contract',languages:['java'],frameworks:[],analyzedAt:'2026-10-07T00:00:00Z',gitCommitHash:null,sourceCommits:{'ORISO-UserService':sha,'ORISO-Infra':sha,'ORISO-Keycloak':sha}},metadata:{sources:[{repo:'ORISO-UserService',gitCommitHash:sha},{repo:'ORISO-Infra',gitCommitHash:sha},{repo:'ORISO-Keycloak',gitCommitHash:sha}]},nodes:[publicNode,privateNode,changedNode,fileNode,conceptNode,classNode],edges:[{id:'concept-owning-source',source:conceptNode.id,target:classNode.id,type:'related',direction:'forward',weight:1,metadata:{runtimeVerified:false,sourceCommit:sha}},{source:fileNode.id,target:publicNode.id,type:'contains',direction:'forward',weight:1},{id:'call-site-1',source:publicNode.id,target:privateNode.id,type:'calls_unconfirmed',direction:'forward',weight:1,metadata:{reason:'ambiguous-overload',lineNumber:4}},{id:'call-site-2',source:publicNode.id,target:privateNode.id,type:'calls_unconfirmed',direction:'forward',weight:1,metadata:{reason:'java-typechecking-unavailable',lineNumber:8}}],layers:[],tour:[]};
 +fs.writeFileSync(path.join(graphRoot,'knowledge-graph.json'),JSON.stringify(graph));
-+Object.assign(process.env,{UNDERSTAND_ACCESS_TOKEN:'synthetic-node-info',GRAPH_DIR:path.dirname(graphRoot),ORISO_SOURCE_REPOS:JSON.stringify({'ORISO-UserService':sourceRoot})});
++Object.assign(process.env,{UNDERSTAND_ACCESS_TOKEN:'synthetic-node-info',GRAPH_DIR:path.dirname(graphRoot),ORISO_SOURCE_REPOS:JSON.stringify({'ORISO-UserService':sourceRoot,'ORISO-Keycloak':sourceRoot})});
 + server=await createServer({root:dashboard,configFile:path.join(dashboard,'vite.config.ts'),logLevel:'silent',server:{host:'127.0.0.1',port:0}});await server.listen();
 + const port=server.httpServer.address().port;
 + browser=await chromium.launch({headless:true});
@@ -278,6 +309,30 @@ index 0000000..a65ff73
 +     else {assert.ok(!('content' in data));await page.getByText(expectedMessage,{exact:true}).waitFor({state:'visible'});}
 +    }finally{await context.close();}
 +   });
++  }
++  for (const relationWidth of [320,412]) {
++  await test(`${language} ${relationWidth}px: concept relationship is keyboard reachable and opens the owning class source`, async () => {
++   fs.writeFileSync(path.join(graphRoot,'config.json'),JSON.stringify({outputLanguage:language}));
++   const context=await browser.newContext({viewport:{width:relationWidth,height:900}}),page=await context.newPage();
++   try {
++    await page.goto(`http://127.0.0.1:${port}/?token=synthetic-node-info`);
++    await page.getByRole('button',{name:'Show search'}).click();await page.getByTestId('search-input').fill(conceptNode.name);
++    const result=page.locator('button').filter({hasText:conceptNode.name}).first();await result.waitFor({state:'visible'});await result.focus();await page.keyboard.press('Enter');
++    const pane=page.getByRole('heading',{name:conceptNode.name,exact:true}).locator('../..');
++    const relation=pane.getByRole('button').filter({hasText:classNode.name});
++    assert.equal(await relation.count(),1,'owning relationship must be a native keyboard control');
++    assert.ok((await relation.innerText()).includes(classNode.id),'qualified source identity remains readable');
++    await relation.focus();assert.ok(await relation.evaluate(element=>element.matches(':focus-visible')&&parseFloat(getComputedStyle(element).outlineWidth)>0),'keyboard focus has a visible outline');
++    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'relationship identity does not cause horizontal overflow');
++    await page.keyboard.press('Enter');
++    const classPane=page.getByRole('heading',{name:classNode.name,exact:true}).locator('../..');await classPane.waitFor({state:'visible'});
++    assert.equal(await classPane.getByRole('link',{name:language==='de'?'Quelle dieser Revision':'Source at revision'}).getAttribute('href'),`https://github.com/OpenResilienceInitiative/ORISO-Keycloak/blob/${sha}/src/Fixture.java#L1-L3`);
++    const responsePromise=page.waitForResponse(response=>response.url().includes('/file-content.json')&&new URL(response.url()).searchParams.get('nodeId')===classNode.id);
++    const open=classPane.getByRole('button',{name:language==='de'?'Code öffnen':'Open code',exact:true});await open.focus();await page.keyboard.press('Enter');
++    const response=await responsePromise;assert.equal(response.status(),200);const data=await response.json();assert.equal(data.content,content);assert.equal(data.path,'src/Fixture.java');
++    await page.locator('pre').filter({hasText:'public class Fixture'}).waitFor({state:'visible'});
++   } finally {await context.close();}
++  });
 +  }
 +  await test(`${language} ${width}px: distinct call evidence retains both reasons and keyboard targets`, async () => {
 +   fs.writeFileSync(path.join(graphRoot,'config.json'),JSON.stringify({outputLanguage:language}));
