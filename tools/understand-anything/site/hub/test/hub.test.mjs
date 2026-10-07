@@ -32,3 +32,18 @@ test('old release remains bound when exact vector matches; changed SHA is visibl
   await new Promise(resolve=>setImmediate(resolve));assert.match(state.className,mismatch?/warn/:/ok/);
  }
 });
+
+test('repository cards show call coverage with unresolved calls in both languages',async()=>{
+ const script=readFileSync(new URL('../assets/status.js',import.meta.url),'utf8');
+ const appended=[];const card={querySelector:()=>null,appendChild:line=>appended.push(line)};
+ const el=()=>{const node={attrs:{},children:[],setAttribute(k,v){this.attrs[k]=v;},appendChild(c){this.children.push(c);}};return node;};
+ const nodes={closest:()=>card};
+ const source={name:'ORISO-UserService',repository:'ORISO-UserService',ref:'refs/heads/dev',sourceSHA:'a'.repeat(40),nodes:10,calls:{confirmed:20648,possible:6023,unresolved:147611,status:'partial'}};
+ vm.runInNewContext(script,{document:{querySelectorAll:selector=>selector.includes('ORISO-UserService')?[nodes]:[],querySelector:()=>null,createElement:el},Intl,Date,Number,String,Boolean,Set,fetch:async()=>({ok:true,json:async()=>({generatedAt:'2020-01-01T00:00:00Z',branch:'dev',sources:[source,{...source,name:'ORISO-Empty',calls:{confirmed:0,possible:0,unresolved:0}}]})})});
+ await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(appended.length,1);
+ const [deText,enText]=appended[0].children.map(c=>c.textContent);
+ assert.equal(deText,'Aufrufe: 20.648 bestätigt · 6.023 möglich · 147.611 nicht aufgelöst');
+ assert.equal(enText,'Calls: 20,648 confirmed · 6,023 possible · 147,611 unresolved');
+ assert.deepEqual(appended[0].children.map(c=>c.attrs.lang),['de','en']);
+});

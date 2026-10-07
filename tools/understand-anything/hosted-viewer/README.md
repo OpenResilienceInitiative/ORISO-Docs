@@ -56,9 +56,11 @@ viewer baseline. These scripts were not executed against any server.
 
 ## Pinned source-preview integration
 
-The current installer uses `patches/oriso-public-source-preview-v1.patch` after
-`oriso-schema-viewer-v1.patch` on the exact locked upstream commit. It verifies
-both patch checksums and the resolver/type-module checksums, copies those modules,
+The current installer applies `oriso-schema-viewer-v1.patch`,
+`patches/oriso-public-source-preview-v1.patch` and `oriso-call-relations-v1.patch`
+(node panel "Called by" / "Calls" lists with labelled possible calls and an include toggle,
+Docs#167) in that order on the exact locked upstream commit. It verifies
+the patch checksums and the resolver/type-module checksums, copies those modules,
 and builds core and dashboard before activating its immutable runtime release.
 The older `apply.py`/`viewer.patch`/manifest are historical compatibility tooling
 for their recorded baseline; do not apply them blindly to the current pinned tree.
