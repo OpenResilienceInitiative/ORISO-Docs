@@ -53,11 +53,17 @@ test('actual pinned production build serves its asset chunks without exposing th
  const revision=execFileSync('git',['-C',path.join(sourceRoot,'ORISO-Docs'),'rev-parse','HEAD'],{encoding:'utf8'}).trim();
  const manifest=buildViewerArtifact({dist:path.join(process.env.UNDERSTAND_TEST_UPSTREAM,'understand-anything-plugin/packages/dashboard/dist'),out:artifact,revision});
  assert.ok(!manifest.files.some(f=>f.path==='static/knowledge-graph.json'));
- const server=await startViewer({artifact,sourceRoot,repository:'ORISO-UserService',basePath:'/user-service/',port:0});t.after(()=>new Promise(r=>server.close(r)));const origin=`http://127.0.0.1:${server.address().port}/user-service/`;
- const html=await(await fetch(origin+'?token=public-navigation-marker')).text();assert.ok(!html.includes('@vite/client'));
- const urls=[...html.matchAll(/(?:src|href)="(\/[^" ]+)"/g)].map(m=>m[1]);assert.ok(urls.length>=5);
- for(const route of urls)assert.equal((await fetch(new URL(route,origin))).status,200,route);
- const graph=await(await fetch(origin+'knowledge-graph.json')).json();assert.equal(graph.project.name,'ORISO-UserService');
+ for(const [repository,basePath] of [['ORISO-UserService','/user-service/'],['ORISO-Platform','/platform/'],['ORISO-Supergraph','/supergraph/'],['ORISO-Docs','/docs/']]){
+  const server=await startViewer({artifact,sourceRoot,repository,basePath,port:0});t.after(()=>new Promise(r=>server.close(r)));const origin=`http://127.0.0.1:${server.address().port}${basePath}`;
+  const html=await(await fetch(origin+'?token=public-navigation-marker')).text();assert.ok(!html.includes('@vite/client'));
+  const urls=[...html.matchAll(/(?:src|href)="((?:\.\/|\/)[^" ]+)"/g)].map(m=>m[1]);assert.ok(urls.length>=5);
+  for(const route of urls)assert.equal((await fetch(new URL(route,origin))).status,200,route);
+  // Fetch every sealed JS chunk too: lazy imports must resolve under each prefix.
+  for(const file of manifest.files.filter(f=>f.path.endsWith('.js')))assert.equal((await fetch(new URL(file.path.replace(/^static\//,''),origin))).status,200,file.path);
+  const graph=await(await fetch(origin+'knowledge-graph.json')).json();assert.equal(graph.project.name,repository);
+  const aggregate=['ORISO-Platform','ORISO-Supergraph'].includes(repository),response=await fetch(origin+'file-content.json?path=source.txt&nodeId='+encodeURIComponent(aggregate?'ORISO-Docs::one':'one'));assert.equal(response.status,200);const source=await response.json();assert.equal(source.content,'Synthetic source text\n');
+  if(aggregate){assert.equal(source.sourceRepo,'ORISO-Docs');assert.equal(source.sourceCommit,revision);}
+ }
 });
 
 test('only matching immutable production artifact can switch the viewer current pointer',t=>{

@@ -118,3 +118,5 @@ tools/understand-anything/hosted-viewer/consumer_test.py # ORISO own public inst
 tools/understand-anything/hosted-viewer/readback.py # ORISO own public installation binding or deliberate publication regression fixture
 tools/docs-publication/test/workflow-release.test.mjs # ORISO own public installation binding or deliberate publication regression fixture
 tools/docs-publication/test/release-fixture.mjs # Exact released source-vector fixture for ORISO public publication regression tests
+
+tools/understand-anything/hosted-viewer/activate.sh # ORISO own approved installation/public hub origin
