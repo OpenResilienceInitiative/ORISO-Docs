@@ -62,16 +62,66 @@
     {
       "id": "concept:identity-authentication-2fa",
       "name": "Keycloak Identity, 2FA and Passwordless Entry",
-      "summary": "Keycloak is the identity provider; every account operation goes through api/adapters/keycloak/KeycloakService.java, which is hidden behind the fine-grained ports in api/port/out (IdentityClient, IdentityRoleUpdater, IdentitySecondFactor, IdentitySessionExchange). Second factor setup — app TOTP and e-mail OTP — is exposed on /otp-config/* and /users/2fa/* and reaches Keycloak through api/port/out/IdentitySecondFactor.java. Passwordless entry paths are api/service/auth/MagicLinkLoginService.java and api/service/auth/PasswordResetService.java, both backed by the Redis one-time token store api/service/auth/RedisOneTimeTokenStore.java. The second-factor logic itself (e-mail OTP generation, verification, expiry, the otp-config REST endpoints) is NOT in this repo: it lives in ORISO-Keycloak under keycloak-image/otp-config-spi (ADR-013); see concept:email-otp-second-factor and concept:otp-config-rest-api in the ORISO-Keycloak graph.",
-      "tags": ["keycloak", "authentication", "2fa", "otp", "magic-link"],
+      "summary": "UserService is a client of the Keycloak second-factor implementation. IdentitySecondFactor declares credential lookup, app setup/deletion and e-mail verification operations. KeycloakService implements those operations with the matching GET, PUT, DELETE and POST requests to otp-config. UserTwoFactorAuthControllerDelegate handles the user-facing setup result and invitation state. OTP code generation, expiry and login verification belong to the ORISO-Keycloak SPI, reachable through the related second-factor concepts and owning classes. This source review covers the second-factor route; the other related identity and passwordless entrypoints remain discovery links.",
+      "tags": [
+        "keycloak",
+        "authentication",
+        "2fa",
+        "otp",
+        "magic-link"
+      ],
       "related": [
-        "src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakService.java",
-        "src/main/java/de/caritas/cob/userservice/api/port/out/IdentitySecondFactor.java",
+        "class:src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakService.java:de.caritas.cob.userservice.api.adapters.keycloak.KeycloakService",
+        "class:src/main/java/de/caritas/cob/userservice/api/port/out/IdentitySecondFactor.java:de.caritas.cob.userservice.api.port.out.IdentitySecondFactor",
         "src/main/java/de/caritas/cob/userservice/api/service/auth/MagicLinkLoginService.java",
         "src/main/java/de/caritas/cob/userservice/api/service/auth/PasswordResetService.java",
         "src/main/java/de/caritas/cob/userservice/api/service/auth/RedisOneTimeTokenStore.java",
-        "src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/UserTwoFactorAuthControllerDelegate.java"
-      ]
+        "class:src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/UserTwoFactorAuthControllerDelegate.java:de.caritas.cob.userservice.api.adapters.web.controller.UserTwoFactorAuthControllerDelegate"
+      ],
+      "claim": {
+        "sourceCommit": "803970c97fec74ce2141f5ce8a59fd29cbe1c9f9",
+        "generationId": "source-review-168-2026-10-07",
+        "generatedAt": "2026-10-07T18:59:47.733Z",
+        "reviewedAt": "2026-10-07T19:03:18.147301Z",
+        "reviewedBy": {
+          "kind": "agent",
+          "name": "Codex ticket 168 source review"
+        },
+        "confidence": "source-reviewed",
+        "scope": "second-factor source routing; no runtime acceptance",
+        "evidence": [
+          {
+            "nodeId": "class:src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakService.java:de.caritas.cob.userservice.api.adapters.keycloak.KeycloakService",
+            "kind": "source",
+            "sourceCommit": "803970c97fec74ce2141f5ce8a59fd29cbe1c9f9",
+            "sourceRange": [
+              93,
+              1184
+            ],
+            "sourceFingerprint": "f46426f700ce44df16bf82f78cccfeaa3855a65fb2928ed563889e96e2ef4e1d"
+          },
+          {
+            "nodeId": "class:src/main/java/de/caritas/cob/userservice/api/port/out/IdentitySecondFactor.java:de.caritas.cob.userservice.api.port.out.IdentitySecondFactor",
+            "kind": "source",
+            "sourceCommit": "803970c97fec74ce2141f5ce8a59fd29cbe1c9f9",
+            "sourceRange": [
+              7,
+              18
+            ],
+            "sourceFingerprint": "f44117631f697fc4fa2057e985433b17ece3a7d41be6b12d650db480cbf92c6a"
+          },
+          {
+            "nodeId": "class:src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/UserTwoFactorAuthControllerDelegate.java:de.caritas.cob.userservice.api.adapters.web.controller.UserTwoFactorAuthControllerDelegate",
+            "kind": "source",
+            "sourceCommit": "803970c97fec74ce2141f5ce8a59fd29cbe1c9f9",
+            "sourceRange": [
+              21,
+              106
+            ],
+            "sourceFingerprint": "260d92114137daacccd05a62dce4f78eb9c614371487269386ddd03b5ece9423"
+          }
+        ]
+      }
     },
     {
       "id": "concept:multitenancy-tenant-context",

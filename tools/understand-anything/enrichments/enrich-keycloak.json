@@ -31,29 +31,120 @@
     {
       "id": "concept:email-otp-second-factor",
       "name": "E-mail OTP second factor (vendored otp-config SPI)",
-      "summary": "Second-factor logic for ORISO is not in UserService: it lives in the vendored Keycloak extension keycloak-image/otp-config-spi (ADR-013). OtpMailAuthenticator (id 'email-authenticator', direct grant) and OtpMailFormAuthenticator (browser form) send a one-time code by e-mail and check it in MailOtpVerifier; the code and its expiry are kept in memory by MemoryOtpService (default lifetime 900 s, configurable per authentication config) and the mail goes out through OtpMailSender / DefaultMailSender using the oriso theme template themes/oriso/email/*/otp-email.ftl. The e-mail factor is stored as a Keycloak credential (MailOtpCredentialProvider, MailOtpCredentialService). Work on e-mail 2FA, resend or lockout starts here; UserService only calls this SPI over REST (see concept:otp-config-rest-api).",
-      "tags": ["keycloak", "authentication", "2fa", "otp", "email-otp", "spi"],
+      "summary": "E-mail second-factor login is implemented by the vendored ORISO-Keycloak otp-config SPI. OtpMailAuthenticator answers direct-grant token requests and delegates the submitted code to MailOtpVerifier. The verifier invalidates a valid credential and counts invalid attempts through the credential service. MemoryOtpService creates codes with a configurable lifetime (900 seconds by default), and checks expiry, invalidation and the limit of three failed validations. These are source-level responsibilities; this graph does not establish deployed authentication behavior. ADR-013 records the original vendoring under ORISO-Helm; the reviewed current classes are under ORISO-Keycloak.",
+      "tags": [
+        "keycloak",
+        "authentication",
+        "2fa",
+        "otp",
+        "email-otp",
+        "spi"
+      ],
       "related": [
-        "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/authenticator/OtpMailAuthenticator.java",
+        "class:keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/authenticator/OtpMailAuthenticator.java:de.onlineberatung.authenticator.OtpMailAuthenticator",
         "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/authenticator/OtpMailFormAuthenticator.java",
-        "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/authenticator/MailOtpVerifier.java",
-        "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/otp/MemoryOtpService.java",
+        "class:keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/authenticator/MailOtpVerifier.java:de.onlineberatung.authenticator.MailOtpVerifier",
+        "class:keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/otp/MemoryOtpService.java:de.onlineberatung.otp.MemoryOtpService",
         "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/otp/OtpMailSender.java",
         "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/credential/MailOtpCredentialService.java",
         "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/credential/MailOtpCredentialProvider.java"
-      ]
+      ],
+      "claim": {
+        "sourceCommit": "1d86e8abe8b1ae26a383794ee3241702a30c18e6",
+        "generationId": "source-review-168-2026-10-07",
+        "generatedAt": "2026-10-07T18:59:38.487Z",
+        "reviewedAt": "2026-10-07T19:03:18.147301Z",
+        "reviewedBy": {
+          "kind": "agent",
+          "name": "Codex ticket 168 source review"
+        },
+        "confidence": "source-reviewed",
+        "scope": "second-factor source routing; no runtime acceptance",
+        "evidence": [
+          {
+            "nodeId": "class:keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/authenticator/OtpMailAuthenticator.java:de.onlineberatung.authenticator.OtpMailAuthenticator",
+            "kind": "source",
+            "sourceCommit": "1d86e8abe8b1ae26a383794ee3241702a30c18e6",
+            "sourceRange": [
+              31,
+              198
+            ],
+            "sourceFingerprint": "e8249313950785f5b409375bf6038827ab4a525af1df87067c37a4212b8084bf"
+          },
+          {
+            "nodeId": "class:keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/authenticator/MailOtpVerifier.java:de.onlineberatung.authenticator.MailOtpVerifier",
+            "kind": "source",
+            "sourceCommit": "1d86e8abe8b1ae26a383794ee3241702a30c18e6",
+            "sourceRange": [
+              20,
+              61
+            ],
+            "sourceFingerprint": "e4e3997148dbf67a3203080f2a5e34c6a5ba7959d44f928117aa481c58dd63a8"
+          },
+          {
+            "nodeId": "class:keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/otp/MemoryOtpService.java:de.onlineberatung.otp.MemoryOtpService",
+            "kind": "source",
+            "sourceCommit": "1d86e8abe8b1ae26a383794ee3241702a30c18e6",
+            "sourceRange": [
+              12,
+              80
+            ],
+            "sourceFingerprint": "503c23eb8e15adf53cc974e06946c921148288eac601e3b45754041281b1215a"
+          }
+        ]
+      }
     },
     {
       "id": "concept:otp-config-rest-api",
       "name": "otp-config REST API (how UserService reaches the 2FA SPI)",
-      "summary": "RealmOtpResourceProvider is registered as a Keycloak realm resource under the id 'otp-config' and is the door other ORISO services use for second-factor setup: GET fetch-otp-setup-info/{username}, PUT setup-otp/{username} (app TOTP), DELETE delete-otp/{username}, PUT send-verification-mail/{username} and POST setup-otp-mail/{username} (e-mail OTP). On the caller side this is ORISO-UserService: the port IdentitySecondFactor, the adapter KeycloakService and the controller delegate UserTwoFactorAuthControllerDelegate. That is why UserService has no OTP code of its own and issues about e-mail 2FA usually need no UserService change.",
-      "tags": ["keycloak", "authentication", "2fa", "rest", "cross-repo"],
+      "summary": "RealmOtpResourceProviderFactory registers the realm resource as otp-config. RealmOtpResourceProvider declares GET fetch-otp-setup-info/{username}, PUT setup-otp/{username}, DELETE delete-otp/{username}, PUT send-verification-mail/{username} and POST setup-otp-mail/{username}, with service-session authentication before each operation. These are the Keycloak SPI endpoints used by the UserService second-factor client; they are source declarations, not runtime verification. ADR-013 is historical architectural context for the original ORISO-Helm location.",
+      "tags": [
+        "keycloak",
+        "authentication",
+        "2fa",
+        "rest",
+        "cross-repo"
+      ],
       "related": [
-        "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/RealmOtpResourceProvider.java",
-        "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/RealmOtpResourceProviderFactory.java",
+        "class:keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/RealmOtpResourceProvider.java:de.onlineberatung.RealmOtpResourceProvider",
+        "class:keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/RealmOtpResourceProviderFactory.java:de.onlineberatung.RealmOtpResourceProviderFactory",
         "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/authenticator/SessionAuthenticator.java",
         "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/authenticator/BearerTokenSessionAuthenticator.java"
-      ]
+      ],
+      "claim": {
+        "sourceCommit": "1d86e8abe8b1ae26a383794ee3241702a30c18e6",
+        "generationId": "source-review-168-2026-10-07",
+        "generatedAt": "2026-10-07T18:59:38.487Z",
+        "reviewedAt": "2026-10-07T19:03:18.147301Z",
+        "reviewedBy": {
+          "kind": "agent",
+          "name": "Codex ticket 168 source review"
+        },
+        "confidence": "source-reviewed",
+        "scope": "second-factor source routing; no runtime acceptance",
+        "evidence": [
+          {
+            "nodeId": "class:keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/RealmOtpResourceProvider.java:de.onlineberatung.RealmOtpResourceProvider",
+            "kind": "source",
+            "sourceCommit": "1d86e8abe8b1ae26a383794ee3241702a30c18e6",
+            "sourceRange": [
+              34,
+              340
+            ],
+            "sourceFingerprint": "5f7c95be90b578285866e8a4d8bacdbea6864da2ffb27da64e9abdc1d4672c4b"
+          },
+          {
+            "nodeId": "class:keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/RealmOtpResourceProviderFactory.java:de.onlineberatung.RealmOtpResourceProviderFactory",
+            "kind": "source",
+            "sourceCommit": "1d86e8abe8b1ae26a383794ee3241702a30c18e6",
+            "sourceRange": [
+              21,
+              63
+            ],
+            "sourceFingerprint": "4ae22e4bc0b92819476aa1c3d8bac82b67455e48af1255c3b8af705835ce6a3f"
+          }
+        ]
+      }
     }
   ],
   "flows": [

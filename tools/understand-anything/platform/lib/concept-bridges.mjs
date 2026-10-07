@@ -1,10 +1,14 @@
+import {assessClaim} from '../../lib/semantic-claims.mjs';
 // Cross-repo concept bridges (Docs#168). A bridge links a concept in one repo graph to the
 // concept that owns the implementation in another repo, e.g. the UserService 2FA concept to the
-// Keycloak otp-config SPI concepts (ADR-013). A bridge is only emitted when confirmed `calls`
-// matches (exact verb + exact path) exist from the source repo to the target repo, so the edge is
-// source-evidenced, never a text pointer. Both concepts are projected with their own `related`
-// targets (the SPI classes), which makes the owning classes reachable from the source concept.
+// Keycloak otp-config SPI concepts (ADR-013). Repository calls qualify discovery
+// links; direct owning-class routes require exact, current source-reviewed claims
+// at both ends. The aggregate reuses those claims without inventing call evidence.
 const RELATED_TYPES = new Set(['related']);
+function reviewed(graph, id) {
+    const claim = graph?.nodes?.find(n => n.id === id)?.metadata?.semanticClaim;
+    return claim?.confidence === 'source-reviewed' && assessClaim(claim, graph).status === 'source-current';
+}
 
 function projectConcept(graphs, repo, conceptId, addNode, addEdge) {
 	const graph = graphs[repo]?.graph;
@@ -24,12 +28,12 @@ function projectConcept(graphs, repo, conceptId, addNode, addEdge) {
 	return id;
 }
 
-export function projectConceptBridges({ graphs, bridges, confirmedMatches, callerNodeIds = [], addNode, addEdge }) {
+export function projectConceptBridges({ graphs, bridges, confirmedMatches = [], callerNodeIds = [], addNode, addEdge }) {
 	const emitted = [];
 	const skipped = [];
 	for (const bridge of bridges) {
 		const evidence = confirmedMatches.filter((m) => m.sourceRepo === bridge.from.repo && m.targetRepo === bridge.to.repo);
-		if (!evidence.length) {
+		if (!evidence.length && !(reviewed(graphs[bridge.from.repo]?.graph, bridge.from.concept) && bridge.to.concepts.some(id => reviewed(graphs[bridge.to.repo]?.graph, id)))) {
 			skipped.push({ bridge: bridge.id, reason: 'no confirmed calls between the repos' });
 			continue;
 		}
@@ -41,12 +45,30 @@ export function projectConceptBridges({ graphs, bridges, confirmedMatches, calle
 		const endpoints = [...new Set(evidence.map((m) => m.endpointNode.id))].sort();
 		const nodeIds = [fromId];
 		for (const conceptId of bridge.to.concepts) {
+            if (!evidence.length && !reviewed(graphs[bridge.to.repo]?.graph, conceptId)) {
+                skipped.push({bridge:bridge.id,reason:`source review required: ${bridge.to.repo}:${conceptId}`});
+                continue;
+            }
 			const toId = projectConcept(graphs, bridge.to.repo, conceptId, addNode, addEdge);
 			if (!toId) {
 				skipped.push({ bridge: bridge.id, reason: `missing ${bridge.to.repo}:${conceptId}` });
 				continue;
 			}
 			nodeIds.push(toId);
+            const fromGraph = graphs[bridge.from.repo].graph;
+            const toGraph = graphs[bridge.to.repo].graph;
+            if (reviewed(fromGraph, bridge.from.concept) && reviewed(toGraph, conceptId)) {
+                const targetClaim = toGraph.nodes.find(n => n.id === conceptId).metadata.semanticClaim;
+                const evidenceIds = new Set(targetClaim.evidence.map(e => e.nodeId));
+                for (const relation of toGraph.edges.filter(e => e.source === conceptId && e.type === 'related')) {
+                    const target = toGraph.nodes.find(n => n.id === relation.target);
+                    if (target?.type !== 'class' || !evidenceIds.has(target.id)) continue;
+                    const targetId = `${bridge.to.repo}::${target.id}`;
+                    addEdge({id:`bridge:${fromId}->${targetId}`,source:fromId,target:targetId,type:'related',direction:'forward',weight:1,label:'owning second-factor implementation',
+                      metadata:{evidence:'source-reviewed',decision:bridge.decision,sourceCommit:toGraph.project.gitCommitHash,sourceFingerprint:target.metadata.sourceFingerprint,runtimeVerified:false}});
+                    nodeIds.push(targetId);
+                }
+            }
 			addEdge({
 				id: `bridge:${fromId}->${toId}`,
 				source: fromId,
@@ -55,7 +77,7 @@ export function projectConceptBridges({ graphs, bridges, confirmedMatches, calle
 				label: bridge.label,
 				direction: 'forward',
 				weight: 1,
-				metadata: { evidence: 'confirmed-calls', decision: bridge.decision, confirmedCalls: evidence.length, endpoints }
+				metadata: { evidence: evidence.length ? 'confirmed-calls' : 'source-reviewed', runtimeVerified: false, decision: bridge.decision, confirmedCalls: evidence.length, endpoints }
 			});
 		}
 		// The concept also points at the source-repo methods that make those calls.

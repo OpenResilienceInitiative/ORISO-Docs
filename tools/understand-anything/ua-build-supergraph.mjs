@@ -13,6 +13,8 @@
 
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 
+import {projectConceptBridges} from './platform/lib/concept-bridges.mjs';
+
 const CORE = process.env.UA_CORE ?? "/opt/oriso-understand/understand-anything-plugin/understand-anything-plugin/packages/core/dist/index.js";
 const c = await import(CORE);
 
@@ -75,6 +77,7 @@ const layerRank = n => { const i = LAYER_ORDER.indexOf(n); return i === -1 ? LAY
 
 const nodes = [], edges = [];
 const mergeSources = [];
+const sourceGraphs = {};
 
 // Architecture layers: platform overview + one layer per tier
 const archLayer = {
@@ -101,6 +104,7 @@ for (const r of REPOS) {
   if (!/^[a-f0-9]{40}$/.test(meta.gitCommitHash ?? "") || meta.gitCommitHash !== g.project.gitCommitHash)
     throw new Error(`Inconsistent full source SHA: ${r}`);
 
+  sourceGraphs[r] = {graph:g,meta};
   const info = infoOf[r];
   const repoNodeId = `repo:${r}`;
   const conceptCount = g.nodes.filter(n => n.type === "concept" || n.type === "flow").length;
@@ -143,6 +147,14 @@ for (const r of REPOS) {
     perRepoLayers.push({ id: `${r}::${l.id ?? l.name}`, name: `${r} · ${l.name}`, description: l.description, nodeIds: (l.nodeIds ?? []).map(id => `${r}::${id}`) });
   }
 }
+
+// Reuse the same reviewed concept route as the slim platform. These relations
+// are semantic source evidence, never keyword-inferred calls.
+projectConceptBridges({graphs:sourceGraphs,
+  bridges:JSON.parse(readFileSync(new URL('./platform/narrative/concept-bridges.json',import.meta.url),'utf8')).bridges,
+  addNode(node){if(!nodes.some(n=>n.id===node.id))nodes.push({...node,metadata:{...node.metadata,sourceRepo:node.sourceRepo}});},
+  addEdge(edge){if(!edges.some(e=>e.source===edge.source&&e.target===edge.target&&e.type===edge.type))edges.push(edge);}
+});
 
 // final layer order: platform map, tiers, then per-repo (repo order = REPO_INFO order)
 const layers = [archLayer, ...tierLayers.filter(t => t.nodeIds.length), ...perRepoLayers];
