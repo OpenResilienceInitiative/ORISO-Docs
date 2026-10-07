@@ -8,7 +8,7 @@
   "patches": [
     {
       "path": "patches/oriso-schema-viewer-v1.patch",
-      "sha256": "3cab5ac1106c880ceb74c2e8b60250b4c5ba4b9e8301a76db1a45f5f11413a0b"
+      "sha256": "384df3b5933fdb295894e3f71ed2cd33afb9375099feda46422d3c7799a4a1de"
     },
     {
       "path": "patches/oriso-public-source-preview-v1.patch",
@@ -16,7 +16,7 @@
     },
     {
       "path": "patches/oriso-call-relations-v1.patch",
-      "sha256": "8d90eea76053533ac34886fa7a6bd8cc79ef4877a437d7639d52299534337108"
+      "sha256": "657d1a3d513313e8d14cc4c7b44b47faf98f29def3223828904eb43199489768"
     },
     {
       "path": "patches/oriso-platform-tour-v1.patch",

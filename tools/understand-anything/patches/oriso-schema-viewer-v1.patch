@@ -1161,10 +1161,10 @@ index 08adb7b..28fc2dd 100644
    const value = useMemo(
      () => ({
 diff --git a/understand-anything-plugin/packages/dashboard/src/locales/index.ts b/understand-anything-plugin/packages/dashboard/src/locales/index.ts
-index 27f022c..2a81cfe 100644
+index 27f022c..ec8b429 100644
 --- a/understand-anything-plugin/packages/dashboard/src/locales/index.ts
 +++ b/understand-anything-plugin/packages/dashboard/src/locales/index.ts
-@@ -5,11 +5,12 @@ import ja from "./ja";
+@@ -5,11 +5,13 @@ import ja from "./ja";
  import ko from "./ko";
  import ru from "./ru";
  
@@ -1174,11 +1174,12 @@ index 27f022c..2a81cfe 100644
  
  export const locales: Record<LocaleKey, Locale> = {
    en,
-+  de: { ...en, common: { ...en.common, openCode: "Code öffnen" } },
++  de: { ...en, common: { ...en.common, openCode: "Code öffnen", connections: "Verbindungen" },
++    edgeLabels: { ...en.edgeLabels, related: { forward: "verknüpft mit", backward: "verknüpft mit" } } },
    zh,
    "zh-TW": zhTW,
    ja,
-@@ -24,6 +25,7 @@ export function getLocale(key: LocaleKey): Locale {
+@@ -24,6 +26,7 @@ export function getLocale(key: LocaleKey): Locale {
  export function resolveLocaleKey(lang: string | undefined): LocaleKey {
    if (!lang) return "en";
    const normalized = lang.toLowerCase().replace(/[_\s]/g, "-");

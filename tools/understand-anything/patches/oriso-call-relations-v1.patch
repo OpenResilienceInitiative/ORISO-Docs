@@ -244,10 +244,10 @@ index 0000000..783bab6
 +}
 diff --git a/understand-anything-plugin/packages/dashboard/src/components/__tests__/NodeInfo.browser.mjs b/understand-anything-plugin/packages/dashboard/src/components/__tests__/NodeInfo.browser.mjs
 new file mode 100644
-index 0000000..fd244bd
+index 0000000..5d7115b
 --- /dev/null
 +++ b/understand-anything-plugin/packages/dashboard/src/components/__tests__/NodeInfo.browser.mjs
-@@ -0,0 +1,113 @@
+@@ -0,0 +1,115 @@
 +// Real pinned dashboard interaction seam; UA_PLAYWRIGHT supplies the explicitly pinned
 +// browser runtime used by CI. No store/component mocks or fabricated source response.
 +import {test} from 'node:test';
@@ -321,6 +321,8 @@ index 0000000..fd244bd
 +    const pane=page.getByRole('heading',{name:conceptNode.name,exact:true}).locator('../..');
 +    const relation=pane.getByRole('button').filter({hasText:classNode.name});
 +    assert.equal(await relation.count(),1,'owning relationship must be a native keyboard control');
++    assert.ok((await relation.innerText()).includes(language==='de'?'verknüpft mit':'related to'),'related relationship is labelled in the selected language');
++    await pane.getByRole('heading',{name:language==='de'?'Verbindungen (1)':'Connections (1)',exact:true}).waitFor({state:'visible'});
 +    assert.ok((await relation.innerText()).includes(classNode.id),'qualified source identity remains readable');
 +    await relation.focus();assert.ok(await relation.evaluate(element=>element.matches(':focus-visible')&&parseFloat(getComputedStyle(element).outlineWidth)>0),'keyboard focus has a visible outline');
 +    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'relationship identity does not cause horizontal overflow');
