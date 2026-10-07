@@ -18,6 +18,32 @@
     if (badge) badge.className = 'badge ' + (ok ? 'ok' : 'warn');
   }
 
+  // Call coverage under each repository card: confirmed, possible (not type-checked) and
+  // unresolved calls, so an empty caller list is not read as "no callers" (ORISO-Docs#167).
+  function calls(source, format, formatEn) {
+    var c = source.calls;
+    if (!c || !(c.confirmed + c.possible + (c.unresolved || 0))) return;
+    var known = c.unresolved !== null && c.unresolved !== undefined;
+    var text = {
+      de: 'Aufrufe: ' + format.format(c.confirmed) + ' bestätigt · ' + format.format(c.possible) + ' möglich · ' + (known ? format.format(c.unresolved) + ' nicht aufgelöst' : 'nicht aufgelöst: unbekannt'),
+      en: 'Calls: ' + formatEn.format(c.confirmed) + ' confirmed · ' + formatEn.format(c.possible) + ' possible · ' + (known ? formatEn.format(c.unresolved) + ' unresolved' : 'unresolved: unknown')
+    };
+    document.querySelectorAll('[data-ua-nodes="' + source.name + '"]').forEach(function (el) {
+      var card = el.closest && el.closest('.card');
+      if (!card || card.querySelector('[data-ua-calls]')) return;
+      var line = document.createElement('div');
+      line.className = 'calls';
+      line.setAttribute('data-ua-calls', source.name);
+      ['de', 'en'].forEach(function (lang) {
+        var span = document.createElement('span');
+        span.setAttribute('lang', lang);
+        span.textContent = text[lang];
+        line.appendChild(span);
+      });
+      card.appendChild(line);
+    });
+  }
+
   fetch('/status.json', { cache: 'no-store' })
     .then(function (response) { if (!response.ok) throw new Error(response.status); return response.json(); })
     .then(function (status) {
@@ -34,6 +60,7 @@
       set('[data-ua="nodes"]', de.format(status.nodes));
       (status.sources || []).forEach(function (source) {
         set('[data-ua-nodes="' + source.name + '"]', de.format(source.nodes));
+        calls(source, de, new Intl.NumberFormat('en-GB'));
       });
       // Age describes the generation; releases are not scheduled daily.
       var locked = status.releaseSources || [];
