@@ -53,8 +53,8 @@ if actual:
  now=datetime.datetime.now(datetime.timezone.utc)
  for directory in gen.iterdir():
   config=directory/'.understand-anything/config.json'
-  if config.exists():
-   value=json.loads(config.read_text());value['outputLanguage']=os.environ.get('UNDERSTAND_FIXTURE_LANGUAGE','en');config.write_text(json.dumps(value))
+  if config.parent.is_dir():
+   value=json.loads(config.read_text()) if config.exists() else {};value['outputLanguage']=os.environ.get('UNDERSTAND_FIXTURE_LANGUAGE','en');config.write_text(json.dumps(value))
 lock=dict(schemaVersion='oriso.platform-release/v1',version='v2.0.7',releaseUrl='https://github.com/OpenResilienceInitiative/ORISO-Helm/releases/tag/v2.0.7',documentationRevision=sha,sources=[{k:s[k] for k in ['repository','ref','sourceSHA']} for s in sources])
 evidence=dict(lock=lock,sha256=hashlib.sha256(canonical_bytes(lock)).hexdigest(),publishedAt=now.isoformat(),releaseId=1,evidenceScope='published-github-release-and-source-refs')
 seal(gen,sources,now=now,release=evidence)
