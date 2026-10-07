@@ -727,3 +727,30 @@ export function parseHelmDeploymentName(yamlSource) {
 	const m = /metadata:\s*\n\s*name:\s*([\w-]+)/.exec(yamlSource);
 	return m ? m[1] : null;
 }
+
+/**
+ * UserService -> Keycloak otp-config SPI callers (ADR-013). KeycloakService keeps the SPI
+ * sub-paths in `ENDPOINT_OTP_*` constants and builds each URL with `getOtpUrl(<CONSTANT>, ...)`;
+ * the HTTP verb is the keycloakClient helper used by the same method (get/putForEntity/
+ * postForEntity/delete). A method that names an unknown constant, or no recognised helper
+ * before the next method, yields nothing: no guessed call.
+ *
+ * @returns {Array<{methodName: string, method: string, path: string}>} path is relative to the
+ *   SPI base (for example `/setup-otp/{username}`).
+ */
+export function parseKeycloakOtpCallers(javaSource) {
+	const constants = new Map();
+	for (const m of javaSource.matchAll(/\bString\s+(ENDPOINT_OTP_[A-Z_]+)\s*=\s*"([^"]+)"/g)) constants.set(m[1], m[2]);
+	const verbOf = { get: 'GET', putForEntity: 'PUT', postForEntity: 'POST', delete: 'DELETE' };
+	const declaration = /^\s*(?:public|protected|private)\s+(?:static\s+)?(?:final\s+)?[\w<>\[\],.? ]+?\s+(\w+)\s*\([^;{]*\)\s*(?:throws [\w., ]+)?\{/gm;
+	const starts = [...javaSource.matchAll(declaration)].map((m) => ({ name: m[1], index: m.index }));
+	const out = [];
+	for (let i = 0; i < starts.length; i++) {
+		const body = javaSource.slice(starts[i].index, starts[i + 1]?.index ?? javaSource.length);
+		const urls = [...body.matchAll(/getOtpUrl\(\s*(ENDPOINT_OTP_[A-Z_]+)\s*,/g)];
+		const verbs = [...body.matchAll(/keycloakClient\s*\.\s*(get|putForEntity|postForEntity|delete)\s*\(/g)];
+		if (urls.length !== 1 || verbs.length !== 1 || !constants.has(urls[0][1])) continue;
+		out.push({ methodName: starts[i].name, method: verbOf[verbs[0][1]], path: constants.get(urls[0][1]) });
+	}
+	return out;
+}

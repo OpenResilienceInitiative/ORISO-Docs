@@ -216,6 +216,13 @@ per the matcher tests.
 
 ## Known limits
 
+- **One service-to-service client is parsed: UserService -> Keycloak otp-config SPI** (ADR-013,
+  `lib/userservice-keycloak.mjs`). `KeycloakService` builds each URL from an `ENDPOINT_OTP_*`
+  constant under `identity.otp-url` and takes the verb from the `keycloakClient` helper; each
+  method is matched by exact verb + path to the SPI's own endpoint nodes and to exactly one
+  function node, otherwise it is skipped. These `calls` edges appear in the "UserService
+  Callers" layer and count as callers for the uncalled-endpoint stats. No other Java client
+  (Agency/Tenant/ConsultingType REST clients, Matrix) is traced.
 - **The caller scan is now `src/**/*.ts`+`.tsx` repo-wide** (previously
   `src/api/**/*.ts` only) for both Frontend and Admin, which closed most of
   the "real caller lives outside the scanned directory" gap described in
