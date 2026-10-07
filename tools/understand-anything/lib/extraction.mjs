@@ -22,6 +22,14 @@ const collectShadowNames = (node, names = new Set()) => {
   for (const child of node.namedChildren) collectShadowNames(child, names);
   return names;
 };
+// Type parameters declared on a type or callable. A variable whose declared type names one of
+// them is typed by that parameter (its bound), never by an indexed class of the same name.
+const javaTypeParameters = (node) => (field(node, 'type_parameters')?.namedChildren ?? [])
+  .filter((n) => n.type === 'type_parameter')
+  .map((n) => n.namedChildren.find((part) => part.type === 'type_identifier' || part.type === 'identifier')?.text)
+  .filter(Boolean);
+const TYPE_PARAMETER = '<type-parameter>';
+const scopedType = (type, typeParameters) => typeParameters?.has(type.replace(/<.*>/g, '').replace(/\[\]|\.\.\./g, '').split('.')[0]) ? TYPE_PARAMETER : type;
 const simpleJavaReceiver = (node) => {
   if (!node) return '';
   return /^(?:[\p{L}_$][\p{L}\p{N}_$]*)(?:\.[\p{L}_$][\p{L}\p{N}_$]*)*$/u.test(node.text) ? node.text : '<expression>';
@@ -69,13 +77,13 @@ export function createJavaExtractor(base) {
     const packageNode = root.namedChildren.find((node) => node.type === 'package_declaration');
     const packageName = packageNode?.text.replace(/^package\s+/, '').replace(/;\s*$/, '').trim() ?? '';
     const functions = [], classes = [], calls = [], parserIssues = [];
-    const variableTypes = (node) => {
+    const variableTypes = (node, typeParameters) => {
       const out = new Map();
       for (const declaration of node?.namedChildren ?? []) {
         if (!['field_declaration', 'constant_declaration'].includes(declaration.type)) continue;
         const type = javaText(field(declaration, 'type'));
         for (const variable of declaration.namedChildren.filter((n) => n.type === 'variable_declarator')) {
-          out.set(field(variable, 'name')?.text, type);
+          out.set(field(variable, 'name')?.text, scopedType(type, typeParameters));
         }
       }
       return out;
@@ -90,14 +98,17 @@ export function createJavaExtractor(base) {
         const hasSupertypes = Boolean(field(node, 'superclass') || field(node, 'interfaces') || node.namedChildren.some((child) => child.type === 'extends_interfaces'));
         const declaration = { name: owner, displayName: name, legacyName: name, qualifiedName: owner, lineRange: lineRange(node), methods: [], properties: [], kind: node.type, hasSupertypes };
         classes.push(declaration);
-        const fields = variableTypes(body);
-        for (const child of node.namedChildren) visit(child, { owner, variables: fields, fields, method: null, declaration });
+        // Static nested types do not see the outer type parameters; inner classes do.
+        const isStatic = node.namedChildren.some((c) => c.type === 'modifiers' && /\bstatic\b/.test(c.text));
+        const typeParameters = new Set([...(isStatic ? [] : context.typeParameters ?? []), ...javaTypeParameters(node)]);
+        const fields = variableTypes(body, typeParameters);
+        for (const child of node.namedChildren) visit(child, { owner, variables: fields, fields, method: null, declaration, typeParameters });
         return;
       }
       if (node.type === 'class_body' && node.parent?.type === 'object_creation_expression') {
         const owner = `${context.method?.name ?? context.owner}.<anonymous:${node.startPosition.row + 1}:${node.startPosition.column}>`;
-        const fields = variableTypes(node);
-        for (const child of node.namedChildren) visit(child, { owner, variables: fields, fields, method: null });
+        const fields = variableTypes(node, context.typeParameters);
+        for (const child of node.namedChildren) visit(child, { owner, variables: fields, fields, method: null, typeParameters: context.typeParameters });
         return;
       }
       if (['method_declaration', 'constructor_declaration', 'compact_constructor_declaration'].includes(node.type)) {
@@ -110,9 +121,10 @@ export function createJavaExtractor(base) {
           return javaText(type) + (parameter.type === 'spread_parameter' ? '...' : javaText(field(parameter, 'dimensions')));
         });
         const variables = new Map(context.variables);
+        const typeParameters = new Set([...(context.typeParameters ?? []), ...javaTypeParameters(node)]);
         for (let i = 0; i < parameters.length; i++) {
           const parameterName = field(parameters[i], 'name')?.text ?? parameters[i].namedChildren.find((n) => n.type === 'variable_declarator')?.text;
-          if (parameterName) variables.set(parameterName, types[i]);
+          if (parameterName) variables.set(parameterName, scopedType(types[i], typeParameters));
         }
         const signatureStatus = parameterNode?.hasError ? 'unresolved' : 'parsed';
         const signatureArgs = signatureStatus === 'parsed' ? types.join(',') : `<unresolved-signature:${createHash('sha256').update(parameterNode.text).digest('hex').slice(0, 16)}>`;
@@ -120,16 +132,17 @@ export function createJavaExtractor(base) {
         const fn = { name: `${context.owner}.${signature}`, displayName: name, legacyName: name, qualifiedName: `${context.owner}.${name}`, declaringType: context.owner, signature, signatureStatus, parameterTypes: types, params: parameters.map((p) => field(p, 'name')?.text ?? ''), lineRange: lineRange(node), returnType: javaText(field(node, 'type')), constructor: node.type !== 'method_declaration' };
         functions.push(fn);
         context.declaration?.methods.push(fn.name);
-        for (const child of node.namedChildren) visit(child, { ...context, variables, method: fn, shadow: collectShadowNames(node) });
+        for (const child of node.namedChildren) visit(child, { ...context, variables, method: fn, shadow: collectShadowNames(node), typeParameters });
         return;
       }
-      if (node.type === 'block') {
+      // A for-initializer is scoped to its loop and a switch-block local to its switch block.
+      if (['block', 'for_statement', 'switch_block'].includes(node.type)) {
         const blockContext = { ...context, variables: new Map(context.variables) };
         for (const child of node.namedChildren) visit(child, blockContext);
         return;
       }
       if (node.type === 'local_variable_declaration') {
-        for (const variable of node.namedChildren.filter((n) => n.type === 'variable_declarator')) context.variables.set(field(variable, 'name')?.text, javaText(field(node, 'type')));
+        for (const variable of node.namedChildren.filter((n) => n.type === 'variable_declarator')) context.variables.set(field(variable, 'name')?.text, scopedType(javaText(field(node, 'type')), context.typeParameters));
       }
       if (context.method && ['method_invocation', 'object_creation_expression'].includes(node.type)) {
         const constructor = node.type === 'object_creation_expression';

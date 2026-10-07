@@ -119,6 +119,47 @@ test('Java calls stay unconfirmed when another member could be applicable', asyn
   }
 });
 
+// Review cases from Docs#167 (both compile with javac --release 17; targets checked against javap -c).
+test('a class type parameter that shadows an indexed class never binds to that class', async () => {
+  const graph = await javaGraph({
+    'Manager.java': 'class Manager { void accept(String value) {} }',
+    'Other.java': 'class Other { void accept(Integer value) {} }',
+    'Caller.java': 'class Caller<Manager extends Other> { Manager manager; void go() { manager.accept(1); } }',
+  });
+  const wrong = graph.edges.filter((e) => e.source === 'function:Caller.java:Caller.go()' && e.target.startsWith('function:Manager.java:'));
+  assert.deepEqual(wrong, [], 'Manager is the type parameter here, the compiler binds Other.accept(Integer)');
+  assert.equal(edgesOf(graph, 'calls').filter((e) => e.source === 'function:Caller.java:Caller.go()').length, 0);
+});
+
+test('a method type parameter shadows an indexed class for its parameters', async () => {
+  const graph = await javaGraph({
+    'Manager.java': 'class Manager { void accept(String value) {} }',
+    'Other.java': 'class Other { void accept(Integer value) {} }',
+    'Caller.java': 'class Caller { <Manager extends Other> void go(Manager manager) { manager.accept(1); } }',
+  });
+  assert.deepEqual(graph.edges.filter((e) => e.source.startsWith('function:Caller.java:') && e.target.startsWith('function:Manager.java:')), []);
+});
+
+test('a for-initializer variable is scoped to its loop', async () => {
+  const graph = await javaGraph({
+    'Manager.java': 'class Manager { void accept(String value) {} }',
+    'Other.java': 'class Other { void accept(String value) {} }',
+    'Caller.java': 'class Caller { Manager manager; void go() { for (Other manager = new Other(); ; ) { manager.accept("loop"); break; } manager.accept("field"); } }',
+  });
+  const calls = edgesOf(graph, 'calls').filter((e) => e.source === 'function:Caller.java:Caller.go()').map((e) => e.target).sort();
+  assert.deepEqual(calls, ['function:Manager.java:Manager.accept(String)', 'function:Other.java:Other.accept(String)']);
+});
+
+test('a local declared in a switch block does not leak past the switch', async () => {
+  const graph = await javaGraph({
+    'Manager.java': 'class Manager { void accept(String value) {} }',
+    'Other.java': 'class Other { void accept(String value) {} }',
+    'Caller.java': 'class Caller { Manager manager; void go(int k) { switch (k) { case 1: Other manager = new Other(); manager.accept("in"); break; } manager.accept("field"); } }',
+  });
+  const calls = edgesOf(graph, 'calls').filter((e) => e.source === 'function:Caller.java:Caller.go(int)').map((e) => e.target).sort();
+  assert.deepEqual(calls, ['function:Manager.java:Manager.accept(String)', 'function:Other.java:Other.accept(String)']);
+});
+
 test('real pinned Java grammar limitation is explicit and does not erase other declarations', async () => {
   const { plugin, core } = await parser();
   const content = `class Controller {

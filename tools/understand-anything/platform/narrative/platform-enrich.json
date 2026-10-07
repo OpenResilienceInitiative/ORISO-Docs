@@ -262,13 +262,16 @@
     {
       "order": 6,
       "title": "Identity: Keycloak and the vendored OTP SPI",
-      "description": "Identities live in Keycloak, not in any Spring service. The only Keycloak endpoints this graph knows are the {{stats.services.ORISO-Keycloak.endpointsOwn}} represented endpoint nodes, including /otp-config routes of the vendored SPI described in ADR-013, and {{stats.services.ORISO-Keycloak.endpointsOwnUncalled}} have no confirmed parsed caller — the Frontend's 2FA callers go through UserService's /users/2fa/* routes instead, and UserService's KeycloakService is the parsed caller of the SPI (getOtpCredential, setUpOtpCredential, deleteOtpCredential, initiateEmailVerification, finishEmailVerification), and its logout call to /protocol/openid-connect/logout is classified external and left unmatched on purpose.",
+      "description": "Identities live in Keycloak, not in any Spring service. The only Keycloak endpoints this graph knows are the {{stats.services.ORISO-Keycloak.endpointsOwn}} represented endpoint nodes, including /otp-config routes of the vendored SPI described in ADR-013, and {{stats.services.ORISO-Keycloak.endpointsOwnUncalled}} have no confirmed parsed caller — the Frontend's 2FA callers go through UserService's /users/2fa/* routes instead, and UserService's KeycloakService is the parsed caller of the SPI (getOtpCredential, setUpOtpCredential, deleteOtpCredential, initiateEmailVerification, finishEmailVerification), and its logout call to /protocol/openid-connect/logout is classified external and left unmatched on purpose. To go from the 2FA idea to the code that owns it, open the UserService 2FA concept: the Concept Bridges layer links it to the Keycloak otp-config REST API and e-mail OTP concepts, and from there to the SPI classes (RealmOtpResourceProvider, OtpMailAuthenticator, MemoryOtpService). That bridge only exists when the confirmed KeycloakService calls above exist.",
       "nodeIds": [
         "service:ORISO-Keycloak",
         "ORISO-Keycloak::endpoint:keycloak-image/otp-config-spi/api/keycloakextension.yaml:PUT /otp-config/setup-otp/{username}",
         "document:adr:ORISO-Docs:oriso-platform/decisions/ADR-013-2fa-via-vendored-otp-config-spi.md",
         "ORISO-Frontend::function:src/api/apiTwoFactorAuth.ts:apiPutTwoFactorAuthApp",
-        "ORISO-UserService::endpoint:api/userservice.yaml:PUT /users/2fa/app"
+        "ORISO-UserService::endpoint:api/userservice.yaml:PUT /users/2fa/app",
+        "ORISO-UserService::concept:identity-authentication-2fa",
+        "ORISO-Keycloak::concept:otp-config-rest-api",
+        "ORISO-Keycloak::concept:email-otp-second-factor"
       ]
     },
     {

@@ -24,6 +24,7 @@ import { loadUserServiceKeycloakCallers } from './lib/userservice-keycloak.mjs';
 import { parseAuthority, authorityRelations } from './lib/authority.mjs';
 import { bindSourceRevisions, readSource, listSourceFiles } from './lib/source-reader.mjs';
 import { projectSemanticFlows, relationCoverage } from './lib/semantic-projection.mjs';
+import { projectConceptBridges } from './lib/concept-bridges.mjs';
 import { createHash } from 'node:crypto';
 import { classifyFilePath, specBasename } from './lib/classify.mjs';
 import {
@@ -1234,6 +1235,18 @@ function main() {
 	addCallsFor(adminResult.matches, adminCallers);
 	addCallsFor(userKeycloak.matches, userKeycloak.callers);
 
+	// concept bridges: a concept in one repo -> the concept that owns the implementation in
+	// another repo, only when confirmed calls between the two repos exist (Docs#168).
+	const conceptBridges = projectConceptBridges({
+		graphs,
+		bridges: readJson(path.join(__dirname, 'narrative', 'concept-bridges.json')).bridges,
+		confirmedMatches,
+		callerNodeIds: nodes.filter((n) => n.tags?.includes('api-caller')).map((n) => n.id),
+		addNode,
+		addEdge
+	});
+	for (const s of conceptBridges.skipped) console.warn(`[warn] concept bridge ${s.bridge} skipped: ${s.reason}`);
+
 	// depends_on: service -> service, aggregated from calls edges AND from
 	// internal `consumes` references (a repo that bundles another service's
 	// OpenAPI spec depends on it just as much as one that calls it at
@@ -1310,6 +1323,7 @@ function main() {
 		{ id: 'frontend-callers', name: 'Frontend Callers', description: 'ORISO-Frontend functions/files (anywhere in src/**) that call backend endpoints.', nodeIds: nodes.filter((n) => (n.type === 'function' || n.type === 'file') && n.tags?.includes('api-caller') && n.sourceRepo === 'ORISO-Frontend').map((n) => n.id) },
 		{ id: 'admin-callers', name: 'Admin Callers', description: 'ORISO-Admin functions/files (anywhere in src/**) that call backend endpoints.', nodeIds: nodes.filter((n) => (n.type === 'function' || n.type === 'file') && n.tags?.includes('api-caller') && n.sourceRepo === 'ORISO-Admin').map((n) => n.id) },
 		...(userKeycloak.callers.length ? [{ id: 'userservice-callers', name: 'UserService Callers', description: 'ORISO-UserService methods that call the Keycloak otp-config SPI (ADR-013).', nodeIds: nodes.filter((n) => n.tags?.includes('api-caller') && n.sourceRepo === 'ORISO-UserService').map((n) => n.id) }] : []),
+		...(conceptBridges.emitted.length ? [{ id: 'concept-bridges', name: 'Concept Bridges', description: 'Concepts linked across repos to the concept that owns the implementation, backed by confirmed calls (e.g. UserService 2FA -> Keycloak otp-config SPI, ADR-013).', nodeIds: [...new Set(conceptBridges.emitted.flatMap((b) => b.nodeIds))] }] : []),
 		{ id: 'data', name: 'Data', description: 'Database tables owned by each backend service.', nodeIds: nodes.filter((n) => n.type === 'table').map((n) => n.id) },
 		{ id: 'decisions-docs', name: 'Decisions & Docs', description: 'ADRs and Fumadocs developer-documentation pages.', nodeIds: nodes.filter((n) => n.type === 'document').map((n) => n.id) }
 	];
