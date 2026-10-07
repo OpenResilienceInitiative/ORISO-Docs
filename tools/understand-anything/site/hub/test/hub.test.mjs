@@ -48,7 +48,7 @@ test('repository cards show call coverage with unresolved calls in both language
  assert.deepEqual(appended[0].children.map(c=>c.attrs.lang),['de','en']);
 });
 test('reader sees exact repository revision and generation time while a failed later refresh stays separate',async()=>{
- const script=readFileSync(new URL('../assets/status.js',import.meta.url),'utf8'),rows=[],attempt={};
+ const script=readFileSync(new URL('../assets/status.js',import.meta.url),'utf8'),rows=[],attempt={appendChild(child){this.textContent += child.textContent;}};
  const createElement=()=>({children:[],attrs:{},setAttribute(k,v){this.attrs[k]=v;},appendChild(v){this.children.push(v);}});
  const source={name:'ORISO-Docs',repository:'ORISO-Docs',ref:'refs/tags/v2.0.7',sourceSHA:'a'.repeat(40),fetchedAt:'2026-10-01T08:00:00Z',nodes:10};
  const status={generatedAt:'2026-10-01T09:00:00Z',generationId:'installed-one',branch:source.ref,releaseVersion:'v2.0.7',releasedAt:'2026-10-01T07:00:00Z',releaseSources:[source],sources:[source]};

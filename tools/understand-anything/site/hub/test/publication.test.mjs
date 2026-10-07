@@ -61,5 +61,5 @@ test('actual canonical-source and locale output drift fail before artifact gener
 test('hosted preflight fails named missing operator bindings before consumer scheduling',()=>{
  const text=fs.readFileSync(path.join(root,'.github/workflows/ua-public-site.yml'),'utf8');const code=text.match(/node - <<'NODE'\n([\s\S]*?)\n          NODE/)[1].split('\n').map(x=>x.slice(10)).join('\n');
  assert.throws(()=>execFileSync(process.execPath,['-e',code],{env:{PATH:process.env.PATH},stdio:'pipe'}),error=>/UNDERSTAND_HUB_CURRENT/.test(error.stderr.toString())&&/UNDERSTAND_VIEWER_READBACK_TOKENS/.test(error.stderr.toString()));
- assert.ok(text.includes('needs: [binding, produce]'));assert.ok(text.includes('runtime-test.mjs'));assert.ok(text.includes('consumer.py'));assert.ok(text.includes('--readback'));assert.ok(!text.includes('UA_GRAPH_TOKEN'));
+ assert.ok(text.includes('needs: [binding, produce]'));assert.ok(text.includes('runtime-test.mjs'));const activation=fs.readFileSync(path.join(root,'tools/understand-anything/hosted-viewer/activate.sh'),'utf8');assert.ok(activation.includes('consumer.py'));assert.ok(activation.includes('--readback'));assert.ok(text.includes('activation.py'));assert.ok(text.includes('UNDERSTAND_STATIC_ROOT'));assert.ok(text.includes('UNDERSTAND_ATTEMPT_RECEIPT'));assert.ok(!text.includes('UA_GRAPH_TOKEN'));
 });

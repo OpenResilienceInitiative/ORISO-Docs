@@ -3,7 +3,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 const phases=['preflight','generation','installation','readback','complete'];
-const codes=['PREFLIGHT_FAILED','GENERATION_FAILED','INSTALLATION_FAILED','READBACK_FAILED','NONE'];
+const phaseCodes={preflight:'PREFLIGHT_FAILED',generation:'GENERATION_FAILED',installation:'INSTALLATION_FAILED',readback:'READBACK_FAILED',complete:'NONE'};
+const codes=Object.values(phaseCodes);
 const revision=s=>typeof s==='string'&&/^[a-f0-9]{40}$/.test(s)?s:null;
 const version=s=>typeof s==='string'&&/^v?\d+\.\d+\.\d+(?:[-+][a-zA-Z0-9.-]+)?$/.test(s)?s:null;
 const identity=s=>typeof s==='string'&&/^[a-zA-Z0-9_.-]{1,120}$/.test(s)?s:null;
@@ -20,7 +21,7 @@ export function recordAttempt({output,current,input}){
  if(!path.isAbsolute(output)||!path.isAbsolute(current))throw Error('Independent explicit attempt receipt binding required');
  const destination=resolvedPath(output),installedRoot=resolvedPath(current);if(destination===installedRoot||destination.startsWith(installedRoot+path.sep))throw Error('Independent explicit attempt receipt binding required');
  if(!['failed','succeeded'].includes(input.state)||!identity(input.attemptId)||!phases.includes(input.phase))throw Error('Invalid attempt identity/state/phase');
- if(!codes.includes(input.errorCode)||input.state==='failed'&&input.errorCode==='NONE'||input.state==='succeeded'&&(input.errorCode!=='NONE'||input.phase!=='complete'))throw Error('Invalid sanitized error code');
+ if(!codes.includes(input.errorCode)||phaseCodes[input.phase]!==input.errorCode||input.state==='failed'&&input.errorCode==='NONE'||input.state==='succeeded'&&(input.errorCode!=='NONE'||input.phase!=='complete'))throw Error('Invalid sanitized error code');
  const time=new Date(input.attemptedAt);if(!Number.isFinite(time.getTime()))throw Error('Valid attempt time required');
  let installed=null;
  try{const s=JSON.parse(fs.readFileSync(path.join(current,'status.json')));installed={generationId:identity(s.generationId),releaseVersion:version(s.releaseVersion),documentationRevision:revision(s.sources?.find(r=>r.repository==='ORISO-Docs')?.sourceSHA)};}catch{}
@@ -30,5 +31,13 @@ export function recordAttempt({output,current,input}){
 }
 if(process.argv[1]===fileURLToPath(import.meta.url)){
  const arg=(key,fallback)=>{const i=process.argv.indexOf(key);if(i>=0)return process.argv[i+1];if(fallback!==undefined)return fallback;throw Error('Required '+key);};
- try{recordAttempt({output:arg('--output'),current:arg('--current'),input:{state:arg('--state'),attemptId:arg('--attempt-id'),attemptedAt:arg('--time',new Date().toISOString()),releaseVersion:arg('--release',''),documentationRevision:arg('--revision',''),phase:arg('--phase'),errorCode:arg('--error-code')}});console.log('Sanitized refresh receipt recorded');}catch{console.error('Refresh receipt binding/validation failed');process.exitCode=1;}
+ try{
+  let input;
+  if(process.argv.includes('--from-workflow')){
+   let lock={};try{const event=JSON.parse(fs.readFileSync(arg('--event')));lock=event.client_payload?.release_manifest||JSON.parse(event.inputs?.release_manifest||'{}');}catch{}
+   let phase=process.env.CONTRACT_RESULT!=='success'||process.env.BINDING_RESULT!=='success'||lock.schemaVersion!=='oriso.platform-release/v1'?'preflight':process.env.PRODUCER_RESULT!=='success'?'generation':process.env.CONSUMER_RESULT!=='success'?(['readback','complete'].includes(process.env.CONSUMER_PHASE)?'readback':'installation'):'complete';
+   input={state:phase==='complete'?'succeeded':'failed',attemptId:arg('--attempt-id'),attemptedAt:new Date().toISOString(),releaseVersion:lock.version,documentationRevision:lock.documentationRevision,phase,errorCode:phaseCodes[phase]};
+  }else input={state:arg('--state'),attemptId:arg('--attempt-id'),attemptedAt:arg('--time',new Date().toISOString()),releaseVersion:arg('--release',''),documentationRevision:arg('--revision',''),phase:arg('--phase'),errorCode:arg('--error-code')};
+  recordAttempt({output:arg('--output'),current:arg('--current'),input});console.log('Sanitized refresh receipt recorded');
+ }catch{console.error('Refresh receipt binding/validation failed');process.exitCode=1;}
 }

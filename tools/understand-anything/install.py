@@ -107,7 +107,7 @@ def _install_locked(root, profile=None, docker=False):
         pnpm = ['npm', 'exec', '--yes', '--package=pnpm@' + lock['pnpm'], '--', 'pnpm']
         runtime(pnpm + ['install', '--frozen-lockfile'], upstream)
         runtime(pnpm + ['--filter', '@understand-anything/core', 'build'], upstream)
-        runtime(pnpm + ['--filter', '@understand-anything/dashboard', 'build'], upstream)
+        runtime(pnpm + ['--filter', '@understand-anything/dashboard', 'build', '--base=./'], upstream)
         runtime(['npm', 'ci', '--ignore-scripts', '--no-audit', '--no-fund'], tooling)
         # Content address includes the custom source, not merely the upstream version.
         files = sorted(p for p in tooling.rglob('*') if p.is_file() and 'node_modules' not in p.parts)

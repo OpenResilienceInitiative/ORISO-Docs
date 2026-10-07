@@ -10,7 +10,7 @@ subprocess.run(['git','init','-q',str(source)],check=True)
 subprocess.run(['git','-C',str(source),'add','.'],check=True)
 subprocess.run(['git','-C',str(source),'-c','user.name=Fixture','-c','user.email=fixture@example.invalid','commit','-qm','fixture'],check=True)
 sha=subprocess.check_output(['git','-C',str(source),'rev-parse','HEAD'],text=True).strip()
-sources_root=root/'sources';gen=sources_root/'graph-generation';now=datetime.datetime.now(datetime.timezone.utc);fixture(gen,now)
+sources_root=root/'sources';gen=sources_root/'graph-generation';now=datetime.datetime.fromisoformat(sys.argv[2]) if len(sys.argv)>2 else datetime.datetime.now(datetime.timezone.utc);fixture(gen,now)
 sources=[]
 for name in sorted(required_repositories()):
  shutil.copytree(source,sources_root/name);shutil.copytree(gen/'ORISO-Test',gen/name)

@@ -45,6 +45,11 @@
   }
 
 
+  function bilingual(el, de, en) {
+    el.textContent = '';
+    [de, en].forEach(function (text, index) { var span = document.createElement('span'); span.setAttribute('lang', index ? 'en' : 'de'); span.textContent = text; el.appendChild(span); });
+  }
+
   function sourceList(status) {
     var target = document.querySelector('[data-ua="source-list"]');
     if (!target) return;
@@ -77,11 +82,11 @@
         var attempted = receipt.releaseVersion && /^v?\d+\.\d+\.\d+(?:[-+][a-zA-Z0-9.-]+)?$/.test(receipt.releaseVersion) ? receipt.releaseVersion : '–';
         var installed = status.releaseVersion || '–';
         el.className = receipt.state === 'failed' ? 'note' : 'src';
-        el.textContent = receipt.state === 'failed'
-          ? 'Aktualisierung fehlgeschlagen / Refresh failed: ' + attempted + ' · ' + receipt.attemptedAt + ' · ' + receipt.errorCode + '. Installiert / Installed: ' + installed + ' · ' + status.generationId
-          : 'Letzte Aktualisierung geprüft / Latest refresh verified: ' + receipt.attemptedAt + '. Installiert / Installed: ' + installed + ' · ' + status.generationId;
+        bilingual(el,
+          (receipt.state === 'failed' ? 'Aktualisierung fehlgeschlagen: ' + attempted + ' · ' + receipt.attemptedAt + ' · ' + receipt.errorCode : 'Letzte Aktualisierung geprüft: ' + receipt.attemptedAt) + '. Installiert: ' + installed + ' · ' + status.generationId,
+          (receipt.state === 'failed' ? 'Refresh failed: ' + attempted + ' · ' + receipt.attemptedAt + ' · ' + receipt.errorCode : 'Latest refresh verified: ' + receipt.attemptedAt) + '. Installed: ' + installed + ' · ' + status.generationId);
       })
-      .catch(function () { el.className = 'src'; el.textContent = 'Aktualisierungsnachweis nicht verfügbar / Refresh receipt unavailable. Installiert / Installed: ' + (status.releaseVersion || '–'); });
+      .catch(function () { el.className = 'src'; bilingual(el, 'Aktualisierungsnachweis nicht verfügbar. Installiert: ' + (status.releaseVersion || '–'), 'Refresh receipt unavailable. Installed: ' + (status.releaseVersion || '–')); });
   }
 
   fetch('/status.json', { cache: 'no-store' })
@@ -108,7 +113,7 @@
         var included = coverage.filter(function (s) { return s.status === 'included' && /^[a-f0-9]{40}$/.test(s.sourceCommit) && aggregate.sourceCommits && aggregate.sourceCommits[s.repository] === s.sourceCommit; }).map(function (s) { return s.repository; });
         var unavailable = coverage.filter(function (s) { return s.status === 'unavailable'; }).map(function (s) { return s.repository; });
         document.querySelectorAll('[data-ua-coverage="' + aggregate.name + '"]').forEach(function (el) {
-          el.textContent = 'Enthalten / Included: ' + (included.join(', ') || '–') + '. Nicht verfügbar / Unavailable: ' + (unavailable.join(', ') || '–');
+          bilingual(el, 'Enthalten: ' + (included.join(', ') || '–') + '. Nicht verfügbar: ' + (unavailable.join(', ') || '–'), 'Included: ' + (included.join(', ') || '–') + '. Unavailable: ' + (unavailable.join(', ') || '–'));
         });
       });
       sourceList(status);
@@ -126,5 +131,6 @@
       set('[data-ua="released"]', '–');
       set('[data-ua="branch"]', '–');
       state(false, true);
+      var attemptState = document.querySelector('[data-ua="attempt"]'); if (attemptState) bilingual(attemptState, 'Installierter Status nicht verfügbar; ein Aktualisierungsnachweis bestätigt keinen Release.', 'Installed status unavailable; a refresh receipt does not establish the installed release.');
     });
 })();
