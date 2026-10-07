@@ -53,6 +53,7 @@ jobs:
           node hosted-viewer/platform-tour-browser-test.mjs --upstream /tmp/oriso-ua-runtime/current/upstream --playwright /tmp/ua-browser/node_modules/playwright/index.mjs --output /tmp/oriso-platform-browser
       - name: Test guarded source, static serving and hub status
         run: |
+          export UNDERSTAND_TEST_UPSTREAM=/tmp/oriso-ua-runtime/current/upstream
           cd tools/understand-anything
           node --test hosted-viewer/*.test.mjs site/hub/test/*.test.mjs
           node hosted-viewer/runtime-test.mjs --upstream /tmp/oriso-ua-runtime/current/upstream
