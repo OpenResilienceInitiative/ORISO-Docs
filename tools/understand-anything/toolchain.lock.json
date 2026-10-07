@@ -13,6 +13,10 @@
     {
       "path": "patches/oriso-public-source-preview-v1.patch",
       "sha256": "b58907479a7ef131e87b3ed4d9f094496f297b88405d830e6ac3a4809d28f6e6"
+    },
+    {
+      "path": "patches/oriso-call-relations-v1.patch",
+      "sha256": "90f6462c1766fa3ca0f31d85c100bea04c14f8f29315e08fdb892f8a4da24a51"
     }
   ],
   "nodeImage": "node@sha256:8a34c4ab3ea2c5cd194f07e317b2a8f09461d3c8b05c4e34c8ccd56d56024c4d",
