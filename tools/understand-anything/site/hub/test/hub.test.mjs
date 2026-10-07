@@ -43,8 +43,8 @@ test('repository cards show call coverage with unresolved calls in both language
  await new Promise(resolve=>setImmediate(resolve));
  assert.equal(appended.length,1);
  const [deText,enText]=appended[0].children.map(c=>c.textContent);
- assert.equal(deText,'Aufrufe: 20.648 bestätigt · 6.023 möglich · 147.611 nicht aufgelöst');
- assert.equal(enText,'Calls: 20,648 confirmed · 6,023 possible · 147,611 unresolved');
+ assert.equal(deText,'Aufrufe: 20.648 quellseitig aufgelöst · 6.023 möglich · 147.611 nicht aufgelöst. Enge statische Quellregeln; keine Bestätigung durch Compiler, Typprüfung oder Laufzeit.');
+ assert.equal(enText,'Calls: 20,648 source-resolved · 6,023 possible · 147,611 unresolved. Narrow static source rules; no compiler, type-checker or runtime verification.');
  assert.deepEqual(appended[0].children.map(c=>c.attrs.lang),['de','en']);
 });
 test('reader sees exact repository revision and generation time while a failed later refresh stays separate',async()=>{

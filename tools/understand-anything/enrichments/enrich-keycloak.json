@@ -31,7 +31,7 @@
     {
       "id": "concept:email-otp-second-factor",
       "name": "E-mail OTP second factor (vendored otp-config SPI)",
-      "summary": "E-mail second-factor login is implemented by the vendored ORISO-Keycloak otp-config SPI. OtpMailAuthenticator answers direct-grant token requests and delegates the submitted code to MailOtpVerifier. The verifier invalidates a valid credential and counts invalid attempts through the credential service. MemoryOtpService creates codes with a configurable lifetime (900 seconds by default), and checks expiry, invalidation and the limit of three failed validations. These are source-level responsibilities; this graph does not establish deployed authentication behavior. ADR-013 records the original vendoring under ORISO-Helm; the reviewed current classes are under ORISO-Keycloak.",
+      "summary": "E-mail second-factor login is implemented by the vendored ORISO-Keycloak otp-config SPI. OtpMailAuthenticator answers direct-grant token requests and delegates the submitted code to MailOtpVerifier. OtpMailFormAuthenticator handles browser login forms and delegates submitted codes to the same MailOtpVerifier. The verifier invalidates a valid credential and counts invalid attempts through the credential service. MemoryOtpService creates codes with a configurable lifetime (900 seconds by default), and checks expiry, invalidation and the limit of three failed validations. These are source-level responsibilities; this graph does not establish deployed authentication behavior. ADR-013 records the original vendoring under ORISO-Helm; the reviewed current classes are under ORISO-Keycloak.",
       "tags": [
         "keycloak",
         "authentication",
@@ -42,7 +42,7 @@
       ],
       "related": [
         "class:keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/authenticator/OtpMailAuthenticator.java:de.onlineberatung.authenticator.OtpMailAuthenticator",
-        "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/authenticator/OtpMailFormAuthenticator.java",
+        "class:keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/authenticator/OtpMailFormAuthenticator.java:de.onlineberatung.authenticator.OtpMailFormAuthenticator",
         "class:keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/authenticator/MailOtpVerifier.java:de.onlineberatung.authenticator.MailOtpVerifier",
         "class:keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/otp/MemoryOtpService.java:de.onlineberatung.otp.MemoryOtpService",
         "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/otp/OtpMailSender.java",
@@ -53,10 +53,10 @@
         "sourceCommit": "1d86e8abe8b1ae26a383794ee3241702a30c18e6",
         "generationId": "source-review-168-2026-10-07",
         "generatedAt": "2026-10-07T18:59:38.487Z",
-        "reviewedAt": "2026-10-07T19:03:18.147301Z",
+        "reviewedAt": "2026-10-07T21:28:22.961380+00:00",
         "reviewedBy": {
           "kind": "agent",
-          "name": "Codex ticket 168 source review"
+          "name": "Codex ticket 168 source review and browser-login source follow-up"
         },
         "confidence": "source-reviewed",
         "scope": "second-factor source routing; no runtime acceptance",
@@ -90,6 +90,16 @@
               80
             ],
             "sourceFingerprint": "503c23eb8e15adf53cc974e06946c921148288eac601e3b45754041281b1215a"
+          },
+          {
+            "nodeId": "class:keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/authenticator/OtpMailFormAuthenticator.java:de.onlineberatung.authenticator.OtpMailFormAuthenticator",
+            "kind": "source",
+            "sourceCommit": "1d86e8abe8b1ae26a383794ee3241702a30c18e6",
+            "sourceRange": [
+              43,
+              196
+            ],
+            "sourceFingerprint": "3bb25b6ea78ddfa9532e20b604bdcab06ac89019b14a3eef1e18d023a53e22be"
           }
         ]
       }
@@ -152,13 +162,21 @@
       "id": "flow:deploy-and-configure",
       "name": "Deploy & Configure",
       "summary": "Apply the Kubernetes manifests (deployment, service, ingress) → wait for the Keycloak pod to become ready → run configure-http-access.sh to disable the SSL requirement → realm available for the platform.",
-      "related": ["keycloak-deployment.yaml", "keycloak-service.yaml", "ingress.yaml", "configure-http-access.sh"]
+      "related": [
+        "keycloak-deployment.yaml",
+        "keycloak-service.yaml",
+        "ingress.yaml",
+        "configure-http-access.sh"
+      ]
     },
     {
       "id": "flow:backup-restore",
       "name": "Backup & Restore Realm",
       "summary": "realm-backup.sh exports the realm from the running pod to a timestamped file; realm.json is the canonical import used to restore or re-provision the realm.",
-      "related": ["backup/realm-backup.sh", "realm.json"]
+      "related": [
+        "backup/realm-backup.sh",
+        "realm.json"
+      ]
     }
   ]
 }

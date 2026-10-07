@@ -2,7 +2,7 @@
 import { readFileSync } from 'node:fs';
 import { assessClaim } from '../../lib/semantic-claims.mjs';
 const userServiceEnrichment = JSON.parse(readFileSync(new URL('../../enrichments/enrich-userservice.json', import.meta.url), 'utf8'));
-const detailRoutes = { 'ORISO-Frontend': '/frontend/', 'ORISO-Admin': '/admin-service/', 'ORISO-UserService': '/user-service/', 'ORISO-AgencyService': '/agency-service/', 'ORISO-TenantService': '/tenant-service/', 'ORISO-ConsultingTypeService': '/consulting-type-service/', 'ORISO-Keycloak': '/keycloak/', 'ORISO-Kubernetes': '/kubernetes/', 'ORISO-Database': '/database/', 'ORISO-ElementCall': '/element-call/', 'ORISO-Livekit': '/livekit/', 'ORISO-Helm': '/helm/', 'ORISO-HealthDashboard': '/health-dashboard/', 'ORISO-SigNoz': '/signoz/', 'ORISO-Status': '/status/', 'ORISO-Docs': '/docs/' };
+const detailRoutes = JSON.parse(readFileSync(new URL('../../hosted-viewer/viewer-routes.json', import.meta.url), 'utf8'));
 const fullSHA = /^[a-f0-9]{40}$/i;
 const groups = [
   { id: 'entry', repos: ['ORISO-Frontend', 'ORISO-Admin'], en: ['Entry points', 'Start with the two browser applications. Follow a selected source or contract into its owning repository; graph relations are not runtime verification.'], de: ['Einstiegspunkte', 'Beginne mit den beiden Browser-Anwendungen. Folge einer Quelle oder einem Vertrag in das zuständige Repository; Graph-Beziehungen sind kein Laufzeitnachweis.'] },

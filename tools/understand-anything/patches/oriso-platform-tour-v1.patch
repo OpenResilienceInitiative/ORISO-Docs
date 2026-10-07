@@ -1,5 +1,5 @@
 diff --git a/understand-anything-plugin/packages/dashboard/src/components/LearnPanel.tsx b/understand-anything-plugin/packages/dashboard/src/components/LearnPanel.tsx
-index 381f1fe..613ad79 100644
+index 381f1fe..4f239f1 100644
 --- a/understand-anything-plugin/packages/dashboard/src/components/LearnPanel.tsx
 +++ b/understand-anything-plugin/packages/dashboard/src/components/LearnPanel.tsx
 @@ -2,6 +2,8 @@ import { useMemo } from "react";
@@ -11,17 +11,12 @@ index 381f1fe..613ad79 100644
  
  export default function LearnPanel() {
    const graph = useDashboardStore((s) => s.graph);
-@@ -13,11 +15,16 @@ export default function LearnPanel() {
+@@ -13,11 +15,11 @@ export default function LearnPanel() {
    const nextTourStep = useDashboardStore((s) => s.nextTourStep);
    const prevTourStep = useDashboardStore((s) => s.prevTourStep);
    const selectNode = useDashboardStore((s) => s.selectNode);
 -  const { t } = useI18n();
-+  const { t: translations, localeKey } = useI18n();
-+  const t = localeKey === 'de' ? { ...translations, learnPanel: { ...translations.learnPanel,
-+    noTour: 'Keine Tour verfügbar', noTourHint: 'Für diese Generation wurde keine Tour erstellt.',
-+    projectTour: 'Projekt-Tour', steps: 'Schritte', guidedWalkthrough: 'Geführter Überblick',
-+    startTour: 'Tour starten', tour: 'Tour', exitTour: 'Tour beenden', prev: 'Zurück', next: 'Weiter', finish: 'Abschließen',
-+  } } : translations;
++  const { t, localeKey } = useI18n();
  
    const tourSteps = useMemo(
 -    () => graph?.tour ? [...graph.tour].sort((a, b) => a.order - b.order) : [],
@@ -31,7 +26,7 @@ index 381f1fe..613ad79 100644
    );
    const hasTour = tourSteps.length > 0;
  
-@@ -70,6 +77,7 @@ export default function LearnPanel() {
+@@ -70,6 +72,7 @@ export default function LearnPanel() {
              </div>
            ))}
          </div>
@@ -39,7 +34,7 @@ index 381f1fe..613ad79 100644
        </div>
      );
    }
-@@ -158,7 +166,7 @@ export default function LearnPanel() {
+@@ -158,7 +161,7 @@ export default function LearnPanel() {
          {step.languageLesson && (
            <div className="bg-accent/5 border border-accent/20 rounded p-3 mb-4">
              <h4 className="text-[11px] font-semibold text-accent uppercase tracking-wider mb-1.5">
@@ -48,7 +43,7 @@ index 381f1fe..613ad79 100644
              </h4>
              <p className="text-sm text-text-secondary leading-relaxed">
                {step.languageLesson}
-@@ -170,7 +178,7 @@ export default function LearnPanel() {
+@@ -170,7 +173,7 @@ export default function LearnPanel() {
          {step.nodeIds.length > 0 && (
            <div className="mb-4">
              <h4 className="text-[11px] font-semibold text-accent uppercase tracking-wider mb-2">
@@ -57,7 +52,7 @@ index 381f1fe..613ad79 100644
              </h4>
              <div className="flex flex-wrap gap-1.5">
                {step.nodeIds.map((nodeId) => {
-@@ -179,7 +187,7 @@ export default function LearnPanel() {
+@@ -179,7 +182,7 @@ export default function LearnPanel() {
                    <button
                      key={nodeId}
                      onClick={() => selectNode(nodeId)}
@@ -66,7 +61,7 @@ index 381f1fe..613ad79 100644
                    >
                      {node?.name ?? nodeId}
                    </button>
-@@ -188,6 +196,7 @@ export default function LearnPanel() {
+@@ -188,6 +191,7 @@ export default function LearnPanel() {
              </div>
            </div>
          )}
@@ -74,7 +69,7 @@ index 381f1fe..613ad79 100644
        </div>
  
        {/* Navigation: dots + prev/next */}
-@@ -203,7 +212,7 @@ export default function LearnPanel() {
+@@ -203,7 +207,7 @@ export default function LearnPanel() {
                    ? "bg-accent"
                    : "bg-elevated hover:bg-surface"
                }`}
@@ -83,6 +78,55 @@ index 381f1fe..613ad79 100644
              />
            ))}
          </div>
+diff --git a/understand-anything-plugin/packages/dashboard/src/components/OrisoPlatformOverview.tsx b/understand-anything-plugin/packages/dashboard/src/components/OrisoPlatformOverview.tsx
+new file mode 100644
+index 0000000..f4b8c24
+--- /dev/null
++++ b/understand-anything-plugin/packages/dashboard/src/components/OrisoPlatformOverview.tsx
+@@ -0,0 +1,43 @@
++import type { KnowledgeGraph } from '@understand-anything/core/types';
++import { useI18n } from '../contexts/I18nContext';
++import { object, platformMetadata } from './orisoPlatformModel';
++
++export default function OrisoPlatformOverview({ graph, onSelect }: { graph: KnowledgeGraph; onSelect?: (id: string) => void }) {
++  const text = useI18n().t.oriso;
++  const metadata = platformMetadata(graph);
++  const data = object(metadata.platformNavigation).repositories;
++  if (!Array.isArray(data)) return null;
++  const repositories = data.map(object).filter(item => typeof item.repository === 'string');
++  const dispositions = Array.isArray(metadata.semanticDispositions) ? metadata.semanticDispositions.map(object) : [];
++  const nodes = new Set(graph.nodes.map(node => node.id));
++  const statusLabel = (status: unknown) => status === 'source-current' ? text.sourceCurrent : status === 'stale' ? text.stale : text.awaitingReview;
++  return <section aria-label={text.coverage} className="min-w-0 mb-5 text-xs">
++    <h3 className="font-semibold text-accent mb-2">{text.coverage}</h3>
++    <p className="text-text-muted mb-2">{text.coverageCaveat}</p>
++    <ul className="space-y-2">
++      {repositories.map(item => {
++        const repository = String(item.repository);
++        const available = item.status === 'included';
++        const href = available && typeof item.detailHref === 'string' && /^\/[a-z][a-z0-9-]*\/$/.test(item.detailHref) ? item.detailHref : null;
++        const id = typeof item.nodeId === 'string' && nodes.has(item.nodeId) ? item.nodeId : null;
++        return <li key={repository} className="min-w-0 rounded border border-border-subtle p-2">
++          <div className="flex flex-wrap items-center gap-2">
++            {available && id && onSelect ? <button onClick={() => onSelect(id)} className="text-accent underline break-all text-left">{repository}</button> : <span className="break-all">{repository}</span>}
++            <span>{available ? text.included : text.unavailable}</span>
++            {item.lifecycle === 'retired' && <span>{text.retired}</span>}
++            {href && <a className="text-accent underline" href={href}>{text.openRepository}</a>}
++          </div>
++          {typeof item.sourceCommit === 'string' && /^[a-f0-9]{40}$/i.test(item.sourceCommit) && <code className="block break-all text-text-muted">{item.sourceCommit}</code>}
++        </li>;
++      })}
++    </ul>
++    {dispositions.length > 0 && <details className="mt-3">
++      <summary className="cursor-pointer text-accent">{text.semanticEntries} ({dispositions.length})</summary>
++      <p className="my-2 text-text-muted">{text.semanticCaveat}</p>
++      <ul className="space-y-2">{dispositions.map((item, index) => <li key={String(item.nodeId ?? index)} className="min-w-0 break-words border border-border-subtle rounded p-2">
++        <span>{String(item.name ?? item.nodeId ?? '')}</span> — <strong>{statusLabel(item.status)}</strong>
++        <code className="block break-all text-text-muted">{String(item.repository ?? '')}::{String(item.nodeId ?? '')}</code>
++      </li>)}</ul>
++    </details>}
++  </section>;
++}
 diff --git a/understand-anything-plugin/packages/dashboard/src/components/ProjectOverview.tsx b/understand-anything-plugin/packages/dashboard/src/components/ProjectOverview.tsx
 index c9cb478..21c927f 100644
 --- a/understand-anything-plugin/packages/dashboard/src/components/ProjectOverview.tsx
@@ -103,80 +147,6 @@ index c9cb478..21c927f 100644
        {/* File Types breakdown */}
        {hasNonCodeNodes && (
          <div className="mb-5">
-diff --git a/understand-anything-plugin/packages/dashboard/src/components/OrisoPlatformOverview.tsx b/understand-anything-plugin/packages/dashboard/src/components/OrisoPlatformOverview.tsx
-new file mode 100644
-index 0000000..e3d7c3c
---- /dev/null
-+++ b/understand-anything-plugin/packages/dashboard/src/components/OrisoPlatformOverview.tsx
-@@ -0,0 +1,44 @@
-+import type { KnowledgeGraph } from '@understand-anything/core/types';
-+import { useI18n } from '../contexts/I18nContext';
-+import { object, platformMetadata } from './orisoPlatformModel';
-+
-+export default function OrisoPlatformOverview({ graph, onSelect }: { graph: KnowledgeGraph; onSelect?: (id: string) => void }) {
-+  const { localeKey } = useI18n();
-+  const de = localeKey === 'de';
-+  const metadata = platformMetadata(graph);
-+  const data = object(metadata.platformNavigation).repositories;
-+  if (!Array.isArray(data)) return null;
-+  const repositories = data.map(object).filter(item => typeof item.repository === 'string');
-+  const dispositions = Array.isArray(metadata.semanticDispositions) ? metadata.semanticDispositions.map(object) : [];
-+  const nodes = new Set(graph.nodes.map(node => node.id));
-+  const statusLabel = (status: unknown) => status === 'source-current' ? (de ? 'Quellenstand geprüft' : 'Source current') : status === 'stale' ? (de ? 'Erneute Prüfung nötig' : 'Stale — re-review required') : (de ? 'Prüfung ausstehend' : 'Awaiting review');
-+  return <section aria-label={de ? 'Repository-Abdeckung' : 'Repository coverage'} className="min-w-0 mb-5 text-xs">
-+    <h3 className="font-semibold text-accent mb-2">{de ? 'Repository-Abdeckung' : 'Repository coverage'}</h3>
-+    <p className="text-text-muted mb-2">{de ? 'Enthaltene Quellen belegen keine aktive Bereitstellung oder Laufzeitprüfung.' : 'Included source does not establish deployment or runtime verification.'}</p>
-+    <ul className="space-y-2">
-+      {repositories.map(item => {
-+        const repository = String(item.repository);
-+        const available = item.status === 'included';
-+        const href = available && typeof item.detailHref === 'string' && /^\/[a-z][a-z0-9-]*\/$/.test(item.detailHref) ? item.detailHref : null;
-+        const id = typeof item.nodeId === 'string' && nodes.has(item.nodeId) ? item.nodeId : null;
-+        return <li key={repository} className="min-w-0 rounded border border-border-subtle p-2">
-+          <div className="flex flex-wrap items-center gap-2">
-+            {available && id && onSelect ? <button onClick={() => onSelect(id)} className="text-accent underline break-all text-left">{repository}</button> : <span className="break-all">{repository}</span>}
-+            <span>{available ? (de ? 'Enthalten' : 'Included') : (de ? 'Nicht verfügbar' : 'Unavailable')}</span>
-+            {item.lifecycle === 'retired' && <span>{de ? 'Historische Quelle (stillgelegt)' : 'Historical source (retired)'}</span>}
-+            {href && <a className="text-accent underline" href={href}>{de ? 'Detailgraph öffnen' : 'Open repository graph'}</a>}
-+          </div>
-+          {typeof item.sourceCommit === 'string' && /^[a-f0-9]{40}$/i.test(item.sourceCommit) && <code className="block break-all text-text-muted">{item.sourceCommit}</code>}
-+        </li>;
-+      })}
-+    </ul>
-+    {dispositions.length > 0 && <details className="mt-3">
-+      <summary className="cursor-pointer text-accent">{de ? 'Semantische Einträge' : 'Semantic entries'} ({dispositions.length})</summary>
-+      <p className="my-2 text-text-muted">{de ? 'Ein Quellenabgleich ist kein Laufzeitnachweis. Historische Erklärungen bleiben prüfpflichtig.' : 'Matching source is not runtime proof. Historical explanations still need review.'}</p>
-+      <ul className="space-y-2">{dispositions.map((item, index) => <li key={String(item.nodeId ?? index)} className="min-w-0 break-words border border-border-subtle rounded p-2">
-+        <span>{String(item.name ?? item.nodeId ?? '')}</span> — <strong>{statusLabel(item.status)}</strong>
-+        <code className="block break-all text-text-muted">{String(item.repository ?? '')}::{String(item.nodeId ?? '')}</code>
-+      </li>)}</ul>
-+    </details>}
-+  </section>;
-+}
-diff --git a/understand-anything-plugin/packages/dashboard/src/components/orisoPlatformModel.ts b/understand-anything-plugin/packages/dashboard/src/components/orisoPlatformModel.ts
-new file mode 100644
-index 0000000..6d2fa7a
---- /dev/null
-+++ b/understand-anything-plugin/packages/dashboard/src/components/orisoPlatformModel.ts
-@@ -0,0 +1,18 @@
-+import type { KnowledgeGraph, TourStep } from '@understand-anything/core/types';
-+
-+export function platformMetadata(graph: KnowledgeGraph) {
-+  const value = (graph as KnowledgeGraph & {metadata?: unknown}).metadata;
-+  return object(value);
-+}
-+export function object(value: unknown): Record<string, unknown> {
-+  return value !== null && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {};
-+}
-+export function localizedPlatformTour(graph: KnowledgeGraph | null, locale: string): TourStep[] {
-+  if (!graph) return [];
-+  const steps = object(platformMetadata(graph).platformTour).steps;
-+  return [...graph.tour].sort((a, b) => a.order - b.order).map(step => {
-+    const authored = Array.isArray(steps) ? steps.find(item => object(item).order === step.order) : null;
-+    const text = object(object(object(authored).locales)[locale === 'de' ? 'de' : 'en']);
-+    return typeof text.title === 'string' && typeof text.description === 'string' ? { ...step, title: text.title, description: text.description } : step;
-+  });
-+}
 diff --git a/understand-anything-plugin/packages/dashboard/src/components/__tests__/OrisoPlatformTour.test.ts b/understand-anything-plugin/packages/dashboard/src/components/__tests__/OrisoPlatformTour.test.ts
 new file mode 100644
 index 0000000..3793e5a
@@ -230,3 +200,27 @@ index 0000000..3793e5a
 +  expect(html).not.toContain('href="/infra/"');
 +  expect(html).toContain('Historische Quelle (stillgelegt)');
 +});
+diff --git a/understand-anything-plugin/packages/dashboard/src/components/orisoPlatformModel.ts b/understand-anything-plugin/packages/dashboard/src/components/orisoPlatformModel.ts
+new file mode 100644
+index 0000000..6d2fa7a
+--- /dev/null
++++ b/understand-anything-plugin/packages/dashboard/src/components/orisoPlatformModel.ts
+@@ -0,0 +1,18 @@
++import type { KnowledgeGraph, TourStep } from '@understand-anything/core/types';
++
++export function platformMetadata(graph: KnowledgeGraph) {
++  const value = (graph as KnowledgeGraph & {metadata?: unknown}).metadata;
++  return object(value);
++}
++export function object(value: unknown): Record<string, unknown> {
++  return value !== null && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {};
++}
++export function localizedPlatformTour(graph: KnowledgeGraph | null, locale: string): TourStep[] {
++  if (!graph) return [];
++  const steps = object(platformMetadata(graph).platformTour).steps;
++  return [...graph.tour].sort((a, b) => a.order - b.order).map(step => {
++    const authored = Array.isArray(steps) ? steps.find(item => object(item).order === step.order) : null;
++    const text = object(object(object(authored).locales)[locale === 'de' ? 'de' : 'en']);
++    return typeof text.title === 'string' && typeof text.description === 'string' ? { ...step, title: text.title, description: text.description } : step;
++  });
++}
