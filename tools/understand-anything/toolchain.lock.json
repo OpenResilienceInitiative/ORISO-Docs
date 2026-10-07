@@ -8,7 +8,7 @@
   "patches": [
     {
       "path": "patches/oriso-schema-viewer-v1.patch",
-      "sha256": "8d9c3159066c73fbcdac81e2a054a6aa5cd9c98b8c875b8e4d0c9f129923ee31"
+      "sha256": "3cab5ac1106c880ceb74c2e8b60250b4c5ba4b9e8301a76db1a45f5f11413a0b"
     },
     {
       "path": "patches/oriso-public-source-preview-v1.patch",
@@ -20,7 +20,7 @@
     },
     {
       "path": "patches/oriso-platform-tour-v1.patch",
-      "sha256": "b2a873627d68ae537f8da13e1ea36b3f69b6425f81b336eb40ebb29a8549dae1"
+      "sha256": "02f916e0d0b117d6282c159ad85b5b46096a57dee5622ef47be2c899aa600cab"
     }
   ],
   "nodeImage": "node@sha256:8a34c4ab3ea2c5cd194f07e317b2a8f09461d3c8b05c4e34c8ccd56d56024c4d",

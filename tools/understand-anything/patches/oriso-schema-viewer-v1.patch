@@ -1188,10 +1188,10 @@ index 27f022c..2a81cfe 100644
    if (normalized === "ja" || normalized === "japanese") return "ja";
 diff --git a/understand-anything-plugin/packages/dashboard/src/locales/oriso.ts b/understand-anything-plugin/packages/dashboard/src/locales/oriso.ts
 new file mode 100644
-index 0000000..65bc960
+index 0000000..127dceb
 --- /dev/null
 +++ b/understand-anything-plugin/packages/dashboard/src/locales/oriso.ts
-@@ -0,0 +1,107 @@
+@@ -0,0 +1,113 @@
 +// One typed ORISO extension; the provider supplies English fallback for other languages.
 +const calls = {
 +  en: { calls: "Calls", callers: "Called by", possible: "possible", include: "Include possible calls",
@@ -1252,7 +1252,10 @@ index 0000000..65bc960
 +  "semanticCaveat": "Matching source is not runtime proof. Historical explanations still need review.",
 +  "sourceCurrent": "Source current",
 +  "stale": "Stale — re-review required",
-+  "awaitingReview": "Awaiting review"
++  "awaitingReview": "Awaiting review",
++  "languageLesson": "Language Lesson",
++  "referencedComponents": "Referenced Components",
++  "goToStep": "Go to step"
 +};
 +const de: typeof en = {
 +  "sourceAtRevision": "Quelle dieser Revision",
@@ -1294,7 +1297,10 @@ index 0000000..65bc960
 +  "semanticCaveat": "Ein Quellenabgleich ist kein Laufzeitnachweis. Historische Erklärungen bleiben prüfpflichtig.",
 +  "sourceCurrent": "Quellenstand geprüft",
 +  "stale": "Erneute Prüfung nötig",
-+  "awaitingReview": "Prüfung ausstehend"
++  "awaitingReview": "Prüfung ausstehend",
++  "languageLesson": "Sprachhinweis",
++  "referencedComponents": "Referenzierte Komponenten",
++  "goToStep": "Zu Schritt"
 +};
 +export const orisoLocales = {en: {...en, calls: calls.en}, de: {...de, calls: calls.de}};
 +export type OrisoLocale = typeof orisoLocales.en;

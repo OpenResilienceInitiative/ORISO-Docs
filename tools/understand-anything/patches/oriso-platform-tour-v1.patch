@@ -1,5 +1,5 @@
 diff --git a/understand-anything-plugin/packages/dashboard/src/components/LearnPanel.tsx b/understand-anything-plugin/packages/dashboard/src/components/LearnPanel.tsx
-index 381f1fe..4f239f1 100644
+index 381f1fe..f2a8ded 100644
 --- a/understand-anything-plugin/packages/dashboard/src/components/LearnPanel.tsx
 +++ b/understand-anything-plugin/packages/dashboard/src/components/LearnPanel.tsx
 @@ -2,6 +2,8 @@ import { useMemo } from "react";
@@ -39,7 +39,7 @@ index 381f1fe..4f239f1 100644
            <div className="bg-accent/5 border border-accent/20 rounded p-3 mb-4">
              <h4 className="text-[11px] font-semibold text-accent uppercase tracking-wider mb-1.5">
 -              Language Lesson
-+              {localeKey === 'de' ? 'Sprachhinweis' : 'Language Lesson'}
++              {t.oriso.languageLesson}
              </h4>
              <p className="text-sm text-text-secondary leading-relaxed">
                {step.languageLesson}
@@ -48,7 +48,7 @@ index 381f1fe..4f239f1 100644
            <div className="mb-4">
              <h4 className="text-[11px] font-semibold text-accent uppercase tracking-wider mb-2">
 -              Referenced Components
-+              {localeKey === 'de' ? 'Referenzierte Komponenten' : 'Referenced Components'}
++              {t.oriso.referencedComponents}
              </h4>
              <div className="flex flex-wrap gap-1.5">
                {step.nodeIds.map((nodeId) => {
@@ -74,7 +74,7 @@ index 381f1fe..4f239f1 100644
                    : "bg-elevated hover:bg-surface"
                }`}
 -              aria-label={`Go to step ${i + 1}`}
-+              aria-label={localeKey === 'de' ? `Zu Schritt ${i + 1}` : `Go to step ${i + 1}`}
++              aria-label={`${t.oriso.goToStep} ${i + 1}`}
              />
            ))}
          </div>
@@ -149,15 +149,15 @@ index c9cb478..21c927f 100644
          <div className="mb-5">
 diff --git a/understand-anything-plugin/packages/dashboard/src/components/__tests__/OrisoPlatformTour.test.ts b/understand-anything-plugin/packages/dashboard/src/components/__tests__/OrisoPlatformTour.test.ts
 new file mode 100644
-index 0000000..3793e5a
+index 0000000..547d74c
 --- /dev/null
 +++ b/understand-anything-plugin/packages/dashboard/src/components/__tests__/OrisoPlatformTour.test.ts
-@@ -0,0 +1,47 @@
+@@ -0,0 +1,68 @@
 +import { createElement } from 'react';
 +import { renderToStaticMarkup } from 'react-dom/server';
 +import { afterEach, expect, it } from 'vitest';
 +import type { KnowledgeGraph } from '@understand-anything/core/types';
-+import { I18nProvider } from '../../contexts/I18nContext';
++import { I18nProvider, useI18n } from '../../contexts/I18nContext';
 +import { useDashboardStore } from '../../store';
 +import LearnPanel from '../LearnPanel';
 +import ProjectOverview from '../ProjectOverview';
@@ -199,6 +199,27 @@ index 0000000..3793e5a
 +  expect(html).toContain('concept:case-handover');
 +  expect(html).not.toContain('href="/infra/"');
 +  expect(html).toContain('Historische Quelle (stillgelegt)');
++});
++
++
++it('the shared provider supplies the three tour labels in German and English', () => {
++  const Labels = () => {
++    const {t} = useI18n();
++    return createElement('p', null, `${t.oriso.languageLesson} | ${t.oriso.referencedComponents} | ${t.oriso.goToStep} 2`);
++  };
++  for (const [language, expected] of [['en', 'Language Lesson | Referenced Components | Go to step 2'], ['de', 'Sprachhinweis | Referenzierte Komponenten | Zu Schritt 2']]) {
++    expect(renderToStaticMarkup(createElement(I18nProvider, {language, children: createElement(Labels)}))).toContain(expected);
++  }
++});
++it('active tour headings and accessible step controls retain equivalent German and English labels', () => {
++  const withLesson = {...graph, tour: graph.tour.map(step => ({...step, languageLesson: 'Source fixture example'}))};
++  for (const [language, lesson, components, stepLabel] of [['en', 'Language Lesson', 'Referenced Components', 'Go to step 1'], ['de', 'Sprachhinweis', 'Referenzierte Komponenten', 'Zu Schritt 1']]) {
++    Object.assign(useDashboardStore.getInitialState(), {graph: withLesson, tourActive: true, currentTourStep: 0});
++    const html = render(LearnPanel, language);
++    expect(html).toContain(lesson);
++    expect(html).toContain(components);
++    expect(html).toContain(`aria-label="${stepLabel}"`);
++  }
 +});
 diff --git a/understand-anything-plugin/packages/dashboard/src/components/orisoPlatformModel.ts b/understand-anything-plugin/packages/dashboard/src/components/orisoPlatformModel.ts
 new file mode 100644
