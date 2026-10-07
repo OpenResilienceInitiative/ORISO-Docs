@@ -223,6 +223,13 @@ per the matcher tests.
   function node, otherwise it is skipped. These `calls` edges appear in the "UserService
   Callers" layer and count as callers for the uncalled-endpoint stats. No other Java client
   (Agency/Tenant/ConsultingType REST clients, Matrix) is traced.
+- **Concept bridges are declared in `narrative/concept-bridges.json`** (`lib/concept-bridges.mjs`,
+  Docs#168). Today one bridge: UserService `concept:identity-authentication-2fa` -> Keycloak
+  `concept:otp-config-rest-api` and `concept:email-otp-second-factor` (ADR-013). Both concepts are
+  projected with their own `related` targets, so the SPI classes are one step past the bridge,
+  and the 2FA concept also points at the UserService caller methods. A bridge is emitted only
+  when confirmed `calls` exist between the two repos; otherwise it is skipped with a warning and
+  no text-only link is drawn. Shown in the "Concept Bridges" layer.
 - **The caller scan is now `src/**/*.ts`+`.tsx` repo-wide** (previously
   `src/api/**/*.ts` only) for both Frontend and Admin, which closed most of
   the "real caller lives outside the scanned directory" gap described in
