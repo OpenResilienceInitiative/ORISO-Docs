@@ -21,6 +21,7 @@ This contract is maintained beside the code-owned architecture record. The issue
 | Second factor | backend-account-otp | Direct otp-config-admin with exact bound identity; no account management |
 | Session compatibility | backend-session-exchange | Separate compatibility identity, preserving existing unsupported native exchange limitation |
 | SMTP synchronization | backend-smtp-sync | Current SMTP snapshot plus SMTP-only Keycloak command |
+| Consultant CSV import | backend-consultant-import | Start only the configured server CSV import; verified file/row provenance, no direct provider or administrator access |
 
 GET /settings is already public and needs no runtime reader identity. Existing notifications-technical is a preference-read permission, not sending power. Appointment external ownership/authentication and external legacy mail fallback contracts must be proven before their affected credential retirement.
 
@@ -41,10 +42,11 @@ GET /settings is already public and needs no runtime reader identity. Existing n
 | OTP | otp-config-admin | oriso-task-commands |
 | SESSION_EXCHANGE | session-exchange | none (unsupported native exchange baseline) |
 | SMTP_SYNC | smtp-sync | oriso-task-commands, consultingtypeservice |
+| CONSULTANT_IMPORT | consultant-import | userservice |
 
 ## Credential and token configuration
 
-Client IDs use IDENTITY_<TASK>_CLIENT_ID, secrets KEYCLOAK_<TASK>_CLIENT_SECRET, receiver/caller service-account bindings IDENTITY_<TASK>_SERVICE_SUBJECT. Task keys include CONFIG_WIZARD, INVITE_RESERVATIONS, NOTIFICATION_DISPATCH, SYSTEM_EMAIL_DELIVERY, RUNTIME_POLICY, MATRIX_AGENCY, APPOINTMENT_SYNC, APPOINTMENT_CLEANUP, ACCOUNT_PROVISIONING, ACCOUNT_MAINTENANCE, OTP, SESSION_EXCHANGE and SMTP_SYNC.
+Client IDs use IDENTITY_<TASK>_CLIENT_ID, secrets KEYCLOAK_<TASK>_CLIENT_SECRET, receiver/caller service-account bindings IDENTITY_<TASK>_SERVICE_SUBJECT. Task keys include CONFIG_WIZARD, INVITE_RESERVATIONS, NOTIFICATION_DISPATCH, SYSTEM_EMAIL_DELIVERY, RUNTIME_POLICY, MATRIX_AGENCY, APPOINTMENT_SYNC, APPOINTMENT_CLEANUP, ACCOUNT_PROVISIONING, ACCOUNT_MAINTENANCE, OTP, SESSION_EXCHANGE, SMTP_SYNC and CONSULTANT_IMPORT.
 
 Provider client IDs are configured explicitly; the provider resolves the actual service account from its client model and checks the token subject and azp. No username-based trust or arbitrary subject override. Task command audience is oriso-task-commands; service operation audiences are explicitly configured for the receiver. Effective groups, composite roles and scopes must not introduce extra permissions.
 
@@ -65,8 +67,8 @@ standard Base64 encoded >=32 random bytes, distinct from each other/client secre
 JWT header {alg:HS256,typ:JWT}; claim fields EXACTLY iss,aud,iat,exp,jti,purpose,
 operation,taskClient,taskSubject,originKind,originAction,target,tenantId,roles,
 payloadDigest. iss=oriso-userservice; aud=oriso-task-commands;
-purpose=oriso-command; exp>now, exp-iat<=60, iat<=now+5; unique jti UUID.
-originKind INVITATION|REGISTRATION|ANONYMOUS|HUMAN_ADMIN|SELF_SERVICE|LIFECYCLE.
+purpose=oriso-command; exp>now, exp>iat, exp-iat<=60, now-60<=iat<=now+5; unique jti UUID.
+originKind INVITATION|REGISTRATION|ANONYMOUS|HUMAN_ADMIN|SELF_SERVICE|LIFECYCLE|IMPORT|ONBOARDING|PASSWORD_RESET.
 originAction must equal operation. target=attempt UUID for create/commit/compensate,
 account ID for account operations; exact query value for email/username search.
 tenantId string or null; roles array of allowed human realm-role names.
@@ -91,6 +93,10 @@ Keys purpose-separated by input prefix; compare constant-time. No secrets in log
 | account.roles | PUT /accounts/{id}/roles | {roles:[...]} |
 | account.deactivate | POST /accounts/{id}/deactivation | {} |
 | account.delete | DELETE /accounts/{id} | proof digest over {} |
+| account.inventory | POST /account-inventory | {cutoff:ISO-8601 Instant,first:int>=0,max:int1..1000} |
+| account.lifecycle-status | GET /accounts/{id}/lifecycle-status | proof digest over {} |
+| account.suspend | POST /accounts/{id}/suspension | {} |
+| account.restore | POST /accounts/{id}/access-restoration | {enabled:boolean} |
 | SMTP no origin header | PUT /smtp | {revision,globalSmtpEnabled,globalFeatureSystemNotificationEmailsEnabled,globalSmtpHost,globalSmtpPort,globalSmtpFrom,globalSmtpUsername,globalSmtpPassword,globalSmtpSecure} |
 
 Create returns HTTP201 {attemptId,accountId,creationProof,status:OPEN}, replay200 same
@@ -111,9 +117,11 @@ Optional group-chat-consultant for consultant kinds and topic-admin for TENANT_A
 only, as limited by signed origin role authority. CONSULTANT_AGENCY_ADMIN accepts
 INVITATION or HUMAN_ADMIN origin only. ASKER/ANONYMOUS have no anonymous realm role.
 Signed roles limit DTO roles; no task actor inherits these human roles.
-SELF_SERVICE cannot change roles/tenant or delete unrelated target; HUMAN_ADMIN
-limited signed tenant/role permissions; LIFECYCLE only read/deactivate/delete/profile
-for verified account workflow and dummy email, never create/roles/password.
+SELF_SERVICE authorizes only read/profile/password for its verified own target and cannot change tenant; HUMAN_ADMIN
+limited signed tenant/role permissions; LIFECYCLE only read/search/deactivate/delete/dummy-email profile and the bounded inactivity inventory/status/suspend/restore actions below, never create/roles/password.
+IMPORT permits CONSULTANT creation and own-attempt commit/compensation after the receiving exact importer identity and actual configured file/validated row authorize target tenant, agencies, fields and consultant-only roles. A new-account relation finalizer uses its persisted OPEN creation receipt, initial roles and authorized agency IDs; it does not reread or modify native roles. Existing-row import can read its actual persisted consultant target and add only consultant/group-chat-consultant roles through maintenance-key authorization bound to the captured row and target tenant/agencies. All unrelated preexisting roles must remain; human admin role additions/removals and protected platform targets are denied. IMPORT has no profile/password/tenant/deactivation/delete authority and cannot create other account kinds or read arbitrary accounts.
+ONBOARDING permits only read/password after verified held/consumed one-time setup authority and persisted target/tenant. PASSWORD_RESET permits only read/password after consumed verified reset proof and existing OTP/MFA guards, with the persisted subject/tenant as target. Neither kind changes roles/profile/tenant or deletes accounts.
+Protected platform accounts allow their existing own-account read/profile/password only through authenticated own-target SELF_SERVICE; existing one-time password recovery uses the separate PASSWORD_RESET read/password authority. Protected tenant0 targets are detected through actual effective tenant-admin roles, including composite/group inheritance. Read-only LIFECYCLE inventory/status can retain their existing enrollment and diagnostics; HUMAN_ADMIN/LIFECYCLE mutations, IMPORT and ONBOARDING cannot manage protected platform targets.
 OTP paths unchanged; the normal guard binds backend-account-otp + otp-config-admin with no stock management permission. Migration-only legacy OTP opt-in is documented below. Magic Link exchange remains baseline unsupported.
 
 
@@ -132,7 +140,7 @@ OTP paths unchanged; the normal guard binds backend-account-otp + otp-config-adm
 ## Safe migration order
 
 1. Add bounded receiving commands/authorities and compatible caller contracts.
-2. Reconcile confidential task clients, exact roles/scopes/audiences and distinct credential bindings; validate configuration before changes.
+2. Prepare confidential task clients, exact roles/scopes/audiences and distinct credential bindings before upgraded receiver pods start. The reconciler is a pre-upgrade hook, so Helm --wait cannot deadlock on startup task-token validation. Fresh installs import the task registry and run the reconciler post-install. Hook credential Secret and script ConfigMap run pre-install/pre-upgrade with earlier weights and remain available after successful hooks; validate configuration before changes.
 3. Switch explicit task callers after their receiving contract is available, without privileged fallback.
 4. Verify intended and denied real-token operations and fresh/existing-realm repeat reconciliation.
 5. Retire corresponding old mappings/secrets only after deployed consumer readback proves they are unused; reviewed dev deployment then browser and received-mail acceptance.
@@ -186,20 +194,59 @@ JWT converters remove all generic/human/legacy authorities for recognized task r
 
 ## Helm installation and legacy retirement
 
-The root chart registry `files/task-identities.json` defines the 13 exact task client IDs, roles and audiences. The realm default scope is only native `basic`, with no optional defaults. Each existing human client retains its explicit scopes. Task clients explicitly use `basic` only; its native subject and auth-time mappers have no role grants and are audited before changes. The hook removes every other attached default/optional scope through native DELETE endpoints because client PUT alone does not remove them. The older export migration automatically supplies `basic`; removing it without a subject mapper would invalidate caller binding. Task subjects are deterministic UUIDs based on realm+client ID for a fresh import. Existing task service accounts require their actual UUID overrides; reconciliation refuses to overwrite a colliding human or service account.
+The root chart registry `files/task-identities.json` defines the 14 exact task client IDs, roles and audiences. The realm default scope is only native `basic`, with no optional defaults. Each existing human client retains its explicit scopes. Task clients explicitly use `basic` only; its native subject and auth-time mappers have no role grants and are audited before changes. The hook removes every other attached default/optional scope through native DELETE endpoints because client PUT alone does not remove them. The older export migration automatically supplies `basic`; removing it without a subject mapper would invalidate caller binding. Task subjects are deterministic UUIDs based on realm+client ID for a fresh import. Existing task service accounts require their actual UUID overrides; reconciliation refuses to overwrite a colliding human or service account.
 
-Managed task credentials live under `global.taskIdentitySecrets`. Provisioning, maintenance and tenant-creation keys live under `global.commandOriginKeys` as independent Base64 keys of at least 32 decoded bytes. Receivers use `TASK_IDENTITY_REQUIRED_TASKS` plus their nonsecret client/subject bindings; UserService holds only the task credentials it consumes, CTS and the SMTP helper only SMTP_SYNC. Keycloak and UserService alone receive the account-origin keys; TenantService and CTS alone receive the creation-context key.
+Managed task credentials live under `global.taskIdentitySecrets`. Provisioning, maintenance, tenant-creation and Wizard-policy keys live under `global.commandOriginKeys` as independent Base64 keys of at least 32 decoded bytes. Receivers use `TASK_IDENTITY_REQUIRED_TASKS` plus their nonsecret client/subject bindings; the CSV importer is a receiving-only UserService binding; its credential is never mounted into that runtime. UserService holds only the task credentials it consumes, CTS and the SMTP helper only SMTP_SYNC. Keycloak and UserService alone receive the account-origin keys; TenantService and CTS alone receive the creation-context key.
+
+The rendered realm import contains client credentials and is mounted from a Kubernetes Secret, never a ConfigMap.
 
 Fresh imports do not activate the legacy technical/backend-admin actors. Installer administration exists only in installer hooks. Optional `global.keycloak.serviceTechUserId` continues an explicitly configured legacy receiver binding; blank disables that binding.
 
 For existing realms, `global.taskIdentities.retireLegacy=false` retains old actors while consumer ownership is checked. Setting it true is an operator action only after live consumer readback, with all four verified `legacySubjects` entries (`TECHNICAL_PASSWORD`, `SERVICE_ADMIN_PASSWORD`, `TECHNICAL_CLIENT`, `ADMIN_CLIENT`). The hook checks the exact configured UUID+username and client linkage before mutation, protects installation/task subjects, disables only those actors, removes direct/group grants and removes the unused exported `TECHNICAL_DEFAULT` role. No old password/admin credential remains a runtime fallback.
 
-Existing caller cutover also needs an OTP bridge: `global.taskIdentities.legacyOtpCompatibility` defaults false. During the explicitly reviewed transition, it enables only the verified backend-admin service account for existing OTP operations via `ORISO_LEGACY_OTP_COMPATIBILITY` and `ORISO_LEGACY_OTP_CLIENT_ID`; its exact sub/azp, direct plus token otp-config-admin and realm-management audience are checked against the resolved client service-account owner. The allowed native management baseline is manage-users/view-users/query-users/view-realm plus the verified Keycloak 26.6.3 query-groups closure; other management/human roles are rejected. This bridge applies only to existing OTP operations, never account/SMTP commands, and new OTP/task actors always take the strict branch. Disable this option immediately after migrated UserService readback, before setting `retireLegacy=true`. The chart rejects enabling both at once. No password-user fallback or extra native permission is granted.
+Existing caller cutover also needs an OTP bridge: `global.taskIdentities.legacyOtpCompatibility` defaults false. During the explicitly reviewed transition, it enables only the verified backend-admin service account for existing OTP operations via `ORISO_LEGACY_OTP_COMPATIBILITY` and `ORISO_LEGACY_OTP_CLIENT_ID`; its exact sub/azp, direct plus token otp-config-admin and realm-management audience are checked against the resolved client service-account owner. The allowed native management baseline is manage-users/view-users/query-users/view-realm plus the verified Keycloak 26.6.3 query-groups closure; other management/human roles are rejected. This bridge applies only to existing OTP operations, never account/SMTP commands, and new OTP/task actors always take the strict branch. The only harmless native default-role closure allowed on that legacy actor is offline_access, uma_authorization and account.manage-account/view-profile/manage-account-links; no arbitrary extra direct/effective/group/client grants are accepted. Issued realm roles remain exactly otp-config-admin and token audience only realm-management. Disable this option immediately after migrated UserService readback, before setting `retireLegacy=true`. The chart rejects enabling both at once. No password-user fallback or extra native permission is granted.
 
 ## Verified Wizard account-policy context
 
 Wizard account creation reads only `{id,allowedNumberOfUsers}` at `GET /internal/tenants/{id}/account-provisioning-policy`. The receiver requires its normal exact Wizard role/sub/client/audience plus `X-ORISO-Wizard-Policy-Context`; a claimed tenant header alone proves no permission.
 
-The independent Base64 key `ORISO_WIZARD_POLICY_CONTEXT_KEY` is managed by `global.commandOriginKeys.wizardPolicy`, supplied only to UserService and TenantService. The header reuses the sorted JSON Base64URL payload plus HMAC-SHA256 encoded-payload signature. Claims are exactly `{aud:tenantservice,azp,exp:iat+60,iat,iss:oriso-userservice,nonce:UUID,operation:wizard.account-policy.read,sub,tenantId,tokenIssuer:<actual Wizard token issuer>,v:1}`. UserService signs only after typed invitation/registration/human origin checks; TenantService verifies signature, time, actual task binding and target. It gives no general TenantDTO or SMTP secret access.
+The independent Base64 key `ORISO_WIZARD_POLICY_CONTEXT_KEY` is managed by `global.commandOriginKeys.wizardPolicy`, supplied only to UserService and TenantService. The header reuses the sorted JSON Base64URL payload plus HMAC-SHA256 encoded-payload signature. Claims are exactly `{aud:tenantservice,azp,exp:iat+60,iat,iss:oriso-userservice,nonce:UUID,operation:wizard.account-policy.read,sub,tenantId,tokenIssuer:<actual Wizard token issuer>,v:1}`. UserService signs only after typed invitation/registration/human or verified configured import-file/row origin checks; TenantService verifies signature, time, actual task binding and target. It gives no general TenantDTO or SMTP secret access.
 
 Initial placeholder email uses the server-managed common suffix `global.identityDummyEmailSuffix` (`IDENTITY_EMAIL_DUMMY_SUFFIX` in UserService and `ORISO_IDENTITY_DUMMY_EMAIL_SUFFIX` in Keycloak), defaulting to the existing `@beratungcaritas.de`. The creation provider derives missing email from its own newly created account ID within the atomic creation transaction. This is not a caller-controlled arbitrary account update.
+
+
+### Bounded inactivity inventory
+
+The existing startup/nightly orphan inventory uses ACCOUNT_MAINTENANCE through a separate read-only `POST /account-inventory`. The typed signed LIFECYCLE authority comes from the actual immutable `account_inactivity_rollout` row under its existing database lock, and binds the cutoff, page and exact payload digest. This authority never authorizes any account mutation.
+
+For implementers — the provider derives classification from real account state:
+
+```text
+body {cutoff:Instant,first:integer>=0,max:integer1..1000}
+origin target cutoff:<cutoff>/first:<first>/max:<max>, tenantId=null, roles=[]
+minimal response accounts[id,tenantId,createdTimestamp,eligibleHuman], hasMore
+No native role list, email, names, credentials or arbitrary realm/filter is exposed.
+Service accounts and pure technical identities are ineligible. Existing human
+platform accounts and mixed technical/human-role accounts retain their enrollment
+and missing-snapshot diagnostics; protected-target mutation guards remain separate.
+```
+
+Bounded inactivity effects preserve the existing deletion and restoration workflow.
+
+For implementers — state and effects are separately authorized:
+
+```text
+GET lifecycle-status returns {enabled,sessionCount,roles:[ASKER|CONSULTANT|OTHER|UNKNOWN]}.
+The provider derives coarse roles from actual effective realm/client/group roles;
+it skips only known default/account infrastructure, preserving privilege guards.
+POST suspension disables the native identity, invalidates not-before and performs
+native backchannel logout, then confirms disabled/no active sessions.
+POST access-restoration restores only the durable original enabled state.
+All three operations require maintenance-key LIFECYCLE authorization, exact target,
+tenant and full-body digest, with roles=[]. The issuer reads persisted workflow:
+SUSPENDING/DELETING authorizes suspension; REACTIVATING plus the actual durable
+original-access record authorizes restoration. DELETING + deletion_authorized can
+authorize normal downstream orphan/retry deletion without an unsaved user marker.
+Inventory/status proof grants no mutation authority; platform/service mutations deny.
+No arbitrary request-body enabled flag, profile, role or provisioning power is added.
+```
