@@ -7,7 +7,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {sourceLocation} from '../../hosted-viewer/source-location.mjs';
 const tools=fileURLToPath(new URL('../../',import.meta.url));
-const repos=['ORISO-Admin','ORISO-AgencyService','ORISO-ConsultingTypeService','ORISO-Database','ORISO-Docs','ORISO-E2E','ORISO-ElementCall','ORISO-Frontend','ORISO-HealthDashboard','ORISO-Helm','ORISO-Infra','ORISO-Keycloak','ORISO-Livekit','ORISO-SigNoz','ORISO-Status','ORISO-TenantService','ORISO-UserService'];
+const repos=['ORISO-Admin','ORISO-AgencyService','ORISO-ConsultingTypeService','ORISO-Database','ORISO-Docs','ORISO-E2E','ORISO-ElementCall','ORISO-Frontend','ORISO-HealthDashboard','ORISO-Helm','ORISO-Infra','ORISO-Keycloak','ORISO-Kubernetes','ORISO-Livekit','ORISO-SigNoz','ORISO-Status','ORISO-TenantService','ORISO-UserService'];
 const userFile='src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakService.java';
 const verifierFile='keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/authenticator/MailOtpVerifier.java';
 const from='ORISO-UserService::concept:identity-authentication-2fa';
@@ -47,6 +47,13 @@ function fixture({staleRepo,staleConcept}={}) {
 test('generated platform gives the 2FA reader a direct owning class and exact source preview', {skip:!process.env.UA_CORE},()=>{
  const f=fixture();try{
   const graph=f.build('platform');
+  assert.equal(graph.tour.length,6,'platform reader gets the complete bounded tour');
+  const authStep=graph.tour.find(step=>step.title==='Authentication and two factor');
+  assert.ok(authStep.nodeIds.includes(owningClass),'authentication tour reaches the exact SPI class');
+  assert.equal(graph.metadata.semanticDispositions.length,27);
+  assert.equal(graph.project.sourceCommits['ORISO-Kubernetes'],f.revisions['ORISO-Kubernetes'],'complete release vector retains the historical source');
+  assert.equal(graph.nodes.find(node=>node.id==='service:ORISO-Kubernetes').metadata.lifecycle,'retired');
+  assert.equal(graph.nodes.find(node=>node.id==='service:ORISO-Kubernetes').type,'module','retired configuration is not an active platform service');
   assert.ok(graph.edges.some(e=>e.source===from&&e.target===owningClass&&e.type==='related'),'owning SPI class must be selectable directly from 2FA');
   const node=graph.nodes.find(n=>n.id===owningClass);assert.equal(node.type,'class');assert.equal(node.metadata.sourceCommit,f.revisions['ORISO-Keycloak']);
   const location=sourceLocation(graph,path.join(f.root,'sources/ORISO-Docs'),verifierFile,owningClass,Object.fromEntries(repos.map(r=>[r,path.join(f.root,'sources',r)])));
@@ -56,6 +63,9 @@ test('generated platform gives the 2FA reader a direct owning class and exact so
 test('aggregate graph preserves the same reviewed one-click owning implementation', {skip:!process.env.UA_CORE},()=>{
  const f=fixture();try{
   const graph=f.build('supergraph');
+  assert.equal(graph.tour.length,6,'merged graph uses the same bounded platform tour');
+  assert.ok(graph.tour.find(step=>step.title==='Authentication and two factor').nodeIds.includes(owningClass));
+  assert.equal(graph.metadata.platformNavigation.repositories.find(repo=>repo.repository==='ORISO-Keycloak').detailHref,'/keycloak/');
   assert.ok(graph.edges.some(e=>e.source===from&&e.target===owningClass&&e.type==='related'),'aggregate retains reviewed cross-repo concept route');
   const node=graph.nodes.find(n=>n.id===owningClass);assert.equal(node.metadata.sourceRepo,'ORISO-Keycloak');assert.equal(node.metadata.sourceCommit,f.revisions['ORISO-Keycloak']);
  }finally{rmSync(f.root,{recursive:true,force:true});}

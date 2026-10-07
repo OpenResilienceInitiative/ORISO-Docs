@@ -12,6 +12,7 @@
 // Output is explicit (--out or UA_SUPERGRAPH_OUT); publication belongs to bundle/.
 
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
+import { decoratePlatform } from './platform/lib/platform-navigation.mjs';
 
 import {projectConceptBridges} from './platform/lib/concept-bridges.mjs';
 
@@ -218,6 +219,7 @@ let graph = {
   },
 };
 
+decoratePlatform(graph, { repositoryGraphs: sourceGraphs, expectedRepositories: REPO_INFO.map(([repo]) => repo) });
 const v = c.validateGraph(graph);
 console.error(`validate: success=${v.success} issues=${(v.issues ?? []).length}${v.fatal ? " FATAL " + v.fatal : ""}`);
 if (!v.success || v.issues?.length) throw new Error(`Supergraph validation failed: ${JSON.stringify(v.issues)} ${v.fatal ?? ""}`);
@@ -225,7 +227,7 @@ if (!v.success || v.issues?.length) throw new Error(`Supergraph validation faile
 writeFileSync(`${OUT}/knowledge-graph.json`, JSON.stringify(graph) + "\n");
 console.log(JSON.stringify({
   nodes: graph.nodes.length, edges: graph.edges.length, layers: graph.layers.length,
-  tourSteps: tour.length, crossRepoEdges: crossEdges,
+  tourSteps: graph.tour.length, crossRepoEdges: crossEdges,
   evidence,
   sizeMB: (Buffer.byteLength(JSON.stringify(graph)) / 1e6).toFixed(1),
 }, null, 2));
