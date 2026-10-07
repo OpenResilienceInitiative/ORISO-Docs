@@ -68,3 +68,34 @@ Zielgruppen keine Varianten voneinander. Ratsuchende selten und unfreiwillig, of
 - `appointmentNotificationEnabled` hat Zeile und Vorlage `termin`, aber keinen Sender. Sichtbar behalten; Sender in `ORISO-Frontend#874`.
 - In-App-`event_notification` hier **nicht** abgeglichen. `ORISO-Frontend#947` schlägt gemeinsamen Katalog für E-Mail/In-App/Browser-Push vor. E-Mail zuerst, nicht auf alle blockieren.
 - Zwei Zielgruppen, zwei Prüfbereiche. Zusammenlegung als vermeintliche Vereinfachung ist Regression.
+
+## Gewöhnlicher interner Beraterchat — Implementierungsergänzung vom 2026-10-07
+
+Frank hat Benachrichtigungsmails für Nachrichten zwischen Beraterinnen und Beratern in gewöhnlichen
+internen Gruppen angefordert und die vorgeschlagene P1-Implementierung für v2.0.11 freigegeben.
+Das separat prüfbare Arbeitspaket ist [UserService #1375](https://github.com/OpenResilienceInitiative/ORISO-UserService/issues/1375).
+Damit wird ein ausdrücklicher Vertrag für den Auslöser ergänzt. Gewöhnliche Gruppen werden dadurch
+nicht zu geschützten Supervisionsrückmeldungen. Die historischen Implementierungsmessungen oben
+behalten ihr ursprüngliches Datum.
+
+| Anlass | Empfänger | Unabhängige Mail-Einstellung | Darstellung |
+|---|---|---|---|
+| Nachricht in einer gewöhnlichen internen Gruppe | Andere aktive und aktuell berechtigte Beraterinnen und Berater derselben Gruppe und desselben Trägers | `internalChatNotificationEnabled` | Neutrale Vorlage für Beraternachrichten; eigener Abmeldeselektor `interne-nachricht` |
+
+Die Einstellung folgt dem bisherigen Standard für Arbeitsabläufe: Sie ist eingeschaltet, solange der
+Empfänger sie nicht ausschaltet. Die allgemeine Mail-Einstellung des Empfängers und der Schalter des
+Trägers für Benachrichtigungsmails gelten weiterhin. Der Absender, Ratsuchende, ausgeschiedene oder
+unbeteiligte Gruppenmitglieder und andere Träger erhalten diese Mail nicht. Mitgliedschaft und Ursprung
+des Ereignisses müssen bei der Zustellungsprüfung aktuell sein. Wiederholte Ereignisse dürfen keine
+doppelten Benachrichtigungen erzeugen.
+
+Der Auslöser verwendet die bestehende Vorlage `neue-nachricht-beratung`, weil sie nur neutral zur
+Rückkehr in ORISO auffordert. Die gemeinsame Darstellung bedeutet keine gemeinsame Einstellung für
+Nachrichten von Ratsuchenden: Der Link im Mail-Fuß führt zum neuen Schalter für den internen Chat.
+Dies dokumentiert die in Entscheidung 5 verlangte Ausnahme für gemeinsam verwendete Vorlagen.
+Entschlüsselter Nachrichteninhalt wird nicht verwendet.
+
+Browser-Einstellungen bleiben unabhängig. Diese Mail-Ergänzung beinhaltet keinen neuen Auslöser für
+Browser-Ereignisse, keine zugesicherte Web-Push-Zustellung im Hintergrund und keine Änderung am
+Aufbewahren des In-App-Verlaufs. Die offenen Fragen zur Aufbewahrung von Benachrichtigungen bleiben
+im bestehenden Datenschutz-Arbeitspaket.
