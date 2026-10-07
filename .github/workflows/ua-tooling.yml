@@ -41,7 +41,7 @@ jobs:
           npm exec --yes --package=pnpm@10.6.2 -- pnpm --filter @understand-anything/dashboard exec vitest run src/__tests__/edgeCategories.test.ts src/__tests__/oriso-status-config.test.ts src/components/__tests__/ContainerNodeHandles.test.ts src/components/__tests__/OrisoNodeEvidence.test.ts src/components/__tests__/OrisoCallRelations.test.ts
       - name: Test guarded source, static serving and hub status
         run: |
-          cd /tmp/oriso-ua-runtime/current/tooling
+          cd tools/understand-anything
           node --test hosted-viewer/*.test.mjs site/hub/test/*.test.mjs
           node hosted-viewer/runtime-test.mjs --upstream /tmp/oriso-ua-runtime/current/upstream
       - name: Test publication, failed transfers and real Git worktrees
