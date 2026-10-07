@@ -7,8 +7,18 @@ const codes=['PREFLIGHT_FAILED','GENERATION_FAILED','INSTALLATION_FAILED','READB
 const revision=s=>typeof s==='string'&&/^[a-f0-9]{40}$/.test(s)?s:null;
 const version=s=>typeof s==='string'&&/^v?\d+\.\d+\.\d+(?:[-+][a-zA-Z0-9.-]+)?$/.test(s)?s:null;
 const identity=s=>typeof s==='string'&&/^[a-zA-Z0-9_.-]{1,120}$/.test(s)?s:null;
+function resolvedPath(value){
+ let existing=path.resolve(value),tail=[];
+ while(!fs.existsSync(existing)){
+  // Dangling symlinks do not define a usable operator binding.
+  if(fs.lstatSync(existing,{throwIfNoEntry:false})?.isSymbolicLink())throw Error('Independent explicit attempt receipt binding required');
+  const parent=path.dirname(existing);if(parent===existing)throw Error('Independent explicit attempt receipt binding required');tail.unshift(path.basename(existing));existing=parent;
+ }
+ return path.join(fs.realpathSync(existing),...tail);
+}
 export function recordAttempt({output,current,input}){
- if(!path.isAbsolute(output)||!path.isAbsolute(current)||path.resolve(output).startsWith(path.resolve(current)+path.sep))throw Error('Independent explicit attempt receipt binding required');
+ if(!path.isAbsolute(output)||!path.isAbsolute(current))throw Error('Independent explicit attempt receipt binding required');
+ const destination=resolvedPath(output),installedRoot=resolvedPath(current);if(destination===installedRoot||destination.startsWith(installedRoot+path.sep))throw Error('Independent explicit attempt receipt binding required');
  if(!['failed','succeeded'].includes(input.state)||!identity(input.attemptId)||!phases.includes(input.phase))throw Error('Invalid attempt identity/state/phase');
  if(!codes.includes(input.errorCode)||input.state==='failed'&&input.errorCode==='NONE'||input.state==='succeeded'&&(input.errorCode!=='NONE'||input.phase!=='complete'))throw Error('Invalid sanitized error code');
  const time=new Date(input.attemptedAt);if(!Number.isFinite(time.getTime()))throw Error('Valid attempt time required');

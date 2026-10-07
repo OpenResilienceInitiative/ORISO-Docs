@@ -44,6 +44,46 @@
     });
   }
 
+
+  function sourceList(status) {
+    var target = document.querySelector('[data-ua="source-list"]');
+    if (!target) return;
+    target.textContent = '';
+    (status.sources || []).forEach(function (source) {
+      if (!/^ORISO-[A-Za-z0-9_-]+$/.test(source.repository) || !/^[a-f0-9]{40}$/.test(source.sourceSHA)) throw new Error('Invalid source revision');
+      var row = document.createElement('tr');
+      [source.repository, source.sourceSHA, source.ref, status.generatedAt].forEach(function (value, index) {
+        var cell = document.createElement('td');
+        if (index < 2) {
+          var link = document.createElement('a');
+          link.setAttribute('href', 'https://github.com/OpenResilienceInitiative/' + encodeURIComponent(source.repository) + '/tree/' + source.sourceSHA);
+          link.textContent = value;
+          cell.appendChild(link);
+        } else cell.textContent = value;
+        row.appendChild(cell);
+      });
+      target.appendChild(row);
+    });
+  }
+
+  function attempt(status) {
+    var el = document.querySelector('[data-ua="attempt"]');
+    if (!el) return;
+    fetch('/refresh-attempt.json', { cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error('No receipt'); return r.json(); })
+      .then(function (receipt) {
+        var codes = {preflight: 'PREFLIGHT_FAILED', generation: 'GENERATION_FAILED', installation: 'INSTALLATION_FAILED', readback: 'READBACK_FAILED', complete: 'NONE'};
+        if (receipt.schemaVersion !== 'oriso.refresh-attempt/v1' || !Number.isFinite(new Date(receipt.attemptedAt).getTime()) || !/^[a-zA-Z0-9_.-]{1,120}$/.test(receipt.attemptId) || !codes[receipt.phase] || receipt.errorCode !== codes[receipt.phase] || !['failed', 'succeeded'].includes(receipt.state) || (receipt.state === 'succeeded') !== (receipt.phase === 'complete')) throw new Error('Invalid receipt');
+        var attempted = receipt.releaseVersion && /^v?\d+\.\d+\.\d+(?:[-+][a-zA-Z0-9.-]+)?$/.test(receipt.releaseVersion) ? receipt.releaseVersion : '–';
+        var installed = status.releaseVersion || '–';
+        el.className = receipt.state === 'failed' ? 'note' : 'src';
+        el.textContent = receipt.state === 'failed'
+          ? 'Aktualisierung fehlgeschlagen / Refresh failed: ' + attempted + ' · ' + receipt.attemptedAt + ' · ' + receipt.errorCode + '. Installiert / Installed: ' + installed + ' · ' + status.generationId
+          : 'Letzte Aktualisierung geprüft / Latest refresh verified: ' + receipt.attemptedAt + '. Installiert / Installed: ' + installed + ' · ' + status.generationId;
+      })
+      .catch(function () { el.className = 'src'; el.textContent = 'Aktualisierungsnachweis nicht verfügbar / Refresh receipt unavailable. Installiert / Installed: ' + (status.releaseVersion || '–'); });
+  }
+
   fetch('/status.json', { cache: 'no-store' })
     .then(function (response) { if (!response.ok) throw new Error(response.status); return response.json(); })
     .then(function (status) {
@@ -62,6 +102,17 @@
         set('[data-ua-nodes="' + source.name + '"]', de.format(source.nodes));
         calls(source, de, new Intl.NumberFormat('en-GB'));
       });
+      (status.aggregates || []).forEach(function (aggregate) {
+        set('[data-ua-nodes="' + aggregate.name + '"]', de.format(aggregate.nodes));
+        var coverage = aggregate.coverage || [];
+        var included = coverage.filter(function (s) { return s.status === 'included' && /^[a-f0-9]{40}$/.test(s.sourceCommit) && aggregate.sourceCommits && aggregate.sourceCommits[s.repository] === s.sourceCommit; }).map(function (s) { return s.repository; });
+        var unavailable = coverage.filter(function (s) { return s.status === 'unavailable'; }).map(function (s) { return s.repository; });
+        document.querySelectorAll('[data-ua-coverage="' + aggregate.name + '"]').forEach(function (el) {
+          el.textContent = 'Enthalten / Included: ' + (included.join(', ') || '–') + '. Nicht verfügbar / Unavailable: ' + (unavailable.join(', ') || '–');
+        });
+      });
+      sourceList(status);
+      attempt(status);
       // Age describes the generation; releases are not scheduled daily.
       var locked = status.releaseSources || [];
       var sources = status.sources || [];

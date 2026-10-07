@@ -12,3 +12,8 @@ test('failed refresh publishes only a sanitized attempt receipt and keeps instal
  assert.equal(result.state,'failed');assert.equal(result.installed.generationId,'installed-fixture');assert.equal(result.installed.releaseVersion,'v2.0.7');assert.equal(result.releaseVersion,'v2.0.8');assert.equal(result.errorCode,'GENERATION_FAILED');assert.ok(!fs.readFileSync(receipt,'utf8').includes('SECRET_SENTINEL'));assert.equal(fs.readFileSync(path.join(current,'status.json'),'utf8'),installed);
  assert.throws(()=>recordAttempt({output:receipt,current,input:{...result,errorCode:'SECRET_SENTINEL'}}),/error code/);assert.equal(JSON.parse(fs.readFileSync(receipt)).attemptId,'12345-1');
 });
+test('symlinked ancestor cannot place the mutable attempt receipt inside the installed hub',t=>{
+ const root=fs.mkdtempSync(path.join(os.tmpdir(),'attempt-containment-'));t.after(()=>fs.rmSync(root,{recursive:true,force:true}));const current=path.join(root,'installed');fs.mkdirSync(current);fs.symlinkSync(current,path.join(root,'alias'));
+ assert.throws(()=>recordAttempt({output:path.join(root,'alias/ops/receipt.json'),current,input:{state:'failed',attemptId:'1',attemptedAt:'2026-10-07T14:00:00Z',phase:'generation',errorCode:'GENERATION_FAILED'}}),/Independent explicit/);
+ assert.ok(!fs.existsSync(path.join(current,'ops')));
+});
