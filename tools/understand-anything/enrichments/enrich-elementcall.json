@@ -1,0 +1,60 @@
+{
+  "concepts": [
+    {
+      "id": "concept:matrixrtc-group-calls",
+      "name": "MatrixRTC Group Calls",
+      "summary": "Element Call fork: decentralized video conferencing over the Matrix protocol (MatrixRTC, MSC4143) with LiveKit as the media backend (MSC4195). GroupCallView/InCallView drive the call lifecycle; the CallViewModel state layer keeps UI and RTC session in sync.",
+      "tags": ["domain", "core", "calls"],
+      "related": ["GroupCallView.tsx", "InCallView.tsx", "AppViewModel.ts", "App.tsx"]
+    },
+    {
+      "id": "concept:livekit-media-layer",
+      "name": "LiveKit Media Layer",
+      "summary": "The SFU-facing side: openIDSFU.ts exchanges a Matrix OpenID token for a LiveKit access token, MatrixAudioRenderer plays remote tracks, and TrackProcessorContext/BlurBackgroundTransformer process local media before publishing.",
+      "tags": ["media", "integration"],
+      "related": ["openIDSFU.ts", "MatrixAudioRenderer.tsx", "TrackProcessorContext.tsx", "BlurBackgroundTransformer.ts"]
+    },
+    {
+      "id": "concept:media-e2ee",
+      "name": "End-to-End Encrypted Media",
+      "summary": "Per-sender media encryption on top of the SFU: matrixKeyProvider distributes keys over Matrix, sharedKeyManagement covers password-protected rooms, e2eeAvailability gates the feature by platform support. Embedded widget sessions carry no Matrix crypto of their own.",
+      "tags": ["security", "e2ee"],
+      "related": ["matrixKeyProvider.ts", "sharedKeyManagement.ts", "e2eeAvailability.ts", "e2eeType.ts", "EncryptionLock.tsx"]
+    },
+    {
+      "id": "concept:widget-vs-standalone",
+      "name": "Widget vs. Standalone Mode",
+      "summary": "Two runtime modes: embedded as a Matrix-client widget (widget.ts, widget API messaging) or standalone SPA with its own Matrix session (matrixSessionStorage, auth/ login and passwordless registration).",
+      "tags": ["architecture"],
+      "related": ["widget.ts", "matrixSessionStorage.ts", "LoginPage.tsx", "useRegisterPasswordlessUser.ts"]
+    },
+    {
+      "id": "concept:call-observability",
+      "name": "Call Observability & Rageshake",
+      "summary": "OpenTelemetry spans model the call (OTelCall, OTelGroupCallMembership, per-track media spans); rageshake uploads user bug reports with logs from the settings UI.",
+      "tags": ["observability"],
+      "related": ["OTelCall.ts", "OTelGroupCallMembership.ts", "otel.ts", "rageshake.ts", "RageshakeButton.tsx"]
+    },
+    {
+      "id": "concept:dev-backend-stack",
+      "name": "Local Dev Backend Stack",
+      "summary": "backend/ ships a reproducible two-homeserver dev stack: Synapse configs, LiveKit configs, nginx and a local TLS CA — used to develop and test federation and calls locally.",
+      "tags": ["development", "infrastructure"],
+      "related": ["dev_homeserver.yaml", "dev_livekit.yaml", "dev_homeserver-othersite.yaml"]
+    }
+  ],
+  "flows": [
+    {
+      "id": "flow:join-group-call",
+      "name": "Joining a Group Call",
+      "summary": "User opens a call link or widget → GroupCallView resolves the Matrix room → openIDSFU exchanges the OpenID token for a LiveKit token → media tracks publish through the track processors → InCallView renders the grid; media E2EE keys arrive via matrixKeyProvider.",
+      "related": ["GroupCallView.tsx", "openIDSFU.ts", "InCallView.tsx", "matrixKeyProvider.ts"]
+    },
+    {
+      "id": "flow:widget-embed",
+      "name": "Embedding as a Matrix Widget",
+      "summary": "A Matrix client embeds Element Call → widget.ts negotiates capabilities over the widget API → the host client supplies the session; no standalone Matrix login or crypto store is created in this mode.",
+      "related": ["widget.ts", "App.tsx", "ClientContext.tsx"]
+    }
+  ]
+}

@@ -1,0 +1,149 @@
+---
+title: "Programmierrichtlinien"
+description: "Programmierrichtlinien für Frontend und Backend, Projektstruktur, i18n-Regeln, Tests, Bereitstellung und wichtige Arbeitsweisen"
+source: "oriso-platform/coding-standards.mdx"
+---
+
+## Frontend (React/TypeScript)
+
+- **Build-System**: Vite (ORISO-Admin) / angepasster webpack-Build (ORISO-Frontend)
+- **Framework**: React 19
+- **Sprache**: TypeScript
+- **ESLint**: Airbnb-Konfiguration + TypeScript
+- **Prettier**: 4 Leerzeichen, Semikolons, einfache Anführungszeichen, 120 Zeichen Breite
+- **Komponenten**: Nur Pfeilfunktionen
+- **Node**: >= 18.16.1
+- **React**: Kein `import React` erforderlich
+- **TypeScript**: `any` erlaubt, explizite Rückgabetypen nicht erforderlich
+- **Wichtige Abhängigkeiten**: Matrix JS SDK, Keycloak-JS-Adapter, LiveKit SDK
+
+## Backend (Java/Spring Boot)
+
+- **Java**: 17
+- **Spring Boot**: 2.7.14
+- **Build**: Maven-Projektstruktur
+- **Zeichenkodierung**: Überall UTF-8
+- **DB-Migrationen**: Liquibase **DEAKTIVIERT** (Schemata werden in ORISO-Database verwaltet)
+- **Authentifizierung**: Keycloak OAuth2/JWT
+- **Dienstbenennung**: Präfix `oriso-platform-*` für Kubernetes-Ressourcen
+
+## Projektstruktur
+
+- **Frontend**: `src/api`, `src/components`, `src/pages`, `src/resources`
+- **Backend**: `api/`, `config/`, `admin/`
+
+## i18n-Regeln
+
+- **Verschachtelte JSON-Schlüssel**: z. B. `"registration.agency.result.headline"`
+- **UI-Text** → i18n-Dateien; **Benutzerinhalte** → Datenbank
+- **Dateien**: `de/common.json`, `en/common.json`
+
+## Wichtige Grundsätze
+
+- **Feature-Flags** statt Code zu löschen (für spätere Verwendung auskommentieren)
+- **Immer** `.catch()` bei API-Aufrufen verwenden
+- **Optional Chaining** für sicheren Zugriff verwenden (`obj?.prop`)
+- **Explizite** Typumwandlungen (`String()`, `Number()`)
+- **Keine** leeren Arrays/Objekte an das Backend senden
+- **Vollständig neu laden** nach Bereitstellungen (`Ctrl+Shift+R`)
+- **DB-Sequenzen prüfen** nach Fehlern
+
+## Git
+
+- **Kein Force-Push** auf `main`, `dev` oder `pre-dev`
+- **Hooks beibehalten** (kein `--no-verify`)
+- **Nur committen**, wenn ausdrücklich darum gebeten wird
+- **Branch von `dev` abzweigen** — niemals direkt auf `dev` implementieren
+- **PRs richten sich an den Integrationsbranch `dev`** — niemals an `pre-dev` oder `main`
+
+`main` ist der Release-Branch. Seit dem 31.08.2026 ist `pre-dev` kein Integrationsbranch mehr;
+ein offener PR, der noch darauf zeigt, sollte auf `dev` umgestellt werden. (ORISO-E2E ist die einzige
+Ausnahme: Es besitzt keinen Branch `dev` und integriert auf `pre-dev`.)
+
+## Der Dev-Ablauf
+
+1. Stellen Sie die Änderung lokal fertig und testen Sie sie. Öffnen Sie anschließend einen PR gegen `dev`.
+2. Fordern Sie im selben Schritt, in dem der PR geöffnet wird, 2–3 Reviewer an, ausgenommen den Autor. Ein PR
+   ohne angeforderte Reviewer ist nicht zur Prüfung geöffnet.
+3. Nach der Prüfung entscheiden die Entwickler, welche PRs wann zusammengeführt werden.
+4. Sobald eine Änderung zusammengeführt und auf Dev bereitgestellt wurde, **testen Sie sie auf Dev** und kommentieren Sie im Issue,
+   dass Sie dies getan haben. Wenn etwas nicht funktioniert, entscheidet das Team zwischen Zurückrollen und schneller Korrektur.
+5. Wenn alle Tickets auf Dev freigegeben sind, kann ein Release für Stage erstellt werden. Seine Tickets wechseln dann
+   zu "QA external / Stage" — die Person, die das Release erstellt, verschiebt sie.
+6. Kleine, häufige Releases sind das Ziel.
+
+Bearbeiten Sie die für das aktuelle Release geplanten Issues; nichts anderes wird zusammengeführt, da dies
+QA und Tests beeinträchtigt. Verschieben Sie kein Issue eigenständig in ein Release — stimmen Sie sich zuerst mit Björn, Frank oder
+Christoph ab.
+
+Dokumentieren Sie Ihre Arbeit im Issue: Weisen Sie es sich während der Bearbeitung zu, kommentieren Sie nach
+abgeschlossener Prüfung und Zusammenführung des PRs, kommentieren Sie erneut nach dem Test auf Dev und halten Sie
+den Board-Status aktuell.
+
+## Umgebungen
+
+| Umgebung | URL | Zweck |
+| --- | --- | --- |
+| local | — | Hier entwickeln und testen Sie zuerst. |
+| Dev | `dev.oriso.org` | Integration, aus `dev` gebaut. Hier werden zusammengeführte Änderungen überprüft und QA prüft hier. Kann kurzzeitig instabil sein — Stage ist die stabile Umgebung. |
+| Stage | — | Die stabile Umgebung für Demos und externe QA, als Release erstellt. |
+| Pre-Dev | `predev.oriso.org` | Seit dem 31.08.2026 außerhalb des Entwicklerprozesses. Franks Umgebung. |
+
+Entwickler testen lokal und auf Dev. Niemand sonst stellt auf Pre-Dev bereit, ändert dessen
+Konfiguration oder verändert dessen Daten.
+
+## Lieferregeln für KI-Agenten
+
+Diese gelten für jeden KI-Coding-Agenten, der in ORISO-Repositories arbeitet (Claude Code, Codex,
+Cursor und alle Nachfolger). Sie bestehen, weil ein Agent Code schneller erstellen und prüfen kann,
+als das Team ihn überprüfen kann, und die verlockenden Abkürzungen alle zum selben Ergebnis führen:
+ungeprüfter Code und eine Umgebung, der niemand vertrauen kann.
+
+- **Ein Agent führt niemals einen Pull Request zusammen.** Nicht bei grünem CI, nicht wenn der Benutzer
+  "fertig machen" sagt, nicht für Wartungs- oder reine Teständerungen. Die Zusammenführung ist die Handlung des menschlichen Reviewers. Die
+  Lieferung des Agenten endet bei: überprüft → PR mit Nachweisen und Reviewer-Testplan geöffnet →
+  Reviewer angefordert → Issue auf `In review` gesetzt. Nur auf eine ausdrückliche, auf diesen PR bezogene
+  Anweisung zusammenführen, die den PR benennt.
+- **Reviewer werden im selben Schritt angefordert, in dem der PR geöffnet wird.** Ein PR ohne angeforderte
+  Reviewer ist nicht zur Prüfung geöffnet. Wählen Sie sie aus der Reviewer-Zuordnung des Repositories,
+  ausgenommen den PR-Autor.
+- **Pre-Dev benötigt eine namentliche Anweisung.** Es ist Franks Umgebung. Ein Agent stellt dort bereit,
+  tauscht ein Image aus oder verändert Konfiguration oder Daten nur auf eine ausdrückliche, auf die Aufgabe bezogene
+  Anweisung von Frank, die Pre-Dev nennt. Andernfalls: lokal und auf Dev reproduzieren und berichten.
+- **Stellen Sie die geliehene Umgebung wieder her.** Wenn eine solche Bereitstellung *autorisiert* ist, erfassen Sie
+  zuerst die vorherige Image-Referenz und deren `imagePullPolicy`; stellen Sie beides wieder her, bevor Sie
+  die Arbeit als erledigt melden, und beschreiben Sie im Bericht den Austausch und die Wiederherstellung. Zurückgelassene
+  Images mit `imagePullPolicy: Never` frieren den Cluster für alle anderen unbemerkt auf veraltetem Code
+  ein.
+- **Berichten Sie, wo überprüft wurde.** Jeder PR-Text nennt die Umgebung und das Image, auf denen die
+  Änderung ausgeführt wurde, oder sagt ausdrücklich, dass nur lokal getestet wurde. Ein Reviewer darf
+  niemals raten müssen, wie viel Überprüfung bereits erfolgt ist.
+- **Erzeugen Sie niemals künstliche Review-Nachweise.** Ein Agent kann Zugangsdaten besitzen, die einen PR freigeben
+  oder ein Review verwerfen können. Damit eine Schranke zu überwinden, fingiert genau die menschliche Prüfung,
+  für die sie besteht. Berichten Sie, welche PRs wessen Freigabe benötigen, und überlassen Sie den Klick einem Menschen.
+- **Prüfen Sie das Ticket gegen den Wissensgraphen und die ADRs, bevor Sie Code schreiben.** Die
+  veröffentlichten Graphen je Repository und über Dienste hinweg werden unter `https://understand.oriso.org` abgefragt; ein von
+  `dev` erreichbarer Merge-Commit beweist nicht, dass das Artefakt auf `dev` vorhanden ist.
+
+## Tests
+
+- **Frontend**: Cypress
+- **Backend**: JUnit + MockMvc
+- **Immer in einem echten Browser testen**
+
+## Bereitstellung
+
+- **Verfahren**: Kubernetes mit Helm-Charts
+- **Übergeordnetes Chart**: `oriso-platform` (stellt alle 21 Dienste bereit)
+- **Namespace**: `caritas`
+- **Diensterkennung**: Kubernetes-DNS (`.svc.cluster.local`)
+- **Ablauf**: Docker-Images erstellen → In k3s importieren → Über Helm bereitstellen → Automatische Skalierung
+- **Helm-Werte**: Umgebungsspezifische Dateien (`values.yaml`, `values-prod.yaml`)
+
+<Callout>
+Diese Richtlinien gelten verbindlich für alle Repositories der ORISO-Plattform. Passen Sie Ihre lokalen Werkzeuge (ESLint/Prettier/Java-Toolchain) entsprechend an.
+</Callout>
+
+
+
+

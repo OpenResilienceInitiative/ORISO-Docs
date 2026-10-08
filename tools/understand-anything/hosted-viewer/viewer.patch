@@ -1,0 +1,298 @@
+--- a/packages/dashboard/vite.config.ts
++++ b/packages/dashboard/vite.config.ts
+@@ -5,6 +5,7 @@
+ import path from "path";
+ import fs from "fs";
+ import crypto from "crypto";
++import { sourceLocation } from "./source-location.mjs";
+ 
+ // Generate a one-time token when the server process starts.
+ // This token is printed to the terminal and must be in the URL
+@@ -107,8 +108,8 @@
+   res.end(JSON.stringify(payload));
+ }
+ 
+-function rejectFileRequest(message: string, statusCode = 400) {
+-  return { statusCode, payload: { error: message } };
++function rejectFileRequest(message: string, statusCode = 400, errorCode = "SOURCE_ERROR") {
++  return { statusCode, payload: { error: message, errorCode } };
+ }
+ 
+ function readSourceFile(url: URL) {
+@@ -133,20 +134,15 @@
+   }
+ 
+   const projectRoot = projectRootFromGraphFile(graphFile);
+-  const absoluteFile = path.resolve(projectRoot, normalizedPath);
+-  const relativeToRoot = path.relative(projectRoot, absoluteFile);
+-  if (
+-    !relativeToRoot ||
+-    relativeToRoot.startsWith(`..${path.sep}`) ||
+-    relativeToRoot === ".." ||
+-    path.isAbsolute(relativeToRoot)
+-  ) {
+-    return rejectFileRequest("Path must stay inside the project");
+-  }
+-  const safeRelativePath = relativeToRoot.split(path.sep).join("/");
+-  if (!graphFilePathSet(graphFile, projectRoot).has(safeRelativePath)) {
+-    return rejectFileRequest("File is not in the knowledge graph", 404);
+-  }
++  let graph;
++  let repositories;
++  try {
++    graph = JSON.parse(fs.readFileSync(graphFile, "utf-8"));
++    repositories = JSON.parse(process.env.ORISO_SOURCE_REPOS || "{}");
++  } catch { return rejectFileRequest("Source index is unavailable", 500); }
++  const located = sourceLocation(graph, projectRoot, requestedPath, url.searchParams.get("nodeId"), repositories);
++  if (located.error) return {statusCode: located.statusCode, payload: {error: located.error, errorCode: located.errorCode}};
++  const {absoluteFile, safeRelativePath} = located;
+ 
+   let stat: fs.Stats;
+   try {
+@@ -155,20 +151,20 @@
+     return rejectFileRequest("File not found", 404);
+   }
+ 
+-  if (!stat.isFile()) return rejectFileRequest("Path is not a file");
++  if (!stat.isFile()) return rejectFileRequest("Path is not a file", 422, "SOURCE_NOT_FILE");
+   if (stat.size > MAX_SOURCE_FILE_BYTES) {
+-    return rejectFileRequest("File is too large to preview", 413);
++    return rejectFileRequest("File is too large to preview", 413, "SOURCE_TOO_LARGE");
+   }
+ 
+   const buffer = fs.readFileSync(absoluteFile);
+-  if (buffer.includes(0)) return rejectFileRequest("Binary files cannot be previewed", 415);
++  if (buffer.includes(0)) return rejectFileRequest("Binary files cannot be previewed", 415, "SOURCE_BINARY");
+ 
+   const content = buffer.toString("utf8");
+   return {
+     statusCode: 200,
+     payload: {
+       path: safeRelativePath,
+-      language: detectLanguage(relativeToRoot),
++      language: detectLanguage(safeRelativePath),
+       content,
+       sizeBytes: buffer.byteLength,
+       lineCount: content.length === 0 ? 0 : content.split(/\r\n|\n|\r/).length,
+--- a/packages/dashboard/src/App.tsx
++++ b/packages/dashboard/src/App.tsx
+@@ -107,10 +107,14 @@
+   return <Dashboard accessToken={accessToken} />;
+ }
+ 
++type OptionalViewState = "loading" | "available" | "missing" | "empty" | "error";
++
+ function Dashboard({ accessToken }: { accessToken: string }) {
+   const setGraph = useDashboardStore((s) => s.setGraph);
+   const setDomainGraph = useDashboardStore((s) => s.setDomainGraph);
+   const setDiffOverlay = useDashboardStore((s) => s.setDiffOverlay);
++  const [domainStatus, setDomainStatus] = useState<OptionalViewState>("loading");
++  const [diffStatus, setDiffStatus] = useState<OptionalViewState>("loading");
+   const [loadError, setLoadError] = useState<string | null>(null);
+   const [graphIssues, setGraphIssues] = useState<GraphIssue[]>([]);
+   const [metaTheme, setMetaTheme] = useState<ThemeConfig | null>(null);
+@@ -165,50 +169,51 @@
+   }, [setGraph]);
+ 
+   useEffect(() => {
++    let active = true;
++    setDiffStatus("loading");
+     fetch(dataUrl("diff-overlay.json", accessToken))
+-      .then((res) => {
+-        if (!res.ok) return null;
+-        return res.json();
++      .then(async (res) => {
++        if (!active) return;
++        if (res.status === 404) { setDiffStatus("missing"); return; }
++        if (!res.ok) throw new Error("Diff request failed");
++        const data = await res.json();
++        if (!active) return;
++        if (!data || !Array.isArray(data.changedNodeIds) || !Array.isArray(data.affectedNodeIds)
++          || !data.changedNodeIds.every((id: unknown) => typeof id === "string")
++          || !data.affectedNodeIds.every((id: unknown) => typeof id === "string")) {
++          throw new Error("Invalid diff data");
++        }
++        setDiffOverlay(data.changedNodeIds, data.affectedNodeIds);
++        setDiffStatus(data.changedNodeIds.length ? "available" : "empty");
+       })
+-      .then((data: unknown) => {
+-        if (
+-          data &&
+-          typeof data === "object" &&
+-          "changedNodeIds" in data &&
+-          "affectedNodeIds" in data &&
+-          Array.isArray((data as Record<string, unknown>).changedNodeIds) &&
+-          Array.isArray((data as Record<string, unknown>).affectedNodeIds)
+-        ) {
+-          const d = data as { changedNodeIds: string[]; affectedNodeIds: string[] };
+-          if (d.changedNodeIds.length > 0) {
+-            setDiffOverlay(d.changedNodeIds, d.affectedNodeIds);
+-          }
+-        }
++      .catch(() => { if (active) setDiffStatus("error"); });
++    return () => { active = false; };
++  }, [accessToken, setDiffOverlay]);
++
++  useEffect(() => {
++    let active = true;
++    setDomainStatus("loading");
++    fetch(dataUrl("domain-graph.json", accessToken))
++      .then(async (res) => {
++        if (!active) return;
++        if (res.status === 404) { setDomainStatus("missing"); return; }
++        if (!res.ok) throw new Error("Domain request failed");
++        const data = await res.json();
++        if (!active) return;
++        const result = validateGraph(data);
++        if (!result.success || !result.data) throw new Error("Invalid domain data");
++        if (!result.data.nodes.length) { setDomainStatus("empty"); return; }
++        setDomainGraph(result.data);
++        setDomainStatus("available");
+       })
+-      .catch(() => {});
+-  }, [setDiffOverlay]);
+-
+-  useEffect(() => {
+-    fetch(dataUrl("domain-graph.json", accessToken))
+-      .then((res) => {
+-        if (!res.ok) return null;
+-        return res.json();
+-      })
+-      .then((data: unknown) => {
+-        if (!data) return;
+-        const result = validateGraph(data);
+-        if (result.success && result.data) {
+-          setDomainGraph(result.data);
+-        } else if (result.fatal) {
+-          console.warn(`[domain-graph] validation failed: ${result.fatal}`);
+-        }
+-      })
+-      .catch(() => {});
+-  }, [setDomainGraph]);
++      .catch(() => { if (active) setDomainStatus("error"); });
++    return () => { active = false; };
++  }, [accessToken, setDomainGraph]);
+ 
+   return (
+     <I18nProvider language={outputLanguage ?? "en"}>
+       <ThemeProvider metaTheme={metaTheme}>
++        <OptionalViewsStatus domain={domainStatus} diff={diffStatus} />
+         <DashboardContent
+           accessToken={accessToken}
+           loadError={loadError}
+@@ -216,6 +221,31 @@
+         />
+       </ThemeProvider>
+     </I18nProvider>
++  );
++}
++
++function OptionalViewsStatus({ domain, diff }: { domain: OptionalViewState; diff: OptionalViewState }) {
++  const message = (state: OptionalViewState, kind: "domain" | "diff") => {
++    switch (state) {
++      case "loading": return "Checking availability…";
++      case "available": return "Available";
++      case "missing": return kind === "domain"
++        ? "Not available yet. A separate business-domain graph has not been published. The code graph works independently."
++        : "Not available yet. No change comparison has been published. The code graph works independently.";
++      case "empty": return kind === "domain"
++        ? "No business-domain nodes have been published yet."
++        : "The published comparison contains no changed nodes.";
++      case "error": return "Could not load this view. Reload to retry; this is a loading error, not an unpublished view.";
++    }
++  };
++  return (
++    <details className="fixed bottom-3 right-3 z-40 w-80 max-w-[calc(100vw-1.5rem)] rounded-lg border border-border-subtle bg-surface p-3 text-xs text-text-secondary shadow-lg">
++      <summary className="cursor-pointer font-medium text-text-primary">Additional views{domain === "error" || diff === "error" ? " — loading error" : ""}</summary>
++      <dl className="mt-3 space-y-3" aria-live="polite">
++        <div><dt className="font-medium text-text-primary">Business domain</dt><dd className="mt-1">{message(domain, "domain")}</dd></div>
++        <div><dt className="font-medium text-text-primary">Change comparison</dt><dd className="mt-1">{message(diff, "diff")}</dd></div>
++      </dl>
++    </details>
+   );
+ }
+ 
+--- a/packages/dashboard/src/components/CodeViewer.tsx
++++ b/packages/dashboard/src/components/CodeViewer.tsx
+@@ -21,10 +21,10 @@
+ type SourceState =
+   | { status: "idle" | "loading"; source: null; error: null }
+   | { status: "loaded"; source: SourceFile; error: null }
+-  | { status: "error"; source: null; error: string };
+-
+-function fileContentUrl(filePath: string, token: string): string {
+-  const params = new URLSearchParams({ token, path: filePath });
++  | { status: "error" | "unavailable"; source: null; error: string };
++
++function fileContentUrl(filePath: string, token: string, nodeId: string): string {
++  const params = new URLSearchParams({ token, path: filePath, nodeId });
+   return `${import.meta.env.BASE_URL}file-content.json?${params.toString()}`;
+ }
+ 
+@@ -83,15 +83,15 @@
+ 
+   useEffect(() => {
+     if (!node?.filePath) {
+-      setState({ status: "error", source: null, error: "This node does not have a file path." });
++      setState({ status: "unavailable", source: null, error: "No single source file is assigned to this node. Architecture, concept and repository nodes describe a larger part of the system. Select a related file or symbol to view its code." });
+       return;
+     }
+ 
+     if (accessToken === "__demo__") {
+       setState({
+-        status: "error",
++        status: "unavailable",
+         source: null,
+-        error: "Source preview is available only when the local dashboard server is running.",
++        error: "This demonstration graph does not include source files.",
+       });
+       return;
+     }
+@@ -99,10 +99,22 @@
+     const controller = new AbortController();
+     setState({ status: "loading", source: null, error: null });
+ 
+-    fetch(fileContentUrl(node.filePath, accessToken), { signal: controller.signal })
++    fetch(fileContentUrl(node.filePath, accessToken, node.id), { signal: controller.signal })
+       .then(async (res) => {
+-        const data = (await res.json()) as SourceFile | { error?: string };
++        const data = (await res.json()) as SourceFile | { error?: string; errorCode?: string };
++        if (controller.signal.aborted) return;
+         if (!res.ok) {
++          const unavailableMessages: Record<string, string> = {
++            SOURCE_NOT_FILE: "This node represents a directory or a group of files. Select an individual file to view its code.",
++            SOURCE_TOO_LARGE: "This file is too large for the code preview. Open it in the source repository instead.",
++            SOURCE_BINARY: "This is a binary file. A text code preview is not available.",
++            SOURCE_UNAVAILABLE_REPO: "Source files for this repository are not published in this dashboard. Its graph is still available; open the repository to read the code.",
++          };
++          const explanation = "errorCode" in data && data.errorCode ? unavailableMessages[data.errorCode] : undefined;
++          if (explanation) {
++            setState({ status: "unavailable", source: null, error: explanation });
++            return;
++          }
+           throw new Error("error" in data && data.error ? data.error : "Source unavailable");
+         }
+         setState({ status: "loaded", source: data as SourceFile, error: null });
+@@ -117,7 +129,7 @@
+       });
+ 
+     return () => controller.abort();
+-  }, [accessToken, node?.filePath]);
++  }, [accessToken, node?.filePath, node?.id]);
+ 
+   const highlightedRange = useMemo(() => {
+     if (!node?.lineRange) return null;
+@@ -197,6 +209,13 @@
+       <div className="flex-1 min-h-0 overflow-auto bg-root">
+         {state.status === "loading" && (
+           <div className="p-5 text-sm text-text-muted">{t.codeViewer.loading}</div>
++        )}
++
++        {state.status === "unavailable" && (
++          <div className="p-5 text-sm text-text-secondary leading-relaxed" role="status">
++            <div className="font-medium text-text-primary mb-2">No code preview for this node</div>
++            <p>{state.error}</p>
++          </div>
+         )}
+ 
+         {state.status === "error" && (

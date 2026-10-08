@@ -1,0 +1,37 @@
+{
+  "release": "1.0.0",
+  "upstream": {
+    "url": "https://github.com/Egonex-AI/Understand-Anything.git",
+    "commit": "ba450c43425f3de6d43daf76526950ad8ca93536",
+    "pluginVersion": "2.9.4"
+  },
+  "patches": [
+    {
+      "path": "patches/oriso-schema-viewer-v1.patch",
+      "sha256": "ebf936b43717889ad13cb7538ba1bf38a81d31862e882eefd94db1d8b7238146"
+    },
+    {
+      "path": "patches/oriso-public-source-preview-v1.patch",
+      "sha256": "b58907479a7ef131e87b3ed4d9f094496f297b88405d830e6ac3a4809d28f6e6"
+    },
+    {
+      "path": "patches/oriso-call-relations-v1.patch",
+      "sha256": "90f6462c1766fa3ca0f31d85c100bea04c14f8f29315e08fdb892f8a4da24a51"
+    }
+  ],
+  "nodeImage": "node@sha256:8a34c4ab3ea2c5cd194f07e317b2a8f09461d3c8b05c4e34c8ccd56d56024c4d",
+  "pnpm": "10.6.2",
+  "typescript": "5.9.3",
+  "schemaVersion": "oriso.ua.graph/v1",
+  "generationSchema": "oriso.ua.generation/v1",
+  "sourcePreviewModules": [
+    {
+      "path": "hosted-viewer/source-location.mjs",
+      "sha256": "8d03443309a5340669b1dc2c2f3e5a2fa31a3c5211bea014962d1a2a2f6ecc00"
+    },
+    {
+      "path": "hosted-viewer/source-location.d.mts",
+      "sha256": "cce7c033cba7f7bc5702adeb7aefb975feeb942e766de6283fa9d1ae23277253"
+    }
+  ]
+}
