@@ -1,0 +1,222 @@
+---
+title: "Frontend bereitstellen"
+description: "Frontend-Anwendungen werden über Helm bereitgestellt. Diese Anleitung behandelt Build, Bereitstellung und Überprüfung."
+---
+
+# Frontend bereitstellen
+
+Frontend-Anwendungen (ORISO-Frontend und ORISO-Admin) werden über Helm bereitgestellt. Diese Anleitung behandelt das Erstellen von Docker-Images und die Bereitstellung über Helm.
+
+<Info>
+Frontend-Anwendungen werden als Teil des übergeordneten Helm-Charts `oriso-platform` bereitgestellt. Sie müssen zuerst Docker-Images erstellen und diese anschließend über Helm bereitstellen.
+</Info>
+
+<Steps>
+<Step title="Frontend-Docker-Images erstellen">
+
+Erstellen Sie Docker-Images für beide Frontend-Anwendungen.
+
+```bash
+# Build ORISO-Frontend
+cd ~/online-beratung/caritas-workspace/ORISO-Frontend
+docker build -t caritas-frontend:latest .
+
+# Build ORISO-Admin
+cd ~/online-beratung/caritas-workspace/ORISO-Admin
+docker build -t caritas-admin:latest .
+
+# Verify images
+docker images | grep -E "caritas-frontend|caritas-admin"
+```
+
+<Check>
+Beide Images sollten mit dem Tag `latest` aufgeführt sein.
+</Check>
+
+</Step>
+
+<Step title="Images in k3s importieren">
+
+Importieren Sie die Docker-Images in k3s (falls Sie k3s verwenden).
+
+```bash
+# Import frontend image
+sudo k3s ctr images import <(docker save caritas-frontend:latest)
+
+# Import admin image
+sudo k3s ctr images import <(docker save caritas-admin:latest)
+
+# Verify images in k3s
+sudo k3s ctr images list | grep -E "caritas-frontend|caritas-admin"
+```
+
+<Note>
+Wenn Sie k3s nicht verwenden, übertragen Sie die Images in eine Container-Registry und tragen Sie deren URL in den Helm-Werten ein.
+</Note>
+
+</Step>
+
+<Step title="Über Helm bereitstellen">
+
+Stellen Sie die Frontend-Anwendungen über Helm bereit (falls noch nicht geschehen).
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes/helm
+
+# Update dependencies
+cd oriso-platform
+helm dependency update
+cd ..
+
+# Deploy (or upgrade if already deployed)
+helm upgrade oriso-platform ./oriso-platform \
+  --namespace caritas \
+  -f values.yaml \
+  --set frontend.enabled=true \
+  --set admin.enabled=true
+
+# Monitor deployment
+kubectl get pods -n caritas -l tier=frontend -w
+```
+
+<Check>
+Frontend-Pods sollten erstellt werden und den Zustand `Running` erreichen.
+</Check>
+
+</Step>
+
+<Step title="Frontend-Bereitstellung prüfen">
+
+Prüfen Sie, ob die Frontend-Anwendungen erreichbar sind.
+
+```bash
+# Check pods
+kubectl get pods -n caritas | grep -E "frontend|admin"
+
+# Should see:
+# oriso-platform-frontend-xxx    1/1     Running
+# oriso-platform-admin-xxx        1/1     Running
+
+# Check services
+kubectl get svc -n caritas | grep -E "frontend|admin"
+
+# Test internal access
+kubectl exec -n caritas deployment/oriso-platform-frontend -- \
+  curl -I http://localhost:80
+
+# Test via Ingress (after Ingress is deployed)
+curl -I https://app.example.org
+curl -I https://admin.example.org
+```
+
+<Check>
+- Pods sollten `Running` sein.
+- Dienste sollten erstellt sein.
+- Ingress sollte auf die Dienste routen (falls konfiguriert).
+</Check>
+
+</Step>
+</Steps>
+
+## Frontend-Anwendungen
+
+### ORISO-Frontend (Benutzerportal)
+- **Docker-Image:** `caritas-frontend:latest`
+- **Dienst:** `oriso-platform-frontend.caritas.svc.cluster.local:80`
+- **Extern:** `https://app.example.org`
+- **Technologie:** React 19, angepasster webpack-Build, TypeScript
+- **Funktionen:** Benutzerportal, Matrix-Chat, Videoanrufe
+
+### ORISO-Admin (Administrationsoberfläche)
+- **Docker-Image:** `caritas-admin:latest`
+- **Dienst:** `oriso-platform-admin.caritas.svc.cluster.local:80`
+- **Extern:** `https://admin.example.org`
+- **Technologie:** React 19, Vite, TypeScript
+- **Funktionen:** Administrationsoberfläche, Beratungsstellenverwaltung
+
+## Build-Konfiguration
+
+### Umgebungsvariablen
+Umgebungsvariablen werden während des Builds in die Ausgabe integriert:
+
+```bash
+# .env file in ORISO-Frontend
+VITE_API_URL=https://api.example.org
+VITE_KEYCLOAK_URL=https://auth.example.org
+VITE_KEYCLOAK_REALM=online-beratung
+VITE_KEYCLOAK_CLIENT_ID=app
+VITE_MATRIX_HOMESERVER_URL=https://matrix.example.org
+VITE_MATRIX_SERVER_NAME=caritas.local
+```
+
+### Docker Build
+```dockerfile
+# Example Dockerfile structure
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
+RUN npm run build
+
+FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
+```
+
+## Fehlerbehebung
+
+### Build schlägt fehl
+```bash
+# Clear node_modules and rebuild
+cd ~/online-beratung/caritas-workspace/ORISO-Frontend
+rm -rf node_modules package-lock.json
+npm install
+npm run build
+
+# Check for build errors
+npm run build 2>&1 | tee build.log
+```
+
+### Probleme beim Image-Import
+```bash
+# Check if image exists
+docker images | grep caritas-frontend
+
+# Re-export and import
+docker save caritas-frontend:latest | sudo k3s ctr images import -
+
+# Check k3s images
+sudo k3s ctr images list | grep caritas
+```
+
+### Pod startet nicht
+```bash
+# Check pod status
+kubectl describe pod -n caritas <pod-name>
+
+# Check logs
+kubectl logs -n caritas deployment/oriso-platform-frontend
+
+# Check image pull
+kubectl get pod -n caritas <pod-name> -o yaml | grep image
+```
+
+### Ingress funktioniert nicht
+```bash
+# Check Ingress resources
+kubectl get ingress -n caritas | grep frontend
+
+# Check Ingress Controller
+kubectl get pods -n ingress-nginx
+
+# Test Ingress
+curl -I https://app.example.org
+```
+
+## Nächste Schritte
+
+- [Ingress bereitstellen](/oriso-platform/deploy-nginx) – Externen Zugriff konfigurieren
+- [Nach der Bereitstellung](/oriso-platform/post-deployment) – Abschließende Schritte nach der Bereitstellung ausführen
+- [Überprüfung und Tests](/oriso-platform/verification-testing) – Frontend-Funktionen testen

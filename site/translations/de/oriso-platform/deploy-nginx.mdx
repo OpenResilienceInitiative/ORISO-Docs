@@ -1,0 +1,287 @@
+---
+title: "Kubernetes-Ingress bereitstellen"
+description: "Kubernetes-Ingress-Ressourcen für externen Zugriff mit TLS-Automatisierung über cert-manager bereitstellen"
+---
+
+# Kubernetes-Ingress bereitstellen
+
+Stellen Sie Kubernetes-Ingress-Ressourcen für externen Zugriff auf alle Dienste der ORISO-Plattform bereit. Dies ersetzt manuelle Nginx-Konfiguration durch Kubernetes-natives Ingress.
+
+<Warning>
+**WESENTLICHE ÄNDERUNG:** Die ORISO-Plattform v3.0.0 verwendet Kubernetes-Ingress statt manueller Nginx-Konfiguration. Das gesamte Routing erfolgt über Ingress-Ressourcen mit automatischem TLS über cert-manager.
+</Warning>
+
+<Info>
+- **Ingress-Ressourcen insgesamt:** 33 in 22 YAML-Dateien
+- **TLS:** Automatisch über cert-manager
+- **Funktionen:** Umschreiben von Pfaden, CORS-Unterstützung, Routing zu Diensten
+- **Dienstnamen:** Alle verwenden das Präfix `oriso-platform-*`.
+</Info>
+
+<Steps>
+<Step title="Voraussetzungen prüfen">
+
+Stellen Sie sicher, dass Ingress Controller und cert-manager installiert sind.
+
+```bash
+# Check Nginx Ingress Controller
+kubectl get pods -n ingress-nginx
+
+# Check cert-manager
+kubectl get pods -n cert-manager
+
+# Check ClusterIssuer
+kubectl get clusterissuer letsencrypt-prod
+```
+
+<Check>
+- Der Ingress Controller sollte laufen.
+- cert-manager-Pods sollten laufen.
+- ClusterIssuer sollte `Ready=True` anzeigen.
+</Check>
+
+<Note>
+Falls sie nicht installiert sind, lesen Sie [Erforderliche Software installieren](/oriso-platform/install-software) und [Kubernetes einrichten](/oriso-platform/setup-kubernetes).
+</Note>
+
+</Step>
+
+<Step title="Ingress-Ressourcen bereitstellen">
+
+Stellen Sie alle Ingress-Ressourcen für externen Zugriff bereit.
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes/ingress
+
+# Deploy all Ingress resources
+kubectl apply -f .
+
+# Verify Ingress resources
+kubectl get ingress -n caritas
+
+# Check TLS certificates
+kubectl get certificate -n caritas
+```
+
+<Info>
+Dadurch werden 33 Ingress-Ressourcen in 22 YAML-Dateien bereitgestellt. Sie ermöglichen:
+- Externen Zugriff auf alle Dienste
+- Automatische Ausstellung von TLS-Zertifikaten
+- Pfadbasiertes Routing
+- CORS-Konfiguration
+</Info>
+
+<Check>
+- Ingress-Ressourcen sollten erstellt sein.
+- Zertifikate werden automatisch ausgestellt (dies kann einige Minuten dauern).
+- Prüfen Sie den Zertifikatsstatus: `kubectl get certificate -n caritas`
+</Check>
+
+</Step>
+
+<Step title="Ingress-Konfiguration prüfen">
+
+Prüfen Sie, ob Ingress korrekt routet.
+
+```bash
+# Check Ingress resources
+kubectl get ingress -n caritas
+
+# Check Ingress details
+kubectl describe ingress -n caritas
+
+# Check TLS certificates
+kubectl get certificate -n caritas
+kubectl describe certificate <cert-name> -n caritas
+
+# Test endpoints (after DNS is configured)
+curl -I https://app.example.org
+curl -I https://api.example.org
+curl -I https://admin.example.org
+curl -I https://auth.example.org
+curl -I https://matrix.example.org
+```
+
+<Check>
+- Ingress-Ressourcen sollten die richtigen Hosts und Pfade anzeigen.
+- Zertifikate sollten nach der Ausstellung `Ready=True` anzeigen.
+- Endpunkte sollten HTTP 200 oder passende Antworten zurückgeben.
+</Check>
+
+</Step>
+
+<Step title="DNS-Einträge konfigurieren">
+
+Richten Sie DNS-Einträge auf die IP Ihres Servers aus.
+
+```bash
+# Get server IP
+SERVER_IP=$(kubectl get nodes -o jsonpath="{.items[0].status.addresses[?(@.type=='InternalIP')].address}")
+echo "Server IP: $SERVER_IP"
+```
+
+**Erforderliche DNS-Einträge:**
+- `api.example.org` → `$SERVER_IP`
+- `app.example.org` → `$SERVER_IP`
+- `admin.example.org` → `$SERVER_IP`
+- `auth.example.org` → `$SERVER_IP`
+- `matrix.example.org` → `$SERVER_IP`
+- Weitere Subdomains nach Bedarf
+
+<Note>
+DNS-Einträge müssen vor der Ausstellung von TLS-Zertifikaten konfiguriert sein. Cert-manager verwendet die HTTP-01-Challenge, die eine korrekte DNS-Auflösung voraussetzt.
+</Note>
+
+</Step>
+</Steps>
+
+## Ingress-Architektur
+
+### Ingress Controller
+- **Typ:** Nginx Ingress Controller
+- **Namespace:** `ingress-nginx`
+- **Ports:** 80 (HTTP), 443 (HTTPS)
+- **Zweck:** Leitet externen Datenverkehr an Dienste weiter
+
+### Ingress-Ressourcen
+- **Speicherort:** `caritas-workspace/ORISO-Kubernetes/ingress/`
+- **Gesamt:** 33 Ingress-Ressourcen in 22 YAML-Dateien
+- **Namespace:** `caritas`
+- **TLS:** Automatisch über cert-manager-Annotationen
+
+### Routing zu Diensten
+Alle Dienste verwenden das Präfix `oriso-platform-*`:
+- Frontend: `oriso-platform-frontend:80`
+- Backend: `oriso-platform-userservice:8082`
+- Keycloak: `oriso-platform-keycloak:8080`
+- Matrix: `oriso-platform-matrix-synapse:8008`
+
+## Beispiel einer Ingress-Ressource
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: frontend-ingress
+  namespace: caritas
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  tls:
+  - hosts:
+    - app.example.org
+    secretName: frontend-tls
+  rules:
+  - host: app.example.org
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: oriso-platform-frontend
+            port:
+              number: 80
+```
+
+## Verwaltung von TLS-Zertifikaten
+
+### Automatische Ausstellung
+Cert-manager stellt Zertifikate automatisch aus, wenn Ingress-Ressourcen erstellt werden:
+1. Ingress-Ressource wird mit der Annotation `cert-manager.io/cluster-issuer` erstellt.
+2. cert-manager erstellt CertificateRequest.
+3. Let's Encrypt stellt das Zertifikat über die HTTP-01-Challenge aus.
+4. Zertifikat wird in einem Kubernetes Secret gespeichert.
+5. Ingress verwendet das Zertifikat für TLS.
+
+### Zertifikatsstatus
+```bash
+# Check certificates
+kubectl get certificate -n caritas
+
+# Check certificate details
+kubectl describe certificate frontend-tls -n caritas
+
+# Check certificate requests
+kubectl get certificaterequest -n caritas
+```
+
+## Fehlerbehebung
+
+### Ingress Controller läuft nicht
+```bash
+# Check Ingress Controller pods
+kubectl get pods -n ingress-nginx
+
+# Check logs
+kubectl logs -n ingress-nginx -l app.kubernetes.io/component=controller
+
+# Restart if needed
+kubectl rollout restart deployment -n ingress-nginx ingress-nginx-controller
+```
+
+### TLS-Zertifikate werden nicht ausgestellt
+```bash
+# Check cert-manager
+kubectl get pods -n cert-manager
+
+# Check ClusterIssuer
+kubectl get clusterissuer letsencrypt-prod
+
+# Check certificate requests
+kubectl get certificaterequest -n caritas
+kubectl describe certificaterequest <name> -n caritas
+
+# Check certificate events
+kubectl describe certificate <cert-name> -n caritas
+```
+
+### DNS wird nicht aufgelöst
+```bash
+# Test DNS resolution
+dig app.example.org
+nslookup app.example.org
+
+# Verify DNS points to correct IP
+curl -I http://app.example.org
+```
+
+### Dienste sind nicht erreichbar
+```bash
+# Check Ingress routing
+kubectl describe ingress -n caritas
+
+# Check service endpoints
+kubectl get endpoints -n caritas
+
+# Test service directly
+kubectl exec -n caritas deployment/oriso-platform-frontend -- curl http://localhost:80
+```
+
+## Ingress-Funktionen
+
+### Umschreiben von Pfaden
+```yaml
+annotations:
+  nginx.ingress.kubernetes.io/rewrite-target: /
+```
+
+### CORS-Unterstützung
+```yaml
+annotations:
+  nginx.ingress.kubernetes.io/enable-cors: "true"
+  nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+```
+
+### Begrenzung der Anfragerate
+```yaml
+annotations:
+  nginx.ingress.kubernetes.io/limit-rps: "100"
+```
+
+## Nächste Schritte
+
+- [DNS- und SSL-Konfiguration](/oriso-platform/dns-ssl) – DNS-Einträge konfigurieren
+- [Nach der Bereitstellung](/oriso-platform/post-deployment) – Abschließende Schritte nach der Bereitstellung ausführen
+- [Überprüfung und Tests](/oriso-platform/verification-testing) – Alle Endpunkte testen

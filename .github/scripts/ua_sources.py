@@ -23,6 +23,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 
@@ -46,6 +47,7 @@ def git_env(token: str | None) -> dict:
         # token below is the only credential source and nothing on the runner
         # can substitute another one.
         env["GIT_ASKPASS"] = ""
+        env["UA_GRAPH_TOKEN"] = token
     return env
 
 
@@ -56,7 +58,7 @@ def git(args, token: str | None, **kwargs):
             "-c",
             "credential.helper=",
             "-c",
-            f"credential.helper=!f() {{ echo username=x-access-token; echo password={token}; }}; f",
+            'credential.helper=!f() { echo username=x-access-token; echo password="$UA_GRAPH_TOKEN"; }; f',
         ]
     return subprocess.run(command + args, env=git_env(token), **kwargs)
 
@@ -78,12 +80,28 @@ def main() -> int:
     parser.add_argument("--base", required=True, help="directory to clone sources into")
     parser.add_argument("--inventory", required=True)
     parser.add_argument("--repo-args", required=True)
+    parser.add_argument("--release-manifest")
+    parser.add_argument("--require-release", action="store_true")
+    parser.add_argument("--documentation-revision")
     args = parser.parse_args()
 
+    if args.require_release and not args.release_manifest:
+        print("::error::release manifest required; no branch-tip fallback")
+        return 1
     token = os.environ.get("UA_GRAPH_TOKEN") or None
     included, skipped = [], []
 
-    for entry in load_inventory(args.tooling):
+    entries=load_inventory(args.tooling)
+    release_evidence=None
+    if args.require_release or args.release_manifest:
+        if args.owner != OWNER_DEFAULT:raise ValueError("Release sources require the canonical public owner")
+        if args.require_release and not args.documentation_revision:raise ValueError("Exact documentation revision required for public release inputs")
+        from bundle.release_inputs import load_release
+        release_evidence=load_release(args.release_manifest,args.documentation_revision)
+        enrichments={e['name']:e['enrichment'] for e in entries}
+        entries=[{'name':s['repository'],'branch':s['ref'],'sourceSHA':s['sourceSHA'],'enrichment':enrichments[s['repository']]} for s in release_evidence['lock']['sources']]
+        token=None # The release path is public-only; no private graph credential used.
+    for entry in entries:
         if entry["name"] in PRIVATE:
             # Check even with a token: a token that lacks read access would
             # otherwise fail deep inside the producer, where the error is far
@@ -100,29 +118,27 @@ def main() -> int:
     os.makedirs(args.base, exist_ok=True)
     for entry in included:
         target = os.path.join(args.base, entry["name"])
-        # The producer expects base/<name> to be a git repository with an
-        # `origin` remote; it fetches the pinned branch itself and analyses a
-        # detached checkout, so a single-branch clone is sufficient.
-        result = git(
-            [
-                "clone",
-                "--quiet",
-                "--single-branch",
-                "--branch",
-                entry["branch"],
-                f"https://github.com/{args.owner}/{entry['name']}",
-                target,
-            ],
-            token,
-            capture_output=True,
-            text=True,
-            timeout=900,
-        )
+        if release_evidence:
+            os.makedirs(target,exist_ok=False)
+            for command in [['init','--quiet',target],['-C',target,'remote','add','origin',f"https://github.com/{args.owner}/{entry['name']}"]]:
+                result=git(command,None,capture_output=True,text=True,timeout=90)
+                if result.returncode:raise ValueError('Exact release source preparation failed: '+entry['name'])
+            from bundle.pipeline import fetch_source
+            sha=fetch_source(target,entry['branch'],expected_sha=entry['sourceSHA'])
+            result=git(['-C',target,'checkout','--quiet','--detach',sha],None,capture_output=True,text=True,timeout=90)
+        else:
+            result=git(['clone','--quiet','--single-branch','--branch',entry['branch'],f"https://github.com/{args.owner}/{entry['name']}",target],token,capture_output=True,text=True,timeout=900)
         if result.returncode != 0:
-            # Never echo git's stderr verbatim: a failing authenticated clone
-            # can carry the remote URL, and with it the credential.
             print(f"::error::Failed to clone {entry['name']} ({entry['branch']}).")
             return 1
+        if not release_evidence:
+            # Previews must use the commit that was cloned, not a moving branch
+            # that can advance between source preparation and graph verification.
+            head = git(["-C", target, "rev-parse", "--verify", "HEAD^{commit}"], None,
+                       capture_output=True, text=True, timeout=10)
+            if head.returncode != 0 or not re.fullmatch(r"[a-f0-9]{40}", head.stdout.strip()):
+                raise ValueError("Failed to pin preview source: " + entry["name"])
+            entry["sourceSHA"] = head.stdout.strip()
         print(f"INPUT {entry['name']} {entry['branch']}")
 
     for name in skipped:
@@ -132,18 +148,25 @@ def main() -> int:
         print(f"::notice::{name} is not reachable and is omitted from this generation.")
 
     with open(args.inventory, "w", encoding="utf-8") as handle:
-        json.dump({"included": included, "skipped": skipped}, handle, indent=2)
+        json.dump({"included": included, "skipped": skipped,"release":release_evidence,"mode":"released-inputs" if release_evidence else "non-activatable-branch-preview"}, handle, indent=2)
         handle.write("\n")
 
     # One argument per line, ready for `mapfile`, so the workflow needs no
     # nested heredoc inside a process substitution.
     with open(args.repo_args, "w", encoding="utf-8") as handle:
+        if release_evidence:
+            handle.write("--require-release\n--release-manifest\n"+os.path.abspath(args.release_manifest)+"\n")
+            if args.documentation_revision:handle.write("--documentation-revision\n"+args.documentation_revision+"\n")
         for entry in included:
             handle.write("--repo\n")
-            handle.write(f"{entry['name']}:{entry['branch']}:{entry['enrichment']}\n")
+            ref = entry["branch"] if release_evidence else entry["sourceSHA"]
+            handle.write(f"{entry['name']}:{ref}:{entry['enrichment']}\n")
 
     return 0
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:sys.exit(main())
+    except Exception:
+        print("::error::Release/source input verification failed; inspect declared lock/ref agreement. No fallback performed.")
+        sys.exit(1)

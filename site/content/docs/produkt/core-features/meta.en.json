@@ -1,0 +1,15 @@
+{
+  "title": "Core features",
+  "pages": [
+    "index",
+    "ai-tools",
+    "case-handover",
+    "group-chats",
+    "handover",
+    "live-chat",
+    "notifications",
+    "pincode-chat",
+    "session-management",
+    "transcription"
+  ]
+}

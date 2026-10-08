@@ -11,6 +11,25 @@ const field = (node, name) => node?.childForFieldName(name);
 const lineRange = (node) => [node.startPosition.row + 1, node.endPosition.row + 1];
 const slash = (file) => file.split(sep).join('/');
 const arrayMapAdd = (map, key, value) => { if (!map.has(key)) map.set(key, []); map.get(key).push(value); };
+// Names a Java method body can bind besides block-scoped local declarations (which `variables`
+// tracks): for-each variables, catch parameters, lambda parameters, resources and patterns.
+// A receiver sharing one of these names may not be the field/parameter the type lookup found.
+const collectShadowNames = (node, names = new Set()) => {
+  const identifiers = (n) => { if (n.type === 'identifier') names.add(n.text); for (const child of n.namedChildren) identifiers(child); };
+  if (['enhanced_for_statement', 'catch_formal_parameter', 'resource'].includes(node.type)) { const name = field(node, 'name'); if (name) names.add(name.text); }
+  else if (node.type === 'lambda_expression') { const parameters = field(node, 'parameters'); if (parameters) identifiers(parameters); }
+  else if (node.type === 'type_pattern' || node.type === 'record_pattern') identifiers(node);
+  for (const child of node.namedChildren) collectShadowNames(child, names);
+  return names;
+};
+// Type parameters declared on a type or callable. A variable whose declared type names one of
+// them is typed by that parameter (its bound), never by an indexed class of the same name.
+const javaTypeParameters = (node) => (field(node, 'type_parameters')?.namedChildren ?? [])
+  .filter((n) => n.type === 'type_parameter')
+  .map((n) => n.namedChildren.find((part) => part.type === 'type_identifier' || part.type === 'identifier')?.text)
+  .filter(Boolean);
+const TYPE_PARAMETER = '<type-parameter>';
+const scopedType = (type, typeParameters) => typeParameters?.has(type.replace(/<.*>/g, '').replace(/\[\]|\.\.\./g, '').split('.')[0]) ? TYPE_PARAMETER : type;
 const simpleJavaReceiver = (node) => {
   if (!node) return '';
   return /^(?:[\p{L}_$][\p{L}\p{N}_$]*)(?:\.[\p{L}_$][\p{L}\p{N}_$]*)*$/u.test(node.text) ? node.text : '<expression>';
@@ -58,13 +77,13 @@ export function createJavaExtractor(base) {
     const packageNode = root.namedChildren.find((node) => node.type === 'package_declaration');
     const packageName = packageNode?.text.replace(/^package\s+/, '').replace(/;\s*$/, '').trim() ?? '';
     const functions = [], classes = [], calls = [], parserIssues = [];
-    const variableTypes = (node) => {
+    const variableTypes = (node, typeParameters) => {
       const out = new Map();
       for (const declaration of node?.namedChildren ?? []) {
         if (!['field_declaration', 'constant_declaration'].includes(declaration.type)) continue;
         const type = javaText(field(declaration, 'type'));
         for (const variable of declaration.namedChildren.filter((n) => n.type === 'variable_declarator')) {
-          out.set(field(variable, 'name')?.text, type);
+          out.set(field(variable, 'name')?.text, scopedType(type, typeParameters));
         }
       }
       return out;
@@ -76,14 +95,20 @@ export function createJavaExtractor(base) {
         if (!name) throw new Error('Java declaring type has no name');
         const owner = [context.method?.name ?? context.owner, name].filter(Boolean).join('.');
         const body = field(node, 'body');
-        const declaration = { name: owner, displayName: name, legacyName: name, qualifiedName: owner, lineRange: lineRange(node), methods: [], properties: [] };
+        const hasSupertypes = Boolean(field(node, 'superclass') || field(node, 'interfaces') || node.namedChildren.some((child) => child.type === 'extends_interfaces'));
+        const declaration = { name: owner, displayName: name, legacyName: name, qualifiedName: owner, lineRange: lineRange(node), methods: [], properties: [], kind: node.type, hasSupertypes };
         classes.push(declaration);
-        for (const child of node.namedChildren) visit(child, { owner, variables: variableTypes(body), method: null, declaration });
+        // Static nested types do not see the outer type parameters; inner classes do.
+        const isStatic = node.namedChildren.some((c) => c.type === 'modifiers' && /\bstatic\b/.test(c.text));
+        const typeParameters = new Set([...(isStatic ? [] : context.typeParameters ?? []), ...javaTypeParameters(node)]);
+        const fields = variableTypes(body, typeParameters);
+        for (const child of node.namedChildren) visit(child, { owner, variables: fields, fields, method: null, declaration, typeParameters });
         return;
       }
       if (node.type === 'class_body' && node.parent?.type === 'object_creation_expression') {
         const owner = `${context.method?.name ?? context.owner}.<anonymous:${node.startPosition.row + 1}:${node.startPosition.column}>`;
-        for (const child of node.namedChildren) visit(child, { owner, variables: variableTypes(node), method: null });
+        const fields = variableTypes(node, context.typeParameters);
+        for (const child of node.namedChildren) visit(child, { owner, variables: fields, fields, method: null, typeParameters: context.typeParameters });
         return;
       }
       if (['method_declaration', 'constructor_declaration', 'compact_constructor_declaration'].includes(node.type)) {
@@ -96,9 +121,10 @@ export function createJavaExtractor(base) {
           return javaText(type) + (parameter.type === 'spread_parameter' ? '...' : javaText(field(parameter, 'dimensions')));
         });
         const variables = new Map(context.variables);
+        const typeParameters = new Set([...(context.typeParameters ?? []), ...javaTypeParameters(node)]);
         for (let i = 0; i < parameters.length; i++) {
           const parameterName = field(parameters[i], 'name')?.text ?? parameters[i].namedChildren.find((n) => n.type === 'variable_declarator')?.text;
-          if (parameterName) variables.set(parameterName, types[i]);
+          if (parameterName) variables.set(parameterName, scopedType(types[i], typeParameters));
         }
         const signatureStatus = parameterNode?.hasError ? 'unresolved' : 'parsed';
         const signatureArgs = signatureStatus === 'parsed' ? types.join(',') : `<unresolved-signature:${createHash('sha256').update(parameterNode.text).digest('hex').slice(0, 16)}>`;
@@ -106,22 +132,23 @@ export function createJavaExtractor(base) {
         const fn = { name: `${context.owner}.${signature}`, displayName: name, legacyName: name, qualifiedName: `${context.owner}.${name}`, declaringType: context.owner, signature, signatureStatus, parameterTypes: types, params: parameters.map((p) => field(p, 'name')?.text ?? ''), lineRange: lineRange(node), returnType: javaText(field(node, 'type')), constructor: node.type !== 'method_declaration' };
         functions.push(fn);
         context.declaration?.methods.push(fn.name);
-        for (const child of node.namedChildren) visit(child, { ...context, variables, method: fn });
+        for (const child of node.namedChildren) visit(child, { ...context, variables, method: fn, shadow: collectShadowNames(node), typeParameters });
         return;
       }
-      if (node.type === 'block') {
+      // A for-initializer is scoped to its loop and a switch-block local to its switch block.
+      if (['block', 'for_statement', 'switch_block'].includes(node.type)) {
         const blockContext = { ...context, variables: new Map(context.variables) };
         for (const child of node.namedChildren) visit(child, blockContext);
         return;
       }
       if (node.type === 'local_variable_declaration') {
-        for (const variable of node.namedChildren.filter((n) => n.type === 'variable_declarator')) context.variables.set(field(variable, 'name')?.text, javaText(field(node, 'type')));
+        for (const variable of node.namedChildren.filter((n) => n.type === 'variable_declarator')) context.variables.set(field(variable, 'name')?.text, scopedType(javaText(field(node, 'type')), context.typeParameters));
       }
       if (context.method && ['method_invocation', 'object_creation_expression'].includes(node.type)) {
         const constructor = node.type === 'object_creation_expression';
         const receiver = constructor ? javaText(field(node, 'type')) : simpleJavaReceiver(field(node, 'object'));
         const name = constructor ? receiver.split('.').at(-1) : field(node, 'name')?.text;
-        if (name) calls.push({ caller: context.method.name, callee: constructor ? `new ${receiver}` : receiver ? `${receiver}.${name}` : name, methodName: name, receiver, receiverType: context.variables.get(receiver) ?? (receiver.startsWith('this.') ? context.variables.get(receiver.slice(5)) : undefined), declaringType: context.owner, constructor, argumentCount: field(node, 'arguments')?.namedChildCount ?? 0, lineNumber: node.startPosition.row + 1 });
+        if (name) calls.push({ caller: context.method.name, callee: constructor ? `new ${receiver}` : receiver ? `${receiver}.${name}` : name, methodName: name, receiver, receiverType: receiver.startsWith('this.') ? context.fields?.get(receiver.slice(5)) : context.variables.get(receiver), receiverShadowed: Boolean(context.shadow?.has(receiver.replace(/^this\./, '').split('.')[0])), declaringType: context.owner, constructor, argumentCount: field(node, 'arguments')?.namedChildCount ?? 0, lineNumber: node.startPosition.row + 1 });
       }
       for (const child of node.namedChildren) visit(child, context);
     }
@@ -313,12 +340,26 @@ export function createProjectExtraction({ repoDir, files }) {
         else unsupportedInputs.push({ file, relation: 'imports', specifier: imported.source, reason: 'language-binding-not-supported' });
       }
     }
+    // A call is certain without a compiler only when no other member can be applicable: the owner is
+    // a plain class/interface with no supertypes (no inherited overloads), the receiver cannot be
+    // shadowed, the name is not an Object member, and no same-named method of the owner is unparsed.
+    const OBJECT_MEMBERS = new Set(['equals', 'hashCode', 'toString', 'getClass', 'notify', 'notifyAll', 'wait', 'clone', 'finalize']);
+    const javaCallIsCertain = (call, owner) => {
+      const classes = javaClasses.get(owner) ?? [];
+      if (classes.length !== 1 || call.constructor || OBJECT_MEMBERS.has(call.methodName) || call.receiverShadowed) return false;
+      if (!['class_declaration', 'interface_declaration'].includes(classes[0].kind) || classes[0].hasSupertypes) return false;
+      if (javaFunctions.some((fn) => fn.declaringType === owner && fn.displayName === call.methodName && fn.signatureStatus !== 'parsed')) return false;
+      if (!call.receiver || call.receiver === 'this') return true;
+      if (call.receiverType) return true;
+      return /^[A-Z]/.test(call.receiver) && !call.receiver.includes('<expression>');
+    };
     for (const call of javaCalls) {
       let owners;
       if (!call.receiver || call.receiver === 'this') owners = [call.declaringType];
       else owners = resolveJavaType(call.receiverType ?? call.receiver, call.file, call.declaringType);
       const candidates = javaFunctions.filter((fn) => fn.signatureStatus === 'parsed' && owners.includes(fn.declaringType) && fn.displayName === call.methodName && (fn.parameterTypes.length === call.argumentCount || (fn.parameterTypes.at(-1)?.endsWith('...') && call.argumentCount >= fn.parameterTypes.length - 1)));
       const caller = `function:${call.file}:${call.caller}`;
+      if (owners.length === 1 && candidates.length === 1 && javaCallIsCertain(call, owners[0]) && addEdge('calls', caller, candidates[0].id, { resolution: 'java-declared-type-unique-member', lineNumber: call.lineNumber })) continue;
       if (owners.length === 1 && candidates.length === 1 && addEdge('calls_unconfirmed', caller, candidates[0].id, { resolution: 'java-unique-scoped-declaration', reason: 'java-typechecking-unavailable', lineNumber: call.lineNumber })) continue;
       unresolvedCalls.push({ file: call.file, caller, callee: call.callee, lineNumber: call.lineNumber, reason: candidates.length > 1 || owners.length > 1 ? 'ambiguous-target' : owners.length === 0 ? 'receiver-type-unresolved' : 'target-not-indexed-or-unresolved', candidates: candidates.map((fn) => fn.id) });
     }

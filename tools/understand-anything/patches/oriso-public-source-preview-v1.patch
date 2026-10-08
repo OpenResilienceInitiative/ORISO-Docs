@@ -1,0 +1,187 @@
+--- a/understand-anything-plugin/packages/dashboard/vite.config.ts
++++ b/understand-anything-plugin/packages/dashboard/vite.config.ts
+@@ -5,6 +5,7 @@
+ import path from "path";
+ import fs from "fs";
+ import crypto from "crypto";
++import { sourceLocation } from "./source-location.mjs";
+ import type { IncomingMessage, ServerResponse } from "http";
+ import {
+   getGraphFreshnessBatch,
+@@ -42,43 +43,6 @@
+   return path.dirname(path.dirname(candidate));
+ }
+ 
+-function normalizeGraphPath(filePath: string, projectRoot: string): string | null {
+-  const rawPath = path.isAbsolute(filePath)
+-    ? filePath.startsWith(projectRoot)
+-      ? path.relative(projectRoot, filePath)
+-      : null
+-    : filePath;
+-  if (rawPath === null) return null;
+-  const normalized = path.normalize(rawPath);
+-  if (
+-    !normalized ||
+-    normalized === "." ||
+-    normalized.includes("\0") ||
+-    normalized === ".." ||
+-    normalized.startsWith(`..${path.sep}`) ||
+-    path.isAbsolute(normalized)
+-  ) {
+-    return null;
+-  }
+-  return normalized.split(path.sep).join("/");
+-}
+-
+-function graphFilePathSet(graphFile: string, projectRoot: string): Set<string> {
+-  const allowed = new Set<string>();
+-  try {
+-    const raw = JSON.parse(fs.readFileSync(graphFile, "utf-8")) as {
+-      nodes?: Array<Record<string, unknown>>;
+-    };
+-    for (const node of raw.nodes ?? []) {
+-      if (typeof node.filePath !== "string") continue;
+-      const normalized = normalizeGraphPath(node.filePath, projectRoot);
+-      if (normalized) allowed.add(normalized);
+-    }
+-  } catch {
+-    return allowed;
+-  }
+-  return allowed;
+-}
+ 
+ function detectLanguage(filePath: string): string {
+   const ext = path.extname(filePath).slice(1).toLowerCase();
+@@ -118,8 +82,8 @@
+   res.end(JSON.stringify(payload));
+ }
+ 
+-function rejectFileRequest(message: string, statusCode = 400) {
+-  return { statusCode, payload: { error: message } };
++function rejectFileRequest(message: string, statusCode = 400, errorCode = "SOURCE_ERROR") {
++  return { statusCode, payload: { error: message, errorCode } };
+ }
+ 
+ function readSourceFile(url: URL) {
+@@ -143,21 +107,14 @@
+     return rejectFileRequest("No knowledge graph found. Run /understand first.", 404);
+   }
+ 
+-  const projectRoot = projectRootFromGraphFile(graphFile);
+-  const absoluteFile = path.resolve(projectRoot, normalizedPath);
+-  const relativeToRoot = path.relative(projectRoot, absoluteFile);
+-  if (
+-    !relativeToRoot ||
+-    relativeToRoot.startsWith(`..${path.sep}`) ||
+-    relativeToRoot === ".." ||
+-    path.isAbsolute(relativeToRoot)
+-  ) {
+-    return rejectFileRequest("Path must stay inside the project");
+-  }
+-  const safeRelativePath = relativeToRoot.split(path.sep).join("/");
+-  if (!graphFilePathSet(graphFile, projectRoot).has(safeRelativePath)) {
+-    return rejectFileRequest("File is not in the knowledge graph", 404);
+-  }
++  const graph = JSON.parse(fs.readFileSync(graphFile, "utf8"));
++  const repositories = JSON.parse(process.env.ORISO_SOURCE_REPOS || "{}");
++  const selectedRepository = process.env.ORISO_SOURCE_REPOSITORY;
++  const projectRoot = selectedRepository && repositories[selectedRepository] ? repositories[selectedRepository] : projectRootFromGraphFile(graphFile);
++  const location = sourceLocation(graph, projectRoot, normalizedPath, url.searchParams.get("nodeId"), repositories);
++  if ("statusCode" in location) return rejectFileRequest(location.error, location.statusCode, location.errorCode);
++  const absoluteFile = location.absoluteFile;
++  const safeRelativePath = location.safeRelativePath;
+ 
+   let stat: fs.Stats;
+   try {
+@@ -166,20 +123,20 @@
+     return rejectFileRequest("File not found", 404);
+   }
+ 
+-  if (!stat.isFile()) return rejectFileRequest("Path is not a file");
++  if (!stat.isFile()) return rejectFileRequest("Path is not a file", 422, "SOURCE_NOT_FILE");
+   if (stat.size > MAX_SOURCE_FILE_BYTES) {
+-    return rejectFileRequest("File is too large to preview", 413);
++    return rejectFileRequest("File is too large to preview", 413, "SOURCE_TOO_LARGE");
+   }
+ 
+   const buffer = fs.readFileSync(absoluteFile);
+-  if (buffer.includes(0)) return rejectFileRequest("Binary files cannot be previewed", 415);
++  if (buffer.includes(0)) return rejectFileRequest("Binary files cannot be previewed", 415, "SOURCE_BINARY");
+ 
+   const content = buffer.toString("utf8");
+   return {
+     statusCode: 200,
+     payload: {
+       path: safeRelativePath,
+-      language: detectLanguage(relativeToRoot),
++      language: detectLanguage(safeRelativePath),
+       content,
+       sizeBytes: buffer.byteLength,
+       lineCount: content.length === 0 ? 0 : content.split(/\r\n|\n|\r/).length,
+--- a/understand-anything-plugin/packages/dashboard/src/components/CodeViewer.tsx
++++ b/understand-anything-plugin/packages/dashboard/src/components/CodeViewer.tsx
+@@ -23,11 +23,13 @@
+ type SourceState =
+   | { status: "idle" | "loading"; source: null; error: null }
+   | { status: "loaded"; source: SourceFile; error: null }
+-  | { status: "error"; source: null; error: string };
+-
+-function fileContentUrl(filePath: string, token: string): string {
+-  const params = new URLSearchParams({ token, path: filePath });
+-  return `/file-content.json?${params.toString()}`;
++  | { status: "error" | "unavailable"; source: null; error: string };
++
++function fileContentUrl(filePath: string, token: string, nodeId: string): string {
++  const params = new URLSearchParams({ token, path: filePath, nodeId });
++  const base = window.location.pathname.replace(/[^/]+\.html$/, "");
++  const directory = base.endsWith("/") ? base : `${base}/`;
++  return `${directory}file-content.json?${params.toString()}`;
+ }
+ 
+ function fallbackLanguage(filePath: string | undefined): string {
+@@ -164,10 +166,13 @@
+     const controller = new AbortController();
+     setState({ status: "loading", source: null, error: null });
+ 
+-    fetch(fileContentUrl(node.filePath, accessToken), { signal: controller.signal })
++    fetch(fileContentUrl(node.filePath, accessToken, node.id), { signal: controller.signal })
+       .then(async (res) => {
+-        const data = (await res.json()) as SourceFile | { error?: string };
++        const data = (await res.json()) as SourceFile | { error?: string; errorCode?: string };
+         if (!res.ok) {
++          if ("errorCode" in data && ["SOURCE_UNAVAILABLE_REPO", "SOURCE_NOT_FILE", "SOURCE_TOO_LARGE", "SOURCE_BINARY"].includes(data.errorCode || "")) {
++            setState({status:"unavailable",source:null,error:"This public graph does not include a text source preview for this node."}); return;
++          }
+           throw new Error("error" in data && data.error ? data.error : "Source unavailable");
+         }
+         setState({ status: "loaded", source: data as SourceFile, error: null });
+@@ -182,7 +187,7 @@
+       });
+ 
+     return () => controller.abort();
+-  }, [accessToken, node?.filePath]);
++  }, [accessToken, node?.filePath, node?.id]);
+ 
+   const highlightedRange = useMemo(() => {
+     if (!node?.lineRange) return null;
+@@ -265,6 +270,8 @@
+         {state.status === "loading" && (
+           <div className="p-5 text-sm text-text-muted">{t.codeViewer.loading}</div>
+         )}
++
++        {state.status === "unavailable" && (<div role="status" className="p-5 text-sm text-text-muted">{state.error}</div>)}
+ 
+         {state.status === "error" && (
+           <div className="p-5">
+--- a/understand-anything-plugin/packages/dashboard/src/App.tsx
++++ b/understand-anything-plugin/packages/dashboard/src/App.tsx
+@@ -70,7 +70,8 @@
+     const base = import.meta.env.BASE_URL || "/";
+     return `${base.endsWith("/") ? base : `${base}/`}${fileName}`;
+   }
+-  const path = `/${fileName}`;
++  const base = window.location.pathname.replace(/[^/]+\.html$/, "");
++  const path = `${base.endsWith("/") ? base : `${base}/`}${fileName}`;
+   return token ? `${path}?token=${encodeURIComponent(token)}` : path;
+ }
+ 

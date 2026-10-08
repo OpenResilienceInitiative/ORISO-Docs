@@ -409,7 +409,7 @@ def source_check(sources, now, max_age, expected_refs=None):
         ref = source.get("ref")
         require(
             isinstance(ref, str)
-            and ref.startswith("refs/heads/")
+            and re.fullmatch(r"(refs/(heads|tags)/[A-Za-z0-9_.+/-]+|[a-f0-9]{40})", ref)
             and ".." not in ref
             and not any(x.isspace() for x in ref),
             "invalid source ref",
@@ -539,7 +539,7 @@ def latest_claim_review(graph, now):
     return max(dates, key=lambda entry: entry[0])[1] if dates else None
 
 
-def seal(root, sources, generation_id=None, now=None, expected_refs=None):
+def seal(root, sources, generation_id=None, now=None, expected_refs=None, release=None):
     root = Path(root)
     preflight_tree(root)
     now = now or now_utc()
@@ -696,6 +696,7 @@ def seal(root, sources, generation_id=None, now=None, expected_refs=None):
         graphs=graphs,
         files=files,
     )
+    if release is not None:manifest["release"]=release
     write_json(root / "manifest.json", manifest)
     validate(root, now=now, expected_refs=expected_refs)
     return manifest
@@ -706,6 +707,11 @@ def validate(root, now=None, max_age=86400, expected_refs=None):
     now = now or now_utc()
     manifest = read_json(root / "manifest.json")
     sources = envelope(manifest, now, max_age, expected_refs)
+    if 'release' in manifest:
+        from .release_inputs import validate_lock,canonical_bytes
+        record=manifest['release'];require(isinstance(record,dict) and record.get('evidenceScope')=='published-github-release-and-source-refs' and record.get('publishedAt'),'verified published release evidence required')
+        lock=validate_lock(record.get('lock'));require(record.get('sha256')==hashlib.sha256(canonical_bytes(lock)).hexdigest(),'release lock hash mismatch')
+        require({s['repository']:(s['ref'],s['sourceSHA']) for s in lock['sources']}=={n:(s['ref'],s['sourceSHA']) for n,s in sources.items()},'release source vector mismatch')
     files = manifest.get("files")
     require(isinstance(files, list) and files, "files required")
     listed = set()

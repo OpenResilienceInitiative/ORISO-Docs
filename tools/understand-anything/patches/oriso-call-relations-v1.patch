@@ -1,0 +1,292 @@
+diff --git a/understand-anything-plugin/packages/dashboard/src/components/NodeInfo.tsx b/understand-anything-plugin/packages/dashboard/src/components/NodeInfo.tsx
+index ebbd6bc..ea8447a 100644
+--- a/understand-anything-plugin/packages/dashboard/src/components/NodeInfo.tsx
++++ b/understand-anything-plugin/packages/dashboard/src/components/NodeInfo.tsx
+@@ -1,5 +1,7 @@
+ import { useState } from "react";
+ import OrisoNodeEvidence from "./OrisoNodeEvidence";
++import OrisoCallRelations from "./OrisoCallRelations";
++import { callRelations, hasCallRole, isCallEdge } from "./orisoCallModel";
+ import { isOriso, sourceAtRevision } from "./orisoEvidenceModel";
+ import { useDashboardStore } from "../store";
+ import { useI18n } from "../contexts/I18nContext";
+@@ -283,6 +285,7 @@ export default function NodeInfo() {
+   const nodeHistory = useDashboardStore((s) => s.nodeHistory);
+   const goBackNode = useDashboardStore((s) => s.goBackNode);
+   const [languageExpanded, setLanguageExpanded] = useState(true);
++  const [showPossibleCalls, setShowPossibleCalls] = useState(true);
+   const { t } = useI18n();
+ 
+   const navigateToNode = useDashboardStore((s) => s.navigateToNode);
+@@ -321,9 +324,14 @@ export default function NodeInfo() {
+   const childEdges = connections.filter(
+     (e) => e.type === "contains" && e.source === node.id,
+   );
++  // Calls get their own Called by / Calls lists; keep them out of the generic list.
+   const otherConnections = connections.filter(
+-    (e) => !(e.type === "contains" && e.source === node.id),
++    (e) => !(e.type === "contains" && e.source === node.id) && !isCallEdge(e),
+   );
++  const calls = callRelations(node.id, connections, activeGraph?.nodes ?? []);
++  const showCalls = hasCallRole(node) || calls.callers.length > 0 || calls.callees.length > 0;
++  const unresolvedCalls = (activeGraph as { metadata?: { extraction?: { diagnostics?: { unresolvedCalls?: { total?: number } } } } } | null)
++    ?.metadata?.extraction?.diagnostics?.unresolvedCalls?.total;
+ 
+   // Resolve child nodes
+   const childNodes = childEdges
+@@ -528,7 +536,17 @@ export default function NodeInfo() {
+         </div>
+       )}
+ 
+-      {/* Other connections (excluding "contains" children) */}
++      {showCalls && (
++        <OrisoCallRelations
++          relations={calls}
++          showPossible={showPossibleCalls}
++          onTogglePossible={() => setShowPossibleCalls((v) => !v)}
++          onOpen={navigateToNode}
++          unresolvedCalls={unresolvedCalls}
++        />
++      )}
++
++      {/* Other connections (excluding "contains" children and calls) */}
+       {otherConnections.length > 0 && (
+         <div>
+           <h3 className="text-[11px] font-semibold text-gold uppercase tracking-wider mb-2">
+diff --git a/understand-anything-plugin/packages/dashboard/src/components/OrisoCallRelations.tsx b/understand-anything-plugin/packages/dashboard/src/components/OrisoCallRelations.tsx
+new file mode 100644
+index 0000000..a01023a
+--- /dev/null
++++ b/understand-anything-plugin/packages/dashboard/src/components/OrisoCallRelations.tsx
+@@ -0,0 +1,83 @@
++import type { CallRelation, CallRelations } from "./orisoCallModel";
++
++const REASONS: Record<string, string> = {
++  "java-typechecking-unavailable": "not type-checked",
++};
++
++function RelationList({ title, relations, showPossible, onOpen, empty }: {
++  title: string;
++  relations: CallRelation[];
++  showPossible: boolean;
++  onOpen: (id: string) => void;
++  empty: string;
++}) {
++  const visible = relations.filter((r) => showPossible || !r.possible);
++  const possible = relations.filter((r) => r.possible).length;
++  return (
++    <section className="mb-3" aria-label={title}>
++      <h4 className="text-[10px] font-semibold text-text-secondary uppercase tracking-wider mb-1.5">
++        {title} ({relations.length - possible}{possible ? ` + ${possible} possible` : ""})
++      </h4>
++      {visible.length === 0 ? (
++        <p className="text-[11px] text-text-muted">{relations.length ? "Only possible calls; shown when included." : empty}</p>
++      ) : (
++        <ul className="space-y-1.5">
++          {visible.map((r) => (
++            <li key={r.nodeId}>
++              <button
++                type="button"
++                className="w-full text-left text-xs bg-elevated rounded-lg px-3 py-2 border border-border-subtle flex items-center gap-2 hover:border-gold/40 hover:bg-gold/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold transition-colors"
++                onClick={() => onOpen(r.nodeId)}
++                title={r.nodeId}
++              >
++                <span className="text-text-primary truncate min-w-0 flex-1">{r.name}</span>
++                {r.lineNumbers.length > 0 && (
++                  <span className="text-[10px] text-text-muted font-mono shrink-0">L{r.lineNumbers.join(", ")}</span>
++                )}
++                {r.possible && (
++                  <span
++                    className="text-[9px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded border border-dashed border-gold/50 text-gold shrink-0"
++                    title={r.reason ? REASONS[r.reason] ?? r.reason : "possible call"}
++                  >
++                    possible
++                  </span>
++                )}
++              </button>
++            </li>
++          ))}
++        </ul>
++      )}
++    </section>
++  );
++}
++
++export default function OrisoCallRelations({ relations, showPossible, onTogglePossible, onOpen, unresolvedCalls }: {
++  relations: CallRelations;
++  showPossible: boolean;
++  onTogglePossible: () => void;
++  onOpen: (id: string) => void;
++  unresolvedCalls?: number;
++}) {
++  const possible = [...relations.callers, ...relations.callees].filter((r) => r.possible).length;
++  return (
++    <div className="mb-4" aria-label="Call relations">
++      <div className="flex items-center gap-2 mb-2">
++        <h3 className="text-[11px] font-semibold text-gold uppercase tracking-wider">Calls</h3>
++        {possible > 0 && (
++          <label className="ml-auto flex items-center gap-1.5 text-[10px] text-text-secondary cursor-pointer">
++            <input type="checkbox" checked={showPossible} onChange={onTogglePossible} />
++            Include possible calls
++          </label>
++        )}
++      </div>
++      <RelationList title="Called by" relations={relations.callers} showPossible={showPossible} onOpen={onOpen} empty="No caller found in the extracted source." />
++      <RelationList title="Calls" relations={relations.callees} showPossible={showPossible} onOpen={onOpen} empty="No callee found in the extracted source." />
++      <p className="text-[10px] text-text-muted">
++        Confirmed calls are bound to one declaration; possible calls are not type-checked.
++        {typeof unresolvedCalls === "number" && unresolvedCalls > 0
++          ? ` ${unresolvedCalls.toLocaleString("en")} calls in this graph could not be resolved, so an empty list is not proof of no calls.`
++          : " An empty list is not proof of no calls."}
++      </p>
++    </div>
++  );
++}
+diff --git a/understand-anything-plugin/packages/dashboard/src/components/__tests__/OrisoCallRelations.test.ts b/understand-anything-plugin/packages/dashboard/src/components/__tests__/OrisoCallRelations.test.ts
+new file mode 100644
+index 0000000..1df2a0d
+--- /dev/null
++++ b/understand-anything-plugin/packages/dashboard/src/components/__tests__/OrisoCallRelations.test.ts
+@@ -0,0 +1,84 @@
++import { createElement } from "react";
++import { renderToStaticMarkup } from "react-dom/server";
++import { describe, expect, it } from "vitest";
++import type { GraphEdge, GraphNode } from "@understand-anything/core/types";
++import OrisoCallRelations from "../OrisoCallRelations";
++import { callRelations } from "../orisoCallModel";
++
++const fn = (id: string, name: string): GraphNode => ({ id, type: "function", name, summary: "", tags: [], complexity: "simple" });
++const edge = (type: string, source: string, target: string, metadata?: Record<string, unknown>) =>
++  ({ type, source, target, direction: "forward", weight: 1, ...(metadata ? { metadata } : {}) }) as unknown as GraphEdge;
++
++const setup = fn("function:KeycloakService.java:KeycloakService.setUpOtpCredential(String,String,String)", "setUpOtpCredential");
++const delegate = fn("function:UserTwoFactorAuthControllerDelegate.java:Delegate.setUp()", "setUp");
++const facade = fn("function:TwoFactorFacade.java:Facade.enable()", "enable");
++const client = fn("function:KeycloakClient.java:KeycloakClient.putForEntity(String,String,Object,Class)", "putForEntity");
++const overload = fn("function:KeycloakClient.java:KeycloakClient.putForEntity(String,Object)", "putForEntity");
++const nodes = [setup, delegate, facade, client, overload];
++
++const edges: GraphEdge[] = [
++  edge("calls", delegate.id, setup.id, { lineNumber: 40 }),
++  edge("calls_unconfirmed", facade.id, setup.id, { reason: "java-typechecking-unavailable", lineNumber: 12 }),
++  edge("calls", setup.id, client.id, { lineNumber: 7 }),
++  edge("calls_unconfirmed", setup.id, client.id, { lineNumber: 9 }),
++  edge("contains", "file:KeycloakService.java", setup.id),
++  edge("imports", "file:A.java", "file:B.java"),
++];
++
++describe("callRelations", () => {
++  it("splits callers and callees with direction and keeps possible calls qualified", () => {
++    const r = callRelations(setup.id, edges, nodes);
++    expect(r.callers.map((c) => [c.name, c.possible])).toEqual([["setUp", false], ["enable", true]]);
++    expect(r.callers[1].reason).toBe("java-typechecking-unavailable");
++    expect(r.callees).toHaveLength(1);
++  });
++
++  it("a confirmed edge outranks a possible one to the same node, line numbers merge", () => {
++    const [callee] = callRelations(setup.id, edges, nodes).callees;
++    expect(callee.nodeId).toBe(client.id);
++    expect(callee.possible).toBe(false);
++    expect(callee.lineNumbers).toEqual([7, 9]);
++  });
++
++  it("overloads keep distinct identities and containment is never a call", () => {
++    const r = callRelations(overload.id, edges, nodes);
++    expect(r).toEqual({ callers: [], callees: [] });
++    expect(callRelations("file:KeycloakService.java", edges, nodes)).toEqual({ callers: [], callees: [] });
++  });
++
++  it("an unknown target keeps its id instead of inventing a name", () => {
++    const r = callRelations(setup.id, [edge("calls", setup.id, "function:Gone.java:gone()")], nodes);
++    expect(r.callees[0].name).toBe("function:Gone.java:gone()");
++  });
++});
++
++describe("OrisoCallRelations", () => {
++  const render = (showPossible: boolean, unresolvedCalls?: number) =>
++    renderToStaticMarkup(createElement(OrisoCallRelations, {
++      relations: callRelations(setup.id, edges, nodes), showPossible, onTogglePossible: () => {}, onOpen: () => {}, unresolvedCalls,
++    }));
++
++  it("shows possible calls with a label when included", () => {
++    const html = render(true);
++    expect(html).toContain("Called by (1 + 1 possible)");
++    expect(html).toContain("enable");
++    expect(html).toContain(">possible<");
++    expect(html).toContain("Include possible calls");
++  });
++
++  it("hides possible calls without dropping confirmed ones", () => {
++    const html = render(false);
++    expect(html).toContain("setUp");
++    expect(html).not.toContain("enable");
++    expect(html).toContain("Called by (1 + 1 possible)");
++  });
++
++  it("states that unresolved extraction is not proof of no calls", () => {
++    expect(render(true, 147611)).toContain("147,611 calls in this graph could not be resolved");
++    const empty = renderToStaticMarkup(createElement(OrisoCallRelations, {
++      relations: { callers: [], callees: [] }, showPossible: true, onTogglePossible: () => {}, onOpen: () => {},
++    }));
++    expect(empty).toContain("No caller found in the extracted source.");
++    expect(empty).not.toContain("Include possible calls");
++  });
++});
+diff --git a/understand-anything-plugin/packages/dashboard/src/components/orisoCallModel.ts b/understand-anything-plugin/packages/dashboard/src/components/orisoCallModel.ts
+new file mode 100644
+index 0000000..c052267
+--- /dev/null
++++ b/understand-anything-plugin/packages/dashboard/src/components/orisoCallModel.ts
+@@ -0,0 +1,52 @@
++import type { GraphEdge, GraphNode } from "@understand-anything/core/types";
++
++// Call relations of one node, read straight from the loaded edges. `calls` are confirmed;
++// `calls_unconfirmed` are possible (source-grounded but not type-checked) and stay labelled as
++// such. Containment is never a call, and nothing is added for unresolved extraction.
++export const CALL_EDGE_TYPES = ["calls", "calls_unconfirmed"] as const;
++
++export interface CallRelation {
++  nodeId: string;
++  name: string;
++  possible: boolean;
++  reason?: string;
++  lineNumbers: number[];
++}
++
++export interface CallRelations {
++  callers: CallRelation[];
++  callees: CallRelation[];
++}
++
++const isCallEdge = (edge: GraphEdge) => (CALL_EDGE_TYPES as readonly string[]).includes(edge.type);
++
++export function callRelations(nodeId: string, edges: GraphEdge[], nodes: GraphNode[]): CallRelations {
++  const names = new Map(nodes.map((n) => [n.id, n.name]));
++  const collect = (side: "source" | "target") => {
++    const other = side === "source" ? "target" : "source";
++    const byNode = new Map<string, CallRelation>();
++    for (const edge of edges) {
++      if (!isCallEdge(edge) || edge[side] !== nodeId) continue;
++      const id = edge[other];
++      const possible = edge.type === "calls_unconfirmed";
++      const metadata = (edge as { metadata?: { reason?: string; lineNumber?: number } }).metadata;
++      const existing = byNode.get(id);
++      const relation = existing ?? { nodeId: id, name: names.get(id) ?? id, possible, lineNumbers: [] };
++      // A confirmed edge to the same node outranks a possible one.
++      if (!possible) { relation.possible = false; delete relation.reason; }
++      else if (relation.possible && metadata?.reason) relation.reason = metadata.reason;
++      if (typeof metadata?.lineNumber === "number" && !relation.lineNumbers.includes(metadata.lineNumber)) relation.lineNumbers.push(metadata.lineNumber);
++      byNode.set(id, relation);
++    }
++    return [...byNode.values()]
++      .map((r) => ({ ...r, lineNumbers: [...r.lineNumbers].sort((a, b) => a - b) }))
++      .sort((a, b) => Number(a.possible) - Number(b.possible) || a.name.localeCompare(b.name));
++  };
++  return { callees: collect("source"), callers: collect("target") };
++}
++
++export function hasCallRole(node: GraphNode) {
++  return node.type === "function" || node.type === "class";
++}
++
++export { isCallEdge };
