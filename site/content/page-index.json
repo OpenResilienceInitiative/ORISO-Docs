@@ -3929,7 +3929,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/decisions/ADR-024-notification-matrix-two-lists-not-one-filtered.md",
-      "sourceHash": "56df3a04d7ce55ec62791d08bac3d472ebfc28358ecb1c7fe10388e9a2976734",
+      "sourceHash": "b960c89d8c1513ca766ce9b6ad964dbd08afcb2111b36fe7a61dbe52e5b494cc",
       "locales": {
         "de": {
           "available": true,
@@ -3968,7 +3968,7 @@
           }
         }
       },
-      "sourceRevision": "8609a494bd4fe1636462b736e813e4b7c08087d4",
+      "sourceRevision": "7377253568f53a7403f0c7262a933153b47b267c",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
