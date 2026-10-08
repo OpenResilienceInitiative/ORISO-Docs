@@ -145,3 +145,48 @@ Zustimmung. Die historischen Messungen oben behalten ihre ursprünglichen Daten.
 wird in [Frontend #1666](https://github.com/OpenResilienceInitiative/ORISO-Frontend/pull/1666) und
 [UserService #1376](https://github.com/OpenResilienceInitiative/ORISO-UserService/pull/1376) geprüft.
 Quellcode-Prüfungen, Deployment und tatsächlicher Mail-Empfang bleiben getrennte Nachweise.
+
+
+## Gewöhnliche eingegangene Beratungsanfrage ablehnen — Entscheidung vom 2026-10-08
+
+Eine Beratungsperson darf eine gewöhnliche eingegangene Anfrage ihrer Beratungsstelle ablehnen,
+bevor jemand sie annimmt. Frank hat diese Umsetzung am 8. Oktober 2026 freigegeben. Sie ist von
+der Ablehnung einer Fallübergabe getrennt. Die ratsuchende Person erhält einen neutralen Eintrag
+in den Aktivitäten und kann den bisherigen Gesprächsverlauf lesen. Das abgelehnte Gespräch bleibt
+für neue Nachrichten und Anrufe geschlossen.
+
+| Situation | Ergebnis |
+|---|---|
+| Eine aktuell berechtigte Beratungsperson der Beratungsstelle bestätigt die Ablehnung | Entscheidung festhalten und Anfrage sowie Team-Besprechung für neue Beiträge schließen |
+| Die ursprüngliche ratsuchende Person öffnet den Aktivitätseintrag | Abgelehnte Anfrage und lesbaren bisherigen Verlauf ohne Nachrichteneditor anzeigen |
+| Dieselbe Beratungsperson wiederholt eine bereits abgeschlossene Anfrage | Abschluss ohne weitere Entscheidung oder weiteren Aktivitätseintrag bestätigen |
+| Die Anfrage wurde inzwischen angenommen oder von jemand anderem abgelehnt | Aktuellen Stand laden und anzeigen, dass diese Aktion nicht abgeschlossen werden kann |
+| Das Schließen des zugrunde liegenden Gesprächs scheitert | Entscheidung behalten, unvollständigen Vorgang melden und Schließen erneut versuchen; keinen Erfolg behaupten |
+
+Die Bestätigung verlangt keine schriftliche Begründung. Weder Aktivitätseintrag noch Vorschau
+nennen Beratungsperson, Fall oder Nachrichteninhalt. Es entsteht keine zusätzliche Ablehnungsmail
+und kein neuer E-Mail-Schalter. Archivieren, Annehmen oder Zuweisen darf eine abgelehnte Anfrage
+nicht stillschweigend wieder öffnen.
+
+**Für Entwickler — Vertrag für Status, Zustellung und Protokoll:**
+
+```text
+POST /users/sessions/{sessionId}/rejection; operationId rejectEnquiry; ohne Request-Body.
+Nur eingegangene registrierte NEW/nicht zugewiesene gewöhnliche Beratungsanfragen.
+Aktuelle nicht gelöschte aktive Beratungsperson + aktuelle Träger-/Stellenberechtigung.
+Status REJECTED=5 ergänzen; bestehende numerische Werte0–4 beibehalten.
+TX1: Anfrage sperren, endgültige Entscheidung und unveränderliche offene Audit-Bindung speichern.
+Außerhalb TX: primären und Team-Matrix-Raum als schreibgeschützt verifizieren,
+einschließlich m.room.encrypted / m.room.message; Mitgliedschaften und Verlauf erhalten.
+TX2: dieselbe Entscheidung bestätigen und genau einen request.denied-Eintrag atomar
+für die ursprüngliche aktuell berechtigte ratsuchende Person speichern; Signal nach Commit.
+204 erst nach bestätigtem Schließen. Fehler bleiben dauerhaft für begrenzte Reparatur
+vorgemerkt, ohne bestätigenden Feed-Eintrag; Neustart/Instanzwechsel müssen überlebt werden.
+403 unberechtigter aktueller Akteur;404 nicht verfügbare Anfrage;409 geänderter/konfliktärer Status.
+Aktionspfad /sessions/user/session/{sessionId}; kein neuer Mail-Anlass oder Freitextgrund.
+```
+
+Dies ist ein freigegebener Umsetzungsvertrag. Der Quellcode wird in
+[Frontend #1666](https://github.com/OpenResilienceInitiative/ORISO-Frontend/pull/1666) und
+[UserService #1376](https://github.com/OpenResilienceInitiative/ORISO-UserService/pull/1376) umgesetzt.
+Er belegt weder abgeschlossene Umsetzung noch Deployment oder tatsächliche Produktabnahme.
