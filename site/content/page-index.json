@@ -3929,7 +3929,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/decisions/ADR-024-notification-matrix-two-lists-not-one-filtered.md",
-      "sourceHash": "b2f176ffa226340dc5071b371a5f422f8065ce72e45c927bb3a756c2ca1639ed",
+      "sourceHash": "233ef525c66fac6d496ae83794684f170bed91f8e5099b83569df2b57f0a13ad",
       "locales": {
         "de": {
           "available": true,
@@ -3948,7 +3948,9 @@
             "ordinary-internal-counsellor-chat--implementation-addendum-2026-10-07": "ordinary-internal-counsellor-chat--implementation-addendum-2026-10-07",
             "gewöhnlicher-interner-beraterchat--implementierungsergänzung-vom-2026-10-07": "ordinary-internal-counsellor-chat--implementation-addendum-2026-10-07",
             "required-personal-consent-for-case-handover--decision-addendum-2026-10-08": "required-personal-consent-for-case-handover--decision-addendum-2026-10-08",
-            "erforderliche-persönliche-zustimmung-zur-fallübergabe--entscheidung-vom-2026-10-08": "required-personal-consent-for-case-handover--decision-addendum-2026-10-08"
+            "erforderliche-persönliche-zustimmung-zur-fallübergabe--entscheidung-vom-2026-10-08": "required-personal-consent-for-case-handover--decision-addendum-2026-10-08",
+            "rejecting-an-ordinary-incoming-enquiry--decision-addendum-2026-10-08": "rejecting-an-ordinary-incoming-enquiry--decision-addendum-2026-10-08",
+            "gewöhnliche-eingegangene-beratungsanfrage-ablehnen--entscheidung-vom-2026-10-08": "rejecting-an-ordinary-incoming-enquiry--decision-addendum-2026-10-08"
           }
         },
         "en": {
@@ -3961,11 +3963,12 @@
             "implementation-status-measured-on-dev-2026-09-22": "implementation-status-measured-on-dev-2026-09-22",
             "consequences": "consequences",
             "ordinary-internal-counsellor-chat--implementation-addendum-2026-10-07": "ordinary-internal-counsellor-chat--implementation-addendum-2026-10-07",
-            "required-personal-consent-for-case-handover--decision-addendum-2026-10-08": "required-personal-consent-for-case-handover--decision-addendum-2026-10-08"
+            "required-personal-consent-for-case-handover--decision-addendum-2026-10-08": "required-personal-consent-for-case-handover--decision-addendum-2026-10-08",
+            "rejecting-an-ordinary-incoming-enquiry--decision-addendum-2026-10-08": "rejecting-an-ordinary-incoming-enquiry--decision-addendum-2026-10-08"
           }
         }
       },
-      "sourceRevision": "4e189d67a4e6a45738b29e0a121d61d76eb0307d",
+      "sourceRevision": "8c2f5a6ea0a68fa36d887c487618d767ab12df74",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },

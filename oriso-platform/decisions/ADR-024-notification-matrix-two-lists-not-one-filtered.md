@@ -175,3 +175,46 @@ measurements above keep their original dates. The implementation is being review
 [Frontend #1666](https://github.com/OpenResilienceInitiative/ORISO-Frontend/pull/1666) and
 [UserService #1376](https://github.com/OpenResilienceInitiative/ORISO-UserService/pull/1376).
 Source checks, deployment and actual mail receipt remain separate evidence gates.
+
+
+## Rejecting an ordinary incoming enquiry — decision addendum, 2026-10-08
+
+A counsellor may reject an ordinary submitted agency enquiry before anyone accepts it. Frank
+approved implementing this action on 8 October 2026. It is separate from refusing a case handover.
+The advice seeker receives a neutral activity entry and can open the existing conversation to
+read its history. The rejected conversation stays closed for new messages and calls.
+
+| Situation | Result |
+|---|---|
+| A currently authorized counsellor of the enquiry's agency confirms rejection | Record the decision and close the enquiry and its team discussion for writing |
+| The original advice seeker opens the activity entry | Show the rejected enquiry and existing readable history without a message composer |
+| The same counsellor repeats a completed request | Confirm completion without another decision or activity entry |
+| Someone already accepted the enquiry, or another counsellor rejected it | Refresh the current state and show that the requested action cannot be completed |
+| Closing the underlying conversation fails | Keep the recorded decision, report the incomplete operation and retry closure; do not claim success |
+
+The confirmation asks for no written reason. Neither the activity entry nor its preview names a
+counsellor, case or message content. This decision adds no rejection email or new email switch.
+Archiving, accepting or assigning the case must not silently reopen a rejected enquiry.
+
+**For developers — state, delivery and protocol contract:**
+
+```text
+POST /users/sessions/{sessionId}/rejection; operationId rejectEnquiry; no request body.
+Scope: submitted registered NEW/unassigned ordinary agency counselling enquiries.
+Current nondeleted active agency counsellor + current tenant/agency authority required.
+Append status REJECTED=5; preserve the existing numeric values0–4.
+TX1: lock session and commit terminal decision plus immutable pending audit/bindings.
+Outside TX: verify primary and team Matrix rooms are read-only, including explicit
+m.room.encrypted / m.room.message overrides; retain memberships/readable history.
+TX2: confirm the same immutable decision and persist one request.denied feed entry
+for the original current advice seeker atomically; send a content-free nudge after commit.
+204 only after confirmed closure; failures remain durable pending repair without an
+affirmative feed entry. Bounded reconciliation must survive process/instance failure.
+403 unauthorized current actor;404 unavailable case;409 conflicting or changed state.
+Action path /sessions/user/session/{sessionId}; no new email occasion or free-text reason.
+```
+
+This is an approved implementation contract. Its source is being implemented in
+[Frontend #1666](https://github.com/OpenResilienceInitiative/ORISO-Frontend/pull/1666) and
+[UserService #1376](https://github.com/OpenResilienceInitiative/ORISO-UserService/pull/1376).
+It does not establish completed implementation, deployment or actual product acceptance.
