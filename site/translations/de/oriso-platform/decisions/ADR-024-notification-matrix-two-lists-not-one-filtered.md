@@ -199,7 +199,7 @@ Dies ist ein freigegebener Umsetzungsvertrag. Der Quellcode wird in
 [UserService #1376](https://github.com/OpenResilienceInitiative/ORISO-UserService/pull/1376) umgesetzt.
 Er belegt weder abgeschlossene Umsetzung noch Deployment oder tatsächliche Produktabnahme.
 
-Alle Produktabnahmen für Benachrichtigungstickets erfolgen auf Dev unter https://dev.oriso.org,
+Alle Produktabnahmen für Benachrichtigungstickets erfolgen ausschließlich in der ORISO-Dev-Umgebung,
 wie Frank am 8. Oktober 2026 ausdrücklich bestätigt hat. Pre-Dev ist kein Abnahmeziel.
 Lokale Quellcodeprüfungen und Vorschauen bleiben getrennte Nachweise. Dasselbe Ereignis kann
 in Anfragen, Gesprächen und Timeline erscheinen; Anzeige und eingestellten Ton je zutreffendem

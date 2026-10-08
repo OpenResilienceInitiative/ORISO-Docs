@@ -225,7 +225,7 @@ This is an approved implementation contract. Its source is being implemented in
 [UserService #1376](https://github.com/OpenResilienceInitiative/ORISO-UserService/pull/1376).
 It does not establish completed implementation, deployment or actual product acceptance.
 
-Product acceptance target for all notification tickets is Dev at https://dev.oriso.org,
+Product acceptance target for all notification tickets is the ORISO Dev environment,
 as explicitly confirmed by Frank on 8 October 2026. Pre-Dev is not the acceptance target.
 Local source checks and previews remain separate evidence. The same event may appear in
 Requests, Conversations and Timeline; qualify its actual display and configured sound in
