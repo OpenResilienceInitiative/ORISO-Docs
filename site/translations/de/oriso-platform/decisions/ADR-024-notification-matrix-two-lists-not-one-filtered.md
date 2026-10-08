@@ -167,6 +167,9 @@ Die Bestätigung verlangt keine schriftliche Begründung. Weder Aktivitätseintr
 nennen Beratungsperson, Fall oder Nachrichteninhalt. Es entsteht keine zusätzliche Ablehnungsmail
 und kein neuer E-Mail-Schalter. Archivieren, Annehmen oder Zuweisen darf eine abgelehnte Anfrage
 nicht stillschweigend wieder öffnen.
+Wenn die ursprüngliche ratsuchende Person keine Benachrichtigungen mehr erhalten darf,
+das verifizierte Schließen ohne Aktivitätseintrag abschließen. Ein unvollständig geschlossenes
+Gespräch bleibt für die Reparatur vorgemerkt und darf nicht als erfolgreicher Abschluss erscheinen.
 
 **Für Entwickler — Vertrag für Status, Zustellung und Protokoll:**
 
@@ -177,12 +180,17 @@ Aktuelle nicht gelöschte aktive Beratungsperson + aktuelle Träger-/Stellenbere
 Status REJECTED=5 ergänzen; bestehende numerische Werte0–4 beibehalten.
 TX1: Anfrage sperren, endgültige Entscheidung und unveränderliche offene Audit-Bindung speichern.
 Außerhalb TX: primären und Team-Matrix-Raum als schreibgeschützt verifizieren,
-einschließlich m.room.encrypted / m.room.message; Mitgliedschaften und Verlauf erhalten.
-TX2: dieselbe Entscheidung bestätigen und genau einen request.denied-Eintrag atomar
-für die ursprüngliche aktuell berechtigte ratsuchende Person speichern; Signal nach Commit.
+einschließlich expliziter Nachrichten-/Verschlüsselungs-/Reaktions-/Redaktions-/RTC-/Anrufrechte;
+Mitgliedschaften und Verlauf erhalten.
+TX2: dieselbe Entscheidung atomar mit genau einem request.denied-Eintrag für die aktuell
+berechtigte ursprüngliche ratsuchende Person bestätigen, oder einen bewussten Nichtversand
+speichern, wenn diese Identität nicht mehr berechtigt ist. Nie an einen geänderten Eigentümer
+oder Träger umleiten. Signal nur nach einem gespeicherten Feed-Eintrag und Commit.
 204 erst nach bestätigtem Schließen. Fehler bleiben dauerhaft für begrenzte Reparatur
 vorgemerkt, ohne bestätigenden Feed-Eintrag; Neustart/Instanzwechsel müssen überlebt werden.
 403 unberechtigter aktueller Akteur;404 nicht verfügbare Anfrage;409 geänderter/konfliktärer Status.
+503 solange das verifizierte Schließen unvollständig ist; Wiederholung durch denselben Akteur.
+Spätere Übergabe-/Annehmen-/Archivieren-/Wiederherstellen-Aktionen öffnen Status5 nicht erneut.
 Aktionspfad /sessions/user/session/{sessionId}; kein neuer Mail-Anlass oder Freitextgrund.
 ```
 
@@ -190,3 +198,10 @@ Dies ist ein freigegebener Umsetzungsvertrag. Der Quellcode wird in
 [Frontend #1666](https://github.com/OpenResilienceInitiative/ORISO-Frontend/pull/1666) und
 [UserService #1376](https://github.com/OpenResilienceInitiative/ORISO-UserService/pull/1376) umgesetzt.
 Er belegt weder abgeschlossene Umsetzung noch Deployment oder tatsächliche Produktabnahme.
+
+Alle Produktabnahmen für Benachrichtigungstickets erfolgen auf Dev unter https://dev.oriso.org,
+wie Frank am 8. Oktober 2026 ausdrücklich bestätigt hat. Pre-Dev ist kein Abnahmeziel.
+Lokale Quellcodeprüfungen und Vorschauen bleiben getrennte Nachweise. Dasselbe Ereignis kann
+in Anfragen, Gesprächen und Timeline erscheinen; Anzeige und eingestellten Ton je zutreffendem
+Kontext prüfen. Eine neue Unterdrückung freiwilliger Mails nach Live-Empfang oder Ton wartet
+auf eine Produktentscheidung; dieser Nachtrag gibt diese Regel nicht frei.
