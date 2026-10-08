@@ -11,7 +11,9 @@ The invitation Config Wizard runs before the invited person's account exists. It
 
 The user requested a dedicated Config Wizard role and separate automatic identities for other duties. The accepted responsibility split includes account provisioning, maintenance/deletion and second-factor administration. Each duty needs an enforceable boundary at its receiving operation.
 
-On source-pinned Keycloak 26.6.3, native user creation, update and deletion all use the manage permission. Native fine-grained target scopes cannot provide the required action separation. Assigning manage-users to each new account identity therefore preserves the broad power this change intends to remove.
+On source-pinned Keycloak 26.6.3, the usual native user-creation path checks the global manage permission, with a separate group-member creation exception. Native user update and deletion check manage permission for the target user. Fine-grained administration also exposes separate reset-password, role-mapping and group-membership permissions; it is not equivalent to assigning the broad manage-users role to every account identity.
+
+No complete native fine-grained policy has been demonstrated against this specification's combined requirements: initial field and role limits, original creation ownership, disabled-until-commit activation, mutually exclusive commit and compensation, crash recovery, originating domain authorization and SMTP-only revision updates. Assigning manage-users alone does not provide those guarantees. The command provider below is the proposed enforcement boundary; this investigation does not establish that every native or hybrid alternative is impossible.
 
 The existing accepted [OTP provider decision](ADR-013-2fa-via-vendored-otp-config-spi.md) establishes the custom Keycloak image and bounded OTP API. It does not approve these additional account and SMTP commands. This ADR records that additional proposal explicitly.
 
@@ -33,7 +35,7 @@ The shared API and migration matrix live in [the task identity contract](../cont
 
 ## Alternatives considered
 
-- Native management roles: rejected because they do not separate creation from update/deletion.
+- Native management roles and fine-grained policies: assigning manage-users alone leaves broad update/deletion authority. A narrower native or hybrid design remains a technical-review alternative if its complete policy is demonstrated against the same required guarantees; no such fit has been proved here.
 - Independent general broker: not selected by this specification; it introduces another runtime and credential boundary.
 - Provider which accepts arbitrary Admin API representations: rejected because it recreates general administration under a different route.
 - Human Wizard role: does not fit existing pre-account invitation setup.
