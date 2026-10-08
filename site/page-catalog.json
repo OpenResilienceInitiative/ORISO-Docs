@@ -1344,12 +1344,12 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/ADR-024-notification-matrix-two-lists-not-one-filtered.md",
-          "sourceHash": "233ef525c66fac6d496ae83794684f170bed91f8e5099b83569df2b57f0a13ad",
+          "sourceHash": "56df3a04d7ce55ec62791d08bac3d472ebfc28358ecb1c7fe10388e9a2976734",
           "reviewedAt": "2026-10-07"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/ADR-024-notification-matrix-two-lists-not-one-filtered.md",
-          "sourceHash": "233ef525c66fac6d496ae83794684f170bed91f8e5099b83569df2b57f0a13ad",
+          "sourceHash": "56df3a04d7ce55ec62791d08bac3d472ebfc28358ecb1c7fe10388e9a2976734",
           "reviewedAt": "2026-10-07"
         }
       }

@@ -195,6 +195,8 @@ read its history. The rejected conversation stays closed for new messages and ca
 The confirmation asks for no written reason. Neither the activity entry nor its preview names a
 counsellor, case or message content. This decision adds no rejection email or new email switch.
 Archiving, accepting or assigning the case must not silently reopen a rejected enquiry.
+If the original advice seeker is no longer eligible for notifications, finish the verified
+closure without an activity entry. An incomplete underlying closure must remain retryable.
 
 **For developers — state, delivery and protocol contract:**
 
@@ -205,12 +207,16 @@ Current nondeleted active agency counsellor + current tenant/agency authority re
 Append status REJECTED=5; preserve the existing numeric values0–4.
 TX1: lock session and commit terminal decision plus immutable pending audit/bindings.
 Outside TX: verify primary and team Matrix rooms are read-only, including explicit
-m.room.encrypted / m.room.message overrides; retain memberships/readable history.
-TX2: confirm the same immutable decision and persist one request.denied feed entry
-for the original current advice seeker atomically; send a content-free nudge after commit.
+message/encrypted/reaction/redaction/RTC/call overrides; retain memberships/readable history.
+TX2: confirm the same immutable decision atomically with one request.denied feed entry
+for the currently eligible original advice seeker, or a deliberate no-recipient outcome
+if that identity is now ineligible. Never redirect delivery to a changed owner or tenant.
+Send a content-free nudge after a committed feed entry.
 204 only after confirmed closure; failures remain durable pending repair without an
 affirmative feed entry. Bounded reconciliation must survive process/instance failure.
 403 unauthorized current actor;404 unavailable case;409 conflicting or changed state.
+503 while verified dependency closure is incomplete; same-actor retry/reconciliation.
+Later handover, accept, archive or dearchive commands cannot reopen status5.
 Action path /sessions/user/session/{sessionId}; no new email occasion or free-text reason.
 ```
 
@@ -218,3 +224,10 @@ This is an approved implementation contract. Its source is being implemented in
 [Frontend #1666](https://github.com/OpenResilienceInitiative/ORISO-Frontend/pull/1666) and
 [UserService #1376](https://github.com/OpenResilienceInitiative/ORISO-UserService/pull/1376).
 It does not establish completed implementation, deployment or actual product acceptance.
+
+Product acceptance target for all notification tickets is Dev at https://dev.oriso.org,
+as explicitly confirmed by Frank on 8 October 2026. Pre-Dev is not the acceptance target.
+Local source checks and previews remain separate evidence. The same event may appear in
+Requests, Conversations and Timeline; qualify its actual display and configured sound in
+each applicable context. A new rule suppressing optional mail after live receipt or sound
+is awaiting a product decision; this addendum does not authorize that policy.
