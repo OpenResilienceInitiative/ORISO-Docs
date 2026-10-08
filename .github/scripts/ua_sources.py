@@ -142,6 +142,14 @@ def main() -> int:
         if result.returncode != 0:
             print(f"::error::Failed to clone {entry['name']} ({entry['branch']}).")
             return 1
+        if not release_evidence:
+            # Previews must use the commit that was cloned, not a moving branch
+            # that can advance between source preparation and graph verification.
+            head = git(["-C", target, "rev-parse", "--verify", "HEAD^{commit}"], None,
+                       capture_output=True, text=True, timeout=10)
+            if head.returncode != 0 or not re.fullmatch(r"[a-f0-9]{40}", head.stdout.strip()):
+                raise ValueError("Failed to pin preview source: " + entry["name"])
+            entry["sourceSHA"] = head.stdout.strip()
         print(f"INPUT {entry['name']} {entry['branch']}")
 
     for name in skipped:
@@ -162,7 +170,8 @@ def main() -> int:
             if args.documentation_revision:handle.write("--documentation-revision\n"+args.documentation_revision+"\n")
         for entry in included:
             handle.write("--repo\n")
-            handle.write(f"{entry['name']}:{entry['branch']}:{entry['enrichment']}\n")
+            ref = entry["branch"] if release_evidence else entry["sourceSHA"]
+            handle.write(f"{entry['name']}:{ref}:{entry['enrichment']}\n")
 
     return 0
 

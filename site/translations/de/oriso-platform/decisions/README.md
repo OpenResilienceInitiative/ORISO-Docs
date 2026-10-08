@@ -10,6 +10,8 @@ Dieses Verzeichnis enthält die Architekturentscheidungsprotokolle (ADRs) auf Pl
 
   Hinweis für Leser des ausgelieferten Codes: Dort werden diese drei Entscheidungen als `ADR-019`, `ADR-020` und `ADR-021` zitiert. In dieser Reihe stehen diese Nummern für Medienprüfung, geplante Anrufe und Rechtstexthierarchie. Die E-Mail-Entscheidungen haben die Nummern 024–026; die Codeverweise müssen noch korrigiert werden (in jedem ADR aufgeführt).
 
+- `ADR-014-amendment-2026-09-25-one-topic-per-agency-policy.md` — am 2026-09-26 vom Produktverantwortlichen angenommen (ORISO-UserService#1264): ein globaler, standardmäßig ausgeschalteter Plattformschalter, der jede Beratungsstelle auf ein Thema beschränkt; das Datenmodell bleibt mehrthemig.
+
 Neue Entscheidungen in diesem Abschnitt gehören zum Repository und sind kein Teil des oben beschriebenen unveränderten Imports von 19 Dateien.
 
 ## Bekannte Probleme

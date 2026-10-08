@@ -1114,13 +1114,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent.md",
-          "sourceHash": "75fda1712139bba88962339edf682d575a17263118fdaacad3fd6e3ed12a6e7f",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "2e2b95153271e550dd19d12e0b6293bbba908130f0b273668a2dde829cd7de91",
+          "reviewedAt": "2026-10-05"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent.md",
-          "sourceHash": "75fda1712139bba88962339edf682d575a17263118fdaacad3fd6e3ed12a6e7f",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "2e2b95153271e550dd19d12e0b6293bbba908130f0b273668a2dde829cd7de91",
+          "reviewedAt": "2026-10-05"
         }
       }
     },
@@ -1413,13 +1413,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/README.md",
-          "sourceHash": "705d264ec3521f1c31b344aaac3104da4da21e0899f612b37e9c0914bdd04149",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "c3f2fc53454bb3c341dfb119ef7c217f1cdd84cb3fd2e9279cec85b810b28800",
+          "reviewedAt": "2026-10-05"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/README.md",
-          "sourceHash": "705d264ec3521f1c31b344aaac3104da4da21e0899f612b37e9c0914bdd04149",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "c3f2fc53454bb3c341dfb119ef7c217f1cdd84cb3fd2e9279cec85b810b28800",
+          "reviewedAt": "2026-10-05"
         }
       }
     },

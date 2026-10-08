@@ -376,8 +376,8 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent.md",
-          "sourceRevision": "7b544fbb0faca5ec941db4369855b4bcfa28207c",
-          "sourceHash": "75fda1712139bba88962339edf682d575a17263118fdaacad3fd6e3ed12a6e7f",
+          "sourceRevision": "230c20634e557604c67bb55bd4075a4534fc5a03",
+          "sourceHash": "2e2b95153271e550dd19d12e0b6293bbba908130f0b273668a2dde829cd7de91",
           "title": "ADR-014: Shared legal-text objects, multi-topic agencies, and topic-before-consent",
           "state": "accepted",
           "binding": "reviewed",
@@ -539,8 +539,8 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent.md",
-          "sourceRevision": "7b544fbb0faca5ec941db4369855b4bcfa28207c",
-          "sourceHash": "75fda1712139bba88962339edf682d575a17263118fdaacad3fd6e3ed12a6e7f",
+          "sourceRevision": "230c20634e557604c67bb55bd4075a4534fc5a03",
+          "sourceHash": "2e2b95153271e550dd19d12e0b6293bbba908130f0b273668a2dde829cd7de91",
           "title": "ADR-014: Shared legal-text objects, multi-topic agencies, and topic-before-consent",
           "state": "accepted",
           "binding": "reviewed",
