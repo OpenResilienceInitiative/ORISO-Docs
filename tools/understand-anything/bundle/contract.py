@@ -708,6 +708,9 @@ def seal(root, sources, generation_id=None, now=None, expected_refs=None, releas
         graphs=graphs,
         files=files,
     )
+    if (root / "glossary/bindings.json").exists():
+        bindings = read_json(root / "glossary/bindings.json")
+        manifest["glossary"] = dict(catalogPath="glossary/catalog.json", bindingsPath="glossary/bindings.json", catalogHash=bindings.get("catalogHash"), documentationRevision=bindings.get("documentationRevision"))
     if release is not None:manifest["release"]=release
     write_json(root / "manifest.json", manifest)
     validate(root, now=now, expected_refs=expected_refs)
@@ -763,6 +766,32 @@ def validate(root, now=None, max_age=86400, expected_refs=None):
         if p.is_file() and p.relative_to(root).as_posix() != "manifest.json"
     }
     require(actual == listed, "unlisted or missing generation files")
+    glossary_paths = {"glossary/catalog.json", "glossary/bindings.json"}
+    if glossary_paths & listed or "glossary" in manifest:
+        info = manifest.get("glossary")
+        require(isinstance(info, dict) and glossary_paths <= listed, "complete glossary artifact binding required")
+        require(info.get("catalogPath") == "glossary/catalog.json" and info.get("bindingsPath") == "glossary/bindings.json", "glossary artifact paths differ")
+        bindings = read_json(root / "glossary/bindings.json")
+        require(bindings.get("schemaVersion") == 1, "glossary bindings schema mismatch")
+        vector = {name: source["sourceSHA"] for name, source in sources.items()}
+        require(bindings.get("sourceVector") == vector, "glossary selected source vector mismatch")
+        require(info.get("documentationRevision") == bindings.get("documentationRevision") == vector.get("ORISO-Docs"), "glossary pinned Docs revision mismatch")
+        require(info.get("catalogHash") == bindings.get("catalogHash") == hashlib.sha256((root / "glossary/catalog.json").read_bytes()).hexdigest(), "glossary catalog checksum mismatch")
+        require(isinstance(bindings.get("sourceBindings"), list) and bindings["sourceBindings"] and all(item.get("state") in ("verified", "external") for item in bindings["sourceBindings"]), "unverified glossary authority source")
+        require(isinstance(bindings.get("graphMappings"), list) and all(item.get("state") in ("verified", "historical", "stale", "unavailable") for item in bindings["graphMappings"]), "invalid glossary graph mapping state")
+        catalog = read_json(root / "glossary/catalog.json")
+        expected_sources = {(concept["id"], index) for concept in catalog["concepts"] for index, _ in enumerate(concept["sources"])}
+        require({(item.get("conceptId"), item.get("sourceIndex")) for item in bindings["sourceBindings"]} == expected_sources and len(bindings["sourceBindings"]) == len(expected_sources), "glossary authority coverage differs")
+        for binding in bindings["sourceBindings"]:
+            if binding["state"] == "verified":
+                require(binding.get("selectedRevision") == vector.get(binding.get("repository")) and binding.get("repository") in vector, "glossary selected authority revision mismatch")
+        expected_mappings = {(concept["id"], item["repository"], item["nodeId"], item["mode"]) for concept in catalog["concepts"] for item in concept["graphMappings"]}
+        require({(item.get("conceptId"), item.get("repository"), item.get("nodeId"), item.get("mode")) for item in bindings["graphMappings"]} == expected_mappings, "glossary graph mapping coverage differs")
+        for binding in bindings["graphMappings"]:
+            if binding["state"] != "unavailable":
+                require(binding.get("selectedRevision") == vector.get(binding.get("repository")) and binding.get("repository") in vector, "glossary graph selected revision mismatch")
+            if binding["state"] == "verified" and binding["mode"] == "domain-concept":
+                require(binding.get("reviewedRevision") == binding.get("selectedRevision"), "historical glossary graph cannot claim current binding")
     for source in sources.values():
         policy = source.get("analysisConfig")
         if policy is not None:

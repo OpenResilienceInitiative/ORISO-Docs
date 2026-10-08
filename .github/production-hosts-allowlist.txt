@@ -120,3 +120,7 @@ tools/docs-publication/test/workflow-release.test.mjs # ORISO own public install
 tools/docs-publication/test/release-fixture.mjs # Exact released source-vector fixture for ORISO public publication regression tests
 
 tools/understand-anything/hosted-viewer/activate.sh # ORISO own approved installation/public hub origin
+tools/understand-anything/glossary/sources/naming-audit.md # Dated audit documents ORISO own Understand hub as observed source provenance
+tools/understand-anything/site/hub/glossary/index.html # Generated glossary retains canonical ORISO Docs navigation
+tools/understand-anything/site/hub/render-glossary.mjs # Glossary renderer links ORISO own canonical public documentation
+tools/understand-anything/site/hub/test/language.test.mjs # Regression fixture verifies canonical ORISO Docs navigation across DE and EN

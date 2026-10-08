@@ -25,8 +25,8 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
-      - name: Trust this checkout in the pinned job container
-        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - name: Trust the checked-out workspace in the ephemeral container
+        run: git config --global --add safe.directory "${GITHUB_WORKSPACE:?missing GITHUB_WORKSPACE}"
       - name: Verify supported repositories against canonical public visibility
         run: python3 .github/scripts/ua_public_policy_test.py -v
       - name: Install the pinned producer and consumer in a clean profile
@@ -35,7 +35,8 @@ jobs:
       - name: Test graph extraction, semantics, platform and consumer
         run: |
           export UA_CORE=/tmp/oriso-ua-runtime/current/upstream/understand-anything-plugin/packages/core/dist/index.js
-          cd /tmp/oriso-ua-runtime/current/tooling
+          cd tools/understand-anything
+          npm ci
           npm test
       - name: Test patched viewer evidence, relation categories and container connections
         run: |
@@ -60,5 +61,5 @@ jobs:
       - name: Test publication, failed transfers and real Git worktrees
         run: |
           export UA_CORE=/tmp/oriso-ua-runtime/current/upstream/understand-anything-plugin/packages/core/dist/index.js
-          cd /tmp/oriso-ua-runtime/current/tooling
+          cd tools/understand-anything
           python3 -m unittest discover -s test -p '*_test.py' -v
