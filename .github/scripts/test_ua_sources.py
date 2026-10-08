@@ -48,9 +48,10 @@ class PreviewSourceTests(unittest.TestCase):
             original_git = ua_sources.git
 
             def local_git(args, token, **kwargs):
-                remote = f"https://github.com/{ua_sources.OWNER_DEFAULT}/ORISO-Test"
+                remotes = {f"https://github.com/{ua_sources.OWNER_DEFAULT}/{name}"
+                           for name in ["ORISO-Test", "ORISO-Docs"]}
                 return original_git(
-                    [str(origin) if item == remote else item for item in args],
+                    [str(origin) if item in remotes else item for item in args],
                     token,
                     **kwargs,
                 )
@@ -58,10 +59,12 @@ class PreviewSourceTests(unittest.TestCase):
             argv = [
                 str(SCRIPT), "--tooling", str(TOOLS), "--base", str(base),
                 "--inventory", str(inventory), "--repo-args", str(repo_args),
+                "--documentation-revision", first_sha,
             ]
             with patch.object(sys, "argv", argv), patch.object(
                 ua_sources, "load_inventory", return_value=[
-                    {"name": "ORISO-Test", "branch": "dev", "enrichment": "test.json"}
+                    {"name": "ORISO-Test", "branch": "dev", "enrichment": "test.json"},
+                    {"name": "ORISO-Docs", "branch": "dev", "enrichment": "docs.json"}
                 ]
             ), patch.object(ua_sources, "git", side_effect=local_git):
                 self.assertEqual(ua_sources.main(), 0)
@@ -71,6 +74,7 @@ class PreviewSourceTests(unittest.TestCase):
                 first_sha,
             )
             self.assertIn(f"ORISO-Test:{first_sha}:test.json", repo_args.read_text())
+            self.assertIn(f"ORISO-Docs:{first_sha}:docs.json", repo_args.read_text())
 
             (author / "README.md").write_text("second\n")
             git("-C", author, "commit", "-am", "second")
