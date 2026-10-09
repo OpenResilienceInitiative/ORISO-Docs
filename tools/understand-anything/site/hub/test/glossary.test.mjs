@@ -37,15 +37,15 @@ test('rendered release evidence gives verified graph links and keeps missing or 
   assert.ok(!historical.includes('href="/tenant-service/?token=public-graph"'));
 });
 
-test('published input snapshots are readable only through their verified exact internal source path, with Supergraph node IDs visible', () => {
+test('published input snapshots are readable only through their verified exact internal source path, with native Docs graph node IDs visible', () => {
   const concept = catalog.concepts.find(item => item.id === 'platform-operator');
   const sourceIndex = concept.sources.findIndex(source => source.binding === 'input-snapshot');
   const mapping = concept.graphMappings[0];
   const sourceBinding = {conceptId: concept.id, sourceIndex, state: 'verified', reasonKey: 'source-content-unchanged', href: '/glossary/sources/seed.md'};
-  const graphMapping = {conceptId: concept.id, ...mapping, state: 'verified', reasonKey: 'source-content-unchanged', href: '/docs/?token=oriso-docs-dashboard', viewerNodeId: `ORISO-Docs::${mapping.nodeId}`};
+  const graphMapping = {conceptId: concept.id, ...mapping, state: 'verified', reasonKey: 'source-content-unchanged', href: '/docs/?token=oriso-docs-dashboard', viewerNodeId: mapping.nodeId};
   const html = renderGlossary(catalog, {sourceBindings: [sourceBinding], graphMappings: [graphMapping]});
   assert.ok(html.includes('href="/glossary/sources/seed.md"'));
-  assert.ok(html.includes(`ORISO-Docs::${mapping.nodeId}`));
+  assert.ok(html.includes(`<code>${mapping.nodeId}</code>`));
   assert.ok(html.includes('Node ID in this viewer'));
   assert.ok(!renderGlossary(catalog).includes('Die Eingabe ist als Snapshot im Release enthalten'));
   assert.ok(renderGlossary(catalog).includes('Editorial input snapshot with recorded hash'));

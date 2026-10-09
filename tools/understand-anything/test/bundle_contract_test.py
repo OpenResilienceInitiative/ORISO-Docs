@@ -127,6 +127,31 @@ class ContractTests(unittest.TestCase):
     def tearDown(self):
         self.temp.cleanup()
 
+    def test_sealed_locale_is_preserved_hash_bound_and_auto_update_disabled(self):
+        import hashlib
+        config = self.root / "ORISO-Platform/.understand-anything/config.json"
+        for language in ["en", "de", "zh", "zh-TW", "ja", "ko", "ru"]:
+            with self.subTest(language=language):
+                write(config, {"autoUpdate": True, "outputLanguage": language,
+                               "untrustedSetting": "not-published"})
+                seal(self.root, self.sources, now=NOW)
+                manifest = validate(self.root, now=NOW)
+                self.assertEqual(json.loads(config.read_text()),
+                                 {"autoUpdate": False, "outputLanguage": language})
+                record = next(item for item in manifest["files"]
+                              if item["path"] == str(config.relative_to(self.root)))
+                self.assertEqual(record["sha256"], hashlib.sha256(config.read_bytes()).hexdigest())
+
+    def test_malformed_locale_fails_before_any_generation_stamps(self):
+        config = self.root / "ORISO-Platform/.understand-anything/config.json"
+        for language in ["unsupported", "", None, True, ["de"], {"de": True}]:
+            with self.subTest(language=language):
+                write(config, {"outputLanguage": language})
+                before = {p: p.read_bytes() for p in self.root.rglob("*") if p.is_file()}
+                with self.assertRaisesRegex(ContractError, "outputLanguage"):
+                    seal(self.root, self.sources, now=NOW)
+                self.assertEqual({p: p.read_bytes() for p in self.root.rglob("*") if p.is_file()}, before)
+
     def test_complete_generation_preserves_extension_metadata(self):
         path = self.root / "ORISO-Test/.understand-anything/knowledge-graph.json"
         graph = json.loads(path.read_text())

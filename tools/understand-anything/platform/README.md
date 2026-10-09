@@ -2,6 +2,34 @@
 
 > Historical implementation notes and build snapshots retained from the imported September 4 work. Counts, self-loops and deployment descriptions below are not current acceptance evidence. Use the current generation manifest, metadata.stats, typed relations and the remediation matrix; differing older counts refer to different intermediate runs.
 
+## Current platform navigation contract
+
+The slim platform and the merged supergraph share six deliberately small tour
+steps: entry points, core domain, authentication, messaging, operations, and
+evidence. Each selects at most six existing nodes; absent sections are explicitly
+unavailable. The authentication step reuses reviewed concept routes, while
+uncertain relationships remain qualified. Tour text is source orientation and
+never establishes runtime acceptance.
+
+`metadata.platformNavigation` lists represented and unavailable repositories,
+exact source revisions, and approved repository detail routes. The Docs graph
+remains separate. Retired Kubernetes configuration stays in the complete source
+vector with an explicit historical label and is not an active service.
+
+`metadata.platformTour` supplies equivalent German and English descriptions.
+`metadata.semanticDispositions` records every one of the original 27 UserService
+concept/flow identities. Existing claims are re-assessed against the original
+source graph and the aggregate vector; missing evidence awaits review, changed
+evidence is stale, and reviewed matching source never implies runtime proof.
+The older platform narrative remains excluded from release generation until it
+has its own source review.
+
+The pinned viewer shows coverage, exact revisions, repository detail links and
+the individual semantic dispositions in its overview and tour panels. The
+isolated `hosted-viewer/platform-tour-browser-test.mjs` exercises all six steps,
+keyboard selection of the owning SPI class, both languages, and narrow/desktop
+layouts. This fixture is not public-delivery evidence.
+
 
 A slim, high-signal knowledge graph layered on top of the per-repo
 Understand-Anything graphs. Where the existing 36 MB super-graph only glues
