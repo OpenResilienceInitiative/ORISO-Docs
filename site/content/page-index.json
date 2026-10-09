@@ -5883,7 +5883,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "product/features/group-chats.mdx",
-      "sourceHash": "873c5c15d4d1fe8bc49514af11e236ff11f19b37436d54a1a6388be5a8d1fbd5",
+      "sourceHash": "3296648a4cc97bf9152273444b2d8f7a803072f25852206e54c4bfa31623fcb9",
       "locales": {
         "de": {
           "available": true,
@@ -5949,7 +5949,7 @@
           }
         }
       },
-      "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
+      "sourceRevision": "72bc00b04b1bc5d84f6ea39ed85a58ff4c644433",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -6025,7 +6025,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "product/features/index.mdx",
-      "sourceHash": "5d61551d859eeae8947aece8c094a049d0e829be240a292535bb7a08cc832cad",
+      "sourceHash": "ed58a1f1af3ca258e06cd0159449a7a1dd185d6c45e02d3d29ffdcd4aa48f6eb",
       "locales": {
         "de": {
           "available": true,
@@ -6043,7 +6043,7 @@
           }
         }
       },
-      "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
+      "sourceRevision": "72bc00b04b1bc5d84f6ea39ed85a58ff4c644433",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -6266,6 +6266,60 @@
         }
       },
       "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
+      "sourceState": "committed",
+      "factsStatus": "source-only"
+    },
+    {
+      "id": "product/features/self-help-groups",
+      "route": "produkt/core-features/self-help-groups",
+      "aliases": [
+        "product/features/self-help-groups",
+        "product/features/self-help-groups.md",
+        "product/features/self-help-groups.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "source": "product/features/self-help-groups.mdx",
+      "sourceHash": "c3895cb4b286def3ebb24f4ddbe8c90d7b3e79d1d37ba25ac141458cfef3b010",
+      "locales": {
+        "de": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "4101-the-invite-link": "4101-the-invite-link",
+            "4101-der-einladungslink": "4101-the-invite-link",
+            "4102-who-opens-the-link-and-where-they-land": "4102-who-opens-the-link-and-where-they-land",
+            "4102-wer-den-link-öffnet-und-wo-er-landet": "4102-who-opens-the-link-and-where-they-land",
+            "4103-join-without-an-account-or-create-an-account": "4103-join-without-an-account-or-create-an-account",
+            "4103-ohne-konto-beitreten-oder-ein-konto-anlegen": "4103-join-without-an-account-or-create-an-account",
+            "4104-joining-a-group-opens-no-counselling-enquiry": "4104-joining-a-group-opens-no-counselling-enquiry",
+            "4104-der-beitritt-zu-einer-gruppe-eröffnet-keine-beratungsanfrage": "4104-joining-a-group-opens-no-counselling-enquiry",
+            "4105-privacy-statement-datenschutz-and-impressum": "4105-privacy-statement-datenschutz-and-impressum",
+            "4105-datenschutzerklärung-datenschutz-und-impressum": "4105-privacy-statement-datenschutz-and-impressum",
+            "4106-for-developers": "4106-for-developers",
+            "4106-für-entwicklerinnen": "4106-for-developers",
+            "4107-delivery-status": "4107-delivery-status",
+            "4107-lieferstand": "4107-delivery-status",
+            "4108-related": "4108-related",
+            "4108-verwandte-seiten": "4108-related"
+          }
+        },
+        "en": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "4101-the-invite-link": "4101-the-invite-link",
+            "4102-who-opens-the-link-and-where-they-land": "4102-who-opens-the-link-and-where-they-land",
+            "4103-join-without-an-account-or-create-an-account": "4103-join-without-an-account-or-create-an-account",
+            "4104-joining-a-group-opens-no-counselling-enquiry": "4104-joining-a-group-opens-no-counselling-enquiry",
+            "4105-privacy-statement-datenschutz-and-impressum": "4105-privacy-statement-datenschutz-and-impressum",
+            "4106-for-developers": "4106-for-developers",
+            "4107-delivery-status": "4107-delivery-status",
+            "4108-related": "4108-related"
+          }
+        }
+      },
+      "sourceRevision": "029e785e0ff893cabca7ab5911ef273255b20632",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -7103,8 +7157,8 @@
     }
   ],
   "coverage": {
-    "currentPages": 92,
-    "completePairs": 92,
+    "currentPages": 93,
+    "completePairs": 93,
     "missing": [],
     "stale": []
   }

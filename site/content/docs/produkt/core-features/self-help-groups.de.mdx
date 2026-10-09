@@ -1,0 +1,240 @@
+---
+title: "4.10 Gesprächskreise — Einladungslink und Beitritt"
+description: "Wie Ratsuchende einem Gesprächskreis über seinen Einladungslink beitreten, was mit und ohne Konto geschieht, wo Beratende landen und warum der Beitritt zu einer Gruppe keine Beratungsanfrage eröffnet."
+source: "product/features/self-help-groups.mdx"
+---
+
+Ein **Gesprächskreis** (Selbsthilfegruppe) ist ein geplantes Gruppengespräch, das eine Beratungsperson
+für viele Ratsuchende zugleich leitet: ein Thema, ein Datum, eine Startzeit, eine Dauer, optionale
+Wiederholungen und ein Format (Text, Audio oder Video). Ratsuchende erreichen ihn über einen
+**Einladungslink**, den die Beratungsperson teilt.
+
+Diese Seite beschreibt, **was geschieht, wenn jemand diesen Link öffnet**. Sie richtet sich an
+Beratende, Administrator:innen von Beratungsstellen und Datenschutzbeauftragte. Die technischen
+Hinweise für Entwickler:innen stehen am Ende.
+
+<Callout>
+Stand (05.10.2026): Die Regeln auf dieser Seite sind entschieden. Jeder Abschnitt sagt, was bereits
+in `dev` gemergt ist und was noch in einem offenen Pull Request **aussteht** — siehe
+[4.10.7 Lieferstand](#4107-lieferstand). In `dev` gemergt heißt nicht, dass es auf dem Dev-Server
+geprüft wurde.
+</Callout>
+
+## 4.10.1 Der Einladungslink
+
+Die Beratungsperson kopiert den Link aus dem Dialog, der sich nach dem Anlegen der Gruppe öffnet,
+oder später aus der Chat-Info der Gruppe (auch als QR-Code). Er sieht so aus:
+
+```text
+https://<host>/login?gcid=<group id>.<invite token>&aid=<Beratungsstelle id>
+```
+
+- `gcid` benennt die Gruppe und trägt ihr geheimes Einladungs-Token. Die Gruppennummer allein ist
+  erratbar, ohne das Token kann also niemand beitreten.
+- `aid` benennt die Beratungsstelle der Gruppe. Vor der Anmeldung darf die App die Gruppe nicht
+  lesen. Ohne `aid` müssten Neue die Beratungsstelle über die normale Themen- und Postleitzahlsuche
+  finden, in der die Beratungsstelle einer Gruppe oft nicht erscheint. Mit `aid` kennt die
+  Registrierung die Beratungsstelle und ihr Thema bereits.
+- `<host>` ist immer der Server, auf dem der Link kopiert wurde. Ein auf einem Testserver kopierter
+  Link führt zurück auf diesen Testserver.
+
+<Callout type="warn">
+**Links, die vor der `aid`-Änderung geteilt wurden, müssen neu geteilt werden.** Ältere Links
+tragen nur `gcid`. Wer neu ist und einen solchen Link öffnet, landet bei „Keine
+Online-Beratungsstelle gefunden“. Diese alten Links werden nicht repariert. Kopieren Sie den Link
+erneut aus der Chat-Info der Gruppe und teilen Sie den neuen.
+</Callout>
+
+## 4.10.2 Wer den Link öffnet und wo er landet
+
+| Wer den Link öffnet | Was er sieht | Wo er ankommt |
+|---|---|---|
+| **Neu, ohne Konto** | Den Einstiegsbildschirm der Gruppe: keine Schritte, keine Fragen nach Thema oder Postleitzahl. Er öffnet mit **„Ohne Konto beitreten“** (Bildschirm 0a). **„Konto anlegen“** wechselt zu Bildschirm 0b. | Im Warteraum der Gruppe, dann in der Gruppe, sobald eine Moderation sie startet |
+| **Ratsuchende mit Konto** | Die normale Anmeldung | Im Warteraum der Gruppe |
+| **Beratende der Beratungsstelle der Gruppe** | Ihre eigene Gruppenansicht mit **„Chat starten“**, nicht den Warteraum der Ratsuchenden | In der Gruppe, als Moderation |
+| **Beratende einer anderen Beratungsstelle** | Einen Hinweis, dass sie nicht Teil dieser Gruppe sind, mit „Beitritt anfragen“ | In der Gruppe, sobald eine Moderation sie hereinlässt — siehe *Anklopfen* unten |
+
+**Anklopfen (in `dev` gemergt).** Beratende, die nicht Mitglied sind, können mit „Beitritt
+anfragen“ um Aufnahme bitten. Die Moderation der Gruppe sieht, wer anfragt, und kann hereinlassen
+oder ablehnen. Die Anfrage braucht das Einladungs-Token aus dem Link. Backend
+ORISO-UserService#1243 und Frontend ORISO-Frontend#1548 sind gemergt.
+
+## 4.10.3 Ohne Konto beitreten oder ein Konto anlegen
+
+Der Einstiegsbildschirm bietet zwei Wege. Beide zeigen den Datenschutzsatz der Beratungsstelle der
+Gruppe mit einem Kontrollkästchen, und die Beitrittsschaltfläche bleibt aus, bis es angehakt ist.
+**Dieser Haken wird nicht als Einwilligung am Konto gespeichert** — warum, und wo die Einwilligung
+stattdessen festgehalten wird, steht in 4.10.5.
+
+| | **Ohne Konto beitreten** (0a) | **Konto anlegen** (0b) |
+|---|---|---|
+| Was die Person eingibt | einen Namen (ein Pseudonym wird vorgeschlagen) | einen Namen und ein selbst gewähltes Passwort |
+| Passwort | wird für sie erzeugt und nie angezeigt | selbst gewählt und sichtbar |
+| Später zurückkommen | nicht möglich, sobald die Browsersitzung endet | jederzeit erneut anmelden; die Gruppe steht in der Gesprächsliste |
+| Schaltfläche | „Der Gruppe beitreten“ | „Registrieren“ |
+
+Wer ohne Konto beitritt, bekommt trotzdem ein echtes Konto auf dem Server. Die Person erfährt nur
+nie sein Passwort. Solche Konten automatisch zu löschen, sobald ihre Anmeldung beendet ist,
+**steht aus** (ORISO-UserService#1247 und ORISO-Frontend#1552, beide offen). Bis dahin bleiben
+diese Konten bestehen.
+
+**Während die Registrierung läuft** (ausstehend, ORISO-Frontend#1549), zeigt der Bildschirm die drei
+Karten der Gruppe (wie die Gruppe stattfindet, nur mit Alias, neue Termine und Links) und „Zur
+Gruppe“. Er verspricht nie eine Antwort einer Beratungsstelle, denn ein Gruppenbeitritt eröffnet
+keine Anfrage (siehe 4.10.4).
+
+## 4.10.4 Der Beitritt zu einer Gruppe eröffnet keine Beratungsanfrage
+
+**Die Regel:** Wer sich über den Einladungslink einer Gruppe registriert, wird Mitglied **dieser
+Gruppe** und von nichts anderem. Es wird **keine** Beratungsanfrage bei der Beratungsstelle der
+Gruppe eröffnet.
+
+**Warum.** Wer einem Gesprächskreis beitritt, hat um die Gruppe gebeten, nicht um eine
+Einzelberatung. Bis zu dieser Änderung nutzte der Link die gewöhnliche Registrierung, und die
+gewöhnliche Registrierung eröffnet immer ein Beratungsgespräch bei der gewählten Beratungsstelle.
+Jeder Gruppenbeitritt hinterließ deshalb zusätzlich ein leeres Beratungsgespräch:
+
+- Ratsuchende sahen in ihrer Liste ein Beratungsgespräch, um das sie nie gebeten hatten;
+- sobald sie ihre Datenschutzeinwilligung gegeben hatten, konnte dieses Gespräch in der Liste der
+  offenen Anfragen der Beratenden auftauchen, wo niemand es erwartete und niemand es beantworten
+  sollte.
+
+Auf dem Entwicklungsserver hinterließen Testbeitritte am 22.–23.09.2026 genau solche Gespräche
+(Sitzungen 211 und 213).
+
+**Was sich ändert (ausstehend, ORISO-UserService#1241 und ORISO-Frontend#1547).** Bis beide
+gemergt sind, eröffnet eine Registrierung über den Link weiterhin ein Beratungsgespräch. Danach
+gilt: Die Registrierung benennt die Gruppe. Der Server prüft, dass die Gruppe ein Gesprächskreis
+dieser Beratungsstelle ist, legt das Konto an und nimmt die Person in die Gruppe auf. Es entsteht
+kein Beratungsgespräch. Wer später eine Einzelberatung möchte, fragt sie gesondert an, wie alle
+anderen Ratsuchenden.
+
+Ein Konto, das nur zu einer Gruppe gehört, enthält eine Gruppe und kein Beratungsgespräch. Die
+Kontodaten laden normal, und nach der Anmeldung sieht die Person die Gruppe.
+
+## 4.10.5 Datenschutzerklärung, Datenschutz und Impressum
+
+Die Einwilligung läuft in drei Schritten. Schritt 1 und 2 sind in `dev` gemergt. Schritt 3
+**steht aus**.
+
+1. **Auf dem Einstiegsbildschirm: ein Kontrollkästchen (gemergt).** 0a und 0b zeigen den
+   Datenschutzsatz der Beratungsstelle mit einem Kontrollkästchen, das vor dem Beitritt angehakt
+   sein muss (ORISO-Frontend#1531).
+2. **Bei der Registrierung: keine Einwilligung gespeichert (gemergt).** Der Einladungslink nennt
+   die Beratungsstelle, aber keine Postleitzahl, daher registriert die App mit der
+   Platzhalter-Postleitzahl `00000`. Die Registrierung sendet außerdem, wie jede Registrierung, die
+   AGB-Bestätigung mit (`termsAccepted: "true"`). Für die Platzhalter-Postleitzahl löscht der
+   Server dann bewusst **beide**, die Datenschutz- und die AGB-Bestätigung am neuen Konto, genau
+   wie beim anonymen Live-Chat. Nach dem Beitritt über den Link haben **0a- und 0b-Konten also
+   keine der beiden Bestätigungen gespeichert**, obwohl der Haken gesetzt war.
+3. **Vor der ersten Nachricht: die Datenschutzerklärung der Beratungsstelle (ausstehend,
+   ORISO-Frontend#1549).** Von Frank am 23.09.2026 entschieden. Ratsuchende in einer Gruppe, deren
+   Einwilligung nicht gespeichert ist, sehen vor dem Schreiben die Erklärung der Beratungsstelle,
+   die die Gruppe führt. Das ist das zweite Einwilligungstor aus [ADR-022](/de/decisions/adr-022), mit
+   denselben Satzregeln wie im Live-Chat. Die Person antwortet „Einverstanden“ oder „Ablehnen“. Die
+   Erklärung ersetzt das Gespräch, und das Eingabefeld bleibt verborgen, bis die Person zustimmt.
+   „Einverstanden“ speichert die Datenschutz- und die AGB-Bestätigung am Konto.
+
+<Callout type="warn">
+**Bis ORISO-Frontend#1549 gemergt ist**, hat eine Person, die über den Link beigetreten ist, keine
+Einwilligung gespeichert und wird vor dem Schreiben **nicht** erneut gefragt. Danach hakt sie das
+Kästchen auf dem Einstiegsbildschirm an *und* beantwortet das Tor vor der ersten Nachricht:
+Derselbe Satz der Beratungsstelle wird zweimal abgefragt, und nur die zweite Antwort wird
+gespeichert. Ob das Kontrollkästchen auf dem Einstiegsbildschirm bleibt, ist eine offene
+Produktfrage (siehe 4.10.7).
+</Callout>
+
+Regeln des Tors (ausstehend, ORISO-Frontend#1549):
+
+- **Wer gefragt wird.** Alle Ratsuchenden in einer Gruppe, deren Einwilligung nicht gespeichert
+  ist. ADR-022 entscheidet dieses Tor nach dem Einwilligungsstand und verbietet, Anonymität zu
+  raten; die App fragt also nie, ob ein Konto vorübergehend ist. Weil die Registrierung über den
+  Link keine Einwilligung speichert (Schritt 2), werden sowohl der vorübergehende Beitritt (0a) als
+  auch das über den Link angelegte volle Konto (0b) einmal gefragt. Wer schon ein Konto hatte, etwa
+  aus einer Beratung, hat eine gespeicherte Einwilligung und wird nicht erneut gefragt. Beratende
+  werden nie gefragt.
+- **Welcher Text.** Der Einwilligungssatz der Beratungsstelle der Gruppe für ihr Thema, wenn es ihn
+  gibt. Eine Beratungsstelle ohne eigene Erklärung zeigt den festen Hinweis, dass keine Erklärung
+  hinterlegt ist. Lässt sich das Thema der Gruppe nicht bestimmen (die Beratungsstelle hat mehrere),
+  gilt der Satz der Plattform.
+- **Wo sie gespeichert wird.** Am Konto, wie im Live-Chat. Eine Gruppe hat kein Beratungsgespräch,
+  das einen Verweis pro Raum tragen könnte. Die bekannte Grenze: Wer für eine Beratungsstelle
+  zugestimmt hat, wird in der Gruppe einer anderen nicht erneut gefragt. Diese Lücke zu schließen
+  braucht einen Verweis pro Gruppenmitgliedschaft (Backend, nicht begonnen).
+
+**Datenschutz und Impressum, wie in jedem Chatraum.** Alle in einer laufenden Gruppe — Ratsuchende
+oder Beratende, Text oder Audio/Video — finden beides im ⋮-Menü des Raums. Im Warteraum der
+Ratsuchenden (ausstehend, ORISO-Frontend#1549) stehen sie auf dem Desktop unter der Bühne und auf
+dem Telefon in einem ⋮-Menü „Rechtliches“ in der oberen Leiste. Beide öffnen die Dokumente der
+Beratungsstelle, die die Gruppe führt.
+
+## 4.10.6 Für Entwickler:innen
+
+Die ersten sechs Punkte **stehen aus** in ORISO-UserService#1241 und ORISO-Frontend#1547; die
+Prüfung des Einladungs-Tokens selbst ist gemergt (ORISO-UserService#1248).
+
+- `POST /users/askers/new` akzeptiert ein optionales `groupChatId`. Ist es gesetzt, ordnet die
+  Registrierung diese Gruppe zu (`user_chat`) und legt **keine** Sitzung an. Die Antwort ist wie
+  bisher `201`.
+- Der Server antwortet mit `400` und legt **kein** Konto an, wenn die Gruppe nicht existiert, kein
+  Gesprächskreis ist (`conversation_type = SELF_HELP`), nicht zur `agencyId` derselben Anfrage
+  gehört oder wenn zusätzlich `consultantId` gesetzt ist (ein Beratendenlink eröffnet eine
+  Einzelanfrage).
+- Er braucht außerdem `groupChatInviteToken`, den geheimen Teil des Einladungslinks. Seit der
+  Sicherheitskorrektur zu #1237 lautet der Link `/login?gcid=<id>.<token>&aid=<agency>`. Ein
+  fehlendes oder falsches Token ergibt `403`, bevor ein Konto angelegt wird. Es ist dieselbe
+  Prüfung wie beim Beitritt über den Einladungslink.
+- Das Frontend sendet `groupChatId` nur, wenn der Link `aid` trägt und die Person sich genau bei
+  dieser Beratungsstelle registriert. Eine Registrierung bei einer in den Schritten gewählten
+  Beratungsstelle bleibt eine gewöhnliche Beratungsregistrierung.
+- Scheitert ein späterer Schritt der Registrierung, wird die Gruppenmitgliedschaft zusammen mit dem
+  Konto wieder entfernt (Provisioning-Kompensation `GROUP_CHAT_MEMBERSHIP`).
+- Nach der Registrierung folgt die App dem Link wie bisher: `PUT /users/chat/<id>/assign` antwortet
+  mit `409`, weil die Person schon Mitglied ist, und die App öffnet den Warteraum.
+- Einwilligung (gemergt): Der Gruppeneinstieg rendert `AccountData` mit `entry="link"` und dem
+  Standardwert `dataProtection="checkbox"`. `Registration.tsx` sendet bei jeder Registrierung
+  `termsAccepted: "true"`, `RegistrationProvider` sendet `postcode: "00000"` für einen Link, der
+  die Beratungsstelle nennt, und `CreateUserFacade.shouldClearPrivacyConfirmations`
+  in ORISO-UserService setzt für diese Postleitzahl `dataPrivacyConfirmation` und
+  `termsAndConditionsConfirmation` auf `null`. Das hängt am Platzhalter des anonymen Live-Chats;
+  eine eigene Gruppenregel gibt es nicht.
+- Einwilligungstor (ausstehend, ORISO-Frontend#1549): `SessionItemComponent` zeigt
+  `GroupConsentGate`, wenn die Sitzung eine Gruppe ist, die Person ratsuchend ist und
+  `userData.dataPrivacyConfirmation` leer ist. „Einverstanden“ sendet `PATCH /users/data` mit
+  `dataPrivacyConfirmation: true` und `termsAndConditionsConfirmation: true`.
+- Reihenfolge der Bereitstellung: Das Backend ignoriert unbekannte Felder, und das alte Frontend
+  sendet nie `groupChatId`; jede Seite kann also zuerst kommen. Die Regel greift, sobald beide
+  bereitgestellt sind.
+
+## 4.10.7 Lieferstand
+
+Am 05.10.2026 aus GitHub gelesen. „Gemergt“ heißt in `dev` gemergt; für diese Seite wurde es nicht
+auf dem Dev-Server geprüft.
+
+| Baustein | Wo | Stand |
+|---|---|---|
+| Link trägt die Beratungsstelle; Einstieg 0a/0b mit Einwilligungs-Kontrollkästchen | ORISO-Frontend#1531 | gemergt (30.09.) |
+| Einladungs-Token im Link (Sicherheitskorrektur) | ORISO-UserService#1248, ORISO-Frontend#1554 | beide gemergt (30.09.) |
+| Gruppenchats bleiben in ihrem Träger | ORISO-UserService#1244 | gemergt (30.09.) |
+| Anklopfen für Beratende, die nicht Mitglied sind | ORISO-UserService#1243, ORISO-Frontend#1548 | beide gemergt (01.10. / 30.09.) |
+| Beratende landen in ihrer eigenen Gruppenansicht; Nichtmitglieder sehen einen Hinweis | ORISO-Frontend#1534 | offen; seine Funktions-Commits sind über #1548 bereits in `dev` |
+| Registrierung über den Link eröffnet keine Anfrage (Backend) | ORISO-UserService#1241 | offen, ausstehend |
+| Registrierung über den Link benennt die Gruppe (Frontend) | ORISO-Frontend#1547 | offen, ausstehend |
+| Datenschutztor vor der ersten Gruppennachricht, Rechtliches-Menü im Warteraum, Gruppentexte beim Beitritt | ORISO-Frontend#1549 (nach #1547) | offen, ausstehend |
+| Automatisches Löschen von Konten aus „Ohne Konto beitreten“ | ORISO-UserService#1247, ORISO-Frontend#1552 (Teil von ORISO-UserService#1001) | beide offen, ausstehend; für #1247 sind im Review Änderungen angefragt |
+| Startzeit und Wiederholung bleiben beim Bearbeiten erhalten | ORISO-UserService#1234, ORISO-Frontend#1527 | beide offen |
+| Chat-Info auf dem Telefon, Anlegeformular, Countdown | ORISO-Frontend#1528, #1529, #1530 | offen |
+| Einwilligungsverweis pro Gruppenmitgliedschaft | — | nicht begonnen |
+
+**Offene Produktfrage.** Soll der Einstiegsbildschirm sein Einwilligungs-Kontrollkästchen behalten,
+sobald das Tor vor der ersten Nachricht (ORISO-Frontend#1549) live ist? Heute wird der Haken nicht
+gespeichert, die Person würde also zweimal nach demselben Satz gefragt. Der Link-Einstieg des
+Live-Chats hat sein Kontrollkästchen aus diesem Grund bereits durch einen Hinweis ersetzt. Bis das
+entschieden ist, bleibt beides wie oben beschrieben.
+
+## 4.10.8 Verwandte Seiten
+
+- [Gruppenchats und Versand an mehrere Empfänger (4.5)](/de/produkt/core-features/group-chats) — der
+  Designhintergrund für Gruppengespräche.
+- [ADR-012](/de/decisions/adr-012) — Gesprächskreis-Chat: erweitern, nicht neu bauen.
+- Hauptissue: ORISO-Frontend#1499.

@@ -2013,13 +2013,37 @@
       "translations": {
         "en": {
           "path": "site/translations/en/product/features/group-chats.mdx",
-          "sourceHash": "873c5c15d4d1fe8bc49514af11e236ff11f19b37436d54a1a6388be5a8d1fbd5",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "3296648a4cc97bf9152273444b2d8f7a803072f25852206e54c4bfa31623fcb9",
+          "reviewedAt": "2026-10-05"
         },
         "de": {
           "path": "site/translations/de/product/features/group-chats.mdx",
-          "sourceHash": "873c5c15d4d1fe8bc49514af11e236ff11f19b37436d54a1a6388be5a8d1fbd5",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "3296648a4cc97bf9152273444b2d8f7a803072f25852206e54c4bfa31623fcb9",
+          "reviewedAt": "2026-10-05"
+        }
+      }
+    },
+    {
+      "id": "product/features/self-help-groups",
+      "source": "product/features/self-help-groups.mdx",
+      "route": "produkt/core-features/self-help-groups",
+      "aliases": [
+        "product/features/self-help-groups",
+        "product/features/self-help-groups.md",
+        "product/features/self-help-groups.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/product/features/self-help-groups.mdx",
+          "sourceHash": "c3895cb4b286def3ebb24f4ddbe8c90d7b3e79d1d37ba25ac141458cfef3b010",
+          "reviewedAt": "2026-10-05"
+        },
+        "de": {
+          "path": "site/translations/de/product/features/self-help-groups.mdx",
+          "sourceHash": "c3895cb4b286def3ebb24f4ddbe8c90d7b3e79d1d37ba25ac141458cfef3b010",
+          "reviewedAt": "2026-10-05"
         }
       }
     },
@@ -2062,13 +2086,13 @@
       "translations": {
         "en": {
           "path": "site/translations/en/product/features/index.mdx",
-          "sourceHash": "5d61551d859eeae8947aece8c094a049d0e829be240a292535bb7a08cc832cad",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "ed58a1f1af3ca258e06cd0159449a7a1dd185d6c45e02d3d29ffdcd4aa48f6eb",
+          "reviewedAt": "2026-10-05"
         },
         "de": {
           "path": "site/translations/de/product/features/index.mdx",
-          "sourceHash": "5d61551d859eeae8947aece8c094a049d0e829be240a292535bb7a08cc832cad",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "ed58a1f1af3ca258e06cd0159449a7a1dd185d6c45e02d3d29ffdcd4aa48f6eb",
+          "reviewedAt": "2026-10-05"
         }
       }
     },
