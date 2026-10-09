@@ -1,0 +1,11 @@
+{
+  "bridges": [
+    {
+      "id": "userservice-2fa-to-keycloak-otp-spi",
+      "label": "second factor implemented in",
+      "decision": "ADR-013",
+      "from": { "repo": "ORISO-UserService", "concept": "concept:identity-authentication-2fa" },
+      "to": { "repo": "ORISO-Keycloak", "concepts": ["concept:otp-config-rest-api", "concept:email-otp-second-factor"] }
+    }
+  ]
+}

@@ -3447,7 +3447,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/decisions/ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent.md",
-      "sourceHash": "75fda1712139bba88962339edf682d575a17263118fdaacad3fd6e3ed12a6e7f",
+      "sourceHash": "2e2b95153271e550dd19d12e0b6293bbba908130f0b273668a2dde829cd7de91",
       "locales": {
         "de": {
           "available": true,
@@ -3477,7 +3477,7 @@
           }
         }
       },
-      "sourceRevision": "b02af4254a944f33fb24e11c82ab6b961e4ec01b",
+      "sourceRevision": "230c20634e557604c67bb55bd4075a4534fc5a03",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -3929,7 +3929,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/decisions/ADR-024-notification-matrix-two-lists-not-one-filtered.md",
-      "sourceHash": "8e76843785c65229ca1ea5857ca873b466cc03aa317871d21d984aa9b8f1760e",
+      "sourceHash": "b960c89d8c1513ca766ce9b6ad964dbd08afcb2111b36fe7a61dbe52e5b494cc",
       "locales": {
         "de": {
           "available": true,
@@ -3944,7 +3944,13 @@
             "implementation-status-measured-on-dev-2026-09-22": "implementation-status-measured-on-dev-2026-09-22",
             "implementierungsstand-auf-dev-gemessen-2026-09-22": "implementation-status-measured-on-dev-2026-09-22",
             "consequences": "consequences",
-            "folgen": "consequences"
+            "folgen": "consequences",
+            "ordinary-internal-counsellor-chat--implementation-addendum-2026-10-07": "ordinary-internal-counsellor-chat--implementation-addendum-2026-10-07",
+            "gewöhnlicher-interner-beraterchat--implementierungsergänzung-vom-2026-10-07": "ordinary-internal-counsellor-chat--implementation-addendum-2026-10-07",
+            "required-personal-consent-for-case-handover--decision-addendum-2026-10-08": "required-personal-consent-for-case-handover--decision-addendum-2026-10-08",
+            "erforderliche-persönliche-zustimmung-zur-fallübergabe--entscheidung-vom-2026-10-08": "required-personal-consent-for-case-handover--decision-addendum-2026-10-08",
+            "rejecting-an-ordinary-incoming-enquiry--decision-addendum-2026-10-08": "rejecting-an-ordinary-incoming-enquiry--decision-addendum-2026-10-08",
+            "gewöhnliche-eingegangene-beratungsanfrage-ablehnen--entscheidung-vom-2026-10-08": "rejecting-an-ordinary-incoming-enquiry--decision-addendum-2026-10-08"
           }
         },
         "en": {
@@ -3955,11 +3961,14 @@
             "context": "context",
             "decision": "decision",
             "implementation-status-measured-on-dev-2026-09-22": "implementation-status-measured-on-dev-2026-09-22",
-            "consequences": "consequences"
+            "consequences": "consequences",
+            "ordinary-internal-counsellor-chat--implementation-addendum-2026-10-07": "ordinary-internal-counsellor-chat--implementation-addendum-2026-10-07",
+            "required-personal-consent-for-case-handover--decision-addendum-2026-10-08": "required-personal-consent-for-case-handover--decision-addendum-2026-10-08",
+            "rejecting-an-ordinary-incoming-enquiry--decision-addendum-2026-10-08": "rejecting-an-ordinary-incoming-enquiry--decision-addendum-2026-10-08"
           }
         }
       },
-      "sourceRevision": "6f6a9734ed5e0d6681e2b8d0807304a5b3a1872f",
+      "sourceRevision": "7377253568f53a7403f0c7262a933153b47b267c",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -4073,7 +4082,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/decisions/README.md",
-      "sourceHash": "705d264ec3521f1c31b344aaac3104da4da21e0899f612b37e9c0914bdd04149",
+      "sourceHash": "e84bfa1611a8c4c5e6e7206075327f535cff02941d51ee8ea5a642301a504771",
       "locales": {
         "de": {
           "available": true,
@@ -4100,7 +4109,7 @@
           }
         }
       },
-      "sourceRevision": "6f6a9734ed5e0d6681e2b8d0807304a5b3a1872f",
+      "sourceRevision": "74fd6f3314b373f8bd1397d2ae1c8779bffd62fe",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },

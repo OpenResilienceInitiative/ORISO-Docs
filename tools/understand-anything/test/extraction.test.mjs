@@ -75,23 +75,89 @@ class Other { void accept(String value) {} }
   } finally { f.close(); }
 });
 
-test('unique scoped Java target remains unconfirmed without compiler overload resolution', async () => {
+async function javaGraph(files) {
   const { plugin, core } = await parser();
-  const file = 'Manager.java', content = 'class Manager { void accept(String id) {} void run() { accept("id"); } }';
-  const f = fixture({ [file]: content });
+  const f = fixture(files);
   try {
     const extraction = createProjectExtraction({ repoDir: f.root, files: f.files });
-    const analysis = plugin.analyzeFile(file, content);
     const builder = new core.GraphBuilder('Fixture', 'a'.repeat(40));
-    builder.addFileWithAnalysis(file, analysis, { fileSummary: '', summaries: {}, tags: [], complexity: 'simple' });
-    extraction.addFile(file, content, analysis, plugin.extractCallGraph(file, content));
-    const graph = extraction.complete(builder.build());
-    assert.equal(graph.relationCoverage.calls.emitted, 0);
-    assert.equal(graph.relationCoverage.calls_unconfirmed.emitted, 1);
-    assert.deepEqual(graph.metadata.extraction.diagnostics.unsupportedInputs.byRelation, {});
-    assert.equal(graph.relationCoverage.calls.unsupported, 1);
-    assert.equal(graph.edges.find((e) => e.type === 'calls_unconfirmed').metadata.reason, 'java-typechecking-unavailable');
+    for (const file of f.files) {
+      const content = files[file], analysis = plugin.analyzeFile(file, content);
+      extraction.addFile(file, content, analysis, plugin.extractCallGraph(file, content));
+      builder.addFileWithAnalysis(file, analysis, { fileSummary: '', summaries: {}, tags: [], complexity: 'simple' });
+    }
+    return extraction.complete(builder.build());
   } finally { f.close(); }
+}
+const edgesOf = (graph, type) => graph.edges.filter((e) => e.type === type);
+
+test('unique member of a supertype-free Java class is a confirmed call, with and without a field receiver', async () => {
+  const graph = await javaGraph({
+    'Manager.java': 'class Manager { void accept(String id) {} void run() { accept("id"); } }',
+    'Caller.java': 'class Caller { private Manager manager; void go() { manager.accept("x"); this.manager.accept("y"); } }',
+  });
+  // Manager.run -> accept, and Caller.go -> accept (the plain and the this.-qualified receiver share one edge).
+  assert.deepEqual(edgesOf(graph, 'calls').map((e) => e.source).sort(), ['function:Caller.java:Caller.go()', 'function:Manager.java:Manager.run()']);
+  assert.equal(edgesOf(graph, 'calls_unconfirmed').length, 0);
+  assert.equal(edgesOf(graph, 'calls')[0].metadata.resolution, 'java-declared-type-unique-member');
+});
+
+test('Java calls stay unconfirmed when another member could be applicable', async () => {
+  const cases = {
+    'inherited overloads': { 'Base.java': 'class Base { void accept(Integer id) {} }', 'Manager.java': 'class Manager extends Base { void accept(String id) {} void run() { accept("id"); } }' },
+    'implemented interface': { 'Manager.java': 'class Manager implements Runnable { public void run() {} void accept(String id) {} void go() { accept("id"); } }' },
+    'Object member': { 'Manager.java': 'class Manager { boolean equals(Manager other) { return true; } void run(Manager m) { equals(m); } }' },
+    'enum owner': { 'Kind.java': 'enum Kind { A; void accept(String id) {} void run() { accept("id"); } }' },
+    'lambda parameter shadows the field': { 'Manager.java': 'class Manager { void accept(String id) {} }', 'Caller.java': 'class Caller { private Manager manager; void go(java.util.List<Object> items) { items.forEach(manager -> manager.accept("x")); } }' },
+    'for-each variable shadows the field': { 'Manager.java': 'class Manager { void accept(String id) {} }', 'Caller.java': 'class Caller { private Manager manager; void go(java.util.List<Other> items) { for (Other manager : items) manager.accept("x"); } }' },
+    'parameter of another type hides the field': { 'Manager.java': 'class Manager { void accept(String id) {} }', 'Caller.java': 'class Caller { private Manager manager; void go(Other manager) { manager.accept("x"); } }' },
+  };
+  for (const [name, files] of Object.entries(cases)) {
+    const graph = await javaGraph(files);
+    const target = edgesOf(graph, 'calls').filter((e) => /accept|equals/.test(e.target));
+    assert.equal(target.length, 0, `${name}: must not be a confirmed call`);
+  }
+});
+
+// Review cases from Docs#167 (both compile with javac --release 17; targets checked against javap -c).
+test('a class type parameter that shadows an indexed class never binds to that class', async () => {
+  const graph = await javaGraph({
+    'Manager.java': 'class Manager { void accept(String value) {} }',
+    'Other.java': 'class Other { void accept(Integer value) {} }',
+    'Caller.java': 'class Caller<Manager extends Other> { Manager manager; void go() { manager.accept(1); } }',
+  });
+  const wrong = graph.edges.filter((e) => e.source === 'function:Caller.java:Caller.go()' && e.target.startsWith('function:Manager.java:'));
+  assert.deepEqual(wrong, [], 'Manager is the type parameter here, the compiler binds Other.accept(Integer)');
+  assert.equal(edgesOf(graph, 'calls').filter((e) => e.source === 'function:Caller.java:Caller.go()').length, 0);
+});
+
+test('a method type parameter shadows an indexed class for its parameters', async () => {
+  const graph = await javaGraph({
+    'Manager.java': 'class Manager { void accept(String value) {} }',
+    'Other.java': 'class Other { void accept(Integer value) {} }',
+    'Caller.java': 'class Caller { <Manager extends Other> void go(Manager manager) { manager.accept(1); } }',
+  });
+  assert.deepEqual(graph.edges.filter((e) => e.source.startsWith('function:Caller.java:') && e.target.startsWith('function:Manager.java:')), []);
+});
+
+test('a for-initializer variable is scoped to its loop', async () => {
+  const graph = await javaGraph({
+    'Manager.java': 'class Manager { void accept(String value) {} }',
+    'Other.java': 'class Other { void accept(String value) {} }',
+    'Caller.java': 'class Caller { Manager manager; void go() { for (Other manager = new Other(); ; ) { manager.accept("loop"); break; } manager.accept("field"); } }',
+  });
+  const calls = edgesOf(graph, 'calls').filter((e) => e.source === 'function:Caller.java:Caller.go()').map((e) => e.target).sort();
+  assert.deepEqual(calls, ['function:Manager.java:Manager.accept(String)', 'function:Other.java:Other.accept(String)']);
+});
+
+test('a local declared in a switch block does not leak past the switch', async () => {
+  const graph = await javaGraph({
+    'Manager.java': 'class Manager { void accept(String value) {} }',
+    'Other.java': 'class Other { void accept(String value) {} }',
+    'Caller.java': 'class Caller { Manager manager; void go(int k) { switch (k) { case 1: Other manager = new Other(); manager.accept("in"); break; } manager.accept("field"); } }',
+  });
+  const calls = edgesOf(graph, 'calls').filter((e) => e.source === 'function:Caller.java:Caller.go(int)').map((e) => e.target).sort();
+  assert.deepEqual(calls, ['function:Manager.java:Manager.accept(String)', 'function:Other.java:Other.accept(String)']);
 });
 
 test('real pinned Java grammar limitation is explicit and does not erase other declarations', async () => {

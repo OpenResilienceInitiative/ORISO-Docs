@@ -22,6 +22,10 @@ not its `_artifacts/` subfolder). The series was re-synchronised on 2026-08-17 f
   legal-text hierarchy. The e-mail decisions are 024–026; the code references still have to be
   corrected (listed in each ADR).
 
+- `ADR-014-amendment-2026-09-25-one-topic-per-agency-policy.md` — accepted 2026-09-26 by the
+  product owner (ORISO-UserService#1264): a global, default-off platform switch that limits
+  every agency to one topic; the data model stays multi-topic.
+
 New decisions in this section are repository-owned records and are not part of the unchanged
 19-file import described above.
 
@@ -53,3 +57,5 @@ they need manual reconciliation first:
   series that happens to reuse the same numbering.
 
 Both need a human to reconcile against the series imported here before they can be merged in.
+
+- `ADR-027-restricted-task-identities-and-keycloak-commands.md` — proposed 2026-10-07 under ORISO-Helm#367; additional bounded account/SMTP provider and task credential boundaries. Human technical approval remains open. Shared contract: `../contracts/technical-task-identities.md`.

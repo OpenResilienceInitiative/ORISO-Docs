@@ -1114,13 +1114,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent.md",
-          "sourceHash": "75fda1712139bba88962339edf682d575a17263118fdaacad3fd6e3ed12a6e7f",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "2e2b95153271e550dd19d12e0b6293bbba908130f0b273668a2dde829cd7de91",
+          "reviewedAt": "2026-10-05"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent.md",
-          "sourceHash": "75fda1712139bba88962339edf682d575a17263118fdaacad3fd6e3ed12a6e7f",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "2e2b95153271e550dd19d12e0b6293bbba908130f0b273668a2dde829cd7de91",
+          "reviewedAt": "2026-10-05"
         }
       }
     },
@@ -1344,13 +1344,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/ADR-024-notification-matrix-two-lists-not-one-filtered.md",
-          "sourceHash": "8e76843785c65229ca1ea5857ca873b466cc03aa317871d21d984aa9b8f1760e",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "b960c89d8c1513ca766ce9b6ad964dbd08afcb2111b36fe7a61dbe52e5b494cc",
+          "reviewedAt": "2026-10-07"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/ADR-024-notification-matrix-two-lists-not-one-filtered.md",
-          "sourceHash": "8e76843785c65229ca1ea5857ca873b466cc03aa317871d21d984aa9b8f1760e",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "b960c89d8c1513ca766ce9b6ad964dbd08afcb2111b36fe7a61dbe52e5b494cc",
+          "reviewedAt": "2026-10-07"
         }
       }
     },
@@ -1413,13 +1413,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/README.md",
-          "sourceHash": "705d264ec3521f1c31b344aaac3104da4da21e0899f612b37e9c0914bdd04149",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "e84bfa1611a8c4c5e6e7206075327f535cff02941d51ee8ea5a642301a504771",
+          "reviewedAt": "2026-10-07"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/README.md",
-          "sourceHash": "705d264ec3521f1c31b344aaac3104da4da21e0899f612b37e9c0914bdd04149",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "e84bfa1611a8c4c5e6e7206075327f535cff02941d51ee8ea5a642301a504771",
+          "reviewedAt": "2026-10-07"
         }
       }
     },

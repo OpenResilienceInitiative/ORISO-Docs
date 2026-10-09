@@ -27,6 +27,33 @@
       "summary": "backup/realm-backup.sh exports the 'online-beratung' realm from the running Keycloak pod (kubectl exec) into timestamped backups in the repo's backup directory.",
       "tags": ["operations"],
       "related": ["backup/realm-backup.sh"]
+    },
+    {
+      "id": "concept:email-otp-second-factor",
+      "name": "E-mail OTP second factor (vendored otp-config SPI)",
+      "summary": "Second-factor logic for ORISO is not in UserService: it lives in the vendored Keycloak extension keycloak-image/otp-config-spi (ADR-013). OtpMailAuthenticator (id 'email-authenticator', direct grant) and OtpMailFormAuthenticator (browser form) send a one-time code by e-mail and check it in MailOtpVerifier; the code and its expiry are kept in memory by MemoryOtpService (default lifetime 900 s, configurable per authentication config) and the mail goes out through OtpMailSender / DefaultMailSender using the oriso theme template themes/oriso/email/*/otp-email.ftl. The e-mail factor is stored as a Keycloak credential (MailOtpCredentialProvider, MailOtpCredentialService). Work on e-mail 2FA, resend or lockout starts here; UserService only calls this SPI over REST (see concept:otp-config-rest-api).",
+      "tags": ["keycloak", "authentication", "2fa", "otp", "email-otp", "spi"],
+      "related": [
+        "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/authenticator/OtpMailAuthenticator.java",
+        "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/authenticator/OtpMailFormAuthenticator.java",
+        "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/authenticator/MailOtpVerifier.java",
+        "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/otp/MemoryOtpService.java",
+        "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/otp/OtpMailSender.java",
+        "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/credential/MailOtpCredentialService.java",
+        "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/credential/MailOtpCredentialProvider.java"
+      ]
+    },
+    {
+      "id": "concept:otp-config-rest-api",
+      "name": "otp-config REST API (how UserService reaches the 2FA SPI)",
+      "summary": "RealmOtpResourceProvider is registered as a Keycloak realm resource under the id 'otp-config' and is the door other ORISO services use for second-factor setup: GET fetch-otp-setup-info/{username}, PUT setup-otp/{username} (app TOTP), DELETE delete-otp/{username}, PUT send-verification-mail/{username} and POST setup-otp-mail/{username} (e-mail OTP). On the caller side this is ORISO-UserService: the port IdentitySecondFactor, the adapter KeycloakService and the controller delegate UserTwoFactorAuthControllerDelegate. That is why UserService has no OTP code of its own and issues about e-mail 2FA usually need no UserService change.",
+      "tags": ["keycloak", "authentication", "2fa", "rest", "cross-repo"],
+      "related": [
+        "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/RealmOtpResourceProvider.java",
+        "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/RealmOtpResourceProviderFactory.java",
+        "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/authenticator/SessionAuthenticator.java",
+        "keycloak-image/otp-config-spi/src/main/java/de/onlineberatung/authenticator/BearerTokenSessionAuthenticator.java"
+      ]
     }
   ],
   "flows": [
