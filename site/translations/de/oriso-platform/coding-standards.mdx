@@ -131,6 +131,11 @@ ungeprüfter Code und eine Umgebung, der niemand vertrauen kann.
 - **Frontend**: Cypress
 - **Backend**: JUnit + MockMvc
 - **Immer in einem echten Browser testen**
+- **Komponenteneigenschaften kommen aus Storybook**, niemals aus Vermutungen. Die Storybook-MCP-Server
+  für ORISO-Frontend und ORISO-Admin bieten `docs-list`, `docs-show`, `docs-show-story`,
+  `stories-find-by-component`, `stories-changed` und `stories-preview`. Eine Eigenschaft, die dort
+  nicht dokumentiert ist, existiert nicht. Bei jeder UI-Änderung gehört die `stories-preview`-URL
+  in den PR.
 
 ## Bereitstellung
 
