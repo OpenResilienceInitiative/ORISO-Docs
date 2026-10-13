@@ -14,10 +14,11 @@ agency administrators and data protection officers. The technical notes for deve
 end.
 
 <Callout>
-Status (05.10.2026): the rules on this page are decided. Each section says what is already merged
-into `dev` and what is still **pending** in an open pull request — see
-[4.10.7 Delivery status](#4107-delivery-status). Merged into `dev` does not mean it was checked on
-the dev server.
+Status (13.10.2026): the rules on this page are decided and the invite-link work is merged into
+`dev`. The merged changes are also running on the dev server (the images built from `dev` contain
+them), but nobody has yet recorded a browser acceptance on the dev server, so treat them as
+*merged, not yet tested on the environment*. Three pull requests are still open — see
+[4.10.7 Delivery status](#4107-delivery-status).
 </Callout>
 
 ## 4.10.1 The invite link
@@ -73,11 +74,15 @@ recorded instead.
 | Button | "Der Gruppe beitreten" | "Registrieren" |
 
 A person who joins without an account still gets a real account on the server. They simply never
-learn its password. Deleting such accounts automatically once their login has ended is
-**pending** (ORISO-UserService#1247 and ORISO-Frontend#1552, both open). Until then, these accounts
-stay.
+learn its password. Such accounts are marked as temporary and deleted automatically 24 hours after
+they were created (ORISO-UserService#1247 and ORISO-Frontend#1552, both merged into `dev`; the
+cleanup job runs hourly). Accounts created before this change are not marked and stay.
 
-**While the registration runs** (pending, ORISO-Frontend#1549), the screen shows the group's own
+If an invite link is incomplete (it carries no `aid`), the "Ohne Konto beitreten" button is shown
+greyed out with a short note, and the person can still register with an account (ORISO-Frontend#1687,
+merged into `dev`).
+
+**While the registration runs** (merged into `dev`, ORISO-Frontend#1549), the screen shows the group's own
 three cards (how the group takes place, alias only, new dates and links) and "Zur Gruppe". It never promises an answer from
 a counselling centre, because a group join opens no enquiry (see 4.10.4).
 
@@ -99,9 +104,9 @@ group join also left an empty counselling conversation behind:
 On the development server, test joins on 22–23.09.2026 left exactly such conversations behind
 (sessions 211 and 213).
 
-**What changes (pending, ORISO-UserService#1241 and ORISO-Frontend#1547).** Until both are
-merged, a registration through the link still opens a counselling conversation. Once they are
-merged: the registration names the group. The server checks that the group is a
+**What changed (merged into `dev`, ORISO-UserService#1241 and ORISO-Frontend#1547).** Before
+these two were merged, a registration through the link opened a counselling conversation. Now the
+registration names the group. The server checks that the group is a
 self-help group of that Beratungsstelle, creates the account, and adds the person to the group.
 No counselling conversation is created. A client who later wants one-to-one counselling asks for
 it separately, like any other client.
@@ -111,7 +116,7 @@ account data loads normally, and the group is what they see after logging in.
 
 ## 4.10.5 Privacy statement, Datenschutz and Impressum
 
-The consent story has three steps. Steps 1 and 2 are merged into `dev`. Step 3 is **pending**.
+The consent story has three steps. All three are merged into `dev`.
 
 1. **On the entry screen: a checkbox (merged).** Both 0a and 0b show the Beratungsstelle's
    data-protection sentence with a checkbox that must be ticked before joining
@@ -123,7 +128,7 @@ The consent story has three steps. Steps 1 and 2 are merged into `dev`. Step 3 i
    privacy confirmation and the terms confirmation on the new account, exactly as it does for the
    anonymous live chat. So after joining through the link, **0a and 0b accounts have neither
    agreement on record**, even though the box was ticked.
-3. **Before the first message: the Beratungsstelle's privacy statement (pending,
+3. **Before the first message: the Beratungsstelle's privacy statement (merged into `dev`,
    ORISO-Frontend#1549).** Decided by Frank on 23.09.2026. A group client whose agreement is not on
    record sees the statement of the Beratungsstelle that runs the group before they can write. This
    is the second consent gate of [ADR-022](/en/decisions/adr-022), with the same sentence rules as the
@@ -132,14 +137,14 @@ The consent story has three steps. Steps 1 and 2 are merged into `dev`. Step 3 i
    both the privacy confirmation and the terms confirmation on the account.
 
 <Callout type="warn">
-**Until ORISO-Frontend#1549 is merged**, a client who joined through the link has no agreement on
-record and is **not** asked again before writing. Once it is merged, that client ticks the box on
-the entry screen *and* answers the gate before the first message: the same Beratungsstelle
-sentence is asked twice, and only the second answer is stored. Whether the entry checkbox stays is
-an open product question (see 4.10.7).
+A client who joined through the link has no agreement on record. Since ORISO-Frontend#1549 is
+merged into `dev`, that client ticks the box on the entry screen *and* answers the gate before the
+first message: the same Beratungsstelle sentence is asked twice, and only the second answer is
+stored. Whether the entry checkbox stays is an open product question (see 4.10.7).
 </Callout>
 
-Rules of the gate (pending, ORISO-Frontend#1549):
+Rules of the gate (merged into `dev`, ORISO-Frontend#1549; ORISO-Frontend#1688 also hides the
+group's topic until the client has agreed):
 
 - **Who is asked.** Every group client whose agreement is not on record. ADR-022 decides this gate
   by consent state and forbids guessing anonymity, so the app never asks whether an account is
@@ -158,14 +163,14 @@ Rules of the gate (pending, ORISO-Frontend#1549):
 
 **Datenschutz and Impressum, like in every chat room.** Everyone in a running group — client or
 counsellor, text or audio/video — finds both in the ⋮ menu of the room. In the client's waiting
-room (pending, ORISO-Frontend#1549) they sit under the stage on desktop and in a ⋮ menu
+room (merged into `dev`, ORISO-Frontend#1549) they sit under the stage on desktop and in a ⋮ menu
 "Rechtliches" in the top bar on a phone. Both open the documents of the Beratungsstelle that runs
 the group.
 
 ## 4.10.6 For developers
 
-The first six points are **pending** in ORISO-UserService#1241 and ORISO-Frontend#1547; the invite
-token check itself is merged (ORISO-UserService#1248).
+The first six points are merged into `dev` in ORISO-UserService#1241 and ORISO-Frontend#1547; the
+invite token check is merged as well (ORISO-UserService#1248).
 
 - `POST /users/askers/new` accepts an optional `groupChatId`. When it is set, the registration
   assigns that group (`user_chat`) and creates **no** session. The response is `201` as before.
@@ -188,7 +193,7 @@ token check itself is merged (ORISO-UserService#1248).
   and `CreateUserFacade.shouldClearPrivacyConfirmations` in ORISO-UserService
   sets `dataPrivacyConfirmation` and `termsAndConditionsConfirmation` to `null` for that postcode.
   This rides on the anonymous live-chat placeholder; there is no group-specific rule.
-- Consent gate (pending, ORISO-Frontend#1549): `SessionItemComponent` shows `GroupConsentGate`
+- Consent gate (merged into `dev`, ORISO-Frontend#1549): `SessionItemComponent` shows `GroupConsentGate`
   when the session is a group, the user is an asker and `userData.dataPrivacyConfirmation` is
   empty. "Einverstanden" sends `PATCH /users/data` with `dataPrivacyConfirmation: true` and
   `termsAndConditionsConfirmation: true`.
@@ -197,8 +202,12 @@ token check itself is merged (ORISO-UserService#1248).
 
 ## 4.10.7 Delivery status
 
-Read from GitHub on 05.10.2026. "Merged" means merged into `dev`; it was not checked on the dev
-server for this page.
+Read from GitHub on 13.10.2026. "Merged" means merged into `dev`. On 13.10.2026 (about 08:00 UTC)
+the running dev deployments were read: the Frontend image (source revision `f58354e`, built
+12.10.2026, running since 13.10.2026 01:00 UTC) and the UserService image (source revision
+`92ab690`, built 10.10.2026, running since 11.10.2026 01:00 UTC) both contain every merged pull
+request in the table below. That shows the code is on the dev server. It is **not** an acceptance
+test: no browser test of these flows on the dev server is recorded here.
 
 | Piece | Where | State |
 |---|---|---|
@@ -207,12 +216,16 @@ server for this page.
 | Group chats stay inside their Träger | ORISO-UserService#1244 | merged (30.09.) |
 | Knock to join for non-member counsellors | ORISO-UserService#1243, ORISO-Frontend#1548 | both merged (01.10. / 30.09.) |
 | Counsellors land in their own group view; non-members see a notice | ORISO-Frontend#1534 | open; its feature commits already reached `dev` through #1548 |
-| Registration through the link opens no enquiry (backend) | ORISO-UserService#1241 | open, pending |
-| Registration through the link names the group (frontend) | ORISO-Frontend#1547 | open, pending |
-| Privacy gate before the first group message, legal menu in the waiting room, group words while joining | ORISO-Frontend#1549 (after #1547) | open, pending |
-| Automatic deletion of join-without-account accounts | ORISO-UserService#1247, ORISO-Frontend#1552 (part of ORISO-UserService#1001) | both open, pending; #1247 has changes requested in review |
-| Group start time and repeat setting kept when editing | ORISO-UserService#1234, ORISO-Frontend#1527 | both open |
-| Chat-Info on phones, create form, countdown | ORISO-Frontend#1528, #1529, #1530 | open |
+| Registration through the link opens no enquiry (backend) | ORISO-UserService#1241 | merged (06.10.), on dev server, not yet tested there |
+| Registration through the link names the group (frontend) | ORISO-Frontend#1547 | merged (06.10.), on dev server, not yet tested there |
+| Privacy gate before the first group message, legal menu in the waiting room, group words while joining | ORISO-Frontend#1549 | merged (06.10.), on dev server, not yet tested there |
+| Group topic hidden until the privacy gate is accepted | ORISO-Frontend#1688 | merged (09.10.), on dev server, not yet tested there |
+| Automatic deletion of join-without-account accounts | ORISO-UserService#1247 (07.10.), ORISO-Frontend#1552 (07.10.) (part of ORISO-UserService#1001) | both merged, on dev server, not yet tested there |
+| "Ohne Konto beitreten" disabled with a hint on incomplete invite links | ORISO-Frontend#1687 | merged (09.10.), on dev server, not yet tested there |
+| Group start time and repeat setting kept when editing | ORISO-UserService#1234 (06.10.), ORISO-Frontend#1527 (06.10.) | both merged, on dev server, not yet tested there |
+| Create form: one card on phones, repeat field says how often | ORISO-Frontend#1530 | merged (06.10.), on dev server, not yet tested there |
+| Chat-Info on phones, overdue countdown | ORISO-Frontend#1528, #1529 | open |
+| End-to-end test stub for the enquiry team panel (test-only, no behaviour change) | ORISO-Frontend#1591 | merged (12.10.) |
 | Consent pointer per group membership | — | not started |
 
 **Open product question.** Should the entry screen keep its consent checkbox once the gate before

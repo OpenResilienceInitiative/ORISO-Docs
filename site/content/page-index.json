@@ -3885,7 +3885,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
-      "sourceHash": "6592caa757811e78c6c4213e453556a7e76bb4f2caa097b13979d3a238541e2e",
+      "sourceHash": "1ca3a10a5e0e35cdfa9811a962e205894dc4037c42c932b133bc31ea2ca22643",
       "locales": {
         "de": {
           "available": true,
@@ -3900,7 +3900,13 @@
             "consequences": "consequences",
             "folgen": "consequences",
             "alternatives-considered": "alternatives-considered",
-            "erwogene-alternativen": "alternatives-considered"
+            "erwogene-alternativen": "alternatives-considered",
+            "addendum--2026-10-06-avv-renewal-and-new-counselling": "addendum--2026-10-06-avv-renewal-and-new-counselling",
+            "ergänzung--2026-10-06-avv-erneuerung-und-neue-beratung": "addendum--2026-10-06-avv-renewal-and-new-counselling",
+            "confirmed-refinement": "confirmed-refinement",
+            "bestätigte-präzisierung": "confirmed-refinement",
+            "unresolved-boundaries-and-acceptance": "unresolved-boundaries-and-acceptance",
+            "offene-grenzen-und-abnahme": "unresolved-boundaries-and-acceptance"
           }
         },
         "en": {
@@ -3911,11 +3917,14 @@
             "context": "context",
             "decision": "decision",
             "consequences": "consequences",
-            "alternatives-considered": "alternatives-considered"
+            "alternatives-considered": "alternatives-considered",
+            "addendum--2026-10-06-avv-renewal-and-new-counselling": "addendum--2026-10-06-avv-renewal-and-new-counselling",
+            "confirmed-refinement": "confirmed-refinement",
+            "unresolved-boundaries-and-acceptance": "unresolved-boundaries-and-acceptance"
           }
         }
       },
-      "sourceRevision": "b02af4254a944f33fb24e11c82ab6b961e4ec01b",
+      "sourceRevision": "656d6474caf4b1f3365b2ee3018c0a0537b6a5cd",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -6280,11 +6289,11 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "product/features/self-help-groups.mdx",
-      "sourceHash": "c3895cb4b286def3ebb24f4ddbe8c90d7b3e79d1d37ba25ac141458cfef3b010",
+      "sourceHash": "3b59e4adf9ce694ac33497fadf4b9db552b61e81491d655fcb00494a282117f1",
       "locales": {
         "de": {
           "available": true,
-          "translationState": "current",
+          "translationState": "stale",
           "sectionAliases": {
             "4101-the-invite-link": "4101-the-invite-link",
             "4101-der-einladungslink": "4101-the-invite-link",
@@ -6306,7 +6315,7 @@
         },
         "en": {
           "available": true,
-          "translationState": "current",
+          "translationState": "stale",
           "sectionAliases": {
             "4101-the-invite-link": "4101-the-invite-link",
             "4102-who-opens-the-link-and-where-they-land": "4102-who-opens-the-link-and-where-they-land",
@@ -6320,7 +6329,7 @@
         }
       },
       "sourceRevision": "029e785e0ff893cabca7ab5911ef273255b20632",
-      "sourceState": "committed",
+      "sourceState": "working-copy",
       "factsStatus": "source-only"
     },
     {
@@ -7158,8 +7167,17 @@
   ],
   "coverage": {
     "currentPages": 93,
-    "completePairs": 93,
+    "completePairs": 92,
     "missing": [],
-    "stale": []
+    "stale": [
+      {
+        "id": "product/features/self-help-groups",
+        "locale": "de"
+      },
+      {
+        "id": "product/features/self-help-groups",
+        "locale": "en"
+      }
+    ]
   }
 }

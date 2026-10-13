@@ -13,10 +13,11 @@ Beratende, Administrator:innen von Beratungsstellen und Datenschutzbeauftragte. 
 Hinweise für Entwickler:innen stehen am Ende.
 
 <Info>
-Stand (05.10.2026): Die Regeln auf dieser Seite sind entschieden. Jeder Abschnitt sagt, was bereits
-in `dev` gemergt ist und was noch in einem offenen Pull Request **aussteht** — siehe
-[4.10.7 Lieferstand](#4107-lieferstand). In `dev` gemergt heißt nicht, dass es auf dem Dev-Server
-geprüft wurde.
+Stand (13.10.2026): Die Regeln auf dieser Seite sind entschieden, und die Arbeit am Einladungslink
+ist in `dev` gemergt. Die gemergten Änderungen laufen auch auf dem Dev-Server (die aus `dev`
+gebauten Images enthalten sie), aber eine Browser-Abnahme auf dem Dev-Server ist noch nicht
+festgehalten; sie gelten also als *gemergt, noch nicht auf der Umgebung getestet*. Drei Pull
+Requests sind noch offen — siehe [4.10.7 Lieferstand](#4107-lieferstand).
 </Info>
 
 ## 4.10.1 Der Einladungslink
@@ -73,11 +74,16 @@ stattdessen festgehalten wird, steht in 4.10.5.
 | Schaltfläche | „Der Gruppe beitreten“ | „Registrieren“ |
 
 Wer ohne Konto beitritt, bekommt trotzdem ein echtes Konto auf dem Server. Die Person erfährt nur
-nie sein Passwort. Solche Konten automatisch zu löschen, sobald ihre Anmeldung beendet ist,
-**steht aus** (ORISO-UserService#1247 und ORISO-Frontend#1552, beide offen). Bis dahin bleiben
-diese Konten bestehen.
+nie sein Passwort. Solche Konten werden als vorübergehend markiert und 24 Stunden nach dem
+Anlegen automatisch gelöscht (ORISO-UserService#1247 und ORISO-Frontend#1552, beide in `dev`
+gemergt; der Bereinigungsjob läuft stündlich). Konten, die vor dieser Änderung angelegt wurden,
+sind nicht markiert und bleiben bestehen.
 
-**Während die Registrierung läuft** (ausstehend, ORISO-Frontend#1549), zeigt der Bildschirm die drei
+Ist ein Einladungslink unvollständig (er trägt kein `aid`), erscheint „Ohne Konto beitreten“
+ausgegraut mit einem kurzen Hinweis, und die Person kann sich weiterhin mit Konto registrieren
+(ORISO-Frontend#1687, in `dev` gemergt).
+
+**Während die Registrierung läuft** (in `dev` gemergt, ORISO-Frontend#1549), zeigt der Bildschirm die drei
 Karten der Gruppe (wie die Gruppe stattfindet, nur mit Alias, neue Termine und Links) und „Zur
 Gruppe“. Er verspricht nie eine Antwort einer Beratungsstelle, denn ein Gruppenbeitritt eröffnet
 keine Anfrage (siehe 4.10.4).
@@ -101,9 +107,9 @@ Jeder Gruppenbeitritt hinterließ deshalb zusätzlich ein leeres Beratungsgespr�
 Auf dem Entwicklungsserver hinterließen Testbeitritte am 22.–23.09.2026 genau solche Gespräche
 (Sitzungen 211 und 213).
 
-**Was sich ändert (ausstehend, ORISO-UserService#1241 und ORISO-Frontend#1547).** Bis beide
-gemergt sind, eröffnet eine Registrierung über den Link weiterhin ein Beratungsgespräch. Danach
-gilt: Die Registrierung benennt die Gruppe. Der Server prüft, dass die Gruppe ein Gesprächskreis
+**Was sich geändert hat (in `dev` gemergt, ORISO-UserService#1241 und ORISO-Frontend#1547).** Vor
+dem Merge beider eröffnete eine Registrierung über den Link ein Beratungsgespräch. Jetzt benennt
+die Registrierung die Gruppe. Der Server prüft, dass die Gruppe ein Gesprächskreis
 dieser Beratungsstelle ist, legt das Konto an und nimmt die Person in die Gruppe auf. Es entsteht
 kein Beratungsgespräch. Wer später eine Einzelberatung möchte, fragt sie gesondert an, wie alle
 anderen Ratsuchenden.
@@ -126,7 +132,7 @@ Die Einwilligung läuft in drei Schritten. Schritt 1 und 2 sind in `dev` gemergt
    Server dann bewusst **beide**, die Datenschutz- und die AGB-Bestätigung am neuen Konto, genau
    wie beim anonymen Live-Chat. Nach dem Beitritt über den Link haben **0a- und 0b-Konten also
    keine der beiden Bestätigungen gespeichert**, obwohl der Haken gesetzt war.
-3. **Vor der ersten Nachricht: die Datenschutzerklärung der Beratungsstelle (ausstehend,
+3. **Vor der ersten Nachricht: die Datenschutzerklärung der Beratungsstelle (in `dev` gemergt,
    ORISO-Frontend#1549).** Von Frank am 23.09.2026 entschieden. Ratsuchende in einer Gruppe, deren
    Einwilligung nicht gespeichert ist, sehen vor dem Schreiben die Erklärung der Beratungsstelle,
    die die Gruppe führt. Das ist das zweite Einwilligungstor aus [ADR-022](/decisions/adr-022), mit
@@ -135,15 +141,16 @@ Die Einwilligung läuft in drei Schritten. Schritt 1 und 2 sind in `dev` gemergt
    „Einverstanden“ speichert die Datenschutz- und die AGB-Bestätigung am Konto.
 
 <Warning>
-**Bis ORISO-Frontend#1549 gemergt ist**, hat eine Person, die über den Link beigetreten ist, keine
-Einwilligung gespeichert und wird vor dem Schreiben **nicht** erneut gefragt. Danach hakt sie das
-Kästchen auf dem Einstiegsbildschirm an *und* beantwortet das Tor vor der ersten Nachricht:
+Eine Person, die über den Link beigetreten ist, hat keine Einwilligung gespeichert. Seit
+ORISO-Frontend#1549 in `dev` gemergt ist, hakt sie das Kästchen auf dem Einstiegsbildschirm an
+*und* beantwortet das Tor vor der ersten Nachricht:
 Derselbe Satz der Beratungsstelle wird zweimal abgefragt, und nur die zweite Antwort wird
 gespeichert. Ob das Kontrollkästchen auf dem Einstiegsbildschirm bleibt, ist eine offene
 Produktfrage (siehe 4.10.7).
 </Warning>
 
-Regeln des Tors (ausstehend, ORISO-Frontend#1549):
+Regeln des Tors (in `dev` gemergt, ORISO-Frontend#1549; ORISO-Frontend#1688 blendet zusätzlich das
+Thema der Gruppe aus, bis die Person zugestimmt hat):
 
 - **Wer gefragt wird.** Alle Ratsuchenden in einer Gruppe, deren Einwilligung nicht gespeichert
   ist. ADR-022 entscheidet dieses Tor nach dem Einwilligungsstand und verbietet, Anonymität zu
@@ -163,14 +170,14 @@ Regeln des Tors (ausstehend, ORISO-Frontend#1549):
 
 **Datenschutz und Impressum, wie in jedem Chatraum.** Alle in einer laufenden Gruppe — Ratsuchende
 oder Beratende, Text oder Audio/Video — finden beides im ⋮-Menü des Raums. Im Warteraum der
-Ratsuchenden (ausstehend, ORISO-Frontend#1549) stehen sie auf dem Desktop unter der Bühne und auf
+Ratsuchenden (in `dev` gemergt, ORISO-Frontend#1549) stehen sie auf dem Desktop unter der Bühne und auf
 dem Telefon in einem ⋮-Menü „Rechtliches“ in der oberen Leiste. Beide öffnen die Dokumente der
 Beratungsstelle, die die Gruppe führt.
 
 ## 4.10.6 Für Entwickler:innen
 
-Die ersten sechs Punkte **stehen aus** in ORISO-UserService#1241 und ORISO-Frontend#1547; die
-Prüfung des Einladungs-Tokens selbst ist gemergt (ORISO-UserService#1248).
+Die ersten sechs Punkte sind in ORISO-UserService#1241 und ORISO-Frontend#1547 in `dev` gemergt;
+die Prüfung des Einladungs-Tokens ist ebenfalls gemergt (ORISO-UserService#1248).
 
 - `POST /users/askers/new` akzeptiert ein optionales `groupChatId`. Ist es gesetzt, ordnet die
   Registrierung diese Gruppe zu (`user_chat`) und legt **keine** Sitzung an. Die Antwort ist wie
@@ -197,7 +204,7 @@ Prüfung des Einladungs-Tokens selbst ist gemergt (ORISO-UserService#1248).
   in ORISO-UserService setzt für diese Postleitzahl `dataPrivacyConfirmation` und
   `termsAndConditionsConfirmation` auf `null`. Das hängt am Platzhalter des anonymen Live-Chats;
   eine eigene Gruppenregel gibt es nicht.
-- Einwilligungstor (ausstehend, ORISO-Frontend#1549): `SessionItemComponent` zeigt
+- Einwilligungstor (in `dev` gemergt, ORISO-Frontend#1549): `SessionItemComponent` zeigt
   `GroupConsentGate`, wenn die Sitzung eine Gruppe ist, die Person ratsuchend ist und
   `userData.dataPrivacyConfirmation` leer ist. „Einverstanden“ sendet `PATCH /users/data` mit
   `dataPrivacyConfirmation: true` und `termsAndConditionsConfirmation: true`.
@@ -207,8 +214,12 @@ Prüfung des Einladungs-Tokens selbst ist gemergt (ORISO-UserService#1248).
 
 ## 4.10.7 Lieferstand
 
-Am 05.10.2026 aus GitHub gelesen. „Gemergt“ heißt in `dev` gemergt; für diese Seite wurde es nicht
-auf dem Dev-Server geprüft.
+Am 13.10.2026 aus GitHub gelesen. „Gemergt“ heißt in `dev` gemergt. Am 13.10.2026 (etwa 08:00 UTC)
+wurden die laufenden Dev-Deployments gelesen: Das Frontend-Image (Quellrevision `f58354e`, gebaut
+am 12.10.2026, läuft seit 13.10.2026 01:00 UTC) und das UserService-Image (Quellrevision `92ab690`,
+gebaut am 10.10.2026, läuft seit 11.10.2026 01:00 UTC) enthalten beide jeden gemergten Pull Request
+der folgenden Tabelle. Das zeigt, dass der Code auf dem Dev-Server liegt. Es ist **keine** Abnahme:
+Ein Browsertest dieser Abläufe auf dem Dev-Server ist hier nicht festgehalten.
 
 | Baustein | Wo | Stand |
 |---|---|---|
@@ -217,12 +228,16 @@ auf dem Dev-Server geprüft.
 | Gruppenchats bleiben in ihrem Träger | ORISO-UserService#1244 | gemergt (30.09.) |
 | Anklopfen für Beratende, die nicht Mitglied sind | ORISO-UserService#1243, ORISO-Frontend#1548 | beide gemergt (01.10. / 30.09.) |
 | Beratende landen in ihrer eigenen Gruppenansicht; Nichtmitglieder sehen einen Hinweis | ORISO-Frontend#1534 | offen; seine Funktions-Commits sind über #1548 bereits in `dev` |
-| Registrierung über den Link eröffnet keine Anfrage (Backend) | ORISO-UserService#1241 | offen, ausstehend |
-| Registrierung über den Link benennt die Gruppe (Frontend) | ORISO-Frontend#1547 | offen, ausstehend |
-| Datenschutztor vor der ersten Gruppennachricht, Rechtliches-Menü im Warteraum, Gruppentexte beim Beitritt | ORISO-Frontend#1549 (nach #1547) | offen, ausstehend |
-| Automatisches Löschen von Konten aus „Ohne Konto beitreten“ | ORISO-UserService#1247, ORISO-Frontend#1552 (Teil von ORISO-UserService#1001) | beide offen, ausstehend; für #1247 sind im Review Änderungen angefragt |
-| Startzeit und Wiederholung bleiben beim Bearbeiten erhalten | ORISO-UserService#1234, ORISO-Frontend#1527 | beide offen |
-| Chat-Info auf dem Telefon, Anlegeformular, Countdown | ORISO-Frontend#1528, #1529, #1530 | offen |
+| Registrierung über den Link eröffnet keine Anfrage (Backend) | ORISO-UserService#1241 | gemergt (06.10.), auf dem Dev-Server, dort noch nicht getestet |
+| Registrierung über den Link benennt die Gruppe (Frontend) | ORISO-Frontend#1547 | gemergt (06.10.), auf dem Dev-Server, dort noch nicht getestet |
+| Datenschutztor vor der ersten Gruppennachricht, Rechtliches-Menü im Warteraum, Gruppentexte beim Beitritt | ORISO-Frontend#1549 | gemergt (06.10.), auf dem Dev-Server, dort noch nicht getestet |
+| Thema der Gruppe bleibt verborgen, bis das Datenschutztor akzeptiert ist | ORISO-Frontend#1688 | gemergt (09.10.), auf dem Dev-Server, dort noch nicht getestet |
+| Automatisches Löschen von Konten aus „Ohne Konto beitreten“ | ORISO-UserService#1247 (07.10.), ORISO-Frontend#1552 (07.10.) (Teil von ORISO-UserService#1001) | beide gemergt, auf dem Dev-Server, dort noch nicht getestet |
+| „Ohne Konto beitreten“ ausgegraut mit Hinweis bei unvollständigem Einladungslink | ORISO-Frontend#1687 | gemergt (09.10.), auf dem Dev-Server, dort noch nicht getestet |
+| Startzeit und Wiederholung bleiben beim Bearbeiten erhalten | ORISO-UserService#1234 (06.10.), ORISO-Frontend#1527 (06.10.) | beide gemergt, auf dem Dev-Server, dort noch nicht getestet |
+| Anlegeformular: eine Karte auf dem Telefon, Wiederholungsfeld sagt, wie oft | ORISO-Frontend#1530 | gemergt (06.10.), auf dem Dev-Server, dort noch nicht getestet |
+| Chat-Info auf dem Telefon, überfälliger Countdown | ORISO-Frontend#1528, #1529 | offen |
+| End-to-End-Test-Stub für das Anfrage-Team-Panel (nur Test, kein Verhaltenswechsel) | ORISO-Frontend#1591 | gemergt (12.10.) |
 | Einwilligungsverweis pro Gruppenmitgliedschaft | — | nicht begonnen |
 
 **Offene Produktfrage.** Soll der Einstiegsbildschirm sein Einwilligungs-Kontrollkästchen behalten,
