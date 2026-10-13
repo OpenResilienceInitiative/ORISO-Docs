@@ -50,16 +50,14 @@ function glossaryArtifact(root,generation,manifest) {
  for(const match of home.matchAll(/<a[^>]+href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g)) {
   const repository=match[2].match(/data-ua-nodes="([^"]+)"/)?.[1];if(repository)routes.set(repository,match[1]);
  }
- // The deployed Docs route is the Supergraph. Exact IDs are displayed, not invented node-selection queries.
- const superRoute=[...home.matchAll(/<a[^>]+href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g)].find(m=>m[2].includes('Supergraph')&&m[1].startsWith('/docs/'))?.[1];
  const graphMappings=report.graphMappings.map(outcome=>{
   if(outcome.state==='unavailable')return outcome;
   const graph=JSON.parse(fs.readFileSync(path.join(generation,outcome.repository,'.understand-anything/knowledge-graph.json'))),nodes=graph.nodes.filter(n=>n.id===outcome.nodeId);
   if(nodes.length!==1 || nodes[0].type!==graphMappingType(outcome) || !nodes[0].metadata?.glossary?.mappings.some(m=>m.conceptId===outcome.conceptId&&m.state===outcome.state&&m.selectedRevision===outcome.selectedRevision))throw Error('Hub glossary graph mapping differs: '+outcome.nodeId);
   if(outcome.state!=='verified')return outcome;
   if(outcome.repository==='ORISO-Docs') {
-   const supergraph=JSON.parse(fs.readFileSync(path.join(generation,'ORISO-Supergraph/.understand-anything/knowledge-graph.json'))),viewerNodeId='ORISO-Docs::'+outcome.nodeId;
-   return supergraph.nodes.some(n=>n.id===viewerNodeId)&&superRoute?{...outcome,href:superRoute,viewerNodeId}:outcome;
+   // Docs now has its own repository viewer; its validated native IDs are not aggregate IDs.
+   return routes.has(outcome.repository)?{...outcome,href:routes.get(outcome.repository),viewerNodeId:outcome.nodeId}:outcome;
   }
   return routes.has(outcome.repository)?{...outcome,href:routes.get(outcome.repository)}:outcome;
  });
@@ -96,7 +94,8 @@ export function buildHub({root,out,generation,origin,revision,releaseLock,operat
  fs.writeFileSync(path.join(out,'operator-snapshot.json'),JSON.stringify(operator.snapshot)+'\n');
  for(const file of ['index.html','features/index.html','features/de.html','features/en.html']){const target=path.join(out,file),locale=file==='features/en.html'?'en':'de';const section=file==='index.html'?operator.html.de+operator.html.en:operator.html[locale];fs.writeFileSync(target,fs.readFileSync(target,'utf8').replace('</body>',section+'</body>'));}
  const sources=manifest.sources.map(source=>{const graph=JSON.parse(fs.readFileSync(path.join(generation,source.repository,'.understand-anything/knowledge-graph.json')));return {...source,name:source.repository,branch:source.ref.replace(/^refs\/heads\//,''),nodes:graph.nodes.length,calls:callCoverage(graph)};});
- fs.writeFileSync(path.join(out,'status.json'),JSON.stringify({operatorSnapshotHash:operator.snapshot.snapshotHash,operatorStatus:operator.snapshot.status,operatorFieldsConfirmed:operator.operatorFieldsConfirmed,releaseVersion:releaseBinding?.version,releasedAt:manifest.release?.publishedAt,releaseSources:releaseBinding?.sources,branch:refs.join(','),generatedAt:manifest.generatedAt,generationId:manifest.generationId,repositories:sources.length,sources,nodes:sources.reduce((n,s)=>n+s.nodes,0)})+'\n');
+ const aggregates=['ORISO-Platform','ORISO-Supergraph'].map(repository=>{const graph=JSON.parse(fs.readFileSync(path.join(generation,repository,'.understand-anything/knowledge-graph.json')));const sourceCommits=graph.project.sourceCommits;return {repository,name:repository,nodes:graph.nodes.length,sourceCommits,coverage:graph.metadata?.platformNavigation?.repositories||Object.keys(sourceCommits).sort().map(repository=>({repository,status:'included',sourceCommit:sourceCommits[repository]}))};});
+ fs.writeFileSync(path.join(out,'status.json'),JSON.stringify({operatorSnapshotHash:operator.snapshot.snapshotHash,operatorStatus:operator.snapshot.status,operatorFieldsConfirmed:operator.operatorFieldsConfirmed,releaseVersion:releaseBinding?.version,releasedAt:manifest.release?.publishedAt,releaseSources:releaseBinding?.sources,branch:refs.join(','),generatedAt:manifest.generatedAt,generationId:manifest.generationId,repositories:sources.length,sources,aggregates,nodes:sources.reduce((n,s)=>n+s.nodes,0)})+'\n');
  const result={operatorSnapshotHash:operator.snapshot.snapshotHash,operatorFieldsConfirmed:operator.operatorFieldsConfirmed,glossary:{catalogHash:hash(glossary.bytes),documentationRevision:glossary.documentationRevision,sourceVector:glossary.report.sourceVector,sourceBindings:glossary.sourceBindings.length,graphMappings:glossary.report.graphMappings.length},version:1,scope:'understand-hub',state:releaseBinding?'complete':'preview',releaseBinding,origin,sourceRevision:revision,graphGenerationId:manifest.generationId,files:files(out).map(p=>({path:p,sha256:hash(fs.readFileSync(path.join(out,p)))}))};
  fs.writeFileSync(path.join(out,'hub-manifest.json'),JSON.stringify(result)+'\n');return result;
 }

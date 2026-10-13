@@ -247,6 +247,12 @@ html[data-lang="en"] [lang="de"]{display:none !important}
 .langswitch button[aria-pressed="true"]{background:var(--brand);color:var(--on-brand)}
 .langswitch button:hover:not([aria-pressed="true"]){color:var(--ink)}
 
+/* Exact revisions remain copyable on narrow screens. */
+.source-table{max-width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius)}
+.source-table table{border-collapse:collapse;width:100%;font-size:13px;text-align:left}
+.source-table th,.source-table td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top}
+.source-table td:nth-child(2){font-family:var(--mono);overflow-wrap:anywhere;min-width:180px}
+.source-table:focus-visible{outline:3px solid var(--brand);outline-offset:3px}
 /* Domain glossary: use the same cards, colors and language states as the hub. */
 .glossary-page [hidden]{display:none !important}
 .skip-link{position:absolute;left:var(--pad);top:-100px;padding:8px 12px;background:var(--card);

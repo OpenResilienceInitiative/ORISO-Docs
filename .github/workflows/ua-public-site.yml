@@ -34,6 +34,7 @@ jobs:
       - run: PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tools/understand-anything/hosted-viewer -p "*_test.py"
       - run: python3 tools/understand-anything/install.py --runtime-root "$RUNNER_TEMP/ua-contract-runtime"
       - run: node tools/understand-anything/hosted-viewer/runtime-test.mjs --upstream "$RUNNER_TEMP/ua-contract-runtime/current/upstream"
+      - run: UNDERSTAND_TEST_UPSTREAM="$RUNNER_TEMP/ua-contract-runtime/current/upstream" node --test tools/understand-anything/hosted-viewer/production.test.mjs
   binding:
     if: github.event_name == 'repository_dispatch' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
@@ -43,6 +44,8 @@ jobs:
           UNDERSTAND_RUNNER_LABELS: ${{ vars.UNDERSTAND_RUNNER_LABELS }}
           UNDERSTAND_HUB_ROOT: ${{ vars.UNDERSTAND_HUB_ROOT }}
           UNDERSTAND_HUB_CURRENT: ${{ vars.UNDERSTAND_HUB_CURRENT }}
+          UNDERSTAND_STATIC_ROOT: ${{ vars.UNDERSTAND_STATIC_ROOT }}
+          UNDERSTAND_ATTEMPT_RECEIPT: ${{ vars.UNDERSTAND_ATTEMPT_RECEIPT }}
           UNDERSTAND_RUNTIME_ROOT: ${{ vars.UNDERSTAND_RUNTIME_ROOT }}
           UNDERSTAND_COMPOSE_FILE: ${{ vars.UNDERSTAND_COMPOSE_FILE }}
           UNDERSTAND_VIEWER_BINDINGS: ${{ vars.UNDERSTAND_VIEWER_BINDINGS }}
@@ -50,7 +53,7 @@ jobs:
           UNDERSTAND_VIEWER_READBACK_TOKENS: ${{ secrets.UNDERSTAND_VIEWER_READBACK_TOKENS }}
         run: |
           node - <<'NODE'
-          const keys=['UNDERSTAND_RUNNER_LABELS','UNDERSTAND_HUB_ROOT','UNDERSTAND_HUB_CURRENT','UNDERSTAND_RUNTIME_ROOT','UNDERSTAND_COMPOSE_FILE','UNDERSTAND_SOURCE_ROOT','UNDERSTAND_VIEWER_BINDINGS','UNDERSTAND_VIEWER_READBACK_TOKENS'];
+          const keys=['UNDERSTAND_RUNNER_LABELS','UNDERSTAND_HUB_ROOT','UNDERSTAND_HUB_CURRENT','UNDERSTAND_STATIC_ROOT','UNDERSTAND_ATTEMPT_RECEIPT','UNDERSTAND_RUNTIME_ROOT','UNDERSTAND_COMPOSE_FILE','UNDERSTAND_SOURCE_ROOT','UNDERSTAND_VIEWER_BINDINGS','UNDERSTAND_VIEWER_READBACK_TOKENS'];
           const missing=keys.filter(k=>!process.env[k]);if(missing.length)throw Error('Missing Understand installation binding: '+missing.join(', '));
           const labels=JSON.parse(process.env.UNDERSTAND_RUNNER_LABELS);if(!Array.isArray(labels)||!labels.includes('self-hosted'))throw Error('Explicit self-hosted Understand runner required');
           for(const key of keys.filter(k=>!['UNDERSTAND_RUNNER_LABELS','UNDERSTAND_VIEWER_SERVICE','UNDERSTAND_VIEWER_BINDINGS','UNDERSTAND_VIEWER_READBACK_TOKENS'].includes(k)))if(!process.env[key].startsWith('/'))throw Error('Absolute binding required: '+key);
@@ -86,6 +89,7 @@ jobs:
         run: echo "revision=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
       - run: python3 tools/understand-anything/install.py --runtime-root "$RUNNER_TEMP/ua-runtime"
       - run: node tools/understand-anything/hosted-viewer/runtime-test.mjs --upstream "$RUNNER_TEMP/ua-runtime/current/upstream"
+      - run: UNDERSTAND_TEST_UPSTREAM="$RUNNER_TEMP/ua-runtime/current/upstream" node --test tools/understand-anything/hosted-viewer/production.test.mjs
       - run: PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tools/understand-anything/hosted-viewer -p "*_test.py"
       - run: node --test tools/understand-anything/glossary/test/*.test.mjs tools/understand-anything/site/hub/test/*.test.mjs tools/understand-anything/hosted-viewer/*.test.mjs
       - name: Produce public-only validated generation
@@ -101,6 +105,7 @@ jobs:
           PYTHONPATH="$UA_TOOLING" python3 -m bundle refresh verify --base "$RUNNER_TEMP/ua-base" --tools "$UA_TOOLING" --publish-root "$RUNNER_TEMP/ua-published" "${REPO_ARGS[@]}"
           PYTHONPATH="$UA_TOOLING" python3 -m bundle validate "$RUNNER_TEMP/ua-published/current"
           node tools/understand-anything/site/hub/publication.mjs --root "$PWD" --out "$RUNNER_TEMP/ua-artifact/hub" --generation "$RUNNER_TEMP/ua-published/current" --origin https://understand.oriso.org --revision "$(git rev-parse HEAD)" --release-manifest "$RUNNER_TEMP/platform-release.json"
+          node tools/understand-anything/hosted-viewer/production.mjs --build --dist "$RUNNER_TEMP/ua-runtime/current/upstream/understand-anything-plugin/packages/dashboard/dist" --out "$RUNNER_TEMP/ua-artifact/viewer" --revision "$(git rev-parse HEAD)"
           cp -R -L "$RUNNER_TEMP/ua-published/current" "$RUNNER_TEMP/ua-artifact/generation"
       - uses: actions/upload-artifact@v4
         with: {name: 'understand-public-${{ github.run_id }}', path: '${{ runner.temp }}/ua-artifact/', if-no-files-found: error}
@@ -108,6 +113,8 @@ jobs:
     needs: [binding, produce]
     runs-on: ${{ fromJSON(vars.UNDERSTAND_RUNNER_LABELS || '["ubuntu-latest"]') }}
     timeout-minutes: 80
+    outputs:
+      phase: ${{ steps.phase.outputs.phase }}
     steps:
       - uses: actions/checkout@v4
         with: {ref: '${{ needs.produce.outputs.revision }}', persist-credentials: false, fetch-depth: 0}
@@ -118,34 +125,46 @@ jobs:
       - run: python3 -m pip install PyYAML==6.0.2
       - uses: actions/setup-node@v4
         with: {node-version: '24'}
-      - name: Install exact pinned patched viewer and validated public sources
+      - name: Install production viewers and hub; roll back on installation or public readback failure
         env:
           UNDERSTAND_RUNTIME_ROOT: ${{ vars.UNDERSTAND_RUNTIME_ROOT }}
           UNDERSTAND_SOURCE_ROOT: ${{ vars.UNDERSTAND_SOURCE_ROOT }}
-        run: |
-          python3 tools/understand-anything/install.py --runtime-root "$UNDERSTAND_RUNTIME_ROOT"
-          python3 tools/understand-anything/hosted-viewer/consumer.py --generation "$RUNNER_TEMP/ua-artifact/generation" --source-root "$UNDERSTAND_SOURCE_ROOT"
-      - name: Bind existing viewer compose service explicitly
-        env:
-          UNDERSTAND_RUNTIME_ROOT: ${{ vars.UNDERSTAND_RUNTIME_ROOT }}
-          UNDERSTAND_SOURCE_ROOT: ${{ vars.UNDERSTAND_SOURCE_ROOT }}
+          UNDERSTAND_STATIC_ROOT: ${{ vars.UNDERSTAND_STATIC_ROOT }}
           UNDERSTAND_COMPOSE_FILE: ${{ vars.UNDERSTAND_COMPOSE_FILE }}
           UNDERSTAND_VIEWER_BINDINGS: ${{ vars.UNDERSTAND_VIEWER_BINDINGS }}
-        run: |
-          printf '%s' "$UNDERSTAND_VIEWER_BINDINGS" > "$RUNNER_TEMP/ua-viewer-bindings.json"
-          python3 tools/understand-anything/hosted-viewer/configure-source-mounts.py --compose "$UNDERSTAND_COMPOSE_FILE" --source-root "$UNDERSTAND_SOURCE_ROOT/current" --runtime-root "$UNDERSTAND_RUNTIME_ROOT" --bindings "$RUNNER_TEMP/ua-viewer-bindings.json" --manifest "$RUNNER_TEMP/ua-artifact/generation/manifest.json"
-          mapfile -t VIEWER_SERVICES < <(python3 -c 'import json,sys; print("\n".join(v["service"] for v in json.load(open(sys.argv[1]))))' "$RUNNER_TEMP/ua-viewer-bindings.json")
-          docker compose -f "$UNDERSTAND_COMPOSE_FILE" up -d --force-recreate "${VIEWER_SERVICES[@]}"
-      - name: Install immutable hub and verify actual public bytes
-        env:
           UNDERSTAND_HUB_ROOT: ${{ vars.UNDERSTAND_HUB_ROOT }}
           UNDERSTAND_HUB_CURRENT: ${{ vars.UNDERSTAND_HUB_CURRENT }}
+          UNDERSTAND_VIEWER_READBACK_TOKENS: ${{ secrets.UNDERSTAND_VIEWER_READBACK_TOKENS }}
           REVISION: ${{ needs.produce.outputs.revision }}
         run: |
-          node tools/understand-anything/site/hub/publication.mjs --install --artifact "$RUNNER_TEMP/ua-artifact/hub" --destination "$UNDERSTAND_HUB_ROOT" --current-link "$UNDERSTAND_HUB_CURRENT" --origin https://understand.oriso.org --revision "$REVISION"
-          node tools/understand-anything/site/hub/publication.mjs --readback --manifest "$RUNNER_TEMP/ua-artifact/hub/hub-manifest.json"
-      - name: Verify actual viewer source bytes
+          printf '%s' "$UNDERSTAND_VIEWER_BINDINGS" > "$RUNNER_TEMP/ua-viewer-bindings.json"
+          python3 tools/understand-anything/hosted-viewer/activation.py --link "$UNDERSTAND_RUNTIME_ROOT/current" --link "$UNDERSTAND_SOURCE_ROOT/current" --link "$UNDERSTAND_STATIC_ROOT/current" --link "$UNDERSTAND_HUB_CURRENT" --compose "$UNDERSTAND_COMPOSE_FILE" --journal "$UNDERSTAND_HUB_ROOT/activation-attempts/$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" --bindings "$RUNNER_TEMP/ua-viewer-bindings.json" -- bash tools/understand-anything/hosted-viewer/activate.sh
+      - id: phase
+        if: always()
+        run: |
+          if [ -f "$RUNNER_TEMP/ua-activation-phase" ]; then
+            echo "phase=$(cat "$RUNNER_TEMP/ua-activation-phase")" >> "$GITHUB_OUTPUT"
+          else
+            echo "phase=installation" >> "$GITHUB_OUTPUT"
+          fi
+  record-attempt:
+    needs: [contracts, binding, produce, consume]
+    if: always() && (github.event_name == 'repository_dispatch' || github.event_name == 'workflow_dispatch')
+    runs-on: ${{ fromJSON(vars.UNDERSTAND_RUNNER_LABELS || '["ubuntu-latest"]') }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: '${{ needs.produce.outputs.revision || github.sha }}', persist-credentials: false}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24'}
+      - name: Record a sanitized refresh receipt independently of the immutable installed hub
         env:
-          UNDERSTAND_SOURCE_ROOT: ${{ vars.UNDERSTAND_SOURCE_ROOT }}
-          UNDERSTAND_VIEWER_READBACK_TOKENS: ${{ secrets.UNDERSTAND_VIEWER_READBACK_TOKENS }}
-        run: python3 tools/understand-anything/hosted-viewer/readback.py --source-root "$UNDERSTAND_SOURCE_ROOT" --bindings "$RUNNER_TEMP/ua-viewer-bindings.json"
+          UNDERSTAND_ATTEMPT_RECEIPT: ${{ vars.UNDERSTAND_ATTEMPT_RECEIPT }}
+          UNDERSTAND_HUB_CURRENT: ${{ vars.UNDERSTAND_HUB_CURRENT }}
+          CONTRACT_RESULT: ${{ needs.contracts.result }}
+          BINDING_RESULT: ${{ needs.binding.result }}
+          PRODUCER_RESULT: ${{ needs.produce.result }}
+          CONSUMER_RESULT: ${{ needs.consume.result }}
+          CONSUMER_PHASE: ${{ needs.consume.outputs.phase }}
+        run: |
+          node tools/understand-anything/site/hub/attempt.mjs --from-workflow --output "$UNDERSTAND_ATTEMPT_RECEIPT" --current "$UNDERSTAND_HUB_CURRENT" --event "$GITHUB_EVENT_PATH" --attempt-id "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"

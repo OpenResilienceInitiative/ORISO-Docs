@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ORISO Understand</title>
+<meta name="robots" content="noindex">
 <meta name="description" content="Wie ORISO gebaut ist: Feature-Erklärungen, Code-Wissensgraphen je Repository, Doku und Rechtliches. — How ORISO is built: feature explanations, code knowledge graphs per repository, documentation and legal.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -59,7 +60,7 @@
 <div class="wrap">
 
   <div class="meta">
-    <div><div class="vlabel"><span lang="de">Letzter Lauf</span><span lang="en">Last run</span></div><div class="vvalue" data-ua="built">…</div></div>
+    <div><div class="vlabel"><span lang="de">Installierte Generation</span><span lang="en">Installed generation</span></div><div class="vvalue" data-ua="built">…</div></div>
     <div><div class="vlabel"><span lang="de">Quelle</span><span lang="en">Source</span></div><div class="vvalue"><span lang="de">Referenzen</span><span lang="en">Refs</span> <span class="mono" data-ua="branch">–</span></div></div>
     <div><div class="vlabel"><span lang="de">Repositorien</span><span lang="en">Repositories</span></div><div class="vvalue" data-ua="repositories">…</div></div>
     <div><div class="vlabel"><span lang="de">Knoten insgesamt</span><span lang="en">Nodes in total</span></div><div class="vvalue" data-ua="nodes">…</div></div>
@@ -109,11 +110,19 @@
     <div class="ch"><span class="chapter-no">2</span><h2><span lang="de">Code</span><span lang="en">Code</span></h2>
       <span class="sub2"><span lang="de">Supergraph für den Überblick, einzelne Repository-Graphen für die Details</span><span lang="en">Supergraph for the overview, individual repository graphs for the details</span></span></div>
 
-    <h3 id="supergraph"><span lang="de">Plattformüberblick: Supergraph</span><span lang="en">Platform overview: Supergraph</span></h3>
+    <h3 id="supergraph"><span lang="de">Plattform und Repositories</span><span lang="en">Platform and repositories</span></h3>
     <div class="cards">
+      <a class="card" href="/platform/?token=oriso-platform-dashboard">
+        <div class="t"><span><span lang="de">Plattformüberblick</span><span lang="en">Platform overview</span></span><span class="n" data-ua-nodes="ORISO-Platform">…</span></div>
+        <div class="d"><span lang="de">Dienste und verfügbare, quellenbelegte Endpunkt-Verbindungen. Ein geführter Einstieg in die Plattform; anschließend im zuständigen Repository weiterlesen.</span><span lang="en">Services and available source-evidenced endpoint connections. A guided introduction to the platform, with links to the responsible repository.</span></div>
+        <div class="src" data-ua-coverage="ORISO-Platform"><span lang="de">Quellabdeckung wird geladen.</span><span lang="en">Loading source coverage.</span></div></a>
+      <a class="card" href="/supergraph/?token=oriso-supergraph-dashboard">
+        <div class="t"><span>Supergraph</span><span class="n" data-ua-nodes="ORISO-Supergraph">…</span></div>
+        <div class="d"><span lang="de">Die eingebundenen Repository-Graphen gemeinsam. Schlüsselwort-basierte Abhängigkeiten sind abgeleitete Hinweise; sie bestätigen keine Laufzeit-Verbindung.</span><span lang="en">The included repository graphs together. Keyword-based dependencies are inferred leads; they do not confirm runtime connections.</span></div>
+        <div class="src" data-ua-coverage="ORISO-Supergraph"><span lang="de">Quellabdeckung wird geladen.</span><span lang="en">Loading source coverage.</span></div></a>
       <a class="card" href="/docs/?token=oriso-docs-dashboard">
-        <div class="t"><span><span lang="de">Supergraph — gesamte ORISO-Plattform</span><span lang="en">Supergraph — the entire ORISO platform</span></span></div>
-        <div class="d"><span lang="de">Der gemeinsame Graph über alle eingebundenen Repositories: Dienste, API-Endpunkte, Architektur-Ebenen und Verbindungen zwischen den Projekten. Hier starten, wenn noch nicht klar ist, welches Repository zuständig ist; anschließend im jeweiligen Detailgraphen weitergehen.</span><span lang="en">The combined graph across the included repositories: services, API endpoints, architecture layers and cross-project relationships. Start here to find the responsible repository, then explore its detailed graph.</span></div></a>
+        <div class="t"><span><span lang="de">Docs-Repository</span><span lang="en">Docs repository</span></span><span class="n" data-ua-nodes="ORISO-Docs">…</span></div>
+        <div class="d"><span lang="de">Der einzelne Graph des Dokumentations-Repositorys mit Architekturentscheidungen und Werkzeugen.</span><span lang="en">The separate documentation repository graph, including architecture decisions and tooling.</span></div></a>
     </div>
 
     <h3><span lang="de">Anwendung</span><span lang="en">Application</span></h3>
@@ -153,6 +162,9 @@
       <a class="card" href="/helm/?token=oriso-helm-dashboard">
         <div class="t"><span>Helm</span><span class="n" data-ua-nodes="ORISO-Helm">…</span></div>
         <div class="d"><span lang="de">Auslieferung: Charts, Werte, Ingress.</span><span lang="en">Delivery: charts, values, ingress.</span></div></a>
+      <a class="card" href="/kubernetes/?token=oriso-kubernetes-dashboard">
+        <div class="t"><span>Kubernetes · <span lang="de">historisch</span><span lang="en">historical</span></span><span class="n" data-ua-nodes="ORISO-Kubernetes">…</span></div>
+        <div class="d"><span lang="de">Quellgraph der früheren Kubernetes-Konfiguration. Er zeigt keinen aktuellen Cluster-Zustand.</span><span lang="en">Source graph of the retired Kubernetes configuration. It does not show current cluster state.</span></div></a>
       <a class="card" href="/element-call/?token=oriso-elementcall-dashboard">
         <div class="t"><span>ElementCall</span><span class="n" data-ua-nodes="ORISO-ElementCall">…</span></div>
         <div class="d"><span lang="de">Video- und Sprachgespräche.</span><span lang="en">Video and voice calls.</span></div></a>
@@ -202,6 +214,10 @@
   <section id="frische">
     <div class="ch"><span class="chapter-no">4</span><h2><span lang="de">Frische</span><span lang="en">Freshness</span></h2></div>
     <div class="prose"><p>Release: <span data-ua="release">–</span> · <span lang="de">Veröffentlicht</span><span lang="en">Released</span>: <span data-ua="released">–</span></p><p><span lang="de">Der Status zeigt den gebundenen Release, Quellreferenzen und Erstellungszeit der installierten Generation. Aktualisierungen folgen tatsächlichen Plattform-Releases. Das Alter allein macht einen Release nicht veraltet. Feature-Zusammenfassungen verweisen auf kanonische Quellen mit Hash und Revision.</span><span lang="en">Status shows the bound release, source references and generation time of the installed generation. Updates follow actual platform releases. Age alone does not make a release stale. Feature summaries link canonical sources with hash and revision.</span></p>
+    </div>
+    <p class="src" data-ua="attempt" role="status" aria-live="polite"><span lang="de">Aktualisierungsnachweis wird geladen.</span><span lang="en">Loading refresh receipt.</span></p>
+    <div class="source-table" tabindex="0" role="region" aria-label="Quellrevisionen / Source revisions">
+      <table><thead><tr><th>Repository</th><th><span lang="de">Vollständige Quellrevision</span><span lang="en">Full source revision</span></th><th><span lang="de">Quellreferenz</span><span lang="en">Source ref</span></th><th><span lang="de">Generation erstellt</span><span lang="en">Generation created</span></th></tr></thead><tbody data-ua="source-list"></tbody></table>
     </div>
   </section>
 

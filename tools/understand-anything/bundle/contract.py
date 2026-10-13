@@ -554,9 +554,21 @@ def seal(root, sources, generation_id=None, now=None, expected_refs=None, releas
     ]
     graphs = []
     latest_reviews = {}
+    configs = {}
     # Preflight every output before stamping anything; malformed/old output is not repaired.
     for name, kind, inputs in specs:
         directory = root / name / ".understand-anything"
+        config_path = directory / "config.json"
+        input_config = read_json(config_path) if config_path.exists() else {}
+        require(isinstance(input_config, dict), "analysis config must be an object")
+        configs[name] = {"autoUpdate": False}
+        if "outputLanguage" in input_config:
+            language = input_config["outputLanguage"]
+            # Canonical values in the pinned dashboard's supported locale catalogue.
+            require(isinstance(language, str) and language in
+                    {"en", "de", "zh", "zh-TW", "ja", "ko", "ru"},
+                    "unsupported or malformed outputLanguage")
+            configs[name]["outputLanguage"] = language
         graph = read_json(directory / "knowledge-graph.json")
         graph_check(graph)
         latest_reviews[name] = latest_claim_review(graph, now)
@@ -664,7 +676,7 @@ def seal(root, sources, generation_id=None, now=None, expected_refs=None, releas
                 },
             )
         # Semantic recency is never inferred from filesystem mtime or build time.
-        write_json(directory / "config.json", {"autoUpdate": False})
+        write_json(directory / "config.json", configs[spec["repository"]])
         write_json(
             directory / "depth.json",
             {

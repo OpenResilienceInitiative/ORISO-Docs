@@ -1,0 +1,20 @@
+{
+  "ORISO-Platform": "/platform/",
+  "ORISO-Supergraph": "/supergraph/",
+  "ORISO-Docs": "/docs/",
+  "ORISO-Admin": "/admin-service/",
+  "ORISO-Frontend": "/frontend/",
+  "ORISO-UserService": "/user-service/",
+  "ORISO-AgencyService": "/agency-service/",
+  "ORISO-TenantService": "/tenant-service/",
+  "ORISO-ConsultingTypeService": "/consulting-type-service/",
+  "ORISO-Database": "/database/",
+  "ORISO-Keycloak": "/keycloak/",
+  "ORISO-Helm": "/helm/",
+  "ORISO-Kubernetes": "/kubernetes/",
+  "ORISO-ElementCall": "/element-call/",
+  "ORISO-Livekit": "/livekit/",
+  "ORISO-HealthDashboard": "/health-dashboard/",
+  "ORISO-Status": "/status/",
+  "ORISO-SigNoz": "/signoz/"
+}
