@@ -87,6 +87,7 @@ oriso-platform/dsfa-text/drafts/2026-09-30-v5-draft/manifest.json # DPIA own pub
 oriso-platform/dsfa-text/evidence-map-v2.json # DPIA own public documentation reference or exact regression fixture
 oriso-platform/dsfa-text/evidence-map.yaml # DPIA own public documentation reference or exact regression fixture
 oriso-platform/dsfa-text/kap-06-verfahren-und-technik.md # DPIA own public documentation reference or exact regression fixture
+oriso-platform/dsfa-text/drafts/2026-09-30-v5-draft/historical-source/kap-06-verfahren-und-technik.md # Exact immutable source at ae32ab5462488b6b21a92f868563792c3df3902a, SHA-256 a210a0a255203ad54052ff1226166f1872576bebf82d848b3ab68692059be728; preserves the original already-allowlisted public documentation link
 tools/audit/dsfa-status-2026-09-05.md # DPIA own public documentation reference or exact regression fixture
 tools/dsfa_draft.py # DPIA own public documentation reference or exact regression fixture
 tools/test_dsfa_draft.py # DPIA own public documentation reference or exact regression fixture
