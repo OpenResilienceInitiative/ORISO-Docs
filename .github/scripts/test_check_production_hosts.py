@@ -1,5 +1,6 @@
 """Tests for check_production_hosts.py (run: python3 -m unittest discover -s .github/scripts -p 'test_*.py')."""
 
+import fnmatch
 import subprocess
 import sys
 import tempfile
@@ -82,6 +83,27 @@ class GuardTest(unittest.TestCase):
         self.assertEqual(
             self.run_guard(), ["allowlist.txt: entry 'gone.md' matches no tracked file"]
         )
+
+    def test_exact_historical_capture_is_allowed_but_neighbors_and_guides_are_not(self):
+        archive = (
+            "oriso-platform/dsfa-text/drafts/2026-09-30-v5-draft/"
+            "historical-source/kap-06-verfahren-und-technik.md"
+        )
+        neighbor = archive.replace("kap-06-", "new-kap-06-")
+        for path in (archive, neighbor, "guide.mdx"):
+            self.write(path, f"https://{HOST}\n")
+        repository = Path(__file__).resolve().parents[2]
+        applicable = [
+            pattern
+            for pattern in guard.read_allowlist(repository / guard.DEFAULT_ALLOWLIST)
+            if fnmatch.fnmatchcase(archive, pattern)
+        ]
+        self.allow(*applicable)
+
+        self.assertEqual(
+            self.run_guard(), [f"guide.mdx:1: {HOST}", f"{neighbor}:1: {HOST}"]
+        )
+        self.assertEqual(applicable, [archive])
 
     def test_main_exits_non_zero_and_names_the_hit(self):
         self.write("guide.mdx", f"https://{HOST}\n")
