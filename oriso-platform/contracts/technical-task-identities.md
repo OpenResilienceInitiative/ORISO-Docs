@@ -1,3 +1,84 @@
+# Technical task identities — current scenario C contract
+
+**Status:** Coordinated source preparation, not a complete implementation or deployment. [Parent367](https://github.com/OpenResilienceInitiative/ORISO-Helm/issues/367), [C coordination423](https://github.com/OpenResilienceInitiative/ORISO-Helm/issues/423), [ADR-027](../decisions/ADR-027-restricted-task-identities-and-keycloak-commands.md).
+
+The selected target has five automatic actors. Existing operation purposes remain so tenant, invitation, reservation, account and originating human checks keep their meaning. The historical fourteen-credential contract is retained below; it must not be used to enable C.
+
+## Five-actor receiving contract
+
+**For developers — shared naming, capability unions and staged receiver binding:**
+```text
+SETUP / backend-setup
+  CONFIG_WIZARD, INVITE_RESERVATIONS, CONSULTANT_IMPORT
+  config-wizard, invitation-reservations, consultant-import
+ACCOUNT_CREATE / backend-account-create
+  ACCOUNT_PROVISIONING
+  account-provisioning, account-read
+ACCOUNT_ADMIN / backend-account-admin
+  ACCOUNT_MAINTENANCE, OTP, SESSION_EXCHANGE
+  account-maintenance, account-read, otp-config-admin, session-exchange
+MAIL / backend-mail
+  SMTP_SYNC, SYSTEM_EMAIL_DELIVERY, NOTIFICATION_DISPATCH
+  smtp-sync, system-email-delivery, notification-dispatch, notifications-technical
+RUNTIME / backend-runtime
+  RUNTIME_POLICY, MATRIX_AGENCY, APPOINTMENT_SYNC, APPOINTMENT_CLEANUP
+  runtime-policy, matrix-agency, matrix-agency-provision,
+  appointment-sync, appointment-participant-cleanup
+
+Opt-in receiver model:TASK_IDENTITY_MODEL=FIVE_ACTORS.
+Absent model preserves existing bindings during staged migration.
+Blank/unknown models fail; grouped mode never falls back to task credentials.
+Binding:IDENTITY_<ACTOR>_CLIENT_ID + IDENTITY_<ACTOR>_SERVICE_SUBJECT.
+TASK_IDENTITY_REQUIRED_TASKS selects required logical purposes, not credentials.
+Only purposes expressly enabled may authorize an actor at that receiver.
+Same actor:one binding; different actors:distinct client and subject.
+Token:exact actor role union, valid issuer/expiry/audience/sub/azp,
+no extra direct/inherited/default/client-management grant.
+Configured machine actors never fall through ordinary human authorization.
+```
+
+The capability unions are a coordinated receiver contract, not native management grants. Account capabilities still need proved native group policies. No five-actor production registry or caller cutover is claimed by the receiver-preparation slice. Existing legacy bindings remain until coordinated deployment and consumer verification.
+
+## Human role migration
+
+Every known exact human-role combination maps to one explicitly reviewed group. The migration may establish only mapped groups using existing roles. It compares effective realm and client grants before membership, verifies them after membership and removes direct mappings only after readback. Unknown/ambiguous combinations, service accounts and technical anomalies remain unchanged and are reported. A second apply is stable; dry-run performs no mutation. Failure paths preserve or restore the old effective grants.
+
+Native policy enablement follows the migration, never happens implicitly inside it. Protected platform/Traeger groups and ordinary centre-admin combined groups follow424; generic role-name guessing is forbidden.
+
+## Account, OTP and creation recovery
+
+Native ordinary-role membership is the intended replacement for account command role mapping. The old account-provider endpoints below are porting history, not C APIs. Durable creation ownership, journal/execution fencing, disabled-until-valid-commit behavior, mutually exclusive commit/compensation and same-attempt retry guarantees remain required.
+
+The native activation/recovery algorithm and protected-admin invitation route are unresolved. A native user lookup does not equal a recovery tombstone, and an unconditional enable retry can undo an independent disable. Until those contracts are proved, the production adapter is not replaced. Pending cleanup is owned by account administration after ordinary commit; protected creation requires its separately recorded owner/flow.
+
+OTP keeps the accepted vendored SPI. Its exact actor and permitted-target checks need separate HTTP proof; a native delete-credential test does not establish OTP setup, verification, email behavior or Magic Link session exchange.
+
+## SMTP control boundary
+
+[Keycloak57](https://github.com/OpenResilienceInitiative/ORISO-Keycloak/issues/57) owns the failed native field limit and receiving-boundary decision. [Helm430](https://github.com/OpenResilienceInitiative/ORISO-Helm/pull/430) records the real-token result. Ordinary grouped mail never receives native realm management.
+
+The standalone SMTP-only alternative is an unactivated proposal, not a restored account provider. Its schema, revision/idempotence and purpose-proof tests must be recorded before packaging or cutover. The current isolated SMTP control credential remains isolated meanwhile; any exception to five actors must be explicit and technically accepted.
+
+## Cross-service context and retained acceptance
+
+**For developers — one-key direction and unchanged security outcomes:**
+```text
+Managed ORISO_TASK_CONTEXT_KEY:at least32 decoded random bytes,
+distinct from actor client secrets; one key for purpose-separated proofs.
+Bind purpose,operation,actor,tenant,realm/target and full canonical payload.
+Short expiry and retry/idempotence limits; no unsigned HTTP origin context.
+No weakening of receiver tenant/target/invitation/reservation checks.
+No native management shortcut, password-user fallback or silent extra actor.
+Fresh install, existing realm, twice reconcile, unknown consumer/reservation
+retirement, real-token matrix and fail-closed startup remain required.
+```
+
+Every original38 story is retained through the existing parent and seven repo packages. Review source/local proof, actual CI, human approval, merge, installed revision, browser journeys and received-mail evidence separately. A partial-source PR closes none of the product acceptance gates by implication.
+
+## Historical option D wire contract — retained porting input
+
+The complete old contract below is preserved for comparisons and recovery requirements. Its clients, keys and custom account/SMTP endpoints are superseded as the C implementation target.
+
 # Technical task identities — implementation contract
 
 **Status:** Coordinated implementation proposal, not deployment proof. Parent specification: [Helm #367](https://github.com/OpenResilienceInitiative/ORISO-Helm/issues/367). Decision: [ADR-027](../decisions/ADR-027-restricted-task-identities-and-keycloak-commands.md).

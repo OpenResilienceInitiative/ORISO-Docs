@@ -1,3 +1,85 @@
+# ADR-027 — Scenario C task identities and native permission boundaries
+
+**Status:** Proposed; technical approval and production cutover remain open. **Updated:** 2026-10-14.
+**Accountable delivery owner:** Frank Gerhardt (Storypapst). **Technical reviewers:** Hassan Saeed and Shazia Kausar.
+**Scope:** Keycloak, UserService, TenantService, AgencyService, ConsultingTypeService and Helm.
+**Delivery:** [Helm367](https://github.com/OpenResilienceInitiative/ORISO-Helm/issues/367), [C coordination423](https://github.com/OpenResilienceInitiative/ORISO-Helm/issues/423), [Docs175](https://github.com/OpenResilienceInitiative/ORISO-Docs/issues/175).
+
+## Current decision: scenario C
+
+Hassan and Shazia selected scenario C on9 October2026: five grouped automatic identities, ORISO receiver checks and native Keycloak account permissions where the spike proves the required limits. The earlier fourteen-identity account-provider proposal below is superseded as the implementation target. All38 user-story outcomes remain required; choosing C does not remove account ownership, recovery, tenant boundaries or mail acceptance.
+
+The Config Wizard still runs through an invitation before the invited person's completed account exists. Its backend operations belong to the setup identity. The eventual human role comes from the invitation; a grouped automatic identity is not a new administrator role for the person completing setup.
+
+| Automatic identity | Responsibilities |
+| --- | --- |
+| Setup | Config Wizard, invitation reservation allocation/cleanup, controlled consultant import |
+| Account creation | Initial ordinary account provisioning and its own unfinished attempts |
+| Account administration | Authorized existing-account maintenance, second-factor administration, explicitly preserved session compatibility |
+| Mail | Delivery, notification dispatch and a proved bounded SMTP control operation |
+| Runtime | Policy reads, Matrix operations, appointment synchronization and participant cleanup |
+
+Five credential bindings do not mean five generic permission checks. The operation purposes remain explicit, with the same originating human, tenant, target, invitation and reservation checks. Effective roles, audiences, client, service-account subject and forbidden inherited grants must be checked at each receiver. Identical credentials are valid only for purposes mapped to the same actor; collisions between actors fail startup.
+
+## Native account policy and human groups
+
+The native spike shows ordinary account creation and maintenance can be limited through role groups. Direct role mapping is not a substitute: the spike demonstrated that role-mapping power reaches protected users. Native management shortcuts bypass the group model.
+
+Existing human roles must migrate to one explicitly reviewed combined group per exact account kind, preserving effective realm and client roles. Unknown combinations and technical principals are reported and left untouched. Ordinary counselling-centre-admin combinations may use ordinary human-role groups as specified in424. Platform and Traeger administrators remain protected. Group migration and policy enablement are separate changes; an opt-in migration tool never turns on native enforcement.
+
+**For developers — native group and grant contract:**
+```text
+/pending-provisioning
+/human-roles/<explicit combined kind>
+/protected-admins/<explicit protected kind>
+Groups-only FGAP; no global Users/Roles permission shortcut.
+Runtime actors: no manage-users, view-users, realm-admin or manage-realm.
+Creation commit via group join; pending cleanup belongs to account-admin.
+Unknown mappings: report, do not guess. Dry-run: no receiver mutation.
+```
+
+The six native-spike guarantees are isolated receiver evidence, not full production lifecycle proof. Native group join removes the creation actor's access. Disabled pending-account activation, uncertain HTTP outcomes, durable attempt fencing and retries after an independent administrator disables the account must be proved before replacing the creation journal adapter. Protected platform/Traeger invitation provisioning also needs an explicit privileged owner and flow; ordinary actors must not gain protected-role assignment merely to complete setup.
+
+## SMTP native gap and bounded alternative
+
+The new [native SMTP proof](https://github.com/OpenResilienceInitiative/ORISO-Helm/pull/430) shows native realm management accepts SMTP plus unrelated settings. With native fine-grained administration enabled, that same permission can edit the permission store and grant itself user-management access. Ordinary mail callers must not receive it.
+
+**For developers — actual isolated Keycloak26.6.3 evidence:**
+```text
+Six methods, zero skips; tests/keycloak_native_smtp_permissions_test.py.
+SMTP, unrelated and mixed realm updates:204 with manage-realm.
+FGAP self-grant:policy201 + Users/manage permission201, user update204.
+Ordinary mail and foreign realm administration:403.
+Realms/SMTP fine-grained permission resource types:400.
+These passing characterization tests prove a blocking native capability gap.
+```
+
+A small standalone SMTP-only receiver is being prepared as an unactivated proposal under57/53. It would validate only the bounded SMTP representation, exact mail actor and purpose-bound context; ordinary mail bearer alone would not authorize the control operation. It adds no account provider. Its positive receiving-boundary tests and explicit technical approval are required before production packaging or credential grouping.
+
+Keeping the current isolated SMTP control credential is the safe existing state. It is an explicit temporary exception to exactly five actors, not a hidden accepted sixth actor. The team must choose a proved bounded boundary or record an accepted exception before mail cutover.
+
+## Origin context and residual trust
+
+C uses one managed context key for cross-service proofs, with explicit purpose, operation, actor, tenant, target and full-payload binding. Same-process Java authorization may use typed originating context after domain checks; unsigned HTTP claims between services cannot replace receiver proof. The former four-key design is historical.
+
+One process holding several actor credentials and the context key does not gain process isolation from role names. A compromised process can invoke the powers it legitimately holds. This residual trust and context replay/idempotence limits require explicit technical review; they are not closed by green unit tests.
+
+The accepted [ADR-013 OTP decision](ADR-013-2fa-via-vendored-otp-config-spi.md) remains in force. Native credential deletion tests do not prove the existing custom OTP setup/verification endpoints are target-scoped. Session exchange retains its separately recorded compatibility limitation; no new session issuer or impersonation permission is introduced by C.
+
+## Activation gates and migration order
+
+1. Accept the native account conditions and resolve SMTP, protected-admin provisioning and native recovery.
+2. Establish and migrate exact human groups on a realm copy; verify fresh/existing/twice behavior.
+3. Load and reconcile the native policy with compatible receivers; prove real-token allowed and denied operations.
+4. Wire the five callers only after their contracts are ready; verify actual deployed revisions and every retained user journey.
+5. Retire old grants/secrets only after external consumer and open-reservation proof; keep source, review, merge, deployment, browser and received-mail evidence separate.
+
+This ADR remains Proposed until Hassan and Shazia record technical approval. Source preparation and a draft PR neither approve the new conditions nor enable production permissions.
+
+## Historical option D record — superseded implementation target
+
+The following original record is preserved for traceability. Its fourteen actors, account command provider, four keys and wire endpoints do not control scenario C. Its security and recovery outcomes still identify retained requirements where C has not yet proved an equivalent.
+
 # ADR-027 — Restricted task identities and Keycloak commands
 
 **Status:** Proposed, pending human technical review. **Date:** 2026-10-07.
