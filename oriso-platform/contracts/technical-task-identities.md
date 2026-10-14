@@ -39,6 +39,17 @@ Configured machine actors never fall through ordinary human authorization.
 
 The capability unions are a coordinated receiver contract, not native management grants. Account capabilities still need proved native group policies. No five-actor production registry or caller cutover is claimed by the receiver-preparation slice. Existing legacy bindings remain until coordinated deployment and consumer verification.
 
+## Credential-isolation clauses amended by C
+
+All38 original story IDs and their historical text remain in Parent367. C changes two literal credential-isolation clauses; operation checks must not be described as separate credentials.
+
+| Story | Accepted C credential boundary | Retained requirements and current proof |
+| --- | --- | --- |
+| US17 | ACCOUNT_ADMIN combines OTP with authorized maintenance/deletion and session compatibility. An OTP-only credential with no account-administration power is no longer the selected design. | Other actors cannot acquire these powers outside their declared responsibilities. Permitted human/account/target checks remain required. Actual OTP purpose/target enforcement and native maintenance limits are OPEN. |
+| US21 | MAIL combines preference reads, delivery, notifications and bounded SMTP control. Its credential therefore has sending rights; it is not a preference-only credential. | Minimal preference data, tenant/recipient/target checks and separate operation authorities remain required. A read operation cannot be relabelled a send authorization. Coordinated receiver-purpose and caller proof are OPEN. |
+
+The remaining tenant, target, originating-human, invitation, reservation, account-ownership and workflow/recovery guarantees are retained. These amendments do not report any unproved operation boundary as delivered. Under US22, SMTP remains a separate control operation, but its bearer-plus-common-key trust is unresolved: code cohosted with MAIL credentials and the shared context key can authorize the bounded command. Common-process trust requires explicit technical acceptance. C retains five actors and one context key; no additional credential or account provider is implied.
+
 ## Human role migration
 
 Every known exact human-role combination maps to one explicitly reviewed group. The migration may establish only mapped groups using existing roles. It compares effective realm and client grants before membership, verifies them after membership and removes direct mappings only after readback. Unknown/ambiguous combinations, service accounts and technical anomalies remain unchanged and are reported. A second apply is stable; dry-run performs no mutation. Failure paths preserve or restore the old effective grants.
@@ -61,7 +72,7 @@ The standalone SMTP-only alternative is an unactivated proposal, not a restored 
 
 ## Cross-service context and retained acceptance
 
-**For developers — one-key direction and unchanged security outcomes:**
+**For developers — one-key direction and retained receiver/workflow requirements:**
 ```text
 Managed ORISO_TASK_CONTEXT_KEY:at least32 decoded random bytes,
 distinct from actor client secrets; one key for purpose-separated proofs.
@@ -73,7 +84,7 @@ Fresh install, existing realm, twice reconcile, unknown consumer/reservation
 retirement, real-token matrix and fail-closed startup remain required.
 ```
 
-Every original38 story is retained through the existing parent and seven repo packages. Review source/local proof, actual CI, human approval, merge, installed revision, browser journeys and received-mail evidence separately. A partial-source PR closes none of the product acceptance gates by implication.
+Every original38 story ID and its history is retained through the existing parent and seven repo packages, with US17/US21 credential-isolation amendments recorded above. Review source/local proof, actual CI, human approval, merge, installed revision, browser journeys and received-mail evidence separately. Unproved receiver-purpose and common-key trust gates stay OPEN. A partial-source PR closes none of the product acceptance gates by implication.
 
 ## Historical option D wire contract — retained porting input
 

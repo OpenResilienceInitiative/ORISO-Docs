@@ -7,7 +7,7 @@
 
 ## Current decision: scenario C
 
-Hassan and Shazia selected scenario C on9 October2026: five grouped automatic identities, ORISO receiver checks and native Keycloak account permissions where the spike proves the required limits. The earlier fourteen-identity account-provider proposal below is superseded as the implementation target. All38 user-story outcomes remain required; choosing C does not remove account ownership, recovery, tenant boundaries or mail acceptance.
+Hassan and Shazia selected scenario C on9 October2026: five grouped automatic identities, ORISO receiver checks and native Keycloak account permissions where the spike proves the required limits. The earlier fourteen-identity account-provider proposal below is superseded as the implementation target. All38 story IDs and their history remain in the delivery record. C amends the credential-isolation clauses of US17 and US21 as recorded below; account ownership, recovery, tenant/target/human boundaries, invitation/reservation checks and mail acceptance remain required.
 
 The Config Wizard still runs through an invitation before the invited person's completed account exists. Its backend operations belong to the setup identity. The eventual human role comes from the invitation; a grouped automatic identity is not a new administrator role for the person completing setup.
 
@@ -20,6 +20,17 @@ The Config Wizard still runs through an invitation before the invited person's c
 | Runtime | Policy reads, Matrix operations, appointment synchronization and participant cleanup |
 
 Five credential bindings do not mean five generic permission checks. The operation purposes remain explicit, with the same originating human, tenant, target, invitation and reservation checks. Effective roles, audiences, client, service-account subject and forbidden inherited grants must be checked at each receiver. Identical credentials are valid only for purposes mapped to the same actor; collisions between actors fail startup.
+
+## C amendments to credential isolation
+
+The selected grouping changes what a credential can do. A purpose claim and an operation-specific receiver check do not create another credential or isolate code holding the shared credential.
+
+| Original story | C amendment | Retained guarantees and open proof |
+| --- | --- | --- |
+| US17: the second-factor credential has no general account administration power | OTP shares ACCOUNT_ADMIN with permitted maintenance/deletion and session compatibility. The literal OTP-only credential isolation is superseded; it must not be reported as a passed C guarantee. | SETUP, ACCOUNT_CREATE, MAIL and RUNTIME remain denied OTP/account-administration powers outside their declared responsibilities. Permitted account, human and target checks remain required. Exact OTP receiver-purpose/target proof and native maintenance limits are OPEN. |
+| US21: the preference reader receives no sending rights | Preference reads and delivery share MAIL. The MAIL credential intentionally holds both capabilities; the literal read-only credential isolation is superseded. | Preference projections stay minimal, tenant/recipient/target checks remain, and preference-read authority alone is not a delivery authorization. Operation-purpose enforcement and the coordinated MAIL caller/receiver proof are OPEN. |
+
+All38 IDs remain traceable; these two amended clauses do not waive the other security or workflow outcomes. US22's SMTP/delivery separation is also an unresolved production boundary: the proposal denies a bearer-only control request, but a cohosted process holding MAIL credentials and the common context key can authorize bounded SMTP. Explicit common-process trust acceptance, receiver-purpose proof and source-to-live acceptance remain OPEN. The accepted five-actor choice is not being reopened, and no extra actor, signing key or discarded account provider is introduced.
 
 ## Native account policy and human groups
 
