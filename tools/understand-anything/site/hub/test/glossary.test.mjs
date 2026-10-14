@@ -81,7 +81,8 @@ test('reader sees DDD responsibility and evidence scope without treating draft t
   assert.ok(html.includes('Technical mappings'));
   assert.ok(html.includes('Graph target has not been verified for the selected release.'));
   assert.ok(!html.includes('href="/agency-service/?'));
-  assert.ok(html.includes('https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/7b544fbb0faca5ec941db4369855b4bcfa28207c/oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md'));
+  assert.ok(html.includes('https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/656d6474caf4b1f3365b2ee3018c0a0537b6a5cd/oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md'));
+  assert.ok(!html.includes('https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/7b544fbb0faca5ec941db4369855b4bcfa28207c/oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md'));
   assert.ok(html.includes('Legacy code review'));
   assert.ok(html.includes('migration-candidate'));
   assert.ok(html.includes('GroupChatParticipant.chatId'));
