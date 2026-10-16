@@ -768,13 +768,13 @@
       "translations": {
         "en": {
           "path": "site/translations/en/oriso-platform/coding-standards.mdx",
-          "sourceHash": "22867d0faf289afd230f7ac2a177991371a6c83fb18efaeeb56bd5cf15b6286f",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "2ffba0272bdc4fecfb2705ea7b86afdf7249e575979c656de94d0c71cb0f93dd",
+          "reviewedAt": "2026-10-08"
         },
         "de": {
           "path": "site/translations/de/oriso-platform/coding-standards.mdx",
-          "sourceHash": "22867d0faf289afd230f7ac2a177991371a6c83fb18efaeeb56bd5cf15b6286f",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "2ffba0272bdc4fecfb2705ea7b86afdf7249e575979c656de94d0c71cb0f93dd",
+          "reviewedAt": "2026-10-08"
         }
       }
     },

@@ -124,6 +124,7 @@ unreviewed code and an environment nobody can trust.
   gate exists for. Report which PRs need an approval and from whom, and let a person click.
 - **Check the ticket against the knowledge graph and the ADRs before writing code.** The
   published per-repo and cross-service graphs are queried at `https://understand.oriso.org`; a merge commit reachable from
+
   `dev` is not proof that the artefact is on `dev`.
 
 ## Testing
@@ -131,6 +132,11 @@ unreviewed code and an environment nobody can trust.
 - **Frontend**: Cypress
 - **Backend**: JUnit + MockMvc
 - **Always test in a real browser**
+- **Component props come from Storybook**, never from guessing. The Storybook MCP servers
+  for ORISO-Frontend and ORISO-Admin answer `docs-list`, `docs-show`, `docs-show-story`,
+  `stories-find-by-component`, `stories-changed` and `stories-preview`. A property that is
+  not documented there does not exist. Put the `stories-preview` URL in the PR for any UI
+  change.
 
 ## Deployment
 
