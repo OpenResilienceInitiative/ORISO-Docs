@@ -152,3 +152,33 @@ test('every error code the planning API can return has a reason in the UI', asyn
   const {ERROR_CODES} = await import('../../../../planning-map/lib/planning-api.mjs');
   for (const code of ERROR_CODES) assert.ok(code in PlanMove.REASONS || code === 'BAD_REQUEST', code);
 });
+
+// ───── per-issue expectations and displaced sub-issues (review of #210) ─────
+test('multi-epic intents carry one expectation per issue, and plan.mjs parses them back', () => {
+  const i = intent({expect: undefined, release: 'v2.0.13', issues: [
+    {repository: `${ORG}/ORISO-Frontend`, number: 10, expect: 'v2.0.12'}, {repository: `${ORG}/ORISO-Admin`, number: 5, expect: null}, {repository: `${ORG}/ORISO-Admin`, number: 6}]});
+  delete i.expect;
+  const cmd = PlanMove.command(i, false);
+  const rest = cmd.slice('node tools/planning-map/plan.mjs '.length);
+  const tokens = execFileSync('sh', ['-c', 'printf "%s\\n" ' + rest], {encoding: 'utf8'}).trimEnd().split('\n');
+  const parsed = parseArgs(tokens);
+  assert.deepEqual(parsed.issues, [`${ORG}/ORISO-Frontend#10`, `${ORG}/ORISO-Admin#5`, `${ORG}/ORISO-Admin#6`]);
+  assert.deepEqual(parsed.expects, {[`${ORG}/ORISO-Frontend#10`]: 'v2.0.12', [`${ORG}/ORISO-Admin#5`]: null});
+  assert.equal(parsed.expect, undefined);
+});
+
+test('otherRelease lists the sub-issues of a move that sit in another release now (from the synced board)', () => {
+  const b = board(); b.items.find(x => x.number === 11).platformRelease = 'v2.0.14';
+  const i = intent({withSubIssues: true, release: 'v2.0.13'});
+  assert.deepEqual(plain(PlanMove.otherRelease(b, epics, i)), [{issue: `${ORG}/ORISO-Frontend#11`, before: 'v2.0.14'}, {issue: `${ORG}/ORISO-Admin#5`, before: 'v2.0.12'}]);
+  assert.deepEqual(plain(PlanMove.otherRelease(b, epics, intent({withSubIssues: false}))), [], 'the epic itself is not "displaced"');
+  assert.deepEqual(plain(PlanMove.otherRelease(b, epics, intent({withSubIssues: true, release: 'v2.0.12'}))), [{issue: `${ORG}/ORISO-Frontend#11`, before: 'v2.0.14'}]);
+});
+
+test('run keeps otherRelease on the intent; a confirming transport answer replaces it with what GitHub saw', async () => {
+  const s = PlanMove.create();
+  const x = await s.run({...intent(), otherRelease: [{issue: 'a#1', before: 'v1'}]}, null);
+  assert.deepEqual(plain(x.otherRelease), [{issue: 'a#1', before: 'v1'}]);
+  const y = await s.run({...intent(), otherRelease: []}, {assignRelease: async () => ({ok: true, otherRelease: [{issue: 'b#2', before: 'v9'}]})});
+  assert.deepEqual(plain(y.otherRelease), [{issue: 'b#2', before: 'v9'}]);
+});

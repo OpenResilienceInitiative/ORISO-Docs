@@ -100,6 +100,8 @@ async function run(o, { transport, log, err }) {
   const preflight = preflightOk ? "passed" : "failed";
   log(JSON.stringify({ ok, dryRun, command: o.command, preflight, runs }, null, 2));
   if (!preflightOk && o.apply) err("Preflight failed: nothing was written.");
+  const displaced = runs.flatMap((r) => r.otherRelease ?? []);
+  if (displaced.length) err(`Sub-issues in another release, moved ${dryRun ? "with --apply" : "too"}: ${displaced.map((d) => `${d.issue} (${d.before})`).join(", ")}`);
   if (dryRun && ok) err("Dry run: nothing was written. Add --apply to write to GitHub.");
   return ok ? 0 : 1;
 }

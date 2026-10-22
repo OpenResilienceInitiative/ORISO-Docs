@@ -192,14 +192,18 @@ export const assignRelease = neverThrows(async (applied, issue, release, { withS
 
   // Preflight: rights on every target, then the conflict check on the main issue. No write happens before all pass.
   for (const t of targets) if (!t.node.viewerCanUpdate) return none(fail("NO_WRITE_RIGHTS", `No write rights on ${t.ref}`, { issue: t.ref }));
+  // The whole live set counts: "v2.0.12" matches only exactly ["v2.0.12"], null only [].
   const live = releaseOf(main.node);
-  if (expectedRelease !== undefined && (expectedRelease ?? null) !== (live[0] ?? null)) {
-    return none(fail("CONFLICT", `${name} is in ${live[0] ?? "no release"} on GitHub, not ${expectedRelease ?? "no release"}`, { issue: name, detail: { expected: expectedRelease ?? null, actual: live[0] ?? null } }));
+  const matches = expectedRelease == null ? live.length === 0 : live.length === 1 && live[0] === expectedRelease;
+  if (expectedRelease !== undefined && !matches) {
+    return none(fail("CONFLICT", `${name} is in ${live.length ? live.join(" + ") : "no release"} on GitHub, not ${expectedRelease ?? "no release"}`, { issue: name, detail: { expected: expectedRelease ?? null, actual: live[0] ?? null, actualReleases: live } }));
   }
 
   const results = [];
+  const otherRelease = []; // sub-issues that sit in another release now: moved too, but named so nobody is surprised
   for (const t of targets) {
     const current = releaseOf(t.node);
+    if (t.role === "sub-issue" && current.length && !(current.length === 1 && current[0] === release)) otherRelease.push({ issue: t.ref, before: current[0] });
     const changed = !(current.length === 1 && current[0] === release);
     const row = { issue: t.ref, role: t.role, before: current[0] ?? null, after: release, changed, wrote: false };
     if (changed && !dryRun) {
@@ -210,7 +214,7 @@ export const assignRelease = neverThrows(async (applied, issue, release, { withS
     }
     results.push(row);
   }
-  return { ok: true, release, dryRun, results };
+  return { ok: true, release, dryRun, results, otherRelease };
 });
 
 // ───────── setGate (ORISO-Docs#211) ─────────

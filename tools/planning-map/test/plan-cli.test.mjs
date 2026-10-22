@@ -187,3 +187,13 @@ test("set-gate takes per-issue expectations as well", async () => {
   assert.equal(r.out.runs[1].error.code, "CONFLICT");
   assert.deepEqual(gh.writes, []);
 });
+
+test("the dry run names sub-issues that sit in another release", async () => {
+  const gh = createFakeGitHub({ issues: [{ repository: FE, number: 10, release: null, subIssues: [`${FE}#11`] }, { repository: FE, number: 11, release: "v2.0.12" }] });
+  const errs = [];
+  const lines = [];
+  const code = await main(["assign-release", "--issue", "ORISO-Frontend#10", "--release", "v2.0.13", "--with-sub-issues"], { transport: gh.transport, log: (s) => lines.push(s), err: (s) => errs.push(s) });
+  assert.equal(code, 0);
+  assert.deepEqual(JSON.parse(lines.join("\n")).runs[0].otherRelease, [{ issue: `${FE}#11`, before: "v2.0.12" }]);
+  assert.match(errs.join("\n"), /ORISO-Frontend#11 \(v2\.0\.12\)/);
+});

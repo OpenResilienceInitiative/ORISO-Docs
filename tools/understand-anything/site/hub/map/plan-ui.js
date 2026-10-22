@@ -6,7 +6,10 @@
    command that an operator runs. Transport contract (same shape as lib/planning-api.mjs results):
      PlanningTransport.assignRelease(intent) -> Promise<{ok:true} | {ok:false, error:{code,message,issue?}, applied?:["Org/Repo#1"]}>
      PlanningTransport.setGate(intent)       -> same
-   intent = {action:'assignRelease'|'setGate', issues:[{repository, number}], release|gate, withSubIssues?, expect?} */
+   intent = {action:'assignRelease'|'setGate', issues:[{repository, number, expect?}], release|gate, withSubIssues?, expect?, otherRelease?}
+     issues[].expect: what the last SYNCED board showed for that issue (null = none); the write is refused on a mismatch.
+     intent.expect (one value for all issues) is still understood; per-issue values win.
+     otherRelease: [{issue, before}] sub-issues that sit in another release now (shown to the user, moved too). */
 (function (root, factory) {
   root.PlanMove = factory();
 })(typeof self !== 'undefined' ? self : globalThis, function () {
@@ -42,7 +45,7 @@
   /* Arguments after "node tools/planning-map/plan.mjs". withApply adds --apply. */
   function argv(intent, withApply, org) {
     var a = [COMMAND_OF[intent.action]];
-    intent.issues.forEach(function (i) { a.push('--issue', refText(i, org)); });
+    intent.issues.forEach(function (i) { a.push('--issue', refText(i, org) + (i.expect === undefined ? '' : '=' + (i.expect === null ? 'none' : i.expect))); });
     if (intent.action === 'assignRelease') {
       a.push('--release', intent.release);
       if (intent.withSubIssues) a.push('--with-sub-issues');
@@ -75,6 +78,18 @@
       });
     });
     return want;
+  }
+
+  /* Sub-issues a move with sub-issues would take out of ANOTHER release (read from the synced board). */
+  function otherRelease(board, epics, intent) {
+    if (!intent.withSubIssues || intent.action !== 'assignRelease') return [];
+    var main = {}, out = [], hit = targets(board, epics, intent);
+    intent.issues.forEach(function (i) { main[key(i.repository, i.number)] = true; });
+    Object.keys(hit).forEach(function (k) {
+      var it = hit[k];
+      if (!main[k] && it.platformRelease && it.platformRelease !== intent.release) out.push({issue: fullName(it.repository) + '#' + it.number, before: it.platformRelease});
+    });
+    return out;
   }
 
   function create() {
@@ -114,6 +129,7 @@
         var x = {id: ++seq, action: intent.action, issues: intent.issues, release: intent.release, gate: intent.gate,
           withSubIssues: !!intent.withSubIssues, expect: intent.expect, label: intent.label || '', status: 'pending', error: null};
         if (x.expect === undefined) delete x.expect;
+        if (Array.isArray(intent.otherRelease)) x.otherRelease = intent.otherRelease.slice();
         intents.push(x); changed();
         var fn = transport && typeof transport[intent.action] === 'function' ? transport[intent.action] : null;
         if (!fn) { x.status = 'command'; changed(); return Promise.resolve(x); }
@@ -121,7 +137,7 @@
         try { call = Promise.resolve(fn.call(transport, JSON.parse(JSON.stringify(intent)))); } catch (e) { call = Promise.reject(e); }
         return call.then(function (res) { return res; }, function (e) { return {ok: false, error: {code: 'TRANSPORT', message: String(e && e.message || e)}}; })
           .then(function (res) {
-            if (res && res.ok) { x.status = 'confirmed'; }
+            if (res && res.ok) { x.status = 'confirmed'; if (Array.isArray(res.otherRelease)) x.otherRelease = res.otherRelease.slice(); }
             else {
               x.error = (res && res.error) || {code: 'GITHUB_ERROR', message: ''};
               if (res && res.applied && res.applied.length) { x.status = 'confirmed'; x.only = res.applied.slice(); x.partial = true; } /* what GitHub already took stays */
@@ -133,5 +149,5 @@
     };
     return store;
   }
-  return {REASONS: REASONS, reason: reason, argv: argv, command: command, targets: targets, create: create, key: key, fullName: fullName};
+  return {REASONS: REASONS, reason: reason, argv: argv, command: command, targets: targets, otherRelease: otherRelease, create: create, key: key, fullName: fullName};
 });

@@ -436,8 +436,7 @@ test('drag an epic onto a release: optimistic at once, then kept once the transp
   const calls = await page.evaluate(() => window.__calls);
   assert.equal(calls.length, 1);
   assert.equal(calls[0].action, 'assignRelease'); assert.equal(calls[0].release, 'v2.0.13'); assert.equal(calls[0].withSubIssues, false);
-  assert.deepEqual(calls[0].issues, [{repository: 'OpenResilienceInitiative/ORISO-Frontend', number: 1734}]);
-  assert.equal(calls[0].expect, 'v2.0.12');
+  assert.deepEqual(calls[0].issues, [{repository: 'OpenResilienceInitiative/ORISO-Frontend', number: 1734, expect: 'v2.0.12'}]);
   assert.match(await relCount(page, 'v2.0.13'), /^2 issues/, 'moved before the answer');
   assert.match(await relCount(page, 'v2.0.12'), /^2 issues/);
   await page.evaluate(() => window.__answer({ok: true}));
@@ -478,7 +477,7 @@ test('without a transport the move stays as a command to copy, and Undo takes it
   await page.locator('#mvgo').click();
   await page.waitForSelector('#planlog .plrow.command');
   assert.equal(await page.locator('#planlog .plcmd').innerText(),
-    "node tools/planning-map/plan.mjs assign-release --issue 'OpenResilienceInitiative/ORISO-Frontend#1734' --release v2.0.13 --with-sub-issues --expect v2.0.12");
+    "node tools/planning-map/plan.mjs assign-release --issue 'OpenResilienceInitiative/ORISO-Frontend#1734=v2.0.12' --release v2.0.13 --with-sub-issues");
   assert.match(await page.locator('#planlog').innerText(), /noch nicht auf GitHub/);
   assert.match(await relCount(page, 'v2.0.13'), /^10 Aufgaben/, 'the epic and its 9 sub-issues (8 with a parent link, 1 from the epic list) move on the map');
   await page.locator('#planlog .plb', {hasText: 'Zurücknehmen'}).click();
@@ -584,3 +583,66 @@ for (const width of [320, 390, 1440]) {
     }
   });
 }
+
+// ───── Review of #210/#209: expectations, focus, redraws, drag on phones, drawer, XSS ─────
+const TWO_EPICS = async (context) => context.route('**/map/data/epics.json', async route => {
+  const response = await route.fetch(); const doc = await response.json();
+  doc.epics.epics.push({r: 0, n: 1806, t: 'Second chat epic', s: 'o', tot: 0, done: 0, b: 'chat', pr: 'Low', ef: 'S', rl: 'v2.0.13', u: '2026-10-20', subs: []});
+  await route.fulfill({response, json: doc});
+});
+const planCmds = page => page.locator('#planlog .plcmd').allInnerTexts();
+
+test('the expectation comes from the synced board, not from a move still waiting to be written', {skip}, async () => {
+  const {page, problems, context} = await open({lang: 'en'});
+  for (const target of ['v2.0.13', 'v2.0.12']) {
+    await openEpicForMove(page);
+    await page.locator(`${VIEWBOX} [data-move="epic"]:visible`).click();
+    await page.waitForSelector('#movedlg[open]');
+    await page.locator('#mvrel').selectOption(target);
+    await page.locator('#mvgo').click();
+  }
+  const cmds = await planCmds(page);
+  assert.equal(cmds.length, 2);
+  for (const c of cmds) assert.match(c, /--issue 'OpenResilienceInitiative\/ORISO-Frontend#1734=v2\.0\.12'/, c);
+  assert.deepEqual(problems, []);
+  await context.close();
+});
+
+test('moving a capability with several epics carries one expectation per epic', {skip}, async () => {
+  const context = await browser.newContext({viewport: {width: 1440, height: 900}, reducedMotion: 'reduce', locale: 'en-GB'});
+  await TWO_EPICS(context);
+  await context.addInitScript(HELD);
+  const page = await context.newPage(); const problems = []; page.on('pageerror', e => problems.push(String(e)));
+  await page.goto(origin + '/map/'); await page.waitForSelector('#tm .blk');
+  await page.evaluate(() => document.documentElement.setAttribute('data-lang', 'en'));
+  await page.locator('#tm .blk[data-id="chat"]').click();
+  await page.locator('#panel .navrow[data-view="epics"]').click();
+  await page.locator('#panel [data-move="block"]').click();
+  await page.waitForSelector('#movedlg[open]');
+  await page.locator('#mvrel').selectOption('v2.0.13');
+  await page.locator('#mvgo').click();
+  await page.waitForSelector('#planlog .plrow.pending');
+  const [call] = await page.evaluate(() => window.__calls);
+  assert.equal(call.expect, undefined);
+  assert.deepEqual(call.issues, [
+    {repository: 'OpenResilienceInitiative/ORISO-Frontend', number: 1734, expect: 'v2.0.12'},
+    {repository: 'OpenResilienceInitiative/ORISO-Frontend', number: 1806, expect: 'v2.0.13'}]);
+  assert.deepEqual(problems, []);
+  await context.close();
+});
+
+test('a move with sub-issues names the ones that sit in another release (dry-run message)', {skip}, async () => {
+  const {page, problems, context} = await open({lang: 'en'});
+  await openEpicForMove(page);
+  await page.locator('#panel [data-move="epic"]').click();
+  await page.locator('#mvrel').selectOption('v2.0.13');
+  await page.locator('#mvsubs').check();
+  await page.locator('#mvgo').click();
+  await page.waitForSelector('#planlog .plrow.command');
+  const msg = await page.locator('#planlog .pmsg').innerText();
+  assert.match(msg, /in another release/i);
+  assert.match(msg, /#1801 \(v2\.0\.12\)/); assert.match(msg, /#1804 \(v2\.0\.12\)/);
+  assert.doesNotMatch(msg, /#1806/, 'already in the target release');
+  assert.deepEqual(problems, []);
+  await context.close();
+});

@@ -1372,6 +1372,14 @@ function boardRelease(e){
   return hit ? (hit.platformRelease || null) : undefined;
 }
 function currentReleaseOf(e){ var r = boardRelease(e); return r===undefined ? (e.rl || '') : (r || ''); }
+/* Erwartung für den Schreibbefehl: der zuletzt SYNCHRONISIERTE Board-Stand (MEAS.board), nie die optimistische Ansicht:
+   eine noch nicht geschriebene Verschiebung ist auf GitHub nicht zu sehen und würde sonst als Konflikt enden. */
+function syncedRelease(e){
+  if (!MEAS.board) return undefined;
+  var k = PlanMove.key(EPR[e.r], e.n), hit;
+  MEAS.board.items.forEach(function(it){ if (it.contentType==='Issue' && it.repository && PlanMove.key(it.repository, it.number)===k) hit = it; });
+  return hit ? (hit.platformRelease || null) : undefined;
+}
 function moveButton(sub){
   if (!canPlan() || !subjectEpics(sub).length) return '';
   var b = sub.kind==='epic';
@@ -1399,8 +1407,8 @@ function closeMove(){ if (movedlg.open) movedlg.close(); if (mvOpener && documen
 function submitMove(){
   var sub = mvSub, epics = sub ? subjectEpics(sub) : []; if (!epics.length) return;
   var intent = {action:'assignRelease', release: document.getElementById('mvrel').value, withSubIssues: document.getElementById('mvsubs').checked,
-    issues: epics.map(function(e){ return {repository: PlanMove.fullName(EPR[e.r], ORGN), number: e.n}; }), label: subjectTitle(sub)};
-  if (epics.length===1){ var was = boardRelease(epics[0]); if (was!==undefined) intent.expect = was; }
+    issues: epics.map(function(e){ var i = {repository: PlanMove.fullName(EPR[e.r], ORGN), number: e.n}, was = syncedRelease(e); if (was!==undefined) i.expect = was; return i; }), label: subjectTitle(sub)};
+  intent.otherRelease = PlanMove.otherRelease(MEAS.board, MEAS.epics, intent);
   mvSub = null; closeMove();
   if (sheet.open) sheet.close(); /* Handy: das Bottom-Sheet ist modal und würde die Meldung darunter verdecken */
   setTimeout(function(){ var pl = document.getElementById('planlog'); if (pl && !pl.hidden) pl.scrollIntoView({block:'nearest'}); }, 0);
@@ -1423,6 +1431,8 @@ function drawPlanLog(){
     var row = el('div','plrow '+x.status); row.dataset.plan = x.id;
     var what = esc(x.label)+' → <b>'+esc(x.release)+'</b>'+(x.withSubIssues ? (de()?' (mit Teilaufgaben)':' (with sub-issues)') : '');
     var msg, btns = '';
+    var other = (x.otherRelease && x.otherRelease.length && x.status!=='failed') ? '<br>'+(de()?'Teilaufgaben in einem anderen Release, werden mitverschoben: ':'Sub-issues in another release, moved too: ')+
+      x.otherRelease.map(function(o){ return esc(String(o.issue).replace(/^[^\/]*\//,'')+' ('+o.before+')'); }).join(', ') : '';
     if (x.status==='pending') msg = (de()?'Wird gespeichert: ':'Saving: ')+what;
     else if (x.status==='confirmed') msg = (x.partial ? (de()?'Nur teilweise auf GitHub gespeichert: ':'Only partly saved on GitHub: ') : (de()?'Auf GitHub gespeichert: ':'Saved on GitHub: '))+what+(x.partial ? ' · '+esc(PlanMove.reason(x.error, lang)+' '+(x.error.issue||'')) : '');
     else if (x.status==='failed') msg = (de()?'Nicht gespeichert, zurückgesetzt: ':'Not saved, rolled back: ')+what+'<br>'+esc(PlanMove.reason(x.error, lang))+(x.error.message ? ' <span class="raw">('+esc(x.error.message)+')</span>' : '');
@@ -1430,7 +1440,7 @@ function drawPlanLog(){
       msg = (de()?'Geplant, noch nicht auf GitHub: ':'Planned, not on GitHub yet: ')+what+'<br>'+(de()?'Dieser Befehl schreibt es (erst ohne, dann mit --apply):':'This command writes it (first without, then with --apply):');
       btns = '<code class="plcmd">'+esc(PlanMove.command(x, false, ORGN))+'</code>';
     }
-    row.innerHTML = '<p class="pmsg" tabindex="-1">'+msg+'</p>'+btns;
+    row.innerHTML = '<p class="pmsg" tabindex="-1">'+msg+other+'</p>'+btns;
     var bar = el('div','plbtns');
     function add(txt, fn){ var b = el('button','plb', esc(txt)); b.type='button'; b.addEventListener('click', function(){ fn(b); }); bar.appendChild(b); }
     if (x.status==='command'){

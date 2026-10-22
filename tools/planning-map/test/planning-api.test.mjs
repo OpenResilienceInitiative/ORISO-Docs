@@ -28,7 +28,7 @@ test("the platform release field is the org multi-select issue field", () => {
 test("a single issue gets the release; the result reports before and after", async () => {
   const gh = world();
   const r = await assignRelease(`${FE}#2`, "v2.0.13", { transport: gh.transport });
-  assert.deepEqual(r, { ok: true, release: "v2.0.13", dryRun: false, results: [{ issue: `${FE}#2`, role: "issue", before: null, after: "v2.0.13", changed: true, wrote: true }] });
+  assert.deepEqual(r, { ok: true, release: "v2.0.13", dryRun: false, results: [{ issue: `${FE}#2`, role: "issue", before: null, after: "v2.0.13", changed: true, wrote: true }], otherRelease: [] });
   assert.deepEqual(gh.writes, [{ kind: "release", issue: `${FE}#2`, value: ["v2.0.13"] }]);
   assert.deepEqual(gh.issue(`${FE}#2`).release, ["v2.0.13"]);
 });
@@ -105,7 +105,7 @@ test("conflict: the board showed another release than GitHub has now", async () 
   const r = await assignRelease(`${FE}#1`, "v2.0.13", { expectedRelease: "v2.0.13", transport: gh.transport });
   assert.equal(r.ok, false);
   assert.equal(r.error.code, "CONFLICT");
-  assert.deepEqual(r.error.detail, { expected: "v2.0.13", actual: "v2.0.12" });
+  assert.deepEqual(r.error.detail, { expected: "v2.0.13", actual: "v2.0.12", actualReleases: ["v2.0.12"] });
   assert.deepEqual(gh.writes, []);
 });
 
@@ -245,4 +245,31 @@ test("malformed answers never throw: they come back as TRANSPORT", async () => {
   const gh = world();
   gh.respond.PlanSubIssues = () => ({ data: { node: { subIssues: { pageInfo: null, nodes: [] } } } });
   assert.equal((await assignRelease(`${FE}#10`, "v2.0.13", { withSubIssues: true, transport: gh.transport })).error.code, "TRANSPORT");
+});
+
+// ───── conflicts compare the full release set; displaced sub-issues are listed (review of #210) ─────
+test("CONFLICT compares the full release set: two live values never match one expectation", async () => {
+  const gh = createFakeGitHub({ issues: [{ repository: FE, number: 7, release: ["v2.0.12", "v2.0.13"] }] });
+  const r = await assignRelease(`${FE}#7`, "v2.0.13", { expectedRelease: "v2.0.12", transport: gh.transport });
+  assert.equal(r.ok, false);
+  assert.equal(r.error.code, "CONFLICT");
+  assert.deepEqual(r.error.detail, { expected: "v2.0.12", actual: "v2.0.12", actualReleases: ["v2.0.12", "v2.0.13"] });
+  assert.deepEqual(gh.writes, []);
+});
+
+test("sub-issues already in a different release are moved, and listed with their before value", async () => {
+  for (const dryRun of [true, false]) {
+    const gh = world();
+    const r = await assignRelease(`${FE}#10`, "v2.0.13", { withSubIssues: true, dryRun, transport: gh.transport });
+    assert.equal(r.ok, true);
+    assert.deepEqual(r.otherRelease, [{ issue: `${AD}#5`, before: "v2.0.12" }], `dryRun ${dryRun}`);
+  }
+});
+
+test("no displaced sub-issues: otherRelease is an empty list", async () => {
+  const gh = world();
+  const r = await assignRelease(`${FE}#10`, "v2.0.12", { withSubIssues: true, dryRun: true, transport: gh.transport });
+  assert.deepEqual(r.otherRelease, [{ issue: `${FE}#12`, before: "v2.0.13" }]);
+  const solo = await assignRelease(`${FE}#2`, "v2.0.12", { dryRun: true, transport: gh.transport });
+  assert.deepEqual(solo.otherRelease, []);
 });
