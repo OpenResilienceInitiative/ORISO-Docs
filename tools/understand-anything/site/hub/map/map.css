@@ -237,6 +237,8 @@ footer .fl{display:flex;flex-wrap:wrap;gap:6px 16px}
 footer a{color:var(--ink-2)}
 footer .meas{display:grid;gap:4px;max-width:120ch}
 footer .meas b{color:var(--ink-2)}
+footer .standwarn{color:var(--warn);background:var(--warn-wash);border:1.5px dashed var(--warn-line);border-radius:8px;padding:8px 12px}
+footer .standwarn b{color:var(--warn)}
 
 @media (max-width:560px){
   .appbar .sub{display:none}

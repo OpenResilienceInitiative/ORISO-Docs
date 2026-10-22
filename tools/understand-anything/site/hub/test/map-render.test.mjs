@@ -16,9 +16,13 @@ const types = {'.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.
 // Strictest policy the page must live under: no inline code or styles.
 const CSP = "default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self'; img-src 'self' data:";
 
+// Tests can replace or add served data files ({'board.json': {...}}); reset after use.
+let overrides = {};
 function serve() {
   const server = http.createServer((req, res) => {
     const url = req.url.split('?')[0];
+    const name = url.startsWith('/map/data/') ? url.slice('/map/data/'.length) : null;
+    if (name && name in overrides) { res.setHeader('content-type', 'application/json'); return res.end(JSON.stringify(overrides[name])); }
     const file = url.startsWith('/map/data/') ? fixtures + url.slice('/map/data/'.length)
       : url === '/map/' ? hub + 'map/index.html' : hub + url.slice(1);
     if (!file.startsWith(hub) && !file.startsWith(fixtures) || !existsSync(file)) { res.statusCode = 404; return res.end('not found'); }
@@ -103,3 +107,49 @@ for (const width of [320, 390, 1440]) {
     });
   }
 }
+
+const runFixture = JSON.parse(readFileSync(new URL('./fixtures/run.json', import.meta.url), 'utf8'));
+const fixtureLinks = JSON.parse(readFileSync(fixtures + 'links.json', 'utf8'));
+
+test('footer shows one Stand from the run manifest with the commit of each repo and no warning', {skip}, async () => {
+  const {page, context} = await open({lang: 'en'});
+  const meas = await page.locator('#meas').innerText();
+  assert.equal((meas.match(/As of/g) || []).length, 1);
+  assert.match(meas, /As of 2026-10-23 01:00 UTC/);
+  assert.match(meas, /ORISO-Frontend 3333333/);
+  assert.match(meas, /ORISO-Admin 1111111/);
+  assert.equal(await page.locator('#stand-warning').count(), 0);
+  assert.equal((await page.locator('body').innerText()).match(/\bAs of\b/g).length, 1);
+  await context.close();
+});
+
+test('German page says Stand exactly once', {skip}, async () => {
+  const {page, context} = await open({lang: 'de'});
+  assert.equal(((await page.locator('body').innerText()).match(/\bStand\b/g) || []).length, 1);
+  assert.match(await page.locator('#meas').innerText(), /Stand 2026-10-23 01:00 UTC/);
+  await context.close();
+});
+
+test('a board.json from another run raises a visible warning naming the file', {skip}, async () => {
+  const other = {...runFixture, runId: '20261022T010000Z-deadbeef', generatedAt: '2026-10-22T01:00:00Z'};
+  overrides = {'links.json': {...fixtureLinks, optional: ['board.json']}, 'board.json': {schemaVersion: 1, run: other}};
+  try {
+    const {page, context, problems} = await open({lang: 'en'});
+    const w = page.locator('#stand-warning');
+    assert.equal(await w.count(), 1);
+    assert.match(await w.innerText(), /different runs/i);
+    assert.match(await w.innerText(), /board\.json/);
+    assert.deepEqual(problems, []);
+    await context.close();
+  } finally { overrides = {}; }
+});
+
+test('a data file without a run is reported as unstamped', {skip}, async () => {
+  const {run, ...bare} = JSON.parse(readFileSync(fixtures + 'zoom.json', 'utf8'));
+  overrides = {'zoom.json': bare};
+  try {
+    const {page, context} = await open({lang: 'en'});
+    assert.match(await page.locator('#stand-warning').innerText(), /zoom\.json/);
+    await context.close();
+  } finally { overrides = {}; }
+});

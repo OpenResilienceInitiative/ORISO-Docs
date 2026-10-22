@@ -8,6 +8,17 @@
   "properties": {
     "schemaVersion": { "const": 1 },
     "syncedAt": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$" },
+    "run": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schemaVersion", "runId", "generatedAt", "commits"],
+      "properties": {
+        "schemaVersion": { "const": 1 },
+        "runId": { "type": "string", "pattern": "^\\d{8}T\\d{6}Z-[0-9a-f]{8}$" },
+        "generatedAt": { "type": "string" },
+        "commits": { "type": "object", "additionalProperties": { "type": "string", "pattern": "^[0-9a-f]{40}$" } },
+        "trigger": { "type": "string" }
+      }
+    },
     "source": {
       "type": "object", "additionalProperties": false,
       "required": ["owner", "projectNumber", "title"],
