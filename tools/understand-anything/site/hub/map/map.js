@@ -13,7 +13,7 @@ var UA = {
  ct:{u:'https://understand.oriso.org/consulting-type-service/?token=oriso-consulting-type-dashboard',n:'ConsultingTypeService'},
  kc:{u:'https://understand.oriso.org/keycloak/?token=oriso-keycloak-dashboard',n:'Keycloak'},
  ec:{u:'https://understand.oriso.org/element-call/?token=oriso-elementcall-dashboard',n:'ElementCall'},
- sg:{u:'https://understand.oriso.org/docs/?token=oriso-docs-dashboard',n:'Supergraph'}
+ sg:{u:'https://understand.oriso.org/supergraph/?token=oriso-supergraph-dashboard',n:'Supergraph'}
 };
 var REPOID = {fe:'ORISO-Frontend',ad:'ORISO-Admin',us:'ORISO-UserService',as:'ORISO-AgencyService',ts:'ORISO-TenantService',ct:'ORISO-ConsultingTypeService',kc:'ORISO-Keycloak',ec:'ORISO-ElementCall'};
 var ADRT = {
@@ -716,6 +716,8 @@ function viewBlock(b){
       ? '<a class="featlink" href="https://understand.oriso.org/features/'+slug+'.html" target="_blank" rel="noopener"><b>'+esc(t.feature)+'</b><span>understand.oriso.org ↗</span></a>'
       : '<div class="featlink wip"><b>'+esc(t.featureWip)+'</b><span>features/'+esc(slug)+'.html</span></div>';
   }
+  var cap = capNodeId(b.id);
+  if (cap) feat += '<p class="links"><a class="ua" href="'+uaNodeHref(UA.sg, cap)+'" target="_blank" rel="noopener" title="'+esc(cap)+'">'+(de()?'Im Understand-Graph öffnen':'Open in the Understand graph')+' · '+(de()?'Fähigkeit':'Capability')+' ↗</a></p>';
   var nAdr = b.adr.length, nDocs = b.docs.length + b.ua.length, nRel = (REL[b.id]||[]).length, nEp = b.ep.length;
   var nMods = (Z[b.id]||[]).length;
   var rows = [['mods',(de()?'Ordner und Dateien (Karte zoomt hinein)':'Folders and files (map zooms in)'),nMods],['epics',t.epics, nEp ? (fmt(nEp)+' · '+t.openEp(openEpics(b))) : '0'],['adr',t.adr,nAdr],['docs',t.docs,nDocs],['rel',t.rel,nRel]].map(function(r){
@@ -799,7 +801,7 @@ function viewDocs(b){
                                           : '<li><span>'+esc(t.featureWip)+'</span><span class="c">'+(de()?'in Arbeit':'in progress')+'</span></li>';
   b.docs.forEach(function(d){ rows += '<li><a href="https://docs.oriso.org/'+d[0]+'/" target="_blank" rel="noopener">'+esc(de()?d[1]:d[2])+'</a><span class="c">docs</span></li>'; });
   var ua = b.ua.map(function(u){ var r=UA[u[0]], id = u[1] ? REPOID[u[0]]+'::'+u[1] : r.n;
-    return '<li><a href="'+r.u+'" target="_blank" rel="noopener" title="'+esc(id)+'">'+esc(r.n+(u[1]?' · '+u[2]:''))+'</a><span class="c">'+esc(u[1]?u[1].split(':')[0]:'repo')+'</span></li>'; }).join('');
+    return '<li><a href="'+(u[1] ? uaNodeHref(r, id) : r.u)+'" target="_blank" rel="noopener" title="'+esc(id)+'">'+esc(r.n+(u[1]?' · '+u[2]:''))+'</a><span class="c">'+esc(u[1]?u[1].split(':')[0]:'repo')+'</span></li>'; }).join('');
   return '<h3 id="pdTitle" tabindex="-1">'+esc(t.docs)+' · '+esc(L(b.t))+'</h3>'+
     '<div class="dgroup"><h5><span>'+(de()?'Beschreibungen':'Descriptions')+'</span></h5><ul class="dlist">'+(rows||'<li><span class="dmeta">—</span></li>')+'</ul></div>'+
     (ua ? '<div class="dgroup"><h5><span>'+esc(t.graph)+'</span></h5><ul class="dlist">'+ua+'</ul><p class="dmeta">'+(de()?'Der Graph öffnet das Dashboard des Repositoriums; die Knoten-ID steht im Tooltip.':'The graph opens the repository dashboard; the node ID is in the tooltip.')+'</p></div>' : '');
@@ -847,9 +849,12 @@ function ghPath(z, f){
   return pre ? pre+'/'+f[0] : f[0];
 }
 var UAK = ['fe','ad','us','ts','as','ct'];
-function graphLink(z, path, inline){
-  var r = UA[UAK[z[0]]], id = CODE_REPOS[z[0]]+'::file:'+path;
-  var a = '<a class="ua" href="'+r.u+'" target="_blank" rel="noopener" title="'+esc(path?id:r.n)+'">'+(de()?'Im Understand-Graph öffnen':'Open in the Understand graph')+' · '+esc(r.n)+' ↗</a>';
+/* Knoten-ID wie im Understand-Graphen: Fähigkeit capability:<slug>, Ordner <repo>::folder:<dir>, Datei <repo>::file:<pfad>. */
+function uaNodeHref(r, nodeId){ return r.u + (r.u.indexOf('?')<0 ? '?' : '&') + 'node=' + encodeURIComponent(nodeId); }
+function capNodeId(blockId){ return blockId==='base' ? 'capability:shared' : SLUG[blockId] ? 'capability:'+SLUG[blockId] : null; }
+function graphLink(z, path, inline, dir){
+  var r = UA[UAK[z[0]]], id = path ? CODE_REPOS[z[0]]+'::file:'+path : dir ? CODE_REPOS[z[0]]+'::folder:'+dir : '';
+  var a = '<a class="ua" href="'+(id ? uaNodeHref(r, id) : r.u)+'" target="_blank" rel="noopener" title="'+esc(id||r.n)+'">'+(de()?'Im Understand-Graph öffnen':'Open in the Understand graph')+' · '+esc(r.n)+' ↗</a>';
   return inline ? a : '<p class="links">'+a+'</p>';
 }
 function wasIst(txt){ return '<div class="wasist"><h4>'+(de()?'Was ist das?':'What is this?')+'</h4>'+txt+'</div>'; }
@@ -910,7 +915,7 @@ function viewMod(b, v){
       '<div class="num"><span class="k">'+esc(t.core)+'</span><span class="v" data-css="font-size:12px">'+rund(z[6])+' '+(de()?'unverändert':'unchanged')+' · '+rund(z[7])+' '+(de()?'umgearbeitet':'reworked')+' · '+rund(z[8])+' '+(de()?'gelöscht':'deleted')+'</span></div>'+
       '<div class="num"><span class="k">'+esc(t.testl)+'</span><span class="v"><span class="o">'+rund(z[10])+'</span><span class="a">→</span>'+rund(z[9])+'</span></div>'+
     '</div>'+
-    modDescHTML(b, v.m)+modRelHTML(b, v.m)+graphLink(z, '')+
+    modDescHTML(b, v.m)+modRelHTML(b, v.m)+graphLink(z, '', false, z[2] && z[4] ? z[2] : '')+
     '<p class="dmeta">'+fmt(z[12].length)+(de()?' Dateien. Beauftragt / zusätzlich ist je Fähigkeit geschätzt, nicht je Datei.':' files. Commissioned / additional is estimated per capability, not per file.')+'</p>'+
     '<input type="search" class="search" data-q value="'+esc(v.q||'')+'" placeholder="'+esc(t.search)+'" aria-label="'+esc(t.search)+'">'+
     '<ul class="dlist">'+files.slice(0,shown).map(row).join('')+'</ul>'+
@@ -1101,10 +1106,57 @@ function setLang(l){
   renderAll();
 }
 document.addEventListener('oriso:languagechange', function(e){ if (e.detail && (e.detail.lang==='de'||e.detail.lang==='en') && e.detail.lang!==lang) setLang(e.detail.lang); });
-function renderAll(){ drawTotals(); drawControls(); drawMap(); drawPlanned(); drawCards(); drawKpis(); drawHow(); drawMeas(); if (stack.length) renderView(); else renderEmpty(); }
+/* ───────── Deep-Link aus dem Understand-Viewer: /map/#node=<knoten-id> ───────── */
+function resolveNode(id){
+  var m, bid, i, j, z, f;
+  if (/^capability:./.test(id)){
+    for (bid in BY) if (capNodeId(bid) === id) return [{v:'block', id:bid}];
+    return null;
+  }
+  if ((m = /^(ORISO-[A-Za-z]+)::(folder|file):(.*)$/.exec(id))){
+    var repo = m[1], kind = m[2], rest = m[3];
+    for (bid in BY){
+      var zs = Z[bid] || [];
+      for (i=0;i<zs.length;i++){
+        z = zs[i]; if (CODE_REPOS[z[0]] !== repo) continue;
+        if (kind === 'folder'){ if (z[2] && z[4] && z[2] === rest) return [{v:'block', id:bid}, {v:'mod', m:i}]; continue; }
+        for (j=0;j<z[12].length;j++){ f = z[12][j]; if (f[1] !== 2 && ghPath(z, f) === rest) return [{v:'block', id:bid}, {v:'mod', m:i}, {v:'file', m:i, f:j}]; }
+      }
+    }
+  }
+  return null;
+}
+function hashNodeId(){
+  var m = /^#node=(.+)$/.exec(location.hash || ''), id;
+  if (!m) return null;
+  try { id = decodeURIComponent(m[1]); } catch (e) { return null; }
+  return id.length <= 512 && !/[\u0000-\u001f\u007f]/.test(id) ? id : null;
+}
+var notFoundId = null;
+function drawNotice(){
+  var old = document.querySelector('.map-notfound'); if (old) old.remove();
+  if (notFoundId === null) return;
+  var n = el('div','map-notfound'); n.setAttribute('role','status');
+  n.innerHTML = '<b>'+(de()?'Knoten nicht gefunden':'Node not found')+'</b> <span>'+(de()
+    ? 'Auf der Karte gibt es keinen Eintrag für diesen Verweis. Die Karte zeigt die Übersicht.'
+    : 'The map has no entry for this link. Showing the overview.')+'</span> <code>'+esc(notFoundId)+'</code>';
+  var host = document.getElementById('karte'); host.insertBefore(n, host.querySelector('.controls'));
+}
+function applyHash(){
+  var id = hashNodeId(); if (id === null) return;
+  var path = resolveNode(id);
+  notFoundId = path ? null : id;
+  drawNotice();
+  if (!path) return;
+  stack = path; renderView();
+  if (useSheet()) focusZbar(); else focusTitle();
+  document.getElementById('karte').scrollIntoView({behavior:reduce?'auto':'smooth'});
+}
+window.addEventListener('hashchange', applyHash);
+function renderAll(){ drawNotice(); drawTotals(); drawControls(); drawMap(); drawPlanned(); drawCards(); drawKpis(); drawHow(); drawMeas(); if (stack.length) renderView(); else renderEmpty(); }
 var rt=null, lastW=0;
 window.addEventListener('resize', function(){ clearTimeout(rt); rt=setTimeout(function(){ if (tm.clientWidth!==lastW){ lastW=tm.clientWidth; drawMap(); } },120); });
-renderAll(); lastW = tm.clientWidth;
+renderAll(); lastW = tm.clientWidth; applyHash();
 }
 
 /* ───────── Daten ─────────
