@@ -11,8 +11,10 @@ vm.runInNewContext(readFileSync(new URL('../map/board-agg.js', import.meta.url),
 const raw = sandbox.BoardAgg;
 // JSON round trip drops the foreign-realm prototypes so deepStrictEqual compares plain data.
 const BoardAgg = {STATUSES: [...raw.STATUSES], aggregate: (b, e) => JSON.parse(JSON.stringify(raw.aggregate(b, e)))};
-const fx = n => JSON.parse(readFileSync(new URL('./fixtures/map-data/' + n, import.meta.url), 'utf8'));
-const board = fx('board.json'), epics = fx('epics.json').epics;
+const fx = n => JSON.parse(readFileSync(new URL('./fixtures/' + n, import.meta.url), 'utf8'));
+const board = fx('board.json'), epics = fx('map-data/epics.json').epics;
+// The sub-issue list of the epic carries #900 (Admin); the shared map fixture has none, so add it here.
+epics.epics[0].subs = [[1, 900, 'Mapped through the epic sub-issue list', 'o']];
 
 test('the fixture is a valid board.json (schema v1)', () => {
   assert.deepEqual(validateBoard(board), []);
