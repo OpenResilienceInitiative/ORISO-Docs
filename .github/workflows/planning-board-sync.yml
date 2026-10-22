@@ -32,7 +32,8 @@ jobs:
         with: {node-version: '24'}
       - run: node --test tools/planning-map/test/*.test.mjs
   sync:
-    if: github.event_name != 'pull_request' && github.repository == 'OpenResilienceInitiative/ORISO-Docs'
+    # Only a board exported from dev may reach the public hub (ua-public-site.yml downloads runs on dev only).
+    if: github.event_name != 'pull_request' && github.repository == 'OpenResilienceInitiative/ORISO-Docs' && github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:

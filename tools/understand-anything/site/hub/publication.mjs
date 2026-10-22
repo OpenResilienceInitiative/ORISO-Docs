@@ -83,8 +83,14 @@ export function validateSources(root){
 export function boardAsset(boardPath,linksBytes){
  const board=JSON.parse(fs.readFileSync(boardPath,'utf8')),errors=validateBoard(board);
  if(errors.length)throw Error('board.json invalid: '+errors.join('; '));
- const priv=new Set(boardContract.privateRepositories);
- if(board.items.some(i=>priv.has(i.repository)))throw Error('board.json carries an item of a private repository');
+ // Allow-list, not deny-list: only repositories of the public policy, in the board's organisation, may be named.
+ const priv=new Set(boardContract.privateRepositories),org=boardContract.project.owner+'/';
+ const pub=new Set(JSON.parse(fs.readFileSync(new URL('../../../truth-chain/public-repositories.json',import.meta.url),'utf8')).repositories.map(r=>org+r));
+ const isPublic=r=>typeof r==='string'&&r.startsWith(org)&&pub.has(r)&&!priv.has(r);
+ for(const i of board.items){
+  if(priv.has(i.repository)||priv.has(i.parent?.repository))throw Error('board.json carries an item of a private repository');
+  if(!isPublic(i.repository)||(i.parent&&!isPublic(i.parent.repository)))throw Error('board.json names a repository that is not public: '+String(i.parent&&!isPublic(i.parent.repository)?i.parent.repository:i.repository));
+ }
  const links=JSON.parse(linksBytes);links.optional=[...new Set([...(links.optional||[]),'board.json'])].sort();
  return {board:JSON.stringify(board)+'\n',links:JSON.stringify(links)+'\n'};
 }

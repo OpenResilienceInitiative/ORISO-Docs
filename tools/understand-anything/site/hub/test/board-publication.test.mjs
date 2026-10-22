@@ -19,3 +19,13 @@ test('private items never carry titles into the published file',()=>{
  const dirty=structuredClone(board);dirty.items[0].repository='OpenResilienceInitiative/ORISO-E2E';
  assert.throws(()=>boardAsset(write(dirty),Buffer.from('{"optional":[]}')),/private/i);
 });
+test('only repositories on the public list are published, everything else is refused',()=>{
+ for(const repository of ['OpenResilienceInitiative/ORISO-Unlisted','SomeoneElse/ORISO-Frontend','ORISO-Frontend',null]){
+  const dirty=structuredClone(board);dirty.items[0].repository=repository;
+  assert.throws(()=>boardAsset(write(dirty),Buffer.from('{"optional":[]}')),/not public|private|invalid/i,String(repository));
+ }
+});
+test('a parent reference outside the public list is refused as well',()=>{
+ const dirty=structuredClone(board);const i=dirty.items.find(x=>x.parent);i.parent={repository:'OpenResilienceInitiative/ORISO-E2E',number:1};
+ assert.throws(()=>boardAsset(write(dirty),Buffer.from('{"optional":[]}')),/not public|private/i);
+});

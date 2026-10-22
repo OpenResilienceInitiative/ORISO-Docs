@@ -41,3 +41,20 @@ test("actions use the repo's version pins, the board is an artifact, not a commi
   assert.match(wf, /name: planning-board/);
   assert.doesNotMatch(wf, /git (add|commit|push)/);
 });
+
+// Provenance (ORISO-Docs#208): only a board exported from dev may reach the public hub.
+const site = readFileSync(resolve(here, "../../../.github/workflows/ua-public-site.yml"), "utf8");
+const job = (name) => {
+  const m = new RegExp(`^  ${name}:\\n([\\s\\S]*?)(?=^  [\\w-]+:\\n|(?![\\s\\S]))`, "m").exec(wf);
+  return m ? m[1] : "";
+};
+
+test("the sync job only runs for the dev branch", () => {
+  assert.match(job("sync"), /^\s+if: .*github\.ref == 'refs\/heads\/dev'/m);
+});
+
+test("the hub publication only downloads planning-board artifacts of runs on dev", () => {
+  const lines = site.split("\n").filter((l) => /gh run list --workflow planning-board-sync\.yml/.test(l));
+  assert.ok(lines.length >= 1);
+  for (const l of lines) assert.match(l, /--branch dev\b/);
+});
