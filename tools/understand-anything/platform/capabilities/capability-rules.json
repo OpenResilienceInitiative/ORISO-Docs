@@ -1,6 +1,6 @@
 {
 "schemaVersion": 1,
-"_comment": "Reviewed mapping of ORISO code paths to capability ids (feature-page slugs on understand.oriso.org). Seeded from the v3 growth-map keyword classifier; every change goes through PR review. rules = directory prefixes; overrides = more specific prefixes/files that beat rules. Longest match wins within a tier; equal-length conflicts and unmatched production files fail the contract test.",
+"_comment": "Reviewed mapping of ORISO code paths to capability ids (feature-page slugs). Seeded from the v3 growth-map keyword classifier; every change goes through PR review. rules = directory prefixes; overrides = more specific prefixes/files that beat rules. Longest match wins within a tier; equal-length conflicts and unmatched production files fail the contract test.",
 "capabilities": {
   "case-handover": {"label": "Fallübergabe"},
   "notifications": {"label": "Benachrichtigungen"},
