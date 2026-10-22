@@ -83,7 +83,17 @@ and protanopia simulation. The hub documents the scheme in the "Colour scheme" s
 inline script, style or style attribute and loads the data with same-origin
 `fetch`. `map.js` merges every data file into one `MEAS` object; files named in
 `links.json` under `optional` (allowed names: `OPTIONAL_DATA` in `map.js`, today
-`board.json`) are merged into the same object when present.
+`board.json`) are loaded when present and kept whole under their file name
+(`board.json` -> `MEAS.board`, shape: `tools/planning-map/board.schema.json`).
+
+Status bars (#205): `map/board-agg.js` (classic script, also run by
+`test/board-agg.test.mjs`) maps every issue of `MEAS.board` to a capability through
+the epics of this map (the epic itself, its sub-issue list, or the `parent` link),
+counts issues per Status, Urgent/High and Readiness (average of scored issues, raw
+scale, board-wide maximum, count of unscored). Colours come from `assets/tokens.css`
+(`--ua-status-*`); widths are set through `data-css` + CSSOM, never style attributes.
+Without `board.json` the page shows no bars. `map/data/board.json` is produced by
+`tools/planning-map/export-board.mjs` and is not committed.
 
 Regenerate the data from the measured intermediate files (code counts, tests,
 stories, graph links):

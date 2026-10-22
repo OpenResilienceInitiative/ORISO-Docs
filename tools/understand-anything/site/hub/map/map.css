@@ -397,3 +397,37 @@ footer .meas b{color:var(--ink-2)}
 .wasist p{font-size:13.5px;overflow-wrap:anywhere}
 html[data-lang="de"] .wasist [lang="en"]{display:inline !important}
 
+
+/* Board-Stand (ORISO-Docs#205): Farben ausschließlich aus assets/tokens.css */
+.sbar{display:flex;overflow:hidden;border-radius:2px;background:var(--sunken);pointer-events:auto}
+.sbar.tile{position:absolute;left:0;right:0;bottom:0;height:7px;z-index:1;border-radius:0}
+.sbar.big{height:14px;border-radius:4px;margin:6px 0 8px}
+.sseg{display:block;flex:0 0 auto;height:100%;min-width:0;border-left:1px solid var(--card)}
+.sseg:first-child{border-left:0}
+.sseg[data-status="Backlog"]{background:var(--ua-status-backlog)}
+.sseg[data-status="Ready"]{background:var(--ua-status-ready)}
+.sseg[data-status="On hold"]{background:var(--ua-status-on-hold)}
+.sseg[data-status="In progress"]{background:var(--ua-status-in-progress)}
+.sseg[data-status="In review"]{background:var(--ua-status-in-review)}
+.sseg[data-status="QA internal"]{background:var(--ua-status-qa-internal)}
+.sseg[data-status="QA external"]{background:var(--ua-status-qa-external)}
+.sseg[data-status="Done"]{background:var(--ua-status-done)}
+.sseg[data-group="neutral"]{box-shadow:inset 0 0 0 1px var(--ua-status-backlog-edge)}
+.blk.hasbar .lab{bottom:11px;max-height:calc(100% - 15px)}
+.sbadges{position:absolute;left:5px;top:5px;z-index:1;display:flex;flex-wrap:wrap;gap:3px;max-width:calc(100% - 10px);pointer-events:none}
+.bb{display:inline-block;font-size:10.5px;font-weight:600;line-height:1.5;padding:1px 6px;border-radius:999px;background:var(--label-bg);color:var(--ink);border:1px solid var(--line);white-space:nowrap}
+.blk.xs .sbadges,.blk.sm .sbadges{display:none}
+.blk.xs .sbar.tile{height:4px}
+.slist{list-style:none;margin:0 0 8px;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:3px 14px}
+.slist li{display:flex;align-items:center;gap:6px;font-size:12.5px}
+.slist .sn{flex:1;min-width:0}
+.slist .sc{font-variant-numeric:tabular-nums;font-weight:600}
+.sw.sseg{display:inline-block;flex:0 0 12px;width:12px;height:12px;border-radius:3px;border:0}
+.bbadges{display:flex;flex-wrap:wrap;gap:6px}
+.bbadges .bb{font-size:12px;padding:2px 8px}
+.bbadges .raw{color:var(--ink-2);font-weight:500}
+.bnote{font-size:12px;color:var(--ink-2);margin:8px 0 0}
+.blegend{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center}
+.blegend span{display:inline-flex;align-items:center;gap:6px}
+.sbar.card{height:8px;margin-top:8px}
+.cbadges{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}

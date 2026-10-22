@@ -282,6 +282,8 @@ var CODE_REPOS = ['ORISO-Frontend','ORISO-Admin','ORISO-UserService','ORISO-Tena
 var GH = 'https://github.com/OpenResilienceInitiative/';
 var SBH = ['storybook-frontend','storybook-admin'];
 var EP = MEAS.epics.epics, EPR = MEAS.epics.repos;
+/* Board-Stand je Fähigkeit (board.json, optional): Aggregation in board-agg.js, Zuordnung über die Epics dieser Karte. */
+var BOARD = (MEAS.board && typeof BoardAgg !== 'undefined') ? BoardAgg.aggregate(MEAS.board, MEAS.epics) : null;
 
 /* ───────── Hilfen ───────── */
 var lang = document.documentElement.getAttribute('data-lang')==='en' ? 'en' : 'de';
@@ -420,6 +422,46 @@ function docBadge(b){
   var n = docCount(b);
   return '<span class="docb'+(n?'':' none')+'" data-layer="d">'+(n ? (de()?'Doku ':'Docs ')+n : (de()?'keine Doku':'no docs'))+'</span>';
 }
+/* ───────── Board-Stand: Statusleiste, Prioritäts- und Reife-Plaketten ───────── */
+var STATUS_L = {'Backlog':['Backlog','Backlog'],'Ready':['Bereit','Ready'],'On hold':['Pausiert','On hold'],'In progress':['In Arbeit','In progress'],'In review':['In Prüfung','In review'],'QA internal':['QA intern','QA internal'],'QA external':['QA extern','QA external'],'Done':['Fertig','Done']};
+function boardOf(id){ return BOARD && BOARD.blocks[id] ? BOARD.blocks[id] : null; }
+function dec(n){ return n.toLocaleString(loc(), {minimumFractionDigits:1, maximumFractionDigits:1}); }
+function uhText(bs){ return (de()?'Dringend/Hoch ':'Urgent/High ')+fmt(bs.priority.urgentHigh); }
+function readyText(bs){
+  var r = bs.readiness;
+  return r.avg===null ? (de()?'Reife –':'Readiness –') : (de()?'Reife ':'Readiness ')+dec(r.avg)+(de()?' von ':' of ')+fmt(r.max);
+}
+function unscoredText(bs){ return fmt(bs.readiness.unscored)+(de()?' ohne Wert':' without score'); }
+function boardTitle(bs){
+  var parts = bs.segments.filter(function(g){ return g.count>0; }).map(function(g){ return L2(STATUS_L[g.status])+' '+fmt(g.count); });
+  return fmt(bs.total)+(de()?' Aufgaben: ':' issues: ')+parts.join(', ')+'; '+uhText(bs)+'; '+readyText(bs)+'; '+unscoredText(bs);
+}
+function sbarHTML(bs, cls){
+  return '<span class="sbar '+cls+'" aria-hidden="true">'+bs.segments.map(function(g){
+    return '<i class="sseg" data-status="'+esc(g.status)+'" data-group="'+g.group+'" title="'+esc(L2(STATUS_L[g.status])+': '+g.count)+'" data-css="width:'+g.share+'%"></i>';
+  }).join('')+'</span>';
+}
+function boardLegend(){
+  if (!BOARD) return '';
+  var names = ['Backlog','In progress','QA internal','QA external','Done'], groups = ['neutral','progress','qa-internal','qa-external','done'];
+  var lab = [de()?'Backlog, Bereit, Pausiert':'Backlog, Ready, On hold', de()?'In Arbeit, In Prüfung':'In progress, In review', 'QA '+(de()?'intern':'internal'), 'QA '+(de()?'extern':'external'), de()?'Fertig':'Done'];
+  return '<div class="blegend" role="img" aria-label="'+esc(de()?'Farbskala Board-Status':'Board status colour scale')+'"><b>'+(de()?'Statusleiste (Board)':'Status bar (board)')+'</b>'+
+    groups.map(function(g,i){ return '<span><i class="sw sseg" data-status="'+names[i]+'" data-group="'+g+'"></i>'+esc(lab[i])+'</span>'; }).join('')+
+    '<span>'+esc((de()?'Aufgaben ohne Fähigkeit: ':'Issues outside any capability: ')+fmt(BOARD.unmapped))+'</span></div>';
+}
+function boardPanel(bs){
+  var rows = bs.segments.map(function(g){
+    return '<li><i class="sw sseg" data-status="'+esc(g.status)+'" data-group="'+g.group+'"></i><span class="sn">'+esc(L2(STATUS_L[g.status]))+'</span><span class="sc">'+fmt(g.count)+'</span></li>';
+  }).join('');
+  var r = bs.readiness;
+  return '<div class="kv bstat"><h4>'+(de()?'Stand auf dem Board':'State on the board')+'</h4>'+sbarHTML(bs,'big')+
+    '<ul class="slist">'+rows+'</ul>'+
+    '<div class="bbadges"><span class="bb">'+(de()?'Dringend ':'Urgent ')+fmt(bs.priority.urgent)+'</span><span class="bb">'+(de()?'Hoch ':'High ')+fmt(bs.priority.high)+'</span>'+
+    '<span class="bb">'+esc(readyText(bs))+(r.avg===null?'':' <span class="raw">(Ø '+dec(r.avg)+' / '+fmt(r.max)+')</span>')+'</span><span class="bb">'+esc(unscoredText(bs))+'</span></div>'+
+    '<p class="bnote">'+(de()?'Reife: Rohwert aus dem Board, die Skala ist offen; Maximum = höchster Wert auf dem ganzen Board.':'Readiness: raw board value, the scale is open; maximum = highest value on the whole board.')+
+    (bs.noStatus ? ' '+fmt(bs.noStatus)+(de()?' Aufgabe(n) ohne Status stehen nicht in der Leiste.':' issue(s) without a status are not in the bar.') : '')+'</p></div>';
+}
+
 function label(title, sub){ return '<span class="lab"><span class="lt">'+esc(title)+'</span>'+(sub?'<span class="ln">'+esc(sub)+'</span>':'')+'</span>'; }
 function sizeCls(btn, w, h){ if (w<74 || h<46) btn.classList.add('xs'); else if (w<150 || h<74) btn.classList.add('sm'); }
 function tile(tag, x, y, w, h){ var e = el(tag,'blk'); e.style.left=x+'px'; e.style.top=y+'px'; e.style.width=w+'px'; e.style.height=h+'px'; if (tag==='button') e.type='button'; return e; }
@@ -465,6 +507,11 @@ function drawLevel0(root, W, H){
       }
       btn.insertAdjacentHTML('beforeend', label(L(b.t), rund(b.m.newL)+(de()?' Zeilen · ':' lines · ')+fmt(b.m.newT)+(de()?' Tests':' tests')) + docBadge(b));
       if (fr && gx){ btn.querySelector('.lab').style.right = (gw+6)+'px'; btn.querySelector('.docb').style.right = (gw+7)+'px'; }
+      var bs = boardOf(b.id);
+      if (bs){
+        btn.classList.add('hasbar'); btn.title = L(b.t)+' – '+boardTitle(bs);
+        btn.insertAdjacentHTML('beforeend', sbarHTML(bs,'tile')+'<span class="sbadges" aria-hidden="true"><span class="bb">'+esc(uhText(bs))+'</span><span class="bb">'+esc(readyText(bs))+' · '+esc(unscoredText(bs))+'</span></span>');
+      }
       if (pl) btn.setAttribute('aria-label', L(b.t)+' – '+(de()?'hineinzoomen; rund ':'zoom in; about ')+rund(pl)+(de()?' Zeilen geplant (Schätzung)':' lines planned (estimate)'));
       sizeCls(btn, q.w, q.h);
       btn.addEventListener('click', function(){ openBlock(b.id, btn, true); });
@@ -564,7 +611,7 @@ function drawMap(animFrom){
     }
   }
   applyLayers(); markSel(); drawZbar(st);
-  document.getElementById('stagefoot').innerHTML = rampLegend() + '<span>'+esc(tt().area(layers.t?'show':'hide'))+'</span>';
+  document.getElementById('stagefoot').innerHTML = rampLegend() + '<span>'+esc(tt().area(layers.t?'show':'hide'))+'</span>' + boardLegend();
 }
 function rampLegend(){
   var d = de();
@@ -726,6 +773,7 @@ function viewBlock(b){
     '<div class="can"><h4>'+esc(t.can)+' …</h4><ul>'+L(b.can).map(function(c){return '<li>'+esc(c)+'</li>';}).join('')+'</ul></div>'+
     '<p class="before"><b>'+esc(t.before)+':</b> '+esc(L(b.before))+'</p>'+plannedBox(b)+
     '<div class="kv"><h4>'+esc(t.split)+'</h4>'+bar+'</div>'+
+    (boardOf(b.id) ? boardPanel(boardOf(b.id)) : '')+
     '<div class="nums">'+
       numBtn('lines', t.lines, '<span class="o">'+rund(m.oldL)+'</span><span class="a">→</span>'+rund(m.newL))+
       numBtn('tests', t.tests, '<span class="o">'+fmt(m.oldT)+'</span><span class="a">→</span>'+fmt(m.newT))+
@@ -1054,7 +1102,8 @@ function drawCards(){
     B.filter(function(b){return b.aud===a;}).forEach(function(b){
       var m=b.m, k = el('button','card'); k.type='button';
       k.innerHTML = '<span class="aude">'+esc(L(AUD[a].s))+'</span><h3>'+esc(L(b.t))+'</h3><span class="d">'+esc(L(b.can)[0])+' …</span>'+
-        '<span class="m"><span>'+(de()?'Zeilen ':'lines ')+'<b>'+rund(m.oldL)+' → '+rund(m.newL)+'</b></span><span>'+(de()?'Tests ':'tests ')+'<b>'+fmt(m.oldT)+' → '+fmt(m.newT)+'</b></span>'+(b.ep.length?'<span>Epics <b>'+openEpics(b)+'/'+b.ep.length+'</b></span>':'')+'</span>';
+        '<span class="m"><span>'+(de()?'Zeilen ':'lines ')+'<b>'+rund(m.oldL)+' → '+rund(m.newL)+'</b></span><span>'+(de()?'Tests ':'tests ')+'<b>'+fmt(m.oldT)+' → '+fmt(m.newT)+'</b></span>'+(b.ep.length?'<span>Epics <b>'+openEpics(b)+'/'+b.ep.length+'</b></span>':'')+'</span>'+
+        (boardOf(b.id) ? sbarHTML(boardOf(b.id),'card')+'<span class="cbadges"><span class="bb">'+esc(uhText(boardOf(b.id)))+'</span><span class="bb">'+esc(readyText(boardOf(b.id)))+' · '+esc(unscoredText(boardOf(b.id)))+'</span></span>' : '');
       k.addEventListener('click', function(){ openBlock(b.id, k); if (!useSheet()) document.getElementById('karte').scrollIntoView({behavior:reduce?'auto':'smooth'}); });
       c.appendChild(k);
     });
@@ -1110,7 +1159,7 @@ renderAll(); lastW = tm.clientWidth;
 /* ───────── Daten ─────────
    Alle Messwerte liegen als erzeugte JSON-Dateien in data/ neben dieser Seite
    (Erzeuger: build-map-data.mjs). OPTIONAL_DATA sind Dateien, die nur geladen werden, wenn links.json sie
-   unter "optional" meldet; ihr Inhalt wird unter demselben Schlüssel in MEAS gemischt (Platz für board.json). */
+   unter "optional" meldet; ihr Inhalt liegt in MEAS unter dem Dateinamen ohne .json (board.json wird zu MEAS.board). */
 var DATA_FILES = ['counts.json', 'descriptions.json', 'drill.json', 'epics.json', 'links.json', 'zoom.json'];
 var OPTIONAL_DATA = ['board.json'];
 function fetchJson(name, optional){
@@ -1130,7 +1179,8 @@ function loadMeasurements(){
     /* Optionale Dateien nur laden, wenn der Erzeuger sie in links.json meldet (kein 404 in der Konsole). */
     var wanted = (meas.optional || []).filter(function(n){ return OPTIONAL_DATA.indexOf(n) >= 0; });
     return Promise.all(wanted.map(function(n){ return fetchJson(n, true); })).then(function(extra){
-      var more = mergeDocs(extra); Object.keys(more).forEach(function(k){ meas[k] = more[k]; });
+      /* Optionale Dateien behalten ihre Form (board.json folgt tools/planning-map/board.schema.json) und liegen unter ihrem Dateinamen: MEAS.board. */
+      extra.forEach(function(doc, i){ if (doc) meas[wanted[i].replace(/\.json$/, '')] = doc; });
       return meas;
     });
   });

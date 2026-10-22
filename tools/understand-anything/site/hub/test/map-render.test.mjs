@@ -19,6 +19,13 @@ const CSP = "default-src 'self'; script-src 'self'; style-src 'self' https://fon
 function serve() {
   const server = http.createServer((req, res) => {
     const url = req.url.split('?')[0];
+    // board.json (optional data) is announced by a patched links.json and served from its own fixture.
+    if (url === '/map/data/links.json' || url === '/map/data/epics.json') {
+      const doc = JSON.parse(readFileSync(fixtures + url.slice('/map/data/'.length), 'utf8'));
+      if (url.endsWith('links.json')) doc.optional = ['board.json']; else doc.epics.epics[0].subs = [[1, 900, 'Mapped through the epic sub-issue list', 'o']];
+      res.setHeader('content-type', types['.json']); res.setHeader('content-security-policy', CSP); return res.end(JSON.stringify(doc));
+    }
+    if (url === '/map/data/board.json') { res.setHeader('content-type', types['.json']); res.setHeader('content-security-policy', CSP); return res.end(readFileSync(fixtures + '../board.json')); }
     const file = url.startsWith('/map/data/') ? fixtures + url.slice('/map/data/'.length)
       : url === '/map/' ? hub + 'map/index.html' : hub + url.slice(1);
     if (!file.startsWith(hub) && !file.startsWith(fixtures) || !existsSync(file)) { res.statusCode = 404; return res.end('not found'); }
@@ -103,3 +110,87 @@ for (const width of [320, 390, 1440]) {
     });
   }
 }
+
+// ───── Status bars from board.json (ORISO-Docs#205) ─────
+const GROUPS = ['neutral', 'progress', 'qa-internal', 'qa-external', 'done'];
+async function segColours(page, id) {
+  return page.evaluate(i => {
+    const out = {};
+    document.querySelectorAll(`#tm .blk[data-id="${i}"] .sbar .sseg`).forEach(s => { out[s.dataset.group] = out[s.dataset.group] || getComputedStyle(s).backgroundColor; });
+    return out;
+  }, id);
+}
+
+test('a block with board data shows a status bar under the strict CSP, widths set through the CSSOM', {skip}, async () => {
+  const {page, problems, context} = await open({lang: 'en'});
+  const segs = page.locator('#tm .blk[data-id="chat"] .sbar .sseg');
+  assert.equal(await segs.count(), 8);
+  assert.deepEqual(await segs.evaluateAll(a => a.map(s => s.dataset.status)), ['Backlog', 'Ready', 'On hold', 'In progress', 'In review', 'QA internal', 'QA external', 'Done']);
+  await page.waitForFunction(() => document.querySelectorAll('#tm [data-css]').length === 0);
+  const widths = await segs.evaluateAll(a => a.map(s => s.style.width));
+  assert.deepEqual(widths, ['10%', '10%', '10%', '20%', '10%', '10%', '10%', '20%']);
+  assert.equal(await page.locator('#tm .blk[data-id="chat"] .sbar[style]').count(), 0); // nothing but CSSOM on elements, no attribute left behind in markup
+  assert.equal(await page.locator('#tm .blk[data-id="livechat"] .sbar').count(), 0); // no board data -> no bar
+  assert.deepEqual(problems, []);
+  await context.close();
+});
+
+for (const scheme of ['light', 'dark']) {
+  test(`status groups use the shared tokens and stay distinct (${scheme})`, {skip}, async () => {
+    const {page, context} = await open({scheme});
+    const tokens = JSON.parse(readFileSync(hub + 'assets/tokens.json', 'utf8')).tokens;
+    const rgb = hex => 'rgb(' + [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16)).join(', ') + ')';
+    const c = await segColours(page, 'chat');
+    assert.deepEqual(Object.keys(c).sort(), [...GROUPS].sort());
+    assert.equal(c['qa-internal'], rgb(tokens['status-qa-internal'][scheme].fill));
+    assert.equal(c['qa-external'], rgb(tokens['status-qa-external'][scheme].fill));
+    assert.equal(c.done, rgb(tokens['status-done'][scheme].fill));
+    assert.equal(c.progress, rgb(tokens['plan-in-progress'][scheme].fill));
+    assert.equal(c.neutral, rgb(tokens['plan-not-started'][scheme].fill));
+    assert.equal(new Set(Object.values(c)).size, 5, 'five distinct colours: ' + JSON.stringify(c));
+    await context.close();
+  });
+}
+
+test('hover title and detail panel give counts per status, Urgent/High and readiness (EN)', {skip}, async () => {
+  const {page, context} = await open({lang: 'en'});
+  const title = await page.locator('#tm .blk[data-id="chat"]').getAttribute('title');
+  assert.match(title, /Done 2/);
+  assert.match(title, /Urgent\/High 5/);
+  assert.match(title, /Readiness 7\.6 of 19/);
+  assert.match(title, /2 without score/);
+  await page.locator('#tm .blk[data-id="chat"]').click();
+  const box = page.locator('#panel .bstat');
+  await box.waitFor();
+  const text = await box.innerText();
+  assert.match(text, /Urgent 3/); assert.match(text, /High 2/);
+  assert.match(text, /7\.6 \/ 19/);
+  assert.match(text, /2 without score/);
+  assert.match(text, /QA internal\s*1/);
+  assert.match(await page.locator('#stagefoot').innerText(), /Issues outside any capability: 1/);
+  await context.close();
+});
+
+test('German labels and decimal comma', {skip}, async () => {
+  const {page, context} = await open({lang: 'de'});
+  const title = await page.locator('#tm .blk[data-id="chat"]').getAttribute('title');
+  assert.match(title, /Dringend\/Hoch 5/);
+  assert.match(title, /Reife 7,6 von 19/);
+  assert.match(title, /2 ohne Wert/);
+  await context.close();
+});
+
+test('on a 390 px phone the bar is visible in the tile and the legend wraps without overflow', {skip}, async () => {
+  const {page, context} = await open({width: 390, lang: 'en'});
+  const r = await page.locator('#tm .blk[data-id="chat"] .sbar').boundingBox();
+  assert.ok(r && r.width >= 20 && r.height >= 3, JSON.stringify(r));
+  const card = page.locator('#cards .card', {hasText: 'Chat and conversation list'});
+  const cbar = await card.locator('.sbar').boundingBox();
+  assert.ok(cbar && cbar.width >= 100 && cbar.height >= 6, JSON.stringify(cbar));
+  assert.match(await card.locator('.cbadges').innerText(), /Urgent\/High 5[\s\S]*Readiness 7\.6 of 19 · 2 without score/);
+  await card.click();
+  await page.locator('#sheetBody .bstat').waitFor();
+  const m = await page.evaluate(() => ({s: document.documentElement.scrollWidth, c: document.documentElement.clientWidth}));
+  assert.ok(m.s <= m.c);
+  await context.close();
+});

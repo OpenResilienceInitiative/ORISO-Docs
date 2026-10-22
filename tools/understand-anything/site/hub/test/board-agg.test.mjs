@@ -1,0 +1,70 @@
+// Aggregation behind the status bars on the map (ORISO-Docs#205): board.json + epics mapping -> per capability.
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import vm from 'node:vm';
+import {validateBoard} from '../../../../planning-map/lib/board.mjs';
+
+// Run it as a classic script, exactly like the browser does (the package is type: module).
+const sandbox = {}; sandbox.self = sandbox;
+vm.runInNewContext(readFileSync(new URL('../map/board-agg.js', import.meta.url), 'utf8'), sandbox);
+const raw = sandbox.BoardAgg;
+// JSON round trip drops the foreign-realm prototypes so deepStrictEqual compares plain data.
+const BoardAgg = {STATUSES: [...raw.STATUSES], aggregate: (b, e) => JSON.parse(JSON.stringify(raw.aggregate(b, e)))};
+const fx = n => JSON.parse(readFileSync(new URL('./fixtures/' + n, import.meta.url), 'utf8'));
+const board = fx('board.json'), epics = fx('map-data/epics.json').epics;
+// The sub-issue list of the epic carries #900 (Admin); the shared map fixture has none, so add it here.
+epics.epics[0].subs = [[1, 900, 'Mapped through the epic sub-issue list', 'o']];
+
+test('the fixture is a valid board.json (schema v1)', () => {
+  assert.deepEqual(validateBoard(board), []);
+});
+
+test('issues map to a capability through the epics: the epic itself, its parent link and its sub-issue list', () => {
+  const agg = BoardAgg.aggregate(board, epics);
+  assert.deepEqual(Object.keys(agg.blocks), ['chat']);
+  assert.equal(agg.blocks.chat.total, 10); // 1734 + 8 children + #900 from subs; PR and unmapped #5 excluded
+  assert.equal(agg.unmapped, 1);
+  assert.equal(agg.ignored, 1); // the pull request
+});
+
+test('status counts and bar shares follow the board order and sum to 100', () => {
+  const b = BoardAgg.aggregate(board, epics).blocks.chat;
+  assert.deepEqual(b.counts, {'Backlog': 1, 'Ready': 1, 'On hold': 1, 'In progress': 2, 'In review': 1, 'QA internal': 1, 'QA external': 1, 'Done': 2});
+  assert.deepEqual(b.segments.map(s => s.status), BoardAgg.STATUSES);
+  assert.deepEqual(b.segments.map(s => s.share), [10, 10, 10, 20, 10, 10, 10, 20]);
+  assert.deepEqual(b.segments.map(s => s.group), ['neutral', 'neutral', 'neutral', 'progress', 'progress', 'qa-internal', 'qa-external', 'done']);
+  assert.equal(b.segments.reduce((a, s) => a + s.share, 0), 100);
+});
+
+test('Urgent and High are counted separately and together', () => {
+  const b = BoardAgg.aggregate(board, epics).blocks.chat;
+  assert.deepEqual(b.priority, {urgent: 3, high: 2, urgentHigh: 5});
+});
+
+test('readiness: average over scored issues, raw max of the board, unscored count (zero is a score)', () => {
+  const agg = BoardAgg.aggregate(board, epics), b = agg.blocks.chat;
+  assert.equal(agg.readinessMax, 19);
+  assert.deepEqual(b.readiness, {avg: 7.6, scored: 8, unscored: 2, max: 19});
+  // (8+4+0+12+6+10+19+2)/8 = 7.625 -> one decimal, rounded half up
+});
+
+test('an empty or missing board gives no blocks, never throws', () => {
+  assert.deepEqual(BoardAgg.aggregate(null, epics).blocks, {});
+  assert.deepEqual(BoardAgg.aggregate({items: []}, epics).blocks, {});
+});
+
+test('a block with only unscored issues has no average', () => {
+  const only = {items: [{contentType: 'Issue', repository: 'o/ORISO-Frontend', number: 1734, status: 'Done', readiness: null, priority: null, parent: null}]};
+  const b = BoardAgg.aggregate(only, epics).blocks.chat;
+  assert.deepEqual(b.readiness, {avg: null, scored: 0, unscored: 1, max: 0});
+});
+
+test('items without a status are counted in the total but not in the bar', () => {
+  const x = {items: [
+    {contentType: 'Issue', repository: 'o/ORISO-Frontend', number: 1734, status: null, readiness: null, priority: null, parent: null},
+    {contentType: 'Issue', repository: 'o/ORISO-Frontend', number: 1, status: 'Done', readiness: null, priority: null, parent: {repository: 'o/ORISO-Frontend', number: 1734}}]};
+  const b = BoardAgg.aggregate(x, epics).blocks.chat;
+  assert.equal(b.total, 2); assert.equal(b.noStatus, 1);
+  assert.equal(b.segments.find(s => s.status === 'Done').share, 100);
+});
