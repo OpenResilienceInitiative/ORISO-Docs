@@ -1152,7 +1152,7 @@ sheet.addEventListener('click', function(e){ if (e.target===sheet) sheet.close()
   sin.addEventListener('touchend', function(e){ if (sy!==null && e.changedTouches.length && e.changedTouches[0].clientY - sy > 80){ var top = stack[stack.length-1]; if (top && top.direct) stack = []; sheet.close(); } sy = null; }, {passive:true});
 })();
 sheet.addEventListener('close', function(){ if (opener && document.contains(opener)) opener.focus(); if (!useSheet()) return; });
-window.matchMedia('(max-width:980px)').addEventListener('change', function(e){ if (!e.matches && sheet.open) sheet.close(); renderView(); });
+window.matchMedia('(max-width:980px)').addEventListener('change', function(e){ if (!e.matches && sheet.open) sheet.close(); renderView(); if (typeof drawPlanned==='function') drawPlanned(); });
 
 /* ───────── Geplante Arbeit ───────── */
 function drawPlanned(){
@@ -1330,19 +1330,43 @@ function setRelease(name){
   markRelease(); relStatus();
 }
 function relMobile(){ return window.matchMedia('(max-width:1560px)').matches; }
-function openRel(noFocus){
+/* Offenes Schubfach (bis 1560 px): der Rest der Seite ist inert, damit Tab und Lesehilfen im Schubfach bleiben.
+   Nicht beim Ziehen: dann ist das Schubfach nur Ablageziel, und die Quelle muss bedienbar bleiben. */
+var relInert = [];
+function setPageInert(on){
+  relInert.forEach(function(n){ n.removeAttribute('inert'); }); relInert = [];
+  if (!on) return;
+  var keep = [document.getElementById('relpanel'), document.getElementById('relback')], node = keep[0];
+  while (node && node.parentElement && node!==document.body){
+    var parent = node.parentElement;
+    Array.prototype.forEach.call(parent.children, function(sib){
+      if (sib===node || keep.indexOf(sib)>=0 || sib.tagName==='DIALOG' || sib.tagName==='SCRIPT' || sib.hasAttribute('inert')) return;
+      sib.setAttribute('inert',''); relInert.push(sib);
+    });
+    node = parent;
+  }
+}
+function openRel(noFocus, viaDrag){
   var p = document.getElementById('relpanel'); p.classList.add('open'); document.getElementById('relback').hidden = false;
-  document.getElementById('relopen').setAttribute('aria-expanded','true'); if (noFocus!==true) document.getElementById('relclose').focus();
+  document.getElementById('relopen').setAttribute('aria-expanded','true');
+  if (viaDrag!==true && relMobile()) setPageInert(true);
+  if (noFocus!==true) document.getElementById('relclose').focus();
 }
 function closeRel(noFocus){
   var p = document.getElementById('relpanel'); if (!p.classList.contains('open')) return;
+  setPageInert(false);
   p.classList.remove('open'); document.getElementById('relback').hidden = true;
   var o = document.getElementById('relopen'); o.setAttribute('aria-expanded','false'); if (!noFocus) o.focus();
 }
 document.getElementById('relopen').addEventListener('click', function(){ openRel(); });
 document.getElementById('relclose').addEventListener('click', function(){ closeRel(); });
 document.getElementById('relback').addEventListener('click', function(){ closeRel(); });
-document.addEventListener('keydown', function(e){ if (e.key==='Escape') closeRel(); });
+/* Escape schließt zuerst das Schubfach (Capture-Phase), erst das nächste Escape zoomt heraus oder schließt Ansichten. */
+document.addEventListener('keydown', function(e){
+  if (e.key!=='Escape' || !document.getElementById('relpanel').classList.contains('open')) return;
+  if ((movedlg && movedlg.open) || sheet.open) return;
+  e.preventDefault(); e.stopPropagation(); closeRel();
+}, true);
 window.matchMedia('(max-width:1560px)').addEventListener('change', function(q){ if (!q.matches) closeRel(true); });
 
 
@@ -1451,14 +1475,30 @@ function drawPlanLog(){
     row.appendChild(bar); box.appendChild(row);
   });
 }
-if (PLAN) PLAN.onChange(function(){ rescope(); drawRelPanel(); markRelease(); relStatus(); drawPlanLog(); if (stack.length) renderView(); });
+/* Nach jeder Änderung neu zeichnen; liegt der Fokus in der Seitenansicht und verschwindet mit dem Neuzeichnen,
+   landet er auf dem neuen „Zu Release verschieben …“-Knopf (gleiches Ziel) oder auf dem Titel der Ansicht. */
+function refocusView(mv){
+  var root = useSheet() ? sheetBody : panel, b = null;
+  if (mv) b = root.querySelector('.mvbtn[data-move="'+CSS.escape(mv[0])+'"][data-moveid="'+CSS.escape(mv[1])+'"]');
+  if (b) b.focus({preventScroll:true}); else focusTitle();
+}
+if (PLAN) PLAN.onChange(function(){
+  var a = document.activeElement;
+  var inView = a && a!==document.body && (panel.contains(a) || sheetBody.contains(a));
+  var mv = inView && a.classList.contains('mvbtn') ? [a.getAttribute('data-move'), a.getAttribute('data-moveid')] : null;
+  rescope(); drawRelPanel(); markRelease(); relStatus(); drawPlanLog(); drawPlanned(); if (stack.length) renderView();
+  if (inView && !document.contains(a)) refocusView(mv);
+});
 /* Ziehen: Epic-Karten und Fähigkeits-Blöcke sind Quellen, die Release-Karten im Panel Ziele. */
+/* Nicht im Bottom-Sheet-Modus (Handy): dort öffnet ein Tipp die Ansicht, Ziehen würde mit dem Scrollen kollidieren. */
 function dragSource(node, sub){
+  if (useSheet()){ node.removeAttribute('draggable'); return; }
   node.draggable = true;
   node.addEventListener('dragstart', function(e){
+    if (useSheet()){ e.preventDefault(); return; }
     dragSubject = sub; e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', 'oriso-plan:'+sub.kind);
     /* Schmale Fenster: das Release-Panel ist ein Schubfach; es geht für die Dauer des Ziehens auf (nach dem Start, damit der Zug nicht abbricht). */
-    if (relMobile() && !document.getElementById('relpanel').classList.contains('open')){ dragOpenedRel = true; setTimeout(function(){ if (dragSubject) openRel(true); }, 0); }
+    if (relMobile() && !document.getElementById('relpanel').classList.contains('open')){ dragOpenedRel = true; setTimeout(function(){ if (dragSubject) openRel(true, true); }, 0); }
   });
   node.addEventListener('dragend', function(){
     dragSubject = null; if (dragOpenedRel){ dragOpenedRel = false; closeRel(true); }

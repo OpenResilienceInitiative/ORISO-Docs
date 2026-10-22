@@ -631,6 +631,52 @@ test('moving a capability with several epics carries one expectation per epic', 
   await context.close();
 });
 
+test('keyboard move: after submitting, focus is back on the "Move to release…" button of the redrawn panel', {skip}, async () => {
+  const {page, problems, context} = await open({lang: 'en'});
+  await openEpicForMove(page);
+  await page.locator('#panel [data-move="epic"]').focus();
+  await page.keyboard.press('Enter');
+  await page.waitForSelector('#movedlg[open]');
+  await page.locator('#mvrel').selectOption('v2.0.13');
+  await page.locator('#mvgo').focus();
+  await page.keyboard.press('Enter');
+  await page.waitForSelector('#planlog .plrow.command');
+  assert.equal(await page.evaluate(() => document.activeElement.getAttribute('data-move')), 'epic');
+  assert.ok(await page.evaluate(() => document.getElementById('panel').contains(document.activeElement)));
+  assert.deepEqual(problems, []);
+  await context.close();
+});
+
+test('a move redraws "Planned work" too: the epic card shows the new release', {skip}, async () => {
+  const {page, problems, context} = await open({lang: 'en'});
+  assert.match(await page.locator('#pgrid .epic[data-epic="0"]').innerText(), /v2\.0\.12/);
+  await openEpicForMove(page);
+  await page.locator('#panel [data-move="epic"]').click();
+  await page.locator('#mvrel').selectOption('v2.0.13');
+  await page.locator('#mvgo').click();
+  await page.waitForSelector('#planlog .plrow.command');
+  assert.match(await page.locator('#pgrid .epic[data-epic="0"]').innerText(), /v2\.0\.13/);
+  await page.locator('#planlog .plb', {hasText: 'Undo'}).click();
+  assert.match(await page.locator('#pgrid .epic[data-epic="0"]').innerText(), /v2\.0\.12/);
+  assert.deepEqual(problems, []);
+  await context.close();
+});
+
+test('phones (bottom sheet): nothing is draggable; desktop: epics and blocks are', {skip}, async () => {
+  for (const [width, want] of [[390, false], [1440, true]]) {
+    const {page, problems, context} = await open({width, lang: 'en'});
+    const n = await page.locator('#pgrid .epic[draggable="true"], #tm .blk[draggable="true"]').count();
+    assert.equal(n > 0, want, `${width}px: ${n} drag sources`);
+    if (!want) {
+      await page.locator('#pgrid .epic').first().click();
+      await page.locator('#sheet[open]').waitFor();
+      assert.equal(await page.locator('#sheetBody [draggable="true"]').count(), 0);
+    }
+    assert.deepEqual(problems, []);
+    await context.close();
+  }
+});
+
 test('a move with sub-issues names the ones that sit in another release (dry-run message)', {skip}, async () => {
   const {page, problems, context} = await open({lang: 'en'});
   await openEpicForMove(page);
@@ -643,6 +689,24 @@ test('a move with sub-issues names the ones that sit in another release (dry-run
   assert.match(msg, /in another release/i);
   assert.match(msg, /#1801 \(v2\.0\.12\)/); assert.match(msg, /#1804 \(v2\.0\.12\)/);
   assert.doesNotMatch(msg, /#1806/, 'already in the target release');
+  assert.deepEqual(problems, []);
+  await context.close();
+});
+
+test('1200px drawer: the rest of the page is inert while it is open, and Escape closes the drawer before zooming out', {skip}, async () => {
+  const {page, problems, context} = await open({width: 1200, lang: 'en'});
+  await page.locator('#tm .blk[data-id="chat"]').click();
+  await page.waitForFunction(() => document.querySelector('#zbar [aria-current]'));
+  await page.locator('#relopen').click();
+  await page.waitForSelector('#relpanel.open');
+  assert.ok(await page.evaluate(() => !!document.getElementById('tm').closest('[inert]')), 'map is inert');
+  assert.ok(await page.evaluate(() => !!document.querySelector('footer').closest('[inert]')), 'footer is inert');
+  assert.ok(await page.evaluate(() => !document.getElementById('relpanel').closest('[inert]') && !document.getElementById('relback').closest('[inert]')));
+  // An Escape that reaches the map (e.g. focus left there) still closes only the drawer.
+  await page.evaluate(() => document.querySelector('.stage').dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', bubbles: true, cancelable: true})));
+  assert.ok(!(await page.locator('#relpanel.open').count()), 'drawer closed');
+  assert.match(await page.locator('#zbar [aria-current]').innerText(), /Chat/, 'still zoomed into the capability');
+  assert.equal(await page.locator('[inert]').count(), 0, 'inert removed');
   assert.deepEqual(problems, []);
   await context.close();
 });
