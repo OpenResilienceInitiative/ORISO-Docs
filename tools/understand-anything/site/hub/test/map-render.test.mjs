@@ -1,6 +1,6 @@
 // Renders the map page in a real browser from fixture JSON (test/fixtures/map-data).
 // Needs Playwright: set UA_PLAYWRIGHT to its index.mjs (CI installs it in ua-tooling.yml);
-// without it the suite is skipped.
+// without it the suite is skipped locally, and FAILS when CI is set (it must never pass silently there).
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
@@ -10,7 +10,8 @@ import {fileURLToPath, pathToFileURL} from 'node:url';
 
 const hub = fileURLToPath(new URL('../', import.meta.url));
 const fixtures = fileURLToPath(new URL('./fixtures/map-data/', import.meta.url));
-const CANDIDATES = [process.env.UA_PLAYWRIGHT, '/opt/npm-tools/node_modules/playwright/index.mjs'].filter(Boolean);
+// An explicit UA_PLAYWRIGHT is the only candidate; otherwise the local tool install.
+const CANDIDATES = process.env.UA_PLAYWRIGHT ? [process.env.UA_PLAYWRIGHT] : ['/opt/npm-tools/node_modules/playwright/index.mjs'];
 const playwrightPath = CANDIDATES.find(p => existsSync(p));
 const types = {'.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json'};
 // Strictest policy the page must live under: no inline code or styles.
@@ -37,7 +38,8 @@ function serve() {
   return new Promise(resolve => server.listen(0, '127.0.0.1', () => resolve(server)));
 }
 
-const skip = playwrightPath ? false : 'Playwright not available (set UA_PLAYWRIGHT)';
+const inCI = !!process.env.CI && process.env.CI !== 'false';
+const skip = playwrightPath || inCI ? false : 'Playwright not available (set UA_PLAYWRIGHT)';
 let browser, server, origin;
 async function open({width = 1440, scheme = 'light', lang = 'de', init, board} = {}) {
   const context = await browser.newContext({viewport: {width, height: 900}, colorScheme: scheme, locale: lang === 'de' ? 'de-DE' : 'en-GB', reducedMotion: 'reduce'});
@@ -55,6 +57,7 @@ async function open({width = 1440, scheme = 'light', lang = 'de', init, board} =
 
 test.before(async () => {
   if (skip) return;
+  if (!playwrightPath) throw new Error('Playwright is required in CI: set UA_PLAYWRIGHT to playwright/index.mjs (' + CANDIDATES.join(', ') + ' not found)');
   const {chromium} = await import(pathToFileURL(playwrightPath));
   browser = await chromium.launch();
   server = await serve();
@@ -707,6 +710,44 @@ test('1200px drawer: the rest of the page is inert while it is open, and Escape 
   assert.ok(!(await page.locator('#relpanel.open').count()), 'drawer closed');
   assert.match(await page.locator('#zbar [aria-current]').innerText(), /Chat/, 'still zoomed into the capability');
   assert.equal(await page.locator('[inert]').count(), 0, 'inert removed');
+  assert.deepEqual(problems, []);
+  await context.close();
+});
+
+test('XSS: hostile titles, release names, finding details, milestone titles and a javascript: URL stay text', {skip}, async () => {
+  const X = '<img src=x onerror="window.__xss=1"><script>window.__xss=2</script>';
+  const context = await browser.newContext({viewport: {width: 1920, height: 900}, reducedMotion: 'reduce', locale: 'en-GB'});
+  await context.route('**/map/data/board.json', async route => {
+    const response = await route.fetch(); const doc = await response.json();
+    const evil = 'v6' + X;
+    doc.fieldOptions.platformRelease.push(evil); doc.releases.push({name: evil, count: 1});
+    doc.items.forEach(i => { i.title = i.title + X; });
+    const sub = doc.items.find(i => i.number === 1805); sub.url = 'javascript:window.__xss=3';
+    const flagged = doc.items.find(i => i.number === 1806); flagged.platformRelease = evil;
+    flagged.findings = [{rule: 'qa-external-no-bjoern', severity: 'warn', detail: {expected: X}}, {rule: 'gate-status-mismatch', severity: 'warn', detail: {gate: X, status: X}}, {rule: X, severity: 'warn', detail: {}}];
+    doc.findingCounts = {'qa-external-no-bjoern': 1};
+    await route.fulfill({response, json: doc});
+  });
+  await context.route('**/map/data/milestones.json', route => route.fulfill({json: {schemaVersion: 1, milestones: [{id: 'evil', title: {de: X, en: X}, releases: ['v2.0.12', 'v6' + X]}]}}));
+  const page = await context.newPage(); const problems = []; page.on('pageerror', e => problems.push(String(e)));
+  await page.goto(origin + '/map/'); await page.waitForSelector('#tm .blk');
+  await page.locator('#tm .blk[data-id="chat"]').click();
+  await page.locator('#panel .navrow[data-view="epics"]').click();
+  await page.locator('#panel .epic').first().click();
+  await page.locator('#panel .estat').waitFor();
+  await page.locator('#relbody .relc').last().click();
+  await page.locator('#panel [data-move="epic"]').click();
+  await page.waitForSelector('#movedlg[open]');
+  await page.locator('#mvrel').selectOption('v6' + X);
+  await page.locator('#mvgo').click();
+  await page.waitForSelector('#planlog .plrow');
+  const found = await page.evaluate(() => ({
+    xss: window.__xss,
+    injected: document.querySelectorAll('img[src="x"], body script:not([src]), [onerror]').length,
+    js: [...document.querySelectorAll('a[href]')].filter(a => /^\s*javascript:/i.test(a.getAttribute('href'))).length,
+  }));
+  assert.deepEqual(found, {xss: undefined, injected: 0, js: 0});
+  assert.match(await page.locator('#relbody').innerText(), /<img src=x/, 'the hostile text is shown as text');
   assert.deepEqual(problems, []);
   await context.close();
 });

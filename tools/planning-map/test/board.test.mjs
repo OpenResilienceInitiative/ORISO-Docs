@@ -183,3 +183,11 @@ test("the items query asks for assignees on pull requests too", async () => {
   const pr = /\.\.\. on PullRequest \{([\s\S]*?)\n\s*\}/.exec(ITEMS_QUERY)?.[1] ?? "";
   assert.match(pr, /assignees\(first: \d+\) \{ nodes \{ login \} \}/);
 });
+
+test("the schema only accepts https item urls (or none)", async () => {
+  const board = await build();
+  for (const url of ["javascript:alert(1)", "http://github.com/x", " https://github.com/x", "data:text/html,x"]) {
+    assert.ok(validateBoard({ ...board, items: [{ ...board.items[0], url }] }).length > 0, url);
+  }
+  assert.deepEqual(validateBoard({ ...board, items: [{ ...board.items[0], url: null }] }), []);
+});

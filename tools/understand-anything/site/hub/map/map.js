@@ -260,7 +260,7 @@ var B = [
   adr:[11], docs:[['plattform/core-systems/frontend-admin-overview','Frontend und Verwaltung','Frontend and administration'],['produkt/design-und-quality/ui-ux','Gestaltung','UI and UX']],
   ua:[['fe','concept:app-structure','Application Structure'],['ad','concept:admin-m3-design-system','M3 Design System'],['sg','','Supergraph']]}
 ];
-var PLAN = [['virus','upload'],['tokens','branding'],['hc','branding'],['video','calls'],['bot','livechat'],['ro','permissions'],['sess','permissions']];
+var PLANNED_FEATURES = [['virus','upload'],['tokens','branding'],['hc','branding'],['video','calls'],['bot','livechat'],['ro','permissions'],['sess','permissions']];
 var PLANT = {virus:['Virenscanner','Virus scanner'],tokens:['Design-Tokens','Design tokens'],hc:['Hoher Kontrast','High contrast'],video:['Video ohne Anmeldung','Video without login'],bot:['Bot-Schutz','Bot protection'],ro:['Support-Admin nur lesen','Read-only support admin'],sess:['Support-Sitzung mit Doppel-Freigabe','Support session with double approval']};
 
 var KPIS = [
@@ -275,7 +275,7 @@ var KPIS = [
 
 
 /* ───────── v3: Feature-Seiten, verwandte Aufgaben, Repositorien ───────── */
-PLAN = [];
+PLANNED_FEATURES = []; /* stillgelegt; nicht mit PLAN (Planungsabsichten, unten) verwechseln */
 var SLUG = {chat:'chat',notify:'notifications',handover:'case-handover',teamdisc:'team-consultation',supervision:'supervision',groups:'self-help-groups',calls:'calls-voice',livechat:'live-chat',upload:'files-media',practice:'training-tours',i18n:'multilingual',legal:'legal-texts',permissions:'feature-permissions',mailadmin:'email-templates',invites:'invitations-onboarding',branding:'branding',stats:'statistics',tenants:'tenants-agencies',auth:'auth-2fa',e2ee:'encryption-keys',deletion:'deletion'};
 var LIVE = MEAS.live || [];
 var CODE_REPOS = ['ORISO-Frontend','ORISO-Admin','ORISO-UserService','ORISO-TenantService','ORISO-AgencyService','ORISO-ConsultingTypeService'];
@@ -937,7 +937,9 @@ function epicBoardHTML(v){
   var groups = ev.groups.map(function(g){
     var name = g.status ? L2(STATUS_L[g.status]) : t.notOnBoard;
     return '<div class="dgroup egroup"><h5><span>'+(g.status ? '<i class="sw sseg" data-status="'+esc(g.status)+'" data-group="'+g.group+'"></i> ' : '')+esc(name)+'</span><span class="c">'+fmt(g.count)+'</span></h5><ul class="dlist">'+g.items.map(function(x){
-      return '<li'+(x.gate?' class="hasgate"':'')+'><a href="'+esc(x.url)+'" target="_blank" rel="noopener">'+esc(x.title)+'</a><span class="c">'+(x.state==='CLOSED'?'✓ ':'○ ')+esc(x.repository.replace('ORISO-',''))+' #'+x.number+'</span>'+gateStepsHTML(x)+'</li>';
+      /* Nur https-Links (wie bei den Befunden): alles andere aus board.json wird Text, nie ein href. */
+      var link = /^https:\/\//.test(x.url||'') ? '<a href="'+esc(x.url)+'" target="_blank" rel="noopener">'+esc(x.title)+'</a>' : '<span class="nolink">'+esc(x.title)+'</span>';
+      return '<li'+(x.gate?' class="hasgate"':'')+'>'+link+'<span class="c">'+(x.state==='CLOSED'?'✓ ':'○ ')+esc(x.repository.replace('ORISO-',''))+' #'+x.number+'</span>'+gateStepsHTML(x)+'</li>';
     }).join('')+'</ul></div>';
   }).join('');
   return '<div class="estat" role="group" aria-label="'+esc(t.onBoardBar)+'"><h4>'+esc(t.onBoardBar)+'</h4>'+sbarHTML(ev,'big')+'<ul class="slist">'+legend+'</ul></div>'+

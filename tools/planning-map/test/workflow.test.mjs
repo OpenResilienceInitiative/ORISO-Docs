@@ -58,3 +58,10 @@ test("the hub publication only downloads planning-board artifacts of runs on dev
   assert.ok(lines.length >= 1);
   for (const l of lines) assert.match(l, /--branch dev\b/);
 });
+
+test("the Understand contract workflow runs when tools/planning-map changes (the hub imports it)", () => {
+  const tooling = readFileSync(resolve(here, "../../../.github/workflows/ua-tooling.yml"), "utf8");
+  const blocks = tooling.split(/^  (?:pull_request|push):\s*$/m).slice(1);
+  assert.equal(blocks.length, 2);
+  for (const b of blocks) assert.match(b.split(/^permissions:/m)[0], /- 'tools\/planning-map\/\*\*'/);
+});

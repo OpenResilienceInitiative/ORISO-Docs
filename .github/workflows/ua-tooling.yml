@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'tools/understand-anything/**'
+      - 'tools/planning-map/**'
       - '.github/workflows/ua-tooling.yml'
       - '.github/scripts/ua_public_policy_test.py'
       - 'tools/truth-chain/public-repositories.json'
@@ -10,6 +11,7 @@ on:
     branches: [dev, pre-dev]
     paths:
       - 'tools/understand-anything/**'
+      - 'tools/planning-map/**'
       - '.github/workflows/ua-tooling.yml'
       - '.github/scripts/ua_public_policy_test.py'
       - 'tools/truth-chain/public-repositories.json'

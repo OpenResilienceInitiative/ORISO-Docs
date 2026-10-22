@@ -135,6 +135,7 @@ a.fcard:hover{text-decoration:none;border-color:var(--line);box-shadow:0 2px 12p
   font-weight:700;font-size:11.5px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
 .fcard h3{font-size:18px;font-weight:700;letter-spacing:-.01em}
 .fcard .q{font-size:14.5px;font-style:italic;border-left:2px solid var(--sc,var(--brand));padding-left:10px}
+.fcard.sc-brand{--sc:var(--brand)}
 .fcard .d{font-size:13.5px;color:var(--ink-2)}
 
 /* Schrittleiste */
