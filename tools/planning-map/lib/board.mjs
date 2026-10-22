@@ -149,7 +149,8 @@ export function buildBoard({ meta, items: rawItems, totalCount, title }, { synce
       priority: f.priority?.[0] ?? null,
       effort: f.effort?.[0] ?? null,
       platformRelease: releases[0] ?? null,
-      assignees: (c?.assignees?.nodes ?? []).map((a) => a.login),
+      // null = not known for this content type (the watcher then does not guess); [] = known to be unassigned.
+      assignees: c.assignees ? (c.assignees.nodes ?? []).map((a) => a.login) : null,
     };
     item.findings = evaluateItem(item, { now: syncedAt });
     for (const f of item.findings) findingCounts[f.rule] = (findingCounts[f.rule] ?? 0) + 1;

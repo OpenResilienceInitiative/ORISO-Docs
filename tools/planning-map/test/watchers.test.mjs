@@ -71,7 +71,8 @@ test("export writes findings per item into board.json, valid against the schema,
   const by = (n) => board.items.find((i) => i.number === n);
   assert.deepEqual(by(55).findings.map((f) => f.rule), []); // closed + Done
   assert.deepEqual(by(204).assignees, ["frank"]);
-  assert.ok(board.items.every((i) => Array.isArray(i.findings) && Array.isArray(i.assignees)));
+  assert.ok(board.items.every((i) => Array.isArray(i.findings) && (Array.isArray(i.assignees) || i.assignees === null)));
+  assert.equal(by(130).assignees, null); // recorded before PRs carried assignees: unknown, not "nobody"
   assert.equal(JSON.stringify(board).includes("SECRET"), false);
   assert.ok(board.items.some((i) => i.findings.length > 0), "fixture exercises at least one finding");
   assert.equal(typeof board.findingCounts, "object");

@@ -35,6 +35,7 @@ query($owner: String!, $number: Int!, $after: String) {
             ... on PullRequest {
               number title url state updatedAt
               repository { nameWithOwner isPrivate }
+              assignees(first: 20) { nodes { login } }
             }
           }
         }

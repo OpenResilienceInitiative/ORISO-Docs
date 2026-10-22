@@ -165,3 +165,21 @@ test("the schema refuses a draft item; hiddenCounts is optional (additive)", asy
   assert.deepEqual(validateBoard({ ...old, totals: oldTotals }), []);
 });
 
+test("assignees: issues and pull requests carry logins; content without an assignees field gives null, not []", async () => {
+  const issue = (extra) => ({ id: "PVTI_A", type: "ISSUE", status: { name: "QA external" }, readiness: null,
+    content: { __typename: "Issue", number: 1, title: "t", url: "https://github.com/OpenResilienceInitiative/ORISO-Docs/issues/1", state: "OPEN", updatedAt: "2026-10-22T00:00:00Z", repository: { nameWithOwner: "OpenResilienceInitiative/ORISO-Docs", isPrivate: false }, ...extra } });
+  const board = await withItems([
+    issue({ assignees: { nodes: [{ login: "BjoernLudwig" }] } }),
+    { ...issue({ __typename: "PullRequest", number: 2, url: "https://github.com/OpenResilienceInitiative/ORISO-Docs/pull/2", assignees: { nodes: [{ login: "frank" }] } }), id: "PVTI_B" },
+    { ...issue({ __typename: "PullRequest", number: 3, url: "https://github.com/OpenResilienceInitiative/ORISO-Docs/pull/3" }), id: "PVTI_C" },
+  ]);
+  assert.deepEqual(board.items.map((i) => i.assignees), [["BjoernLudwig"], ["frank"], null]);
+  assert.deepEqual(board.items.map((i) => i.findings.map((f) => f.rule)), [[], ["qa-external-no-bjoern"], []]);
+  assert.deepEqual(validateBoard(board), []);
+});
+
+test("the items query asks for assignees on pull requests too", async () => {
+  const { ITEMS_QUERY } = await import("../lib/queries.mjs");
+  const pr = /\.\.\. on PullRequest \{([\s\S]*?)\n\s*\}/.exec(ITEMS_QUERY)?.[1] ?? "";
+  assert.match(pr, /assignees\(first: \d+\) \{ nodes \{ login \} \}/);
+});

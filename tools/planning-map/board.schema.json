@@ -312,7 +312,10 @@
             ]
           },
           "assignees": {
-            "type": "array",
+            "type": [
+              "array",
+              "null"
+            ],
             "items": {
               "type": "string"
             }

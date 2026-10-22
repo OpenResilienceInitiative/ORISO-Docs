@@ -157,7 +157,7 @@
       "priority": null,
       "effort": null,
       "platformRelease": null,
-      "assignees": [],
+      "assignees": null,
       "findings": []
     },
     {
