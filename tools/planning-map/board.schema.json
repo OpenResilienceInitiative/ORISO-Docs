@@ -66,6 +66,10 @@
         "private": {
           "type": "integer",
           "minimum": 0
+        },
+        "drafts": {
+          "type": "integer",
+          "minimum": 0
         }
       }
     },
@@ -217,15 +221,11 @@
           "contentType": {
             "enum": [
               "Issue",
-              "PullRequest",
-              "DraftIssue"
+              "PullRequest"
             ]
           },
           "repository": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": "string"
           },
           "number": {
             "type": [
@@ -376,6 +376,58 @@
       "additionalProperties": {
         "type": "integer",
         "minimum": 0
+      }
+    },
+    "hiddenCounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "redacted",
+        "drafts"
+      ],
+      "properties": {
+        "redacted": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "count",
+            "byStatus"
+          ],
+          "properties": {
+            "count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "byStatus": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        },
+        "drafts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "count",
+            "byStatus"
+          ],
+          "properties": {
+            "count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "byStatus": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        }
       }
     }
   }

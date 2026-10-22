@@ -99,6 +99,9 @@ export function buildBoard({ meta, items: rawItems, totalCount, title }, { synce
   const findingCounts = {};
   let readinessMin = null;
   let readinessMax = null;
+  // Not public, counted only: items GitHub redacts (no content or type REDACTED) and draft issues.
+  const hidden = { redacted: { count: 0, byStatus: {} }, drafts: { count: 0, byStatus: {} } };
+  const hide = (bucket, status) => { bucket.count++; bucket.byStatus[status ?? "(none)"] = (bucket.byStatus[status ?? "(none)"] ?? 0) + 1; };
 
   for (const raw of rawItems) {
     const status = raw.status?.name ?? null;
@@ -108,6 +111,8 @@ export function buildBoard({ meta, items: rawItems, totalCount, title }, { synce
     const isPrivate = !!c?.repository?.isPrivate || (repo && privateRepos.has(repo));
     statusCounts[status ?? "(none)"] = (statusCounts[status ?? "(none)"] ?? 0) + 1;
 
+    if (c == null || raw.type === "REDACTED" || !c.__typename) { hide(hidden.redacted, status); continue; }
+    if (c.__typename === "DraftIssue" || raw.type === "DRAFT_ISSUE") { hide(hidden.drafts, status); continue; }
     if (isPrivate) {
       const p = privateMap.get(repo) ?? { repository: repo, count: 0, byStatus: {} };
       p.count++;
@@ -129,7 +134,7 @@ export function buildBoard({ meta, items: rawItems, totalCount, title }, { synce
     if (releases.length > 1) warnings.push(`${releases.length} Platform release values (${releases.join(", ")}) on ${c?.url ?? raw.id}; expected one, using the first`);
     const item = {
       id: raw.id,
-      contentType: c?.__typename ?? "DraftIssue",
+      contentType: c.__typename,
       repository: repo,
       number: c?.number ?? null,
       title: c?.title ?? "",
@@ -153,14 +158,14 @@ export function buildBoard({ meta, items: rawItems, totalCount, title }, { synce
   }
 
   const live = liveOptions(meta);
-  const privateCount = [...privateMap.values()].reduce((s, p) => s + p.count, 0);
+  const privateCount = [...privateMap.values()].reduce((s, p) => s + p.count, 0) + hidden.redacted.count;
   if (totalCount != null && totalCount !== rawItems.length) warnings.push(`Project reports ${totalCount} items but ${rawItems.length} were fetched`);
   const releaseNames = live.platformRelease ?? [...releaseCounts.keys()];
   return {
     schemaVersion: SCHEMA_VERSION,
     syncedAt,
     source: { owner: owner ?? ct.project.owner, projectNumber: number ?? ct.project.number, title: title ?? ct.project.title },
-    totals: { items: rawItems.length, public: items.length, private: privateCount },
+    totals: { items: rawItems.length, public: items.length, private: privateCount, drafts: hidden.drafts.count },
     fieldOptions: {
       status: live.status ?? [],
       gate: live.gate ?? [],
@@ -173,6 +178,7 @@ export function buildBoard({ meta, items: rawItems, totalCount, title }, { synce
     readinessRange: { min: readinessMin, max: readinessMax },
     releases: releaseNames.map((name) => ({ name, count: releaseCounts.get(name) ?? 0 })),
     privateCounts: [...privateMap.values()].sort((a, b) => a.repository.localeCompare(b.repository)),
+    hiddenCounts: hidden,
     items,
     warnings,
   };

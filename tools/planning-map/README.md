@@ -15,7 +15,7 @@ node tools/planning-map/export-board.mjs --out board.json
 
 Exit codes: 0 ok, 1 error/invalid, 2 drift (file is still written). Drift check alone: add `--drift-only`; `--strict` also fails while the Platform release options are not pinned yet.
 
-Expected: about 2,757 items, `statusCounts` matching the board. ORISO-E2E (private) appears only in `privateCounts`.
+Expected: about 2,757 items, `statusCounts` matching the board. ORISO-E2E (private) appears only in `privateCounts`; items GitHub redacts (no content, type REDACTED) and draft issues appear only in `hiddenCounts` (count and status, never a title or id).
 
 ## Known unverified assumption
 

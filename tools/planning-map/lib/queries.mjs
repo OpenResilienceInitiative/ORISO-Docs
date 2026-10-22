@@ -18,7 +18,6 @@ query($owner: String!, $number: Int!, $after: String) {
           readiness: fieldValueByName(name: "Readiness") { ... on ProjectV2ItemFieldNumberValue { number } }
           content {
             __typename
-            ... on DraftIssue { title updatedAt }
             ... on Issue {
               number title url state updatedAt
               repository { nameWithOwner isPrivate }

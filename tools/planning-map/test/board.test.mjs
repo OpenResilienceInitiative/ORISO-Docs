@@ -45,7 +45,7 @@ test("maps Status, Readiness, issue type, parent, state and issue fields", async
 test("status counts include private items; releases carry counts", async () => {
   const board = await build();
   assert.deepEqual(board.statusCounts, { Ready: 1, "In progress": 1, "QA internal": 1, Done: 2, Backlog: 1 });
-  assert.deepEqual(board.totals, { items: 6, public: 5, private: 1 });
+  assert.deepEqual(board.totals, { items: 6, public: 4, private: 1, drafts: 1 });
   assert.deepEqual(board.releases, [{ name: "v2.0.12", count: 2 }, { name: "v2.0.13", count: 1 }]);
 });
 
@@ -62,7 +62,7 @@ test("private repo items are counts only: no title, url, id, or parent ref leaks
 test("readiness is kept raw with no range error; min/max are recorded", async () => {
   const board = await build();
   assert.equal(board.items.find((x) => x.number === 197).readiness, 19);
-  assert.deepEqual(board.readinessRange, { min: 2, max: 19 });
+  assert.deepEqual(board.readinessRange, { min: 6, max: 19 }); // the draft (2) is not public
   assert.doesNotMatch(board.warnings.join("\n"), /Readiness/);
   assert.equal("min" in contract.fields.readiness, false);
 });
@@ -126,3 +126,42 @@ test("CLI exits 2 on drift", async () => {
   const err = console.error; console.error = () => {};
   try { assert.equal(await main(["--fixture", join(dir, "fx.json"), "--drift-only"]), 2); } finally { console.error = err; }
 });
+
+// Privacy (ORISO-Docs#204 review): what GitHub hides and drafts never reach the public file.
+const PRIV = { owner: "OpenResilienceInitiative", number: 1, syncedAt: "2026-10-22T12:00:00Z" };
+const withItems = async (items) => { const d = await load(); return buildBoard({ ...d, items, totalCount: items.length }, PRIV); };
+
+test("redacted items and items without content are private: counted, never listed", async () => {
+  const board = await withItems([
+    { id: "PVTI_R1", type: "REDACTED", status: { name: "Ready" }, readiness: { number: 4 }, content: null },
+    { id: "PVTI_R2", type: "ISSUE", status: { name: "Done" }, readiness: null, content: null },
+    { id: "PVTI_R3", type: "REDACTED", status: null, readiness: null, content: { __typename: "Issue", title: "LEAK redacted", url: "https://github.com/x/y/issues/1" } },
+  ]);
+  assert.deepEqual(validateBoard(board), []);
+  assert.deepEqual(board.items, []);
+  const json = JSON.stringify(board);
+  for (const leak of ["PVTI_R", "LEAK", "x/y/issues"]) assert.equal(json.includes(leak), false, leak);
+  assert.deepEqual(board.hiddenCounts.redacted, { count: 3, byStatus: { Ready: 1, Done: 1, "(none)": 1 } });
+  assert.deepEqual(board.totals, { items: 3, public: 0, private: 3, drafts: 0 });
+  assert.deepEqual(board.readinessRange, { min: null, max: null });
+});
+
+test("draft issues are not public: counted by status, no title, no id", async () => {
+  const board = await build();
+  assert.equal(board.items.some((i) => i.contentType === "DraftIssue"), false);
+  const json = JSON.stringify(board);
+  assert.equal(json.includes("Idea: board filters"), false);
+  assert.equal(json.includes("PVTI_5"), false);
+  assert.deepEqual(board.hiddenCounts.drafts, { count: 1, byStatus: { Backlog: 1 } });
+  assert.deepEqual(validateBoard(board), []);
+});
+
+test("the schema refuses a draft item; hiddenCounts is optional (additive)", async () => {
+  const board = await build();
+  const draft = { ...board.items[0], contentType: "DraftIssue" };
+  assert.ok(validateBoard({ ...board, items: [draft] }).length > 0);
+  const { hiddenCounts, ...old } = board;
+  const { drafts, ...oldTotals } = board.totals;
+  assert.deepEqual(validateBoard({ ...old, totals: oldTotals }), []);
+});
+

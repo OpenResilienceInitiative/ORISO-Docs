@@ -8,8 +8,9 @@
   },
   "totals": {
     "items": 6,
-    "public": 5,
-    "private": 1
+    "public": 4,
+    "private": 1,
+    "drafts": 1
   },
   "fieldOptions": {
     "status": [
@@ -49,7 +50,7 @@
     "stalled": 1
   },
   "readinessRange": {
-    "min": 2,
+    "min": 6,
     "max": 19
   },
   "releases": [
@@ -71,6 +72,18 @@
       }
     }
   ],
+  "hiddenCounts": {
+    "redacted": {
+      "count": 0,
+      "byStatus": {}
+    },
+    "drafts": {
+      "count": 1,
+      "byStatus": {
+        "Backlog": 1
+      }
+    }
+  },
   "items": [
     {
       "id": "PVTI_1",
@@ -139,25 +152,6 @@
       "updatedAt": "2026-10-10T00:00:00Z",
       "status": "Done",
       "readiness": null,
-      "issueType": null,
-      "parent": null,
-      "priority": null,
-      "effort": null,
-      "platformRelease": null,
-      "assignees": [],
-      "findings": []
-    },
-    {
-      "id": "PVTI_5",
-      "contentType": "DraftIssue",
-      "repository": null,
-      "number": null,
-      "title": "Idea: board filters",
-      "url": null,
-      "state": null,
-      "updatedAt": "2026-10-12T00:00:00Z",
-      "status": "Backlog",
-      "readiness": 2,
       "issueType": null,
       "parent": null,
       "priority": null,
