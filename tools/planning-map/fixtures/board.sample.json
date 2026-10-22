@@ -156,5 +156,9 @@
   ],
   "warnings": [
     "Readiness 11 outside contract range 1-10 on https://github.com/OpenResilienceInitiative/ORISO-Docs/issues/197 (kept as-is)"
-  ]
+  ],
+  "readinessRange": {
+    "min": 2,
+    "max": 11
+  }
 }
