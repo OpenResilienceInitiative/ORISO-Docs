@@ -66,3 +66,11 @@ Run the producer's full test command in the repository checkout (`npm ci && npm 
 from `tools/understand-anything`) with `UA_CORE` pointing to the installed pinned
 patched consumer. Source-bound hub tests need both tracked ADR bytes and Git history;
 a copied installed tooling directory alone does not provide that context.
+
+## Shared state colours
+
+`assets/tokens.json` is the single source for state colours (code origin ramp, test
+hatch, deleted, planned, board status), light and dark. `node build-tokens.mjs`
+regenerates `assets/tokens.css` from it; `test/colour-tokens.test.mjs` checks WCAG
+contrast of text on fills and the lightness steps per ramp, also under deuteranopia
+and protanopia simulation. The hub documents the scheme in the "Colour scheme" section.
