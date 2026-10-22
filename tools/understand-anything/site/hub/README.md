@@ -66,3 +66,24 @@ Run the producer's full test command in the repository checkout (`npm ci && npm 
 from `tools/understand-anything`) with `UA_CORE` pointing to the installed pinned
 patched consumer. Source-bound hub tests need both tracked ADR bytes and Git history;
 a copied installed tooling directory alone does not provide that context.
+
+## Capability map (`/map/`)
+
+`map/` is the hub's "Fähigkeiten-Karte" page: `index.html` (shell), `map.css`,
+`map.js` and generated data in `map/data/` (`counts.json`, `drill.json`,
+`zoom.json`, `epics.json`, `descriptions.json`, `links.json`). The page has no
+inline script, style or style attribute and loads the data with same-origin
+`fetch`. `map.js` merges every data file into one `MEAS` object; files named in
+`links.json` under `optional` (allowed names: `OPTIONAL_DATA` in `map.js`, today
+`board.json`) are merged into the same object when present.
+
+Regenerate the data from the measured intermediate files (code counts, tests,
+stories, graph links):
+
+    node map/build-map-data.mjs --inputs DIR --out map/data
+
+`DIR` holds `agg`, `rel`, `drill`, `epics`, `zoom`, `planned`, `desc`, `live`
+and `car15` as `.json` files (see `test/fixtures/map-inputs/`). Output is
+deterministic. `test/map-render.test.mjs` renders the page from
+`test/fixtures/map-data/` in a browser under a strict CSP; it needs Playwright
+(`UA_PLAYWRIGHT=/path/to/playwright/index.mjs`) and is skipped without it.

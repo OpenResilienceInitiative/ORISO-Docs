@@ -1,0 +1,1 @@
+{"schemaVersion":1,"agg":{"base":{"new_l":1000,"new_t":20,"old_l":600,"old_t":5},"chat":{"new_l":400,"new_t":8,"old_l":100,"old_t":2},"upload":{"new_l":50,"new_t":1,"old_l":0,"old_t":0}},"rel":[["chat","upload",12]],"tot":{"new_l":1450,"new_t":29,"old_l":700,"old_t":7}}

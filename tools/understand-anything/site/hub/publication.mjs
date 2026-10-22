@@ -7,10 +7,10 @@ import {renderGlossary} from './render-glossary.mjs';
 import {validateGlossarySources} from '../../lib/glossary-projection.mjs';
 import {immutableSource} from '../../ua-glossary-project.mjs';
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
-const allowed=p=>/^(index\.html|status\.json|operator-snapshot\.json|assets\/(hub\.css|lang\.js|status\.js|glossary\.js)|glossary\/(index\.html|catalog\.json|bindings\.json|sources\/(seed|bjorn-reconciliation|naming-audit)\.md)|features\/(index|de|en|case-handover)\.html)$/.test(p);
+const allowed=p=>/^(index\.html|status\.json|operator-snapshot\.json|assets\/(hub\.css|lang\.js|status\.js|glossary\.js)|glossary\/(index\.html|catalog\.json|bindings\.json|sources\/(seed|bjorn-reconciliation|naming-audit)\.md)|features\/(index|de|en|case-handover)\.html|map\/(index\.html|map\.css|map\.js|data\/(counts|descriptions|drill|epics|links|zoom)\.json))$/.test(p);
 function files(root){return fs.readdirSync(root,{recursive:true}).filter(p=>{const stat=fs.lstatSync(path.join(root,p));if(stat.isSymbolicLink())throw Error('Hub symlinks are forbidden');return stat.isFile();}).sort();}
 const hubSourcePrefix='tools/understand-anything/site/hub/';
-const staticInputs=['index.html','assets/hub.css','assets/lang.js','assets/status.js','assets/glossary.js','glossary/index.html','features/index.html','features/de.html','features/en.html','features/case-handover.html'];
+const staticInputs=['index.html','assets/hub.css','assets/lang.js','assets/status.js','assets/glossary.js','glossary/index.html','features/index.html','features/de.html','features/en.html','features/case-handover.html','map/index.html','map/map.css','map/map.js',...['counts','descriptions','drill','epics','links','zoom'].map(n=>`map/data/${n}.json`)];
 const producerInputs=['render-glossary.mjs','render-features.mjs','publication.mjs'].map(p=>hubSourcePrefix+p).concat([
  'tools/understand-anything/glossary/validate.mjs','tools/understand-anything/glossary/source-bindings.mjs','tools/understand-anything/glossary/reasons.mjs','tools/understand-anything/lib/glossary-projection.mjs','tools/understand-anything/ua-glossary-project.mjs',
  'tools/docs-publication/platform-release.mjs','tools/public_operator_snapshot.py','tools/truth-chain/public-repositories.json','tools/understand-anything/site/hub/features/catalog.json','site/page-catalog.json'
