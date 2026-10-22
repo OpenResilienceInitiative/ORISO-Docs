@@ -33,8 +33,9 @@ function normalizeIssueFieldValues(nodes = []) {
   const out = {};
   for (const n of nodes) {
     const name = n?.field?.name;
-    const value = n?.name ?? n?.value ?? null;
-    if (name) out[name.toLowerCase()] = value;
+    if (!name) continue;
+    const values = n.options ? n.options.map((o) => o.name) : [n.name ?? n.value ?? null];
+    out[name.toLowerCase()] = values.filter((v) => v != null);
   }
   return out;
 }
@@ -92,6 +93,8 @@ export function buildBoard({ meta, items: rawItems, totalCount, title }, { synce
   const privateMap = new Map();
   const statusCounts = {};
   const releaseCounts = new Map();
+  let readinessMin = null;
+  let readinessMax = null;
 
   for (const raw of rawItems) {
     const status = raw.status?.name ?? null;
@@ -114,9 +117,12 @@ export function buildBoard({ meta, items: rawItems, totalCount, title }, { synce
     const parent = par && !par.repository?.isPrivate && !privateRepos.has(par.repository?.nameWithOwner)
       ? { repository: par.repository.nameWithOwner, number: par.number }
       : null;
-    if (readiness != null && (readiness < ct.fields.readiness.min || readiness > ct.fields.readiness.max)) {
-      warnings.push(`Readiness ${readiness} outside contract range ${ct.fields.readiness.min}-${ct.fields.readiness.max} on ${c?.url ?? raw.id} (kept as-is)`);
+    if (readiness != null) {
+      readinessMin = readinessMin == null ? readiness : Math.min(readinessMin, readiness);
+      readinessMax = readinessMax == null ? readiness : Math.max(readinessMax, readiness);
     }
+    const releases = f["platform release"] ?? [];
+    if (releases.length > 1) warnings.push(`${releases.length} Platform release values (${releases.join(", ")}) on ${c?.url ?? raw.id}; expected one, using the first`);
     const item = {
       id: raw.id,
       contentType: c?.__typename ?? "DraftIssue",
@@ -130,9 +136,9 @@ export function buildBoard({ meta, items: rawItems, totalCount, title }, { synce
       readiness,
       issueType: c?.issueType?.name ?? null,
       parent,
-      priority: f.priority ?? null,
-      effort: f.effort ?? null,
-      platformRelease: f["platform release"] ?? null,
+      priority: f.priority?.[0] ?? null,
+      effort: f.effort?.[0] ?? null,
+      platformRelease: releases[0] ?? null,
     };
     if (item.platformRelease) releaseCounts.set(item.platformRelease, (releaseCounts.get(item.platformRelease) ?? 0) + 1);
     items.push(item);
@@ -154,6 +160,7 @@ export function buildBoard({ meta, items: rawItems, totalCount, title }, { synce
       platformRelease: releaseNames,
     },
     statusCounts,
+    readinessRange: { min: readinessMin, max: readinessMax },
     releases: releaseNames.map((name) => ({ name, count: releaseCounts.get(name) ?? 0 })),
     privateCounts: [...privateMap.values()].sort((a, b) => a.repository.localeCompare(b.repository)),
     items,

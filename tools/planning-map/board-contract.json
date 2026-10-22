@@ -1,20 +1,56 @@
 {
   "contractVersion": 1,
-  "project": { "owner": "OpenResilienceInitiative", "number": 1, "title": "ORISO Roadmap" },
-  "privateRepositories": ["OpenResilienceInitiative/ORISO-E2E"],
+  "project": {
+    "owner": "OpenResilienceInitiative",
+    "number": 1,
+    "title": "ORISO Roadmap"
+  },
+  "privateRepositories": [
+    "OpenResilienceInitiative/ORISO-E2E"
+  ],
   "fields": {
     "status": {
       "kind": "single_select",
-      "options": ["Backlog", "Ready", "On hold", "In progress", "In review", "QA internal", "QA external", "Done"]
+      "options": [
+        "Backlog",
+        "Ready",
+        "On hold",
+        "In progress",
+        "In review",
+        "QA internal",
+        "QA external",
+        "Done"
+      ]
     },
-    "readiness": { "kind": "number", "min": 1, "max": 10 },
-    "priority": { "kind": "issue_field_single_select", "options": ["Urgent", "High", "Medium", "Low"] },
-    "effort": { "kind": "issue_field_single_select", "options": ["S", "M", "L"] },
+    "readiness": {
+      "kind": "number"
+    },
+    "priority": {
+      "kind": "issue_field_single_select",
+      "options": [
+        "Urgent",
+        "High",
+        "Medium",
+        "Low"
+      ]
+    },
+    "effort": {
+      "kind": "issue_field_single_select",
+      "options": [
+        "S",
+        "M",
+        "L"
+      ]
+    },
     "platformRelease": {
       "kind": "issue_field_single_select",
       "options": [],
       "note": "Option list is filled from the first live export; until then drift on this field is reported as 'unpinned' and fails with --strict only."
     }
   },
-  "driftChecked": ["status", "readiness", "platformRelease"]
+  "driftChecked": [
+    "status",
+    "readiness",
+    "platformRelease"
+  ]
 }

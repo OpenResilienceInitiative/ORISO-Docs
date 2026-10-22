@@ -46,7 +46,7 @@ test("status counts include private items; releases carry counts", async () => {
   const board = await build();
   assert.deepEqual(board.statusCounts, { Ready: 1, "In progress": 1, "QA internal": 1, Done: 2, Backlog: 1 });
   assert.deepEqual(board.totals, { items: 6, public: 5, private: 1 });
-  assert.deepEqual(board.releases, [{ name: "v2.0.12", count: 1 }, { name: "v2.0.13", count: 1 }]);
+  assert.deepEqual(board.releases, [{ name: "v2.0.12", count: 2 }, { name: "v2.0.13", count: 1 }]);
 });
 
 test("private repo items are counts only: no title, url, id, or parent ref leaks", async () => {
@@ -59,10 +59,19 @@ test("private repo items are counts only: no title, url, id, or parent ref leaks
   assert.equal(board.items.find((x) => x.number === 55).parent, null); // parent lives in a private repo
 });
 
-test("readiness above the contract range is kept and flagged", async () => {
+test("readiness is kept raw with no range error; min/max are recorded", async () => {
   const board = await build();
-  assert.equal(board.items.find((x) => x.number === 197).readiness, 11);
-  assert.match(board.warnings.join("\n"), /Readiness 11 outside contract range 1-10/);
+  assert.equal(board.items.find((x) => x.number === 197).readiness, 19);
+  assert.deepEqual(board.readinessRange, { min: 2, max: 19 });
+  assert.doesNotMatch(board.warnings.join("\n"), /Readiness/);
+  assert.equal("min" in contract.fields.readiness, false);
+});
+
+test("Platform release is read from the multi-select issue field; more than one value warns", async () => {
+  const board = await build();
+  assert.equal(board.items.find((x) => x.number === 204).platformRelease, "v2.0.12");
+  assert.match(board.warnings.join("\n"), /2 Platform release values .*issues\/197/);
+  assert.deepEqual(liveOptions((await load()).meta).platformRelease, ["v2.0.12", "v2.0.13"]);
 });
 
 test("drift check passes on matching live options", async () => {
