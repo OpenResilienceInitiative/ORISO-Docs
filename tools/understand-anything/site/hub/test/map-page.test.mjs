@@ -43,3 +43,12 @@ test('page loads exactly the generated data files, and they are shipped next to 
 test('committed data files are the generator schema', () => {
   for (const file of DATA_FILES) assert.equal(JSON.parse(read('map/data/' + file)).schemaVersion, 1, file);
 });
+
+test('footer shows the board sync time and a sync link, without a token', () => {
+  const js = read('map/map.js');
+  assert.match(js, /MEAS\.syncedAt/);
+  assert.match(js, /Stand '/);
+  assert.match(js, /Jetzt synchronisieren/);
+  assert.match(js, /actions\/workflows\/planning-board-sync\.yml/);
+  assert.doesNotMatch(js, /ghp_|github_pat_|Authorization/i);
+});
