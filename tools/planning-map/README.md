@@ -32,3 +32,22 @@ Platform release is an org multi-select issue field (read via `IssueFieldMultiSe
 ## Watchers (ORISO-Docs#207)
 
 `lib/watchers.mjs` runs inside `buildBoard` and writes `findings[]` (rule, severity, detail) plus `assignees[]` onto every public item, and `findingCounts` at the top level (all additive; v1 boards without them still validate). Rules: `stalled`, `closed-not-done`, `qa-external-no-bjoern`, `epic-no-readiness`, `gate-status-mismatch` (no-op until a Gate field exists, #211). All thresholds and the QA external reviewer live in `watchers.config.json`. Stalled = open item in a status with a configured limit, last updated more than that many days before `syncedAt`.
+
+## Planning API and runner (ORISO-Docs#210)
+
+Seam 2: `lib/planning-api.mjs`. `assignRelease(issue, release, {withSubIssues, expectedRelease, dryRun, transport})` sets the org issue field `Platform release` (multi-select, `IFMS_kgDOArcqMA`) to exactly one value. The GitHub transport is injected (`async (query, variables) => {data, errors}`); tests use `test/fake-github.mjs`, never the network. Every call returns a typed result and never throws:
+
+- ok: `{ok: true, release, dryRun, results: [{issue, role, before, after, changed, wrote}]}`
+- error: `{ok: false, error: {code, message, issue?, detail?}, applied: [...]}`; codes `NO_WRITE_RIGHTS`, `CONFLICT` (live value differs from `expectedRelease`), `NOT_FOUND`, `UNKNOWN_RELEASE` (detail lists the live names), `FIELD_MISSING`, `BAD_REQUEST`, `TRANSPORT`, `GITHUB_ERROR`.
+- `withSubIssues` also moves direct sub-issues (any repository, paged). Rights on every target are checked before the first write; `applied` lists what was written if a later write still fails.
+
+Local runner (uses the operator's `gh` login, shells out to `gh api graphql`, dry run by default):
+
+```sh
+node tools/planning-map/plan.mjs assign-release --issue OpenResilienceInitiative/ORISO-Frontend#1734 --release v2.0.13 --with-sub-issues --expect v2.0.12
+node tools/planning-map/plan.mjs assign-release ... --apply     # only --apply writes
+```
+
+Exit codes: 0 ok, 1 planning error (typed JSON on stdout), 2 usage.
+
+UNVERIFIED (not run against live GitHub from this sandbox): the write is the one constant `SET_RELEASE_MUTATION` (`setIssueFieldValue` with `multiSelectOptionIds`, from the GitHub GraphQL changelog entries of 2026-03-12 and 2026-06-04) and `releaseWriteVariables`; the read of option ids assumes `IssueFieldMultiSelect.options { id name }`. If the first `--apply` fails, change only those two places. Rights are read from `Issue.viewerCanUpdate`.

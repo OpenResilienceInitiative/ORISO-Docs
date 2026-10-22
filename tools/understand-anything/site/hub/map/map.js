@@ -538,6 +538,7 @@ function drawLevel0(root, W, H){
       if (pl) btn.setAttribute('aria-label', L(b.t)+' – '+(de()?'hineinzoomen; rund ':'zoom in; about ')+rund(pl)+(de()?' Zeilen geplant (Schätzung)':' lines planned (estimate)'));
       sizeCls(btn, q.w, q.h);
       btn.addEventListener('click', function(){ openBlock(b.id, btn, true); });
+      if (!small && canPlan() && b.ep.length) dragSource(btn, {kind:'block', id:b.id});
       body.appendChild(btn);
     });
   });
@@ -886,13 +887,14 @@ function epicCard(i){
   var e=EP[i], s=stageOf(e), t=tt();
   var pct = e.tot ? Math.round(100*e.done/e.tot) : (e.s==='c'?100:0);
   return '<button type="button" class="epic" data-epic="'+i+'"><span class="et">'+esc(e.t)+'</span>'+
-    '<span class="em">'+stagePill(s)+'<span class="k">'+esc(EPR[e.r].replace('ORISO-',''))+' #'+e.n+'</span><span>'+esc(t.subs)+' '+e.done+'/'+e.tot+'</span>'+(e.rl?'<span>'+esc(e.rl)+'</span>':'')+'</span>'+
+    '<span class="em">'+stagePill(s)+'<span class="k">'+esc(EPR[e.r].replace('ORISO-',''))+' #'+e.n+'</span><span>'+esc(t.subs)+' '+e.done+'/'+e.tot+'</span>'+(currentReleaseOf(e)?'<span>'+esc(currentReleaseOf(e))+'</span>':'')+'</span>'+
     '<span class="prog" aria-hidden="true"><i data-css="width:'+pct+'%"></i></span></button>';
 }
 function viewEpics(b){
   var t=tt();
   var list = b.ep.slice().sort(function(a,c){ return ['idea','work','near','done'].indexOf(stageOf(EP[a])) - ['idea','work','near','done'].indexOf(stageOf(EP[c])); });
   return '<h3 id="pdTitle" tabindex="-1">'+esc(t.epics)+' · '+esc(L(b.t))+'</h3>'+
+    moveButton({kind:'block', id:b.id})+
     (list.length ? '<div class="elist">'+list.map(epicCard).join('')+'</div>' : '<p class="dmeta">'+esc(t.noEp)+'</p>')+
     relIssues(b);
 }
@@ -930,9 +932,10 @@ function viewEpic(v){
   var pct = e.tot ? Math.round(100*e.done/e.tot) : 0;
   return '<h3 id="pdTitle" tabindex="-1">'+esc(e.t)+'</h3>'+
     '<div class="em" data-css="display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12.5px;color:var(--ink-2)">'+stagePill(s)+
-      '<span>'+esc(t.subs)+' '+e.done+'/'+e.tot+' ('+pct+' %)</span>'+(e.pr?'<span>'+esc(t.prio)+': '+esc(e.pr)+'</span>':'')+(e.ef?'<span>'+esc(t.effort)+': '+esc(e.ef)+'</span>':'')+(e.rl?'<span>'+esc(t.release)+': '+esc(e.rl)+'</span>':'')+'</div>'+
+      '<span>'+esc(t.subs)+' '+e.done+'/'+e.tot+' ('+pct+' %)</span>'+(e.pr?'<span>'+esc(t.prio)+': '+esc(e.pr)+'</span>':'')+(e.ef?'<span>'+esc(t.effort)+': '+esc(e.ef)+'</span>':'')+(currentReleaseOf(e)?'<span>'+esc(t.release)+': '+esc(currentReleaseOf(e))+'</span>':'')+'</div>'+
     '<div class="prog"><i data-css="width:'+pct+'%"></i></div>'+
     '<p><a href="'+GH+EPR[e.r]+'/issues/'+e.n+'" target="_blank" rel="noopener">'+esc(t.openGh)+' · '+esc(EPR[e.r])+' #'+e.n+' ↗</a></p>'+
+    moveButton({kind:'epic', i:i})+
     board+
     (subs ? '<div class="dgroup"><h5><span>'+esc(t.subs)+'</span><span class="c">'+e.subs.length+'</span></h5><ul class="dlist">'+subs+'</ul></div>' : '')+
     (!board && e.hid ? '<p class="dmeta">'+esc(t.hiddenSubs(e.hid))+'</p>' : '');
@@ -1054,7 +1057,8 @@ function back(){
 }
 function wire(root){
   Array.prototype.forEach.call(root.querySelectorAll('[data-view]'), function(e){ e.addEventListener('click', function(){ push({v:e.getAttribute('data-view')}); }); });
-  Array.prototype.forEach.call(root.querySelectorAll('[data-epic]'), function(e){ e.addEventListener('click', function(){ push({v:'epic', i:+e.getAttribute('data-epic')}); }); });
+  Array.prototype.forEach.call(root.querySelectorAll('[data-epic]'), function(e){ e.addEventListener('click', function(){ push({v:'epic', i:+e.getAttribute('data-epic')}); }); if (canPlan()) dragSource(e, {kind:'epic', i:+e.getAttribute('data-epic')}); });
+  Array.prototype.forEach.call(root.querySelectorAll('[data-move]'), function(e){ e.addEventListener('click', function(){ var k = e.getAttribute('data-move'), id = e.getAttribute('data-moveid'); openMove(k==='epic' ? {kind:'epic', i:+id} : {kind:'block', id:id}); }); });
   Array.prototype.forEach.call(root.querySelectorAll('[data-goto]'), function(e){ e.addEventListener('click', function(){ push({v:'block', id:e.getAttribute('data-goto')}); }); });
   Array.prototype.forEach.call(root.querySelectorAll('[data-jump]'), function(e){ e.addEventListener('click', function(){ jumpTo(e.getAttribute('data-jump')); }); });
   Array.prototype.forEach.call(root.querySelectorAll('.navrow[data-mod]'), function(e){ e.addEventListener('click', function(){ openMod(+e.getAttribute('data-mod')); }); });
@@ -1149,7 +1153,7 @@ function drawPlanned(){
     card.innerHTML = '<h3>'+(gr[0] ? '<button type="button" data-blk="'+gr[0]+'">'+esc(gr[1])+'</button>' : '<span>'+esc(gr[1])+'</span>')+'<span class="c">'+vis.length+'/'+gr[2].length+'</span></h3><div class="elist">'+vis.map(epicCard).join('')+'</div>'+ri;
     g.appendChild(card);
   });
-  Array.prototype.forEach.call(g.querySelectorAll('[data-epic]'), function(x){ x.addEventListener('click', function(){ openEpicDirect(+x.getAttribute('data-epic'), x); }); });
+  Array.prototype.forEach.call(g.querySelectorAll('[data-epic]'), function(x){ x.addEventListener('click', function(){ openEpicDirect(+x.getAttribute('data-epic'), x); }); if (canPlan()) dragSource(x, {kind:'epic', i:+x.getAttribute('data-epic')}); });
   Array.prototype.forEach.call(g.querySelectorAll('[data-blk]'), function(x){ x.addEventListener('click', function(){ openBlock(x.getAttribute('data-blk'), x); if(!useSheet()) document.getElementById('karte').scrollIntoView({behavior:reduce?'auto':'smooth'}); }); });
   document.getElementById('mock').innerHTML = de()
    ? '<b>Reifegrad (1–10):</b> Das Projektfeld ließ sich hier nicht lesen; die Organisations-Endpunkte für Projekte (<code>/orgs/OpenResilienceInitiative/projectsV2</code>) sind für diese Sitzung gesperrt. Die Stufen oben sind deshalb ein Ersatz aus den Teilaufgaben: keine erledigt = Idee, unter 80 % = in Arbeit, ab 80 % = fast fertig, alle erledigt oder Epic geschlossen = fertig. Priorität, Aufwand und Release kommen aus den Issue-Feldern. Für den echten Reifegrad braucht es einen nächtlichen Job mit einem Token, das Projekte lesen darf: <code>GET /orgs/OpenResilienceInitiative/projectsV2</code> → Projektnummer; <code>GET …/projectsV2/{n}/fields</code> → ID des Felds „Reifegrad“; <code>GET …/projectsV2/{n}/items?fields[]={id}&amp;per_page=100</code> (seitenweise) → je Issue der Wert. Ergebnis als <code>epics.json</code> neben diese Seite legen (<code>{repo, number, title, state, reifegrad, sub_total, sub_done, block}</code>); die Seite liest dann <code>reifegrad</code> statt der Ersatz-Stufe. Stufen nach Ihrer Skala: 1–3 Idee, 4–6 in Arbeit, 7–9 fast fertig, 10 fertig.'
@@ -1222,8 +1226,15 @@ function drawMeas(){
 }
 
 /* ───────── Meilensteine und Releases (ORISO-Docs#209): linke Seitenleiste, schreibgeschützt ───────── */
-var RSCOPE = (typeof BoardAgg !== 'undefined') ? BoardAgg.releases(MEAS.board || null, MEAS.epics) : null;
-var MSV = (RSCOPE && MEAS.milestones) ? BoardAgg.milestones(MEAS.milestones, RSCOPE) : null;
+/* Planungsabsichten (ORISO-Docs#210): Karte zeigt Board + noch nicht bestätigte Verschiebungen (plan-ui.js). */
+var PLAN = (typeof PlanMove !== 'undefined') ? PlanMove.create() : null;
+var RSCOPE = null, MSV = null, VIEWB = null;
+function rescope(){
+  VIEWB = (MEAS.board && PLAN) ? PLAN.view(MEAS.board, MEAS.epics) : (MEAS.board || null);
+  RSCOPE = (typeof BoardAgg !== 'undefined') ? BoardAgg.releases(VIEWB, MEAS.epics) : null;
+  MSV = (RSCOPE && MEAS.milestones) ? BoardAgg.milestones(MEAS.milestones, RSCOPE) : null;
+}
+rescope();
 var relSel = null, relHit = {};
 var PRIO_L = {Urgent:['Dringend','Urgent'], High:['Hoch','High'], Medium:['Mittel','Medium'], Low:['Niedrig','Low'], none:['ohne Priorität','no priority']};
 function relTitle(m){ return m.title ? L(m.title) : m.id; }
@@ -1249,6 +1260,9 @@ function relCard(sc){
   b.innerHTML = '<span class="rhead">'+s.head+'</span>'+s.body+
     '<span class="rcaps">'+(sc.capabilities.length ? fmt(sc.capabilities.length)+(de()?(sc.capabilities.length===1?' Fähigkeit':' Fähigkeiten'):(sc.capabilities.length===1?' capability':' capabilities')) : (sc.total ? (de()?'keiner Fähigkeit zugeordnet':'not mapped to a capability') : ''))+'</span>';
   b.addEventListener('click', function(){ setRelease(relSel===sc.name ? null : sc.name); if (relMobile()) closeRel(true); });
+  b.addEventListener('dragover', function(e){ if (!dragSubject) return; e.preventDefault(); e.dataTransfer.dropEffect = 'move'; b.classList.add('dropok'); });
+  b.addEventListener('dragleave', function(){ b.classList.remove('dropok'); });
+  b.addEventListener('drop', function(e){ if (!dragSubject) return; e.preventDefault(); b.classList.remove('dropok'); var sub = dragSubject; dragSubject = null; dragOpenedRel = false; if (relMobile()) closeRel(true); openMove(sub, sc.name); });
   return b;
 }
 function drawRelPanel(){
@@ -1272,7 +1286,7 @@ function drawRelPanel(){
     var ul = el('div','rels'); MSV.unlisted.forEach(function(r){ ul.appendChild(relCard(r)); }); u.appendChild(ul); body.appendChild(u);
   }
   if (!MEAS.board) body.insertAdjacentHTML('afterbegin', '<p class="rnone">'+(de()?'Board noch nicht synchronisiert: alle Zahlen sind null.':'Board not synced yet: all figures are zero.')+'</p>');
-  body.insertAdjacentHTML('beforeend', '<p class="bnote">'+(de()?'Aufwand: S = 2, M = 4, L = 8 Personentage; Aufgaben ohne Aufwand zählen nicht mit. Nur Lesen: Releases werden im Board gepflegt, die Gruppierung in tools/planning-map/milestones.json.':'Effort: S = 2, M = 4, L = 8 person-days; issues without effort are not counted. Read-only: releases are kept on the board, the grouping in tools/planning-map/milestones.json.')+'</p>');
+  body.insertAdjacentHTML('beforeend', '<p class="bnote">'+(de()?'Aufwand: S = 2, M = 4, L = 8 Personentage; Aufgaben ohne Aufwand zählen nicht mit. Epic oder Fähigkeit auf ein Release ziehen oder „Zu Release verschieben …“ wählen. Die Gruppierung steht in tools/planning-map/milestones.json.':'Effort: S = 2, M = 4, L = 8 person-days; issues without effort are not counted. Drag an epic or capability onto a release, or choose “Move to release…”. The grouping is in tools/planning-map/milestones.json.')+'</p>');
   relStatus();
 }
 function relStatus(){
@@ -1293,20 +1307,131 @@ function setRelease(name){
   markRelease(); relStatus();
 }
 function relMobile(){ return window.matchMedia('(max-width:1560px)').matches; }
-function openRel(){
+function openRel(noFocus){
   var p = document.getElementById('relpanel'); p.classList.add('open'); document.getElementById('relback').hidden = false;
-  document.getElementById('relopen').setAttribute('aria-expanded','true'); document.getElementById('relclose').focus();
+  document.getElementById('relopen').setAttribute('aria-expanded','true'); if (noFocus!==true) document.getElementById('relclose').focus();
 }
 function closeRel(noFocus){
   var p = document.getElementById('relpanel'); if (!p.classList.contains('open')) return;
   p.classList.remove('open'); document.getElementById('relback').hidden = true;
   var o = document.getElementById('relopen'); o.setAttribute('aria-expanded','false'); if (!noFocus) o.focus();
 }
-document.getElementById('relopen').addEventListener('click', openRel);
+document.getElementById('relopen').addEventListener('click', function(){ openRel(); });
 document.getElementById('relclose').addEventListener('click', function(){ closeRel(); });
 document.getElementById('relback').addEventListener('click', function(){ closeRel(); });
 document.addEventListener('keydown', function(e){ if (e.key==='Escape') closeRel(); });
 window.matchMedia('(max-width:1560px)').addEventListener('change', function(q){ if (!q.matches) closeRel(true); });
+
+
+/* ───────── Verschieben in ein Release (ORISO-Docs#210) ─────────
+   Ziehen (Epic-Karte, Fähigkeits-Block) oder Tastatur („Zu Release verschieben …“) führen in denselben Dialog.
+   Danach: sofort sichtbar (optimistisch), dann window.PlanningTransport; ohne Transport der Befehl für plan.mjs;
+   bei Fehler wird zurückgerollt und der Grund gezeigt. Die Seite selbst schreibt nie nach GitHub. */
+var dragSubject = null, dragOpenedRel = false;
+var ORGN = (MEAS.board && MEAS.board.source && MEAS.board.source.owner) || 'OpenResilienceInitiative';
+function canPlan(){ return !!(PLAN && MEAS.board && MSV); }
+function subjectEpics(sub){ return sub.kind==='epic' ? [EP[sub.i]] : (BY[sub.id] ? BY[sub.id].ep.map(function(i){ return EP[i]; }) : []); }
+function subjectTitle(sub){
+  if (sub.kind==='epic') return EP[sub.i].t;
+  var n = subjectEpics(sub).length;
+  return L(BY[sub.id].t)+' ('+n+(de()?(n===1?' Epic':' Epics'):(n===1?' epic':' epics'))+')';
+}
+function releaseNames(){
+  var out = [];
+  MSV.milestones.forEach(function(m){ m.releases.forEach(function(r){ out.push(r.name); }); });
+  MSV.unlisted.forEach(function(r){ out.push(r.name); });
+  return out;
+}
+function boardRelease(e){
+  if (!VIEWB) return undefined;
+  var k = PlanMove.key(EPR[e.r], e.n), hit;
+  VIEWB.items.forEach(function(it){ if (it.contentType==='Issue' && it.repository && PlanMove.key(it.repository, it.number)===k) hit = it; });
+  return hit ? (hit.platformRelease || null) : undefined;
+}
+function currentReleaseOf(e){ var r = boardRelease(e); return r===undefined ? (e.rl || '') : (r || ''); }
+function moveButton(sub){
+  if (!canPlan() || !subjectEpics(sub).length) return '';
+  var b = sub.kind==='epic';
+  return '<p><button type="button" class="mvbtn" data-move="'+sub.kind+'" data-moveid="'+esc(String(b ? sub.i : sub.id))+'">'+esc(b ? (de()?'Zu Release verschieben …':'Move to release…') : (de()?'Alle Epics zu einem Release verschieben …':'Move all epics to a release…'))+'</button></p>';
+}
+var movedlg = document.getElementById('movedlg'), mvSub = null, mvOpener = null;
+function openMove(sub, preset){
+  if (!canPlan()) return;
+  var epics = subjectEpics(sub); if (!epics.length) return;
+  mvSub = sub; mvOpener = document.activeElement;
+  var one = epics.length===1, cur = one ? currentReleaseOf(epics[0]) : '';
+  document.getElementById('mvTitle').textContent = de() ? 'In ein Release verschieben' : 'Move to a release';
+  document.getElementById('mvWhat').textContent = subjectTitle(sub)+(one && cur ? ' · '+(de()?'jetzt: ':'now: ')+cur : '');
+  document.getElementById('mvrelL').textContent = 'Release';
+  var sel = document.getElementById('mvrel'); sel.innerHTML = '';
+  releaseNames().forEach(function(n){ var o = document.createElement('option'); o.value = n; o.textContent = n; sel.appendChild(o); });
+  sel.value = preset || (cur && releaseNames().indexOf(cur)>=0 ? cur : releaseNames()[0]);
+  var subs = document.getElementById('mvsubs'); subs.checked = false;
+  document.getElementById('mvsubsL').textContent = de() ? 'Teilaufgaben mitverschieben' : 'Move sub-issues too';
+  document.getElementById('mvcancel').textContent = de() ? 'Abbrechen' : 'Cancel';
+  document.getElementById('mvgo').textContent = de() ? 'Verschieben' : 'Move';
+  movedlg.showModal(); sel.focus();
+}
+function closeMove(){ if (movedlg.open) movedlg.close(); if (mvOpener && document.contains(mvOpener)) mvOpener.focus(); mvOpener = null; }
+function submitMove(){
+  var sub = mvSub, epics = sub ? subjectEpics(sub) : []; if (!epics.length) return;
+  var intent = {action:'assignRelease', release: document.getElementById('mvrel').value, withSubIssues: document.getElementById('mvsubs').checked,
+    issues: epics.map(function(e){ return {repository: PlanMove.fullName(EPR[e.r], ORGN), number: e.n}; }), label: subjectTitle(sub)};
+  if (epics.length===1){ var was = boardRelease(epics[0]); if (was!==undefined) intent.expect = was; }
+  mvSub = null; closeMove();
+  if (sheet.open) sheet.close(); /* Handy: das Bottom-Sheet ist modal und würde die Meldung darunter verdecken */
+  setTimeout(function(){ var pl = document.getElementById('planlog'); if (pl && !pl.hidden) pl.scrollIntoView({block:'nearest'}); }, 0);
+  PLAN.run(intent, window.PlanningTransport).then(function(x){ if (x.status==='failed') announcePlan(x); });
+}
+document.getElementById('mvform').addEventListener('submit', function(e){ e.preventDefault(); submitMove(); });
+document.getElementById('mvcancel').addEventListener('click', closeMove);
+movedlg.addEventListener('cancel', function(){ mvSub = null; });
+function copyText(txt, btn){
+  function done(){ var t = btn.textContent; btn.textContent = de() ? 'Kopiert' : 'Copied'; setTimeout(function(){ btn.textContent = t; }, 1600); }
+  if (navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(done, function(){ btn.textContent = de() ? 'Bitte von Hand kopieren' : 'Please copy by hand'; }); }
+  else btn.textContent = de() ? 'Bitte von Hand kopieren' : 'Please copy by hand';
+}
+function announcePlan(x){ var box = document.getElementById('planlog'); if (box){ var f = box.querySelector('[data-plan="'+x.id+'"] .pmsg'); if (f) f.focus(); } }
+function drawPlanLog(){
+  var box = document.getElementById('planlog'); if (!box || !PLAN) return;
+  var list = PLAN.intents.filter(function(x){ return x.status!=='discarded' && !x.dismissed; });
+  box.hidden = !list.length; box.innerHTML = '';
+  list.forEach(function(x){
+    var row = el('div','plrow '+x.status); row.dataset.plan = x.id;
+    var what = esc(x.label)+' → <b>'+esc(x.release)+'</b>'+(x.withSubIssues ? (de()?' (mit Teilaufgaben)':' (with sub-issues)') : '');
+    var msg, btns = '';
+    if (x.status==='pending') msg = (de()?'Wird gespeichert: ':'Saving: ')+what;
+    else if (x.status==='confirmed') msg = (x.partial ? (de()?'Nur teilweise auf GitHub gespeichert: ':'Only partly saved on GitHub: ') : (de()?'Auf GitHub gespeichert: ':'Saved on GitHub: '))+what+(x.partial ? ' · '+esc(PlanMove.reason(x.error, lang)+' '+(x.error.issue||'')) : '');
+    else if (x.status==='failed') msg = (de()?'Nicht gespeichert, zurückgesetzt: ':'Not saved, rolled back: ')+what+'<br>'+esc(PlanMove.reason(x.error, lang))+(x.error.message ? ' <span class="raw">('+esc(x.error.message)+')</span>' : '');
+    else {
+      msg = (de()?'Geplant, noch nicht auf GitHub: ':'Planned, not on GitHub yet: ')+what+'<br>'+(de()?'Dieser Befehl schreibt es (erst ohne, dann mit --apply):':'This command writes it (first without, then with --apply):');
+      btns = '<code class="plcmd">'+esc(PlanMove.command(x, false, ORGN))+'</code>';
+    }
+    row.innerHTML = '<p class="pmsg" tabindex="-1">'+msg+'</p>'+btns;
+    var bar = el('div','plbtns');
+    function add(txt, fn){ var b = el('button','plb', esc(txt)); b.type='button'; b.addEventListener('click', function(){ fn(b); }); bar.appendChild(b); }
+    if (x.status==='command'){
+      add(de()?'Befehl kopieren':'Copy command', function(b){ copyText(PlanMove.command(x, false, ORGN), b); });
+      add(de()?'Mit --apply kopieren':'Copy with --apply', function(b){ copyText(PlanMove.command(x, true, ORGN), b); });
+      add(de()?'Zurücknehmen':'Undo', function(){ PLAN.discard(x.id); });
+    } else if (x.status!=='pending') add(de()?'Schließen':'Dismiss', function(){ PLAN.dismiss(x.id); });
+    row.appendChild(bar); box.appendChild(row);
+  });
+}
+if (PLAN) PLAN.onChange(function(){ rescope(); drawRelPanel(); markRelease(); relStatus(); drawPlanLog(); if (stack.length) renderView(); });
+/* Ziehen: Epic-Karten und Fähigkeits-Blöcke sind Quellen, die Release-Karten im Panel Ziele. */
+function dragSource(node, sub){
+  node.draggable = true;
+  node.addEventListener('dragstart', function(e){
+    dragSubject = sub; e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', 'oriso-plan:'+sub.kind);
+    /* Schmale Fenster: das Release-Panel ist ein Schubfach; es geht für die Dauer des Ziehens auf (nach dem Start, damit der Zug nicht abbricht). */
+    if (relMobile() && !document.getElementById('relpanel').classList.contains('open')){ dragOpenedRel = true; setTimeout(function(){ if (dragSubject) openRel(true); }, 0); }
+  });
+  node.addEventListener('dragend', function(){
+    dragSubject = null; if (dragOpenedRel){ dragOpenedRel = false; closeRel(true); }
+    Array.prototype.forEach.call(document.querySelectorAll('.relc.dropok'), function(b){ b.classList.remove('dropok'); });
+  });
+}
 
 /* ───────── Sprache und Start ───────── */
 function setLang(l){
@@ -1314,7 +1439,7 @@ function setLang(l){
   renderAll();
 }
 document.addEventListener('oriso:languagechange', function(e){ if (e.detail && (e.detail.lang==='de'||e.detail.lang==='en') && e.detail.lang!==lang) setLang(e.detail.lang); });
-function renderAll(){ drawRelPanel(); drawTotals(); drawControls(); drawMap(); drawPlanned(); drawCards(); drawKpis(); drawHow(); drawMeas(); if (stack.length) renderView(); else renderEmpty(); }
+function renderAll(){ drawPlanLog(); drawRelPanel(); drawTotals(); drawControls(); drawMap(); drawPlanned(); drawCards(); drawKpis(); drawHow(); drawMeas(); if (stack.length) renderView(); else renderEmpty(); }
 var rt=null, lastW=0;
 window.addEventListener('resize', function(){ clearTimeout(rt); rt=setTimeout(function(){ if (tm.clientWidth!==lastW){ lastW=tm.clientWidth; drawMap(); } },120); });
 renderAll(); lastW = tm.clientWidth;

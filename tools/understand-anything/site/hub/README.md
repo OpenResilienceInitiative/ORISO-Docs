@@ -138,3 +138,7 @@ Picking a release highlights the capabilities it touches (overview level). Aggre
 (`releases`, `milestones`, `releaseCapabilities`). The config ships as optional `map/data/milestones.json`
 (`publication.mjs` `milestonesAsset`). Releases on the board but not in the config appear under "Not assigned".
 Docked at 1561 px and wider; below that it is a drawer opened by the "Releases" button.
+
+### Planning moves (#210)
+
+`map/plan-ui.js` (classic script, run by `test/plan-move.test.mjs`) holds the planning intents. A capability block (overview level) or an epic card can be dragged onto a release in the left panel, or moved with the button "Move to release…" in the epic view (and "Move all epics…" in a block's epic list). Both open one dialog: release and "move sub-issues too". The move shows on the map at once (optimistic). The static hub has no backend, so the page writes only through an optional `window.PlanningTransport = {assignRelease(intent), setGate(intent)}` returning `{ok:true}` or `{ok:false, error:{code,message}, applied?:[...]}`. On failure the move is rolled back and the reason shown in the log above the map (`#planlog`). Without a transport the log shows the exact `tools/planning-map/plan.mjs` command (dry run, or with `--apply`) and an Undo button. On narrow screens the release drawer opens while dragging; touch users use the button.

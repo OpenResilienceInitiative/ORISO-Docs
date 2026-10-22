@@ -39,8 +39,9 @@ function serve() {
 
 const skip = playwrightPath ? false : 'Playwright not available (set UA_PLAYWRIGHT)';
 let browser, server, origin;
-async function open({width = 1440, scheme = 'light', lang = 'de'} = {}) {
+async function open({width = 1440, scheme = 'light', lang = 'de', init} = {}) {
   const context = await browser.newContext({viewport: {width, height: 900}, colorScheme: scheme, locale: lang === 'de' ? 'de-DE' : 'en-GB', reducedMotion: 'reduce'});
+  if (init) await context.addInitScript(init);
   const page = await context.newPage();
   const problems = [];
   page.on('pageerror', e => problems.push(String(e)));
@@ -388,6 +389,135 @@ for (const width of [320, 390, 1440]) {
       assert.ok(!(await page.locator('#relpanel.open').count()));
       assert.equal(await page.evaluate(() => document.activeElement.id), 'relopen');
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), 'no horizontal overflow');
+      assert.deepEqual(problems, []);
+      await context.close();
+    }
+  });
+}
+
+// ───── Planning moves: drag / keyboard, optimistic update, rollback (ORISO-Docs#210) ─────
+// A transport that waits until the test answers, so the optimistic state can be observed.
+const HELD = () => {
+  window.__calls = [];
+  window.PlanningTransport = {assignRelease: intent => new Promise(res => { window.__calls.push(intent); window.__answer = res; })};
+};
+const relCount = (page, name) => page.locator(`#relbody .relc[data-release="${name}"] .rcount`).textContent();
+const VIEWBOX = ":is(#panel, #sheetBody)"; // side panel on desktop, bottom sheet on phones
+async function openEpicList(page) {
+  await page.locator('#tm .blk[data-id="chat"]').click();
+  await page.locator(`${VIEWBOX} .navrow[data-view="epics"]:visible`).waitFor();
+  await page.locator(`${VIEWBOX} .navrow[data-view="epics"]:visible`).click();
+  await page.locator(`${VIEWBOX} .epic:visible`).first().waitFor();
+}
+async function openEpicForMove(page) {
+  await page.locator('#pgrid .epic').first().click();
+  await page.locator(`${VIEWBOX} [data-move="epic"]:visible`).waitFor();
+}
+async function dragEpicToRelease(page, name) {
+  const dt = await page.evaluateHandle(() => new DataTransfer());
+  await page.dispatchEvent('#panel .epic', 'dragstart', {dataTransfer: dt});
+  await page.waitForSelector('#relpanel', {state: 'visible'});
+  await page.dispatchEvent(`#relbody .relc[data-release="${name}"]`, 'dragover', {dataTransfer: dt});
+  assert.ok(await page.locator(`#relbody .relc[data-release="${name}"].dropok`).count(), 'drop target is marked');
+  await page.dispatchEvent(`#relbody .relc[data-release="${name}"]`, 'drop', {dataTransfer: dt});
+  await page.dispatchEvent('#panel .epic', 'dragend', {dataTransfer: dt});
+}
+
+test('drag an epic onto a release: optimistic at once, then kept once the transport confirms', {skip}, async () => {
+  const {page, problems, context} = await open({lang: 'en', init: HELD});
+  await openEpicList(page);
+  await dragEpicToRelease(page, 'v2.0.13');
+  await page.waitForSelector('#movedlg[open]');
+  assert.match(await page.locator('#mvWhat').innerText(), /Shared waiting room · now: v2\.0\.12/);
+  assert.equal(await page.locator('#mvrel').inputValue(), 'v2.0.13', 'the drop target is preselected');
+  await page.locator('#mvgo').click();
+  await page.waitForSelector('#planlog .plrow.pending');
+  const calls = await page.evaluate(() => window.__calls);
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].action, 'assignRelease'); assert.equal(calls[0].release, 'v2.0.13'); assert.equal(calls[0].withSubIssues, false);
+  assert.deepEqual(calls[0].issues, [{repository: 'OpenResilienceInitiative/ORISO-Frontend', number: 1734}]);
+  assert.equal(calls[0].expect, 'v2.0.12');
+  assert.match(await relCount(page, 'v2.0.13'), /^2 issues/, 'moved before the answer');
+  assert.match(await relCount(page, 'v2.0.12'), /^2 issues/);
+  await page.evaluate(() => window.__answer({ok: true}));
+  await page.waitForSelector('#planlog .plrow.confirmed');
+  assert.match(await page.locator('#planlog').innerText(), /Saved on GitHub/);
+  assert.match(await relCount(page, 'v2.0.13'), /^2 issues/);
+  assert.deepEqual(problems, []);
+  await context.close();
+});
+
+test('ROLLBACK: a refused write puts the card back and shows the reason', {skip}, async () => {
+  const {page, problems, context} = await open({lang: 'en', init: HELD});
+  await openEpicList(page);
+  await dragEpicToRelease(page, 'v2.0.13');
+  await page.locator('#mvgo').click();
+  await page.waitForSelector('#planlog .plrow.pending');
+  assert.match(await relCount(page, 'v2.0.13'), /^2 issues/);
+  await page.evaluate(() => window.__answer({ok: false, error: {code: 'NO_WRITE_RIGHTS', message: 'Resource not accessible by integration', issue: 'OpenResilienceInitiative/ORISO-Frontend#1734'}, applied: []}));
+  await page.waitForSelector('#planlog .plrow.failed');
+  const msg = await page.locator('#planlog').innerText();
+  assert.match(msg, /Not saved, rolled back/); assert.match(msg, /No write rights on GitHub/); assert.match(msg, /Resource not accessible/);
+  assert.match(await relCount(page, 'v2.0.13'), /^1 issue/, 'rolled back');
+  assert.match(await relCount(page, 'v2.0.12'), /^3 issues/);
+  assert.equal(await page.evaluate(() => document.activeElement.className), 'pmsg', 'focus lands on the reason');
+  await page.locator('#planlog .plb').click();
+  assert.ok(await page.locator('#planlog').isHidden());
+  assert.deepEqual(problems, []);
+  await context.close();
+});
+
+test('without a transport the move stays as a command to copy, and Undo takes it back', {skip}, async () => {
+  const {page, problems, context} = await open({lang: 'de'});
+  await openEpicForMove(page);
+  await page.locator(`${VIEWBOX} [data-move="epic"]:visible`).click();
+  await page.waitForSelector('#movedlg[open]');
+  await page.locator('#mvrel').selectOption('v2.0.13');
+  await page.locator('#mvsubs').check();
+  await page.locator('#mvgo').click();
+  await page.waitForSelector('#planlog .plrow.command');
+  assert.equal(await page.locator('#planlog .plcmd').innerText(),
+    "node tools/planning-map/plan.mjs assign-release --issue 'OpenResilienceInitiative/ORISO-Frontend#1734' --release v2.0.13 --with-sub-issues --expect v2.0.12");
+  assert.match(await page.locator('#planlog').innerText(), /noch nicht auf GitHub/);
+  assert.match(await relCount(page, 'v2.0.13'), /^10 Aufgaben/, 'the epic and its 9 sub-issues (8 with a parent link, 1 from the epic list) move on the map');
+  await page.locator('#planlog .plb', {hasText: 'Zurücknehmen'}).click();
+  assert.match(await relCount(page, 'v2.0.13'), /^1 Aufgabe/);
+  assert.ok(await page.locator('#planlog').isHidden());
+  assert.deepEqual(problems, []);
+  await context.close();
+});
+
+test('keyboard path: "Move to release…" opens a labelled dialog, Escape cancels and returns focus', {skip}, async () => {
+  const {page, problems, context} = await open({lang: 'en'});
+  await openEpicForMove(page);
+  const btn = page.locator('#panel [data-move="epic"]');
+  await btn.focus();
+  await page.keyboard.press('Enter');
+  await page.waitForSelector('#movedlg[open]');
+  assert.equal(await page.evaluate(() => document.activeElement.id), 'mvrel');
+  assert.equal(await page.locator('#movedlg').getAttribute('aria-labelledby'), 'mvTitle');
+  await page.keyboard.press('Escape');
+  assert.ok(!(await page.locator('#movedlg[open]').count()));
+  assert.equal(await page.evaluate(() => document.activeElement.getAttribute('data-move')), 'epic');
+  assert.equal(await page.locator('#planlog .plrow').count(), 0, 'cancel plans nothing');
+  assert.deepEqual(problems, []);
+  await context.close();
+});
+
+for (const width of [320, 390, 1440]) {
+  test(`${width}px: the move dialog and the planning log fit and do not overflow (light DE, dark EN)`, {skip}, async () => {
+    for (const [scheme, lang] of [['light', 'de'], ['dark', 'en']]) {
+      const {page, problems, context} = await open({width, scheme, lang});
+      await openEpicForMove(page);
+      await page.locator(`${VIEWBOX} [data-move="epic"]:visible`).click();
+      await page.waitForSelector('#movedlg[open]');
+      const box = await page.locator('#movedlg').boundingBox();
+      assert.ok(box.x >= 0 && box.x + box.width <= width + 1, 'dialog inside the viewport');
+      if (process.env.UA_SHOTS) await page.screenshot({path: `${process.env.UA_SHOTS}/move-${width}-${scheme}-${lang}.png`});
+      await page.locator('#mvgo').click();
+      await page.waitForSelector('#planlog .plrow.command');
+      assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), 'no horizontal overflow');
+      if (process.env.UA_SHOTS) await page.screenshot({path: `${process.env.UA_SHOTS}/planlog-${width}-${scheme}-${lang}.png`});
       assert.deepEqual(problems, []);
       await context.close();
     }

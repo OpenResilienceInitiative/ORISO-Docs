@@ -488,3 +488,30 @@ html[data-lang="de"] .wasist [lang="en"]{display:inline !important}
 }
 @media (prefers-reduced-motion:reduce){ .relpanel{transition:none !important} }
 @media (min-width:1561px){ main.wrap{max-width:1560px} }
+
+/* Verschieben in ein Release (ORISO-Docs#210) */
+.planlog{display:grid;gap:8px;margin:0 0 12px}
+.planlog[hidden]{display:none}
+.plrow{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--brand);border-radius:var(--radius);padding:9px 12px;display:grid;gap:6px;min-width:0;font-size:13px}
+.plrow.failed{border-left-color:var(--ink)}
+.plrow.failed .pmsg{font-weight:600}
+.pmsg{margin:0;overflow-wrap:anywhere}
+.pmsg:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.pmsg .raw{color:var(--ink-2);font-weight:400}
+.plcmd{display:block;font-family:var(--mono);font-size:12px;background:var(--sunken);border:1px solid var(--line);border-radius:6px;padding:6px 8px;overflow-wrap:anywhere;white-space:pre-wrap}
+.plbtns{display:flex;flex-wrap:wrap;gap:6px}
+.plb,.mvbtn,.mvcancel,.mvgo{appearance:none;font:inherit;font-size:13px;font-weight:600;border:1px solid var(--brand-line);background:var(--brand-wash);color:var(--brand-deep);border-radius:999px;padding:8px 14px;min-height:44px;cursor:pointer}
+.plb:focus-visible,.mvbtn:focus-visible,.mvcancel:focus-visible,.mvgo:focus-visible,#mvrel:focus-visible,.mvchk input:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.mvgo{background:var(--brand-deep);color:var(--brand-wash);border-color:var(--brand-deep)}
+.relc.dropok{border-color:var(--brand);background:var(--brand-wash);box-shadow:inset 0 0 0 2px var(--brand)}
+.epic[draggable="true"],.blk[draggable="true"]{cursor:grab}
+dialog#movedlg{border:1px solid var(--line);border-top:4px solid var(--brand);border-radius:var(--radius);background:var(--card);color:var(--ink);padding:0;width:min(420px,calc(100vw - 32px))}
+dialog#movedlg::backdrop{background:rgba(20,16,15,.5)}
+.mvform{display:grid;gap:12px;padding:16px}
+.mvform h3{margin:0;font-size:16px}
+.mvwhat{margin:0;font-size:13.5px;overflow-wrap:anywhere}
+.mvlab{font-size:12.5px;font-weight:600}
+#mvrel{font:inherit;font-size:14px;min-height:44px;padding:6px 8px;border:1px solid var(--line);border-radius:var(--radius);background:var(--paper);color:var(--ink);width:100%}
+.mvchk{display:flex;gap:10px;align-items:center;font-size:13.5px;min-height:44px}
+.mvchk input{width:20px;height:20px;flex:none}
+.mvbtns{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}

@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="/map/map.css">
 <script src="/assets/lang.js"></script>
 <script src="/map/board-agg.js" defer></script>
+<script src="/map/plan-ui.js" defer></script>
 <script src="/map/map.js" defer></script>
 </head>
 <body>
@@ -47,6 +48,8 @@
         <span class="crow" id="layerTogs" role="group" aria-describedby="layerHelp"></span></div>
       <p class="lhelp" id="layerHelp"></p>
     </div>
+
+    <div class="planlog" id="planlog" role="status" aria-live="polite" hidden></div>
 
     <div class="mapcols">
     <button type="button" class="relopen" id="relopen" aria-controls="relpanel" aria-expanded="false"><span lang="de">Releases</span><span lang="en">Releases</span></button>
@@ -107,6 +110,12 @@
   <div class="meas" id="meas"></div>
 </footer>
 
+<dialog id="movedlg" aria-labelledby="mvTitle"><form method="dialog" class="mvform" id="mvform">
+  <h3 id="mvTitle" tabindex="-1"></h3><p class="mvwhat" id="mvWhat"></p>
+  <label class="mvlab" for="mvrel" id="mvrelL"></label><select id="mvrel"></select>
+  <label class="mvchk" id="mvsubsW"><input type="checkbox" id="mvsubs"><span id="mvsubsL"></span></label>
+  <div class="mvbtns"><button type="button" class="mvcancel" id="mvcancel"></button><button type="submit" class="mvgo" id="mvgo"></button></div>
+</form></dialog>
 <dialog id="sheet" aria-label="Details"><div class="sheet-in" id="sheetIn"><div class="grab" aria-hidden="true"></div><div id="sheetBody"></div></div></dialog>
 </body>
 </html>
