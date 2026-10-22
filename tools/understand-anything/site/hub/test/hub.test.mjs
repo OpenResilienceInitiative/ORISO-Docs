@@ -1,10 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {renderFeatures} from '../render-features.mjs';
+import {renderFeatures,renderFeaturePage,featurePages} from '../render-features.mjs';
 const data=JSON.parse(readFileSync(new URL('../features/catalog.json',import.meta.url)));
-test('ten source-bound bilingual summaries link canonical localized docs',()=>{
- assert.equal(data.features.length,10);
+test('seventeen source-bound bilingual summaries link canonical localized docs',()=>{
+ assert.equal(data.features.length,17);
  for(const locale of ['de','en']){
   const html=renderFeatures(data,locale);
   assert.match(html,new RegExp(`<html lang="${locale}"`));
@@ -15,6 +15,18 @@ test('ten source-bound bilingual summaries link canonical localized docs',()=>{
 test('renderer escapes source summaries and preserves subsection IDs',()=>{
  const html=renderFeatures({...data,features:[{...data.features[0],en:{title:'<bad>',summary:'<script>'}}]},'en');
  assert.ok(html.includes('&lt;script&gt;')); assert.ok(html.includes('id="ai-tools"'));
+});
+test('each feature page opens its card and every card link resolves',()=>{
+ const pages=featurePages(data);
+ assert.equal(pages.length,10);assert.ok(pages.includes('features/case-handover.html'));
+ assert.equal(renderFeaturePage(data.features.find(f=>f.id==='product/features/case-handover')),readFileSync(new URL('../features/case-handover.html',import.meta.url),'utf8'));
+ for(const page of pages){const slug=page.slice(9,-5);const html=readFileSync(new URL('../'+page,import.meta.url),'utf8');assert.ok(html.includes(`.html#${slug}`));for(const locale of ['de','en'])assert.ok(renderFeatures(data,locale).includes(`<article id="${slug}">`));}
+ const home=readFileSync(new URL('../index.html',import.meta.url),'utf8');for(const page of pages)assert.ok(home.includes(`href="/${page}"`),page);
+ const en=renderFeatures(data,'en');
+ assert.ok(en.includes('https://docs.oriso.org/en/decisions/adr-024'));assert.ok(en.includes('https://dev.oriso.org/storybook-frontend/?path=/docs/organisms-notificationscenter--docs'));assert.ok(en.includes('href="#case-handover"'));
+ assert.throws(()=>renderFeatures({...data,features:[{...data.features[0],related:['missing-feature']}]},'en'),/Unknown related/);
+ assert.throws(()=>renderFeatures({...data,features:[{...data.features[0],storybook:[{app:'evil',path:'/docs/x',de:'x',en:'x'}]}]},'en'),/Storybook/);
+ assert.throws(()=>renderFeaturePage({...data.features[0],id:'product/features/de',hubPage:{label:'x'}}),/Invalid hub feature page/);
 });
 test('status source renders released source vector and missing evidence',()=>{
  const status=readFileSync(new URL('../assets/status.js',import.meta.url),'utf8');

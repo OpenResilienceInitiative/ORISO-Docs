@@ -2,22 +2,24 @@ import {graphMappingType} from '../../glossary/validate.mjs';
 import fs from 'node:fs';import path from 'node:path';import crypto from 'node:crypto';import {execFileSync} from 'node:child_process';import {fileURLToPath} from 'node:url';
 import {bindPlatformRelease,assertPlatformReleaseBinding} from '../../../docs-publication/platform-release.mjs';
 import {isDeepStrictEqual} from 'node:util';
-import {renderFeatures} from './render-features.mjs';
+import {renderFeatures,renderFeaturePage,featurePages} from './render-features.mjs';
 import {renderGlossary} from './render-glossary.mjs';
 import {validateGlossarySources} from '../../lib/glossary-projection.mjs';
 import {immutableSource} from '../../ua-glossary-project.mjs';
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
-const allowed=p=>/^(index\.html|status\.json|operator-snapshot\.json|assets\/(hub\.css|lang\.js|status\.js|glossary\.js)|glossary\/(index\.html|catalog\.json|bindings\.json|sources\/(seed|bjorn-reconciliation|naming-audit)\.md)|features\/(index|de|en|case-handover)\.html)$/.test(p);
+const allowed=p=>/^(index\.html|status\.json|operator-snapshot\.json|assets\/(hub\.css|lang\.js|status\.js|glossary\.js)|glossary\/(index\.html|catalog\.json|bindings\.json|sources\/(seed|bjorn-reconciliation|naming-audit)\.md)|features\/(index|de|en|[a-z][a-z0-9-]*)\.html)$/.test(p);
 function files(root){return fs.readdirSync(root,{recursive:true}).filter(p=>{const stat=fs.lstatSync(path.join(root,p));if(stat.isSymbolicLink())throw Error('Hub symlinks are forbidden');return stat.isFile();}).sort();}
 const hubSourcePrefix='tools/understand-anything/site/hub/';
-const staticInputs=['index.html','assets/hub.css','assets/lang.js','assets/status.js','assets/glossary.js','glossary/index.html','features/index.html','features/de.html','features/en.html','features/case-handover.html'];
+const staticInputs=['index.html','assets/hub.css','assets/lang.js','assets/status.js','assets/glossary.js','glossary/index.html','features/index.html','features/de.html','features/en.html'];
 const producerInputs=['render-glossary.mjs','render-features.mjs','publication.mjs'].map(p=>hubSourcePrefix+p).concat([
  'tools/understand-anything/glossary/validate.mjs','tools/understand-anything/glossary/source-bindings.mjs','tools/understand-anything/glossary/reasons.mjs','tools/understand-anything/lib/glossary-projection.mjs','tools/understand-anything/ua-glossary-project.mjs',
  'tools/docs-publication/platform-release.mjs','tools/public_operator_snapshot.py','tools/truth-chain/public-repositories.json','tools/understand-anything/site/hub/features/catalog.json','site/page-catalog.json'
 ]);
 function publicationSources(root) {
  files(path.join(root,hubSourcePrefix));
- const docs=immutableSource(root,'ORISO-Docs'),assets=new Map(staticInputs.map(p=>[p,docs.readSource(hubSourcePrefix+p)]));
+ const docs=immutableSource(root,'ORISO-Docs'),catalog=JSON.parse(docs.readSource(hubSourcePrefix+'features/catalog.json'));
+ // Per-feature hub pages are generated from the same selected catalogue bytes as the locale pages.
+ const assets=new Map([...staticInputs,...featurePages(catalog)].map(p=>[p,docs.readSource(hubSourcePrefix+p)]));
  const inputs=[...producerInputs,...execFileSync('git',['ls-tree','-r','--name-only',docs.revision,'--','tools/understand-anything/bundle'],{cwd:root,encoding:'utf8'}).trim().split('\n').filter(p=>p.endsWith('.py'))];
  for(const relative of inputs) {
   const selected=docs.readSource(relative);
@@ -74,6 +76,8 @@ export function validateSources(root){
  }
  for(const locale of ['de','en'])if(fs.readFileSync(path.join(hub,`features/${locale}.html`),'utf8')!==renderFeatures(data,locale))throw Error('Hub renderer output differs: '+locale);
  if(fs.readFileSync(path.join(hub,'features/index.html'),'utf8')!==renderFeatures(data,'de'))throw Error('Hub renderer output differs: index');
+ for(const f of data.features.filter(f=>f.hubPage)){const file=path.join(hub,'features',f.id.split('/').pop()+'.html');if(!fs.existsSync(file)||fs.readFileSync(file,'utf8')!==renderFeaturePage(f))throw Error('Hub feature page differs: '+f.id);}
+ const pages=new Set(featurePages(data).map(p=>p.slice('features/'.length))),stray=fs.readdirSync(path.join(hub,'features')).filter(n=>n.endsWith('.html')&&!['index.html','de.html','en.html'].includes(n)&&!pages.has(n));if(stray.length)throw Error('Hub feature page without catalogue entry: '+stray.join(', '));
  glossarySources(root);return data;
 }
 export function buildHub({root,out,generation,origin,revision,releaseLock,operatorSnapshot,operatorConfirmation}){

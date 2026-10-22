@@ -1,0 +1,79 @@
+---
+title: "4.13 Self-help Groups"
+description: "Protected group rooms for self-help: joining only after the group lead admits you, a waiting area with countdown and group rules, handing over the group lead, joining by link without an account, and recurring group appointments."
+source: "product/features/self-help-groups.mdx"
+---
+
+Self-help needs protected rooms. Nobody should walk into a group unasked, and a group must not stop
+because its lead is away. ORISO's self-help groups build on the group chat: a person asks to join,
+waits in a waiting area that shows the group's rules, and is admitted by the lead. The lead can be
+handed over, and the group can meet at regular times.
+
+This page describes **what** the feature does. It is written for counsellors who lead groups and
+for heads of Beratungsstellen.
+
+## 4.13.1 What you can do with it
+
+- **Admit people yourself.** A person asks to join; the group lead admits or declines.
+- **Prepare people before they enter.** The waiting area shows a countdown to the start and the
+  group's rules.
+- **Hand over the lead.** The main lead can pass the group to another counsellor.
+- **Let people join without an account.** With a group link, a person can join for this one
+  occasion without registering.
+- **Meet regularly.** Plan recurring group appointments with reminder e-mails.
+
+## 4.13.2 How joining works
+
+| Step | What the person sees | What the lead does |
+|---|---|---|
+| Open the group link | the group's information and its rules | — |
+| Ask to join | a waiting area with a countdown to the start | sees the request and admits or declines it |
+| Admitted | the group room; messages are end-to-end encrypted and visible only to members | — |
+| Declined or not answered | stays outside; nothing of the group is visible | — |
+
+Only members read the group. A person who has not been admitted sees neither messages nor other
+members.
+
+## 4.13.3 Joining without an account
+
+A person can join through a group link with "join without account". The login then exists only in
+this one browser. Once the longest possible login has ended, nobody can use that account again, and
+it is deleted after 24 hours. This is a technical limit, not a legal retention period. What the
+person wrote stays visible to the members who were present.
+
+## 4.13.4 Who does what
+
+| Role | Can do |
+|---|---|
+| **Group lead (owner)** | admits or declines requests; sets the rules; hands the lead over to another counsellor |
+| **Co-moderator** | supports the lead in the group |
+| **Participant** | asks to join, reads and writes once admitted, leaves at any time |
+| **Träger and Beratungsstelle** | switch self-help groups on or off, see [Feature permissions](/en/produkt/core-features/feature-permissions) |
+
+## 4.13.5 Group appointments
+
+A group can be planned as a series: daily, weekly, every two weeks, monthly, quarterly or yearly,
+with a fixed number of meetings. A meeting can be text, audio or video. Participants and leads
+receive e-mails when an appointment is confirmed, moved or cancelled, and a reminder beforehand.
+Calendar entries and invitations name no topic, so they reveal nothing about what the group is
+about.
+
+## 4.13.6 State of development
+
+| Part | State |
+|---|---|
+| Creating, starting, ending and joining a group chat; single appointments and calendar file | existed before ORISO |
+| Group chat for further groups of people, including among counsellors | commissioned with CAR-REFACT and built |
+| Join request with admission, waiting area, rules, handing over the lead, joining without an account | built |
+| Recurring group appointments with reminder e-mails | built; requested, not priced in an offer |
+
+## 4.13.7 Related
+
+- [Group Chats & Multi-Recipient Send](/en/produkt/core-features/group-chats) — the group chat this builds on.
+- [Self-help groups: extend the group chat (ADR-012)](/en/decisions/adr-012)
+- [Scheduled calls, secure invitations and calendar (ADR-020)](/en/decisions/adr-020)
+- Storybook, counselling app: [Entry room](https://dev.oriso.org/storybook-frontend/?path=/docs/group-chat-self-help-entry-room--docs) ·
+  [Waiting area](https://dev.oriso.org/storybook-frontend/?path=/docs/group-chat-self-help-waiting-room-stage--docs) ·
+  [Group rules](https://dev.oriso.org/storybook-frontend/?path=/docs/groupchat-waitingarearules--docs) ·
+  [Join request](https://dev.oriso.org/storybook-frontend/?path=/docs/molecules-m3snackbar-join-request--docs) ·
+  [Join without account](https://dev.oriso.org/storybook-frontend/?path=/docs/registration-temporary-join-toggle--docs)

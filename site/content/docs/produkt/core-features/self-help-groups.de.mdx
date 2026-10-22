@@ -1,0 +1,82 @@
+---
+title: "4.13 Selbsthilfegruppen"
+description: "Geschützte Gruppenräume für die Selbsthilfe: Beitritt erst nach Zulassung durch die Gruppenleitung, ein Wartebereich mit Countdown und Gruppenregeln, Übergabe der Gruppenleitung, Beitritt per Link ohne Konto und wiederkehrende Gruppentermine."
+source: "product/features/self-help-groups.mdx"
+---
+
+Selbsthilfe braucht geschützte Räume. Niemand soll ungefragt in eine Gruppe hineinkommen, und eine
+Gruppe darf nicht ausfallen, weil ihre Leitung abwesend ist. Die Selbsthilfegruppen von ORISO bauen
+auf dem Gruppenchat auf: Eine Person bittet um Beitritt, wartet in einem Wartebereich, der die
+Gruppenregeln zeigt, und wird von der Leitung zugelassen. Die Leitung lässt sich übergeben, und die
+Gruppe kann sich regelmäßig treffen.
+
+Diese Seite beschreibt, **was** die Funktion tut. Sie richtet sich an Beratende, die Gruppen leiten,
+und an Leitungen von Beratungsstellen.
+
+## 4.13.1 Das kann ich damit machen
+
+- **Selbst zulassen.** Eine Person bittet um Beitritt; die Gruppenleitung lässt sie zu oder lehnt ab.
+- **Menschen vor dem Eintreten vorbereiten.** Der Wartebereich zeigt einen Countdown bis zum Beginn
+  und die Regeln der Gruppe.
+- **Die Leitung übergeben.** Die Hauptleitung kann die Gruppe an eine andere beratende Person
+  weitergeben.
+- **Ohne Konto beitreten lassen.** Mit einem Gruppenlink kann eine Person für dieses eine Treffen
+  beitreten, ohne sich zu registrieren.
+- **Sich regelmäßig treffen.** Wiederkehrende Gruppentermine mit Erinnerungs-E-Mails planen.
+
+## 4.13.2 So läuft der Beitritt
+
+| Schritt | Was die Person sieht | Was die Leitung tut |
+|---|---|---|
+| Gruppenlink öffnen | die Informationen der Gruppe und ihre Regeln | — |
+| Um Beitritt bitten | einen Wartebereich mit Countdown bis zum Beginn | sieht die Anfrage und lässt zu oder lehnt ab |
+| Zugelassen | den Gruppenraum; Nachrichten sind Ende-zu-Ende-verschlüsselt und nur für Mitglieder sichtbar | — |
+| Abgelehnt oder unbeantwortet | bleibt draußen; von der Gruppe ist nichts zu sehen | — |
+
+Nur Mitglieder lesen in der Gruppe. Wer nicht zugelassen ist, sieht weder Nachrichten noch andere
+Mitglieder.
+
+## 4.13.3 Beitritt ohne Konto
+
+Über einen Gruppenlink kann eine Person „ohne Konto beitreten“. Die Anmeldung gibt es dann nur in
+diesem einen Browser. Sobald die längstmögliche Anmeldung abgelaufen ist, kann niemand das Konto mehr
+nutzen; es wird nach 24 Stunden gelöscht. Das ist eine technische Grenze, keine rechtliche
+Aufbewahrungsfrist. Was die Person geschrieben hat, bleibt für die Mitglieder sichtbar, die dabei
+waren.
+
+## 4.13.4 Wer was tut
+
+| Rolle | Kann |
+|---|---|
+| **Gruppenleitung** | Beitrittsanfragen zulassen oder ablehnen; Regeln festlegen; die Leitung an eine andere beratende Person übergeben |
+| **Ko-Moderation** | unterstützt die Leitung in der Gruppe |
+| **Teilnehmende** | um Beitritt bitten, nach der Zulassung lesen und schreiben, jederzeit gehen |
+| **Träger und Beratungsstelle** | Selbsthilfegruppen ein- oder ausschalten, siehe [Funktionsfreigaben](/de/produkt/core-features/feature-permissions) |
+
+## 4.13.5 Gruppentermine
+
+Eine Gruppe lässt sich als Reihe planen: täglich, wöchentlich, alle zwei Wochen, monatlich,
+vierteljährlich oder jährlich, mit einer festen Zahl von Treffen. Ein Treffen kann per Text, Audio
+oder Video stattfinden. Teilnehmende und Leitungen bekommen E-Mails, wenn ein Termin bestätigt,
+verschoben oder abgesagt wird, und vorher eine Erinnerung. Kalendereinträge und Einladungen nennen
+kein Thema und verraten so nichts darüber, worum es in der Gruppe geht.
+
+## 4.13.6 Stand der Entwicklung
+
+| Teil | Stand |
+|---|---|
+| Gruppenchat anlegen, starten, beenden und beitreten; Einzeltermine und Kalenderdatei | gab es schon vor ORISO |
+| Gruppenchat für weitere Nutzergruppen, auch unter Beratenden | mit CAR-REFACT beauftragt und gebaut |
+| Beitrittsanfrage mit Zulassung, Wartebereich, Regeln, Übergabe der Leitung, Beitritt ohne Konto | gebaut |
+| Wiederkehrende Gruppentermine mit Erinnerungs-E-Mails | gebaut; angefragt, in keinem Angebot bepreist |
+
+## 4.13.7 Verwandte Seiten
+
+- [Gruppenchats und Versand an mehrere Empfänger](/de/produkt/core-features/group-chats) — der Gruppenchat, auf dem dies aufbaut.
+- [Selbsthilfegruppen: Gruppenchat erweitern (ADR-012)](/de/decisions/adr-012)
+- [Geplante Anrufe, sichere Einladungen, Kalender (ADR-020)](/de/decisions/adr-020)
+- Storybook Beratungs-App: [Eingangsraum](https://dev.oriso.org/storybook-frontend/?path=/docs/group-chat-self-help-entry-room--docs) ·
+  [Wartebereich](https://dev.oriso.org/storybook-frontend/?path=/docs/group-chat-self-help-waiting-room-stage--docs) ·
+  [Gruppenregeln](https://dev.oriso.org/storybook-frontend/?path=/docs/groupchat-waitingarearules--docs) ·
+  [Beitrittsanfrage](https://dev.oriso.org/storybook-frontend/?path=/docs/molecules-m3snackbar-join-request--docs) ·
+  [Ohne Konto beitreten](https://dev.oriso.org/storybook-frontend/?path=/docs/registration-temporary-join-toggle--docs)

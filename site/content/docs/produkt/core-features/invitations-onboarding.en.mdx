@@ -1,0 +1,81 @@
+---
+title: "4.12 Invitations and Onboarding"
+description: "How Träger, heads of Beratungsstellen and counsellors get onto the platform: invitations with progress tracking, the set-up wizard, bulk invitations from a spreadsheet, and set-up for counsellors."
+source: "product/features/invitations-onboarding.mdx"
+---
+
+A Träger that starts on ORISO has to invite many people at once: its own administrators, the heads
+of its Beratungsstellen and their counsellors. Each of them has to create an account, set up a
+second factor and, for the Träger, conclude the contract documents. When this happens by e-mail
+and phone, invitations get lost. ORISO follows every invitation until the account is ready and
+shows where it is stuck.
+
+This page describes **what** the feature does. It is written for Träger administrators and heads
+of Beratungsstellen.
+
+## 4.12.1 What you can do with it
+
+- **See where each invitation stands** — and why one is stuck, for example because the e-mail
+  could not be delivered or the link has expired.
+- **Set up a Träger with a wizard** — account, second factor and contract documents, step by step.
+- **Invite many at once** — several new Beratungsstellen with their heads, counsellors and topic
+  rights in one round, or from a spreadsheet (CSV).
+- **Let counsellors set themselves up** — choose topics, or create a new Beratungsstelle while
+  setting up; heads decide whether they also counsel themselves.
+
+## 4.12.2 The stages of an invitation
+
+| Stage | Meaning |
+|---|---|
+| **Prepared** | the invitation is written but not sent yet |
+| **Invited** | the e-mail with the link has gone out |
+| **Account created** | the person has created their account |
+| **Done** | everything the role needs is set up |
+| **Needs action** | something blocks the next step; the reason is shown |
+
+The steps differ by role. A Träger administrator additionally goes through creating the Träger and
+the contract documents; a counsellor goes through invited, account created, done.
+
+An invitation into a Beratungsstelle that does not exist yet waits — unsent and without a link that
+could expire — until that Beratungsstelle's first head has set it up. If no head is invited, the
+administration says so.
+
+## 4.12.3 Who invites whom
+
+| Role | Can invite |
+|---|---|
+| **Platform operator** | Träger administrators |
+| **Träger administrator** | heads of Beratungsstellen and counsellors of its own Träger; several new Beratungsstellen at once |
+| **Head of Beratungsstelle** | counsellors of their own Beratungsstelle |
+
+Invitation e-mails can be written in your own words with an e-mail template, with placeholders and
+a preview before sending. Who may be invited into which Beratungsstelle
+always stays within the inviting person's own Träger.
+
+## 4.12.4 Set-up after accepting
+
+- **Träger administrators** go through the set-up wizard: organisation details, second factor,
+  contract documents. Without signed contract documents no Beratungsstelle can be created.
+- **Heads of Beratungsstellen** set up their Beratungsstelle and decide whether they also counsel.
+- **Counsellors** confirm or choose their topics, in the language they prefer.
+
+## 4.12.5 State of development
+
+| Part | State |
+|---|---|
+| Links to an agency or a counsellor, QR code | existed before ORISO |
+| Träger wizard (account, second factor, contract documents) | commissioned with CAR-14 and built |
+| Invitations with progress tracking, bulk invitations, spreadsheet import | built |
+| Set-up for counsellors and heads | built |
+
+## 4.12.6 Related
+
+- [Legal texts and contract documents](/en/produkt/core-features/legal-texts) — what the Träger signs in the wizard.
+- [Training: tours and practice area](/en/produkt/core-features/training-tours) — what new counsellors do next.
+- [Platform Services Agreement and Träger governance (ADR-023)](/en/decisions/adr-023)
+- [Two-factor via the OTP extension (ADR-013)](/en/decisions/adr-013)
+- Storybook, administration: [Invitation progress](https://dev.oriso.org/storybook-admin/?path=/story/organisms-pages-links-inviteprogress--tenant-invites) ·
+  [Invite composer](https://dev.oriso.org/storybook-admin/?path=/story/organisms-pages-links-invitecomposer--empty) ·
+  [Spreadsheet import](https://dev.oriso.org/storybook-admin/?path=/story/organisms-pages-links-invitecsvimport--more-menu-open) ·
+  [Träger wizard](https://dev.oriso.org/storybook-admin/?path=/story/pages-tenantonboarding-flow--organisation-and-dpa) ·
+  [Counsellor set-up](https://dev.oriso.org/storybook-admin/?path=/story/pages-counselloronboarding-flow--wizard)
