@@ -1,0 +1,66 @@
+---
+title: "4.15 Einarbeitung — vier Touren und ein Übungsbereich"
+description: "Wie neue Beratende sich zurechtfinden: ein Rundgang und eine Tour zur Mail-Beratung, zwei Übungstouren und ein Übungsbereich mit Übungsfällen, in dem nichts eine echte Person erreicht."
+---
+
+Neue Beratende sollen die Plattform nicht an echten Menschen lernen. ORISO bietet zwei Arten von
+Hilfe: Touren, die zeigen, wo was ist, und einen Übungsbereich, in dem Beratende die wichtigsten
+Schritte an Übungsfällen ausprobieren. Nichts, was im Übungsbereich passiert, verlässt den eigenen
+Browser; Fehler kosten also nichts.
+
+Diese Seite beschreibt, **was** die Funktion tut. Sie richtet sich an Beratende und an Leitungen von
+Beratungsstellen, die neue Kolleginnen und Kollegen einarbeiten.
+
+## 4.15.1 Das kann ich damit machen
+
+- **Mich zurechtfinden** mit einem Rundgang durch die Beratungsoberfläche.
+- **In die Mail-Beratung wechseln** mit einer Tour, die zeigt, was dort anders ist.
+- **„Anfrage annehmen“ üben**, Schritt für Schritt: eine Übungsanfrage annehmen und beantworten.
+- **„Supervision hinzuziehen“ üben**: einem angenommenen Übungsfall eine Supervisorin hinzufügen.
+- **Ohne Risiko ausprobieren** im Übungsbereich, an Übungsfällen statt an echten Menschen.
+
+## 4.15.2 Die vier Touren
+
+| Tour | Was sie zeigt |
+|---|---|
+| **Rundgang** | fünf Schritte: Einführung, Anfragen, meine Gespräche, Archiv, Profil |
+| **Mail-Beratung** | was neu ist, Anfragen, Annehmen, meine Gespräche, Schreiben, Archiv |
+| **Übung: Anfrage annehmen** | eine Übungsanfrage annehmen und beantworten |
+| **Übung: Supervision hinzuziehen** | einem angenommenen Übungsfall eine Supervisorin hinzufügen |
+
+Eine Tour lässt sich jederzeit im Hilfebereich des Profils neu starten. ORISO speichert auf dem
+Server, welche Touren eine beratende Person abgeschlossen hat, zusammen mit der Version jeder Tour.
+
+## 4.15.3 Warum im Übungsbereich nichts schiefgehen kann
+
+- **Nichts wird gesendet.** Im Übungsmodus blockiert die App jede Anfrage, die auf dem Server etwas
+  verändern würde. Erlaubt ist nur Lesen und das Speichern des Tour-Fortschritts.
+- **Nichts bleibt liegen.** Übungsfälle existieren nur im Arbeitsspeicher des Browsers und
+  verschwinden, wenn die Übung endet.
+- **Nichts lässt sich verwechseln.** Übungsfälle tragen Kennungen, die nie zu einem echten Fall
+  gehören können, und ein Banner zeigt, dass der Übungsmodus an ist.
+
+## 4.15.4 Wer entscheidet
+
+Der Plattformbetreiber schaltet die Touren für die Plattform ein oder aus. Der Übungsbereich wird je
+Installation eingeschaltet (Release-Schalter `enablePracticeArea`); er ist aus, bis er auf dem
+Entwicklungssystem nachgewiesen ist.
+
+## 4.15.5 Stand der Entwicklung
+
+| Teil | Stand |
+|---|---|
+| Ein einfacher Rundgang | gab es schon vor ORISO |
+| Vier Touren in der Beratungsoberfläche | mit CAR-14 beauftragt und gebaut |
+| Übungsbereich mit Übungsfällen | gebaut; je Installation eingeschaltet |
+| Tour für die Verwaltung | mit CAR-14 beauftragt, offen |
+
+## 4.15.6 Verwandte Seiten
+
+- [Einladungen und Einrichtung](/product/features/invitations-onboarding) — wie neue Beratende zu ihrem Konto kommen.
+- [Sitzungsverwaltung](/product/features/session-management) — Anfragen annehmen und Supervision, die die Übungen einüben.
+- Storybook Beratungs-App: [Touren im Überblick](https://dev.oriso.org/storybook-frontend/?path=/docs/organisms-touroverviewcarousel--docs) ·
+  [Produkttour](https://dev.oriso.org/storybook-frontend/?path=/docs/organisms-producttour--docs) ·
+  [Übungsablauf](https://dev.oriso.org/storybook-frontend/?path=/docs/organisms-practiceflow--docs) ·
+  [Übungskarten](https://dev.oriso.org/storybook-frontend/?path=/docs/organisms-practicecards--docs) ·
+  [Übungsbanner](https://dev.oriso.org/storybook-frontend/?path=/docs/organisms-practicebanner--docs)

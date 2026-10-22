@@ -1,0 +1,78 @@
+---
+title: "4.11 Feature Permissions — What Is Allowed Where"
+description: "How the platform, a Träger and a Beratungsstelle decide which functions are available in which conversation type: 55 switches on three levels, inherited downwards, lockable, and enforced on the server."
+source: "product/features/feature-permissions.mdx"
+---
+
+Every Träger works differently. One allows video calls in live chat, another does not; one wants
+uploads only in one-to-one counselling. Without feature permissions, each of these wishes would be
+a change to the code. With them, the Träger sets it in the administration — without touching any
+other Träger.
+
+This page describes **what** the feature does. It is written for Träger administrators and heads
+of Beratungsstellen.
+
+## 4.11.1 What you can do with it
+
+- **Decide per conversation type.** Allow or forbid a function separately for live chat,
+  one-to-one counselling, group chats and supervision.
+- **Pass a setting down — as a suggestion or as a rule.** A level can suggest a value that the level
+  below may change, or enforce it so that nobody below can change it.
+- **Adjust without programming.** A change takes effect for your own Träger or Beratungsstelle
+  only.
+
+## 4.11.2 Three levels
+
+| Level | Sets | Sees |
+|---|---|---|
+| **Platform** | the defaults for every Träger; may lock a function on or off | all Träger |
+| **Träger** | its own values within what the platform allows; may lock them for its Beratungsstellen | its own Träger |
+| **Beratungsstelle** | its own values within what the Träger allows | its own Beratungsstelle |
+
+A value is either **suggested** (the level below may change it) or **enforced** (the level below
+sees it, marked as set from above, and cannot change it). Where a level sets nothing, the value of
+the level above applies.
+
+<Callout>
+The rule is checked on the server, not only hidden in the interface. A function that is switched
+off cannot be used by calling the server directly either.
+</Callout>
+
+## 4.11.3 What can be switched
+
+55 switches in total, grouped as follows:
+
+| Group | Switches |
+|---|---|
+| Conversation types | live chat, group chat, internal group chat among counsellors, self-help groups |
+| Calls | calls in general; audio calls and video calls, each per conversation type |
+| Messages | threads (replies to single messages) and voice messages, each per conversation type |
+| Media | upload, display of images in the chat and automatic media checking, each per conversation type |
+| Supervision | supervision in general, and for live chats and one-to-one chats |
+| Clients | whether clients may change their display name and give an e-mail address; e-mail and browser notifications for clients per conversation type |
+| Counsellors | e-mail and browser notifications about internal group chats |
+| Other | case handover; appearance |
+
+Case handover carries its own settings per reason — whether the client has to agree and how long
+a look-in may last. See [Case Handover](/en/produkt/core-features/case-handover).
+
+## 4.11.4 State of development
+
+| Part | State |
+|---|---|
+| Individual settings per counselling type | existed before ORISO |
+| Fixed defaults that can change without a new release | commissioned with CAR-07 |
+| Three levels, suggested or enforced, rules per conversation type, server-side enforcement | built |
+| A read-only support administrator, and a support session that needs approval from two sides | planned (CAR-15), not built |
+
+## 4.11.5 Related
+
+- [Counselling modalities as modules (ADR-001)](/en/decisions/adr-001)
+- [Media switches per chat type (ADR-015)](/en/decisions/adr-015)
+- [Roles & Permissions](/en/produkt/architecture-und-roles/roles-permissions) — what each role may see.
+- [Notifications](/en/produkt/core-features/notifications) — the e-mail and browser switches for clients.
+- [Case Handover](/en/produkt/core-features/case-handover) — the per-reason settings.
+- Storybook, administration: [Permissions (Träger view)](https://dev.oriso.org/storybook-admin/?path=/story/organisms-permissions-permissionssettings--tenant-view) ·
+  [Permissions (Beratungsstelle view)](https://dev.oriso.org/storybook-admin/?path=/story/organisms-permissions-agencypermissionssettings--agency-view) ·
+  [Suggested or enforced](https://dev.oriso.org/storybook-admin/?path=/story/molecules-permissionpolicycontrol--suggested-active) ·
+  [Case handover settings](https://dev.oriso.org/storybook-admin/?path=/story/organisms-permissions-casehandovercard--editable)

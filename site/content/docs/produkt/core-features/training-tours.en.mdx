@@ -1,0 +1,67 @@
+---
+title: "4.15 Training — Four Tours and a Practice Area"
+description: "How new counsellors find their way: an overview tour and a tour for e-mail counselling, two practice tours, and a practice area with practice cases in which nothing reaches a real person."
+source: "product/features/training-tours.mdx"
+---
+
+New counsellors should not learn the platform on real people. ORISO offers two kinds of help: tours
+that point out where things are, and a practice area in which counsellors try the main steps on
+practice cases. Nothing done in the practice area leaves the counsellor's own browser, so mistakes
+cost nothing.
+
+This page describes **what** the feature does. It is written for counsellors and heads of
+Beratungsstellen who onboard new colleagues.
+
+## 4.15.1 What you can do with it
+
+- **Find your way** with an overview tour of the counselling interface.
+- **Switch to e-mail counselling** with a tour that shows what is different there.
+- **Practise "accept an enquiry"** step by step: accept a practice enquiry and answer it.
+- **Practise "bring in supervision"**: add a supervisor to an accepted practice case.
+- **Try things without risk** in the practice area, on practice cases instead of real people.
+
+## 4.15.2 The four tours
+
+| Tour | What it shows |
+|---|---|
+| **Overview** | five steps: introduction, enquiries, my conversations, archive, profile |
+| **E-mail counselling** | what is new, enquiries, accepting, my conversations, writing, archive |
+| **Practice: accept an enquiry** | accepting a practice enquiry and answering it |
+| **Practice: bring in supervision** | adding a supervisor to an accepted practice case |
+
+A tour can be restarted at any time from the help area of the profile. ORISO remembers on the server
+which tours a counsellor has finished, together with the version of each tour.
+
+## 4.15.3 Why nothing can go wrong in the practice area
+
+- **Nothing is sent.** In practice mode, the app blocks every request that would change something on
+  the server. Only reading is allowed, plus saving the tour progress.
+- **Nothing is kept.** Practice cases live in the browser's memory only and disappear when the
+  practice ends.
+- **Nothing can be confused.** Practice cases carry identifiers that can never belong to a real
+  case, and a banner shows that practice mode is on.
+
+## 4.15.4 Who decides
+
+The platform operator switches tours on or off for the platform. The practice area is switched on
+per installation (release switch `enablePracticeArea`); it is off until it has been proven on the
+development system.
+
+## 4.15.5 State of development
+
+| Part | State |
+|---|---|
+| A simple walkthrough | existed before ORISO |
+| Four tours in the counselling interface | commissioned with CAR-14 and built |
+| Practice area with practice cases | built; switched on per installation |
+| Tour for the administration | commissioned with CAR-14, open |
+
+## 4.15.6 Related
+
+- [Invitations and onboarding](/en/produkt/core-features/invitations-onboarding) — how new counsellors get their account.
+- [Session Management](/en/produkt/core-features/session-management) — accepting enquiries and supervision, which the practice flows rehearse.
+- Storybook, counselling app: [Tour overview](https://dev.oriso.org/storybook-frontend/?path=/docs/organisms-touroverviewcarousel--docs) ·
+  [Product tour](https://dev.oriso.org/storybook-frontend/?path=/docs/organisms-producttour--docs) ·
+  [Practice flow](https://dev.oriso.org/storybook-frontend/?path=/docs/organisms-practiceflow--docs) ·
+  [Practice cards](https://dev.oriso.org/storybook-frontend/?path=/docs/organisms-practicecards--docs) ·
+  [Practice banner](https://dev.oriso.org/storybook-frontend/?path=/docs/organisms-practicebanner--docs)

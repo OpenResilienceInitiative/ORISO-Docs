@@ -39,7 +39,14 @@
               "product/features/notifications",
               "product/features/pincode-chat",
               "product/features/session-management",
-              "product/features/transcription"
+              "product/features/transcription",
+              "product/features/legal-texts",
+              "product/features/feature-permissions",
+              "product/features/invitations-onboarding",
+              "product/features/self-help-groups",
+              "product/features/team-consultation",
+              "product/features/training-tours",
+              "product/features/encryption-keys"
             ]
           },
           {

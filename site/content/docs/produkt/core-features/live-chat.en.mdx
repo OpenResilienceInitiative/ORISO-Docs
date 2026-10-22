@@ -1,140 +1,99 @@
 ---
-title: "4.2 Live Chat"
-description: "The end-to-end mechanics of ORISO's anonymous live chat: how it activates, the waiting-room and consent flow, the counselor pickup and the encrypted session."
+title: "4.2 Live Chat — Anonymous, Without an Account"
+description: "How a person starts an anonymous live chat without an account: topic and pseudonym, the waiting room with queue position, the two consents, the counsellor who accepts, the first response in the person's language, and when everything is deleted."
 source: "product/features/live-chat.mdx"
 ---
 
-<Callout>
-Live Chat is the **flagship feature** of ORISO. Most of the system exists to make this work safely, anonymously and at scale.
-</Callout>
+Some people only write when they do not have to give their name. The live chat lets a person talk
+to a counsellor straight away, anonymously and without registering. They pick a topic, get a
+pseudonym, wait in a waiting room that shows their place in the queue, and are taken on by the next
+available counsellor. Afterwards, the anonymous access is switched off and deleted.
 
-## 4.2.1 What Live Chat Is
+This page describes **what** the feature does. It is written for counsellors, heads of
+Beratungsstellen and data protection officers.
 
-A no-registration, anonymous, real-time text chat between a **client in distress** and an **available counselor** at a counseling center. Optionally promotable to a video call (LiveKit). The session is end-to-end encrypted and cleaned up immediately after the conversation ends.
+## 4.2.1 What you can do with it
 
-The product distinguishes Live Chat from the legacy "**Enquiry Chat**" (zip-code-based, registered, async) — both flows exist in the codebase, but Live Chat is the modern, anonymous-first path.
+As a person seeking help:
 
-<Callout>
-**Live Chat is the 1-1 entry point**, but a session does not stay 1-1 forever. A counselor in an active room can click **Invite more people** (`⇧I`) to add peers, supervisors, or other clients — the room then becomes a [Group Chat](/en/produkt/core-features/group-chats). The May-2026 Figma also confirms that **video calls** (LiveKit) embed inside the same room rather than spawning a separate session.
-</Callout>
+- start a chat without an account and see how many people are ahead of you
+- do a short breathing exercise in the waiting room and read how the chat works
+- see and confirm a pseudonym with an animal avatar before the chat starts
+- get a first response straight away, in your own language
+- leave the queue at any time; your access is then switched off
 
-## 4.2.2 How It Is Activated
+As a counsellor:
 
-Two activations have to be true for a client to enter Live Chat with a real counselor:
+- switch your own availability on and off; the waiting room never shows who is available
+- take on the next person from the queue and talk in an end-to-end encrypted room
 
-### A. **Counseling-center activation** (admin-side)
+As a Träger:
 
-- A Counselor Admin (or Tenant Admin) opens the admin panel.
-- Generates a **live-chat link** for the agency, with an optional **topic** parameter (e.g. `?topic=debt`).
-- Sets the agency's **live-chat enabled** flag.
+- offer live chat for any topic area, through links created in the administration
+- decide in which conversation types calls, uploads and other functions are allowed, see
+  [Feature permissions](/en/produkt/core-features/feature-permissions)
 
-### B. **Counselor activation** (per-counselor)
+## 4.2.2 The way through
 
-- The counselor logs into the admin panel.
-- Toggles their personal **Live Chat: ON**.
-- They are now visible in the live-chat ticket queue for their counseling center.
+| Step | What happens |
+|---|---|
+| **Entry** | the person opens a live-chat link, picks a topic and receives a generated pseudonym |
+| **Consent 1** | agreement to the privacy policy of the platform (or of the Träger, if the link already belongs to one) |
+| **Waiting room** | position in the queue, breathing exercise, explanation of the chat; counsellor availability is not shown |
+| **Accepted** | a counsellor takes the person on; only now is a Beratungsstelle responsible |
+| **Consent 2** | in the room, before the first message: agreement to the Beratungsstelle's text |
+| **Conversation** | end-to-end encrypted chat; the first response appears as a short sequence of messages |
+| **End** | the person or the counsellor ends the chat; the anonymous access is switched off |
 
-<Callout>
-**Important UX rule** (huddle, 2026-05-05): When a counselor toggles **Live Chat: OFF**, the live-chat section must **stay visible but deactivated**, with a hint to re-enable it. It must **not** disappear from the navigation. This prevents the "I lost a feature" confusion that occurred in earlier versions.
-</Callout>
+There are two consents because two different bodies are responsible. In the waiting room, no
+Beratungsstelle is assigned yet, so only the platform's (or Träger's) text can apply. The
+Beratungsstelle's text applies once a counsellor has taken the person on. See
+[Legal texts](/en/produkt/core-features/legal-texts).
 
-## 4.2.3 The Real-Time Flow (Step-by-Step)
+## 4.2.3 The first response
 
-<Mermaid chart={"sequenceDiagram\n  autonumber\n  participant Cl as Client\n  participant FE as ORISO-Frontend\n  participant US as UserService\n  participant AS as AgencyService\n  participant KC as Keycloak\n  participant MX as Matrix Synapse\n  participant Co as Counselor\n\n  Cl->>FE: Open live-chat link (agency + topic)\n  FE->>AS: Resolve agency + topic\n  AS-->>FE: Active counselors, live-chat enabled?\n  alt live-chat disabled\n    FE-->>Cl: Show \"currently unavailable\" + opt to file an enquiry\n  else live-chat enabled\n    FE->>US: POST /live-chat/anonymous\n    US->>KC: Create anonymous user, role=anonymous\n    KC-->>US: token + pseudonym\n    US-->>FE: cookie session, ticket id, queue position\n    FE-->>Cl: Render Waiting Room (queue pos, GDPR popup #1, breathing-game animation)\n    Note over Cl,US: Client may leave at any time → wipe job\n  end\n\n  loop until accepted\n    FE->>US: GET /live-chat/queue/{ticketId} (heartbeat)\n    US-->>FE: queue position, ETA hint\n  end\n\n  Co->>FE: Accept oldest ticket\n  FE->>US: POST /live-chat/accept?ticketId\n  US->>MX: Create encrypted room, invite Cl + Co\n  US-->>FE: Room id, push consent prompt\n  FE-->>Cl: Show GDPR consent popup #2 (counseling-center version)\n  Cl->>FE: Click \"Bestätigen\"\n  FE->>US: POST /live-chat/consent\n  US-->>Co: Ticket promoted to active session\n  Cl<<->>MX: E2EE chat\n  Co<<->>MX: E2EE chat\n  alt client leaves\n    Cl->>FE: Close tab\n    FE->>US: DELETE /live-chat/session\n    US->>MX: Tombstone room\n    US->>KC: Wipe anonymous user\n  else counselor ends\n    Co->>FE: End session\n    FE->>US: POST /live-chat/end\n    US->>MX: Schedule purge in 48 h\n  end"} />
+When a person has written, they immediately get a first response in their language: what happens
+next, that they should not send personal data, emergency numbers, and — where it applies — an offer
+to save their access or leave an e-mail address. The platform defines the order; a Träger can add
+its own wording. The response is stored once, as one event, so it can be shown later exactly as it
+was said. It comes from the platform, not from a person or a bot in the room; no additional reader
+is added to the encrypted conversation.
 
-## 4.2.4 Role-by-Role Interaction
+## 4.2.4 Anonymity and deletion
 
-### Client (anonymous)
+The person is anonymous up to the point of entering the chat: the display name is generated and
+cannot be changed, the password is generated too. What they then write is up to them.
 
-- Lands on the live-chat link.
-- Is auto-issued a **pseudonym** (e.g. *"geschmeidiges Kanninchen Kim"* — a German animal-adjective combination).
-- Sees the **waiting room** with: queue position ("23 Noch vor Ihnen" — 23 still ahead of you), an animated breathing-game distraction, and a banner that reads *"messages are end-to-end encrypted and auto-deleted after 48 h"*.
-- Receives the **first GDPR popup** ("Bestätigen") covering the platform's default Data Policy.
-- Once a counselor picks them, sees the **second GDPR popup** with that specific counseling center's terms.
-- Once consent is given, the chat opens.
+| What | When |
+|---|---|
+| conversation ended and anonymous access switched off | at once when the person leaves, or after 6 hours without any activity |
+| anonymous account and conversation deleted | 47 hours after the last activity of an ended conversation (configurable per installation) |
 
-### Counselor
+The offer named 3 hours for deletion; the current setting is 47 hours. The final period is still to
+be agreed with Caritas.
 
-- Sees a **ticket queue** in the Live Chat tab, **oldest-first** (intentionally — prioritizes the client who has waited longest).
-- Each ticket shows pseudonym, "Joined N minutes ago", topic.
-- Picks any visible ticket (intentionally not auto-assigned — to leave room for future zip-code awareness).
-- Sees the chat room open with a system message "Awaiting client GDPR consent".
-- Once the client confirms, full chat is enabled.
+## 4.2.5 State of development
 
-### Counselor Admin (Agency lead)
+| Part | State |
+|---|---|
+| Live chat with availability, generated names, consent in the waiting room | existed before ORISO |
+| Queue with position display, acceptance by counsellors, automatic deletion | commissioned with CAR-02 and built |
+| Exact queue across several servers, live chat for every topic area | built |
+| Waiting room with breathing exercise; pseudonym with animal avatar | built |
+| First response in several languages | built |
+| Turning an anonymous chat into an account | commissioned with CAR-02, open — scope to be clarified |
+| Bot protection at the anonymous entrance | planned (CAR-15), not built |
 
-- Watches aggregate queue size and active counselors for the center.
-- Can toggle the agency's live-chat enabled flag.
-- Configures the live-chat link (topic and per-link override).
+## 4.2.6 Related
 
-### Platform / Tenant Admin
-
-- Cannot see ticket content.
-- Can see aggregate metrics (number of waiting clients, average wait).
-- Defines the legal-text templates that flow down the inheritance chain.
-
-## 4.2.5 The Two GDPR Consents (Why Two?)
-
-This is **the** detail Frank emphasised in the huddle. There are **two** consent moments because they cover **two** distinct data scopes:
-
-| When | What it covers | Owner | Scope of data collected |
-|---|---|---|---|
-| **#1 — On entering the waiting room** | The platform's default Data Policy + Imprint | Platform Admin | Pseudonym, cookie, queue counter, optional topic and zip code |
-| **#2 — When counselor picks the client** | The **counseling center's** GDPR Agreement | Counselor Admin / inherits from Tenant / inherits from Platform | Anything the client and counselor exchange in the chat |
-
-If a client refuses #2, the chat **never opens** — the counselor is told "client declined" and the client's pseudonym is wiped.
-
-## 4.2.6 Backend Logic (Inferred from Code & Huddle)
-
-Routes (UserService, REST):
-
-```
-POST   /live-chat/anonymous         create pseudonymous user + ticket
-GET    /live-chat/queue/{ticketId}  long-poll / WS heartbeat
-POST   /live-chat/accept            counselor accepts ticket
-POST   /live-chat/consent           client confirms GDPR #2
-POST   /live-chat/end               either side closes
-DELETE /live-chat/session           explicit teardown + wipe
-```
-
-State machine for a ticket:
-
-<Mermaid chart={"stateDiagram-v2\n  [*] --> Waiting\n  Waiting --> Accepted: counselor.pick\n  Accepted --> Consented: client.confirms_gdpr\n  Consented --> Active: room ready, both joined\n  Active --> Ended: either party closes\n  Waiting --> Abandoned: client closes / heartbeat lost\n  Ended --> Wiped: scheduled cleanup\n  Abandoned --> Wiped: immediate cleanup\n  Wiped --> [*]"} />
-
-Side effects on transition:
-
-- `Waiting → Abandoned`: Keycloak user deleted; ticket row deleted; cookie invalidated.
-- `Active → Ended`: Matrix room kept for ≤ 48 h then purged; session-metadata anonymized.
-- Any → `Wiped`: pseudonym scrubbed from all stores; only an opaque, non-identifying session_id can remain for audit.
-
-## 4.2.7 Edge Cases (Live Chat Specific)
-
-- **Counselor goes offline mid-pickup** → Ticket is returned to queue automatically after a heartbeat timeout.
-- **Counselor accepts but client's tab is dead** → System retries consent prompt with timeout; on timeout, ticket is returned to queue and client is wiped.
-- **Multiple counselors race to accept** → AgencyService uses a row-level lock; second click sees "already taken".
-- **Live-chat link generated for a disabled agency** → Returns a friendly "currently unavailable" page with a fallback enquiry option.
-- **Topic missing on link** → Falls back to the agency-wide queue (any topic).
-- **Browser language detection** → On first paint, the UI loads the browser's preferred language; falls back to English (not German). Frank's explicit requirement.
-
-For the full edge-case catalogue, see [Edge Cases](/en/produkt/design-und-quality/edge-cases).
-
-## 4.2.8 Anti-Patterns (Things ORISO Must Not Do)
-
-- ❌ Auto-assigning a client to the next-in-queue counselor (loses zip-code/topic flexibility).
-- ❌ Hiding the live-chat section when toggled off (use *deactivated state* instead).
-- ❌ Writing client IPs to logs or DB.
-- ❌ Persisting unaccepted tickets indefinitely (was a real bug — clients piled up forever).
-- ❌ Skipping consent #2 because consent #1 was given.
-- ❌ Bringing the live chat back online while in dev mode.
-
-## 4.2.9 Related
-
-- [Group Chats & Multi-Recipient Send (4.5)](/en/produkt/core-features/group-chats) — what a 1-1 chat becomes after `Invite more people`.
-- [AI Tools (4.6)](/en/produkt/core-features/ai-tools) — Mark, Blur, Summary inside the chat.
-- [Case Handover (4.7)](/en/produkt/core-features/handover) — transferring this chat to another counselor.
-- [Notifications & Help Requests (4.8)](/en/produkt/core-features/notifications) — escalation from inside the chat.
-- [Pincode-Based Chat & Access](/en/produkt/core-features/pincode-chat)
-- [Session Management](/en/produkt/core-features/session-management)
-- [User Flow: Live Chat Activation](/en/produkt/flows-und-internals/user-flows#55-live-chat-activation)
-- [UI/UX Interpretation](/en/produkt/design-und-quality/ui-ux)
-- [Figma Analysis (May 2026)](/en/produkt/design-und-quality/figma-analysis-2026-05)
+- [Pincode-Based Chat & Access](/en/produkt/core-features/pincode-chat) — the links that lead into the live chat.
+- [Session Management](/en/produkt/core-features/session-management) — what happens after acceptance.
+- [Live chat: availability and liveness (ADR-007)](/en/decisions/adr-007)
+- [First response as one stored event (ADR-018)](/en/decisions/adr-018)
+- [Consent gates and re-consent (ADR-022)](/en/decisions/adr-022)
+- Storybook, counselling app: [Entry room](https://dev.oriso.org/storybook-frontend/?path=/docs/live-chat-entry-room--docs) ·
+  [All entry flows](https://dev.oriso.org/storybook-frontend/?path=/docs/live-chat-all-entry-flows--docs) ·
+  [Consent before the first message](https://dev.oriso.org/storybook-frontend/?path=/docs/components-dialog-anonymousconsentgate--docs) ·
+  [First response](https://dev.oriso.org/storybook-frontend/?path=/docs/components-chat-erstantwort--docs) ·
+  [Animal avatar](https://dev.oriso.org/storybook-frontend/?path=/docs/pseudonym-atoms-animalavatar--docs) ·
+  [Leave the queue](https://dev.oriso.org/storybook-frontend/?path=/docs/components-dialog-leavequeuedialog--docs)

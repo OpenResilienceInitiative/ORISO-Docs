@@ -3888,7 +3888,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
-      "sourceHash": "6592caa757811e78c6c4213e453556a7e76bb4f2caa097b13979d3a238541e2e",
+      "sourceHash": "1ca3a10a5e0e35cdfa9811a962e205894dc4037c42c932b133bc31ea2ca22643",
       "locales": {
         "de": {
           "available": true,
@@ -3903,7 +3903,13 @@
             "consequences": "consequences",
             "folgen": "consequences",
             "alternatives-considered": "alternatives-considered",
-            "erwogene-alternativen": "alternatives-considered"
+            "erwogene-alternativen": "alternatives-considered",
+            "addendum--2026-10-06-avv-renewal-and-new-counselling": "addendum--2026-10-06-avv-renewal-and-new-counselling",
+            "ergänzung--2026-10-06-avv-erneuerung-und-neue-beratung": "addendum--2026-10-06-avv-renewal-and-new-counselling",
+            "confirmed-refinement": "confirmed-refinement",
+            "bestätigte-präzisierung": "confirmed-refinement",
+            "unresolved-boundaries-and-acceptance": "unresolved-boundaries-and-acceptance",
+            "offene-grenzen-und-abnahme": "unresolved-boundaries-and-acceptance"
           }
         },
         "en": {
@@ -3914,11 +3920,14 @@
             "context": "context",
             "decision": "decision",
             "consequences": "consequences",
-            "alternatives-considered": "alternatives-considered"
+            "alternatives-considered": "alternatives-considered",
+            "addendum--2026-10-06-avv-renewal-and-new-counselling": "addendum--2026-10-06-avv-renewal-and-new-counselling",
+            "confirmed-refinement": "confirmed-refinement",
+            "unresolved-boundaries-and-acceptance": "unresolved-boundaries-and-acceptance"
           }
         }
       },
-      "sourceRevision": "b02af4254a944f33fb24e11c82ab6b961e4ec01b",
+      "sourceRevision": "656d6474caf4b1f3365b2ee3018c0a0537b6a5cd",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -5876,6 +5885,99 @@
       "factsStatus": "source-only"
     },
     {
+      "id": "product/features/encryption-keys",
+      "route": "produkt/core-features/encryption-keys",
+      "aliases": [
+        "product/features/encryption-keys",
+        "product/features/encryption-keys.md",
+        "product/features/encryption-keys.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "source": "product/features/encryption-keys.mdx",
+      "sourceHash": "c7a73ae6eae62abd5867b74669e12019b9ca577799c31b664ef32303d02dce33",
+      "locales": {
+        "de": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "4161-what-you-can-do-with-it": "4161-what-you-can-do-with-it",
+            "4161-das-kann-ich-damit-machen": "4161-what-you-can-do-with-it",
+            "4162-how-the-history-stays-readable": "4162-how-the-history-stays-readable",
+            "4162-wie-der-verlauf-lesbar-bleibt": "4162-how-the-history-stays-readable",
+            "4163-password-or-recovery-key-per-role": "4163-password-or-recovery-key-per-role",
+            "4163-passwort-oder-wiederherstellungsschlüssel-je-rolle": "4163-password-or-recovery-key-per-role",
+            "4164-two-optional-protection-levels": "4164-two-optional-protection-levels",
+            "4164-zwei-zuschaltbare-schutzstufen": "4164-two-optional-protection-levels",
+            "4165-state-of-development": "4165-state-of-development",
+            "4165-stand-der-entwicklung": "4165-state-of-development",
+            "4166-related": "4166-related",
+            "4166-verwandte-seiten": "4166-related"
+          }
+        },
+        "en": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "4161-what-you-can-do-with-it": "4161-what-you-can-do-with-it",
+            "4162-how-the-history-stays-readable": "4162-how-the-history-stays-readable",
+            "4163-password-or-recovery-key-per-role": "4163-password-or-recovery-key-per-role",
+            "4164-two-optional-protection-levels": "4164-two-optional-protection-levels",
+            "4165-state-of-development": "4165-state-of-development",
+            "4166-related": "4166-related"
+          }
+        }
+      },
+      "sourceRevision": null,
+      "sourceState": "working-copy",
+      "factsStatus": "source-only"
+    },
+    {
+      "id": "product/features/feature-permissions",
+      "route": "produkt/core-features/feature-permissions",
+      "aliases": [
+        "product/features/feature-permissions",
+        "product/features/feature-permissions.md",
+        "product/features/feature-permissions.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "source": "product/features/feature-permissions.mdx",
+      "sourceHash": "de755c569be495b27b0dc714a55b8b8ae04a16dd50aff2ad0631067ba3ead755",
+      "locales": {
+        "de": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "4111-what-you-can-do-with-it": "4111-what-you-can-do-with-it",
+            "4111-das-kann-ich-damit-machen": "4111-what-you-can-do-with-it",
+            "4112-three-levels": "4112-three-levels",
+            "4112-drei-ebenen": "4112-three-levels",
+            "4113-what-can-be-switched": "4113-what-can-be-switched",
+            "4113-was-sich-schalten-lässt": "4113-what-can-be-switched",
+            "4114-state-of-development": "4114-state-of-development",
+            "4114-stand-der-entwicklung": "4114-state-of-development",
+            "4115-related": "4115-related",
+            "4115-verwandte-seiten": "4115-related"
+          }
+        },
+        "en": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "4111-what-you-can-do-with-it": "4111-what-you-can-do-with-it",
+            "4112-three-levels": "4112-three-levels",
+            "4113-what-can-be-switched": "4113-what-can-be-switched",
+            "4114-state-of-development": "4114-state-of-development",
+            "4115-related": "4115-related"
+          }
+        }
+      },
+      "sourceRevision": null,
+      "sourceState": "working-copy",
+      "factsStatus": "source-only"
+    },
+    {
       "id": "product/features/group-chats",
       "route": "produkt/core-features/group-chats",
       "aliases": [
@@ -6051,6 +6153,105 @@
       "factsStatus": "source-only"
     },
     {
+      "id": "product/features/invitations-onboarding",
+      "route": "produkt/core-features/invitations-onboarding",
+      "aliases": [
+        "product/features/invitations-onboarding",
+        "product/features/invitations-onboarding.md",
+        "product/features/invitations-onboarding.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "source": "product/features/invitations-onboarding.mdx",
+      "sourceHash": "31fee1d28c165ed7a0640ed4521fa24394feade484f067e8e6d2dbb5857a8564",
+      "locales": {
+        "de": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "4121-what-you-can-do-with-it": "4121-what-you-can-do-with-it",
+            "4121-das-kann-ich-damit-machen": "4121-what-you-can-do-with-it",
+            "4122-the-stages-of-an-invitation": "4122-the-stages-of-an-invitation",
+            "4122-die-stufen-einer-einladung": "4122-the-stages-of-an-invitation",
+            "4123-who-invites-whom": "4123-who-invites-whom",
+            "4123-wer-wen-einlädt": "4123-who-invites-whom",
+            "4124-set-up-after-accepting": "4124-set-up-after-accepting",
+            "4124-einrichtung-nach-dem-annehmen": "4124-set-up-after-accepting",
+            "4125-state-of-development": "4125-state-of-development",
+            "4125-stand-der-entwicklung": "4125-state-of-development",
+            "4126-related": "4126-related",
+            "4126-verwandte-seiten": "4126-related"
+          }
+        },
+        "en": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "4121-what-you-can-do-with-it": "4121-what-you-can-do-with-it",
+            "4122-the-stages-of-an-invitation": "4122-the-stages-of-an-invitation",
+            "4123-who-invites-whom": "4123-who-invites-whom",
+            "4124-set-up-after-accepting": "4124-set-up-after-accepting",
+            "4125-state-of-development": "4125-state-of-development",
+            "4126-related": "4126-related"
+          }
+        }
+      },
+      "sourceRevision": null,
+      "sourceState": "working-copy",
+      "factsStatus": "source-only"
+    },
+    {
+      "id": "product/features/legal-texts",
+      "route": "produkt/core-features/legal-texts",
+      "aliases": [
+        "product/features/legal-texts",
+        "product/features/legal-texts.md",
+        "product/features/legal-texts.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "source": "product/features/legal-texts.mdx",
+      "sourceHash": "4b56d066ec996568b7bb6b3fa48a35323eee6b25d85f99de11cc6c3e505220b0",
+      "locales": {
+        "de": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "4101-what-you-can-do-with-it": "4101-what-you-can-do-with-it",
+            "4101-das-kann-ich-damit-machen": "4101-what-you-can-do-with-it",
+            "4102-four-levels-resolved-from-the-bottom-up": "4102-four-levels-resolved-from-the-bottom-up",
+            "4102-vier-ebenen-von-unten-nach-oben-aufgelöst": "4102-four-levels-resolved-from-the-bottom-up",
+            "4103-the-consent-sentence-belongs-to-the-privacy-policy": "4103-the-consent-sentence-belongs-to-the-privacy-policy",
+            "4103-der-einwilligungssatz-gehört-zur-datenschutzerklärung": "4103-the-consent-sentence-belongs-to-the-privacy-policy",
+            "4104-contract-documents": "4104-contract-documents",
+            "4104-vertragsunterlagen": "4104-contract-documents",
+            "4105-who-does-what": "4105-who-does-what",
+            "4105-wer-was-tut": "4105-who-does-what",
+            "4106-state-of-development": "4106-state-of-development",
+            "4106-stand-der-entwicklung": "4106-state-of-development",
+            "4107-related": "4107-related",
+            "4107-verwandte-seiten": "4107-related"
+          }
+        },
+        "en": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "4101-what-you-can-do-with-it": "4101-what-you-can-do-with-it",
+            "4102-four-levels-resolved-from-the-bottom-up": "4102-four-levels-resolved-from-the-bottom-up",
+            "4103-the-consent-sentence-belongs-to-the-privacy-policy": "4103-the-consent-sentence-belongs-to-the-privacy-policy",
+            "4104-contract-documents": "4104-contract-documents",
+            "4105-who-does-what": "4105-who-does-what",
+            "4106-state-of-development": "4106-state-of-development",
+            "4107-related": "4107-related"
+          }
+        }
+      },
+      "sourceRevision": null,
+      "sourceState": "working-copy",
+      "factsStatus": "source-only"
+    },
+    {
       "id": "product/features/live-chat",
       "route": "produkt/core-features/live-chat",
       "aliases": [
@@ -6061,68 +6262,41 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "product/features/live-chat.mdx",
-      "sourceHash": "3d7f5e56bda0d596c9bd4dcb898b67c8df5aaf0a16db52f8581ed34d603d0cb5",
+      "sourceHash": "164130c23b6196fc8620d4d6c1616373335114788f72eb17606e27e3c08e87f2",
       "locales": {
         "de": {
           "available": true,
           "translationState": "current",
           "sectionAliases": {
-            "421-what-live-chat-is": "421-what-live-chat-is",
-            "421-was-live-chat-ist": "421-what-live-chat-is",
-            "422-how-it-is-activated": "422-how-it-is-activated",
-            "422-aktivierung": "422-how-it-is-activated",
-            "a-counseling-center-activation-admin-side": "a-counseling-center-activation-admin-side",
-            "a-aktivierung-der-beratungsstelle-administration": "a-counseling-center-activation-admin-side",
-            "b-counselor-activation-per-counselor": "b-counselor-activation-per-counselor",
-            "b-aktivierung-der-beratungsperson-je-person": "b-counselor-activation-per-counselor",
-            "423-the-real-time-flow-step-by-step": "423-the-real-time-flow-step-by-step",
-            "423-echtzeitablauf-schritt-für-schritt": "423-the-real-time-flow-step-by-step",
-            "424-role-by-role-interaction": "424-role-by-role-interaction",
-            "424-interaktion-nach-rolle": "424-role-by-role-interaction",
-            "client-anonymous": "client-anonymous",
-            "ratsuchende-anonym": "client-anonymous",
-            "counselor": "counselor",
-            "beratende": "counselor",
-            "counselor-admin-agency-lead": "counselor-admin-agency-lead",
-            "beratungsstellen-admins-leitung": "counselor-admin-agency-lead",
-            "platform--tenant-admin": "platform--tenant-admin",
-            "plattform-träger-admins": "platform--tenant-admin",
-            "425-the-two-gdpr-consents-why-two": "425-the-two-gdpr-consents-why-two",
-            "425-die-zwei-dsgvo-einwilligungen-warum-zwei": "425-the-two-gdpr-consents-why-two",
-            "426-backend-logic-inferred-from-code--huddle": "426-backend-logic-inferred-from-code--huddle",
-            "426-backend-logik-aus-code-und-gespräch-abgeleitet": "426-backend-logic-inferred-from-code--huddle",
-            "427-edge-cases-live-chat-specific": "427-edge-cases-live-chat-specific",
-            "427-sonderfälle-live-chatspezifisch": "427-edge-cases-live-chat-specific",
-            "428-anti-patterns-things-oriso-must-not-do": "428-anti-patterns-things-oriso-must-not-do",
-            "428-fehlmuster-was-oriso-nicht-tun-darf": "428-anti-patterns-things-oriso-must-not-do",
-            "429-related": "429-related",
-            "429-verwandte-seiten": "429-related"
+            "421-what-you-can-do-with-it": "421-what-you-can-do-with-it",
+            "421-das-kann-ich-damit-machen": "421-what-you-can-do-with-it",
+            "422-the-way-through": "422-the-way-through",
+            "422-der-weg-durch-den-chat": "422-the-way-through",
+            "423-the-first-response": "423-the-first-response",
+            "423-die-erstantwort": "423-the-first-response",
+            "424-anonymity-and-deletion": "424-anonymity-and-deletion",
+            "424-anonymität-und-löschung": "424-anonymity-and-deletion",
+            "425-state-of-development": "425-state-of-development",
+            "425-stand-der-entwicklung": "425-state-of-development",
+            "426-related": "426-related",
+            "426-verwandte-seiten": "426-related"
           }
         },
         "en": {
           "available": true,
           "translationState": "current",
           "sectionAliases": {
-            "421-what-live-chat-is": "421-what-live-chat-is",
-            "422-how-it-is-activated": "422-how-it-is-activated",
-            "a-counseling-center-activation-admin-side": "a-counseling-center-activation-admin-side",
-            "b-counselor-activation-per-counselor": "b-counselor-activation-per-counselor",
-            "423-the-real-time-flow-step-by-step": "423-the-real-time-flow-step-by-step",
-            "424-role-by-role-interaction": "424-role-by-role-interaction",
-            "client-anonymous": "client-anonymous",
-            "counselor": "counselor",
-            "counselor-admin-agency-lead": "counselor-admin-agency-lead",
-            "platform--tenant-admin": "platform--tenant-admin",
-            "425-the-two-gdpr-consents-why-two": "425-the-two-gdpr-consents-why-two",
-            "426-backend-logic-inferred-from-code--huddle": "426-backend-logic-inferred-from-code--huddle",
-            "427-edge-cases-live-chat-specific": "427-edge-cases-live-chat-specific",
-            "428-anti-patterns-things-oriso-must-not-do": "428-anti-patterns-things-oriso-must-not-do",
-            "429-related": "429-related"
+            "421-what-you-can-do-with-it": "421-what-you-can-do-with-it",
+            "422-the-way-through": "422-the-way-through",
+            "423-the-first-response": "423-the-first-response",
+            "424-anonymity-and-deletion": "424-anonymity-and-deletion",
+            "425-state-of-development": "425-state-of-development",
+            "426-related": "426-related"
           }
         }
       },
       "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
-      "sourceState": "committed",
+      "sourceState": "working-copy",
       "factsStatus": "source-only"
     },
     {
@@ -6136,68 +6310,44 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "product/features/notifications.mdx",
-      "sourceHash": "ca5b1a0990ee52baed9f1515eaf2e03663bf9eb8dfd84f35114a4d5433319029",
+      "sourceHash": "2443b187b68f6627a76e5c2071d35edfd16fb99665b4af441f2506a77ec2632b",
       "locales": {
         "de": {
           "available": true,
           "translationState": "current",
           "sectionAliases": {
-            "481-whats-new": "481-whats-new",
-            "481-neuerungen": "481-whats-new",
-            "482-notifications-inbox": "482-notifications-inbox",
-            "482-benachrichtigungseingang": "482-notifications-inbox",
-            "what-the-user-sees": "what-the-user-sees",
-            "was-nutzende-sehen": "what-the-user-sees",
-            "source-of-notifications": "source-of-notifications",
-            "quellen-der-benachrichtigungen": "source-of-notifications",
-            "channels": "channels",
-            "kanäle": "channels",
-            "persistence--retention": "persistence--retention",
-            "speicherung-und-aufbewahrung": "persistence--retention",
-            "483-help-requests--internal-escalation": "483-help-requests--internal-escalation",
-            "483-hilfsanfragen--interne-eskalation": "483-help-requests--internal-escalation",
-            "flow": "flow",
-            "ablauf": "flow",
-            "modes": "modes",
-            "modi": "modes",
-            "privacy-guarantees": "privacy-guarantees",
-            "datenschutzgarantien": "privacy-guarantees",
-            "484-system-messages-in-chat": "484-system-messages-in-chat",
-            "484-systemnachrichten-im-chat": "484-system-messages-in-chat",
-            "485-carimat--scripted-bot": "485-carimat--scripted-bot",
-            "485-carimat--skriptgesteuerter-bot": "485-carimat--scripted-bot",
-            "486-permissions--settings": "486-permissions--settings",
-            "486-berechtigungen-und-einstellungen": "486-permissions--settings",
-            "487-edge-cases": "487-edge-cases",
-            "487-sonderfälle": "487-edge-cases",
-            "488-related": "488-related",
-            "488-verwandte-seiten": "488-related"
+            "481-what-you-can-do-with-it": "481-what-you-can-do-with-it",
+            "481-das-kann-ich-damit-machen": "481-what-you-can-do-with-it",
+            "482-two-audiences-two-short-lists": "482-two-audiences-two-short-lists",
+            "482-zwei-zielgruppen-zwei-kurze-listen": "482-two-audiences-two-short-lists",
+            "483-who-sets-what": "483-who-sets-what",
+            "483-wer-was-einstellt": "483-who-sets-what",
+            "484-what-the-server-knows": "484-what-the-server-knows",
+            "484-was-der-server-weiß": "484-what-the-server-knows",
+            "485-how-long-notifications-are-kept": "485-how-long-notifications-are-kept",
+            "485-wie-lange-benachrichtigungen-bleiben": "485-how-long-notifications-are-kept",
+            "486-state-of-development": "486-state-of-development",
+            "486-stand-der-entwicklung": "486-state-of-development",
+            "487-related": "487-related",
+            "487-verwandte-seiten": "487-related"
           }
         },
         "en": {
           "available": true,
           "translationState": "current",
           "sectionAliases": {
-            "481-whats-new": "481-whats-new",
-            "482-notifications-inbox": "482-notifications-inbox",
-            "what-the-user-sees": "what-the-user-sees",
-            "source-of-notifications": "source-of-notifications",
-            "channels": "channels",
-            "persistence--retention": "persistence--retention",
-            "483-help-requests--internal-escalation": "483-help-requests--internal-escalation",
-            "flow": "flow",
-            "modes": "modes",
-            "privacy-guarantees": "privacy-guarantees",
-            "484-system-messages-in-chat": "484-system-messages-in-chat",
-            "485-carimat--scripted-bot": "485-carimat--scripted-bot",
-            "486-permissions--settings": "486-permissions--settings",
-            "487-edge-cases": "487-edge-cases",
-            "488-related": "488-related"
+            "481-what-you-can-do-with-it": "481-what-you-can-do-with-it",
+            "482-two-audiences-two-short-lists": "482-two-audiences-two-short-lists",
+            "483-who-sets-what": "483-who-sets-what",
+            "484-what-the-server-knows": "484-what-the-server-knows",
+            "485-how-long-notifications-are-kept": "485-how-long-notifications-are-kept",
+            "486-state-of-development": "486-state-of-development",
+            "487-related": "487-related"
           }
         }
       },
       "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
-      "sourceState": "committed",
+      "sourceState": "working-copy",
       "factsStatus": "source-only"
     },
     {
@@ -6273,6 +6423,57 @@
       "factsStatus": "source-only"
     },
     {
+      "id": "product/features/self-help-groups",
+      "route": "produkt/core-features/self-help-groups",
+      "aliases": [
+        "product/features/self-help-groups",
+        "product/features/self-help-groups.md",
+        "product/features/self-help-groups.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "source": "product/features/self-help-groups.mdx",
+      "sourceHash": "f1513a2693ff18929c0c4f607d2bf4047dcb9374153fb5094ccfe9d90574bc2d",
+      "locales": {
+        "de": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "4131-what-you-can-do-with-it": "4131-what-you-can-do-with-it",
+            "4131-das-kann-ich-damit-machen": "4131-what-you-can-do-with-it",
+            "4132-how-joining-works": "4132-how-joining-works",
+            "4132-so-läuft-der-beitritt": "4132-how-joining-works",
+            "4133-joining-without-an-account": "4133-joining-without-an-account",
+            "4133-beitritt-ohne-konto": "4133-joining-without-an-account",
+            "4134-who-does-what": "4134-who-does-what",
+            "4134-wer-was-tut": "4134-who-does-what",
+            "4135-group-appointments": "4135-group-appointments",
+            "4135-gruppentermine": "4135-group-appointments",
+            "4136-state-of-development": "4136-state-of-development",
+            "4136-stand-der-entwicklung": "4136-state-of-development",
+            "4137-related": "4137-related",
+            "4137-verwandte-seiten": "4137-related"
+          }
+        },
+        "en": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "4131-what-you-can-do-with-it": "4131-what-you-can-do-with-it",
+            "4132-how-joining-works": "4132-how-joining-works",
+            "4133-joining-without-an-account": "4133-joining-without-an-account",
+            "4134-who-does-what": "4134-who-does-what",
+            "4135-group-appointments": "4135-group-appointments",
+            "4136-state-of-development": "4136-state-of-development",
+            "4137-related": "4137-related"
+          }
+        }
+      },
+      "sourceRevision": null,
+      "sourceState": "working-copy",
+      "factsStatus": "source-only"
+    },
+    {
       "id": "product/features/session-management",
       "route": "produkt/core-features/session-management",
       "aliases": [
@@ -6342,6 +6543,99 @@
       },
       "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
       "sourceState": "committed",
+      "factsStatus": "source-only"
+    },
+    {
+      "id": "product/features/team-consultation",
+      "route": "produkt/core-features/team-consultation",
+      "aliases": [
+        "product/features/team-consultation",
+        "product/features/team-consultation.md",
+        "product/features/team-consultation.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "source": "product/features/team-consultation.mdx",
+      "sourceHash": "04f0db507ebd5f22967806b603f84374b673d64eb8eef084387c2f2cc4fe53d2",
+      "locales": {
+        "de": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "4141-what-you-can-do-with-it": "4141-what-you-can-do-with-it",
+            "4141-das-kann-ich-damit-machen": "4141-what-you-can-do-with-it",
+            "4142-how-it-works": "4142-how-it-works",
+            "4142-so-funktioniert-es": "4142-how-it-works",
+            "4143-who-takes-part": "4143-who-takes-part",
+            "4143-wer-teilnimmt": "4143-who-takes-part",
+            "4144-state-of-development": "4144-state-of-development",
+            "4144-stand-der-entwicklung": "4144-state-of-development",
+            "4145-related": "4145-related",
+            "4145-verwandte-seiten": "4145-related"
+          }
+        },
+        "en": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "4141-what-you-can-do-with-it": "4141-what-you-can-do-with-it",
+            "4142-how-it-works": "4142-how-it-works",
+            "4143-who-takes-part": "4143-who-takes-part",
+            "4144-state-of-development": "4144-state-of-development",
+            "4145-related": "4145-related"
+          }
+        }
+      },
+      "sourceRevision": null,
+      "sourceState": "working-copy",
+      "factsStatus": "source-only"
+    },
+    {
+      "id": "product/features/training-tours",
+      "route": "produkt/core-features/training-tours",
+      "aliases": [
+        "product/features/training-tours",
+        "product/features/training-tours.md",
+        "product/features/training-tours.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "source": "product/features/training-tours.mdx",
+      "sourceHash": "71e05bb3ceb4d578cd4539c5c8a5b5ab8fcbff707f783f652849cf4e0f7d0ee5",
+      "locales": {
+        "de": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "4151-what-you-can-do-with-it": "4151-what-you-can-do-with-it",
+            "4151-das-kann-ich-damit-machen": "4151-what-you-can-do-with-it",
+            "4152-the-four-tours": "4152-the-four-tours",
+            "4152-die-vier-touren": "4152-the-four-tours",
+            "4153-why-nothing-can-go-wrong-in-the-practice-area": "4153-why-nothing-can-go-wrong-in-the-practice-area",
+            "4153-warum-im-übungsbereich-nichts-schiefgehen-kann": "4153-why-nothing-can-go-wrong-in-the-practice-area",
+            "4154-who-decides": "4154-who-decides",
+            "4154-wer-entscheidet": "4154-who-decides",
+            "4155-state-of-development": "4155-state-of-development",
+            "4155-stand-der-entwicklung": "4155-state-of-development",
+            "4156-related": "4156-related",
+            "4156-verwandte-seiten": "4156-related"
+          }
+        },
+        "en": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "4151-what-you-can-do-with-it": "4151-what-you-can-do-with-it",
+            "4152-the-four-tours": "4152-the-four-tours",
+            "4153-why-nothing-can-go-wrong-in-the-practice-area": "4153-why-nothing-can-go-wrong-in-the-practice-area",
+            "4154-who-decides": "4154-who-decides",
+            "4155-state-of-development": "4155-state-of-development",
+            "4156-related": "4156-related"
+          }
+        }
+      },
+      "sourceRevision": null,
+      "sourceState": "working-copy",
       "factsStatus": "source-only"
     },
     {
@@ -7106,8 +7400,8 @@
     }
   ],
   "coverage": {
-    "currentPages": 92,
-    "completePairs": 92,
+    "currentPages": 99,
+    "completePairs": 99,
     "missing": [],
     "stale": []
   }

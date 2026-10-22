@@ -4,12 +4,19 @@
     "index",
     "ai-tools",
     "case-handover",
+    "encryption-keys",
+    "feature-permissions",
     "group-chats",
     "handover",
+    "invitations-onboarding",
+    "legal-texts",
     "live-chat",
     "notifications",
     "pincode-chat",
+    "self-help-groups",
     "session-management",
+    "team-consultation",
+    "training-tours",
     "transcription"
   ]
 }

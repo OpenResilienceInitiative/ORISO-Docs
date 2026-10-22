@@ -1,0 +1,84 @@
+---
+title: "4.12 Einladungen und Einrichtung"
+description: "Wie Träger, Leitungen von Beratungsstellen und Beratende auf die Plattform kommen: Einladungen mit Fortschrittsanzeige, der Einrichtungs-Assistent, Sammeleinladungen aus einer Tabelle und die Einrichtung für Beratende."
+source: "product/features/invitations-onboarding.mdx"
+---
+
+Ein Träger, der mit ORISO beginnt, muss viele Menschen auf einmal einladen: seine eigenen
+Verwaltenden, die Leitungen seiner Beratungsstellen und deren Beratende. Jede dieser Personen muss
+ein Konto anlegen und einen zweiten Faktor einrichten, der Träger zusätzlich die Vertragsunterlagen
+abschließen. Läuft das über E-Mail und Telefon, gehen Einladungen verloren. ORISO verfolgt jede
+Einladung bis zum fertigen Konto und zeigt, wo sie hängt.
+
+Diese Seite beschreibt, **was** die Funktion tut. Sie richtet sich an Verwaltende von Trägern und
+Leitungen von Beratungsstellen.
+
+## 4.12.1 Das kann ich damit machen
+
+- **Sehen, wo jede Einladung steht** — und warum eine hängt, etwa weil die E-Mail nicht zugestellt
+  werden konnte oder der Link abgelaufen ist.
+- **Einen Träger mit einem Assistenten einrichten** — Konto, zweiter Faktor und
+  Vertragsunterlagen, Schritt für Schritt.
+- **Viele auf einmal einladen** — mehrere neue Beratungsstellen samt Leitung, Beratenden und
+  Themenrechten in einer Runde oder aus einer Tabelle (CSV).
+- **Beratende sich selbst einrichten lassen** — Themen wählen oder beim Einrichten eine neue
+  Beratungsstelle anlegen; Leitungen entscheiden, ob sie selbst mitberaten.
+
+## 4.12.2 Die Stufen einer Einladung
+
+| Stufe | Bedeutung |
+|---|---|
+| **Vorbereitet** | die Einladung ist geschrieben, aber noch nicht versendet |
+| **Eingeladen** | die E-Mail mit dem Link ist hinausgegangen |
+| **Konto angelegt** | die Person hat ihr Konto angelegt |
+| **Fertig** | alles, was die Rolle braucht, ist eingerichtet |
+| **Braucht Aktion** | etwas blockiert den nächsten Schritt; der Grund wird angezeigt |
+
+Die Schritte unterscheiden sich je Rolle. Verwaltende eines Trägers durchlaufen zusätzlich die Anlage
+des Trägers und die Vertragsunterlagen; Beratende durchlaufen eingeladen, Konto angelegt, fertig.
+
+Eine Einladung in eine Beratungsstelle, die es noch nicht gibt, wartet — unversendet und ohne Link,
+der ablaufen könnte —, bis die erste Leitung dieser Beratungsstelle sie eingerichtet hat. Ist keine
+Leitung eingeladen, zeigt die Verwaltung das an.
+
+## 4.12.3 Wer wen einlädt
+
+| Rolle | Kann einladen |
+|---|---|
+| **Plattformbetreiber** | Verwaltende von Trägern |
+| **Verwaltende des Trägers** | Leitungen von Beratungsstellen und Beratende des eigenen Trägers; mehrere neue Beratungsstellen auf einmal |
+| **Leitung der Beratungsstelle** | Beratende der eigenen Beratungsstelle |
+
+Einladungs-E-Mails lassen sich mit einer E-Mail-Vorlage in eigenen Worten schreiben, mit Platzhaltern
+und einer Vorschau vor dem Versand. Wer in welche Beratungsstelle eingeladen werden darf, bleibt
+immer innerhalb des eigenen Trägers der einladenden Person.
+
+## 4.12.4 Einrichtung nach dem Annehmen
+
+- **Verwaltende von Trägern** durchlaufen den Einrichtungs-Assistenten: Angaben zur Organisation,
+  zweiter Faktor, Vertragsunterlagen. Ohne unterschriebene Vertragsunterlagen lässt sich keine
+  Beratungsstelle anlegen.
+- **Leitungen von Beratungsstellen** richten ihre Beratungsstelle ein und entscheiden, ob sie selbst
+  mitberaten.
+- **Beratende** bestätigen oder wählen ihre Themen, in der Sprache, die sie bevorzugen.
+
+## 4.12.5 Stand der Entwicklung
+
+| Teil | Stand |
+|---|---|
+| Links zu einer Beratungsstelle oder einer beratenden Person, QR-Code | gab es schon vor ORISO |
+| Träger-Assistent (Konto, zweiter Faktor, Vertragsunterlagen) | mit CAR-14 beauftragt und gebaut |
+| Einladungen mit Fortschrittsanzeige, Sammeleinladungen, Import aus einer Tabelle | gebaut |
+| Einrichtung für Beratende und Leitungen | gebaut |
+
+## 4.12.6 Verwandte Seiten
+
+- [Rechtstexte und Vertragsunterlagen](/de/produkt/core-features/legal-texts) — was der Träger im Assistenten unterschreibt.
+- [Einarbeitung: Touren und Übungsbereich](/de/produkt/core-features/training-tours) — was neue Beratende danach tun.
+- [Plattformvertrag und Steuerung durch Träger (ADR-023)](/de/decisions/adr-023)
+- [Zwei-Faktor über die OTP-Erweiterung (ADR-013)](/de/decisions/adr-013)
+- Storybook Verwaltung: [Fortschritt der Einladungen](https://dev.oriso.org/storybook-admin/?path=/story/organisms-pages-links-inviteprogress--tenant-invites) ·
+  [Einladung schreiben](https://dev.oriso.org/storybook-admin/?path=/story/organisms-pages-links-invitecomposer--empty) ·
+  [Import aus einer Tabelle](https://dev.oriso.org/storybook-admin/?path=/story/organisms-pages-links-invitecsvimport--more-menu-open) ·
+  [Träger-Assistent](https://dev.oriso.org/storybook-admin/?path=/story/pages-tenantonboarding-flow--organisation-and-dpa) ·
+  [Einrichtung für Beratende](https://dev.oriso.org/storybook-admin/?path=/story/pages-counselloronboarding-flow--wizard)

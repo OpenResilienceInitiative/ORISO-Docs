@@ -1,0 +1,79 @@
+---
+title: "4.11 Funktionsfreigaben — was wo erlaubt ist"
+description: "Wie Plattform, Träger und Beratungsstelle festlegen, welche Funktionen in welcher Gesprächsart zur Verfügung stehen: 55 Schalter auf drei Ebenen, nach unten vererbt, sperrbar und auf dem Server durchgesetzt."
+source: "product/features/feature-permissions.mdx"
+---
+
+Jeder Träger arbeitet anders. Der eine erlaubt Videoanrufe im Live-Chat, der andere nicht; ein
+dritter will Uploads nur in der Einzelberatung. Ohne Funktionsfreigaben wäre jeder dieser Wünsche
+eine Änderung am Code. Mit ihnen stellt der Träger es in der Verwaltung selbst ein — ohne einen
+anderen Träger zu berühren.
+
+Diese Seite beschreibt, **was** die Funktion tut. Sie richtet sich an Verwaltende von Trägern und
+Leitungen von Beratungsstellen.
+
+## 4.11.1 Das kann ich damit machen
+
+- **Je Gesprächsart entscheiden.** Eine Funktion getrennt für Live-Chat, Einzelberatung,
+  Gruppenchats und Supervision erlauben oder verbieten.
+- **Eine Einstellung weitergeben — als Vorschlag oder als Regel.** Eine Ebene kann einen Wert
+  vorschlagen, den die Ebene darunter ändern darf, oder ihn festlegen, sodass niemand darunter ihn
+  ändern kann.
+- **Ohne Programmierung anpassen.** Eine Änderung wirkt nur für den eigenen Träger oder die eigene
+  Beratungsstelle.
+
+## 4.11.2 Drei Ebenen
+
+| Ebene | Legt fest | Sieht |
+|---|---|---|
+| **Plattform** | die Voreinstellungen für alle Träger; kann eine Funktion fest ein- oder ausschalten | alle Träger |
+| **Träger** | eigene Werte innerhalb dessen, was die Plattform erlaubt; kann sie für seine Beratungsstellen festlegen | den eigenen Träger |
+| **Beratungsstelle** | eigene Werte innerhalb dessen, was der Träger erlaubt | die eigene Beratungsstelle |
+
+Ein Wert ist entweder **vorgeschlagen** (die Ebene darunter darf ihn ändern) oder **festgelegt** (die
+Ebene darunter sieht ihn, als „von oben gesetzt“ markiert, und kann ihn nicht ändern). Wo eine Ebene
+nichts festlegt, gilt der Wert der Ebene darüber.
+
+<Callout>
+Die Regel wird auf dem Server geprüft, nicht nur in der Oberfläche ausgeblendet. Eine abgeschaltete
+Funktion lässt sich auch durch einen direkten Aufruf des Servers nicht nutzen.
+</Callout>
+
+## 4.11.3 Was sich schalten lässt
+
+Insgesamt 55 Schalter, in diesen Gruppen:
+
+| Gruppe | Schalter |
+|---|---|
+| Gesprächsarten | Live-Chat, Gruppenchat, interner Gruppenchat unter Beratenden, Selbsthilfegruppen |
+| Anrufe | Anrufe allgemein; Audio- und Videoanrufe, jeweils je Gesprächsart |
+| Nachrichten | Threads (Antworten auf einzelne Nachrichten) und Sprachnachrichten, jeweils je Gesprächsart |
+| Medien | Upload, Anzeige von Bildern im Chat und automatische Medienprüfung, jeweils je Gesprächsart |
+| Supervision | Supervision allgemein sowie für Live-Chats und Einzelgespräche |
+| Ratsuchende | ob Ratsuchende ihren Anzeigenamen ändern und eine E-Mail-Adresse angeben dürfen; E-Mail- und Browser-Hinweise für Ratsuchende je Gesprächsart |
+| Beratende | E-Mail- und Browser-Hinweise zu internen Gruppenchats |
+| Sonstiges | Fallübergabe; Erscheinungsbild |
+
+Die Fallübergabe hat eigene Einstellungen je Grund — ob Ratsuchende zustimmen müssen und wie lange
+eine Einsichtnahme dauern darf. Siehe [Fallübergabe](/de/produkt/core-features/case-handover).
+
+## 4.11.4 Stand der Entwicklung
+
+| Teil | Stand |
+|---|---|
+| Einzelne Einstellungen je Beratungsart | gab es schon vor ORISO |
+| Feste Voreinstellungen, die sich ohne neue Auslieferung ändern lassen | mit CAR-07 beauftragt |
+| Drei Ebenen, vorgeschlagen oder festgelegt, Regeln je Gesprächsart, Durchsetzung auf dem Server | gebaut |
+| Support-Admin mit reinem Lesezugriff und eine Support-Sitzung mit Freigabe von zwei Seiten | geplant (CAR-15), nicht gebaut |
+
+## 4.11.5 Verwandte Seiten
+
+- [Beratungsformen als Module (ADR-001)](/de/decisions/adr-001)
+- [Medien-Schalter je Chat-Art (ADR-015)](/de/decisions/adr-015)
+- [Rollen und Rechte](/de/produkt/architecture-und-roles/roles-permissions) — was jede Rolle sehen darf.
+- [Benachrichtigungen](/de/produkt/core-features/notifications) — die E-Mail- und Browser-Schalter für Ratsuchende.
+- [Fallübergabe](/de/produkt/core-features/case-handover) — die Einstellungen je Grund.
+- Storybook Verwaltung: [Freigaben (Träger)](https://dev.oriso.org/storybook-admin/?path=/story/organisms-permissions-permissionssettings--tenant-view) ·
+  [Freigaben (Beratungsstelle)](https://dev.oriso.org/storybook-admin/?path=/story/organisms-permissions-agencypermissionssettings--agency-view) ·
+  [Vorgeschlagen oder festgelegt](https://dev.oriso.org/storybook-admin/?path=/story/molecules-permissionpolicycontrol--suggested-active) ·
+  [Einstellungen zur Fallübergabe](https://dev.oriso.org/storybook-admin/?path=/story/organisms-permissions-casehandovercard--editable)
