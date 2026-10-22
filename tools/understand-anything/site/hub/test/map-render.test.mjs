@@ -22,9 +22,10 @@ function serve() {
     // board.json (optional data) is announced by a patched links.json and served from its own fixture.
     if (url === '/map/data/links.json' || url === '/map/data/epics.json') {
       const doc = JSON.parse(readFileSync(fixtures + url.slice('/map/data/'.length), 'utf8'));
-      if (url.endsWith('links.json')) doc.optional = ['board.json']; else { doc.epics.epics[0].subs = [[1, 900, 'Mapped through the epic sub-issue list', 'o']]; doc.epics.epics[0].hid = 2; }
+      if (url.endsWith('links.json')) doc.optional = ['board.json', 'milestones.json']; else { doc.epics.epics[0].subs = [[1, 900, 'Mapped through the epic sub-issue list', 'o']]; doc.epics.epics[0].hid = 2; }
       res.setHeader('content-type', types['.json']); res.setHeader('content-security-policy', CSP); return res.end(JSON.stringify(doc));
     }
+    if (url === '/map/data/milestones.json') { res.setHeader('content-type', types['.json']); res.setHeader('content-security-policy', CSP); return res.end(readFileSync(fileURLToPath(new URL('../../../../planning-map/milestones.json', import.meta.url)))); }
     if (url === '/map/data/board.json') { res.setHeader('content-type', types['.json']); res.setHeader('content-security-policy', CSP); return res.end(readFileSync(fixtures + '../board.json')); }
     const file = url.startsWith('/map/data/') ? fixtures + url.slice('/map/data/'.length)
       : url === '/map/' ? hub + 'map/index.html' : hub + url.slice(1);
@@ -346,3 +347,49 @@ test('1440 px: the epic panel stays beside the map, no horizontal overflow', {sk
   assert.ok(r.x > 700 && r.x + r.width <= 1440, JSON.stringify(r));
   await context.close();
 });
+
+test('desktop: the milestone panel lists releases with counts and effort; picking one highlights its capabilities', {skip}, async () => {
+  const {page, problems, context} = await open({width: 1920, lang: 'en'});
+  assert.ok(await page.locator('#relpanel').isVisible());
+  assert.ok(!(await page.locator('#relopen').isVisible()));
+  assert.match(await page.locator('#relpanel .mh').first().innerText(), /Platform 2\.0/);
+  const card = page.locator('#relbody .relc[data-release="v2.0.12"]');
+  const text = await card.innerText();
+  assert.match(text, /3 issues/); assert.match(text, /In progress 1/); assert.match(text, /High 2/); assert.match(text, /14 person-days/); assert.match(text, /1 capability/);
+  await card.click();
+  assert.equal(await card.getAttribute('aria-pressed'), 'true');
+  assert.ok(await page.locator('#tm.relf').count() === 1);
+  assert.deepEqual(await page.locator('#tm .blk.relhit').evaluateAll(n => n.map(e => e.dataset.id)), ['chat']);
+  assert.ok(await page.locator('#tm .blk:not(.relhit)').count() > 5);
+  assert.match(await page.locator('#rellive').innerText(), /v2\.0\.12: 1 capability/);
+  await page.locator('#relclear').click();
+  assert.equal(await page.locator('#tm .blk.relhit').count(), 0);
+  assert.deepEqual(problems, []);
+  await context.close();
+});
+
+for (const width of [320, 390, 1440]) {
+  test(`${width}px: the panel is a drawer that opens, filters, closes with Escape and does not overflow`, {skip}, async () => {
+    for (const [scheme, lang] of [['light', 'de'], ['dark', 'en']]) {
+      const {page, problems, context} = await open({width, scheme, lang});
+      assert.ok(!(await page.locator('#relpanel').isVisible()));
+      await page.locator('#relopen').click();
+      await page.waitForSelector('#relpanel.open');
+      assert.equal(await page.locator('#relopen').getAttribute('aria-expanded'), 'true');
+      assert.ok(await page.locator('#relpanel').isVisible());
+      const box = await page.locator('#relpanel').boundingBox();
+      assert.ok(box.x >= 0 && box.x + box.width <= width + 1, 'drawer inside the viewport');
+      if (process.env.UA_SHOTS) await page.screenshot({path: `${process.env.UA_SHOTS}/panel-${width}-${scheme}-${lang}.png`});
+      await page.locator('#relbody .relc[data-release="v2.0.13"]').click();
+      assert.ok(!(await page.locator('#relpanel.open').count()), 'picking a release closes the drawer');
+      assert.deepEqual(await page.locator('#tm .blk.relhit').evaluateAll(n => n.map(e => e.dataset.id)), ['chat']);
+      await page.locator('#relopen').click();
+      await page.keyboard.press('Escape');
+      assert.ok(!(await page.locator('#relpanel.open').count()));
+      assert.equal(await page.evaluate(() => document.activeElement.id), 'relopen');
+      assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), 'no horizontal overflow');
+      assert.deepEqual(problems, []);
+      await context.close();
+    }
+  });
+}

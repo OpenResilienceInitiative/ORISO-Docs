@@ -103,7 +103,7 @@
       },
       "priority": "Urgent",
       "effort": "S",
-      "platformRelease": null,
+      "platformRelease": "v2.0.12",
       "assignees": [
         "frank"
       ],
@@ -175,7 +175,7 @@
       },
       "priority": "High",
       "effort": "M",
-      "platformRelease": null,
+      "platformRelease": "v2.0.12",
       "assignees": [
         "frank"
       ],
@@ -233,7 +233,7 @@
       },
       "priority": "Urgent",
       "effort": "S",
-      "platformRelease": null,
+      "platformRelease": "v2.0.13",
       "assignees": [
         "someone"
       ],

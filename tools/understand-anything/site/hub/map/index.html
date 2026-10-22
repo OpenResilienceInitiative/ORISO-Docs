@@ -48,6 +48,14 @@
       <p class="lhelp" id="layerHelp"></p>
     </div>
 
+    <div class="mapcols">
+    <button type="button" class="relopen" id="relopen" aria-controls="relpanel" aria-expanded="false"><span lang="de">Releases</span><span lang="en">Releases</span></button>
+    <div class="relback" id="relback" hidden></div>
+    <aside class="relpanel" id="relpanel" aria-label="Meilensteine und Releases / Milestones and releases">
+      <div class="relhead"><h3><span lang="de">Meilensteine und Releases</span><span lang="en">Milestones and releases</span></h3>
+        <button type="button" class="relclose" id="relclose" aria-label="Schließen / Close">×</button></div>
+      <div id="relbody"></div>
+    </aside>
     <div class="layout">
       <div class="stage">
         <div class="zbar" id="zbar"></div>
@@ -55,6 +63,7 @@
         <div class="stagefoot" id="stagefoot"></div>
       </div>
       <aside class="panel" id="panel" aria-label="Details"></aside>
+    </div>
     </div>
   </section>
 
