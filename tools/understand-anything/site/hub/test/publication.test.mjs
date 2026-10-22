@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';import os from 'node:os';import {fileURLToPath} from 'node:url';import {execFileSync} from 'node:child_process';
-import {renderFeatures} from '../render-features.mjs';
+import {renderFeatures,renderFeaturePage} from '../render-features.mjs';
 import {buildHub,installHub,readbackHub,validateSources} from '../publication.mjs';
 const root=fileURLToPath(new URL('../../../../../',import.meta.url));
 const projectFixtureCode=`
@@ -15,7 +15,7 @@ const superPath=path.join(generation,'ORISO-Supergraph/.understand-anything/know
 fs.mkdirSync(path.join(generation,'glossary'));fs.writeFileSync(path.join(generation,'glossary/catalog.json'),bytes);fs.writeFileSync(path.join(generation,'glossary/bindings.json'),JSON.stringify(report));
 `;
 
-test('actual source bindings and deterministic locale output validate',()=>{assert.equal(validateSources(root).features.length,10)});
+test('actual source bindings and deterministic locale output validate',()=>{assert.equal(validateSources(root).features.length,17)});
 test('validated public generation becomes immutable hub consumer artifact with exact readback',async t=>{
  const temp=fs.mkdtempSync(path.join(os.tmpdir(),'hub-consumer-'));t.after(()=>fs.rmSync(temp,{recursive:true,force:true}));
  const revision=execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim();const generation=path.join(temp,'generation');execFileSync('python3',['-c',`
@@ -56,7 +56,7 @@ for(const s of JSON.parse(fs.readFileSync(path.join(artifact,'status.json'))).so
  fs.writeFileSync(confirmation,JSON.stringify({...record,legalName:'CHANGED_OPERATOR'}));assert.throws(()=>buildHub({root,out:path.join(temp,'bad-confirmation'),generation,origin,revision,releaseLock,operatorSnapshot:snapshotPath,operatorConfirmation:confirmation}));assert.ok(!fs.existsSync(path.join(temp,'bad-confirmation')));
  const malformed=path.join(temp,'malformed-operator.json');fs.writeFileSync(malformed,JSON.stringify({password:'SECRET_SENTINEL'}));assert.throws(()=>buildHub({root,out:path.join(temp,'bad-operator'),generation,origin,revision,releaseLock,operatorSnapshot:malformed}),/operator|snapshot|Command failed/);assert.ok(!fs.existsSync(path.join(temp,'bad-operator')));const preview=buildHub({root,out:path.join(temp,'preview'),generation,origin,revision});assert.equal(preview.state,'preview');assert.throws(()=>installHub({artifact:path.join(temp,'preview'),destination:path.join(temp,'no-install'),currentLink:path.join(temp,'no-current'),origin,revision}),/binding/);await assert.rejects(readbackHub(preview),/release|preview/i);
  const mismatched=structuredClone(releaseLock);mismatched.sources.find(s=>s.repository==='ORISO-UserService').sourceSHA='b'.repeat(40);assert.throws(()=>buildHub({root,out:path.join(temp,'mismatch'),generation,origin,revision,releaseLock:mismatched}),/source vector/);assert.ok(!fs.existsSync(path.join(temp,'mismatch')));
- assert.equal(manifest.scope,'understand-hub');assert.ok(!manifest.files.some(f=>/legal|test/.test(f.path)));assert.ok(manifest.files.some(f=>f.path==='glossary/catalog.json'));assert.ok(manifest.files.some(f=>f.path==='glossary/bindings.json'));assert.equal(manifest.glossary.documentationRevision,revision);assert.ok(fs.readFileSync(path.join(artifact,'glossary/index.html'),'utf8').includes('Platform Services Agreement'));assert.ok(manifest.glossary.sourceBindings>0);
+ assert.equal(manifest.scope,'understand-hub');assert.ok(!manifest.files.some(f=>/(^|\/)(legal|test)(\/|$)|\.test\./.test(f.path)));assert.ok(manifest.files.some(f=>f.path==='features/legal-texts.html'));assert.ok(manifest.files.some(f=>f.path==='glossary/catalog.json'));assert.ok(manifest.files.some(f=>f.path==='glossary/bindings.json'));assert.equal(manifest.glossary.documentationRevision,revision);assert.ok(fs.readFileSync(path.join(artifact,'glossary/index.html'),'utf8').includes('Platform Services Agreement'));assert.ok(manifest.glossary.sourceBindings>0);
  const publishedStatus=JSON.parse(fs.readFileSync(path.join(artifact,'status.json')));
  assert.deepEqual(publishedStatus.aggregates.map(g=>g.repository),['ORISO-Platform','ORISO-Supergraph']);
  for(const aggregate of publishedStatus.aggregates){
@@ -84,7 +84,10 @@ test('actual canonical-source and locale output drift fail before artifact gener
  const hub=path.join(temp,'tools/understand-anything/site/hub/features');fs.mkdirSync(hub,{recursive:true});fs.writeFileSync(path.join(hub,'catalog.json'),JSON.stringify(data));
  // Use the actual renderer on a disposable source root.
  for(const locale of ['de','en'])fs.writeFileSync(path.join(hub,locale+'.html'),renderFeatures(data,locale));fs.writeFileSync(path.join(hub,'index.html'),renderFeatures(data,'de'));
- assert.equal(validateSources(temp).features.length,10);
+ for(const f of data.features.filter(f=>f.hubPage))fs.writeFileSync(path.join(hub,f.id.split('/').pop()+'.html'),renderFeaturePage(f));
+ assert.equal(validateSources(temp).features.length,17);
+ fs.appendFileSync(path.join(hub,'notifications.html'),'changed');assert.throws(()=>validateSources(temp),/Hub feature page differs/);fs.writeFileSync(path.join(hub,'notifications.html'),renderFeaturePage(data.features.find(f=>f.id==='product/features/notifications')));
+ fs.writeFileSync(path.join(hub,'orphan.html'),'x');assert.throws(()=>validateSources(temp),/without catalogue entry/);fs.rmSync(path.join(hub,'orphan.html'));
  fs.appendFileSync(path.join(temp,data.features[0].source),'changed');assert.throws(()=>validateSources(temp),/Stale hub source binding/);copy(data.features[0].source);
  fs.appendFileSync(path.join(hub,'en.html'),'changed');assert.throws(()=>validateSources(temp),/renderer output differs/);
  fs.writeFileSync(path.join(hub,'en.html'),renderFeatures(data,'en'));

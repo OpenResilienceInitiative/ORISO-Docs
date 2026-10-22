@@ -319,3 +319,6 @@ html[data-lang="en"] [lang="de"]{display:none !important}
   .glossary-layout{display:block}
   .glossary-page .glossary-concept{break-inside:avoid}
 }
+
+/* Feature summaries (features/de.html, features/en.html): decisions, Storybook and related features per card. */
+.flinks{list-style:none;margin:6px 0;padding:0;display:grid;gap:4px;font-size:13.5px;color:var(--ink-2);overflow-wrap:anywhere}

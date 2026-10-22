@@ -30,7 +30,123 @@
       "en": {
         "title": "4.9 Case Handover — Getting and Giving a Case",
         "summary": "How a counselling case moves between colleagues: pulling a case, offering a case, the reasons, who has to agree, and the difference between a look-in and a takeover."
-      }
+      },
+      "hubPage": {
+        "label": "Case handover"
+      },
+      "adrs": [
+        2
+      ],
+      "related": [
+        "notifications",
+        "feature-permissions",
+        "team-consultation"
+      ],
+      "storybook": [
+        {
+          "app": "frontend",
+          "path": "/docs/organisms-casehandover-clientcards--docs",
+          "de": "Zustimmung im Chat",
+          "en": "Consent in the chat"
+        },
+        {
+          "app": "admin",
+          "path": "/story/organisms-permissions-casehandovercard--editable",
+          "de": "Einstellungen je Grund",
+          "en": "Settings per reason"
+        }
+      ]
+    },
+    {
+      "id": "product/features/encryption-keys",
+      "source": "product/features/encryption-keys.mdx",
+      "route": "produkt/core-features/encryption-keys",
+      "sourceHash": "c7a73ae6eae62abd5867b74669e12019b9ca577799c31b664ef32303d02dce33",
+      "sourceRevision": "a8c9b416dd1df395b155a436cc14c2070c9347e0",
+      "de": {
+        "title": "4.16 Verschlüsselung und Schlüssel",
+        "summary": "Wie ORISO Beratungsnachrichten Ende-zu-Ende verschlüsselt und trotzdem für ihre Besitzer lesbar hält: Schlüssel-Backup, Wiederherstellungsschlüssel, signierte Geräte, die Wahl zwischen Passwort und Wiederherstellungsschlüssel je Rolle und zwei zuschaltbare Schutzstufen."
+      },
+      "en": {
+        "title": "4.16 Encryption and Keys",
+        "summary": "How ORISO keeps counselling messages end-to-end encrypted and still readable for their owner: key backup, recovery key, signed devices, the per-role choice between password and recovery key, and two optional protection levels."
+      },
+      "hubPage": {
+        "label": "Encryption and keys"
+      },
+      "adrs": [
+        2,
+        4
+      ],
+      "storybook": [
+        {
+          "app": "frontend",
+          "path": "/docs/organisms-encryptionsettingspanel--docs",
+          "de": "Verschlüsselungs-Einstellungen",
+          "en": "Encryption settings"
+        },
+        {
+          "app": "frontend",
+          "path": "/docs/organisms-keybackuprecoverydialog--docs",
+          "de": "Wiederherstellung",
+          "en": "Recovery dialog"
+        },
+        {
+          "app": "admin",
+          "path": "/story/organisms-globalsettings-chatrecoverysettingscard--default",
+          "de": "Chat-Wiederherstellung je Rolle",
+          "en": "Chat recovery per role"
+        }
+      ],
+      "related": [
+        "case-handover"
+      ]
+    },
+    {
+      "id": "product/features/feature-permissions",
+      "source": "product/features/feature-permissions.mdx",
+      "route": "produkt/core-features/feature-permissions",
+      "sourceHash": "de755c569be495b27b0dc714a55b8b8ae04a16dd50aff2ad0631067ba3ead755",
+      "sourceRevision": "a8c9b416dd1df395b155a436cc14c2070c9347e0",
+      "de": {
+        "title": "4.11 Funktionsfreigaben — was wo erlaubt ist",
+        "summary": "Wie Plattform, Träger und Beratungsstelle festlegen, welche Funktionen in welcher Gesprächsart zur Verfügung stehen: 55 Schalter auf drei Ebenen, nach unten vererbt, sperrbar und auf dem Server durchgesetzt."
+      },
+      "en": {
+        "title": "4.11 Feature Permissions — What Is Allowed Where",
+        "summary": "How the platform, a Träger and a Beratungsstelle decide which functions are available in which conversation type: 55 switches on three levels, inherited downwards, lockable, and enforced on the server."
+      },
+      "hubPage": {
+        "label": "Feature permissions"
+      },
+      "adrs": [
+        1,
+        15
+      ],
+      "storybook": [
+        {
+          "app": "admin",
+          "path": "/story/organisms-permissions-permissionssettings--tenant-view",
+          "de": "Freigaben (Träger)",
+          "en": "Permissions (Träger)"
+        },
+        {
+          "app": "admin",
+          "path": "/story/organisms-permissions-agencypermissionssettings--agency-view",
+          "de": "Freigaben (Beratungsstelle)",
+          "en": "Permissions (Beratungsstelle)"
+        },
+        {
+          "app": "admin",
+          "path": "/story/molecules-permissionpolicycontrol--suggested-active",
+          "de": "Vorgeschlagen oder festgelegt",
+          "en": "Suggested or enforced"
+        }
+      ],
+      "related": [
+        "notifications",
+        "case-handover"
+      ]
     },
     {
       "id": "product/features/group-chats",
@@ -78,34 +194,218 @@
       }
     },
     {
+      "id": "product/features/invitations-onboarding",
+      "source": "product/features/invitations-onboarding.mdx",
+      "route": "produkt/core-features/invitations-onboarding",
+      "sourceHash": "31fee1d28c165ed7a0640ed4521fa24394feade484f067e8e6d2dbb5857a8564",
+      "sourceRevision": "a8c9b416dd1df395b155a436cc14c2070c9347e0",
+      "de": {
+        "title": "4.12 Einladungen und Einrichtung",
+        "summary": "Wie Träger, Leitungen von Beratungsstellen und Beratende auf die Plattform kommen: Einladungen mit Fortschrittsanzeige, der Einrichtungs-Assistent, Sammeleinladungen aus einer Tabelle und die Einrichtung für Beratende."
+      },
+      "en": {
+        "title": "4.12 Invitations and Onboarding",
+        "summary": "How Träger, heads of Beratungsstellen and counsellors get onto the platform: invitations with progress tracking, the set-up wizard, bulk invitations from a spreadsheet, and set-up for counsellors."
+      },
+      "hubPage": {
+        "label": "Invitations and onboarding"
+      },
+      "adrs": [
+        13,
+        23
+      ],
+      "storybook": [
+        {
+          "app": "admin",
+          "path": "/story/organisms-pages-links-inviteprogress--tenant-invites",
+          "de": "Fortschritt der Einladungen",
+          "en": "Invitation progress"
+        },
+        {
+          "app": "admin",
+          "path": "/story/organisms-pages-links-invitecsvimport--more-menu-open",
+          "de": "Import aus einer Tabelle",
+          "en": "Spreadsheet import"
+        },
+        {
+          "app": "admin",
+          "path": "/story/pages-tenantonboarding-flow--organisation-and-dpa",
+          "de": "Träger-Assistent",
+          "en": "Träger wizard"
+        },
+        {
+          "app": "admin",
+          "path": "/story/pages-counselloronboarding-flow--wizard",
+          "de": "Einrichtung für Beratende",
+          "en": "Counsellor set-up"
+        }
+      ],
+      "related": [
+        "legal-texts",
+        "training-tours"
+      ]
+    },
+    {
+      "id": "product/features/legal-texts",
+      "source": "product/features/legal-texts.mdx",
+      "route": "produkt/core-features/legal-texts",
+      "sourceHash": "4b56d066ec996568b7bb6b3fa48a35323eee6b25d85f99de11cc6c3e505220b0",
+      "sourceRevision": "a8c9b416dd1df395b155a436cc14c2070c9347e0",
+      "de": {
+        "title": "4.10 Rechtstexte und Vertragsunterlagen",
+        "summary": "Impressum, Datenschutzerklärung und Einwilligungssatz aus Vorlagen, die von der Plattform an den Träger und weiter an die Beratungsstelle gehen; Versionen; die Vertragsunterlagen mit Weiterleitung an die zeichnungsberechtigte Person, erneuter Bestätigung und Stand."
+      },
+      "en": {
+        "title": "4.10 Legal Texts and Contract Documents",
+        "summary": "Imprint, privacy policy and consent text from templates that pass from the platform to the Träger and on to the Beratungsstelle; versions; the contract documents with forwarding to the signer, re-confirmation and status tracking."
+      },
+      "hubPage": {
+        "label": "Legal texts"
+      },
+      "adrs": [
+        3,
+        14,
+        21,
+        22,
+        23
+      ],
+      "storybook": [
+        {
+          "app": "admin",
+          "path": "/story/organisms-legal-dataprocessingagreementcontainer--platform-admin",
+          "de": "Vertragsunterlagen",
+          "en": "Contract documents"
+        },
+        {
+          "app": "admin",
+          "path": "/story/organisms-dpaforwarddialog--default",
+          "de": "Weiterleiten",
+          "en": "Forward to signer"
+        },
+        {
+          "app": "admin",
+          "path": "/story/organisms-legal-departmentdataprotectioncard-versions-consent--with-version-history",
+          "de": "Versionen und Einwilligung",
+          "en": "Versions and consent"
+        },
+        {
+          "app": "frontend",
+          "path": "/docs/components-dialog-anonymousconsentgate--docs",
+          "de": "Einwilligung vor der ersten Nachricht",
+          "en": "Consent before the first message"
+        }
+      ],
+      "related": [
+        "invitations-onboarding",
+        "live-chat"
+      ]
+    },
+    {
       "id": "product/features/live-chat",
       "source": "product/features/live-chat.mdx",
       "route": "produkt/core-features/live-chat",
-      "sourceHash": "3d7f5e56bda0d596c9bd4dcb898b67c8df5aaf0a16db52f8581ed34d603d0cb5",
-      "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
+      "sourceHash": "164130c23b6196fc8620d4d6c1616373335114788f72eb17606e27e3c08e87f2",
+      "sourceRevision": "a8c9b416dd1df395b155a436cc14c2070c9347e0",
       "de": {
-        "title": "4.2 Live-Chat",
-        "summary": "Der vollständige Ablauf des anonymen ORISO-Live-Chats: Aktivierung, Warteraum und Einwilligung, Übernahme durch Beratende und verschlüsselte Sitzung."
+        "title": "4.2 Live-Chat — anonym, ohne Konto",
+        "summary": "Wie eine Person ohne Konto einen anonymen Live-Chat beginnt: Thema und Pseudonym, der Warteraum mit Position in der Warteschlange, die zwei Einwilligungen, die beratende Person, die annimmt, die Erstantwort in der eigenen Sprache und wann alles gelöscht wird."
       },
       "en": {
-        "title": "4.2 Live Chat",
-        "summary": "The end-to-end mechanics of ORISO's anonymous live chat: how it activates, the waiting-room and consent flow, the counselor pickup and the encrypted session."
-      }
+        "title": "4.2 Live Chat — Anonymous, Without an Account",
+        "summary": "How a person starts an anonymous live chat without an account: topic and pseudonym, the waiting room with queue position, the two consents, the counsellor who accepts, the first response in the person's language, and when everything is deleted."
+      },
+      "hubPage": {
+        "label": "Live chat"
+      },
+      "adrs": [
+        7,
+        18,
+        22
+      ],
+      "storybook": [
+        {
+          "app": "frontend",
+          "path": "/docs/live-chat-entry-room--docs",
+          "de": "Eingangsraum",
+          "en": "Entry room"
+        },
+        {
+          "app": "frontend",
+          "path": "/docs/components-dialog-anonymousconsentgate--docs",
+          "de": "Einwilligung vor der ersten Nachricht",
+          "en": "Consent before the first message"
+        },
+        {
+          "app": "frontend",
+          "path": "/docs/components-chat-erstantwort--docs",
+          "de": "Erstantwort",
+          "en": "First response"
+        },
+        {
+          "app": "frontend",
+          "path": "/docs/pseudonym-atoms-animalavatar--docs",
+          "de": "Tier-Avatar",
+          "en": "Animal avatar"
+        }
+      ],
+      "related": [
+        "pincode-chat",
+        "legal-texts",
+        "feature-permissions"
+      ]
     },
     {
       "id": "product/features/notifications",
       "source": "product/features/notifications.mdx",
       "route": "produkt/core-features/notifications",
-      "sourceHash": "ca5b1a0990ee52baed9f1515eaf2e03663bf9eb8dfd84f35114a4d5433319029",
-      "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
+      "sourceHash": "2443b187b68f6627a76e5c2071d35edfd16fb99665b4af441f2506a77ec2632b",
+      "sourceRevision": "a8c9b416dd1df395b155a436cc14c2070c9347e0",
       "de": {
-        "title": "4.8 Benachrichtigungen und Hilfsanfragen",
-        "summary": "Der Benachrichtigungseingang für Mitarbeitende und optional Ratsuchende, der Ablauf für Hilfsanfragen und Eskalation im Chat sowie die Systematik der Systemnachrichten."
+        "title": "4.8 Benachrichtigungen — Aktivitäts-Zeitleiste, E-Mails, Töne und Nicht-stören",
+        "summary": "Wie Beratende und Ratsuchende erfahren, dass etwas passiert ist: die Aktivitäts-Zeitleiste, E-Mail-Benachrichtigungen je Gesprächsart, Töne je Ereignis, Nicht-stören-Zeiten und Service-Hinweise."
       },
       "en": {
-        "title": "4.8 Notifications & Help Requests",
-        "summary": "The Notifications inbox for staff and (optional) clients, the in-chat Help-Request / Escalation flow, and the system-message taxonomy."
-      }
+        "title": "4.8 Notifications — Activity Timeline, E-mails, Sounds and Do-not-disturb",
+        "summary": "How counsellors and clients learn that something happened: the activity timeline, e-mail notifications per conversation type, sounds per event, do-not-disturb times and service notices."
+      },
+      "hubPage": {
+        "label": "Notifications"
+      },
+      "adrs": [
+        24,
+        26
+      ],
+      "storybook": [
+        {
+          "app": "frontend",
+          "path": "/docs/organisms-notificationscenter--docs",
+          "de": "Aktivitäts-Zeitleiste",
+          "en": "Activity timeline"
+        },
+        {
+          "app": "frontend",
+          "path": "/docs/organisms-notificationsettingspanel--docs",
+          "de": "Benachrichtigungs-Einstellungen",
+          "en": "Notification settings"
+        },
+        {
+          "app": "frontend",
+          "path": "/docs/profile-donotdisturbcontrol--docs",
+          "de": "Nicht-stören",
+          "en": "Do-not-disturb"
+        },
+        {
+          "app": "admin",
+          "path": "/story/organisms-permissions-chattypenotificationswitches--switches-on-tiles",
+          "de": "E-Mail-Schalter je Gesprächsart",
+          "en": "E-mail switches per conversation type"
+        }
+      ],
+      "related": [
+        "feature-permissions",
+        "case-handover",
+        "team-consultation"
+      ]
     },
     {
       "id": "product/features/pincode-chat",
@@ -123,6 +423,58 @@
       }
     },
     {
+      "id": "product/features/self-help-groups",
+      "source": "product/features/self-help-groups.mdx",
+      "route": "produkt/core-features/self-help-groups",
+      "sourceHash": "f1513a2693ff18929c0c4f607d2bf4047dcb9374153fb5094ccfe9d90574bc2d",
+      "sourceRevision": "a8c9b416dd1df395b155a436cc14c2070c9347e0",
+      "de": {
+        "title": "4.13 Selbsthilfegruppen",
+        "summary": "Geschützte Gruppenräume für die Selbsthilfe: Beitritt erst nach Zulassung durch die Gruppenleitung, ein Wartebereich mit Countdown und Gruppenregeln, Übergabe der Gruppenleitung, Beitritt per Link ohne Konto und wiederkehrende Gruppentermine."
+      },
+      "en": {
+        "title": "4.13 Self-help Groups",
+        "summary": "Protected group rooms for self-help: joining only after the group lead admits you, a waiting area with countdown and group rules, handing over the group lead, joining by link without an account, and recurring group appointments."
+      },
+      "hubPage": {
+        "label": "Self-help groups"
+      },
+      "adrs": [
+        12,
+        20
+      ],
+      "storybook": [
+        {
+          "app": "frontend",
+          "path": "/docs/group-chat-self-help-entry-room--docs",
+          "de": "Eingangsraum",
+          "en": "Entry room"
+        },
+        {
+          "app": "frontend",
+          "path": "/docs/group-chat-self-help-waiting-room-stage--docs",
+          "de": "Wartebereich",
+          "en": "Waiting area"
+        },
+        {
+          "app": "frontend",
+          "path": "/docs/molecules-m3snackbar-join-request--docs",
+          "de": "Beitrittsanfrage",
+          "en": "Join request"
+        },
+        {
+          "app": "frontend",
+          "path": "/docs/registration-temporary-join-toggle--docs",
+          "de": "Ohne Konto beitreten",
+          "en": "Join without account"
+        }
+      ],
+      "related": [
+        "group-chats",
+        "feature-permissions"
+      ]
+    },
+    {
       "id": "product/features/session-management",
       "source": "product/features/session-management.mdx",
       "route": "produkt/core-features/session-management",
@@ -136,6 +488,83 @@
         "title": "4.4 Session Management",
         "summary": "How counseling sessions are created, joined, lived, and torn down — including state transitions, retention, wipe-on-disconnect, and the supervisor-review flow."
       }
+    },
+    {
+      "id": "product/features/team-consultation",
+      "source": "product/features/team-consultation.mdx",
+      "route": "produkt/core-features/team-consultation",
+      "sourceHash": "04f0db507ebd5f22967806b603f84374b673d64eb8eef084387c2f2cc4fe53d2",
+      "sourceRevision": "a8c9b416dd1df395b155a436cc14c2070c9347e0",
+      "de": {
+        "title": "4.14 Team-Besprechung neben jeder Anfrage",
+        "summary": "Ein eigener interner Raum zu jeder offenen Anfrage, in dem Beratende sich abstimmen, bevor jemand sie annimmt; Ratsuchende sind nie Mitglied; der Raum schließt mit der Annahme und wird nach 90 Tagen gelöscht."
+      },
+      "en": {
+        "title": "4.14 Team Discussion Next to Each Enquiry",
+        "summary": "A separate internal room for every open enquiry in which counsellors coordinate before someone accepts it; the client is never a member; the room closes at acceptance and is deleted after 90 days."
+      },
+      "hubPage": {
+        "label": "Team discussion"
+      },
+      "adrs": [
+        2,
+        8,
+        16
+      ],
+      "storybook": [
+        {
+          "app": "frontend",
+          "path": "/docs/components-session-teamdiscussionpanel--docs",
+          "de": "Bereich Team-Besprechung",
+          "en": "Team discussion panel"
+        }
+      ],
+      "related": [
+        "case-handover",
+        "notifications"
+      ]
+    },
+    {
+      "id": "product/features/training-tours",
+      "source": "product/features/training-tours.mdx",
+      "route": "produkt/core-features/training-tours",
+      "sourceHash": "71e05bb3ceb4d578cd4539c5c8a5b5ab8fcbff707f783f652849cf4e0f7d0ee5",
+      "sourceRevision": "a8c9b416dd1df395b155a436cc14c2070c9347e0",
+      "de": {
+        "title": "4.15 Einarbeitung — vier Touren und ein Übungsbereich",
+        "summary": "Wie neue Beratende sich zurechtfinden: ein Rundgang und eine Tour zur Mail-Beratung, zwei Übungstouren und ein Übungsbereich mit Übungsfällen, in dem nichts eine echte Person erreicht."
+      },
+      "en": {
+        "title": "4.15 Training — Four Tours and a Practice Area",
+        "summary": "How new counsellors find their way: an overview tour and a tour for e-mail counselling, two practice tours, and a practice area with practice cases in which nothing reaches a real person."
+      },
+      "hubPage": {
+        "label": "Training: tours and practice area"
+      },
+      "storybook": [
+        {
+          "app": "frontend",
+          "path": "/docs/organisms-touroverviewcarousel--docs",
+          "de": "Touren im Überblick",
+          "en": "Tour overview"
+        },
+        {
+          "app": "frontend",
+          "path": "/docs/organisms-practiceflow--docs",
+          "de": "Übungsablauf",
+          "en": "Practice flow"
+        },
+        {
+          "app": "frontend",
+          "path": "/docs/organisms-practicebanner--docs",
+          "de": "Übungsbanner",
+          "en": "Practice banner"
+        }
+      ],
+      "related": [
+        "invitations-onboarding",
+        "session-management"
+      ]
     },
     {
       "id": "product/features/transcription",
