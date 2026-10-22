@@ -74,3 +74,24 @@ hatch, deleted, planned, board status), light and dark. `node build-tokens.mjs`
 regenerates `assets/tokens.css` from it; `test/colour-tokens.test.mjs` checks WCAG
 contrast of text on fills and the lightness steps per ramp, also under deuteranopia
 and protanopia simulation. The hub documents the scheme in the "Colour scheme" section.
+
+## Capability map (`/map/`)
+
+`map/` is the hub's "Fähigkeiten-Karte" page: `index.html` (shell), `map.css`,
+`map.js` and generated data in `map/data/` (`counts.json`, `drill.json`,
+`zoom.json`, `epics.json`, `descriptions.json`, `links.json`). The page has no
+inline script, style or style attribute and loads the data with same-origin
+`fetch`. `map.js` merges every data file into one `MEAS` object; files named in
+`links.json` under `optional` (allowed names: `OPTIONAL_DATA` in `map.js`, today
+`board.json`) are merged into the same object when present.
+
+Regenerate the data from the measured intermediate files (code counts, tests,
+stories, graph links):
+
+    node map/build-map-data.mjs --inputs DIR --out map/data
+
+`DIR` holds `agg`, `rel`, `drill`, `epics`, `zoom`, `planned`, `desc`, `live`
+and `car15` as `.json` files (see `test/fixtures/map-inputs/`). Output is
+deterministic. `test/map-render.test.mjs` renders the page from
+`test/fixtures/map-data/` in a browser under a strict CSP; it needs Playwright
+(`UA_PLAYWRIGHT=/path/to/playwright/index.mjs`) and is skipped without it.
