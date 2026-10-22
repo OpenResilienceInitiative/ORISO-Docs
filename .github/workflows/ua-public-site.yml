@@ -100,7 +100,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p "$RUNNER_TEMP/planning-board"
-          for id in $(gh run list --workflow planning-board-sync.yml --branch dev --status success --limit 20 --json databaseId --jq '.[].databaseId'); do
+          for id in $(gh run list --workflow planning-board-sync.yml --status success --limit 50 --json databaseId,headBranch,createdAt --jq '[.[] | select(.headBranch == "dev" or .headBranch == "main")] | sort_by(.createdAt) | reverse | .[].databaseId'); do
             if gh run download "$id" --name planning-board --dir "$RUNNER_TEMP/planning-board" 2>/dev/null; then echo "planning board from run $id"; break; fi
           done || true
       - name: Produce public-only validated generation

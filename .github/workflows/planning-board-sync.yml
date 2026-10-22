@@ -32,8 +32,9 @@ jobs:
         with: {node-version: '24'}
       - run: node --test tools/planning-map/test/*.test.mjs
   sync:
-    # Only a board exported from dev may reach the public hub (ua-public-site.yml downloads runs on dev only).
-    if: github.event_name != 'pull_request' && github.repository == 'OpenResilienceInitiative/ORISO-Docs' && github.ref == 'refs/heads/dev'
+    # Only a board exported from a protected branch may reach the public hub. Scheduled runs use the
+    # default branch (main), manual runs may use dev; ua-public-site.yml accepts runs from these two only.
+    if: github.event_name != 'pull_request' && github.repository == 'OpenResilienceInitiative/ORISO-Docs' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:

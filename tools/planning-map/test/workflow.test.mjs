@@ -42,21 +42,27 @@ test("actions use the repo's version pins, the board is an artifact, not a commi
   assert.doesNotMatch(wf, /git (add|commit|push)/);
 });
 
-// Provenance (ORISO-Docs#208): only a board exported from dev may reach the public hub.
+// Provenance (ORISO-Docs#208): only a board exported from a protected branch (dev, or main where
+// GitHub runs the hourly schedule because it is the default branch) may reach the public hub.
 const site = readFileSync(resolve(here, "../../../.github/workflows/ua-public-site.yml"), "utf8");
 const job = (name) => {
   const m = new RegExp(`^  ${name}:\\n([\\s\\S]*?)(?=^  [\\w-]+:\\n|(?![\\s\\S]))`, "m").exec(wf);
   return m ? m[1] : "";
 };
 
-test("the sync job only runs for the dev branch", () => {
-  assert.match(job("sync"), /^\s+if: .*github\.ref == 'refs\/heads\/dev'/m);
+test("the sync job only runs on the protected branches dev and main", () => {
+  const cond = /^\s+if: (.*)$/m.exec(job("sync"))[1];
+  assert.match(cond, /\(github\.ref == 'refs\/heads\/dev' \|\| github\.ref == 'refs\/heads\/main'\)/);
+  assert.equal((cond.match(/refs\/heads\//g) || []).length, 2);
 });
 
-test("the hub publication only downloads planning-board artifacts of runs on dev", () => {
+test("the hub publication only downloads planning-board artifacts of runs on dev or main", () => {
   const lines = site.split("\n").filter((l) => /gh run list --workflow planning-board-sync\.yml/.test(l));
   assert.ok(lines.length >= 1);
-  for (const l of lines) assert.match(l, /--branch dev\b/);
+  for (const l of lines) {
+    assert.match(l, /select\(\.headBranch == "dev" or \.headBranch == "main"\)/);
+    assert.doesNotMatch(l, /--branch /);
+  }
 });
 
 test("the Understand contract workflow runs when tools/planning-map changes (the hub imports it)", () => {
