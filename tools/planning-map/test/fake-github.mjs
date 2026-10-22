@@ -18,7 +18,18 @@ export function createFakeGitHub({
     byRef.set(`${issue.repository}#${issue.number}`, issue);
     byId.set(issue.id, issue);
   }
-  const fake = { calls: [], writes: [], hooks: {}, releaseOptions: releases.map((name, i) => ({ id: `OPT_R${i}`, name })) };
+  const fake = { calls: [], writes: [], hooks: {}, respond: {}, releaseOptions: releases.map((name, i) => ({ id: `OPT_R${i}`, name })) };
+  // Failure hooks (review of #210):
+  //   fake.respond[op] = (variables, fake) => body   replaces the answer of one operation (any body shape).
+  //   fake.readError(op, "FORBIDDEN" | "NOT_FOUND")  that read answers {data: null, errors: [{type}]}.
+  //   fake.unauthorized(op)                          that operation answers a 401 body without "errors" or "data".
+  //   sub-issue entry {hidden: "FORBIDDEN" | "NOT_FOUND"} a null node in subIssues.nodes plus a path-scoped error.
+  fake.readError = (op, type, message = type === "FORBIDDEN" ? "Resource not accessible by integration" : "Could not resolve to a node") => {
+    fake.respond[op] = () => ({ data: null, errors: [{ type, message }] });
+  };
+  fake.unauthorized = (op, body = { message: "Bad credentials", documentation_url: "https://docs.github.com/graphql", status: "401" }) => {
+    fake.respond[op] = () => body;
+  };
   const gateOpts = gateOptions && gateOptions.map((name, i) => ({ id: `OPT_G${i}`, name }));
   const fieldValues = (i) => ({
     nodes: i.release ? [{ __typename: "IssueFieldMultiSelectValue", options: [].concat(i.release).map((name) => ({ name })), field: { name: "Platform release" } }] : [],
@@ -34,6 +45,7 @@ export function createFakeGitHub({
     const op = /(?:query|mutation)\s+(\w+)/.exec(query)?.[1];
     fake.calls.push({ op, variables });
     if (fake.hooks[op]) await fake.hooks[op](variables, fake);
+    if (fake.respond[op]) return fake.respond[op](variables, fake);
     switch (op) {
       case "PlanReleaseField":
         return { data: { organization: { issueFields: { nodes: [
@@ -47,11 +59,13 @@ export function createFakeGitHub({
       }
       case "PlanSubIssues": {
         const parent = byId.get(variables.id);
-        const subs = parent.subIssues.map((ref) => byRef.get(ref));
+        const subs = parent.subIssues.map((ref) => (typeof ref === "string" ? byRef.get(ref) : ref));
         const start = variables.after ? Number(variables.after) : 0;
         const page = subs.slice(start, start + (fake.pageSize ?? 100));
         const end = start + page.length;
-        return { data: { node: { subIssues: { pageInfo: { hasNextPage: end < subs.length, endCursor: String(end) }, nodes: page.map(issueNode) } } } };
+        const errors = page.flatMap((x, j) => (x.hidden ? [{ type: x.hidden, path: ["node", "subIssues", "nodes", j], message: x.hidden === "FORBIDDEN" ? "Resource not accessible by integration" : "Could not resolve to an Issue" }] : []));
+        const body = { data: { node: { subIssues: { pageInfo: { hasNextPage: end < subs.length, endCursor: String(end) }, nodes: page.map((x) => (x.hidden ? null : issueNode(x))) } } } };
+        return errors.length ? { ...body, errors } : body;
       }
       case "PlanSetRelease": {
         const { issueId, issueFields } = variables.input;

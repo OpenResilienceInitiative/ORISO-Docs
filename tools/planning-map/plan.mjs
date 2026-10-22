@@ -58,6 +58,17 @@ export function ghTransport({ exec = execFileSync } = {}) {
 export async function main(argv, { transport = ghTransport(), log = console.log, err = console.error } = {}) {
   let o;
   try { o = parseArgs(argv); validate(o); } catch (e) { err(`plan.mjs: ${e.message}`); return 2; }
+  try {
+    return await run(o, { transport, log, err });
+  } catch (e) {
+    // Last line of defence: still a typed JSON answer and exit code 1, never an unhandled rejection.
+    const body = JSON.stringify({ ok: false, command: o.command, error: { code: "TRANSPORT", message: `plan.mjs failed: ${e?.message ?? e}` } }, null, 2);
+    try { log(body); } catch { err(body); }
+    return 1;
+  }
+}
+
+async function run(o, { transport, log, err }) {
   const dryRun = !o.apply;
   const runs = [];
   for (const issue of o.issues) {
@@ -72,5 +83,5 @@ export async function main(argv, { transport = ghTransport(), log = console.log,
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
-  main(process.argv.slice(2)).then((c) => process.exit(c));
+  main(process.argv.slice(2)).then((c) => { process.exitCode = c; }, (e) => { console.error(JSON.stringify({ ok: false, error: { code: "TRANSPORT", message: String(e?.message ?? e) } })); process.exitCode = 1; });
 }

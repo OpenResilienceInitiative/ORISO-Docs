@@ -70,25 +70,41 @@ export function parseIssueRef(ref, org = DEFAULT_ORG) {
   return { owner, name, number };
 }
 
+// Wording GitHub uses when the token may not act: 401/403 bodies, SSO enforcement, missing scopes.
+const NO_RIGHTS = /bad credentials|requires authentication|not accessible|permission|forbidden|must have (write|admin)|saml|single sign-on|\bsso\b/i;
+const isRightsStatus = (status) => [401, 403].includes(Number(status));
+
 // GraphQL errors -> typed error. FORBIDDEN / permission wording means the operator may not write.
 function classifyGraphqlErrors(errors, issue) {
   const e = errors[0] || {};
   const text = String(e.message || "");
-  if (e.type === "FORBIDDEN" || /not accessible|permission|forbidden|must have (write|admin)/i.test(text)) return fail("NO_WRITE_RIGHTS", text || "No write rights", { issue });
+  if (e.type === "FORBIDDEN" || NO_RIGHTS.test(text)) return fail("NO_WRITE_RIGHTS", text || "No write rights", { issue });
   if (e.type === "NOT_FOUND" || /could not resolve/i.test(text)) return fail("NOT_FOUND", text, { issue });
   return fail("GITHUB_ERROR", text || "GitHub returned an error", { issue });
 }
 
+// A body without usable data and without GraphQL errors (a 401 page, {data: null}, nothing at all) never
+// means "field missing" or "not found": it is a rights problem when GitHub says so, otherwise TRANSPORT.
+function classifyEmptyBody(res, issue) {
+  const text = res && typeof res === "object" ? String(res.message ?? "") : "";
+  if (res && typeof res === "object" && (isRightsStatus(res.status) || NO_RIGHTS.test(text))) return fail("NO_WRITE_RIGHTS", text || `GitHub answered ${res.status}`, { issue });
+  return fail("TRANSPORT", text ? `GitHub answered without data: ${text}` : "GitHub answered without data", { issue });
+}
+
 // Run one operation; returns {data} or {error}. Never throws.
-async function call(transport, query, variables, issue) {
+// partial: a body with data AND errors is handed back as {data, errors} (null nodes in a list, see readSubIssues).
+async function call(transport, query, variables, issue, { partial = false } = {}) {
   let res;
   try {
     res = await transport(query, variables);
   } catch (e) {
     return { error: fail("TRANSPORT", `Transport failed: ${e?.message ?? e}`, { issue }) };
   }
-  if (res?.errors?.length) return { error: classifyGraphqlErrors(res.errors, issue) };
-  return { data: res?.data };
+  const hasData = res && typeof res === "object" && res.data != null && typeof res.data === "object";
+  const errors = res && typeof res === "object" && Array.isArray(res.errors) ? res.errors : [];
+  if (errors.length && !(partial && hasData)) return { error: classifyGraphqlErrors(errors, issue) };
+  if (!hasData) return { error: classifyEmptyBody(res, issue) };
+  return errors.length ? { data: res.data, errors } : { data: res.data };
 }
 
 const releaseOf = (node) => {
@@ -103,25 +119,53 @@ async function readIssue(transport, ref) {
   return node ? { node } : { error: fail("NOT_FOUND", `${refString(ref)} does not exist or is not visible`, { issue: refString(ref) }) };
 }
 
+// Sub-issues the operator cannot read come back as null nodes with a path-scoped error. They cannot be
+// moved, so the whole command is refused and each one is reported by its position in the list.
 async function readSubIssues(transport, parent, parentRef) {
   const nodes = [];
+  const unreadable = [];
+  const name = refString(parentRef);
   let after = null;
   for (;;) {
-    const r = await call(transport, SUB_ISSUES_QUERY, { id: parent.id, after }, refString(parentRef));
+    const r = await call(transport, SUB_ISSUES_QUERY, { id: parent.id, after }, name, { partial: true });
     if (r.error) return r;
     const conn = r.data?.node?.subIssues;
-    if (!conn) return { error: fail("NOT_FOUND", `sub-issues of ${refString(parentRef)} not readable`, { issue: refString(parentRef) }) };
-    nodes.push(...conn.nodes);
-    if (!conn.pageInfo.hasNextPage) return { nodes };
+    if (!conn) return { error: fail("NOT_FOUND", `sub-issues of ${name} not readable`, { issue: name }) };
+    const page = conn.nodes ?? [];
+    page.forEach((node, j) => {
+      if (node) return nodes.push(node);
+      const e = (r.errors ?? []).find((x) => Array.isArray(x.path) && x.path[x.path.length - 1] === j && x.path.includes("nodes"));
+      const code = e && (e.type === "FORBIDDEN" || NO_RIGHTS.test(String(e.message ?? ""))) ? "NO_WRITE_RIGHTS" : "NOT_FOUND";
+      unreadable.push({ position: nodes.length + unreadable.length, code, message: e?.message ?? "not visible" });
+    });
+    if (!conn.pageInfo.hasNextPage) break;
     after = conn.pageInfo.endCursor;
   }
+  if (unreadable.length) {
+    const code = unreadable.some((u) => u.code === "NO_WRITE_RIGHTS") ? "NO_WRITE_RIGHTS" : "NOT_FOUND";
+    return { error: fail(code, `${unreadable.length} sub-issue(s) of ${name} cannot be read by this login, so they cannot be moved`, { issue: name, detail: { unreadable } }) };
+  }
+  return { nodes };
+}
+
+// The command bodies may meet answers of an unexpected shape. Whatever they throw becomes a typed TRANSPORT
+// error that still lists what was written before it, so callers never see an exception.
+function neverThrows(body) {
+  return async (...args) => {
+    const applied = [];
+    try {
+      return await body(applied, ...args);
+    } catch (e) {
+      return { ok: false, error: fail("TRANSPORT", `Unexpected answer from GitHub: ${e?.message ?? e}`), applied: applied.slice() };
+    }
+  };
 }
 
 // ───────── assignRelease ─────────
 // assignRelease(issue, release, {withSubIssues, expectedRelease, dryRun, transport})
 //   expectedRelease: what the caller last saw (string, or null for "none"); a different live value is a CONFLICT.
 //   withSubIssues: also the direct sub-issues (any repository). All rights are checked before the first write.
-export async function assignRelease(issue, release, { withSubIssues = false, expectedRelease, dryRun = false, transport } = {}) {
+export const assignRelease = neverThrows(async (applied, issue, release, { withSubIssues = false, expectedRelease, dryRun = false, transport } = {}) => {
   const bad = (message) => ({ ok: false, error: fail("BAD_REQUEST", message), applied: [] });
   if (typeof transport !== "function") return bad("assignRelease needs a transport");
   const ref = parseIssueRef(issue);
@@ -154,7 +198,6 @@ export async function assignRelease(issue, release, { withSubIssues = false, exp
   }
 
   const results = [];
-  const applied = [];
   for (const t of targets) {
     const current = releaseOf(t.node);
     const changed = !(current.length === 1 && current[0] === release);
@@ -168,7 +211,7 @@ export async function assignRelease(issue, release, { withSubIssues = false, exp
     results.push(row);
   }
   return { ok: true, release, dryRun, results };
-}
+});
 
 // ───────── setGate (ORISO-Docs#211) ─────────
 // Gate is a single-select PROJECT field on ORISO Roadmap (not an issue field), so it is written with the
@@ -183,7 +226,7 @@ mutation PlanSetGate($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: St
   updateProjectV2ItemFieldValue(input: {projectId: $projectId, itemId: $itemId, fieldId: $fieldId, value: {singleSelectOptionId: $optionId}}) { projectV2Item { id } }
 }`;
 
-export async function setGate(issue, gate, { expectedGate, dryRun = false, projectId = PROJECT_ID, transport } = {}) {
+export const setGate = neverThrows(async (_applied, issue, gate, { expectedGate, dryRun = false, projectId = PROJECT_ID, transport } = {}) => {
   const bad = (message) => ({ ok: false, error: fail("BAD_REQUEST", message), applied: [] });
   if (typeof transport !== "function") return bad("setGate needs a transport");
   const ref = parseIssueRef(issue);
@@ -215,4 +258,4 @@ export async function setGate(issue, gate, { expectedGate, dryRun = false, proje
     row.wrote = true;
   }
   return { ok: true, gate, dryRun, results: [row] };
-}
+});

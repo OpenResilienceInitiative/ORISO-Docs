@@ -157,3 +157,92 @@ test("the write uses SetIssueFieldValue on the multi-select field with the optio
   const call = gh.calls.find((c) => c.op === "PlanSetRelease");
   assert.deepEqual(call.variables.input, { issueId: gh.issue(`${FE}#2`).id, issueFields: [{ fieldId: "IFMS_kgDOArcqMA", multiSelectOptionIds: ["OPT_R1"] }] });
 });
+
+// ───── robustness (review of #210): unreadable sub-issues, bodies without data, never throw ─────
+test("a sub-issue the operator cannot read (null node) is reported per sub-issue, nothing is written", async () => {
+  const gh = createFakeGitHub({ issues: [
+    { repository: FE, number: 40, subIssues: [`${FE}#41`, { hidden: "FORBIDDEN" }, { hidden: "NOT_FOUND" }] },
+    { repository: FE, number: 41 },
+  ] });
+  const r = await assignRelease(`${FE}#40`, "v2.0.12", { withSubIssues: true, transport: gh.transport });
+  assert.equal(r.ok, false);
+  assert.equal(r.error.code, "NO_WRITE_RIGHTS");
+  assert.deepEqual(r.error.detail.unreadable.map((u) => [u.position, u.code]), [[1, "NO_WRITE_RIGHTS"], [2, "NOT_FOUND"]]);
+  assert.equal(r.error.issue, `${FE}#40`);
+  assert.deepEqual(gh.writes, []);
+});
+
+test("only NOT_FOUND null sub-issues give NOT_FOUND", async () => {
+  const gh = createFakeGitHub({ issues: [{ repository: FE, number: 40, subIssues: [{ hidden: "NOT_FOUND" }] }] });
+  const r = await assignRelease(`${FE}#40`, "v2.0.12", { withSubIssues: true, transport: gh.transport });
+  assert.equal(r.error.code, "NOT_FOUND");
+  assert.match(r.error.message, /sub-issue/);
+});
+
+test("FORBIDDEN and NOT_FOUND on the reads are typed", async () => {
+  for (const [op, type, code] of [["PlanIssue", "FORBIDDEN", "NO_WRITE_RIGHTS"], ["PlanIssue", "NOT_FOUND", "NOT_FOUND"], ["PlanReleaseField", "FORBIDDEN", "NO_WRITE_RIGHTS"], ["PlanSubIssues", "FORBIDDEN", "NO_WRITE_RIGHTS"]]) {
+    const gh = world();
+    gh.readError(op, type);
+    const r = await assignRelease(`${FE}#10`, "v2.0.13", { withSubIssues: true, transport: gh.transport });
+    assert.equal(r.ok, false, op);
+    assert.equal(r.error.code, code, `${op} ${type}`);
+    assert.deepEqual(gh.writes, []);
+  }
+});
+
+test("a 401 body without errors (Bad credentials) is NO_WRITE_RIGHTS, never FIELD_MISSING or NOT_FOUND", async () => {
+  for (const op of ["PlanReleaseField", "PlanIssue", "PlanSubIssues"]) {
+    const gh = world();
+    gh.unauthorized(op);
+    const r = await assignRelease(`${FE}#10`, "v2.0.13", { withSubIssues: true, transport: gh.transport });
+    assert.equal(r.error.code, "NO_WRITE_RIGHTS", op);
+    assert.match(r.error.message, /Bad credentials/);
+  }
+});
+
+test("SSO and 'Resource not accessible' bodies without data are NO_WRITE_RIGHTS", async () => {
+  for (const body of [{ message: "Resource protected by organization SAML enforcement. You must grant your OAuth token access to this organization." }, { message: "Resource not accessible by integration", status: "403" }, { message: "Forbidden", status: 403 }]) {
+    const gh = world();
+    gh.unauthorized("PlanReleaseField", body);
+    assert.equal((await assignRelease(`${FE}#2`, "v2.0.13", { transport: gh.transport })).error.code, "NO_WRITE_RIGHTS", body.message);
+  }
+});
+
+test("data null without errors, a message without data, or no body at all is TRANSPORT", async () => {
+  for (const body of [{ data: null }, { message: "Server Error" }, null, "oops", {}]) {
+    for (const op of ["PlanReleaseField", "PlanIssue"]) {
+      const gh = world();
+      gh.respond[op] = () => body;
+      const r = await assignRelease(`${FE}#2`, "v2.0.13", { transport: gh.transport });
+      assert.equal(r.error.code, "TRANSPORT", `${op} ${JSON.stringify(body)}`);
+    }
+  }
+});
+
+test("setGate maps the same bodies the same way", async () => {
+  const { setGate } = await import("../lib/planning-api.mjs");
+  const gh = createFakeGitHub({ gateOptions: ["P1 Framed"], issues: [{ repository: FE, number: 2 }] });
+  gh.unauthorized("PlanGateField");
+  assert.equal((await setGate(`${FE}#2`, "P1 Framed", { transport: gh.transport })).error.code, "NO_WRITE_RIGHTS");
+  gh.respond.PlanGateField = () => ({ data: null });
+  assert.equal((await setGate(`${FE}#2`, "P1 Framed", { transport: gh.transport })).error.code, "TRANSPORT");
+});
+
+test("malformed answers never throw: they come back as TRANSPORT", async () => {
+  const shapes = {
+    PlanReleaseField: () => ({ data: { organization: { issueFields: { nodes: [{ id: "IFMS_kgDOArcqMA", name: "Platform release", options: null }] } } } }),
+    PlanIssue: () => ({ data: { repository: { issue: { id: "I_x", number: 2, viewerCanUpdate: true, repository: null, issueFieldValues: 7 } } } }),
+    PlanSubIssues: () => ({ data: { node: { subIssues: { pageInfo: null, nodes: [] } } } }),
+  };
+  for (const [op, fn] of Object.entries(shapes)) {
+    const gh = world();
+    gh.respond[op] = fn;
+    const r = await assignRelease(`${FE}#10`, "v2.0.13", { withSubIssues: true, transport: gh.transport });
+    assert.equal(r.ok, false, op);
+    assert.ok(["TRANSPORT", "FIELD_MISSING"].includes(r.error.code), `${op}: ${r.error.code}`);
+    assert.ok(Array.isArray(r.applied));
+  }
+  const gh = world();
+  gh.respond.PlanSubIssues = () => ({ data: { node: { subIssues: { pageInfo: null, nodes: [] } } } });
+  assert.equal((await assignRelease(`${FE}#10`, "v2.0.13", { withSubIssues: true, transport: gh.transport })).error.code, "TRANSPORT");
+});

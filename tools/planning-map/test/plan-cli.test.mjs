@@ -99,3 +99,25 @@ test("set-gate needs --gate", async () => {
   assert.equal(await main(["set-gate", "--issue", "x#1"], { transport: gateWorld().transport, log: () => {}, err: (s) => errs.push(s) }), 2);
   assert.match(errs.join(""), /--gate/);
 });
+
+// ───── never throws (review of #210) ─────
+test("main never rejects: an unexpected failure prints a JSON error and exits 1", async () => {
+  const errs = [];
+  let first = true;
+  const log = (s) => { if (first) { first = false; throw new Error("EPIPE"); } errs.push(s); };
+  const code = await main(["assign-release", "--issue", "ORISO-Frontend#2", "--release", "v2.0.13"], { transport: world().transport, log, err: (s) => errs.push(s) });
+  assert.equal(code, 1);
+  const out = JSON.parse(errs.find((s) => s.trim().startsWith("{")));
+  assert.equal(out.ok, false);
+  assert.equal(out.error.code, "TRANSPORT");
+  assert.match(out.error.message, /EPIPE/);
+});
+
+test("a 401 answer reaches the CLI as NO_WRITE_RIGHTS and exit code 1, with nothing written", async () => {
+  const gh = world();
+  gh.unauthorized("PlanIssue");
+  const { code, out } = await run(["assign-release", "--issue", "ORISO-Frontend#2", "--release", "v2.0.13", "--apply"], gh);
+  assert.equal(code, 1);
+  assert.equal(out.runs[0].error.code, "NO_WRITE_RIGHTS");
+  assert.deepEqual(gh.writes, []);
+});
