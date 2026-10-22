@@ -39,14 +39,17 @@ Seam 2: `lib/planning-api.mjs`. `assignRelease(issue, release, {withSubIssues, e
 
 - ok: `{ok: true, release, dryRun, results: [{issue, role, before, after, changed, wrote}]}`
 - error: `{ok: false, error: {code, message, issue?, detail?}, applied: [...]}`; codes `NO_WRITE_RIGHTS`, `CONFLICT` (live value differs from `expectedRelease`), `NOT_FOUND`, `UNKNOWN_RELEASE` (detail lists the live names), `FIELD_MISSING`, `BAD_REQUEST`, `TRANSPORT`, `GITHUB_ERROR`.
-- `withSubIssues` also moves direct sub-issues (any repository, paged). Rights on every target are checked before the first write; `applied` lists what was written if a later write still fails.
+- `withSubIssues` also moves direct sub-issues (any repository, paged). Rights on every target are checked before the first write; `applied` lists what was written if a later write still fails. A sub-issue the login cannot read (a null node) refuses the move; `detail.unreadable` lists each one by position with `NO_WRITE_RIGHTS` or `NOT_FOUND`. A body without data (401, SSO, `{data: null}`) is `NO_WRITE_RIGHTS` or `TRANSPORT`, never `FIELD_MISSING`/`NOT_FOUND`.
 
 Local runner (uses the operator's `gh` login, shells out to `gh api graphql`, dry run by default):
 
 ```sh
 node tools/planning-map/plan.mjs assign-release --issue OpenResilienceInitiative/ORISO-Frontend#1734 --release v2.0.13 --with-sub-issues --expect v2.0.12
+node tools/planning-map/plan.mjs assign-release --issue ORISO-Frontend#1734=v2.0.12 --issue ORISO-Admin#88=none --release v2.0.13
 node tools/planning-map/plan.mjs assign-release ... --apply     # only --apply writes
 ```
+
+`--issue ref=<expected>` (or `=none`) is the expectation for that one issue and wins over `--expect`. Several `--issue` refs are all or nothing: every one is planned first (reads, rights, conflicts, sub-issues); if any fails, nothing is written and the JSON says `"preflight": "failed"`.
 
 Exit codes: 0 ok, 1 planning error (typed JSON on stdout), 2 usage.
 

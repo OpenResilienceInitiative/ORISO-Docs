@@ -121,3 +121,69 @@ test("a 401 answer reaches the CLI as NO_WRITE_RIGHTS and exit code 1, with noth
   assert.equal(out.runs[0].error.code, "NO_WRITE_RIGHTS");
   assert.deepEqual(gh.writes, []);
 });
+
+// ───── several --issue refs: all-or-nothing, per-issue expectations (review of #210) ─────
+const multi = () => createFakeGitHub({ issues: [
+  { repository: FE, number: 2, release: null },
+  { repository: FE, number: 3, release: "v2.0.12" },
+  { repository: FE, number: 4, release: null, canUpdate: false },
+  { repository: FE, number: 5, release: null, subIssues: [{ hidden: "FORBIDDEN" }] },
+] });
+
+test("--apply with several issues writes nothing when one of them fails the preflight", async () => {
+  for (const bad of ["ORISO-Frontend#4", "ORISO-Frontend#99"]) {
+    const gh = multi();
+    const { code, out } = await run(["assign-release", "--issue", "ORISO-Frontend#2", "--issue", bad, "--issue", "ORISO-Frontend#3", "--release", "v2.0.13", "--apply"], gh);
+    assert.equal(code, 1, bad);
+    assert.equal(out.ok, false);
+    assert.equal(out.preflight, "failed");
+    assert.deepEqual(gh.writes, [], bad);
+    assert.ok(out.runs.some((r) => !r.ok));
+  }
+});
+
+test("the preflight covers sub-issues of every issue", async () => {
+  const gh = multi();
+  const { code, out } = await run(["assign-release", "--issue", "ORISO-Frontend#2", "--issue", "ORISO-Frontend#5", "--release", "v2.0.13", "--with-sub-issues", "--apply"], gh);
+  assert.equal(code, 1);
+  assert.equal(out.runs[1].error.code, "NO_WRITE_RIGHTS");
+  assert.deepEqual(gh.writes, []);
+});
+
+test("a passing preflight writes every issue", async () => {
+  const gh = multi();
+  const { code, out } = await run(["assign-release", "--issue", "ORISO-Frontend#2", "--issue", "ORISO-Frontend#3", "--release", "v2.0.13", "--apply"], gh);
+  assert.equal(code, 0);
+  assert.equal(out.preflight, "passed");
+  assert.deepEqual(gh.writes.map((w) => w.issue), [`${FE}#2`, `${FE}#3`]);
+});
+
+test("--issue ref=expected carries one expectation per issue; =none means unassigned", async () => {
+  assert.deepEqual(parseArgs(["assign-release", "--issue", "ORISO-Frontend#2=none", "--issue", `${FE}#3=v2.0.12`, "--release", "v2.0.13"]), {
+    command: "assign-release", issues: ["ORISO-Frontend#2", `${FE}#3`], expects: { "ORISO-Frontend#2": null, [`${FE}#3`]: "v2.0.12" }, release: "v2.0.13", withSubIssues: false, apply: false,
+  });
+  let gh = multi();
+  let r = await run(["assign-release", "--issue", "ORISO-Frontend#2=none", "--issue", "ORISO-Frontend#3=v2.0.12", "--release", "v2.0.13", "--apply"], gh);
+  assert.equal(r.code, 0);
+  assert.equal(gh.writes.length, 2);
+  gh = multi();
+  r = await run(["assign-release", "--issue", "ORISO-Frontend#2=none", "--issue", "ORISO-Frontend#3=none", "--release", "v2.0.13", "--apply"], gh);
+  assert.equal(r.code, 1);
+  assert.equal(r.out.runs[1].error.code, "CONFLICT");
+  assert.deepEqual(gh.writes, [], "a conflict on the second issue keeps the first unwritten too");
+});
+
+test("a per-issue expectation wins over --expect; --expect still applies to the others", async () => {
+  const gh = multi();
+  const r = await run(["assign-release", "--issue", "ORISO-Frontend#2", "--issue", "ORISO-Frontend#3=v2.0.12", "--expect", "none", "--release", "v2.0.13", "--apply"], gh);
+  assert.equal(r.code, 0);
+  assert.deepEqual(gh.writes.map((w) => w.issue), [`${FE}#2`, `${FE}#3`]);
+});
+
+test("set-gate takes per-issue expectations as well", async () => {
+  const gh = createFakeGitHub({ gateOptions: GATE_NAMES, issues: [{ repository: FE, number: 2, gate: null }, { repository: FE, number: 3, gate: "P1 Framed" }] });
+  const r = await run(["set-gate", "--issue", "ORISO-Frontend#2=none", "--issue", "ORISO-Frontend#3=none", "--gate", "P4 Ready for agent", "--apply"], gh);
+  assert.equal(r.code, 1);
+  assert.equal(r.out.runs[1].error.code, "CONFLICT");
+  assert.deepEqual(gh.writes, []);
+});
