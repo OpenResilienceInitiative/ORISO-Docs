@@ -126,3 +126,29 @@ test('every error code has a German and an English reason', () => {
   }
   assert.ok(PlanMove.reason({code: 'WHAT'}, 'en'));
 });
+
+// ───── setGate intents (ORISO-Docs#211) ─────
+const gateIntent = over => ({action: 'setGate', issues: [{repository: `${ORG}/ORISO-Frontend`, number: 11}], gate: 'R3 Human review', expect: null, ...over});
+
+test('a setGate intent shows the gate at once and rolls back with the reason when refused', async () => {
+  const s = PlanMove.create(), b = board();
+  b.items.forEach(i => { i.gate = null; });
+  const done = s.run(gateIntent(), {setGate: async () => ({ok: false, error: {code: 'FIELD_MISSING', message: 'no Gate field'}})});
+  assert.equal(s.view(b, epics).items.find(i => i.number === 11).gate, 'R3 Human review');
+  const r = await done;
+  assert.equal(r.status, 'failed');
+  assert.equal(s.view(b, epics).items.find(i => i.number === 11).gate, null);
+  assert.match(PlanMove.reason(r.error, 'en'), /does not exist on GitHub yet/);
+});
+
+test('the set-gate command parses back with --gate and --expect', () => {
+  const tokens = PlanMove.argv(gateIntent({gate: 'R4 Verified on Dev', expect: 'R3 Human review'}), true);
+  const parsed = parseArgs(plain(tokens));
+  assert.deepEqual([parsed.command, parsed.issues, parsed.gate, parsed.expect, parsed.apply], ['set-gate', [`${ORG}/ORISO-Frontend#11`], 'R4 Verified on Dev', 'R3 Human review', true]);
+  assert.match(PlanMove.command(gateIntent({gate: 'R4 Verified on Dev'})), /--gate 'R4 Verified on Dev'/);
+});
+
+test('every error code the planning API can return has a reason in the UI', async () => {
+  const {ERROR_CODES} = await import('../../../../planning-map/lib/planning-api.mjs');
+  for (const code of ERROR_CODES) assert.ok(code in PlanMove.REASONS || code === 'BAD_REQUEST', code);
+});

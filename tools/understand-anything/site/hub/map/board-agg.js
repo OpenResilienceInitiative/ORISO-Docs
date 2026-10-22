@@ -12,6 +12,20 @@
   var GROUP = {'Backlog': 'neutral', 'Ready': 'neutral', 'On hold': 'neutral', 'In progress': 'progress', 'In review': 'progress', 'QA internal': 'qa-internal', 'QA external': 'qa-external', 'Done': 'done'};
   var TOKEN = {'Backlog': 'status-backlog', 'Ready': 'status-ready', 'On hold': 'status-on-hold', 'In progress': 'status-in-progress', 'In review': 'status-in-review', 'QA internal': 'status-qa-internal', 'QA external': 'status-qa-external', 'Done': 'status-done'};
 
+  /* Gate field (ORISO-Docs#211): eight steps, same list as tools/planning-map/gate-options.json (a test compares them).
+     The field is a project field; board.json items carry `gate` (null until a project admin creates it). */
+  var GATES = [
+    {name: "P1 Framed", phase: "plan", step: 1, criteria: {de: "Das Problem und das gewünschte Ergebnis stehen im Issue; Epic und Fähigkeit sind bekannt.", en: "Problem and desired outcome are written in the issue; epic and capability are known."}},
+    {name: "P2 Specified", phase: "plan", step: 2, criteria: {de: "Abnahmekriterien und Testplan sind geschrieben; offene Fragen sind beantwortet.", en: "Acceptance criteria and test plan are written; open questions are answered."}},
+    {name: "P3 Sliced", phase: "plan", step: 3, criteria: {de: "In Teile geschnitten, die ein Agent in einem Pull Request schafft; Aufwand ist gesetzt.", en: "Cut into slices an agent can finish in one pull request; effort is set."}},
+    {name: "P4 Ready for agent", phase: "plan", step: 4, criteria: {de: "P1 bis P3 erfüllt, Priorität, Readiness und Release gesetzt, kein offener Blocker; Status ist Ready.", en: "P1 to P3 met, priority, readiness and release set, no open blocker; status is Ready."}},
+    {name: "R1 Checks green", phase: "review", step: 5, criteria: {de: "Pull Request ist offen und alle Prüfungen (Build, Tests, Lint) sind grün.", en: "Pull request is open and all checks (build, tests, lint) are green."}},
+    {name: "R2 AI review", phase: "review", step: 6, criteria: {de: "Die KI-Prüfung ist durch; Befunde sind behoben oder beantwortet.", en: "The AI review passed; findings are fixed or answered."}},
+    {name: "R3 Human review", phase: "review", step: 7, criteria: {de: "Ein Mensch hat den Code geprüft und den Pull Request freigegeben.", en: "A human reviewed the code and approved the pull request."}},
+    {name: "R4 Verified on Dev", phase: "review", step: 8, criteria: {de: "Gemergt und auf Dev geprüft; Status ist QA internal. Danach gilt der bestehende Ablauf (QA external, Done).", en: "Merged and checked on Dev; status is QA internal. After that the existing lifecycle applies (QA external, Done)."}}
+  ];
+  function gateStep(name) { for (var n = 0; n < GATES.length; n++) if (GATES[n].name === name) return GATES[n].step; return 0; }
+
   function repoName(full) { var i = String(full || '').lastIndexOf('/'); return i < 0 ? String(full || '') : full.slice(i + 1); }
   function key(repo, n) { return repoName(repo) + '#' + n; }
 
@@ -80,12 +94,15 @@
     if (filter === 'open') return it.status !== 'Done' && it.state !== 'CLOSED';
     return it.status === FILTER_STATUS[filter];
   }
-  function epicView(board, epics, index, filter) {
+  function gateMatches(g, it) { return g === 'all' ? true : g === 'none' ? !it.gate : it.gate === g; }
+  function epicView(board, epics, index, filter, gateFilter) {
     var repos = (epics && epics.repos) || [], e = epics && epics.epics && epics.epics[index];
     if (!board || !e) return null;
     var org = String((board.source && board.source.owner) || 'OpenResilienceInitiative');
     var ek = key(repos[e.r], e.n), seen = {}, items = [], onBoard = {};
     if (FILTERS.indexOf(filter) < 0) filter = 'all';
+    var gateNames = GATES.map(function (g) { return g.name; });
+    var gate = (gateFilter === 'none' || gateNames.indexOf(gateFilter) >= 0) ? gateFilter : 'all';
     (board.items || []).forEach(function (it) {
       if (it.contentType !== 'Issue' || !it.repository || typeof it.number !== 'number') return;
       var k = key(it.repository, it.number);
@@ -95,7 +112,8 @@
     function add(it, repoFull, k) {
       if (seen[k]) return; seen[k] = 1;
       items.push({repository: repoName(repoFull), number: it.number, title: it.title, url: it.url || ghUrl(repoFull, it.number),
-        state: it.state, status: STATUSES.indexOf(it.status) >= 0 ? it.status : null, priority: it.priority || null});
+        state: it.state, status: STATUSES.indexOf(it.status) >= 0 ? it.status : null, priority: it.priority || null,
+        gate: it.gate || null, gateStep: gateStep(it.gate)});
     }
     Object.keys(onBoard).forEach(function (k) {
       var it = onBoard[k];
@@ -109,21 +127,24 @@
     });
     items.sort(function (a, b) { return a.number - b.number; });
     var counts = {}, filterCounts = {};
-    FILTERS.forEach(function (f) { filterCounts[f] = items.filter(function (it) { return matches(f, it); }).length; });
+    FILTERS.forEach(function (f) { filterCounts[f] = items.filter(function (it) { return matches(f, it) && gateMatches(gate, it); }).length; });
+    var gateCounts = {};
+    ['all', 'none'].concat(gateNames).forEach(function (g) { gateCounts[g] = items.filter(function (it) { return matches(filter, it) && gateMatches(g, it); }).length; });
     items.forEach(function (it) { if (it.status) counts[it.status] = (counts[it.status] || 0) + 1; });
     var inBar = Object.keys(counts).reduce(function (a, s) { return a + counts[s]; }, 0);
     var segments = STATUSES.map(function (s) {
       var n = counts[s] || 0;
       return {status: s, group: GROUP[s], token: TOKEN[s], count: n, share: inBar ? round(100 * n / inBar, 2) : 0};
     });
-    var shown = items.filter(function (it) { return matches(filter, it); });
+    var shown = items.filter(function (it) { return matches(filter, it) && gateMatches(gate, it); });
     var groups = STATUSES.concat([null]).map(function (s) {
       var list = shown.filter(function (it) { return it.status === s; });
       return {status: s, group: s ? GROUP[s] : 'none', token: s ? TOKEN[s] : null, count: list.length, items: list};
     }).filter(function (g) { return g.items.length; });
     return {
       epic: {repository: repoName(repos[e.r]), number: e.n, title: e.t, url: ghUrl(fullName(repos[e.r], org), e.n)},
-      total: items.length, privateCount: e.hid || 0, filter: filter, filterCounts: filterCounts, segments: segments, groups: groups
+      total: items.length, privateCount: e.hid || 0, filter: filter, filterCounts: filterCounts,
+      gate: gate, gateCounts: gateCounts, gateAvailable: items.some(function (it) { return !!it.gate; }), segments: segments, groups: groups
     };
   }
   /* Release scope (ORISO-Docs#209): what each Platform release holds, grouped into reviewed milestones. */
@@ -191,5 +212,5 @@
     var r = name && rel && rel.byName && rel.byName[name];
     return r ? r.capabilities.slice() : [];
   }
-  return {STATUSES: STATUSES, GROUP: GROUP, TOKEN: TOKEN, FILTERS: FILTERS, EFFORT_DAYS: EFFORT_DAYS, PRIORITIES: PRIORITIES, capabilityIndex: capabilityIndex, aggregate: aggregate, epicView: epicView, releases: releases, milestones: milestones, releaseCapabilities: releaseCapabilities};
+  return {GATES: GATES, gateStep: gateStep, STATUSES: STATUSES, GROUP: GROUP, TOKEN: TOKEN, FILTERS: FILTERS, EFFORT_DAYS: EFFORT_DAYS, PRIORITIES: PRIORITIES, capabilityIndex: capabilityIndex, aggregate: aggregate, epicView: epicView, releases: releases, milestones: milestones, releaseCapabilities: releaseCapabilities};
 });

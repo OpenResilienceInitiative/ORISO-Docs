@@ -39,9 +39,10 @@ function serve() {
 
 const skip = playwrightPath ? false : 'Playwright not available (set UA_PLAYWRIGHT)';
 let browser, server, origin;
-async function open({width = 1440, scheme = 'light', lang = 'de', init} = {}) {
+async function open({width = 1440, scheme = 'light', lang = 'de', init, board} = {}) {
   const context = await browser.newContext({viewport: {width, height: 900}, colorScheme: scheme, locale: lang === 'de' ? 'de-DE' : 'en-GB', reducedMotion: 'reduce'});
   if (init) await context.addInitScript(init);
+  if (board) await context.route('**/map/data/board.json', async route => { const response = await route.fetch(); const doc = await response.json(); board(doc); await route.fulfill({response, json: doc}); });
   const page = await context.newPage();
   const problems = [];
   page.on('pageerror', e => problems.push(String(e)));
@@ -518,6 +519,66 @@ for (const width of [320, 390, 1440]) {
       await page.waitForSelector('#planlog .plrow.command');
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), 'no horizontal overflow');
       if (process.env.UA_SHOTS) await page.screenshot({path: `${process.env.UA_SHOTS}/planlog-${width}-${scheme}-${lang}.png`});
+      assert.deepEqual(problems, []);
+      await context.close();
+    }
+  });
+}
+
+// ───── Gate step indicator and gate filter in the epic view (ORISO-Docs#211) ─────
+const GATED = doc => { const g = {1801: 'P2 Specified', 1804: 'R3 Human review', 1805: 'R3 Human review', 1806: 'R4 Verified on Dev'}; doc.items.forEach(i => { if (g[i.number]) i.gate = g[i.number]; }); };
+
+test('each gated sub-issue shows its step along the eight gates, with a spoken label and the criteria on hover', {skip}, async () => {
+  const {page, problems, context} = await open({lang: 'en', board: GATED});
+  await openEpic(page);
+  const row = page.locator('.pd .egroup li', {hasText: 'Child d'});
+  const steps = row.locator('.gsteps');
+  assert.equal(await steps.getAttribute('aria-label'), 'Gate R3 Human review, step 7 of 8');
+  assert.match(await steps.getAttribute('title'), /^R3 Human review: A human reviewed the code/);
+  assert.equal(await steps.locator('.gs').count(), 8);
+  assert.equal(await steps.locator('.gs.on').count(), 6);
+  assert.deepEqual(await steps.locator('.gs.cur').evaluateAll(n => n.map(e => e.dataset.phase)), ['review']);
+  assert.equal(await page.locator('.pd .egroup li', {hasText: 'Child b'}).locator('.gsteps').count(), 0, 'no gate, no indicator');
+  assert.deepEqual(problems, []);
+  await context.close();
+});
+
+test('FILTER by gate: "R3 Human review" keeps only the issues waiting there; the select is keyboard-operable', {skip}, async () => {
+  const {page, problems, context} = await open({lang: 'en', board: GATED});
+  await openEpic(page);
+  const sel = page.locator('.pd select[data-gfilter]');
+  assert.equal(await page.locator('.pd label[for="gsel"]').innerText(), 'GATE');
+  assert.match(await sel.locator('option[value="R3 Human review"]').innerText(), /R3 Human review \(2\)/);
+  await sel.focus();
+  await sel.selectOption('R3 Human review');
+  assert.deepEqual((await listed(page)).sort(), ['Child d', 'Child e']);
+  assert.equal(await page.evaluate(() => document.activeElement.id), 'gsel', 'focus stays on the select');
+  await page.locator('.pd .efilt', {hasText: 'Developed on Dev'}).click(); // combines with the status filter
+  assert.deepEqual(await listed(page), ['Child e']);
+  await page.locator('.pd select[data-gfilter]').selectOption('none');
+  assert.ok(!(await listed(page)).includes('Child d'));
+  assert.deepEqual(problems, []);
+  await context.close();
+});
+
+test('no Gate value on the board: no gate filter and no indicator (the field does not exist yet)', {skip}, async () => {
+  const {page, problems, context} = await open({lang: 'en'});
+  await openEpic(page);
+  assert.equal(await page.locator('.pd select[data-gfilter]').count(), 0);
+  assert.equal(await page.locator('.pd .gsteps').count(), 0);
+  assert.deepEqual(problems, []);
+  await context.close();
+});
+
+for (const width of [320, 390, 1440]) {
+  test(`${width}px: gate indicators and filter fit in light and dark, DE and EN`, {skip}, async () => {
+    for (const [scheme, lang] of [['light', 'de'], ['dark', 'en']]) {
+      const {page, problems, context} = await open({width, scheme, lang, board: GATED});
+      await openEpic(page);
+      await page.locator('.pd .gsteps').first().waitFor();
+      const m = await page.evaluate(() => ({s: document.documentElement.scrollWidth, c: document.documentElement.clientWidth, e: document.getElementById('sheetIn').scrollWidth, ec: document.getElementById('sheetIn').clientWidth}));
+      assert.ok(m.s <= m.c && m.e <= m.ec, `no horizontal overflow ${JSON.stringify(m)}`);
+      if (process.env.UA_SHOTS) await page.locator('.pd .egroup:has(.gsteps)').first().screenshot({path: `${process.env.UA_SHOTS}/gate-${width}-${scheme}-${lang}.png`}).catch(() => {});
       assert.deepEqual(problems, []);
       await context.close();
     }

@@ -322,7 +322,8 @@ var T = {
      hiddenSubs:function(n){return n+' Teilaufgabe(n) in einem privaten Repository nicht angezeigt';},cross:'Übergreifend',relIss:'Weitere zugehörige Aufgaben',
      openEp:function(n){return n+' offen';},showStage:'Stufe zeigen:',
      privSubs:function(n){return n+' Teilaufgabe(n) in einem privaten Repository, nur als Zahl gezählt';},notOnBoard:'Nicht auf dem Board',filterBy:'Teilaufgaben filtern',noneShown:'Keine Teilaufgaben für diesen Filter.',onBoardBar:'Stand auf dem Board',
-     fAll:'Alle',fAccepted:'Abgenommen (Fertig)',fDev:'Auf Dev entwickelt (QA intern)',fStaging:'Auf Staging (QA extern)',fOpen:'Offen'},
+     fAll:'Alle',fAccepted:'Abgenommen (Fertig)',fDev:'Auf Dev entwickelt (QA intern)',fStaging:'Auf Staging (QA extern)',fOpen:'Offen',
+     gate:'Gate',gAll:'Alle Gates',gNone:'Kein Gate',gLegend:'Was die Gates bedeuten',gStep:function(n,name){return 'Gate '+name+', Schritt '+n+' von 8';}},
  en:{show:'show',emph:'emphasise',hide:'hide',same:'existed before, unchanged',rew:'existed before, reworked',gone:'deleted or replaced',b:'commissioned, new',x:'additional, new',told:'tests that already existed',tnew:'tests today',
      tgOld:'Existed before',tgGone:'Deleted',tgB:'Commissioned',tgX:'Additional',
      can:'What I can do with it',before:'Before',lines:'Lines of code',tests:'Test cases',testl:'Test lines',stories:'Storybook views',epics:'Planned work',
@@ -338,7 +339,8 @@ var T = {
      hiddenSubs:function(n){return n+' sub-issue(s) in a private repository not shown';},cross:'Cross-cutting',relIss:'Further related issues',
      openEp:function(n){return n+' open';},showStage:'Show stage:',
      privSubs:function(n){return n+' sub-issue(s) in a private repository, counted only';},notOnBoard:'Not on the board',filterBy:'Filter sub-issues',noneShown:'No sub-issues for this filter.',onBoardBar:'State on the board',
-     fAll:'All',fAccepted:'Accepted (Done)',fDev:'Developed on Dev (QA internal)',fStaging:'On Staging (QA external)',fOpen:'Open'}
+     fAll:'All',fAccepted:'Accepted (Done)',fDev:'Developed on Dev (QA internal)',fStaging:'On Staging (QA external)',fOpen:'Open',
+     gate:'Gate',gAll:'All gates',gNone:'No gate',gLegend:'What the gates mean',gStep:function(n,name){return 'Gate '+name+', step '+n+' of 8';}}
 };
 function tt(){ return T[lang]; }
 
@@ -903,10 +905,28 @@ function relIssues(b){
   return '<div class="dgroup"><h5><span>'+esc(tt().relIss)+'</span><span class="c">'+r.length+'</span></h5><ul class="dlist">'+r.map(function(x){
     return '<li><a href="'+GH+x[0]+'/issues/'+x[1]+'" target="_blank" rel="noopener">'+esc(x[2])+'</a><span class="c">'+esc(x[0].replace('ORISO-',''))+' #'+x[1]+'</span></li>'; }).join('')+'</ul></div>';
 }
+/* Gate-Schrittanzeige (ORISO-Docs#211): acht Schritte P1-P4, R1-R4; der aktuelle ist hervorgehoben, davor liegende sind gefüllt. */
+function gateInfo(name){ var out = null; BoardAgg.GATES.forEach(function(g){ if (g.name===name) out = g; }); return out; }
+function gateTitle(g){ return g.name+': '+L(g.criteria); }
+function gateStepsHTML(x){
+  if (!x.gate) return '';
+  var g = gateInfo(x.gate), t = tt();
+  if (!g) return '<span class="gsteps gunk"><span class="gcode">'+esc(x.gate)+'</span></span>';
+  var dots = BoardAgg.GATES.map(function(h){ return '<i class="gs '+(h.step<g.step?'on':h.step===g.step?'cur':'')+'" data-phase="'+h.phase+'"></i>'; }).join('');
+  return '<span class="gsteps" role="img" aria-label="'+esc(t.gStep(g.step, g.name))+'" title="'+esc(gateTitle(g))+'"><span class="gdots" aria-hidden="true">'+dots+'</span><span class="gcode" aria-hidden="true">'+esc(g.name)+'</span></span>';
+}
+function gateFilterHTML(ev){
+  var t = tt();
+  var opts = [['all', t.gAll], ['none', t.gNone]].concat(BoardAgg.GATES.map(function(g){ return [g.name, g.name]; })).map(function(o){
+    return '<option value="'+esc(o[0])+'"'+(ev.gate===o[0]?' selected':'')+'>'+esc(o[1])+' ('+fmt(ev.gateCounts[o[0]])+')</option>'; }).join('');
+  var legend = BoardAgg.GATES.map(function(g){ return '<li><b>'+esc(g.name)+'</b> '+esc(L(g.criteria))+'</li>'; }).join('');
+  return '<div class="gfilter"><label for="gsel">'+esc(t.gate)+'</label><select id="gsel" data-gfilter>'+opts+'</select></div>'+
+    '<details class="glegend"><summary>'+esc(t.gLegend)+'</summary><ol>'+legend+'</ol></details>';
+}
 var FILTER_KEY = {all:'fAll', accepted:'fAccepted', dev:'fDev', staging:'fStaging', open:'fOpen'};
 /* Seitenansicht eines Epics mit Board-Stand (ORISO-Docs#206): Teilaufgaben nach Status, Filter, Statusleiste. */
 function epicBoardHTML(v){
-  var t = tt(), ev = BOARD && BoardAgg.epicView(MEAS.board, MEAS.epics, v.i, v.f);
+  var t = tt(), ev = BOARD && BoardAgg.epicView(VIEWB || MEAS.board, MEAS.epics, v.i, v.f, v.g);
   if (!ev || (!ev.total && !ev.privateCount)) return '';
   var chips = BoardAgg.FILTERS.map(function(f){
     return '<button type="button" class="tog efilt" data-efilter="'+f+'" aria-pressed="'+(ev.filter===f)+'"><span class="tl">'+esc(t[FILTER_KEY[f]])+'</span> <span class="c">'+fmt(ev.filterCounts[f])+'</span></button>';
@@ -917,11 +937,12 @@ function epicBoardHTML(v){
   var groups = ev.groups.map(function(g){
     var name = g.status ? L2(STATUS_L[g.status]) : t.notOnBoard;
     return '<div class="dgroup egroup"><h5><span>'+(g.status ? '<i class="sw sseg" data-status="'+esc(g.status)+'" data-group="'+g.group+'"></i> ' : '')+esc(name)+'</span><span class="c">'+fmt(g.count)+'</span></h5><ul class="dlist">'+g.items.map(function(x){
-      return '<li><a href="'+esc(x.url)+'" target="_blank" rel="noopener">'+esc(x.title)+'</a><span class="c">'+(x.state==='CLOSED'?'✓ ':'○ ')+esc(x.repository.replace('ORISO-',''))+' #'+x.number+'</span></li>';
+      return '<li'+(x.gate?' class="hasgate"':'')+'><a href="'+esc(x.url)+'" target="_blank" rel="noopener">'+esc(x.title)+'</a><span class="c">'+(x.state==='CLOSED'?'✓ ':'○ ')+esc(x.repository.replace('ORISO-',''))+' #'+x.number+'</span>'+gateStepsHTML(x)+'</li>';
     }).join('')+'</ul></div>';
   }).join('');
   return '<div class="estat" role="group" aria-label="'+esc(t.onBoardBar)+'"><h4>'+esc(t.onBoardBar)+'</h4>'+sbarHTML(ev,'big')+'<ul class="slist">'+legend+'</ul></div>'+
     '<div class="efilters" role="group" aria-label="'+esc(t.filterBy)+'">'+chips+'</div>'+
+    (ev.gateAvailable ? gateFilterHTML(ev) : '')+
     (groups || '<p class="dmeta">'+esc(t.noneShown)+'</p>')+
     (ev.privateCount ? '<p class="dmeta epriv">'+esc(t.privSubs(ev.privateCount))+'</p>' : '');
 }
@@ -1071,6 +1092,8 @@ function wire(root){
       if (to>=0){ e.preventDefault(); chips[to].focus(); }
     });
   });
+  var gs = root.querySelector('[data-gfilter]');
+  if (gs) gs.addEventListener('change', function(){ var v=stack[stack.length-1]; v.g=gs.value; renderView(); var h=(useSheet()?sheetBody:panel).querySelector('[data-gfilter]'); if (h) h.focus({preventScroll:true}); });
   var bk = root.querySelector('[data-back]'); if (bk) bk.addEventListener('click', back);
   var x = root.querySelector('[data-close]'); if (x) x.addEventListener('click', function(){ sheet.close(); });
   var more = root.querySelector('[data-more]'); if (more) more.addEventListener('click', function(){ var v=stack[stack.length-1]; v.n=(v.n||LIMIT)+LIMIT; renderView(); });

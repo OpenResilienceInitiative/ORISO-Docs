@@ -47,7 +47,10 @@
       a.push('--release', intent.release);
       if (intent.withSubIssues) a.push('--with-sub-issues');
       if (intent.expect !== undefined) a.push('--expect', intent.expect === null ? 'none' : intent.expect);
-    } else a.push('--gate', intent.gate);
+    } else {
+      a.push('--gate', intent.gate);
+      if (intent.expect !== undefined) a.push('--expect', intent.expect === null ? 'none' : intent.expect);
+    }
     if (withApply) a.push('--apply');
     return a;
   }

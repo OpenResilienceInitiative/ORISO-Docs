@@ -515,3 +515,20 @@ dialog#movedlg::backdrop{background:rgba(20,16,15,.5)}
 .mvchk{display:flex;gap:10px;align-items:center;font-size:13.5px;min-height:44px}
 .mvchk input{width:20px;height:20px;flex:none}
 .mvbtns{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+
+/* Gate-Schrittanzeige und Gate-Filter (ORISO-Docs#211) */
+.dlist li.hasgate{flex-wrap:wrap}
+.gsteps{flex:0 0 100%;display:flex;align-items:center;gap:8px;min-width:0}
+.gdots{display:inline-flex;gap:3px;align-items:center}
+.gs{display:inline-block;width:9px;height:9px;border-radius:50%;border:1.5px solid var(--ink-3);background:transparent;box-sizing:border-box}
+.gs[data-phase="review"]{border-radius:2px}
+.gs.on{background:var(--ink-3)}
+.gs.cur{background:var(--ink);border-color:var(--ink);box-shadow:0 0 0 2px var(--card),0 0 0 3.5px var(--ink)}
+.gcode{font-family:var(--mono);font-size:11.5px;color:var(--ink-2);overflow-wrap:anywhere}
+.gfilter{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.gfilter label{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.gfilter select{font:inherit;font-size:13px;min-height:44px;padding:6px 8px;border:1px solid var(--line);border-radius:var(--radius);background:var(--paper);color:var(--ink);max-width:100%}
+.gfilter select:focus-visible,.glegend summary:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.glegend{font-size:12.5px;color:var(--ink-2)}
+.glegend summary{cursor:pointer;min-height:32px;display:flex;align-items:center}
+.glegend ol{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
