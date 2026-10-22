@@ -26,3 +26,5 @@ After the first live run, copy `fieldOptions.platformRelease` into `board-contra
 ## Tests
 
 `node --test tools/planning-map/test/*.test.mjs` (recorded-shape fixture in `fixtures/`, page size 2).
+
+Platform release is an org multi-select issue field (read via `IssueFieldMultiSelectValue.options`); more than one value on an issue is flagged in `warnings`. Readiness has no fixed range: `readinessRange` records the observed min/max.

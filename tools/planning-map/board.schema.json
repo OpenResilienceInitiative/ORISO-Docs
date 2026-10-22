@@ -3,7 +3,7 @@
   "$id": "urn:oriso:planning-map:board-schema:v1",
   "title": "ORISO planning map board.json",
   "type": "object",
-  "required": ["schemaVersion", "syncedAt", "source", "totals", "fieldOptions", "statusCounts", "releases", "privateCounts", "items", "warnings"],
+  "required": ["schemaVersion", "syncedAt", "source", "totals", "fieldOptions", "statusCounts", "readinessRange", "releases", "privateCounts", "items", "warnings"],
   "additionalProperties": false,
   "properties": {
     "schemaVersion": { "const": 1 },
@@ -37,6 +37,11 @@
       }
     },
     "statusCounts": { "type": "object", "additionalProperties": { "type": "integer", "minimum": 0 } },
+    "readinessRange": {
+      "type": "object", "additionalProperties": false,
+      "required": ["min", "max"],
+      "properties": { "min": { "type": ["number", "null"] }, "max": { "type": ["number", "null"] } }
+    },
     "releases": {
       "type": "array",
       "items": {

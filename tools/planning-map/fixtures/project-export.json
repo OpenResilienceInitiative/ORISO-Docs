@@ -86,7 +86,7 @@
               ]
             },
             {
-              "__typename": "IssueFieldSingleSelect",
+              "__typename": "IssueFieldMultiSelect",
               "name": "Platform release",
               "options": [
                 {
@@ -164,8 +164,12 @@
                             }
                           },
                           {
-                            "__typename": "IssueFieldSingleSelectValue",
-                            "name": "v2.0.12",
+                            "__typename": "IssueFieldMultiSelectValue",
+                            "options": [
+                              {
+                                "name": "v2.0.12"
+                              }
+                            ],
                             "field": {
                               "name": "Platform release"
                             }
@@ -181,7 +185,7 @@
                       "name": "In progress"
                     },
                     "readiness": {
-                      "number": 11
+                      "number": 19
                     },
                     "content": {
                       "__typename": "Issue",
@@ -205,6 +209,20 @@
                             "name": "Urgent",
                             "field": {
                               "name": "Priority"
+                            }
+                          },
+                          {
+                            "__typename": "IssueFieldMultiSelectValue",
+                            "options": [
+                              {
+                                "name": "v2.0.12"
+                              },
+                              {
+                                "name": "v2.0.13"
+                              }
+                            ],
+                            "field": {
+                              "name": "Platform release"
                             }
                           }
                         ]
@@ -358,8 +376,12 @@
                       "issueFieldValues": {
                         "nodes": [
                           {
-                            "__typename": "IssueFieldSingleSelectValue",
-                            "name": "v2.0.13",
+                            "__typename": "IssueFieldMultiSelectValue",
+                            "options": [
+                              {
+                                "name": "v2.0.13"
+                              }
+                            ],
                             "field": {
                               "name": "Platform release"
                             }

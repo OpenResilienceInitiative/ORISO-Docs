@@ -27,6 +27,7 @@ query($owner: String!, $number: Int!, $after: String) {
                 nodes {
                   __typename
                   ... on IssueFieldSingleSelectValue { name field { ... on IssueFieldSingleSelect { name } } }
+                  ... on IssueFieldMultiSelectValue { options { name } field { ... on IssueFieldMultiSelect { name } } }
                 }
               }
             }
@@ -55,7 +56,11 @@ query($owner: String!, $number: Int!) {
       }
     }
     issueFields(first: 50) {
-      nodes { __typename ... on IssueFieldSingleSelect { name options { name } } }
+      nodes {
+        __typename
+        ... on IssueFieldSingleSelect { name options { name } }
+        ... on IssueFieldMultiSelect { name options { name } }
+      }
     }
   }
 }`;
