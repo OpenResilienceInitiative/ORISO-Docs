@@ -99,7 +99,7 @@
       },
       "priority": "Urgent",
       "effort": "S",
-      "platformRelease": null
+      "platformRelease": "v2.0.12"
     },
     {
       "id": "I3",
@@ -159,7 +159,7 @@
       },
       "priority": "High",
       "effort": "M",
-      "platformRelease": null
+      "platformRelease": "v2.0.12"
     },
     {
       "id": "I6",
@@ -199,7 +199,7 @@
       },
       "priority": "Urgent",
       "effort": "S",
-      "platformRelease": null
+      "platformRelease": "v2.0.13"
     },
     {
       "id": "I8",

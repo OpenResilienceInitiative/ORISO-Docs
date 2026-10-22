@@ -431,3 +431,48 @@ html[data-lang="de"] .wasist [lang="en"]{display:inline !important}
 .blegend span{display:inline-flex;align-items:center;gap:6px}
 .sbar.card{height:8px;margin-top:8px}
 .cbadges{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+
+/* Meilensteine und Releases (ORISO-Docs#209): linke Seitenleiste, ab 1560px breite ein Schubfach */
+.mapcols{display:grid;grid-template-columns:272px minmax(0,1fr);gap:20px;align-items:start}
+.relopen{display:none}
+.relback{display:none}
+.relpanel{position:sticky;top:12px;background:var(--card);border:1px solid var(--line);border-top:4px solid var(--brand);border-radius:var(--radius);padding:14px 14px 16px;display:grid;gap:12px;max-height:calc(100vh - 24px);overflow-y:auto;overscroll-behavior:contain;min-width:0;align-content:start}
+.relpanel[hidden]{display:none}
+.relhead{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.relhead h3{margin:0;font-size:14px}
+.relclose{display:none;appearance:none;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:20px;line-height:1;width:44px;height:44px;border-radius:var(--radius);cursor:pointer}
+#relbody{display:grid;gap:14px;min-width:0}
+.rlive{margin:0;font-size:12.5px;color:var(--ink-2)}
+.rclear{justify-self:start;appearance:none;border:1px solid var(--brand-line);background:var(--brand-wash);color:var(--brand-deep);font:inherit;font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:999px;cursor:pointer;min-height:36px}
+.rclear[hidden]{display:none}
+.ms{display:grid;gap:8px;min-width:0}
+.mh{margin:0;display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.rname{font-weight:700;overflow-wrap:anywhere}
+.rcount{font-size:11.5px;font-weight:500;color:var(--ink-2);white-space:nowrap}
+.rels{display:grid;gap:8px}
+.relc{appearance:none;display:grid;gap:6px;text-align:left;font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:9px 10px;cursor:pointer;min-width:0;min-height:44px}
+.relc[aria-pressed="true"]{border-color:var(--brand);background:var(--brand-wash);box-shadow:inset 0 0 0 1px var(--brand)}
+.relc:focus-visible,.rclear:focus-visible,.relopen:focus-visible,.relclose:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.relc.zero{color:var(--ink-2)}
+.rhead{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.sbar.rsbar{height:8px;border-radius:4px;margin:0;background:var(--sunken)}
+.rfacts{display:flex;flex-wrap:wrap;gap:3px}
+.rfacts:empty{display:none}
+.reff{font-size:12.5px}
+.reff .raw{color:var(--ink-2)}
+.rcaps,.rnone{font-size:12px;color:var(--ink-2);margin:0}
+.rcaps:empty{display:none}
+.tm.relf .blk:not(.relhit){opacity:.22}
+.tm.relf .blk.relhit{opacity:1;box-shadow:inset 0 0 0 3px var(--brand);z-index:2}
+@media (max-width:1560px){
+  .mapcols{grid-template-columns:minmax(0,1fr)}
+  .relopen{display:inline-flex;align-items:center;justify-self:start;appearance:none;border:1px solid var(--brand-line);background:var(--brand-wash);color:var(--brand-deep);font:inherit;font-size:13.5px;font-weight:600;padding:8px 16px;border-radius:999px;cursor:pointer;min-height:44px}
+  .relopen[hidden]{display:none}
+  .relclose{display:inline-flex;align-items:center;justify-content:center}
+  .relpanel{position:fixed;z-index:60;top:0;bottom:0;left:0;width:min(340px,92vw);max-height:none;border-radius:0 var(--radius) var(--radius) 0;transform:translateX(-102%);visibility:hidden;transition:transform 200ms ease,visibility 0s linear 200ms}
+  .relpanel.open{transform:none;visibility:visible;transition:transform 200ms ease}
+  .relback{position:fixed;z-index:55;inset:0;background:rgba(0,0,0,.45)}
+  .relback:not([hidden]){display:block}
+}
+@media (prefers-reduced-motion:reduce){ .relpanel{transition:none !important} }
+@media (min-width:1561px){ main.wrap{max-width:1560px} }

@@ -610,7 +610,7 @@ function drawMap(animFrom){
       root.style.transform='none'; root.style.opacity='1';
     }
   }
-  applyLayers(); markSel(); drawZbar(st);
+  applyLayers(); markSel(); drawZbar(st); if (typeof markRelease === 'function' && RSCOPE) markRelease();
   document.getElementById('stagefoot').innerHTML = rampLegend() + '<span>'+esc(tt().area(layers.t?'show':'hide'))+'</span>' + boardLegend();
 }
 function rampLegend(){
@@ -1153,13 +1153,100 @@ function drawMeas(){
      '<div><b>Estimated:</b> the split of new lines into commissioned and additional (ratio of the building blocks’ test counts in the service overview), the assignment of epics to blocks (by title) and the epics’ stage (from completed sub-issues instead of maturity). This counts quantity, not quality.</div>');
 }
 
+/* ───────── Meilensteine und Releases (ORISO-Docs#209): linke Seitenleiste, schreibgeschützt ───────── */
+var RSCOPE = (typeof BoardAgg !== 'undefined') ? BoardAgg.releases(MEAS.board || null, MEAS.epics) : null;
+var MSV = (RSCOPE && MEAS.milestones) ? BoardAgg.milestones(MEAS.milestones, RSCOPE) : null;
+var relSel = null, relHit = {};
+var PRIO_L = {Urgent:['Dringend','Urgent'], High:['Hoch','High'], Medium:['Mittel','Medium'], Low:['Niedrig','Low'], none:['ohne Priorität','no priority']};
+function relTitle(m){ return m.title ? L(m.title) : m.id; }
+function relFacts(sc){
+  var st = sc.segments.filter(function(g){ return g.count>0; }).map(function(g){ return '<span class="bb">'+esc(L2(STATUS_L[g.status]))+' '+fmt(g.count)+'</span>'; }).join('');
+  if (sc.noStatus) st += '<span class="bb">'+(de()?'ohne Status ':'no status ')+fmt(sc.noStatus)+'</span>';
+  var pr = ['Urgent','High','Medium','Low','none'].filter(function(k){ return sc.priority[k]>0; }).map(function(k){ return '<span class="bb">'+esc(L2(PRIO_L[k]))+' '+fmt(sc.priority[k])+'</span>'; }).join('');
+  var e = sc.effort, parts = ['S','M','L'].filter(function(k){ return e[k]>0; }).map(function(k){ return k+' '+fmt(e[k]); });
+  if (e.none) parts.push(fmt(e.none)+(de()?' ohne Aufwand':' unsized'));
+  return '<div class="rfacts" aria-label="'+esc(de()?'Status':'Status')+'">'+st+'</div>'+
+    '<div class="rfacts" aria-label="'+esc(de()?'Priorität':'Priority')+'">'+pr+'</div>'+
+    '<div class="reff"><b>'+fmt(e.days)+'</b> '+(de()?'Personentage':'person-days')+(parts.length ? ' <span class="raw">('+esc(parts.join(' · '))+')</span>' : '')+'</div>';
+}
+function relScopeHTML(sc, isRel){
+  var empty = sc.total===0;
+  var head = '<span class="rname">'+esc(isRel ? sc.name : relTitle(sc))+'</span><span class="rcount">'+fmt(sc.total)+(de()?(sc.total===1?' Aufgabe':' Aufgaben'):(sc.total===1?' issue':' issues'))+'</span>';
+  var body = empty ? '<p class="rnone">'+(de()?'Keine Aufgaben auf dem Board.':'No issues on the board.')+'</p>' : sbarHTML(sc,'rsbar')+relFacts(sc);
+  return {head:head, body:body};
+}
+function relCard(sc){
+  var s = relScopeHTML(sc, true), b = el('button','relc'+(sc.total?'':' zero')); b.type='button';
+  b.dataset.release = sc.name; b.setAttribute('aria-pressed', relSel===sc.name ? 'true' : 'false');
+  b.innerHTML = '<span class="rhead">'+s.head+'</span>'+s.body+
+    '<span class="rcaps">'+(sc.capabilities.length ? fmt(sc.capabilities.length)+(de()?(sc.capabilities.length===1?' Fähigkeit':' Fähigkeiten'):(sc.capabilities.length===1?' capability':' capabilities')) : (sc.total ? (de()?'keiner Fähigkeit zugeordnet':'not mapped to a capability') : ''))+'</span>';
+  b.addEventListener('click', function(){ setRelease(relSel===sc.name ? null : sc.name); if (relMobile()) closeRel(true); });
+  return b;
+}
+function drawRelPanel(){
+  var body = document.getElementById('relbody'); if (!body) return;
+  var open = document.getElementById('relopen'), pan = document.getElementById('relpanel');
+  if (!MSV){ pan.hidden = true; open.hidden = true; return; }
+  body.innerHTML = '';
+  var live = el('p','rlive'); live.id = 'rellive'; live.setAttribute('role','status');
+  body.appendChild(live);
+  var clr = el('button','rclear', de()?'Filter aufheben':'Clear filter'); clr.type='button'; clr.id='relclear'; clr.hidden = relSel===null;
+  clr.addEventListener('click', function(){ setRelease(null); });
+  body.appendChild(clr);
+  MSV.milestones.forEach(function(m){
+    var sec = el('section','ms'), s = relScopeHTML(m, false);
+    sec.innerHTML = '<h3 class="mh">'+s.head+'</h3>'+(m.total ? s.body : '');
+    var list = el('div','rels'); m.releases.forEach(function(r){ list.appendChild(relCard(r)); });
+    sec.appendChild(list); body.appendChild(sec);
+  });
+  if (MSV.unlisted.length){
+    var u = el('section','ms'); u.innerHTML = '<h3 class="mh"><span class="rname">'+(de()?'Nicht zugeordnet':'Not assigned')+'</span></h3><p class="rnone">'+(de()?'Diese Releases stehen auf dem Board, aber noch in keinem Meilenstein (milestones.json).':'These releases are on the board but in no milestone yet (milestones.json).')+'</p>';
+    var ul = el('div','rels'); MSV.unlisted.forEach(function(r){ ul.appendChild(relCard(r)); }); u.appendChild(ul); body.appendChild(u);
+  }
+  if (!MEAS.board) body.insertAdjacentHTML('afterbegin', '<p class="rnone">'+(de()?'Board noch nicht synchronisiert: alle Zahlen sind null.':'Board not synced yet: all figures are zero.')+'</p>');
+  body.insertAdjacentHTML('beforeend', '<p class="bnote">'+(de()?'Aufwand: S = 2, M = 4, L = 8 Personentage; Aufgaben ohne Aufwand zählen nicht mit. Nur Lesen: Releases werden im Board gepflegt, die Gruppierung in tools/planning-map/milestones.json.':'Effort: S = 2, M = 4, L = 8 person-days; issues without effort are not counted. Read-only: releases are kept on the board, the grouping in tools/planning-map/milestones.json.')+'</p>');
+  relStatus();
+}
+function relStatus(){
+  var live = document.getElementById('rellive'); if (!live) return;
+  live.textContent = relSel===null ? (de()?'Release wählen, um die berührten Fähigkeiten auf der Karte hervorzuheben.':'Pick a release to highlight the capabilities it touches on the map.')
+    : relSel+': '+fmt(BoardAgg.releaseCapabilities(RSCOPE, relSel).length)+(de()?' Fähigkeit(en) hervorgehoben (Übersichtsebene).':' capability(ies) highlighted (overview level).');
+}
+function markRelease(){
+  var on = relSel!==null;
+  relHit = {}; BoardAgg.releaseCapabilities(RSCOPE, relSel).forEach(function(id){ relHit[id] = true; });
+  tm.classList.toggle('relf', on);
+  Array.prototype.forEach.call(tm.querySelectorAll('.blk'), function(e){ e.classList.toggle('relhit', on && e.dataset.id!==undefined && relHit[e.dataset.id]===true); });
+}
+function setRelease(name){
+  relSel = name;
+  Array.prototype.forEach.call(document.querySelectorAll('#relbody .relc'), function(b){ b.setAttribute('aria-pressed', b.dataset.release===relSel ? 'true' : 'false'); });
+  var c = document.getElementById('relclear'); if (c) c.hidden = relSel===null;
+  markRelease(); relStatus();
+}
+function relMobile(){ return window.matchMedia('(max-width:1560px)').matches; }
+function openRel(){
+  var p = document.getElementById('relpanel'); p.classList.add('open'); document.getElementById('relback').hidden = false;
+  document.getElementById('relopen').setAttribute('aria-expanded','true'); document.getElementById('relclose').focus();
+}
+function closeRel(noFocus){
+  var p = document.getElementById('relpanel'); if (!p.classList.contains('open')) return;
+  p.classList.remove('open'); document.getElementById('relback').hidden = true;
+  var o = document.getElementById('relopen'); o.setAttribute('aria-expanded','false'); if (!noFocus) o.focus();
+}
+document.getElementById('relopen').addEventListener('click', openRel);
+document.getElementById('relclose').addEventListener('click', function(){ closeRel(); });
+document.getElementById('relback').addEventListener('click', function(){ closeRel(); });
+document.addEventListener('keydown', function(e){ if (e.key==='Escape') closeRel(); });
+window.matchMedia('(max-width:1560px)').addEventListener('change', function(q){ if (!q.matches) closeRel(true); });
+
 /* ───────── Sprache und Start ───────── */
 function setLang(l){
   lang=l;
   renderAll();
 }
 document.addEventListener('oriso:languagechange', function(e){ if (e.detail && (e.detail.lang==='de'||e.detail.lang==='en') && e.detail.lang!==lang) setLang(e.detail.lang); });
-function renderAll(){ drawTotals(); drawControls(); drawMap(); drawPlanned(); drawCards(); drawKpis(); drawHow(); drawMeas(); if (stack.length) renderView(); else renderEmpty(); }
+function renderAll(){ drawRelPanel(); drawTotals(); drawControls(); drawMap(); drawPlanned(); drawCards(); drawKpis(); drawHow(); drawMeas(); if (stack.length) renderView(); else renderEmpty(); }
 var rt=null, lastW=0;
 window.addEventListener('resize', function(){ clearTimeout(rt); rt=setTimeout(function(){ if (tm.clientWidth!==lastW){ lastW=tm.clientWidth; drawMap(); } },120); });
 renderAll(); lastW = tm.clientWidth;
@@ -1170,7 +1257,7 @@ renderAll(); lastW = tm.clientWidth;
    (Erzeuger: build-map-data.mjs). OPTIONAL_DATA sind Dateien, die nur geladen werden, wenn links.json sie
    unter "optional" meldet; ihr Inhalt liegt in MEAS unter dem Dateinamen ohne .json (board.json wird zu MEAS.board). */
 var DATA_FILES = ['counts.json', 'descriptions.json', 'drill.json', 'epics.json', 'links.json', 'zoom.json'];
-var OPTIONAL_DATA = ['board.json'];
+var OPTIONAL_DATA = ['board.json', 'milestones.json'];
 function fetchJson(name, optional){
   return fetch('/map/data/' + name, {credentials: 'same-origin'}).then(function(r){
     if (!r.ok){ if (optional) return null; throw new Error(name + ' ' + r.status); }

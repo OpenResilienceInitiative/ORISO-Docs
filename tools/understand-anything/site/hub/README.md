@@ -127,3 +127,13 @@ How `board.json` reaches the page, and why:
   re-installs the hub, which this change deliberately does not add.
 - Without the secret `ORISO_BOARD_READ_TOKEN` the workflow runs on the recorded fixture and
   publishes nothing. Exit code 2 of the export (drift) fails the run.
+
+### Milestones and releases panel (ORISO-Docs#209)
+
+Left side panel of the map: reviewed milestones (`tools/planning-map/milestones.json`, validated by
+`lib/milestones.mjs`) with their Platform releases. Each release shows counts by status and priority and
+the summed effort (S = 2, M = 4, L = 8 person-days; issues without effort are counted apart, not guessed).
+Picking a release highlights the capabilities it touches (overview level). Aggregation lives in `map/board-agg.js`
+(`releases`, `milestones`, `releaseCapabilities`). The config ships as optional `map/data/milestones.json`
+(`publication.mjs` `milestonesAsset`). Releases on the board but not in the config appear under "Not assigned".
+Docked at 1561 px and wider; below that it is a drawer opened by the "Releases" button.
