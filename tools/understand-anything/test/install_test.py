@@ -14,7 +14,7 @@ class InstallerTests(unittest.TestCase):
         (self.source/'ua-pull.sh').write_text('fixture');(self.source/'ua-dashboard.sh').write_text('fixture')
         (self.source/'skills/oriso-graph').mkdir(parents=True);(self.source/'skills/oriso-graph/SKILL.md').write_text('fixture')
         (self.source/'hosted-viewer').mkdir()
-        for name in ['source-location.mjs','source-location.d.mts']:(self.source/'hosted-viewer'/name).write_text('fixture module')
+        for name in ['source-location.mjs','source-location.d.mts','deep-link.mjs','deep-link.d.mts']:(self.source/'hosted-viewer'/name).write_text('fixture module')
         self.root=self.base/'runtime';self.profile=self.base/'profile'
     def tearDown(self): self.temp.cleanup()
     def install(self):

@@ -95,3 +95,7 @@ and `car15` as `.json` files (see `test/fixtures/map-inputs/`). Output is
 deterministic. `test/map-render.test.mjs` renders the page from
 `test/fixtures/map-data/` in a browser under a strict CSP; it needs Playwright
 (`UA_PLAYWRIGHT=/path/to/playwright/index.mjs`) and is skipped without it.
+
+### Deep links
+
+Every capability, folder and file in the map links to its Understand node (`?node=<id>` on the viewer; ids `capability:<slug>`, `<repo>::folder:<dir>`, `<repo>::file:<path>`). The viewer links back with `/map/#node=<id>`: the map zooms to that capability, folder or file, and an unknown id shows a "not found" notice above the controls (`.map-notfound`).
