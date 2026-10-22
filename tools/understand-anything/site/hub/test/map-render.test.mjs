@@ -22,7 +22,7 @@ function serve() {
     // board.json (optional data) is announced by a patched links.json and served from its own fixture.
     if (url === '/map/data/links.json' || url === '/map/data/epics.json') {
       const doc = JSON.parse(readFileSync(fixtures + url.slice('/map/data/'.length), 'utf8'));
-      if (url.endsWith('links.json')) doc.optional = ['board.json']; else doc.epics.epics[0].subs = [[1, 900, 'Mapped through the epic sub-issue list', 'o']];
+      if (url.endsWith('links.json')) doc.optional = ['board.json']; else { doc.epics.epics[0].subs = [[1, 900, 'Mapped through the epic sub-issue list', 'o']]; doc.epics.epics[0].hid = 2; }
       res.setHeader('content-type', types['.json']); res.setHeader('content-security-policy', CSP); return res.end(JSON.stringify(doc));
     }
     if (url === '/map/data/board.json') { res.setHeader('content-type', types['.json']); res.setHeader('content-security-policy', CSP); return res.end(readFileSync(fixtures + '../board.json')); }
@@ -208,6 +208,32 @@ test('a block with findings shows a badge with the count; blocks without any sho
   await context.close();
 });
 
+// ───────── Epic side view (ORISO-Docs#206) ─────────
+const EPIC = '#pgrid .epic';
+async function openEpic(page) {
+  await page.locator(EPIC).first().click();
+  await page.locator('.pd .estat').waitFor();
+}
+const listed = page => page.locator('.pd .egroup li a').evaluateAll(a => a.map(x => x.textContent));
+
+test('clicking an epic opens the side view: sub-issues by status, stacked bar, GitHub links, private items as a count', {skip}, async () => {
+  const {page, problems, context} = await open({lang: 'en'});
+  await openEpic(page);
+  assert.equal(await page.locator('#sheet[open]').count(), 0); // desktop: the side panel, not the sheet
+  assert.deepEqual(await page.locator('#panel .estat .sbar .sseg').evaluateAll(a => a.map(s => s.dataset.status)), ['Backlog', 'Ready', 'On hold', 'In progress', 'In review', 'QA internal', 'QA external', 'Done']);
+  await page.waitForFunction(() => document.querySelectorAll('#panel [data-css]').length === 0);
+  assert.deepEqual(await page.locator('#panel .estat .sbar .sseg').evaluateAll(a => a.map(s => s.style.width)), ['11.11%', '11.11%', '11.11%', '11.11%', '11.11%', '11.11%', '11.11%', '22.22%']);
+  assert.deepEqual((await page.locator('#panel .egroup h5 > span:first-child').allInnerTexts()).map(x => x.trim()), ['Backlog', 'Ready', 'On hold', 'In progress', 'In review', 'QA internal', 'QA external', 'Done']);
+  const links = await page.locator('#panel .egroup li a').evaluateAll(a => a.map(x => [x.getAttribute('href'), x.rel, x.target]));
+  assert.equal(links.length, 9);
+  assert.ok(links.every(([h, rel, t]) => /^https:\/\/github\.com\/OpenResilienceInitiative\/ORISO-(Frontend|Admin)\/issues\/\d+$/.test(h) && /noopener/.test(rel) && t === '_blank'));
+  assert.match(await page.locator('#panel .epriv').innerText(), /2 sub-issue\(s\) in a private repository.*count/i);
+  assert.equal(await page.locator('#panel').getByText('E2E').count(), 0);
+  assert.equal(await page.locator('#panel [style]').evaluateAll(a => a.filter(x => !x.classList.contains('sseg') && !x.closest('.prog') && !x.closest('.em')).length), 0);
+  assert.deepEqual(problems, []);
+  await context.close();
+});
+
 test('the detail panel lists the flagged issues with their finding, in English and German', {skip}, async () => {
   for (const [lang, a, b] of [['en', /Stalled in QA internal: 30 days \(limit 7\)/, /QA external without BjoernLudwig/], ['de', /Stillstand in QA intern: 30 Tage \(Grenze 7\)/, /QA extern ohne BjoernLudwig/]]) {
     const {page, context} = await open({lang});
@@ -230,5 +256,93 @@ test('on a phone the findings badge shows on the card and the sheet lists them',
   await page.locator('#sheetBody .flist').waitFor();
   const m = await page.evaluate(() => ({s: document.documentElement.scrollWidth, c: document.documentElement.clientWidth}));
   assert.ok(m.s <= m.c);
+  await context.close();
+});
+
+test('each filter keeps only its items: accepted, developed on Dev, on Staging, open', {skip}, async () => {
+  const {page, context} = await open({lang: 'en'});
+  await openEpic(page);
+  const pick = async name => { await page.locator('#panel .efilters button', {hasText: name}).click(); await page.waitForSelector('#panel .efilters [aria-pressed="true"]'); };
+  await pick('Accepted');
+  assert.deepEqual(await listed(page), ['Child g', 'Child h']);
+  await pick('Developed on Dev');
+  assert.deepEqual(await listed(page), ['Child e']);
+  await pick('On Staging');
+  assert.deepEqual(await listed(page), ['Child f']);
+  await pick('Open');
+  assert.equal((await listed(page)).length, 7);
+  assert.equal(await page.locator('#panel .egroup h5', {hasText: 'Done'}).count(), 0);
+  await pick('All');
+  assert.equal((await listed(page)).length, 9);
+  assert.equal(await page.locator('#panel .efilters [aria-pressed="true"]').count(), 1);
+  assert.match(await page.locator('#panel .efilters [aria-pressed="true"]').innerText(), /All\s*9/);
+  await context.close();
+});
+
+test('keyboard: arrow keys move between filters, Enter picks one and keeps focus, Escape closes the side view', {skip}, async () => {
+  const {page, context} = await open({lang: 'en'});
+  await openEpic(page);
+  await page.locator('#panel .efilters button').first().focus();
+  await page.keyboard.press('ArrowRight');
+  assert.match(await page.evaluate(() => document.activeElement.textContent), /Accepted/);
+  await page.keyboard.press('Enter');
+  assert.deepEqual(await listed(page), ['Child g', 'Child h']);
+  assert.match(await page.evaluate(() => document.activeElement.textContent), /Accepted/); // focus survives the re-render
+  await page.keyboard.press('End');
+  assert.match(await page.evaluate(() => document.activeElement.textContent), /Open/);
+  await page.keyboard.press('Home');
+  assert.match(await page.evaluate(() => document.activeElement.textContent), /All/);
+  await page.keyboard.press('Escape');
+  assert.equal(await page.locator('#panel .estat').count(), 0);
+  assert.equal(await page.evaluate(() => document.activeElement.classList.contains('epic')), true); // focus returns to the epic card
+  await context.close();
+});
+
+for (const width of [390, 320]) {
+  test(`on a ${width} px phone the epic opens as a bottom sheet that closes with Escape and with a swipe down`, {skip}, async () => {
+    const {page, context, problems} = await open({width, lang: 'en'});
+    await openEpic(page);
+    await page.locator('#sheet[open]').waitFor();
+    const box = await page.locator('#sheet .sheet-in').boundingBox();
+    assert.ok(Math.abs(box.y + box.height - 900) <= 1, 'sheet sits at the bottom edge: ' + JSON.stringify(box));
+    assert.ok(box.width <= width);
+    await page.locator('#sheet .efilters button', {hasText: 'Developed on Dev'}).click();
+    assert.deepEqual(await listed(page), ['Child e']);
+    const m = await page.evaluate(() => ({s: document.documentElement.scrollWidth, c: document.documentElement.clientWidth, e: document.getElementById('sheetIn').scrollWidth, ec: document.getElementById('sheetIn').clientWidth}));
+    assert.ok(m.s <= m.c && m.e <= m.ec, JSON.stringify(m));
+    await page.keyboard.press('Escape');
+    assert.equal(await page.locator('#sheet[open]').count(), 0);
+    await openEpic(page);
+    await page.locator('#sheet[open]').waitFor();
+    await page.evaluate(() => {
+      const t = (type, y) => document.getElementById('sheetIn').dispatchEvent(new TouchEvent(type, {bubbles: true, cancelable: true, touches: type === 'touchend' ? [] : [new Touch({identifier: 1, target: document.getElementById('sheetIn'), clientX: 100, clientY: y})], changedTouches: [new Touch({identifier: 1, target: document.getElementById('sheetIn'), clientX: 100, clientY: y})]}));
+      t('touchstart', 500); t('touchmove', 600); t('touchend', 640);
+    });
+    await page.waitForFunction(() => !document.getElementById('sheet').open);
+    assert.deepEqual(problems, []);
+    await context.close();
+  });
+}
+
+test('German labels, and the epic bar uses the shared status tokens in dark mode', {skip}, async () => {
+  const {page, context} = await open({lang: 'de', scheme: 'dark'});
+  await openEpic(page);
+  assert.deepEqual(await page.locator('#panel .efilters button').allInnerTexts().then(a => a.map(x => x.replace(/\s+/g, ' ').trim())),
+    ['Alle 9', 'Abgenommen (Fertig) 2', 'Auf Dev entwickelt (QA intern) 1', 'Auf Staging (QA extern) 1', 'Offen 7']);
+  assert.match(await page.locator('#panel .epriv').innerText(), /2 Teilaufgabe\(n\) in einem privaten Repository/);
+  const tokens = JSON.parse(readFileSync(hub + 'assets/tokens.json', 'utf8')).tokens;
+  const rgb = hex => 'rgb(' + [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16)).join(', ') + ')';
+  const done = await page.locator('#panel .estat .sbar .sseg[data-status="Done"]').evaluate(e => getComputedStyle(e).backgroundColor);
+  assert.equal(done, rgb(tokens['status-done'].dark.fill));
+  await context.close();
+});
+
+test('1440 px: the epic panel stays beside the map, no horizontal overflow', {skip}, async () => {
+  const {page, context} = await open({width: 1440, lang: 'en'});
+  await openEpic(page);
+  const m = await page.evaluate(() => ({s: document.documentElement.scrollWidth, c: document.documentElement.clientWidth}));
+  assert.ok(m.s <= m.c);
+  const r = await page.locator('#panel').boundingBox();
+  assert.ok(r.x > 700 && r.x + r.width <= 1440, JSON.stringify(r));
   await context.close();
 });

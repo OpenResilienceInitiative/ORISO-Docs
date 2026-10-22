@@ -437,3 +437,9 @@ html[data-lang="de"] .wasist [lang="en"]{display:inline !important}
 .flist{list-style:none;margin:0;padding:0;display:grid;gap:8px;font-size:12.5px}
 .flist ul{margin:2px 0 0;padding-left:18px;color:var(--warn)}
 .flist a{color:inherit;font-weight:600;overflow-wrap:anywhere}
+
+/* Epic-Seitenansicht (ORISO-Docs#206) */
+.estat h4{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-weight:700}
+.efilters{display:flex;flex-wrap:wrap;gap:6px}
+.efilt .c{font-family:var(--mono);font-size:11.5px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.egroup h5 .sw{display:inline-block;vertical-align:-1px;margin-right:4px;width:10px;height:10px;border-radius:3px}

@@ -93,6 +93,7 @@ counts issues per Status, Urgent/High and Readiness (average of scored issues, r
 scale, board-wide maximum, count of unscored). Colours come from `assets/tokens.css`
 (`--ua-status-*`); widths are set through `data-css` + CSSOM, never style attributes.
 Without `board.json` the page shows no bars. `map/data/board.json` is produced by
+Epic side view (#206): clicking an epic opens its sub-issues by board status (`BoardAgg.epicView`, same epic links as above) with a stacked bar and the filters accepted (Done), developed on Dev (QA internal), on Staging (QA external) and open. Side panel on desktop, bottom sheet on phones (Esc or swipe down closes). Private sub-issues appear only as the epic's `hid` count.
 `tools/planning-map/export-board.mjs` and is not committed.
 
 Regenerate the data from the measured intermediate files (code counts, tests,
