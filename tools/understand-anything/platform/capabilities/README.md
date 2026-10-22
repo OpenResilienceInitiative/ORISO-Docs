@@ -1,7 +1,7 @@
 # Capability rules
 
 `capability-rules.json` maps `(repo, path)` to exactly one capability id (the feature-page slugs on
-understand.oriso.org, plus the explicit `shared` bucket). Epic ORISO-Docs#197, ticket #198.
+the Understand site, plus the explicit `shared` bucket). Epic ORISO-Docs#197, ticket #198.
 
 - `rules`: directory prefixes. `overrides`: more specific prefixes or single files; they beat rules.
 - Longest match wins within a tier. Equal-length conflicts and unmatched production files fail
