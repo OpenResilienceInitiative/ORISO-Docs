@@ -125,3 +125,50 @@ tools/understand-anything/glossary/sources/naming-audit.md # Dated audit documen
 tools/understand-anything/site/hub/glossary/index.html # Generated glossary retains canonical ORISO Docs navigation
 tools/understand-anything/site/hub/render-glossary.mjs # Glossary renderer links ORISO own canonical public documentation
 tools/understand-anything/site/hub/test/language.test.mjs # Regression fixture verifies canonical ORISO Docs navigation across DE and EN
+
+# Feature pages that link to ORISO's own Storybook catalogues on the Dev host, generated with their DE/EN counterparts.
+product/features/encryption-keys.mdx # links to ORISO own Storybook stories for this feature
+product/features/feature-permissions.mdx # links to ORISO own Storybook stories for this feature
+product/features/invitations-onboarding.mdx # links to ORISO own Storybook stories for this feature
+product/features/legal-texts.mdx # links to ORISO own Storybook stories for this feature
+product/features/live-chat.mdx # links to ORISO own Storybook stories for this feature
+product/features/notifications.mdx # links to ORISO own Storybook stories for this feature
+product/features/self-help-groups.mdx # links to ORISO own Storybook stories for this feature
+product/features/team-consultation.mdx # links to ORISO own Storybook stories for this feature
+product/features/training-tours.mdx # links to ORISO own Storybook stories for this feature
+site/content/docs/produkt/core-features/encryption-keys.de.mdx # links to ORISO own Storybook stories for this feature
+site/content/docs/produkt/core-features/encryption-keys.en.mdx # links to ORISO own Storybook stories for this feature
+site/content/docs/produkt/core-features/feature-permissions.de.mdx # links to ORISO own Storybook stories for this feature
+site/content/docs/produkt/core-features/feature-permissions.en.mdx # links to ORISO own Storybook stories for this feature
+site/content/docs/produkt/core-features/invitations-onboarding.de.mdx # links to ORISO own Storybook stories for this feature
+site/content/docs/produkt/core-features/invitations-onboarding.en.mdx # links to ORISO own Storybook stories for this feature
+site/content/docs/produkt/core-features/legal-texts.de.mdx # links to ORISO own Storybook stories for this feature
+site/content/docs/produkt/core-features/legal-texts.en.mdx # links to ORISO own Storybook stories for this feature
+site/content/docs/produkt/core-features/live-chat.de.mdx # links to ORISO own Storybook stories for this feature
+site/content/docs/produkt/core-features/live-chat.en.mdx # links to ORISO own Storybook stories for this feature
+site/content/docs/produkt/core-features/notifications.de.mdx # links to ORISO own Storybook stories for this feature
+site/content/docs/produkt/core-features/notifications.en.mdx # links to ORISO own Storybook stories for this feature
+site/content/docs/produkt/core-features/self-help-groups.de.mdx # links to ORISO own Storybook stories for this feature
+site/content/docs/produkt/core-features/self-help-groups.en.mdx # links to ORISO own Storybook stories for this feature
+site/content/docs/produkt/core-features/team-consultation.de.mdx # links to ORISO own Storybook stories for this feature
+site/content/docs/produkt/core-features/team-consultation.en.mdx # links to ORISO own Storybook stories for this feature
+site/content/docs/produkt/core-features/training-tours.de.mdx # links to ORISO own Storybook stories for this feature
+site/content/docs/produkt/core-features/training-tours.en.mdx # links to ORISO own Storybook stories for this feature
+site/translations/de/product/features/encryption-keys.mdx # links to ORISO own Storybook stories for this feature
+site/translations/de/product/features/feature-permissions.mdx # links to ORISO own Storybook stories for this feature
+site/translations/de/product/features/invitations-onboarding.mdx # links to ORISO own Storybook stories for this feature
+site/translations/de/product/features/legal-texts.mdx # links to ORISO own Storybook stories for this feature
+site/translations/de/product/features/live-chat.mdx # links to ORISO own Storybook stories for this feature
+site/translations/de/product/features/notifications.mdx # links to ORISO own Storybook stories for this feature
+site/translations/de/product/features/self-help-groups.mdx # links to ORISO own Storybook stories for this feature
+site/translations/de/product/features/team-consultation.mdx # links to ORISO own Storybook stories for this feature
+site/translations/de/product/features/training-tours.mdx # links to ORISO own Storybook stories for this feature
+site/translations/en/product/features/encryption-keys.mdx # links to ORISO own Storybook stories for this feature
+site/translations/en/product/features/feature-permissions.mdx # links to ORISO own Storybook stories for this feature
+site/translations/en/product/features/invitations-onboarding.mdx # links to ORISO own Storybook stories for this feature
+site/translations/en/product/features/legal-texts.mdx # links to ORISO own Storybook stories for this feature
+site/translations/en/product/features/live-chat.mdx # links to ORISO own Storybook stories for this feature
+site/translations/en/product/features/notifications.mdx # links to ORISO own Storybook stories for this feature
+site/translations/en/product/features/self-help-groups.mdx # links to ORISO own Storybook stories for this feature
+site/translations/en/product/features/team-consultation.mdx # links to ORISO own Storybook stories for this feature
+site/translations/en/product/features/training-tours.mdx # links to ORISO own Storybook stories for this feature
