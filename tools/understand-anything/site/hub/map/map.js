@@ -320,7 +320,9 @@ var T = {
      blocks:'Blöcke',search:'Filtern …',more:function(n){return 'Weitere '+n+' anzeigen';},files:'Dateien',folders:'Ordner',comps:'Bausteine',
      today:'heute',old:'Ausgangscode',noEp:'Keine Epics zugeordnet.',subs:'Teilaufgaben',openGh:'Auf GitHub öffnen',prio:'Priorität',effort:'Aufwand',release:'Release',
      hiddenSubs:function(n){return n+' Teilaufgabe(n) in einem privaten Repository nicht angezeigt';},cross:'Übergreifend',relIss:'Weitere zugehörige Aufgaben',
-     openEp:function(n){return n+' offen';},showStage:'Stufe zeigen:'},
+     openEp:function(n){return n+' offen';},showStage:'Stufe zeigen:',
+     privSubs:function(n){return n+' Teilaufgabe(n) in einem privaten Repository, nur als Zahl gezählt';},notOnBoard:'Nicht auf dem Board',filterBy:'Teilaufgaben filtern',noneShown:'Keine Teilaufgaben für diesen Filter.',onBoardBar:'Stand auf dem Board',
+     fAll:'Alle',fAccepted:'Abgenommen (Fertig)',fDev:'Auf Dev entwickelt (QA intern)',fStaging:'Auf Staging (QA extern)',fOpen:'Offen'},
  en:{show:'show',emph:'emphasise',hide:'hide',same:'existed before, unchanged',rew:'existed before, reworked',gone:'deleted or replaced',b:'commissioned, new',x:'additional, new',told:'tests that already existed',tnew:'tests today',
      tgOld:'Existed before',tgGone:'Deleted',tgB:'Commissioned',tgX:'Additional',
      can:'What I can do with it',before:'Before',lines:'Lines of code',tests:'Test cases',testl:'Test lines',stories:'Storybook views',epics:'Planned work',
@@ -334,7 +336,9 @@ var T = {
      blocks:'blocks',search:'Filter …',more:function(n){return 'Show '+n+' more';},files:'files',folders:'folders',comps:'components',
      today:'today',old:'starting code',noEp:'No epics assigned.',subs:'Sub-issues',openGh:'Open on GitHub',prio:'Priority',effort:'Effort',release:'Release',
      hiddenSubs:function(n){return n+' sub-issue(s) in a private repository not shown';},cross:'Cross-cutting',relIss:'Further related issues',
-     openEp:function(n){return n+' open';},showStage:'Show stage:'}
+     openEp:function(n){return n+' open';},showStage:'Show stage:',
+     privSubs:function(n){return n+' sub-issue(s) in a private repository, counted only';},notOnBoard:'Not on the board',filterBy:'Filter sub-issues',noneShown:'No sub-issues for this filter.',onBoardBar:'State on the board',
+     fAll:'All',fAccepted:'Accepted (Done)',fDev:'Developed on Dev (QA internal)',fStaging:'On Staging (QA external)',fOpen:'Open'}
 };
 function tt(){ return T[lang]; }
 
@@ -878,17 +882,41 @@ function relIssues(b){
   return '<div class="dgroup"><h5><span>'+esc(tt().relIss)+'</span><span class="c">'+r.length+'</span></h5><ul class="dlist">'+r.map(function(x){
     return '<li><a href="'+GH+x[0]+'/issues/'+x[1]+'" target="_blank" rel="noopener">'+esc(x[2])+'</a><span class="c">'+esc(x[0].replace('ORISO-',''))+' #'+x[1]+'</span></li>'; }).join('')+'</ul></div>';
 }
-function viewEpic(i){
-  var e=EP[i], t=tt(), s=stageOf(e);
-  var subs = e.subs.map(function(x){ return '<li><a href="'+GH+EPR[x[0]]+'/issues/'+x[1]+'" target="_blank" rel="noopener">'+esc(x[2])+'</a><span class="c">'+(x[3]==='c'?'✓ ':'○ ')+esc(EPR[x[0]].replace('ORISO-',''))+' #'+x[1]+'</span></li>'; }).join('');
+var FILTER_KEY = {all:'fAll', accepted:'fAccepted', dev:'fDev', staging:'fStaging', open:'fOpen'};
+/* Seitenansicht eines Epics mit Board-Stand (ORISO-Docs#206): Teilaufgaben nach Status, Filter, Statusleiste. */
+function epicBoardHTML(v){
+  var t = tt(), ev = BOARD && BoardAgg.epicView(MEAS.board, MEAS.epics, v.i, v.f);
+  if (!ev || (!ev.total && !ev.privateCount)) return '';
+  var chips = BoardAgg.FILTERS.map(function(f){
+    return '<button type="button" class="tog efilt" data-efilter="'+f+'" aria-pressed="'+(ev.filter===f)+'"><span class="tl">'+esc(t[FILTER_KEY[f]])+'</span> <span class="c">'+fmt(ev.filterCounts[f])+'</span></button>';
+  }).join('');
+  var legend = ev.segments.filter(function(g){ return g.count>0; }).map(function(g){
+    return '<li><i class="sw sseg" data-status="'+esc(g.status)+'" data-group="'+g.group+'"></i><span class="sn">'+esc(L2(STATUS_L[g.status]))+'</span><span class="sc">'+fmt(g.count)+'</span></li>';
+  }).join('');
+  var groups = ev.groups.map(function(g){
+    var name = g.status ? L2(STATUS_L[g.status]) : t.notOnBoard;
+    return '<div class="dgroup egroup"><h5><span>'+(g.status ? '<i class="sw sseg" data-status="'+esc(g.status)+'" data-group="'+g.group+'"></i> ' : '')+esc(name)+'</span><span class="c">'+fmt(g.count)+'</span></h5><ul class="dlist">'+g.items.map(function(x){
+      return '<li><a href="'+esc(x.url)+'" target="_blank" rel="noopener">'+esc(x.title)+'</a><span class="c">'+(x.state==='CLOSED'?'✓ ':'○ ')+esc(x.repository.replace('ORISO-',''))+' #'+x.number+'</span></li>';
+    }).join('')+'</ul></div>';
+  }).join('');
+  return '<div class="estat" role="group" aria-label="'+esc(t.onBoardBar)+'"><h4>'+esc(t.onBoardBar)+'</h4>'+sbarHTML(ev,'big')+'<ul class="slist">'+legend+'</ul></div>'+
+    '<div class="efilters" role="group" aria-label="'+esc(t.filterBy)+'">'+chips+'</div>'+
+    (groups || '<p class="dmeta">'+esc(t.noneShown)+'</p>')+
+    (ev.privateCount ? '<p class="dmeta epriv">'+esc(t.privSubs(ev.privateCount))+'</p>' : '');
+}
+function viewEpic(v){
+  var i=v.i, e=EP[i], t=tt(), s=stageOf(e);
+  var board = epicBoardHTML(v);
+  var subs = board ? '' : e.subs.map(function(x){ return '<li><a href="'+GH+EPR[x[0]]+'/issues/'+x[1]+'" target="_blank" rel="noopener">'+esc(x[2])+'</a><span class="c">'+(x[3]==='c'?'✓ ':'○ ')+esc(EPR[x[0]].replace('ORISO-',''))+' #'+x[1]+'</span></li>'; }).join('');
   var pct = e.tot ? Math.round(100*e.done/e.tot) : 0;
   return '<h3 id="pdTitle" tabindex="-1">'+esc(e.t)+'</h3>'+
     '<div class="em" data-css="display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12.5px;color:var(--ink-2)">'+stagePill(s)+
       '<span>'+esc(t.subs)+' '+e.done+'/'+e.tot+' ('+pct+' %)</span>'+(e.pr?'<span>'+esc(t.prio)+': '+esc(e.pr)+'</span>':'')+(e.ef?'<span>'+esc(t.effort)+': '+esc(e.ef)+'</span>':'')+(e.rl?'<span>'+esc(t.release)+': '+esc(e.rl)+'</span>':'')+'</div>'+
     '<div class="prog"><i data-css="width:'+pct+'%"></i></div>'+
     '<p><a href="'+GH+EPR[e.r]+'/issues/'+e.n+'" target="_blank" rel="noopener">'+esc(t.openGh)+' · '+esc(EPR[e.r])+' #'+e.n+' ↗</a></p>'+
+    board+
     (subs ? '<div class="dgroup"><h5><span>'+esc(t.subs)+'</span><span class="c">'+e.subs.length+'</span></h5><ul class="dlist">'+subs+'</ul></div>' : '')+
-    (e.hid ? '<p class="dmeta">'+esc(t.hiddenSubs(e.hid))+'</p>' : '');
+    (!board && e.hid ? '<p class="dmeta">'+esc(t.hiddenSubs(e.hid))+'</p>' : '');
 }
 function ghPath(z, f){
   var pre = f[1]===1 ? (z[3]||z[2]) : z[2];
@@ -988,7 +1016,7 @@ function renderView(){
   else if (v.v==='docs') inner = viewDocs(b);
   else if (v.v==='rel') inner = viewRel(b);
   else if (v.v==='epics') inner = viewEpics(b);
-  else if (v.v==='epic') inner = viewEpic(v.i);
+  else if (v.v==='epic') inner = viewEpic(v);
   else if (v.v==='mods') inner = viewMods(b, v);
   else if (v.v==='mod') inner = viewMod(b, v);
   else if (v.v==='file') inner = viewFile(b, v);
@@ -1012,18 +1040,33 @@ function wire(root){
   Array.prototype.forEach.call(root.querySelectorAll('[data-jump]'), function(e){ e.addEventListener('click', function(){ jumpTo(e.getAttribute('data-jump')); }); });
   Array.prototype.forEach.call(root.querySelectorAll('.navrow[data-mod]'), function(e){ e.addEventListener('click', function(){ openMod(+e.getAttribute('data-mod')); }); });
   Array.prototype.forEach.call(root.querySelectorAll('[data-crumb]'), function(e){ e.addEventListener('click', function(){ stack = stack.slice(0, +e.getAttribute('data-crumb')+1); renderView(); focusTitle(); }); });
+  var chips = Array.prototype.slice.call(root.querySelectorAll('[data-efilter]'));
+  chips.forEach(function(c, n){
+    c.addEventListener('click', function(){ var v=stack[stack.length-1]; v.f=c.getAttribute('data-efilter'); renderView(); var h=(useSheet()?sheetBody:panel).querySelector('[data-efilter="'+v.f+'"]'); if (h) h.focus({preventScroll:true}); });
+    c.addEventListener('keydown', function(e){
+      var to = e.key==='ArrowRight'||e.key==='ArrowDown' ? (n+1)%chips.length : e.key==='ArrowLeft'||e.key==='ArrowUp' ? (n+chips.length-1)%chips.length : e.key==='Home' ? 0 : e.key==='End' ? chips.length-1 : -1;
+      if (to>=0){ e.preventDefault(); chips[to].focus(); }
+    });
+  });
   var bk = root.querySelector('[data-back]'); if (bk) bk.addEventListener('click', back);
   var x = root.querySelector('[data-close]'); if (x) x.addEventListener('click', function(){ sheet.close(); });
   var more = root.querySelector('[data-more]'); if (more) more.addEventListener('click', function(){ var v=stack[stack.length-1]; v.n=(v.n||LIMIT)+LIMIT; renderView(); });
   var q = root.querySelector('[data-q]');
   if (q) q.addEventListener('input', function(){ var v=stack[stack.length-1]; v.q=q.value; v.n=LIMIT; var pos=q.selectionStart; renderView(); var q2=(useSheet()?sheetBody:panel).querySelector('[data-q]'); if (q2){ q2.focus(); try{ q2.setSelectionRange(pos,pos); }catch(e){} } });
 }
+/* Ein direkt geöffnetes Epic schließt mit Esc ganz (Seitenansicht leeren, Bottom-Sheet zu); Zurück und Alt+← gehen schrittweise. */
+function closeEpic(){
+  stack = [];
+  if (sheet.open) sheet.close(); else { renderView(); if (opener && document.contains(opener)) opener.focus(); }
+}
 function onKey(e){
+  var top = stack[stack.length-1];
+  if (e.key==='Escape' && top && top.direct){ e.preventDefault(); e.stopPropagation(); closeEpic(); return; }
   if ((e.key==='Escape' || (e.altKey && e.key==='ArrowLeft')) && (stack.length>1 || (stack.length===1 && !useSheet()))){ e.preventDefault(); e.stopPropagation(); back(); }
 }
 panel.addEventListener('keydown', onKey);
 sheet.addEventListener('keydown', onKey);
-sheet.addEventListener('cancel', function(e){ if (stack.length>1){ e.preventDefault(); back(); } });
+sheet.addEventListener('cancel', function(e){ var top = stack[stack.length-1]; if (top && top.direct) return; if (stack.length>1){ e.preventDefault(); back(); } });
 function renderEmpty(){
   panel.innerHTML = '<div class="empty"><p>'+tt().empty+'</p>'+rampLegend()+'</div>';
 }
@@ -1050,12 +1093,18 @@ function openFile(mi, fi){
 }
 function openEpicDirect(i, btn){
   var e = EP[i]; if (btn) opener = btn;
-  stack = e.b ? [{v:'block',id:e.b},{v:'epics'},{v:'epic',i:i}] : [{v:'epic',i:i,root:1}];
+  stack = e.b ? [{v:'block',id:e.b},{v:'epics'},{v:'epic',i:i,direct:1}] : [{v:'epic',i:i,root:1,direct:1}];
   if (!e.b){ /* übergreifendes Epic ohne Block: eigene kleine Ansicht */ }
   if (useSheet()){ renderView(); if (!sheet.open) sheet.showModal(); focusTitle(); }
   else { renderView(); focusTitle(); document.getElementById('karte').scrollIntoView({behavior:reduce?'auto':'smooth'}); }
 }
 sheet.addEventListener('click', function(e){ if (e.target===sheet) sheet.close(); });
+/* Wischen nach unten schließt das Bottom-Sheet, solange der Inhalt ganz oben steht. */
+(function(){
+  var sy = null, sin = document.getElementById('sheetIn');
+  sin.addEventListener('touchstart', function(e){ sy = (e.touches.length===1 && sin.scrollTop<=0) ? e.touches[0].clientY : null; }, {passive:true});
+  sin.addEventListener('touchend', function(e){ if (sy!==null && e.changedTouches.length && e.changedTouches[0].clientY - sy > 80){ var top = stack[stack.length-1]; if (top && top.direct) stack = []; sheet.close(); } sy = null; }, {passive:true});
+})();
 sheet.addEventListener('close', function(){ if (opener && document.contains(opener)) opener.focus(); if (!useSheet()) return; });
 window.matchMedia('(max-width:980px)').addEventListener('change', function(e){ if (!e.matches && sheet.open) sheet.close(); renderView(); });
 

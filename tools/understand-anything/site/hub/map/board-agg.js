@@ -60,5 +60,66 @@
     });
     return {blocks: blocks, unmapped: unmapped, ignored: ignored, readinessMax: readinessMax};
   }
-  return {STATUSES: STATUSES, GROUP: GROUP, TOKEN: TOKEN, capabilityIndex: capabilityIndex, aggregate: aggregate};
+
+  /* ───── Epic side view (ORISO-Docs#206) ─────
+     Sub-issues of one epic: board items whose parent is the epic, plus the epic's own sub-issue list
+     (the same two links as capabilityIndex). Private repositories never reach board.json items; their
+     sub-issues are only the epic's `hid` count. */
+  var FILTERS = ['all', 'accepted', 'dev', 'staging', 'open'];
+  var FILTER_STATUS = {accepted: 'Done', dev: 'QA internal', staging: 'QA external'};
+  var GH = 'https://github.com/';
+  function ghUrl(full, n) { return GH + full + '/issues/' + n; }
+  function fullName(short, org) { return short.indexOf('/') < 0 ? org + '/' + short : short; }
+  function matches(filter, it) {
+    if (filter === 'all') return true;
+    if (filter === 'open') return it.status !== 'Done' && it.state !== 'CLOSED';
+    return it.status === FILTER_STATUS[filter];
+  }
+  function epicView(board, epics, index, filter) {
+    var repos = (epics && epics.repos) || [], e = epics && epics.epics && epics.epics[index];
+    if (!board || !e) return null;
+    var org = String((board.source && board.source.owner) || 'OpenResilienceInitiative');
+    var ek = key(repos[e.r], e.n), seen = {}, items = [], onBoard = {};
+    if (FILTERS.indexOf(filter) < 0) filter = 'all';
+    (board.items || []).forEach(function (it) {
+      if (it.contentType !== 'Issue' || !it.repository || typeof it.number !== 'number') return;
+      var k = key(it.repository, it.number);
+      if (k === ek) return;
+      onBoard[k] = it;
+    });
+    function add(it, repoFull, k) {
+      if (seen[k]) return; seen[k] = 1;
+      items.push({repository: repoName(repoFull), number: it.number, title: it.title, url: it.url || ghUrl(repoFull, it.number),
+        state: it.state, status: STATUSES.indexOf(it.status) >= 0 ? it.status : null, priority: it.priority || null});
+    }
+    Object.keys(onBoard).forEach(function (k) {
+      var it = onBoard[k];
+      if (it.parent && key(it.parent.repository, it.parent.number) === ek) add(it, it.repository, k);
+    });
+    (e.subs || []).forEach(function (s) {
+      var k = key(repos[s[0]], s[1]);
+      if (k === ek) return;
+      if (onBoard[k]) add(onBoard[k], onBoard[k].repository, k);
+      else add({number: s[1], title: s[2], state: s[3] === 'c' ? 'CLOSED' : 'OPEN', status: null}, fullName(repos[s[0]], org), k);
+    });
+    items.sort(function (a, b) { return a.number - b.number; });
+    var counts = {}, filterCounts = {};
+    FILTERS.forEach(function (f) { filterCounts[f] = items.filter(function (it) { return matches(f, it); }).length; });
+    items.forEach(function (it) { if (it.status) counts[it.status] = (counts[it.status] || 0) + 1; });
+    var inBar = Object.keys(counts).reduce(function (a, s) { return a + counts[s]; }, 0);
+    var segments = STATUSES.map(function (s) {
+      var n = counts[s] || 0;
+      return {status: s, group: GROUP[s], token: TOKEN[s], count: n, share: inBar ? round(100 * n / inBar, 2) : 0};
+    });
+    var shown = items.filter(function (it) { return matches(filter, it); });
+    var groups = STATUSES.concat([null]).map(function (s) {
+      var list = shown.filter(function (it) { return it.status === s; });
+      return {status: s, group: s ? GROUP[s] : 'none', token: s ? TOKEN[s] : null, count: list.length, items: list};
+    }).filter(function (g) { return g.items.length; });
+    return {
+      epic: {repository: repoName(repos[e.r]), number: e.n, title: e.t, url: ghUrl(fullName(repos[e.r], org), e.n)},
+      total: items.length, privateCount: e.hid || 0, filter: filter, filterCounts: filterCounts, segments: segments, groups: groups
+    };
+  }
+  return {STATUSES: STATUSES, GROUP: GROUP, TOKEN: TOKEN, FILTERS: FILTERS, capabilityIndex: capabilityIndex, aggregate: aggregate, epicView: epicView};
 });

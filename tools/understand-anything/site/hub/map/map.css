@@ -431,3 +431,9 @@ html[data-lang="de"] .wasist [lang="en"]{display:inline !important}
 .blegend span{display:inline-flex;align-items:center;gap:6px}
 .sbar.card{height:8px;margin-top:8px}
 .cbadges{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+
+/* Epic-Seitenansicht (ORISO-Docs#206) */
+.estat h4{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-weight:700}
+.efilters{display:flex;flex-wrap:wrap;gap:6px}
+.efilt .c{font-family:var(--mono);font-size:11.5px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.egroup h5 .sw{display:inline-block;vertical-align:-1px;margin-right:4px;width:10px;height:10px;border-radius:3px}
