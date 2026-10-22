@@ -5,7 +5,7 @@
 // Every command returns a typed result and never throws:
 //   {ok: true,  ..., results: [{issue, role, before, after, changed, wrote}]}
 //   {ok: false, error: {code, message, issue?, detail?}, applied: ["Org/Repo#1", ...]}
-// Error codes: NO_WRITE_RIGHTS, CONFLICT, NOT_FOUND, UNKNOWN_RELEASE, FIELD_MISSING, BAD_REQUEST, TRANSPORT, GITHUB_ERROR.
+// Error codes: see ERROR_CODES (NO_WRITE_RIGHTS, CONFLICT, NOT_FOUND, NOT_ON_BOARD, UNKNOWN_RELEASE, UNKNOWN_GATE, FIELD_MISSING, BAD_REQUEST, TRANSPORT, GITHUB_ERROR).
 
 export const DEFAULT_ORG = "OpenResilienceInitiative";
 export const PROJECT_ID = "PVT_kwDODkeBP84BHH8p"; // ORISO Roadmap (project #1)
@@ -13,7 +13,7 @@ export const PLATFORM_RELEASE_FIELD_ID = "IFMS_kgDOArcqMA"; // org ISSUE field (
 export const PLATFORM_RELEASE_FIELD_NAME = "Platform release";
 export const GATE_FIELD_NAME = "Gate";
 
-export const ERROR_CODES = ["NO_WRITE_RIGHTS", "CONFLICT", "NOT_FOUND", "UNKNOWN_RELEASE", "FIELD_MISSING", "BAD_REQUEST", "TRANSPORT", "GITHUB_ERROR"];
+export const ERROR_CODES = ["NO_WRITE_RIGHTS", "CONFLICT", "NOT_FOUND", "NOT_ON_BOARD", "UNKNOWN_RELEASE", "UNKNOWN_GATE", "FIELD_MISSING", "BAD_REQUEST", "TRANSPORT", "GITHUB_ERROR"];
 
 const ISSUE_FIELDS = `
   id number viewerCanUpdate
@@ -168,4 +168,51 @@ export async function assignRelease(issue, release, { withSubIssues = false, exp
     results.push(row);
   }
   return { ok: true, release, dryRun, results };
+}
+
+// ───────── setGate (ORISO-Docs#211) ─────────
+// Gate is a single-select PROJECT field on ORISO Roadmap (not an issue field), so it is written with the
+// documented updateProjectV2ItemFieldValue. The field does not exist until a project admin creates it
+// (tools/planning-map/gate-options.json): until then setGate answers FIELD_MISSING.
+export const GATE_FIELD_QUERY = `
+query PlanGateField($projectId: ID!) {
+  node(id: $projectId) { __typename ... on ProjectV2 { id field(name: "${GATE_FIELD_NAME}") { __typename ... on ProjectV2SingleSelectField { id name options { id name } } } } }
+}`;
+export const SET_GATE_MUTATION = `
+mutation PlanSetGate($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: String!) {
+  updateProjectV2ItemFieldValue(input: {projectId: $projectId, itemId: $itemId, fieldId: $fieldId, value: {singleSelectOptionId: $optionId}}) { projectV2Item { id } }
+}`;
+
+export async function setGate(issue, gate, { expectedGate, dryRun = false, projectId = PROJECT_ID, transport } = {}) {
+  const bad = (message) => ({ ok: false, error: fail("BAD_REQUEST", message), applied: [] });
+  if (typeof transport !== "function") return bad("setGate needs a transport");
+  const ref = parseIssueRef(issue);
+  if (!ref) return bad(`Not an issue reference: ${JSON.stringify(issue)} (expected Org/Repo#123)`);
+  if (typeof gate !== "string" || !gate) return bad("gate must be a non-empty name");
+  const name = refString(ref);
+  const none = (error) => ({ ok: false, error, applied: [] });
+
+  const defs = await call(transport, GATE_FIELD_QUERY, { projectId }, name);
+  if (defs.error) return none(defs.error);
+  if (!defs.data?.node) return none(fail("NOT_FOUND", `Project ${projectId} not found or not visible`, { issue: name }));
+  const field = defs.data.node.field;
+  if (!field?.options) return none(fail("FIELD_MISSING", `Project field "${GATE_FIELD_NAME}" does not exist yet: a project admin creates it first (see tools/planning-map/gate-options.json)`, { issue: name }));
+  const option = field.options.find((o) => o.name === gate);
+  if (!option) return none(fail("UNKNOWN_GATE", `Unknown gate "${gate}"`, { issue: name, detail: { gate, known: field.options.map((o) => o.name) } }));
+
+  const main = await readIssue(transport, ref);
+  if (main.error) return none(main.error);
+  const item = (main.node.projectItems?.nodes ?? []).find((n) => n.project?.id === projectId);
+  if (!item) return none(fail("NOT_ON_BOARD", `${name} is not on the ORISO Roadmap board`, { issue: name }));
+  const before = item.gate?.name ?? null;
+  if (expectedGate !== undefined && (expectedGate ?? null) !== before) {
+    return none(fail("CONFLICT", `${name} has gate ${before ?? "none"} on GitHub, not ${expectedGate ?? "none"}`, { issue: name, detail: { expected: expectedGate ?? null, actual: before } }));
+  }
+  const row = { issue: name, role: "issue", before, after: gate, changed: before !== gate, wrote: false };
+  if (row.changed && !dryRun) {
+    const w = await call(transport, SET_GATE_MUTATION, { projectId, itemId: item.id, fieldId: field.id, optionId: option.id }, name);
+    if (w.error) return none({ ...w.error, issue: name });
+    row.wrote = true;
+  }
+  return { ok: true, gate, dryRun, results: [row] };
 }

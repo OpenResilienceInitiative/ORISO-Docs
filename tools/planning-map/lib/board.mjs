@@ -50,6 +50,7 @@ export function liveOptions(meta) {
   const issueOpts = (name) => issueFields.find((f) => f.name === name)?.options.map((o) => o.name) ?? null;
   return {
     status: single("Status"),
+    gate: single("Gate"), // null until a project admin creates the field (gate-options.json)
     readiness: readiness ? { dataType: readiness.dataType ?? null } : null,
     priority: issueOpts("Priority"),
     effort: issueOpts("Effort"),
@@ -79,6 +80,7 @@ export function driftCheck(live, ct = contract, { strict = false } = {}) {
   };
   if (ct.driftChecked.includes("status")) checkOptions("status", "Status");
   if (ct.driftChecked.includes("platformRelease")) checkOptions("platformRelease", "Platform release");
+  if (live.gate != null && ct.fields.gate) checkOptions("gate", "Gate"); // optional field: only once it exists
   if (ct.driftChecked.includes("readiness")) {
     if (!live.readiness) problems.push("Readiness: field not found on the live board");
     else if (live.readiness.dataType && live.readiness.dataType !== "NUMBER") problems.push(`Readiness: expected a NUMBER field, live is ${live.readiness.dataType}`);
@@ -135,6 +137,7 @@ export function buildBoard({ meta, items: rawItems, totalCount, title }, { synce
       state: c?.state ?? null,
       updatedAt: c?.updatedAt ?? null,
       status,
+      gate: raw.gate?.name ?? null,
       readiness,
       issueType: c?.issueType?.name ?? null,
       parent,
@@ -160,6 +163,7 @@ export function buildBoard({ meta, items: rawItems, totalCount, title }, { synce
     totals: { items: rawItems.length, public: items.length, private: privateCount },
     fieldOptions: {
       status: live.status ?? [],
+      gate: live.gate ?? [],
       priority: live.priority ?? ct.fields.priority.options,
       effort: live.effort ?? ct.fields.effort.options,
       platformRelease: releaseNames,

@@ -69,6 +69,7 @@ export function createFakeGitHub({
         return { data: { node: { __typename: "ProjectV2", id: PROJECT_ID, field: gateOpts ? { __typename: "ProjectV2SingleSelectField", id: "PVTSSF_gate", name: "Gate", options: gateOpts } : null } } };
       case "PlanSetGate": {
         const { itemId, fieldId, optionId } = variables;
+        if (variables.projectId !== PROJECT_ID) return { data: null, errors: [{ type: "NOT_FOUND", message: "unknown project" }] };
         const i = [...byId.values()].find((x) => x.itemId === itemId);
         if (!i || !i.canUpdate) return denied("Resource not accessible by integration");
         if (fieldId !== "PVTSSF_gate") return { data: null, errors: [{ type: "NOT_FOUND", message: "unknown field" }] };

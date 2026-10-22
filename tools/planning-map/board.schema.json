@@ -102,6 +102,12 @@
           "items": {
             "type": "string"
           }
+        },
+        "gate": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -349,6 +355,12 @@
                 }
               }
             }
+          },
+          "gate": {
+            "type": [
+              "string",
+              "null"
+            ]
           }
         }
       }

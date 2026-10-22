@@ -14,6 +14,7 @@ query($owner: String!, $number: Int!, $after: String) {
           id
           type
           status: fieldValueByName(name: "Status") { ... on ProjectV2ItemFieldSingleSelectValue { name } }
+          gate: fieldValueByName(name: "Gate") { ... on ProjectV2ItemFieldSingleSelectValue { name } }
           readiness: fieldValueByName(name: "Readiness") { ... on ProjectV2ItemFieldNumberValue { number } }
           content {
             __typename

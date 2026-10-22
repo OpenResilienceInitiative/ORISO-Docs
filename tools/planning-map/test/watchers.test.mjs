@@ -6,6 +6,8 @@ import { fileURLToPath } from "node:url";
 import { evaluateItem, watchConfig, RULES } from "../lib/watchers.mjs";
 import { buildBoard, fetchAll, validateBoard } from "../lib/board.mjs";
 import { fixtureRunner } from "../export-board.mjs";
+import { GATE_NAMES } from "../lib/gate.mjs";
+import { contract } from "../lib/board.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const NOW = "2026-10-23T00:00:00Z";
@@ -80,4 +82,45 @@ test("schema stays additive: a v1 board without assignees/findings still validat
   for (const i of old.items) { delete i.assignees; delete i.findings; }
   delete old.findingCounts;
   assert.deepEqual(validateBoard(old), []);
+});
+
+// ───── Gate/Status mismatch with the reviewed mapping (ORISO-Docs#211) ─────
+// Literal truth table, written out by hand: gate -> statuses it may sit in. Not derived from the config.
+const STATUS_ORDER = ["Backlog", "Ready", "On hold", "In progress", "In review", "QA internal", "QA external", "Done"];
+const OK = {
+  "P1 Framed": ["Backlog", "On hold"],
+  "P2 Specified": ["Backlog", "On hold"],
+  "P3 Sliced": ["Backlog", "On hold"],
+  "P4 Ready for agent": ["Ready", "In progress", "On hold"],
+  "R1 Checks green": ["In review", "On hold"],
+  "R2 AI review": ["In review", "On hold"],
+  "R3 Human review": ["In review", "On hold"],
+  "R4 Verified on Dev": ["QA internal", "QA external", "Done", "On hold"],
+};
+const flagged = (gate, status) => evaluateItem({ ...base, gate, status, state: status === "Done" ? "CLOSED" : "OPEN", updatedAt: "2026-10-22T00:00:00Z" }, { now: NOW, config: watchConfig }).some((f) => f.rule === "gate-status-mismatch");
+
+for (const [gate, allowed] of Object.entries(OK)) {
+  for (const status of STATUS_ORDER) {
+    test(`gate/status table: ${gate} + ${status} is ${allowed.includes(status) ? "fine" : "flagged"}`, () => assert.equal(flagged(gate, status), !allowed.includes(status)));
+  }
+  test(`gate/status table: ${gate} + no status is flagged`, () => assert.equal(flagged(gate, null), true));
+}
+
+test("gate/status: spec pairs hold (R4 with QA internal, P4 with Ready, R1-R3 with In review)", () => {
+  assert.equal(flagged("R4 Verified on Dev", "QA internal"), false);
+  assert.equal(flagged("P4 Ready for agent", "Ready"), false);
+  for (const g of ["R1 Checks green", "R2 AI review", "R3 Human review"]) assert.equal(flagged(g, "In review"), false);
+  assert.equal(flagged("R3 Human review", "Backlog"), true);
+  assert.equal(flagged("P3 Sliced", "In review"), true);
+});
+
+test("gate/status: no Gate means no finding, whatever the status", () => {
+  for (const status of [...STATUS_ORDER, null]) assert.equal(flagged(null, status), false);
+});
+
+test("the reviewed mapping covers exactly the Gate options and only real Status options", () => {
+  const gates = Object.keys(watchConfig.gate.allowedStatuses);
+  assert.deepEqual(gates, GATE_NAMES);
+  for (const list of Object.values(watchConfig.gate.allowedStatuses)) for (const s of list) assert.ok(contract.fields.status.options.includes(s), s);
+  assert.deepEqual(watchConfig.gate.allowedStatuses, OK);
 });

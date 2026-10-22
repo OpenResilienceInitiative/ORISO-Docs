@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { parseArgs, main, ghTransport } from "../plan.mjs";
 import { createFakeGitHub, ORG } from "./fake-github.mjs";
+import { GATE_NAMES } from "../lib/gate.mjs";
 
 const FE = `${ORG}/ORISO-Frontend`;
 const world = () => createFakeGitHub({ issues: [{ repository: FE, number: 2, release: null }, { repository: FE, number: 3, release: "v2.0.12" }] });
@@ -67,4 +68,34 @@ test("ghTransport shells out to `gh api graphql` with the request body on stdin,
 test("ghTransport hands back GraphQL errors that gh reports with a non-zero exit", async () => {
   const t = ghTransport({ exec: () => { const e = new Error("exit 1"); e.stdout = JSON.stringify({ data: null, errors: [{ type: "FORBIDDEN", message: "nope" }] }); throw e; } });
   assert.equal((await t("q", {})).errors[0].type, "FORBIDDEN");
+});
+
+// ───── set-gate (ORISO-Docs#211) ─────
+const gateWorld = () => createFakeGitHub({ gateOptions: GATE_NAMES, issues: [{ repository: FE, number: 2, gate: null }] });
+
+test("parseArgs reads the set-gate flags", () => {
+  assert.deepEqual(parseArgs(["set-gate", "--issue", "ORISO-Frontend#2", "--gate", "R3 Human review", "--expect", "none"]), {
+    command: "set-gate", issues: ["ORISO-Frontend#2"], gate: "R3 Human review", expect: null, apply: false,
+  });
+});
+
+test("set-gate is a dry run by default and writes only with --apply", async () => {
+  const gh = gateWorld();
+  let r = await run(["set-gate", "--issue", "ORISO-Frontend#2", "--gate", "P4 Ready for agent"], gh);
+  assert.deepEqual([r.code, r.out.dryRun, gh.writes.length], [0, true, 0]);
+  r = await run(["set-gate", "--issue", "ORISO-Frontend#2", "--gate", "P4 Ready for agent", "--apply"], gh);
+  assert.deepEqual([r.code, gh.writes], [0, [{ kind: "gate", issue: `${FE}#2`, value: "P4 Ready for agent" }]]);
+});
+
+test("set-gate without the Gate field exits 1 with FIELD_MISSING", async () => {
+  const gh = createFakeGitHub({ gateOptions: null, issues: [{ repository: FE, number: 2 }] });
+  const r = await run(["set-gate", "--issue", "ORISO-Frontend#2", "--gate", "P1 Framed", "--apply"], gh);
+  assert.equal(r.code, 1);
+  assert.equal(r.out.runs[0].error.code, "FIELD_MISSING");
+});
+
+test("set-gate needs --gate", async () => {
+  const errs = [];
+  assert.equal(await main(["set-gate", "--issue", "x#1"], { transport: gateWorld().transport, log: () => {}, err: (s) => errs.push(s) }), 2);
+  assert.match(errs.join(""), /--gate/);
 });

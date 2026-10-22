@@ -10,7 +10,43 @@
   },
   "qaExternalAssignee": "BjoernLudwig",
   "gate": {
-    "_note": "No Gate field exists yet (#211). While item.gate is empty the rule is a no-op. Fill allowedStatuses (gate value -> statuses it may be in) once the Gate options are decided.",
-    "allowedStatuses": {}
+    "_note": "Reviewed Gate -> Status mapping (ORISO-Docs#211). The Gate/Status mismatch watcher flags an item whose Status is not in the list of its Gate; items without a Gate are never flagged. Reviewed deviations from the spec's strict pairing: P4 also allows In progress (an agent that starts moves the card to In progress while the gate stays P4 until R1); R4 also allows QA external and Done (the gate stays at the last one reached once the client's lifecycle takes over); every gate allows On hold (a pause is orthogonal).",
+    "allowedStatuses": {
+      "P1 Framed": [
+        "Backlog",
+        "On hold"
+      ],
+      "P2 Specified": [
+        "Backlog",
+        "On hold"
+      ],
+      "P3 Sliced": [
+        "Backlog",
+        "On hold"
+      ],
+      "P4 Ready for agent": [
+        "Ready",
+        "In progress",
+        "On hold"
+      ],
+      "R1 Checks green": [
+        "In review",
+        "On hold"
+      ],
+      "R2 AI review": [
+        "In review",
+        "On hold"
+      ],
+      "R3 Human review": [
+        "In review",
+        "On hold"
+      ],
+      "R4 Verified on Dev": [
+        "QA internal",
+        "QA external",
+        "Done",
+        "On hold"
+      ]
+    }
   }
 }
