@@ -1,0 +1,16 @@
+{
+  "_note": "Single place for watcher thresholds (ORISO-Docs#207). stalledDays: an open item whose last update is MORE than this many days old in that status is flagged; statuses not listed are never flagged as stalled.",
+  "stalledDays": {
+    "Ready": 60,
+    "On hold": 90,
+    "In progress": 14,
+    "In review": 7,
+    "QA internal": 7,
+    "QA external": 7
+  },
+  "qaExternalAssignee": "BjoernLudwig",
+  "gate": {
+    "_note": "No Gate field exists yet (#211). While item.gate is empty the rule is a no-op. Fill allowedStatuses (gate value -> statuses it may be in) once the Gate options are decided.",
+    "allowedStatuses": {}
+  }
+}

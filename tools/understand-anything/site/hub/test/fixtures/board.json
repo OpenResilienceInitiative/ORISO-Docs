@@ -79,7 +79,11 @@
       "parent": null,
       "priority": "High",
       "effort": "L",
-      "platformRelease": "v2.0.12"
+      "platformRelease": "v2.0.12",
+      "assignees": [
+        "frank"
+      ],
+      "findings": []
     },
     {
       "id": "I2",
@@ -99,7 +103,11 @@
       },
       "priority": "Urgent",
       "effort": "S",
-      "platformRelease": null
+      "platformRelease": null,
+      "assignees": [
+        "frank"
+      ],
+      "findings": []
     },
     {
       "id": "I3",
@@ -119,7 +127,11 @@
       },
       "priority": "Medium",
       "effort": "S",
-      "platformRelease": null
+      "platformRelease": null,
+      "assignees": [
+        "frank"
+      ],
+      "findings": []
     },
     {
       "id": "I4",
@@ -139,7 +151,11 @@
       },
       "priority": null,
       "effort": null,
-      "platformRelease": null
+      "platformRelease": null,
+      "assignees": [
+        "frank"
+      ],
+      "findings": []
     },
     {
       "id": "I5",
@@ -159,7 +175,11 @@
       },
       "priority": "High",
       "effort": "M",
-      "platformRelease": null
+      "platformRelease": null,
+      "assignees": [
+        "frank"
+      ],
+      "findings": []
     },
     {
       "id": "I6",
@@ -167,7 +187,7 @@
       "repository": "OpenResilienceInitiative/ORISO-Frontend",
       "number": 1805,
       "title": "Child e",
-      "url": null,
+      "url": "https://github.com/OpenResilienceInitiative/ORISO-Frontend/issues/1805",
       "state": "OPEN",
       "updatedAt": null,
       "status": "QA internal",
@@ -179,7 +199,21 @@
       },
       "priority": "Low",
       "effort": "S",
-      "platformRelease": null
+      "platformRelease": null,
+      "assignees": [
+        "frank"
+      ],
+      "findings": [
+        {
+          "rule": "stalled",
+          "severity": "warn",
+          "detail": {
+            "status": "QA internal",
+            "days": 30,
+            "threshold": 7
+          }
+        }
+      ]
     },
     {
       "id": "I7",
@@ -187,7 +221,7 @@
       "repository": "OpenResilienceInitiative/ORISO-Frontend",
       "number": 1806,
       "title": "Child f",
-      "url": null,
+      "url": "https://github.com/OpenResilienceInitiative/ORISO-Frontend/issues/1806",
       "state": "OPEN",
       "updatedAt": null,
       "status": "QA external",
@@ -199,7 +233,19 @@
       },
       "priority": "Urgent",
       "effort": "S",
-      "platformRelease": null
+      "platformRelease": null,
+      "assignees": [
+        "someone"
+      ],
+      "findings": [
+        {
+          "rule": "qa-external-no-bjoern",
+          "severity": "warn",
+          "detail": {
+            "expected": "BjoernLudwig"
+          }
+        }
+      ]
     },
     {
       "id": "I8",
@@ -219,7 +265,11 @@
       },
       "priority": "Medium",
       "effort": "S",
-      "platformRelease": null
+      "platformRelease": null,
+      "assignees": [
+        "frank"
+      ],
+      "findings": []
     },
     {
       "id": "I9",
@@ -239,7 +289,11 @@
       },
       "priority": null,
       "effort": null,
-      "platformRelease": null
+      "platformRelease": null,
+      "assignees": [
+        "frank"
+      ],
+      "findings": []
     },
     {
       "id": "I10",
@@ -256,7 +310,11 @@
       "parent": null,
       "priority": "Urgent",
       "effort": "S",
-      "platformRelease": null
+      "platformRelease": null,
+      "assignees": [
+        "frank"
+      ],
+      "findings": []
     },
     {
       "id": "I11",
@@ -273,7 +331,11 @@
       "parent": null,
       "priority": "High",
       "effort": "S",
-      "platformRelease": null
+      "platformRelease": null,
+      "assignees": [
+        "frank"
+      ],
+      "findings": []
     },
     {
       "id": "I12",
@@ -290,12 +352,20 @@
       "parent": null,
       "priority": "Urgent",
       "effort": null,
-      "platformRelease": null
+      "platformRelease": null,
+      "assignees": [
+        "frank"
+      ],
+      "findings": []
     }
   ],
   "warnings": [],
   "readinessRange": {
     "min": 0,
     "max": 19
+  },
+  "findingCounts": {
+    "stalled": 1,
+    "qa-external-no-bjoern": 1
   }
 }

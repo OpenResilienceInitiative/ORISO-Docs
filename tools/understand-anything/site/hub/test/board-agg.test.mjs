@@ -68,3 +68,19 @@ test('items without a status are counted in the total but not in the bar', () =>
   assert.equal(b.total, 2); assert.equal(b.noStatus, 1);
   assert.equal(b.segments.find(s => s.status === 'Done').share, 100);
 });
+
+test('findings from the export are rolled up per capability: total, per rule and the flagged issues', () => {
+  const f = BoardAgg.aggregate(board, epics).blocks.chat.findings;
+  assert.equal(f.total, 2);
+  assert.deepEqual(f.byRule, {'stalled': 1, 'qa-external-no-bjoern': 1});
+  assert.deepEqual(f.items.map(i => [i.number, i.rules]), [[1805, ['stalled']], [1806, ['qa-external-no-bjoern']]]);
+  assert.equal(f.items[0].details.stalled.days, 30);
+  assert.ok(f.items[0].title && f.items[0].url);
+});
+
+test('a block whose issues carry no findings (or a board without the field) reports zero', () => {
+  const old = JSON.parse(JSON.stringify(board));
+  old.items.forEach(i => { delete i.findings; });
+  const f = BoardAgg.aggregate(old, epics).blocks.chat.findings;
+  assert.deepEqual(f, {total: 0, byRule: {}, items: []});
+});

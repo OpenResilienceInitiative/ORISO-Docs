@@ -434,7 +434,7 @@ function readyText(bs){
 function unscoredText(bs){ return fmt(bs.readiness.unscored)+(de()?' ohne Wert':' without score'); }
 function boardTitle(bs){
   var parts = bs.segments.filter(function(g){ return g.count>0; }).map(function(g){ return L2(STATUS_L[g.status])+' '+fmt(g.count); });
-  return fmt(bs.total)+(de()?' Aufgaben: ':' issues: ')+parts.join(', ')+'; '+uhText(bs)+'; '+readyText(bs)+'; '+unscoredText(bs);
+  return fmt(bs.total)+(de()?' Aufgaben: ':' issues: ')+parts.join(', ')+'; '+uhText(bs)+'; '+readyText(bs)+'; '+unscoredText(bs)+(findingsText(bs) ? '; '+findingsText(bs) : '');
 }
 function sbarHTML(bs, cls){
   return '<span class="sbar '+cls+'" aria-hidden="true">'+bs.segments.map(function(g){
@@ -448,6 +448,25 @@ function boardLegend(){
   return '<div class="blegend" role="img" aria-label="'+esc(de()?'Farbskala Board-Status':'Board status colour scale')+'"><b>'+(de()?'Statusleiste (Board)':'Status bar (board)')+'</b>'+
     groups.map(function(g,i){ return '<span><i class="sw sseg" data-status="'+names[i]+'" data-group="'+g+'"></i>'+esc(lab[i])+'</span>'; }).join('')+
     '<span>'+esc((de()?'Aufgaben ohne Fähigkeit: ':'Issues outside any capability: ')+fmt(BOARD.unmapped))+'</span></div>';
+}
+/* Wächter-Befunde (ORISO-Docs#207): vom Export in board.json je Aufgabe geschrieben, hier nur angezeigt. */
+var RULE_T = {
+  'stalled': function(d){ return de() ? 'Stillstand in '+L2(STATUS_L[d.status]||[d.status,d.status])+': '+fmt(d.days)+' Tage (Grenze '+fmt(d.threshold)+')' : 'Stalled in '+L2(STATUS_L[d.status]||[d.status,d.status])+': '+fmt(d.days)+' days (limit '+fmt(d.threshold)+')'; },
+  'closed-not-done': function(d){ return de() ? 'Geschlossen, aber Status '+(d.status ? L2(STATUS_L[d.status]||[d.status,d.status]) : 'leer')+' statt Fertig' : 'Closed, but status is '+(d.status ? L2(STATUS_L[d.status]||[d.status,d.status]) : 'empty')+' instead of Done'; },
+  'qa-external-no-bjoern': function(d){ return de() ? 'QA extern ohne '+d.expected+' zugewiesen' : 'QA external without '+d.expected+' assigned'; },
+  'epic-no-readiness': function(){ return de() ? 'Epic ohne Reife-Wert' : 'Epic without Readiness'; },
+  'gate-status-mismatch': function(d){ return de() ? 'Gate '+d.gate+' passt nicht zum Status '+d.status : 'Gate '+d.gate+' does not fit status '+d.status; }
+};
+function findingText(rule, d){ return RULE_T[rule] ? RULE_T[rule](d||{}) : rule; }
+function findingsText(bs){ var n = bs.findings ? bs.findings.total : 0; return n ? fmt(n)+(de()?(n===1?' Befund':' Befunde'):(n===1?' finding':' findings')) : ''; }
+function findingBadge(bs){ return bs.findings && bs.findings.total ? '<span class="fbadge" aria-hidden="true">! '+fmt(bs.findings.total)+'</span>' : ''; }
+function findingsPanel(bs){
+  var f = bs.findings; if (!f || !f.total) return '';
+  var rows = f.items.map(function(it){
+    var ref = '#'+it.number, head = /^https:\/\//.test(it.url||'') ? '<a href="'+esc(it.url)+'" target="_blank" rel="noopener">'+esc(ref)+' '+esc(it.title)+'</a>' : esc(ref+' '+it.title);
+    return '<li>'+head+'<ul>'+it.rules.map(function(r){ return '<li>'+esc(findingText(r, it.details[r]))+'</li>'; }).join('')+'</ul></li>';
+  }).join('');
+  return '<div class="kv"><h4>'+(de()?'Befunde der Wächter':'Watcher findings')+' ('+fmt(f.total)+')</h4><ul class="flist">'+rows+'</ul></div>';
 }
 function boardPanel(bs){
   var rows = bs.segments.map(function(g){
@@ -510,7 +529,7 @@ function drawLevel0(root, W, H){
       var bs = boardOf(b.id);
       if (bs){
         btn.classList.add('hasbar'); btn.title = L(b.t)+' – '+boardTitle(bs);
-        btn.insertAdjacentHTML('beforeend', sbarHTML(bs,'tile')+'<span class="sbadges" aria-hidden="true"><span class="bb">'+esc(uhText(bs))+'</span><span class="bb">'+esc(readyText(bs))+' · '+esc(unscoredText(bs))+'</span></span>');
+        btn.insertAdjacentHTML('beforeend', sbarHTML(bs,'tile')+'<span class="sbadges" aria-hidden="true"><span class="bb">'+esc(uhText(bs))+'</span><span class="bb">'+esc(readyText(bs))+' · '+esc(unscoredText(bs))+'</span></span>'+findingBadge(bs));
       }
       if (pl) btn.setAttribute('aria-label', L(b.t)+' – '+(de()?'hineinzoomen; rund ':'zoom in; about ')+rund(pl)+(de()?' Zeilen geplant (Schätzung)':' lines planned (estimate)'));
       sizeCls(btn, q.w, q.h);
@@ -773,7 +792,7 @@ function viewBlock(b){
     '<div class="can"><h4>'+esc(t.can)+' …</h4><ul>'+L(b.can).map(function(c){return '<li>'+esc(c)+'</li>';}).join('')+'</ul></div>'+
     '<p class="before"><b>'+esc(t.before)+':</b> '+esc(L(b.before))+'</p>'+plannedBox(b)+
     '<div class="kv"><h4>'+esc(t.split)+'</h4>'+bar+'</div>'+
-    (boardOf(b.id) ? boardPanel(boardOf(b.id)) : '')+
+    (boardOf(b.id) ? boardPanel(boardOf(b.id))+findingsPanel(boardOf(b.id)) : '')+
     '<div class="nums">'+
       numBtn('lines', t.lines, '<span class="o">'+rund(m.oldL)+'</span><span class="a">→</span>'+rund(m.newL))+
       numBtn('tests', t.tests, '<span class="o">'+fmt(m.oldT)+'</span><span class="a">→</span>'+fmt(m.newT))+
@@ -1103,7 +1122,7 @@ function drawCards(){
       var m=b.m, k = el('button','card'); k.type='button';
       k.innerHTML = '<span class="aude">'+esc(L(AUD[a].s))+'</span><h3>'+esc(L(b.t))+'</h3><span class="d">'+esc(L(b.can)[0])+' …</span>'+
         '<span class="m"><span>'+(de()?'Zeilen ':'lines ')+'<b>'+rund(m.oldL)+' → '+rund(m.newL)+'</b></span><span>'+(de()?'Tests ':'tests ')+'<b>'+fmt(m.oldT)+' → '+fmt(m.newT)+'</b></span>'+(b.ep.length?'<span>Epics <b>'+openEpics(b)+'/'+b.ep.length+'</b></span>':'')+'</span>'+
-        (boardOf(b.id) ? sbarHTML(boardOf(b.id),'card')+'<span class="cbadges"><span class="bb">'+esc(uhText(boardOf(b.id)))+'</span><span class="bb">'+esc(readyText(boardOf(b.id)))+' · '+esc(unscoredText(boardOf(b.id)))+'</span></span>' : '');
+        (boardOf(b.id) ? sbarHTML(boardOf(b.id),'card')+'<span class="cbadges"><span class="bb">'+esc(uhText(boardOf(b.id)))+'</span><span class="bb">'+esc(readyText(boardOf(b.id)))+' · '+esc(unscoredText(boardOf(b.id)))+'</span>'+findingBadge(boardOf(b.id)).replace(' aria-hidden="true"','')+'</span>' : '');
       k.addEventListener('click', function(){ openBlock(b.id, k); if (!useSheet()) document.getElementById('karte').scrollIntoView({behavior:reduce?'auto':'smooth'}); });
       c.appendChild(k);
     });

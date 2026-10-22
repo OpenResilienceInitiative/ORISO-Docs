@@ -3,93 +3,368 @@
   "$id": "urn:oriso:planning-map:board-schema:v1",
   "title": "ORISO planning map board.json",
   "type": "object",
-  "required": ["schemaVersion", "syncedAt", "source", "totals", "fieldOptions", "statusCounts", "readinessRange", "releases", "privateCounts", "items", "warnings"],
+  "required": [
+    "schemaVersion",
+    "syncedAt",
+    "source",
+    "totals",
+    "fieldOptions",
+    "statusCounts",
+    "readinessRange",
+    "releases",
+    "privateCounts",
+    "items",
+    "warnings"
+  ],
   "additionalProperties": false,
   "properties": {
-    "schemaVersion": { "const": 1 },
-    "syncedAt": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$" },
+    "schemaVersion": {
+      "const": 1
+    },
+    "syncedAt": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+    },
     "source": {
-      "type": "object", "additionalProperties": false,
-      "required": ["owner", "projectNumber", "title"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owner",
+        "projectNumber",
+        "title"
+      ],
       "properties": {
-        "owner": { "type": "string" },
-        "projectNumber": { "type": "integer", "minimum": 1 },
-        "title": { "type": "string" }
+        "owner": {
+          "type": "string"
+        },
+        "projectNumber": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "title": {
+          "type": "string"
+        }
       }
     },
     "totals": {
-      "type": "object", "additionalProperties": false,
-      "required": ["items", "public", "private"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "items",
+        "public",
+        "private"
+      ],
       "properties": {
-        "items": { "type": "integer", "minimum": 0 },
-        "public": { "type": "integer", "minimum": 0 },
-        "private": { "type": "integer", "minimum": 0 }
+        "items": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "public": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "private": {
+          "type": "integer",
+          "minimum": 0
+        }
       }
     },
     "fieldOptions": {
-      "type": "object", "additionalProperties": false,
-      "required": ["status", "priority", "effort", "platformRelease"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "priority",
+        "effort",
+        "platformRelease"
+      ],
       "properties": {
-        "status": { "type": "array", "items": { "type": "string" } },
-        "priority": { "type": "array", "items": { "type": "string" } },
-        "effort": { "type": "array", "items": { "type": "string" } },
-        "platformRelease": { "type": "array", "items": { "type": "string" } }
+        "status": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "priority": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "effort": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "platformRelease": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       }
     },
-    "statusCounts": { "type": "object", "additionalProperties": { "type": "integer", "minimum": 0 } },
+    "statusCounts": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
     "readinessRange": {
-      "type": "object", "additionalProperties": false,
-      "required": ["min", "max"],
-      "properties": { "min": { "type": ["number", "null"] }, "max": { "type": ["number", "null"] } }
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "min",
+        "max"
+      ],
+      "properties": {
+        "min": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "max": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      }
     },
     "releases": {
       "type": "array",
       "items": {
-        "type": "object", "additionalProperties": false,
-        "required": ["name", "count"],
-        "properties": { "name": { "type": "string" }, "count": { "type": "integer", "minimum": 0 } }
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "count"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
       }
     },
     "privateCounts": {
       "type": "array",
       "items": {
-        "type": "object", "additionalProperties": false,
-        "required": ["repository", "count", "byStatus"],
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "repository",
+          "count",
+          "byStatus"
+        ],
         "properties": {
-          "repository": { "type": "string" },
-          "count": { "type": "integer", "minimum": 0 },
-          "byStatus": { "type": "object", "additionalProperties": { "type": "integer", "minimum": 0 } }
+          "repository": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "byStatus": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
         }
       }
     },
     "items": {
       "type": "array",
       "items": {
-        "type": "object", "additionalProperties": false,
-        "required": ["id", "contentType", "repository", "number", "title", "url", "state", "updatedAt", "status", "readiness", "issueType", "parent", "priority", "effort", "platformRelease"],
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "contentType",
+          "repository",
+          "number",
+          "title",
+          "url",
+          "state",
+          "updatedAt",
+          "status",
+          "readiness",
+          "issueType",
+          "parent",
+          "priority",
+          "effort",
+          "platformRelease"
+        ],
         "properties": {
-          "id": { "type": "string" },
-          "contentType": { "enum": ["Issue", "PullRequest", "DraftIssue"] },
-          "repository": { "type": ["string", "null"] },
-          "number": { "type": ["integer", "null"] },
-          "title": { "type": "string" },
-          "url": { "type": ["string", "null"] },
-          "state": { "enum": ["OPEN", "CLOSED", "MERGED", null] },
-          "updatedAt": { "type": ["string", "null"] },
-          "status": { "type": ["string", "null"] },
-          "readiness": { "type": ["number", "null"] },
-          "issueType": { "type": ["string", "null"] },
-          "parent": {
-            "type": ["object", "null"], "additionalProperties": false,
-            "required": ["repository", "number"],
-            "properties": { "repository": { "type": "string" }, "number": { "type": "integer" } }
+          "id": {
+            "type": "string"
           },
-          "priority": { "type": ["string", "null"] },
-          "effort": { "type": ["string", "null"] },
-          "platformRelease": { "type": ["string", "null"] }
+          "contentType": {
+            "enum": [
+              "Issue",
+              "PullRequest",
+              "DraftIssue"
+            ]
+          },
+          "repository": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "number": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "state": {
+            "enum": [
+              "OPEN",
+              "CLOSED",
+              "MERGED",
+              null
+            ]
+          },
+          "updatedAt": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "readiness": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "issueType": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "parent": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": false,
+            "required": [
+              "repository",
+              "number"
+            ],
+            "properties": {
+              "repository": {
+                "type": "string"
+              },
+              "number": {
+                "type": "integer"
+              }
+            }
+          },
+          "priority": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "effort": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "platformRelease": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "assignees": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "rule",
+                "severity",
+                "detail"
+              ],
+              "properties": {
+                "rule": {
+                  "enum": [
+                    "stalled",
+                    "closed-not-done",
+                    "qa-external-no-bjoern",
+                    "epic-no-readiness",
+                    "gate-status-mismatch"
+                  ]
+                },
+                "severity": {
+                  "enum": [
+                    "warn",
+                    "error"
+                  ]
+                },
+                "detail": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
-    "warnings": { "type": "array", "items": { "type": "string" } }
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "findingCounts": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    }
   }
 }

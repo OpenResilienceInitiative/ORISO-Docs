@@ -175,6 +175,13 @@
                             }
                           }
                         ]
+                      },
+                      "assignees": {
+                        "nodes": [
+                          {
+                            "login": "frank"
+                          }
+                        ]
                       }
                     }
                   },
@@ -193,7 +200,7 @@
                       "title": "Epic: planning map",
                       "url": "https://github.com/OpenResilienceInitiative/ORISO-Docs/issues/197",
                       "state": "OPEN",
-                      "updatedAt": "2026-10-20T10:00:00Z",
+                      "updatedAt": "2026-09-01T10:00:00Z",
                       "repository": {
                         "nameWithOwner": "OpenResilienceInitiative/ORISO-Docs",
                         "isPrivate": false
@@ -224,6 +231,16 @@
                             "field": {
                               "name": "Platform release"
                             }
+                          }
+                        ]
+                      },
+                      "assignees": {
+                        "nodes": [
+                          {
+                            "login": "frank"
+                          },
+                          {
+                            "login": "BjoernLudwig"
                           }
                         ]
                       }
@@ -284,6 +301,9 @@
                             }
                           }
                         ]
+                      },
+                      "assignees": {
+                        "nodes": []
                       }
                     }
                   },
@@ -387,6 +407,9 @@
                             }
                           }
                         ]
+                      },
+                      "assignees": {
+                        "nodes": []
                       }
                     }
                   }

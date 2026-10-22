@@ -3,6 +3,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { ITEMS_QUERY, META_QUERY } from "./queries.mjs";
 import { validate } from "./schema.mjs";
+import { evaluateItem } from "./watchers.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 export const SCHEMA_VERSION = 1;
@@ -93,6 +94,7 @@ export function buildBoard({ meta, items: rawItems, totalCount, title }, { synce
   const privateMap = new Map();
   const statusCounts = {};
   const releaseCounts = new Map();
+  const findingCounts = {};
   let readinessMin = null;
   let readinessMax = null;
 
@@ -139,7 +141,10 @@ export function buildBoard({ meta, items: rawItems, totalCount, title }, { synce
       priority: f.priority?.[0] ?? null,
       effort: f.effort?.[0] ?? null,
       platformRelease: releases[0] ?? null,
+      assignees: (c?.assignees?.nodes ?? []).map((a) => a.login),
     };
+    item.findings = evaluateItem(item, { now: syncedAt });
+    for (const f of item.findings) findingCounts[f.rule] = (findingCounts[f.rule] ?? 0) + 1;
     if (item.platformRelease) releaseCounts.set(item.platformRelease, (releaseCounts.get(item.platformRelease) ?? 0) + 1);
     items.push(item);
   }
@@ -160,6 +165,7 @@ export function buildBoard({ meta, items: rawItems, totalCount, title }, { synce
       platformRelease: releaseNames,
     },
     statusCounts,
+    findingCounts,
     readinessRange: { min: readinessMin, max: readinessMax },
     releases: releaseNames.map((name) => ({ name, count: releaseCounts.get(name) ?? 0 })),
     privateCounts: [...privateMap.values()].sort((a, b) => a.repository.localeCompare(b.repository)),

@@ -41,10 +41,15 @@
       if (it.contentType !== 'Issue' || !it.repository || typeof it.number !== 'number') { ignored++; return; }
       var id = capabilityOf(it, idx);
       if (!id) { unmapped++; return; }
-      var b = blocks[id] || (blocks[id] = {total: 0, noStatus: 0, counts: {}, priority: {urgent: 0, high: 0, urgentHigh: 0}, rsum: 0, scored: 0, unscored: 0});
+      var b = blocks[id] || (blocks[id] = {total: 0, noStatus: 0, counts: {}, priority: {urgent: 0, high: 0, urgentHigh: 0}, rsum: 0, scored: 0, unscored: 0, findings: {total: 0, byRule: {}, items: []}});
       b.total++;
       if (STATUSES.indexOf(it.status) >= 0) b.counts[it.status] = (b.counts[it.status] || 0) + 1; else b.noStatus++;
       if (it.priority === 'Urgent') b.priority.urgent++; else if (it.priority === 'High') b.priority.high++;
+      if (it.findings && it.findings.length) {
+        var fi = {repository: it.repository, number: it.number, title: it.title, url: it.url, rules: [], details: {}};
+        it.findings.forEach(function (f) { fi.rules.push(f.rule); fi.details[f.rule] = f.detail || {}; b.findings.byRule[f.rule] = (b.findings.byRule[f.rule] || 0) + 1; b.findings.total++; });
+        b.findings.items.push(fi);
+      }
       if (typeof it.readiness === 'number') { b.rsum += it.readiness; b.scored++; } else b.unscored++;
     });
     Object.keys(blocks).forEach(function (id) {

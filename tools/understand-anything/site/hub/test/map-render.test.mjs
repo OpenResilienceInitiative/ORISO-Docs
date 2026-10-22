@@ -194,3 +194,41 @@ test('on a 390 px phone the bar is visible in the tile and the legend wraps with
   assert.ok(m.s <= m.c);
   await context.close();
 });
+
+// ───── Watcher findings from board.json (ORISO-Docs#207) ─────
+test('a block with findings shows a badge with the count; blocks without any show none (EN)', {skip}, async () => {
+  const {page, problems, context} = await open({lang: 'en'});
+  const badge = page.locator('#tm .blk[data-id="chat"] .fbadge');
+  assert.equal(await badge.count(), 1);
+  assert.match(await badge.innerText(), /2/);
+  assert.match(await page.locator('#tm .blk[data-id="chat"]').getAttribute('title'), /2 findings/);
+  assert.equal(await page.locator('#tm .blk[data-id="livechat"] .fbadge').count(), 0);
+  assert.equal(await page.locator('#tm [style]').evaluateAll(a => a.filter(e => e.classList.contains('fbadge')).length), 0);
+  assert.deepEqual(problems, []);
+  await context.close();
+});
+
+test('the detail panel lists the flagged issues with their finding, in English and German', {skip}, async () => {
+  for (const [lang, a, b] of [['en', /Stalled in QA internal: 30 days \(limit 7\)/, /QA external without BjoernLudwig/], ['de', /Stillstand in QA intern: 30 Tage \(Grenze 7\)/, /QA extern ohne BjoernLudwig/]]) {
+    const {page, context} = await open({lang});
+    await page.locator('#tm .blk[data-id="chat"]').click();
+    const box = page.locator('#panel .flist');
+    await box.waitFor();
+    const text = await box.innerText();
+    assert.match(text, a); assert.match(text, b);
+    assert.match(text, /#1805/); assert.match(text, /#1806/);
+    assert.equal(await box.locator('a[href*="ORISO-Frontend/issues/1806"]').count(), 1);
+    await context.close();
+  }
+});
+
+test('on a phone the findings badge shows on the card and the sheet lists them', {skip}, async () => {
+  const {page, context} = await open({width: 390, lang: 'en'});
+  const card = page.locator('#cards .card', {hasText: 'Chat and conversation list'});
+  assert.match(await card.locator('.fbadge').innerText(), /2/);
+  await card.click();
+  await page.locator('#sheetBody .flist').waitFor();
+  const m = await page.evaluate(() => ({s: document.documentElement.scrollWidth, c: document.documentElement.clientWidth}));
+  assert.ok(m.s <= m.c);
+  await context.close();
+});

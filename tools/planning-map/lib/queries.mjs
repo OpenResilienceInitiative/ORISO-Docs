@@ -22,6 +22,7 @@ query($owner: String!, $number: Int!, $after: String) {
               number title url state updatedAt
               repository { nameWithOwner isPrivate }
               issueType { name }
+              assignees(first: 20) { nodes { login } }
               parent { number repository { nameWithOwner isPrivate } }
               issueFieldValues(first: 20) {
                 nodes {

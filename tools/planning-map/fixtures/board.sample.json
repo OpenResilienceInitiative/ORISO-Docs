@@ -45,10 +45,17 @@
     "Done": 2,
     "Backlog": 1
   },
+  "findingCounts": {
+    "stalled": 1
+  },
+  "readinessRange": {
+    "min": 2,
+    "max": 19
+  },
   "releases": [
     {
       "name": "v2.0.12",
-      "count": 1
+      "count": 2
     },
     {
       "name": "v2.0.13",
@@ -83,7 +90,11 @@
       },
       "priority": "High",
       "effort": "M",
-      "platformRelease": "v2.0.12"
+      "platformRelease": "v2.0.12",
+      "assignees": [
+        "frank"
+      ],
+      "findings": []
     },
     {
       "id": "PVTI_2",
@@ -93,14 +104,29 @@
       "title": "Epic: planning map",
       "url": "https://github.com/OpenResilienceInitiative/ORISO-Docs/issues/197",
       "state": "OPEN",
-      "updatedAt": "2026-10-20T10:00:00Z",
+      "updatedAt": "2026-09-01T10:00:00Z",
       "status": "In progress",
-      "readiness": 11,
+      "readiness": 19,
       "issueType": "Epic",
       "parent": null,
       "priority": "Urgent",
       "effort": null,
-      "platformRelease": null
+      "platformRelease": "v2.0.12",
+      "assignees": [
+        "frank",
+        "BjoernLudwig"
+      ],
+      "findings": [
+        {
+          "rule": "stalled",
+          "severity": "warn",
+          "detail": {
+            "status": "In progress",
+            "days": 51,
+            "threshold": 14
+          }
+        }
+      ]
     },
     {
       "id": "PVTI_4",
@@ -117,7 +143,9 @@
       "parent": null,
       "priority": null,
       "effort": null,
-      "platformRelease": null
+      "platformRelease": null,
+      "assignees": [],
+      "findings": []
     },
     {
       "id": "PVTI_5",
@@ -134,7 +162,9 @@
       "parent": null,
       "priority": null,
       "effort": null,
-      "platformRelease": null
+      "platformRelease": null,
+      "assignees": [],
+      "findings": []
     },
     {
       "id": "PVTI_6",
@@ -151,14 +181,12 @@
       "parent": null,
       "priority": null,
       "effort": null,
-      "platformRelease": "v2.0.13"
+      "platformRelease": "v2.0.13",
+      "assignees": [],
+      "findings": []
     }
   ],
   "warnings": [
-    "Readiness 11 outside contract range 1-10 on https://github.com/OpenResilienceInitiative/ORISO-Docs/issues/197 (kept as-is)"
-  ],
-  "readinessRange": {
-    "min": 2,
-    "max": 11
-  }
+    "2 Platform release values (v2.0.12, v2.0.13) on https://github.com/OpenResilienceInitiative/ORISO-Docs/issues/197; expected one, using the first"
+  ]
 }
