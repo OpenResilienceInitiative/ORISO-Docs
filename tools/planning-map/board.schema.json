@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://docs.oriso.org/planning-map/board.schema.json",
+  "$id": "urn:oriso:planning-map:board-schema:v1",
   "title": "ORISO planning map board.json",
   "type": "object",
   "required": ["schemaVersion", "syncedAt", "source", "totals", "fieldOptions", "statusCounts", "releases", "privateCounts", "items", "warnings"],
