@@ -6,14 +6,15 @@ import {renderFeatures} from './render-features.mjs';
 import {renderGlossary} from './render-glossary.mjs';
 import {validateGlossarySources} from '../../lib/glossary-projection.mjs';
 import {immutableSource} from '../../ua-glossary-project.mjs';
+import {validateBoard,contract as boardContract} from '../../../planning-map/lib/board.mjs';
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
-const allowed=p=>/^(index\.html|status\.json|operator-snapshot\.json|assets\/(hub\.css|tokens\.(css|json)|lang\.js|status\.js|glossary\.js)|glossary\/(index\.html|catalog\.json|bindings\.json|sources\/(seed|bjorn-reconciliation|naming-audit)\.md)|features\/(index|de|en|case-handover)\.html|map\/(index\.html|map\.css|map\.js|data\/(counts|descriptions|drill|epics|links|zoom)\.json))$/.test(p);
+const allowed=p=>/^(index\.html|status\.json|operator-snapshot\.json|assets\/(hub\.css|tokens\.(css|json)|lang\.js|status\.js|glossary\.js)|glossary\/(index\.html|catalog\.json|bindings\.json|sources\/(seed|bjorn-reconciliation|naming-audit)\.md)|features\/(index|de|en|case-handover)\.html|map\/(index\.html|map\.css|map\.js|data\/(counts|descriptions|drill|epics|links|zoom|board)\.json))$/.test(p);
 function files(root){return fs.readdirSync(root,{recursive:true}).filter(p=>{const stat=fs.lstatSync(path.join(root,p));if(stat.isSymbolicLink())throw Error('Hub symlinks are forbidden');return stat.isFile();}).sort();}
 const hubSourcePrefix='tools/understand-anything/site/hub/';
 const staticInputs=['index.html','assets/hub.css','assets/tokens.css','assets/tokens.json','assets/lang.js','assets/status.js','assets/glossary.js','glossary/index.html','features/index.html','features/de.html','features/en.html','features/case-handover.html','map/index.html','map/map.css','map/map.js',...['counts','descriptions','drill','epics','links','zoom'].map(n=>`map/data/${n}.json`)];
 const producerInputs=['render-glossary.mjs','render-features.mjs','publication.mjs'].map(p=>hubSourcePrefix+p).concat([
  'tools/understand-anything/glossary/validate.mjs','tools/understand-anything/glossary/source-bindings.mjs','tools/understand-anything/glossary/reasons.mjs','tools/understand-anything/lib/glossary-projection.mjs','tools/understand-anything/ua-glossary-project.mjs',
- 'tools/docs-publication/platform-release.mjs','tools/public_operator_snapshot.py','tools/truth-chain/public-repositories.json','tools/understand-anything/site/hub/features/catalog.json','site/page-catalog.json'
+ 'tools/docs-publication/platform-release.mjs','tools/planning-map/lib/board.mjs','tools/planning-map/lib/queries.mjs','tools/planning-map/lib/schema.mjs','tools/planning-map/board-contract.json','tools/planning-map/board.schema.json','tools/public_operator_snapshot.py','tools/truth-chain/public-repositories.json','tools/understand-anything/site/hub/features/catalog.json','site/page-catalog.json'
 ]);
 function publicationSources(root) {
  files(path.join(root,hubSourcePrefix));
@@ -76,7 +77,17 @@ export function validateSources(root){
  if(fs.readFileSync(path.join(hub,'features/index.html'),'utf8')!==renderFeatures(data,'de'))throw Error('Hub renderer output differs: index');
  glossarySources(root);return data;
 }
-export function buildHub({root,out,generation,origin,revision,releaseLock,operatorSnapshot,operatorConfirmation}){
+// Optional planning board (ORISO-Docs#208): an exported board.json is validated, must not carry private
+// repositories, and is announced to the map through links.json "optional". Absent: the map shows no board.
+export function boardAsset(boardPath,linksBytes){
+ const board=JSON.parse(fs.readFileSync(boardPath,'utf8')),errors=validateBoard(board);
+ if(errors.length)throw Error('board.json invalid: '+errors.join('; '));
+ const priv=new Set(boardContract.privateRepositories);
+ if(board.items.some(i=>priv.has(i.repository)))throw Error('board.json carries an item of a private repository');
+ const links=JSON.parse(linksBytes);links.optional=[...new Set([...(links.optional||[]),'board.json'])].sort();
+ return {board:JSON.stringify(board)+'\n',links:JSON.stringify(links)+'\n'};
+}
+export function buildHub({root,out,generation,origin,revision,releaseLock,operatorSnapshot,operatorConfirmation,board}){
  validateSources(root);const url=new URL(origin);if(url.username||url.password||url.search||url.hash||!['https:','http:'].includes(url.protocol))throw Error('Invalid hub origin');if(!/^[a-f0-9]{40}$/.test(revision))throw Error('Exact source revision required');if(execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim()!==revision)throw Error('Hub producer source revision mismatch');
  const staticBytes=publicationSources(root);
  const manifest=JSON.parse(fs.readFileSync(path.join(generation,'manifest.json'))),policy=JSON.parse(fs.readFileSync(path.join(root,'tools/truth-chain/public-repositories.json'))).repositories;
@@ -90,6 +101,7 @@ export function buildHub({root,out,generation,origin,revision,releaseLock,operat
  const refs=[...new Set(manifest.sources.map(s=>s.ref.replace(/^refs\/heads\//,'')))].sort();
  fs.mkdirSync(out,{recursive:true});if(fs.readdirSync(out).length)throw Error('Hub artifact output must be empty');
  for(const [p,bytes] of staticBytes){fs.mkdirSync(path.dirname(path.join(out,p)),{recursive:true});fs.writeFileSync(path.join(out,p),bytes);}
+ if(board){const asset=boardAsset(board,staticBytes.get('map/data/links.json'));fs.writeFileSync(path.join(out,'map/data/links.json'),asset.links);fs.writeFileSync(path.join(out,'map/data/board.json'),asset.board);}
  fs.mkdirSync(path.join(out,'glossary/sources'),{recursive:true});for(const filename of ['seed.md','bjorn-reconciliation.md','naming-audit.md'])fs.writeFileSync(path.join(out,'glossary/sources',filename),immutableSource(root,'ORISO-Docs').readSource('tools/understand-anything/glossary/sources/'+filename));fs.writeFileSync(path.join(out,'glossary/catalog.json'),glossary.bytes);fs.writeFileSync(path.join(out,'glossary/bindings.json'),JSON.stringify(glossary.report)+'\n');fs.writeFileSync(path.join(out,'glossary/index.html'),renderGlossary(glossary.data,glossary.report));
  fs.writeFileSync(path.join(out,'operator-snapshot.json'),JSON.stringify(operator.snapshot)+'\n');
  for(const file of ['index.html','features/index.html','features/de.html','features/en.html']){const target=path.join(out,file),locale=file==='features/en.html'?'en':'de';const section=file==='index.html'?operator.html.de+operator.html.en:operator.html[locale];fs.writeFileSync(target,fs.readFileSync(target,'utf8').replace('</body>',section+'</body>'));}
@@ -111,4 +123,4 @@ export function installHub({artifact,destination,currentLink,origin,revision}){
  const pending=currentLink+'.pending';fs.symlinkSync(release,pending);fs.renameSync(pending,currentLink);return release;
 }
 export async function readbackHub(manifest,fetcher=fetch,manifestBytes=Buffer.from(JSON.stringify(manifest)+'\n')){if(manifest.state!=='complete')throw Error('Release binding required; preview is non-activatable');assertPlatformReleaseBinding(manifest.releaseBinding,manifest.sourceRevision);const publicManifest=await fetcher(new URL('hub-manifest.json',manifest.origin+'/'),{cache:'no-store'});if(!publicManifest.ok||hash(Buffer.from(await publicManifest.arrayBuffer()))!==hash(manifestBytes))throw Error('Public hub manifest readback binding/hash mismatch');for(const f of manifest.files){const r=await fetcher(new URL(f.path,manifest.origin+'/'),{cache:'no-store'});if(!r.ok||hash(Buffer.from(await r.arrayBuffer()))!==f.sha256)throw Error('Public hub readback mismatch: '+f.path);}}
-if(process.argv[1]===fileURLToPath(import.meta.url)){const arg=n=>{let i=process.argv.indexOf(n);if(i<0)throw Error('Required '+n);return process.argv[i+1];};try{if(process.argv.includes('--install'))console.log(installHub({artifact:arg('--artifact'),destination:arg('--destination'),currentLink:arg('--current-link'),origin:arg('--origin'),revision:arg('--revision')}));else if(process.argv.includes('--readback'))await readbackHub(JSON.parse(fs.readFileSync(arg('--manifest'))),fetch,fs.readFileSync(arg('--manifest')));else console.log(JSON.stringify(buildHub({root:arg('--root'),out:arg('--out'),generation:arg('--generation'),origin:arg('--origin'),revision:arg('--revision'),operatorConfirmation:process.argv.includes('--operator-confirmation')?arg('--operator-confirmation'):undefined,operatorSnapshot:process.argv.includes('--operator-snapshot')?arg('--operator-snapshot'):undefined,releaseLock:process.argv.includes('--release-manifest')?JSON.parse(fs.readFileSync(arg('--release-manifest'))):undefined})));}catch(e){console.error(e.message);process.exitCode=1;}}
+if(process.argv[1]===fileURLToPath(import.meta.url)){const arg=n=>{let i=process.argv.indexOf(n);if(i<0)throw Error('Required '+n);return process.argv[i+1];};try{if(process.argv.includes('--install'))console.log(installHub({artifact:arg('--artifact'),destination:arg('--destination'),currentLink:arg('--current-link'),origin:arg('--origin'),revision:arg('--revision')}));else if(process.argv.includes('--readback'))await readbackHub(JSON.parse(fs.readFileSync(arg('--manifest'))),fetch,fs.readFileSync(arg('--manifest')));else console.log(JSON.stringify(buildHub({root:arg('--root'),out:arg('--out'),generation:arg('--generation'),origin:arg('--origin'),revision:arg('--revision'),operatorConfirmation:process.argv.includes('--operator-confirmation')?arg('--operator-confirmation'):undefined,operatorSnapshot:process.argv.includes('--operator-snapshot')?arg('--operator-snapshot'):undefined,board:process.argv.includes('--board')?arg('--board'):undefined,releaseLock:process.argv.includes('--release-manifest')?JSON.parse(fs.readFileSync(arg('--release-manifest'))):undefined})));}catch(e){console.error(e.message);process.exitCode=1;}}

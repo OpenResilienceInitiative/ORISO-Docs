@@ -95,3 +95,25 @@ and `car15` as `.json` files (see `test/fixtures/map-inputs/`). Output is
 deterministic. `test/map-render.test.mjs` renders the page from
 `test/fixtures/map-data/` in a browser under a strict CSP; it needs Playwright
 (`UA_PLAYWRIGHT=/path/to/playwright/index.mjs`) and is skipped without it.
+
+### Planning board on the map (`board.json`, ORISO-Docs#208)
+
+`.github/workflows/planning-board-sync.yml` exports the ORISO Roadmap project hourly and on
+"Run workflow". The map footer shows "Stand <syncedAt>" and a "Jetzt synchronisieren" link to that
+workflow's page; no token reaches the browser.
+
+How `board.json` reaches the page, and why:
+
+- The sync workflow stores `board.json` as the workflow artifact `planning-board` (7 days). It is
+  never committed, so no board data lands in Git history.
+- `publication.mjs --board FILE` validates it against the v1 schema, refuses items of private
+  repositories, writes `map/data/board.json` and adds it to `links.json` `optional`. The
+  `produce` job of `ua-public-site.yml` downloads the newest artifact before building and passes
+  `--board` when one exists; without one the map simply has no board data.
+- Chosen over a data branch (needs a write token and puts board data into Git) and over writing
+  to the live hub (the hub is installed as an immutable, hash-checked generation; changing a file
+  in place would break that contract). The cost: the map's "Stand" moves when the hub is next
+  published, not at the end of each sync run. Closing that gap needs an operator-side step that
+  re-installs the hub, which this change deliberately does not add.
+- Without the secret `ORISO_BOARD_READ_TOKEN` the workflow runs on the recorded fixture and
+  publishes nothing. Exit code 2 of the export (drift) fails the run.

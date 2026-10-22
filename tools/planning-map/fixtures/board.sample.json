@@ -1,0 +1,160 @@
+{
+  "schemaVersion": 1,
+  "syncedAt": "2026-10-22T12:00:00Z",
+  "source": {
+    "owner": "OpenResilienceInitiative",
+    "projectNumber": 1,
+    "title": "ORISO Roadmap"
+  },
+  "totals": {
+    "items": 6,
+    "public": 5,
+    "private": 1
+  },
+  "fieldOptions": {
+    "status": [
+      "Backlog",
+      "Ready",
+      "On hold",
+      "In progress",
+      "In review",
+      "QA internal",
+      "QA external",
+      "Done"
+    ],
+    "priority": [
+      "Urgent",
+      "High",
+      "Medium",
+      "Low"
+    ],
+    "effort": [
+      "S",
+      "M",
+      "L"
+    ],
+    "platformRelease": [
+      "v2.0.12",
+      "v2.0.13"
+    ]
+  },
+  "statusCounts": {
+    "Ready": 1,
+    "In progress": 1,
+    "QA internal": 1,
+    "Done": 2,
+    "Backlog": 1
+  },
+  "releases": [
+    {
+      "name": "v2.0.12",
+      "count": 1
+    },
+    {
+      "name": "v2.0.13",
+      "count": 1
+    }
+  ],
+  "privateCounts": [
+    {
+      "repository": "OpenResilienceInitiative/ORISO-E2E",
+      "count": 1,
+      "byStatus": {
+        "QA internal": 1
+      }
+    }
+  ],
+  "items": [
+    {
+      "id": "PVTI_1",
+      "contentType": "Issue",
+      "repository": "OpenResilienceInitiative/ORISO-Docs",
+      "number": 204,
+      "title": "Planning map: board.json",
+      "url": "https://github.com/OpenResilienceInitiative/ORISO-Docs/issues/204",
+      "state": "OPEN",
+      "updatedAt": "2026-10-20T10:00:00Z",
+      "status": "Ready",
+      "readiness": 6,
+      "issueType": "Task",
+      "parent": {
+        "repository": "OpenResilienceInitiative/ORISO-Docs",
+        "number": 197
+      },
+      "priority": "High",
+      "effort": "M",
+      "platformRelease": "v2.0.12"
+    },
+    {
+      "id": "PVTI_2",
+      "contentType": "Issue",
+      "repository": "OpenResilienceInitiative/ORISO-Docs",
+      "number": 197,
+      "title": "Epic: planning map",
+      "url": "https://github.com/OpenResilienceInitiative/ORISO-Docs/issues/197",
+      "state": "OPEN",
+      "updatedAt": "2026-10-20T10:00:00Z",
+      "status": "In progress",
+      "readiness": 11,
+      "issueType": "Epic",
+      "parent": null,
+      "priority": "Urgent",
+      "effort": null,
+      "platformRelease": null
+    },
+    {
+      "id": "PVTI_4",
+      "contentType": "PullRequest",
+      "repository": "OpenResilienceInitiative/ORISO-Docs",
+      "number": 130,
+      "title": "Drop committed graphs",
+      "url": "https://github.com/OpenResilienceInitiative/ORISO-Docs/pull/130",
+      "state": "MERGED",
+      "updatedAt": "2026-10-10T00:00:00Z",
+      "status": "Done",
+      "readiness": null,
+      "issueType": null,
+      "parent": null,
+      "priority": null,
+      "effort": null,
+      "platformRelease": null
+    },
+    {
+      "id": "PVTI_5",
+      "contentType": "DraftIssue",
+      "repository": null,
+      "number": null,
+      "title": "Idea: board filters",
+      "url": null,
+      "state": null,
+      "updatedAt": "2026-10-12T00:00:00Z",
+      "status": "Backlog",
+      "readiness": 2,
+      "issueType": null,
+      "parent": null,
+      "priority": null,
+      "effort": null,
+      "platformRelease": null
+    },
+    {
+      "id": "PVTI_6",
+      "contentType": "Issue",
+      "repository": "OpenResilienceInitiative/ORISO-Docs",
+      "number": 55,
+      "title": "Child of a private parent",
+      "url": "https://github.com/OpenResilienceInitiative/ORISO-Docs/issues/55",
+      "state": "CLOSED",
+      "updatedAt": "2026-10-20T10:00:00Z",
+      "status": "Done",
+      "readiness": 8,
+      "issueType": "Task",
+      "parent": null,
+      "priority": null,
+      "effort": null,
+      "platformRelease": "v2.0.13"
+    }
+  ],
+  "warnings": [
+    "Readiness 11 outside contract range 1-10 on https://github.com/OpenResilienceInitiative/ORISO-Docs/issues/197 (kept as-is)"
+  ]
+}
