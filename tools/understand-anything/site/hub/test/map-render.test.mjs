@@ -1,6 +1,7 @@
 // Renders the map page in a real browser from fixture JSON (test/fixtures/map-data).
-// Needs Playwright: set UA_PLAYWRIGHT to its index.mjs (CI installs it in ua-tooling.yml);
-// without it the suite is skipped locally, and FAILS when CI is set (it must never pass silently there).
+// Needs Playwright: set UA_PLAYWRIGHT to its index.mjs. The browser job in ua-tooling.yml installs it and
+// sets UA_PLAYWRIGHT_REQUIRED=1, so there the suite FAILS instead of skipping when Playwright is missing.
+// Other CI jobs (contracts without a browser) and local runs skip it.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
@@ -38,8 +39,8 @@ function serve() {
   return new Promise(resolve => server.listen(0, '127.0.0.1', () => resolve(server)));
 }
 
-const inCI = !!process.env.CI && process.env.CI !== 'false';
-const skip = playwrightPath || inCI ? false : 'Playwright not available (set UA_PLAYWRIGHT)';
+const required = process.env.UA_PLAYWRIGHT_REQUIRED === '1';
+const skip = playwrightPath || required ? false : 'Playwright not available (set UA_PLAYWRIGHT)';
 let browser, server, origin;
 async function open({width = 1440, scheme = 'light', lang = 'de', init, board} = {}) {
   const context = await browser.newContext({viewport: {width, height: 900}, colorScheme: scheme, locale: lang === 'de' ? 'de-DE' : 'en-GB', reducedMotion: 'reduce'});
