@@ -10,7 +10,7 @@ const run = (extra) => {
   const env = {...process.env, UA_PLAYWRIGHT: '/nonexistent/playwright/index.mjs', ...extra};
   delete env.NODE_TEST_CONTEXT;
   if (!('UA_PLAYWRIGHT_REQUIRED' in extra)) delete env.UA_PLAYWRIGHT_REQUIRED;
-  return spawnSync(process.execPath, ['--test', '--test-name-pattern=map renders the three groups', suite], {env, encoding: 'utf8'});
+  return spawnSync(process.execPath, ['--test', '--test-reporter=tap', '--test-name-pattern=map renders the three groups', suite], {env, encoding: 'utf8'});
 };
 
 test('without Playwright the map-render suite is skipped (local runs and CI jobs without a browser)', () => {
