@@ -108,3 +108,67 @@ test("bodyHash is stable and sensitive to every byte", () => {
   assert.notEqual(bodyHash("a"), bodyHash("a "));
   assert.match(bodyHash(""), /^[0-9a-f]{64}$/);
 });
+
+// ───── review of #216 (epic #213) ─────
+test("a body that ends inside an open code fence is refused with BAD_MARKERS instead of appending into the fence", () => {
+  for (const fence of ["```", "~~~~", "   ```js"]) {
+    const body = `Intro\n\n${fence}\nconsole.log(1)\n`;
+    const r = applySection(body, renderSection(job()));
+    assert.equal(r.ok, false, fence);
+    assert.equal(r.error.code, "BAD_MARKERS");
+    assert.match(r.error.message, /open code fence/);
+  }
+  // a closed fence is fine, and so is a fence that only mentions the markers
+  const closed = applySection("Intro\n\n```\ncode\n```\n", renderSection(job()));
+  assert.equal(closed.ok, true);
+  assert.equal(closed.mode, "appended");
+});
+
+test("markers indented by one to three spaces are markers (CommonMark): they are replaced, never a second section", () => {
+  for (const pad of [" ", "  ", "   "]) {
+    const body = `Intro\n\n${renderSection(job()).split("\n").map((l) => (l === START || l === END ? pad + l : l)).join("\n")}\n\nTail\n`;
+    const r = applySection(body, renderSection(job({ state: "done", updated: "2026-10-24T10:00:00Z" })));
+    assert.equal(r.ok, true, JSON.stringify(pad));
+    assert.equal(r.mode, "replaced");
+    assert.equal(r.body.split("oriso:job:start").length, 2, "exactly one section");
+    assert.ok(r.body.startsWith("Intro\n\n") && r.body.endsWith("\n\nTail\n"));
+    assert.equal(parseSection(r.body).job.state, "done");
+  }
+  // four spaces is an indented code block, not a marker
+  const code = `Intro\n\n    ${START}\n    ${END}\n`;
+  assert.equal(parseSection(code), null);
+});
+
+test("yaml comments after a value are stripped (outside quotes); a # inside quotes stays", () => {
+  const sec = [START, "```yaml",
+    "state: running            # running | stopped | waiting-human | done | failed",
+    "runner: local             # local | cloud",
+    'machine: "mac-frank"      # free label',
+    "started: 2026-10-24T08:00:00Z # first report",
+    "updated: 2026-10-24T09:30:00Z",
+    'model: "claude-opus-5-5"',
+    'branches: ["feat/213-216-jobs"] # list',
+    "prs: [] # none",
+    'next: "fix #12 then run tests" # trailing',
+    "report: null # none yet",
+    "```", END].join("\n");
+  const r = parseSection(sec);
+  assert.deepEqual(r.problems, []);
+  assert.equal(r.job.state, "running");
+  assert.equal(r.job.runner, "local");
+  assert.equal(r.job.machine, "mac-frank");
+  assert.equal(r.job.next, "fix #12 then run tests");
+  assert.deepEqual(r.job.branches, ["feat/213-216-jobs"]);
+  assert.equal(r.job.report, null);
+});
+
+test("the example documented at the top of lib/job.mjs parses into a valid job", async () => {
+  const { readFileSync } = await import("node:fs");
+  const src = readFileSync(new URL("../lib/job.mjs", import.meta.url), "utf8");
+  const head = src.split("\n").filter((l) => l.startsWith("//")).map((l) => l.replace(/^\/\/ {0,3}/, ""));
+  const from = head.indexOf(START), to = head.indexOf(END);
+  assert.ok(from >= 0 && to > from, "the header shows a whole section");
+  const r = parseSection(head.slice(from, to + 1).join("\n"));
+  assert.deepEqual(r.problems, []);
+  assert.equal(r.job.state, "running");
+});

@@ -114,3 +114,28 @@ test("GitHub failing on read or write is a typed error, never an exception", asy
   gh3.transport = async () => { throw new Error("offline"); };
   assert.equal((await writeJobSection(REF, job(), { transport: gh3.transport })).error.code, "TRANSPORT");
 });
+
+// ───── review of #216 (epic #213): an invalid existing section is a typed error, not a silent reset ─────
+const brokenSection = (yaml) => `Problem\n\n${START}\n**Agent job**\n\n\`\`\`yaml\n${yaml}\n\`\`\`\n${END}\n`;
+test("an existing section that does not validate is refused with BAD_SECTION and its problems; nothing is written", async () => {
+  const gh = world(brokenSection("state: exploded\nrunner: local\nstarted: 2026-10-24T08:00:00Z\nupdated: 2026-10-24T09:00:00Z"));
+  let seen = "not called";
+  const r = await writeJobSection(REF, (existing) => { seen = existing; return job(); }, { transport: gh.transport });
+  assert.equal(r.ok, false);
+  assert.equal(r.error.code, "BAD_SECTION");
+  assert.ok(ERROR_CODES.includes("BAD_SECTION"));
+  assert.ok(r.error.detail.problems.some((p) => /state/.test(p)));
+  assert.match(r.error.message, /--force/);
+  assert.equal(seen, "not called", "the merge never sees a reset section");
+  assert.deepEqual(gh.writes, []);
+});
+
+test("force: true overwrites an invalid section deliberately (merge starts from nothing)", async () => {
+  const gh = world(brokenSection("state: exploded"));
+  let seen = "not called";
+  const r = await writeJobSection(REF, (existing) => { seen = existing; return job(); }, { transport: gh.transport, force: true });
+  assert.equal(r.ok, true);
+  assert.equal(seen, null);
+  assert.equal(r.mode, "replaced");
+  assert.equal(parseSection(gh.issue(REF).body).job.state, "running");
+});

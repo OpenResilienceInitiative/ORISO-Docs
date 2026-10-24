@@ -4,11 +4,12 @@
 //
 //   node tools/planning-map/job.mjs report --issue Org/Repo#123 --state running|stopped|waiting-human|done|failed \
 //        [--branch feat/x]... [--pr "#5"|Org/Repo#5|<PR url>] (quote the #)... [--report https://...] [--next "what comes next"] \
-//        [--model name] [--machine label] [--runner local|cloud] [--expect-updated-at <ISO>] [--expect-hash <sha256>] [--apply]
+//        [--model name] [--machine label] [--runner local|cloud] [--expect-updated-at <ISO>] [--expect-hash <sha256>] [--force] [--apply]
 //
 // Every call merges into the section that is already there (started is kept, branches and PRs are added, `updated`
 // is set to now), so running it again is a heartbeat and agents of any tool report the same way. No host name, user
 // name or secret is added by default; the machine label is only what you pass. Text outside the markers is never touched.
+// A section that is there but does not validate is refused (BAD_SECTION, with its problems); --force overwrites it deliberately.
 // Exit codes: 0 ok, 1 a planning error (typed JSON on stdout), 2 usage error.
 import { fileURLToPath } from "node:url";
 import { writeJobSection, parseIssueRef } from "./lib/planning-api.mjs";
@@ -21,7 +22,7 @@ const TERMINAL = ["done", "failed"];
 export function parseArgs(argv) {
   const [command, ...rest] = argv;
   if (!COMMANDS.includes(command)) throw new Error(`Unknown command ${JSON.stringify(command)}. Use ${COMMANDS.join(" or ")}.`);
-  const o = { command, issue: null, state: null, branches: [], prs: [], report: undefined, next: undefined, model: undefined, machine: undefined, runner: undefined, apply: false, expectUpdatedAt: undefined, expectHash: undefined };
+  const o = { command, issue: null, state: null, branches: [], prs: [], report: undefined, next: undefined, model: undefined, machine: undefined, runner: undefined, apply: false, expectUpdatedAt: undefined, expectHash: undefined, force: false };
   let dry = false;
   for (let i = 0; i < rest.length; i++) {
     const a = rest[i];
@@ -38,6 +39,7 @@ export function parseArgs(argv) {
     else if (a === "--expect-updated-at") o.expectUpdatedAt = value();
     else if (a === "--expect-hash") o.expectHash = value();
     else if (a === "--apply") o.apply = true;
+    else if (a === "--force") o.force = true;
     else if (a === "--dry-run") dry = true;
     else throw new Error(`Unknown option ${a}`);
   }
@@ -86,7 +88,7 @@ export async function main(argv, { transport = ghTransport(), log = console.log,
   try { o = parseArgs(argv); check(o); } catch (e) { err(`job.mjs: ${e.message}`); return 2; }
   try {
     const stamp = now();
-    const r = await writeJobSection(o.issue, (existing) => mergeJob(existing, o, stamp), { transport, dryRun: !o.apply, expectedUpdatedAt: o.expectUpdatedAt, expectedBodyHash: o.expectHash });
+    const r = await writeJobSection(o.issue, (existing) => mergeJob(existing, o, stamp), { transport, dryRun: !o.apply, expectedUpdatedAt: o.expectUpdatedAt, expectedBodyHash: o.expectHash, force: o.force });
     if (!r.ok) { log(JSON.stringify({ ok: false, command: o.command, error: r.error }, null, 2)); return 1; }
     log(`# ${r.issue}: ${r.mode}${r.wrote ? " (written)" : o.apply ? "" : " (dry run)"}, description was last updated ${r.before.updatedAt}`);
     const d = diffText(r.bodyBefore, r.bodyAfter);

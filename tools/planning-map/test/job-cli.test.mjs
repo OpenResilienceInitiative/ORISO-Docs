@@ -19,7 +19,7 @@ const run = async (argv, gh, now = NOW) => {
 test("parseArgs reads the report flags; --branch and --pr repeat", () => {
   assert.deepEqual(parseArgs(["report", "--issue", "ORISO-Docs#216", "--state", "running", "--branch", "a", "--branch", "b", "--pr", "#5", "--report", "https://x.org/r", "--next", "tests", "--model", "m", "--machine", "mac", "--runner", "cloud", "--apply"]), {
     command: "report", issue: "ORISO-Docs#216", state: "running", branches: ["a", "b"], prs: ["#5"], report: "https://x.org/r", next: "tests", model: "m", machine: "mac", runner: "cloud",
-    apply: true, expectUpdatedAt: undefined, expectHash: undefined,
+    apply: true, expectUpdatedAt: undefined, expectHash: undefined, force: false,
   });
 });
 
@@ -94,4 +94,17 @@ test("diffText shows changed lines with two lines of context", () => {
   const b = "1\n2\n3\nX\n5\n6\n7\n";
   assert.equal(diffText(a, b), [" 2", " 3", "-4", "+X", " 5", " 6"].join("\n"));
   assert.equal(diffText(a, a), "");
+});
+
+test("an invalid section on the issue is exit 1 (BAD_SECTION); --force overwrites it", async () => {
+  const START_ = START;
+  const gh = world(`Problem\n\n${START_}\n\`\`\`yaml\nstate: exploded\n\`\`\`\n<!-- oriso:job:end -->\n`);
+  const refused = await run(["report", "--issue", REF, "--state", "running", "--apply"], gh);
+  assert.equal(refused.code, 1);
+  assert.equal(JSON.parse(refused.out).error.code, "BAD_SECTION");
+  assert.deepEqual(gh.writes, []);
+  assert.equal(parseArgs(["report", "--force"]).force, true);
+  const forced = await run(["report", "--issue", REF, "--state", "running", "--apply", "--force"], gh);
+  assert.equal(forced.code, 0, forced.out);
+  assert.equal(parseSection(gh.issue(REF).body).job.state, "running");
 });

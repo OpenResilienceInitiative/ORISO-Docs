@@ -1,18 +1,26 @@
 // Agent job section in an issue description (ORISO-Docs#216, epic #213). Pure text: no GitHub, no I/O.
 //
 //   <!-- oriso:job:start v1 -->
-//   a short human-readable summary
+//   **Agent job: running** · local, mac-frank · updated 2026-10-24T09:30:00Z
+//
 //   ```yaml
-//   state: running            # running | stopped | waiting-human | done | failed
-//   runner: local             # local | cloud
-//   machine: "mac-frank"      # free label: no hostname, no user name, no secrets
-//   started / updated: ISO UTC
-//   model, branches, prs, next, report
+//   state: running                  # running | stopped | waiting-human | done | failed
+//   runner: local                   # local | cloud
+//   machine: "mac-frank"            # free label: no hostname, no user name, no secrets
+//   started: 2026-10-24T08:00:00Z   # ISO UTC
+//   updated: 2026-10-24T09:30:00Z   # ISO UTC, set by every report
+//   model: "claude-opus-5-5"
+//   branches: ["feat/213-216-jobs"]
+//   prs: ["OpenResilienceInitiative/ORISO-Docs#230"]
+//   next: "run the hub tests"
+//   report: null                    # or an https link without credentials
 //   ```
 //   <!-- oriso:job:end -->
 //
+// (A test parses this example.) Comments after " #" outside quotes are ignored by the parser.
 // Only the text between the two marker lines is ever replaced. Markers count only when they stand alone on a
-// line outside a fenced code block, so a description that merely talks about them is never touched.
+// line (indented by at most three spaces, as in CommonMark) outside a fenced code block, so a description that merely
+// talks about them is never touched. A description that ends inside an open code fence is refused, never appended to.
 import { createHash } from "node:crypto";
 
 export const START = "<!-- oriso:job:start v1 -->";
@@ -113,8 +121,9 @@ export function renderSection(input) {
 }
 
 // ───────── find the markers ─────────
-// Lines are scanned with their offsets. A marker is a line that BEGINS with the marker text (trailing blanks allowed),
-// outside ``` / ~~~ fences.
+// Lines are scanned with their offsets. A marker is a line that holds only the marker text (up to three leading spaces,
+// as CommonMark allows before any block; trailing blanks allowed), outside ``` / ~~~ fences. openFence: the body ends
+// inside a fence.
 function scan(body) {
   const starts = [];
   const ends = [];
@@ -131,20 +140,23 @@ function scan(body) {
       if (!fence) fence = f[1][0].repeat(f[1].length);
       else if (f[1][0] === fence[0] && f[1].length >= fence.length && /^ {0,3}[`~]+\s*$/.test(text)) fence = null;
     } else if (!fence) {
-      const m = /^<!-- oriso:job:start v(\d+) -->\s*$/.exec(text);
-      if (m) starts.push({ at, end: at + START.length, version: m[1], crlf: raw.endsWith("\r") });
-      else if (/^<!-- oriso:job:end -->\s*$/.test(text)) ends.push({ at, end: at + END.length });
+      const m = /^( {0,3})<!-- oriso:job:start v(\d+) -->\s*$/.exec(text);
+      const e = m ? null : /^( {0,3})<!-- oriso:job:end -->\s*$/.exec(text);
+      if (m) starts.push({ at, end: at + m[1].length + START.length, version: m[2], crlf: raw.endsWith("\r") });
+      else if (e) ends.push({ at, end: at + e[1].length + END.length });
     }
     if (last) break;
     at = nl + 1;
   }
-  return { starts, ends };
+  return { starts, ends, openFence: fence !== null };
 }
 
 function locate(body) {
-  const { starts, ends } = scan(body);
-  if (!starts.length && !ends.length) return { none: true };
+  const { starts, ends, openFence } = scan(body);
   const bad = (message) => ({ error: { code: "BAD_MARKERS", message } });
+  if (!starts.length && !ends.length) {
+    return openFence ? { none: true, error: bad("The description ends inside an open code fence (``` or ~~~ without its closing line), so an appended section would land inside the code block; close the fence by hand, then report again").error } : { none: true };
+  }
   if (starts.length !== 1 || ends.length !== 1) return bad(`Expected exactly one job section, found ${starts.length} start and ${ends.length} end marker(s); fix the description by hand`);
   if (starts[0].version !== "1") return bad(`Unsupported job section version v${starts[0].version}; this tool writes v1`);
   if (ends[0].at < starts[0].end) return bad("The job end marker comes before the start marker; fix the description by hand");
@@ -169,11 +181,26 @@ export function applySection(body, section) {
 }
 
 // ───────── parse ─────────
+// " # comment" after a value is cut off, but only outside "..." and '...' (a # inside a quoted string is text).
+export function stripComment(line) {
+  let quote = null;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (quote) {
+      if (c === "\\" && quote === '"') i++;
+      else if (c === quote) quote = null;
+    } else if (c === '"' || c === "'") quote = c;
+    else if (c === "#" && (i === 0 || /\s/.test(line[i - 1]))) return line.slice(0, i).trimEnd();
+  }
+  return line;
+}
+
 function parseYaml(lines) {
   const raw = {};
   const problems = [];
-  for (const line of lines) {
-    if (!line.trim() || /^\s*#/.test(line)) continue;
+  for (const full of lines) {
+    const line = stripComment(full);
+    if (!line.trim()) continue;
     const m = /^([A-Za-z_]+):\s*(.*?)\s*$/.exec(line);
     if (!m) { problems.push("unreadable line in the yaml block"); continue; }
     let [, key, val] = m;
@@ -186,20 +213,21 @@ function parseYaml(lines) {
   return { raw, problems };
 }
 
-// → null (no section) | {job, problems:[]} | {job:null, problems:[...]}
+// → null (no section) | {job, problems:[]} | {job:null, problems:[...], code}
+//   code: "BAD_MARKERS" (markers broken: fix by hand) or "BAD_SECTION" (the section is there but does not validate)
 export function parseSection(body) {
   const text = String(body ?? "");
   const loc = locate(text);
   if (loc.none) return null;
-  if (loc.error) return { job: null, problems: [loc.error.message] };
+  if (loc.error) return { job: null, problems: [loc.error.message], code: "BAD_MARKERS" };
   const lines = text.slice(loc.from, loc.to).split(/\r?\n/);
   const open = lines.findIndex((l) => /^```ya?ml\s*$/.test(l));
   const close = open < 0 ? -1 : lines.findIndex((l, i) => i > open && /^```\s*$/.test(l));
-  if (open < 0 || close < 0) return { job: null, problems: ["no yaml block in the job section"] };
+  if (open < 0 || close < 0) return { job: null, problems: ["no yaml block in the job section"], code: "BAD_SECTION" };
   const { raw, problems } = parseYaml(lines.slice(open + 1, close));
   const job = normalizeJob({ ...raw, state: raw.state, runner: raw.runner, started: raw.started, updated: raw.updated });
   const all = [...problems, ...validateJob({ ...Object.fromEntries(Object.entries(raw).filter(([, v]) => v !== undefined)) })];
-  return all.length ? { job: null, problems: all } : { job, problems: [] };
+  return all.length ? { job: null, problems: all, code: "BAD_SECTION" } : { job, problems: [] };
 }
 
 // ───────── diff for the dry run ─────────

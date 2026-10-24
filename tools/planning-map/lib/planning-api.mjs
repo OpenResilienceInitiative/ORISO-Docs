@@ -5,7 +5,7 @@
 // Every command returns a typed result and never throws:
 //   {ok: true,  ..., results: [{issue, role, before, after, changed, wrote}]}
 //   {ok: false, error: {code, message, issue?, detail?}, applied: ["Org/Repo#1", ...]}
-// Error codes: see ERROR_CODES (NO_WRITE_RIGHTS, CONFLICT, NOT_FOUND, NOT_ON_BOARD, UNKNOWN_RELEASE, UNKNOWN_GATE, FIELD_MISSING, BAD_REQUEST, BAD_MARKERS, TRANSPORT, GITHUB_ERROR).
+// Error codes: see ERROR_CODES (NO_WRITE_RIGHTS, CONFLICT, NOT_FOUND, NOT_ON_BOARD, UNKNOWN_RELEASE, UNKNOWN_GATE, FIELD_MISSING, BAD_REQUEST, BAD_MARKERS, BAD_SECTION, TRANSPORT, GITHUB_ERROR).
 
 import { applySection, bodyHash, parseSection, renderSection, validateJob } from "./job.mjs";
 import { CAPABILITY_IDS, CODE_REPOS } from "../../understand-anything/platform/lib/capabilities.mjs";
@@ -17,7 +17,7 @@ export const PLATFORM_RELEASE_FIELD_ID = "IFMS_kgDOArcqMA"; // org ISSUE field (
 export const PLATFORM_RELEASE_FIELD_NAME = "Platform release";
 export const GATE_FIELD_NAME = "Gate";
 
-export const ERROR_CODES = ["NO_WRITE_RIGHTS", "CONFLICT", "NOT_FOUND", "NOT_ON_BOARD", "UNKNOWN_RELEASE", "UNKNOWN_GATE", "FIELD_MISSING", "BAD_REQUEST", "BAD_MARKERS", "TRANSPORT", "GITHUB_ERROR"];
+export const ERROR_CODES = ["NO_WRITE_RIGHTS", "CONFLICT", "NOT_FOUND", "NOT_ON_BOARD", "UNKNOWN_RELEASE", "UNKNOWN_GATE", "FIELD_MISSING", "BAD_REQUEST", "BAD_MARKERS", "BAD_SECTION", "TRANSPORT", "GITHUB_ERROR"];
 
 const ISSUE_FIELDS = `
   id number viewerCanUpdate
@@ -273,6 +273,8 @@ export const setGate = neverThrows(async (_applied, issue, gate, { expectedGate,
 // outside the markers stays byte-identical; without markers the section is appended.
 //   job: the job object, or (existingJob|null) => job (merge / heartbeat on what is already there).
 //   expectedUpdatedAt / expectedBodyHash: what the caller last saw; a different live value is a CONFLICT.
+//   force: an existing section that does not validate is a BAD_SECTION error (with its problems) unless force is true; then
+//          it is overwritten and the job function gets null. Broken markers stay BAD_MARKERS either way (fix them by hand).
 // GitHub's updateIssue has no compare-and-set, so the issue is read twice: once to plan and again right before the
 // write. If the description changed in between, nothing is written. A human edit in the few milliseconds after the
 // second read can still be overwritten; GitHub's edit history keeps that text.
@@ -286,7 +288,7 @@ mutation PlanSetBody($input: UpdateIssueInput!) {
   updateIssue(input: $input) { issue { id updatedAt } }
 }`;
 
-export const writeJobSection = neverThrows(async (_applied, issue, job, { expectedUpdatedAt, expectedBodyHash, dryRun = false, transport } = {}) => {
+export const writeJobSection = neverThrows(async (_applied, issue, job, { expectedUpdatedAt, expectedBodyHash, dryRun = false, force = false, transport } = {}) => {
   const bad = (message, detail) => ({ ok: false, error: fail("BAD_REQUEST", message, detail ? { detail } : {}), applied: [] });
   if (typeof transport !== "function") return bad("writeJobSection needs a transport");
   const ref = parseIssueRef(issue);
@@ -312,6 +314,10 @@ export const writeJobSection = neverThrows(async (_applied, issue, job, { expect
   }
 
   const existing = parseSection(body);
+  if (existing?.code === "BAD_MARKERS") return none(fail("BAD_MARKERS", existing.problems[0], { issue: name }));
+  if (existing?.code === "BAD_SECTION" && !force) {
+    return none(fail("BAD_SECTION", `The job section of ${name} is there but not valid (${existing.problems.join("; ")}); fix it by hand, or overwrite it deliberately with --force`, { issue: name, detail: { problems: existing.problems } }));
+  }
   const next = typeof job === "function" ? job(existing?.job ?? null) : job;
   const problems = validateJob(next);
   if (problems.length) return bad(`Invalid job section: ${problems.join("; ")}`, { problems });
