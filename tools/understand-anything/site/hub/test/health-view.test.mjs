@@ -179,3 +179,22 @@ test('the legend names the band limits that the colour rule uses and nothing els
   load(record());
   for (const lang of ['de', 'en']) assert.deepEqual(health.legend(lang).match(/\d+/g), ['80', '60', '40']);
 });
+
+// ORISO-Docs#213 review (finding 10): scheduled runs cannot score lint and crap yet. A metric that is "not available" because of how the
+// run was set up (details.state ci-setup or no-coverage) gets a short note in the panel with the reason from details.reason.
+test('a metric that is not available because of the CI setup gets a note with the reason from details.reason', () => {
+  const reason = "not run in the scheduled workflow: the checkout's own eslint is never executed in the job that holds the model secret";
+  const ci = record({measurements: {...MEAS, lint: {value: null, source: 'eslint', details: {reason, state: 'ci-setup'}}}});
+  load(ci);
+  const html = health.panel(BLOCK, 'en', null);
+  assert.match(html, /data-ci-note/);
+  const note = html.slice(html.indexOf('data-ci-note'), html.indexOf('</div>', html.indexOf('data-ci-note')));
+  assert.match(note, /lint/);
+  assert.match(note, /data-from="metrics\[2\]\.details\.reason"/, 'the reason is the record field, traced');
+  assert.match(note.replace(/&#39;/g, "'"), /never executed in the job that holds the model secret/);
+  assert.match(health.panel(BLOCK, 'de', null), /data-ci-note[^]*Geplante Läufe/);
+  assert.match(html, /Scheduled runs cannot score lint and crap yet/);
+  // a metric that is simply not measurable (no linter configuration) is not a CI note
+  load(record());
+  assert.doesNotMatch(health.panel(BLOCK, 'en', null), /data-ci-note/);
+});

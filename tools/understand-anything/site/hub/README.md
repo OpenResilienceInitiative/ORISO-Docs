@@ -150,6 +150,9 @@ good from 80, fair from 60, weak from 40, otherwise critical. Grey (`--neutral`)
 (`overall: null`). The score also stands as a number in the square (`data-hs`, CSS `attr()`), so colour never carries the meaning alone.
 The panel shows date, model, commit (7 characters, full id in the title), criteria version, run id, every metric with value against threshold, its state
 and its source, the model verdict with reasons, the GitHub source link (only a tree URL of the organisation is rendered) and the graph node id.
+Scheduled runs cannot score lint and crap yet: the job that holds the model secret never runs the repositories' eslint (`--no-checkout-tools`,
+`details.state: ci-setup`) and has no coverage step (`details.state: no-coverage`). Such a metric is "not available" and the panel adds a short note
+(`data-ci-note`) with the reason taken from `details.reason`.
 **No invented data:** every number sits in an element with `data-from="<path in the record>"`; `test/health-view.test.mjs` checks that each equals that
 record field and that no digit is left outside such elements; the page computes nothing but the band. Record texts are untrusted and rendered as text.
 Tests: `test/health-view.test.mjs` (colours, panel, tracing), `test/health-publication.test.mjs`, `test/map-health-render.test.mjs` (Playwright, 320/390/1440 px, light and dark, DE and EN).

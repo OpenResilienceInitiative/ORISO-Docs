@@ -184,8 +184,19 @@
     return {
       i: i, name: m.name, status: m.status, value: measured ? m.value : null, threshold: m.threshold, better: m.better, unit: txt(m.unit, 200) || '',
       pass: measured && typeof m.pass === 'boolean' ? m.pass : null, source: txt(m.source, 400) || '',
-      reason: !measured && isObj(m.details) ? txt(m.details.reason, 400) : null
+      reason: !measured && isObj(m.details) ? txt(m.details.reason, 400) : null,
+      ciSetup: !measured && isObj(m.details) && CI_STATES.indexOf(m.details.state) >= 0
     };
+  }
+  /* details.state of a "not available" metric that comes from how the run was set up, not from the code: the scheduled workflow
+     never runs the checkouts' eslint (ci-setup) and has no coverage step (no-coverage). ORISO-Docs#213 review, finding 10. */
+  var CI_STATES = ['ci-setup', 'no-coverage'];
+  function ciNote(r, T) {
+    var list = r.metrics.filter(function (m) { return m.ciSetup && m.reason; });
+    if (!list.length) return '';
+    return '<div class="hk hci" data-ci-note><p class="vnote">' + T.ciHead + '</p><ul class="hci-l">' + list.map(function (m) {
+      return '<li><code>' + esc(m.name) + '</code>: ' + from('metrics[' + m.i + '].details.reason', m.reason) + '</li>';
+    }).join('') + '</ul></div>';
   }
   function cleanVerdict(v, i) {
     if (!isObj(v) || !txt(v.criterion, 100) || !isNum(v.score) || !Array.isArray(v.reasons)) return null;
@@ -239,12 +250,14 @@
       overall: 'Gesamtwert', date: 'Datum', model: 'Modell', noModel: 'keines (nur Kennzahlen)', commit: 'Commit', repo: 'Repository', path: 'Ordner', whole: 'ganze Fähigkeit',
       crit: 'Kriterien-Version', run: 'Lauf', critSet: 'Kriterien des Repositorys', critMatch: 'vom Lauf verwendet', critChanged: 'Kriterien haben sich seit diesem Lauf geändert', metrics: 'Kennzahlen', value: 'Wert', limit: 'Schwelle', met: 'erfüllt', missed: 'nicht erfüllt', na: 'nicht verfügbar',
       src: 'Quelle', verdict: 'Urteil des Modells', score: 'Punkte', links: 'Verweise', github: 'Quelltext auf GitHub', node: 'Graph-Knoten', others: 'Weitere Läufe in dieser Fähigkeit',
-      band: {good: 'gut', fair: 'mittel', weak: 'schwach', poor: 'kritisch'}},
+      band: {good: 'gut', fair: 'mittel', weak: 'schwach', poor: 'kritisch'},
+      ciHead: 'Nicht bewertet wegen der Einrichtung des Laufs, nicht wegen des Codes. Geplante Läufe können Lint und CRAP noch nicht bewerten: Der Job mit dem Modell-Schlüssel führt kein eslint der Repositorys aus, und es gibt keinen Coverage-Schritt.'},
     en: {head: 'Latest health run', none: 'No health run for this capability: no data.', noScore: 'Overall: no data (no criterion could be scored).',
       overall: 'Overall', date: 'Date', model: 'Model', noModel: 'none (metrics only)', commit: 'Commit', repo: 'Repository', path: 'Folder', whole: 'whole capability',
       crit: 'Criteria version', run: 'Run', critSet: 'Criteria of the repository', critMatch: 'used by this run', critChanged: 'criteria changed since this run', metrics: 'Metrics', value: 'Value', limit: 'Threshold', met: 'met', missed: 'not met', na: 'not available',
       src: 'Source', verdict: 'Model verdict', score: 'Score', links: 'Links', github: 'Source on GitHub', node: 'Graph node', others: 'Other runs in this capability',
-      band: {good: 'good', fair: 'fair', weak: 'weak', poor: 'critical'}}
+      band: {good: 'good', fair: 'fair', weak: 'weak', poor: 'critical'},
+      ciHead: 'Not scored because of how the run was set up, not because of the code. Scheduled runs cannot score lint and crap yet: the job that holds the model secret never runs the repositories\' eslint, and there is no coverage step.'}
   };
   function from(path, text) { return '<span data-from="' + esc(path) + '">' + esc(text) + '</span>'; }
   function when(iso) { return iso.slice(0, 10) + ' ' + iso.slice(11, 16) + ' UTC'; }
@@ -302,7 +315,7 @@
       '<dt>' + T.path + '</dt><dd>' + (r.scope.path === null ? esc(T.whole) : '<code data-from="scope.path">' + esc(r.scope.path) + '</code>') + '</dd>' +
       (r.criteriaVersion ? '<dt>' + T.crit + '</dt><dd><code data-from="criteriaVersion" title="' + esc(r.criteriaVersion) + '">' + esc(r.criteriaVersion.slice(0, 12)) + '</code></dd>' : '') +
       (r.runId ? '<dt>' + T.run + '</dt><dd><code data-from="run.runId">' + esc(r.runId) + '</code></dd>' : '') + runCriteria(r, T) + '</dl>';
-    out += runMetrics(r, lang, T) + runVerdict(r, lang, T);
+    out += runMetrics(r, lang, T) + ciNote(r, T) + runVerdict(r, lang, T);
     var links = [];
     if (r.source) links.push('<li><a data-health-source href="' + esc(r.source) + '" target="_blank" rel="noopener noreferrer">' + T.github + '</a></li>');
     if (r.graphNode) links.push('<li>' + T.node + ' <code data-from="links.graphNode">' + esc(r.graphNode) + '</code></li>');
