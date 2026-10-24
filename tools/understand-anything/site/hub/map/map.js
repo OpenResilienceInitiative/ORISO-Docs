@@ -2,6 +2,7 @@
 
 function startMap(MEAS){
 'use strict';
+MapViews.setCriteria(MEAS.criteria || null); /* Gesundheitskriterien (criteria.json, optional): Kriterienbox der Ansicht Health */
 
 /* ───────── Verweise ───────── */
 var UA = {
@@ -1111,7 +1112,7 @@ function renderView(){
   else if (v.v==='mods') inner = viewMods(b, v);
   else if (v.v==='mod') inner = viewMod(b, v);
   else if (v.v==='file') inner = viewFile(b, v);
-  if (v.v==='block') inner = MapViews.VIEWS[view].panel(BY[v.id], lang) + inner;
+  if (v.v==='block') inner = MapViews.VIEWS[view].panel(BY[v.id], lang, capNodeId(v.id)) + inner;
   var sheetMode = useSheet();
   var host = sheetMode ? sheetBody : panel;
   host.innerHTML = frame(inner, sheetMode);
@@ -1743,7 +1744,7 @@ renderAll(); lastW = tm.clientWidth; applyHash(); hashReady = true; syncHash(fal
    (Erzeuger: build-map-data.mjs). OPTIONAL_DATA sind Dateien, die nur geladen werden, wenn links.json sie
    unter "optional" meldet; ihr Inhalt liegt in MEAS unter dem Dateinamen ohne .json (board.json wird zu MEAS.board). */
 var DATA_FILES = ['counts.json', 'descriptions.json', 'drill.json', 'epics.json', 'links.json', 'zoom.json'];
-var OPTIONAL_DATA = ['board.json', 'milestones.json'];
+var OPTIONAL_DATA = ['board.json', 'milestones.json', 'criteria.json'];
 /* Optionale Dateien, die der vereinheitlichte Lauf stempelt (tools/planning-map/nightly-run.mjs). */
 var RUN_DATA = ['board.json'];
 function fetchJson(name, optional){
