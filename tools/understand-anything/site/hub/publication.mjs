@@ -10,21 +10,22 @@ import {validateBoard,contract as boardContract} from '../../../planning-map/lib
 import {validateMilestones} from '../../../planning-map/lib/milestones.mjs';
 import {loadCriteria,buildCriteriaDoc} from '../../platform/lib/health-criteria.mjs';
 import {CAPABILITY_IDS,CODE_REPOS} from '../../platform/lib/capabilities.mjs';
+import {loadRuns,buildHealthDoc} from '../../platform/lib/health-run.mjs';
 import {buildIdeas,ideaFiles} from '../../../planning-map/lib/ideas.mjs';
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
-const allowed=p=>/^(index\.html|status\.json|operator-snapshot\.json|assets\/(hub\.css|tokens\.(css|json)|lang\.js|status\.js|glossary\.js)|glossary\/(index\.html|catalog\.json|bindings\.json|sources\/(seed|bjorn-reconciliation|naming-audit)\.md)|features\/(index|de|en|case-handover)\.html|map\/(index\.html|map\.css|map\.js|board-agg\.js|jobs\.js|plan-ui\.js|views\.js|data\/(counts|descriptions|drill|epics|links|zoom|board|milestones|criteria|ideas)\.json))$/.test(p);
+const allowed=p=>/^(index\.html|status\.json|operator-snapshot\.json|assets\/(hub\.css|tokens\.(css|json)|lang\.js|status\.js|glossary\.js)|glossary\/(index\.html|catalog\.json|bindings\.json|sources\/(seed|bjorn-reconciliation|naming-audit)\.md)|features\/(index|de|en|case-handover)\.html|map\/(index\.html|map\.css|map\.js|board-agg\.js|jobs\.js|plan-ui\.js|views\.js|data\/(counts|descriptions|drill|epics|links|zoom|board|milestones|criteria|health|ideas)\.json))$/.test(p);
 function files(root){return fs.readdirSync(root,{recursive:true}).filter(p=>{const stat=fs.lstatSync(path.join(root,p));if(stat.isSymbolicLink())throw Error('Hub symlinks are forbidden');return stat.isFile();}).sort();}
 const hubSourcePrefix='tools/understand-anything/site/hub/';
 const staticInputs=['index.html','assets/hub.css','assets/tokens.css','assets/tokens.json','assets/lang.js','assets/status.js','assets/glossary.js','glossary/index.html','features/index.html','features/de.html','features/en.html','features/case-handover.html','map/index.html','map/map.css','map/map.js','map/board-agg.js','map/jobs.js','map/plan-ui.js','map/views.js',...['counts','descriptions','drill','epics','links','zoom'].map(n=>`map/data/${n}.json`)];
 const producerInputs=['render-glossary.mjs','render-features.mjs','publication.mjs'].map(p=>hubSourcePrefix+p).concat([
  'tools/understand-anything/glossary/validate.mjs','tools/understand-anything/glossary/source-bindings.mjs','tools/understand-anything/glossary/reasons.mjs','tools/understand-anything/lib/glossary-projection.mjs','tools/understand-anything/ua-glossary-project.mjs',
- 'tools/docs-publication/platform-release.mjs','tools/planning-map/lib/board.mjs','tools/planning-map/lib/job.mjs','tools/planning-map/lib/queries.mjs','tools/planning-map/lib/schema.mjs','tools/planning-map/lib/milestones.mjs','tools/planning-map/lib/ideas.mjs','tools/planning-map/milestones.json','tools/understand-anything/platform/lib/health-criteria.mjs','tools/understand-anything/platform/lib/health-metrics.mjs','tools/understand-anything/platform/lib/capabilities.mjs','tools/understand-anything/platform/capabilities/capability-rules.json','tools/planning-map/board-contract.json','tools/planning-map/board.schema.json','tools/public_operator_snapshot.py','tools/truth-chain/public-repositories.json','tools/understand-anything/site/hub/features/catalog.json','site/page-catalog.json'
+ 'tools/docs-publication/platform-release.mjs','tools/planning-map/lib/board.mjs','tools/planning-map/lib/job.mjs','tools/planning-map/lib/queries.mjs','tools/planning-map/lib/schema.mjs','tools/planning-map/lib/milestones.mjs','tools/planning-map/lib/ideas.mjs','tools/planning-map/milestones.json','tools/understand-anything/platform/lib/health-criteria.mjs','tools/understand-anything/platform/lib/health-metrics.mjs','tools/understand-anything/platform/lib/health-run.mjs','tools/understand-anything/platform/health-run.schema.json','tools/understand-anything/platform/lib/capabilities.mjs','tools/understand-anything/platform/capabilities/capability-rules.json','tools/planning-map/board-contract.json','tools/planning-map/board.schema.json','tools/public_operator_snapshot.py','tools/truth-chain/public-repositories.json','tools/understand-anything/site/hub/features/catalog.json','site/page-catalog.json'
 ]);
 function publicationSources(root) {
  files(path.join(root,hubSourcePrefix));
  const docs=immutableSource(root,'ORISO-Docs'),assets=new Map(staticInputs.map(p=>[p,docs.readSource(hubSourcePrefix+p)]));
  const healthDir='tools/understand-anything/platform/capabilities/health';
- const inputs=[...producerInputs,...ideaFiles(root),...execFileSync('git',['ls-tree','-r','--name-only',docs.revision,'--',healthDir],{cwd:root,encoding:'utf8'}).trim().split('\n').filter(p=>p.endsWith('.md')),...execFileSync('git',['ls-tree','-r','--name-only',docs.revision,'--','tools/understand-anything/bundle'],{cwd:root,encoding:'utf8'}).trim().split('\n').filter(p=>p.endsWith('.py'))];
+ const inputs=[...producerInputs,...ideaFiles(root),...execFileSync('git',['ls-tree','-r','--name-only',docs.revision,'--',healthDir],{cwd:root,encoding:'utf8'}).trim().split('\n').filter(p=>p.endsWith('.md')),...execFileSync('git',['ls-tree','-r','--name-only',docs.revision,'--','health/runs'],{cwd:root,encoding:'utf8'}).trim().split('\n').filter(p=>p.endsWith('.json')),...execFileSync('git',['ls-tree','-r','--name-only',docs.revision,'--','tools/understand-anything/bundle'],{cwd:root,encoding:'utf8'}).trim().split('\n').filter(p=>p.endsWith('.py'))];
  for(const relative of inputs) {
   const selected=docs.readSource(relative);
   // The imported producer must be the same bytes as the claimed Docs source root.
@@ -113,6 +114,14 @@ export function criteriaAsset(criteriaDir,rulesPath,linksBytes){
  const links=JSON.parse(linksBytes);links.optional=[...new Set([...(links.optional||[]),'criteria.json'])].sort();
  return {criteria:JSON.stringify(doc)+'\n',links:JSON.stringify(links)+'\n'};
 }
+// Health run records (ORISO-Docs#218): health/runs/**.json are validated one by one (schema, scores, path) and the latest record
+// per scope is published as map/data/health.json. No record yet is a valid, empty file: every square then shows "no data".
+export function healthAsset(root,linksBytes){
+ let records;
+ try{records=loadRuns(root).map(r=>r.record);}catch(e){throw Error('health runs invalid: '+e.message);}
+ const links=JSON.parse(linksBytes);links.optional=[...new Set([...(links.optional||[]),'health.json'])].sort();
+ return {health:JSON.stringify(buildHealthDoc(records))+'\n',links:JSON.stringify(links)+'\n'};
+}
 // Idea pages (ORISO-Docs#223): product/ideas/*.mdx are validated (unknown capability ids fail) and published as map/data/ideas.json.
 export function ideasAsset(root,linksBytes){
  const doc=buildIdeas(root),links=JSON.parse(linksBytes);links.optional=[...new Set([...(links.optional||[]),'ideas.json'])].sort();
@@ -135,6 +144,7 @@ export function buildHub({root,out,generation,origin,revision,releaseLock,operat
  if(board){const asset=boardAsset(board,staticBytes.get('map/data/links.json'));fs.writeFileSync(path.join(out,'map/data/links.json'),asset.links);fs.writeFileSync(path.join(out,'map/data/board.json'),asset.board);}
  {const asset=milestonesAsset(path.join(root,'tools/planning-map/milestones.json'),fs.readFileSync(path.join(out,'map/data/links.json')));fs.writeFileSync(path.join(out,'map/data/links.json'),asset.links);fs.writeFileSync(path.join(out,'map/data/milestones.json'),asset.milestones);}
  {const asset=criteriaAsset(path.join(root,'tools/understand-anything/platform/capabilities/health'),path.join(root,'tools/understand-anything/platform/capabilities/capability-rules.json'),fs.readFileSync(path.join(out,'map/data/links.json')));fs.writeFileSync(path.join(out,'map/data/links.json'),asset.links);fs.writeFileSync(path.join(out,'map/data/criteria.json'),asset.criteria);}
+ {const asset=healthAsset(root,fs.readFileSync(path.join(out,'map/data/links.json')));fs.writeFileSync(path.join(out,'map/data/links.json'),asset.links);fs.writeFileSync(path.join(out,'map/data/health.json'),asset.health);}
  {const asset=ideasAsset(root,fs.readFileSync(path.join(out,'map/data/links.json')));fs.writeFileSync(path.join(out,'map/data/links.json'),asset.links);fs.writeFileSync(path.join(out,'map/data/ideas.json'),asset.ideas);}
  fs.mkdirSync(path.join(out,'glossary/sources'),{recursive:true});for(const filename of ['seed.md','bjorn-reconciliation.md','naming-audit.md'])fs.writeFileSync(path.join(out,'glossary/sources',filename),immutableSource(root,'ORISO-Docs').readSource('tools/understand-anything/glossary/sources/'+filename));fs.writeFileSync(path.join(out,'glossary/catalog.json'),glossary.bytes);fs.writeFileSync(path.join(out,'glossary/bindings.json'),JSON.stringify(glossary.report)+'\n');fs.writeFileSync(path.join(out,'glossary/index.html'),renderGlossary(glossary.data,glossary.report));
  fs.writeFileSync(path.join(out,'operator-snapshot.json'),JSON.stringify(operator.snapshot)+'\n');

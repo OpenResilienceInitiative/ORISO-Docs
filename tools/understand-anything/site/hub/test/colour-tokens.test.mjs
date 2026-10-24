@@ -73,6 +73,17 @@ test('ramps only reference existing tokens, and the origin ramp is ordered old t
   assert.deepEqual(tokens.ramps.board, ['status-qa-internal', 'status-qa-external', 'status-done']);
 });
 
+test('health tokens (ORISO-Docs#218): four bands from critical to good, a lightness ramp, every band outlined, bands are the documented score ranges', () => {
+  assert.deepEqual(tokens.ramps.health, ['health-poor', 'health-weak', 'health-fair', 'health-good']);
+  for (const n of tokens.ramps.health) for (const mode of MODES) {
+    const t = resolve(n, mode);
+    assert.ok(t.edge, `${n} ${mode} has an outline, so a pale fill stays visible on the surface`);
+    assert.ok(contrast(t.edge, tokens.surface[mode]) >= 3, `${n} ${mode} outline vs surface`);
+  }
+  const de = tokens.ramps.health.map(n => tokens.tokens[n].label.de).join('|');
+  assert.match(de, /unter 40.*40 bis 59.*60 bis 79.*ab 80/);
+});
+
 test('tokens.css is generated from tokens.json (no drift) and defines light, dark and forced-dark', () => {
   const css = read('../assets/tokens.css');
   assert.equal(css, renderTokensCss(tokens));

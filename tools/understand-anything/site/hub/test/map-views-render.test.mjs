@@ -67,8 +67,8 @@ test('the switch offers State | Health | Plan, State is on by default, labels fo
   await context.close();
 });
 
-test('Health and Plan show neutral squares and a one-line note (Plan without ideas says so)', {skip}, async () => {
-  for (const [view, lang, note] of [['health', 'en', /Health is coming/], ['plan', 'de', /Noch keine Ideen/]]) {
+test('Health (no run published) and Plan show neutral squares and a one-line note (Plan without ideas says so)', {skip}, async () => {
+  for (const [view, lang, note] of [['health', 'en', /no health run published yet/], ['plan', 'de', /Noch keine Ideen/]]) {
     const {page, context, problems} = await open('#view=' + view, {lang});
     assert.equal(await pressed(page), view);
     assert.equal(await page.locator('#tm.vview').count(), 1);

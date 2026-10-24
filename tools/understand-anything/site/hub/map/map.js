@@ -281,6 +281,8 @@ var SLUG = {chat:'chat',notify:'notifications',handover:'case-handover',teamdisc
 var LIVE = MEAS.live || [];
 /* Ideen der Plan-Ansicht (ideas.json, optional; ORISO-Docs#223): Fähigkeits-ID je Quadrat über SLUG. */
 MapViews.setIdeas(MEAS.ideas, function(id){ return SLUG[id] || null; });
+/* Prüfläufe der Ansicht Health (health.json, optional; ORISO-Docs#218): jeder gezeigte Wert ist ein Feld des Laufprotokolls. */
+MapViews.setHealth(MEAS.health || null, function(id){ return id === 'base' ? 'shared' : (SLUG[id] || null); });
 var CODE_REPOS = ['ORISO-Frontend','ORISO-Admin','ORISO-UserService','ORISO-TenantService','ORISO-AgencyService','ORISO-ConsultingTypeService'];
 var GH = 'https://github.com/OpenResilienceInitiative/';
 var SBH = ['storybook-frontend','storybook-admin'];
@@ -659,6 +661,9 @@ function applyView(){
   Array.prototype.forEach.call(tm.querySelectorAll('.blk'), function(e){
     var id = e.dataset.id || curBlock(), tok = id && BY[id] ? v.colour(BY[id]) : null;
     if (tok) e.style.setProperty('--view-fill', 'var(--'+tok+')'); else e.style.removeProperty('--view-fill');
+    /* Gesundheits-Merkmal (Band und Wert aus dem Laufprotokoll) nur auf den Quadraten der Übersicht; Farbe allein trägt nie die Aussage. */
+    var hb = e.dataset.id && BY[e.dataset.id] && v.badge ? v.badge(BY[e.dataset.id]) : null;
+    if (hb){ e.dataset.hband = hb.band; e.dataset.hs = hb.text; } else { delete e.dataset.hband; delete e.dataset.hs; }
     /* Ideen-Markierung nur auf den Quadraten der Übersicht (data-id), mit Rahmen statt nur Farbe. */
     e.classList.toggle('vmark', !!(e.dataset.id && BY[e.dataset.id] && v.mark(BY[e.dataset.id])));
   });
@@ -1769,7 +1774,7 @@ renderAll(); lastW = tm.clientWidth; applyHash(); hashReady = true; syncHash(fal
    (Erzeuger: build-map-data.mjs). OPTIONAL_DATA sind Dateien, die nur geladen werden, wenn links.json sie
    unter "optional" meldet; ihr Inhalt liegt in MEAS unter dem Dateinamen ohne .json (board.json wird zu MEAS.board). */
 var DATA_FILES = ['counts.json', 'descriptions.json', 'drill.json', 'epics.json', 'links.json', 'zoom.json'];
-var OPTIONAL_DATA = ['board.json', 'milestones.json', 'criteria.json', 'ideas.json'];
+var OPTIONAL_DATA = ['board.json', 'milestones.json', 'criteria.json', 'health.json', 'ideas.json'];
 /* Optionale Dateien, die der vereinheitlichte Lauf stempelt (tools/planning-map/nightly-run.mjs). */
 var RUN_DATA = ['board.json'];
 function fetchJson(name, optional){

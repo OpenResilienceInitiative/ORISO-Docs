@@ -91,7 +91,8 @@ test('a malformed criteria document is ignored, not half rendered', () => {
     assert.match(text(panel('chat', 'en', bad)), /No criteria published/);
 });
 
-test('the squares stay neutral and the legend still says colouring comes later', () => {
+test('without a run record the square stays neutral grey and the panel says "no data" above the criteria box (colours: health-view.test.mjs)', () => {
   assert.equal(MapViews.VIEWS.health.colour({id: 'chat'}), 'neutral');
-  assert.match(MapViews.VIEWS.health.legend('en'), /neutral/);
+  assert.match(MapViews.VIEWS.health.legend('en'), /no data/);
+  assert.match(text(panel('chat', 'en')), /No health run for this capability: no data[^]*Criteria/);
 });

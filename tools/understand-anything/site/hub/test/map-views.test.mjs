@@ -70,16 +70,13 @@ test('State keeps today\'s map: no colour override, no extra panel, no legend of
   assert.equal(VIEWS.state.legend('de'), '');
 });
 
-test('Health draws a neutral layer and says in one line that the view is coming, in DE and EN (Plan: ideas-view.test.mjs)', () => {
-  for (const v of ['health']) {
-    assert.equal(VIEWS[v].colour({id: 'x'}), 'neutral');
-    for (const lang of ['de', 'en']) {
-      const legend = VIEWS[v].legend(lang);
-      assert.ok(legend.length > 10 && !/\n/.test(legend));
-      // Health's panel is the criteria box since #217 (test/map-criteria.test.mjs); Plan still shows the note.
-      if (v === 'plan') assert.match(VIEWS[v].panel({id: 'x'}, lang), new RegExp(legend.slice(0, 10).replace(/[()]/g, '.')));
-    }
+test('Health without published runs: every square is neutral grey and the one-line legend says "no data", in DE and EN (records: health-view.test.mjs)', () => {
+  for (const lang of ['de', 'en']) {
+    const legend = VIEWS.health.legend(lang);
+    assert.ok(legend.length > 10 && !/\n/.test(legend));
   }
-  assert.match(VIEWS.health.legend('en'), /coming/i);
-  assert.match(VIEWS.health.legend('de'), /folgt/i);
+  assert.equal(VIEWS.health.colour({id: 'x'}), 'neutral');
+  assert.equal(VIEWS.health.badge({id: 'x'}), null);
+  assert.match(VIEWS.health.legend('en'), /no data/i);
+  assert.match(VIEWS.health.legend('de'), /keine Daten/i);
 });

@@ -15,8 +15,10 @@
      mark(block) boolean       true: the square gets the idea mark (class vmark, set by map.js); ideas of the Plan canvas (#223)
    Idea layer (#223): setIdeas(doc, slugOf) takes map/data/ideas.json, tools(view, lang, labelOf) returns the HTML of the
    tool row above the map (idea list in Plan, "Show ideas" toggle in State and Health), selectIdea/toggleIdeas change it.
-   #217 fills VIEWS.health.panel (criteria box), #218 its colours. Details: hub README, "Views".
-   setCriteria(doc): hands over map/data/criteria.json (optional asset, ORISO-Docs#217); map.js calls it once at start. */
+   #217 fills VIEWS.health.panel (criteria box), #218 the colours and the run panel (setHealth). Details: hub README, "Views".
+   badge(block) {band, text}|null  optional: data for the small score badge of a top-level square (Health); map.js sets data-hband and data-hs from it.
+   setCriteria(doc): hands over map/data/criteria.json (optional asset, ORISO-Docs#217); map.js calls it once at start.
+   setHealth(doc, slugFn): hands over map/data/health.json (optional asset, ORISO-Docs#218): the latest run record per scope. */
 (function (root, factory) {
   root.MapViews = factory();
 })(typeof self !== 'undefined' ? self : globalThis, function () {
@@ -131,11 +133,164 @@
     });
     return out + '<div class="crit-k"><h5>' + T.files + '</h5><ul class="crit-f">' + links.join('') + '</ul></div></section>';
   }
+
+  /* ───────── Health: latest run record (ORISO-Docs#218) ─────────
+     Data: health.json = { schemaVersion: 1, records: [latest run record per scope] }, built by publication.mjs from health/runs/.
+     NO INVENTED DATA: every number on the page is a field of a record. Each number sits in an element with data-from="<path in
+     the record>" so a test can trace it; the page computes nothing but the colour band of the overall score (bands in README)
+     and the display format (decimal comma in German, 7 characters of the commit). A square without a record, or a record with
+     overall null (nothing could be scored), is grey: "no data". Record texts (reasons, sources) are untrusted: text only. */
+  var RECORDS = [], HSLUG = function () { return null; };
+  var ISO_RE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/, SHA_RE = /^[0-9a-f]{40}$/;
+  function isNum(x) { return typeof x === 'number' && isFinite(x); }
+  function txt(x, max) { return typeof x === 'string' && x.length <= max ? x : null; }
+  function cleanMetric(m, i) {
+    if (!isObj(m) || !txt(m.name, 64) || (m.status !== 'measured' && m.status !== 'not-available') || !isNum(m.threshold)) return null;
+    if (m.better !== 'lower' && m.better !== 'higher') return null;
+    var measured = m.status === 'measured';
+    if (measured && !isNum(m.value)) return null;
+    return {
+      i: i, name: m.name, status: m.status, value: measured ? m.value : null, threshold: m.threshold, better: m.better, unit: txt(m.unit, 200) || '',
+      pass: measured && typeof m.pass === 'boolean' ? m.pass : null, source: txt(m.source, 400) || '',
+      reason: !measured && isObj(m.details) ? txt(m.details.reason, 400) : null
+    };
+  }
+  function cleanVerdict(v, i) {
+    if (!isObj(v) || !txt(v.criterion, 100) || !isNum(v.score) || !Array.isArray(v.reasons)) return null;
+    return {i: i, criterion: v.criterion, score: v.score, reasons: v.reasons.map(function (r, j) { return {j: j, text: txt(r, 1000)}; }).filter(function (r) { return r.text; })};
+  }
+  function cleanRecord(r) {
+    if (!isObj(r) || r.schemaVersion !== 1 || !isObj(r.scope) || !isObj(r.run) || !isObj(r.links) || !Array.isArray(r.metrics)) return null;
+    var cap = txt(r.scope.capability, 64), repo = txt(r.scope.repo, 100);
+    var path = r.scope.path === null ? null : txt(r.scope.path, 300);
+    if (!cap || !repo || (r.scope.path !== null && !path)) return null;
+    if (!SHA_RE.test(r.commit) || typeof r.startedAt !== 'string' || !ISO_RE.test(r.startedAt)) return null;
+    if (r.overall !== null && !(isNum(r.overall) && r.overall >= 0 && r.overall <= 100)) return null;
+    var src = /^https:\/\/github\.com\/OpenResilienceInitiative\/[A-Za-z0-9_.-]+\/tree\/[0-9a-f]{40}(?:\/[A-Za-z0-9_.@\/-]+)?$/.test(r.links.source) ? r.links.source : null;
+    return {
+      scope: {capability: cap, repo: repo, path: path}, commit: r.commit, startedAt: r.startedAt, model: r.model === null ? null : txt(r.model, 100),
+      criteriaVersion: txt(r.criteriaVersion, 64) || '', runId: txt(r.run.runId, 64) || '', overall: r.overall,
+      metrics: r.metrics.map(cleanMetric).filter(Boolean), verdict: Array.isArray(r.verdict) ? r.verdict.map(cleanVerdict).filter(Boolean) : [],
+      source: src, graphNode: txt(r.links.graphNode, 512)
+    };
+  }
+  /* doc: map/data/health.json; slugFn(blockId) -> capability id of the square, or null. */
+  function setHealth(doc, slugFn) {
+    RECORDS = isObj(doc) && doc.schemaVersion === 1 && Array.isArray(doc.records) ? doc.records.map(cleanRecord).filter(Boolean) : [];
+    HSLUG = typeof slugFn === 'function' ? slugFn : function () { return null; };
+  }
+  function newest(a, b) { return !a || b.startedAt > a.startedAt ? b : a; }
+  /* The record a square shows: the newest run of the whole capability (no folder path). */
+  function recordOf(block) {
+    var cap = block ? HSLUG(block.id) : null, best = null;
+    if (!cap) return null;
+    RECORDS.forEach(function (r) { if (r.scope.capability === cap && r.scope.path === null) best = newest(best, r); });
+    return best;
+  }
+  function recordsOf(block) {
+    var cap = block ? HSLUG(block.id) : null;
+    return cap ? RECORDS.filter(function (r) { return r.scope.capability === cap; }) : [];
+  }
+  function bandOf(score) { return score >= 80 ? 'good' : score >= 60 ? 'fair' : score >= 40 ? 'weak' : 'poor'; }
+  function healthColour(block) {
+    var r = recordOf(block);
+    return r && r.overall !== null ? 'ua-health-' + bandOf(r.overall) : 'neutral';
+  }
+  function healthBadge(block) {
+    var r = recordOf(block);
+    return r && r.overall !== null ? {band: bandOf(r.overall), text: String(r.overall)} : null;
+  }
+
+  var HT = {
+    de: {head: 'Letzter Prüflauf', none: 'Kein Prüflauf für diese Fähigkeit: keine Daten.', noScore: 'Gesamtwert: keine Daten (kein Kriterium konnte bewertet werden).',
+      overall: 'Gesamtwert', date: 'Datum', model: 'Modell', noModel: 'keines (nur Kennzahlen)', commit: 'Commit', repo: 'Repository', path: 'Ordner', whole: 'ganze Fähigkeit',
+      crit: 'Kriterien-Version', run: 'Lauf', metrics: 'Kennzahlen', value: 'Wert', limit: 'Schwelle', met: 'erfüllt', missed: 'nicht erfüllt', na: 'nicht verfügbar',
+      src: 'Quelle', verdict: 'Urteil des Modells', score: 'Punkte', links: 'Verweise', github: 'Quelltext auf GitHub', node: 'Graph-Knoten', others: 'Weitere Läufe in dieser Fähigkeit',
+      band: {good: 'gut', fair: 'mittel', weak: 'schwach', poor: 'kritisch'}},
+    en: {head: 'Latest health run', none: 'No health run for this capability: no data.', noScore: 'Overall: no data (no criterion could be scored).',
+      overall: 'Overall', date: 'Date', model: 'Model', noModel: 'none (metrics only)', commit: 'Commit', repo: 'Repository', path: 'Folder', whole: 'whole capability',
+      crit: 'Criteria version', run: 'Run', metrics: 'Metrics', value: 'Value', limit: 'Threshold', met: 'met', missed: 'not met', na: 'not available',
+      src: 'Source', verdict: 'Model verdict', score: 'Score', links: 'Links', github: 'Source on GitHub', node: 'Graph node', others: 'Other runs in this capability',
+      band: {good: 'good', fair: 'fair', weak: 'weak', poor: 'critical'}}
+  };
+  function from(path, text) { return '<span data-from="' + esc(path) + '">' + esc(text) + '</span>'; }
+  function when(iso) { return iso.slice(0, 10) + ' ' + iso.slice(11, 16) + ' UTC'; }
+  function metricLabel(name, lang) { return HAS.call(MT, name) ? MT[name][lang][0] : name; }
+  function unitLabel(m, lang) { return HAS.call(MT, m.name) ? MT[m.name][lang][1] : m.unit; }
+
+  function runMetrics(r, lang, T) {
+    if (!r.metrics.length) return '';
+    return '<div class="hk"><h5>' + T.metrics + '</h5><ul class="hmet">' + r.metrics.map(function (m) {
+      var at = 'metrics[' + m.i + ']', sign = m.better === 'higher' ? '≥ ' : '≤ ';
+      var state = m.status === 'not-available' ? 'na' : m.pass ? 'met' : 'missed';
+      return '<li class="hm" data-metric="' + esc(m.name) + '" data-state="' + state + '">' +
+        '<span class="crit-n">' + esc(metricLabel(m.name, lang)) + ' <code>' + esc(m.name) + '</code></span>' +
+        (m.status === 'measured'
+          ? '<span class="hv">' + T.value + ' ' + from(at + '.value', num(m.value, lang)) + '</span>'
+          : '<span class="hv">' + esc(T.na) + '</span>') +
+        '<span class="hth">' + T.limit + ' ' + sign + from(at + '.threshold', num(m.threshold, lang)) + '</span> <span class="crit-u">' + esc(unitLabel(m, lang)) + '</span>' +
+        '<span class="hst">' + esc(state === 'na' ? T.na : state === 'met' ? T.met : T.missed) + '</span>' +
+        (m.reason ? '<span class="hrs">' + from(at + '.details.reason', m.reason) + '</span>' : '') +
+        (m.source ? '<span class="hsrc">' + T.src + ': ' + from(at + '.source', m.source) + '</span>' : '') + '</li>';
+    }).join('') + '</ul></div>';
+  }
+  function runVerdict(r, lang, T) {
+    if (!r.verdict.length) return '';
+    return '<div class="hk"><h5>' + T.verdict + '</h5><ul class="hver">' + r.verdict.map(function (v) {
+      return '<li><strong data-from="verdict[' + v.i + '].criterion">' + esc(v.criterion) + '</strong> ' + T.score + ' ' + from('verdict[' + v.i + '].score', num(v.score, lang)) +
+        '<ul>' + v.reasons.map(function (x) { return '<li>' + from('verdict[' + v.i + '].reasons[' + x.j + ']', x.text) + '</li>'; }).join('') + '</ul></li>';
+    }).join('') + '</ul></div>';
+  }
+  function othersBox(others, lang, T) {
+    if (!others.length) return '';
+    return '<div class="hk"><h5>' + T.others + '</h5><ul class="hother">' + others.map(function (o) {
+      return '<li data-rec-start="' + esc(o.startedAt) + '" data-rec-repo="' + esc(o.scope.repo) + '" data-rec-path="' + esc(o.scope.path === null ? '' : o.scope.path) + '"><code data-from="scope.repo">' + esc(o.scope.repo) + '</code>' +
+        (o.scope.path === null ? '' : '/<code data-from="scope.path">' + esc(o.scope.path) + '</code>') + ' <time datetime="' + esc(o.startedAt) + '" data-from="startedAt">' + esc(when(o.startedAt)) + '</time> · ' +
+        (o.overall === null ? esc(T.na) : T.overall + ' ' + from('overall', num(o.overall, lang))) + '</li>';
+    }).join('') + '</ul></div>';
+  }
+  function runBox(r, lang, T, others) {
+    var out = '<section class="hrun" aria-label="' + T.head + '"><h4 class="crit-h">' + T.head + '</h4>';
+    if (r.overall === null) out += '<p class="vnote hnos">' + T.noScore + '</p>';
+    else out += '<p class="hband" data-hband="' + bandOf(r.overall) + '"><span class="hl">' + T.overall + '</span> <strong class="hscore">' + from('overall', num(r.overall, lang)) + '</strong> ' +
+      '<span class="hword">' + esc(T.band[bandOf(r.overall)]) + '</span></p>';
+    out += '<dl class="hmeta"><dt>' + T.date + '</dt><dd><time datetime="' + esc(r.startedAt) + '" data-from="startedAt">' + esc(when(r.startedAt)) + '</time></dd>' +
+      '<dt>' + T.model + '</dt><dd>' + (r.model === null ? '<span data-from="model">' + esc(T.noModel) + '</span>' : '<code data-from="model">' + esc(r.model) + '</code>') + '</dd>' +
+      '<dt>' + T.commit + '</dt><dd><code data-from="commit" title="' + esc(r.commit) + '">' + esc(r.commit.slice(0, 7)) + '</code></dd>' +
+      '<dt>' + T.repo + '</dt><dd><code data-from="scope.repo">' + esc(r.scope.repo) + '</code></dd>' +
+      '<dt>' + T.path + '</dt><dd>' + (r.scope.path === null ? esc(T.whole) : '<code data-from="scope.path">' + esc(r.scope.path) + '</code>') + '</dd>' +
+      (r.criteriaVersion ? '<dt>' + T.crit + '</dt><dd><code data-from="criteriaVersion" title="' + esc(r.criteriaVersion) + '">' + esc(r.criteriaVersion.slice(0, 12)) + '</code></dd>' : '') +
+      (r.runId ? '<dt>' + T.run + '</dt><dd><code data-from="run.runId">' + esc(r.runId) + '</code></dd>' : '') + '</dl>';
+    out += runMetrics(r, lang, T) + runVerdict(r, lang, T);
+    var links = [];
+    if (r.source) links.push('<li><a data-health-source href="' + esc(r.source) + '" target="_blank" rel="noopener noreferrer">' + T.github + '</a></li>');
+    if (r.graphNode) links.push('<li>' + T.node + ' <code data-from="links.graphNode">' + esc(r.graphNode) + '</code></li>');
+    if (links.length) out += '<div class="hk"><h5>' + T.links + '</h5><ul class="hlinks">' + links.join('') + '</ul></div>';
+    out += othersBox(others, lang, T);
+    return out + '</section>';
+  }
+  function runPanel(block, lang) {
+    lang = lang === 'en' ? 'en' : 'de';
+    var T = HT[lang], r = recordOf(block);
+    var others = recordsOf(block).filter(function (o) { return o !== r; }).sort(function (a, b) { return a.startedAt < b.startedAt ? 1 : -1; }).slice(0, 8);
+    if (!r) return '<p class="vnote hno">' + T.none + '</p>' + othersBox(others, lang, T);
+    return runBox(r, lang, T, others);
+  }
   function healthView() {
-    var base = comingView({de: 'Gesundheit', en: 'Health'}, {
-      de: 'Gesundheit folgt: Die Quadrate bleiben neutral, bis die Prüfläufe angebunden sind.',
-      en: 'Health is coming: the squares stay neutral until the health runs are connected.'});
-    base.panel = function (block, lang, node) { try { return criteriaBox(block, lang, node); } catch (e) { return '<p class="vnote">' + CT[lang === 'en' ? 'en' : 'de'].unknown + '</p>'; } };
+    var base = comingView({de: 'Gesundheit', en: 'Health'}, {de: '', en: ''});
+    base.legend = function (lang) {
+      var de = lang !== 'en';
+      if (!RECORDS.length) return de ? 'Gesundheit: Noch kein Prüflauf veröffentlicht, alle Quadrate sind grau (keine Daten).' : 'Health: no health run published yet, all squares are grey (no data).';
+      return de ? 'Gesundheit: Farbe nach Gesamtwert des letzten Prüflaufs (gut ab 80, mittel ab 60, schwach ab 40, sonst kritisch). Grau: keine Daten.'
+        : 'Health: colour by the overall score of the latest run (good from 80, fair from 60, weak from 40, otherwise critical). Grey: no data.';
+    };
+    base.colour = healthColour;
+    base.badge = healthBadge;
+    base.panel = function (block, lang, node) {
+      var run = ''; try { run = runPanel(block, lang); } catch (e) { run = '<p class="vnote">' + HT[lang === 'en' ? 'en' : 'de'].none + '</p>'; }
+      var box = ''; try { box = criteriaBox(block, lang, node); } catch (e) { box = '<p class="vnote">' + CT[lang === 'en' ? 'en' : 'de'].unknown + '</p>'; }
+      return run + box;
+    };
     return base;
   }
 
@@ -292,7 +447,7 @@
   function tools(view, lang, labelOf) { var v = VIEWS[view]; return v && v.tools ? v.tools(lang, labelOf) : ''; }
 
   return {
-    DEFAULT_VIEW: DEFAULT_VIEW, VIEW_IDS: VIEW_IDS, VIEWS: VIEWS, setCriteria: setCriteria, parseHash: parseHash, buildHash: buildHash,
+    DEFAULT_VIEW: DEFAULT_VIEW, VIEW_IDS: VIEW_IDS, VIEWS: VIEWS, setCriteria: setCriteria, setHealth: setHealth, healthBand: bandOf, parseHash: parseHash, buildHash: buildHash,
     setIdeas: setIdeas, ideaCount: function () { return IDEAS.length; }, selectIdea: selectIdea, selectedIdea: function () { return selected; },
     toggleIdeas: toggleIdeas, showIdeas: function () { return shown; }, markedCapabilities: markedSquares, tools: tools
   };

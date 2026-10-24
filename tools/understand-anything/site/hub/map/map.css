@@ -650,3 +650,30 @@ dialog#workdlg::backdrop{background:rgba(20,16,15,.35)}
 .ipanel ul{margin:6px 0 0;padding-left:18px}
 .tm .blk.vmark{outline:3px dashed var(--brand);outline-offset:-3px;z-index:2}
 .tm.vview .blk.vmark{outline-style:solid}
+
+/* Health-Ansicht (ORISO-Docs#218): Farben aus tokens.css (--ua-health-*), Grau (--neutral) = keine Daten.
+   Der Wert steht als Zahl im Quadrat (data-hs aus dem Laufprotokoll), die Farbe allein sagt nichts. */
+.tm.vview .blk[data-hs]::after{content:attr(data-hs);position:absolute;top:4px;right:4px;min-width:26px;padding:1px 6px;border-radius:10px;font:700 12px/1.4 var(--mono);text-align:center;background:var(--label-bg);color:var(--ink);border:1px solid var(--line);pointer-events:none}
+.tm.vview .blk[data-hband]{border-color:var(--tile-gap)}
+.hrun{margin:0 0 14px;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--sunken);min-width:0}
+.hrun .hband{display:inline-flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px;margin:4px 0 10px;padding:4px 10px;border-radius:6px;border:2px solid var(--line)}
+.hrun .hband strong{font-size:22px;line-height:1.2}
+.hband[data-hband="poor"]{background:var(--ua-health-poor);color:var(--ua-health-poor-on);border-color:var(--ua-health-poor-edge)}
+.hband[data-hband="weak"]{background:var(--ua-health-weak);color:var(--ua-health-weak-on);border-color:var(--ua-health-weak-edge)}
+.hband[data-hband="fair"]{background:var(--ua-health-fair);color:var(--ua-health-fair-on);border-color:var(--ua-health-fair-edge)}
+.hband[data-hband="good"]{background:var(--ua-health-good);color:var(--ua-health-good-on);border-color:var(--ua-health-good-edge)}
+.hmeta{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:2px 12px;margin:0 0 10px;font-size:13px}
+.hmeta dt{color:var(--ink-2)}
+.hmeta dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.hk{margin:10px 0 0}
+.hk h5{margin:0 0 4px;font-size:13px}
+.hmet,.hver,.hlinks,.hother{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.hm{display:flex;flex-wrap:wrap;gap:2px 10px;align-items:baseline;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--card);font-size:13px;min-width:0}
+.hm[data-state="missed"]{border-left:4px solid var(--warn)}
+.hm[data-state="met"]{border-left:4px solid var(--ok)}
+.hm[data-state="na"]{border-style:dashed}
+.hm .crit-n{flex:1 1 100%;font-weight:600}
+.hm .hst{font-weight:600}
+.hm .hsrc,.hm .hrs{flex:1 1 100%;color:var(--ink-2);font-size:12px;overflow-wrap:anywhere}
+.hver ul{margin:2px 0 0 18px;padding:0}
+.hno,.hnos{margin:0 0 12px}

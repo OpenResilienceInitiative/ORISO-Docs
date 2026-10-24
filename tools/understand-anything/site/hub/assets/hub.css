@@ -345,3 +345,8 @@ html[data-lang="en"] [lang="de"]{display:none !important}
 .ua-sw[data-token="status-qa-internal"]{background:var(--ua-status-qa-internal);color:var(--ua-status-qa-internal-on);}
 .ua-sw[data-token="status-qa-external"]{background:var(--ua-status-qa-external);color:var(--ua-status-qa-external-on);}
 .ua-sw[data-token="status-done"]{background:var(--ua-status-done);color:var(--ua-status-done-on);}
+/* Gesundheitsfarben (ORISO-Docs#218): Füllung, Textfarbe und Kontur je Band aus tokens.css */
+.ua-sw[data-token="health-poor"]{background:var(--ua-health-poor);color:var(--ua-health-poor-on);border-color:var(--ua-health-poor-edge)}
+.ua-sw[data-token="health-weak"]{background:var(--ua-health-weak);color:var(--ua-health-weak-on);border-color:var(--ua-health-weak-edge)}
+.ua-sw[data-token="health-fair"]{background:var(--ua-health-fair);color:var(--ua-health-fair-on);border-color:var(--ua-health-fair-edge)}
+.ua-sw[data-token="health-good"]{background:var(--ua-health-good);color:var(--ua-health-good-on);border-color:var(--ua-health-good-edge)}
