@@ -42,8 +42,8 @@ function rec(at, [size, ratio, lint, dup], {commit, model = null, verdict = [], 
   });
 }
 const OLD = rec('2026-05-01T08:00:00Z', [900, 0.25, 4, 2.5], {commit: SHA1});
-const MID = rec('2026-08-01T08:00:00Z', [600, 0.3, 2, 2.5], {commit: SHA2, model: 'claude-test', verdict: [{criterion: 'readability', score: 40, weight: 1, reasons: ['Two 600 line files <b>mix</b> state.']}]});
-const NEW = rec('2026-10-24T10:15:00Z', [300, 0.5, 0, 4], {commit: SHA3, model: 'claude-test', verdict: [{criterion: 'readability', score: 70, weight: 1, reasons: ['Split into small files.']}]});
+const MID = rec('2026-08-01T08:00:00Z', [600, 0.3, 2, 2.5], {commit: SHA2, model: 'claude-test', verdict: [{criterion: 'maintainability', score: 40, weight: 1, reasons: ['Two 600 line files <b>mix</b> state.']}]});
+const NEW = rec('2026-10-24T10:15:00Z', [300, 0.5, 0, 4], {commit: SHA3, model: 'claude-test', verdict: [{criterion: 'maintainability', score: 70, weight: 1, reasons: ['Split into small files.']}]});
 const SLUG = {chat: 'chat', handover: 'case-handover'};
 const load = (records, tweak = d => d) => MapViews.setHealth(plain(tweak(buildHealthDoc(records))), id => SLUG[id] || null);
 const NODE = id => 'https://understand.oriso.org/supergraph/?token=t&node=' + encodeURIComponent(id);
@@ -122,12 +122,12 @@ test('Compare with latest: every earlier run has the view, the latest has none; 
   assert.match(mid, /data-metric="size"[^>]*data-direction="better"/);
   assert.match(mid, /data-metric="duplication"[^>]*data-direction="worse"/);
   assert.match(mid, /−300/, 'size 600 → 300');
-  assert.match(mid, /data-criterion="readability"[^>]*data-direction="better"/);
+  assert.match(mid, /data-criterion="maintainability"[^>]*data-direction="better"/);
   assert.match(mid, /\+30/);
   assert.match(mid, /Split into small files\./, 'reasons of the latest run, which the page holds in full');
   assert.match(mid, new RegExp(`data-overall-delta="${NEW.overall - MID.overall}"`));
   const old = it[2].html;
-  assert.match(old, /data-criterion="readability"[^>]*data-direction="unknown"/, 'the oldest run had no verdict: not comparable');
+  assert.match(old, /data-criterion="maintainability"[^>]*data-direction="unknown"/, 'the oldest run had no verdict: not comparable');
   assert.match(old, /only in the later run/);
 });
 
@@ -140,7 +140,8 @@ test('German texts and decimal comma; record texts are escaped', () => {
   load([MID, NEW], d => d);
   // MID's reason is only in the compact history as score; the hostile text lives in MID's full record, which the page never holds (only the latest does)
   assert.doesNotMatch(hist(panel('de')), /<b>mix/);
-  const hostile = rec('2026-10-25T10:15:00Z', [300, 0.5, 0, 4], {commit: SHA3, model: 'm', verdict: [{criterion: 'readability<img>', score: 70, weight: 1, reasons: ['x <b>y</b>']}]});
+  const hostile = rec('2026-10-25T10:15:00Z', [300, 0.5, 0, 4], {commit: SHA3, model: 'm', verdict: [{criterion: 'maintainability', score: 70, weight: 1, reasons: ['x <b>y</b>']}]});
+  hostile.verdict[0].criterion = 'maintainability<img>'; // a hand-edited file: the tooling would refuse it, the page must still escape it
   load([MID, hostile]);
   const out = hist(panel('en'));
   assert.doesNotMatch(out, /<img>|<b>y/); assert.match(out, /x &lt;b&gt;y&lt;\/b&gt;/);

@@ -32,8 +32,8 @@ function rec(at, meas, {model = null, verdict = [], size = 400, commit = 'a'.rep
   });
 }
 // A (before): overall 53. B (after, a refactoring): overall 90. Scores worked out by hand from the rules in health/README.md.
-const A = rec('2026-09-01T08:00:00Z', [900, 0.25, 4, 2.5], {model: 'claude-test', verdict: [{criterion: 'readability', score: 40, weight: 1, reasons: ['Two 600 line files mix rendering and state.']}]});
-const B = rec('2026-10-24T10:15:00Z', [300, 0.5, 0, 8], {model: 'claude-test', commit: 'b'.repeat(40), verdict: [{criterion: 'readability', score: 70, weight: 1, reasons: ['Split into small files.', 'State moved to a hook.']}]});
+const A = rec('2026-09-01T08:00:00Z', [900, 0.25, 4, 2.5], {model: 'claude-test', verdict: [{criterion: 'maintainability', score: 40, weight: 1, reasons: ['Two 600 line files mix rendering and state.']}]});
+const B = rec('2026-10-24T10:15:00Z', [300, 0.5, 0, 8], {model: 'claude-test', commit: 'b'.repeat(40), verdict: [{criterion: 'maintainability', score: 70, weight: 1, reasons: ['Split into small files.', 'State moved to a hook.']}]});
 const by = (list, key, name) => list.find(x => x[key] === name);
 
 test('fixtures are what the hand calculation says (guards the expected values below)', () => {
@@ -57,7 +57,7 @@ test('per criterion of the model: score delta (higher is better), the reasons of
   const c = compareRuns(A, B);
   assert.equal(c.criteria.length, 1);
   const r = c.criteria[0];
-  assert.deepEqual([r.criterion, r.from, r.to, r.delta, r.direction], ['readability', 40, 70, 30, 'better']);
+  assert.deepEqual([r.criterion, r.from, r.to, r.delta, r.direction], ['maintainability', 40, 70, 30, 'better']);
   assert.deepEqual(r.notes, {from: ['Two 600 line files mix rendering and state.'], to: ['Split into small files.', 'State moved to a hook.']});
 });
 

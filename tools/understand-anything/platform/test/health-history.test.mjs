@@ -26,7 +26,7 @@ const day = n => `2026-${String(1 + Math.floor((n - 1) / 28)).padStart(2, '0')}-
 
 test('every scope gets its runs oldest first, compact: date, model, commit, overall, the score per criterion, the record file path', () => {
   const a = rec({ at: '2026-09-01T08:00:00Z', size: 900, lint: 4, commit: SHA(1) });
-  const b = rec({ at: '2026-10-24T10:15:00Z', size: 300, lint: 0, model: 'claude-test', commit: SHA(2), verdict: [{ criterion: 'readability', score: 40, weight: 1, reasons: ['mixed concerns'] }] });
+  const b = rec({ at: '2026-10-24T10:15:00Z', size: 300, lint: 0, model: 'claude-test', commit: SHA(2), verdict: [{ criterion: 'maintainability', score: 40, weight: 1, reasons: ['mixed concerns'] }] });
   const doc = buildHealthDoc([b, a]);
   assert.equal(doc.history.length, 1);
   const h = doc.history[0];
@@ -39,7 +39,7 @@ test('every scope gets its runs oldest first, compact: date, model, commit, over
   assert.equal(x.overall, a.overall); assert.equal(y.overall, b.overall);
   assert.deepEqual(y.metrics.map(m => [m.name, m.value, m.threshold, m.better, m.score]), [['size', 300, 400, 'lower', 100], ['lint', 0, 0, 'lower', 100]]);
   assert.deepEqual(x.metrics.map(m => [m.name, m.value, m.score]), [['size', 900, 0], ['lint', 4, 60]]);
-  assert.deepEqual(y.verdict, [{ criterion: 'readability', score: 40 }], 'scores only: reasons stay in the full record');
+  assert.deepEqual(y.verdict, [{ criterion: 'maintainability', score: 40 }], 'scores only: reasons stay in the full record');
   assert.equal(y.criteriaVersion, b.criteriaVersion);
 });
 

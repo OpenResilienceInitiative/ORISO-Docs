@@ -15,3 +15,8 @@ export const METRICS = Object.freeze({
 });
 export const METRIC_NAMES = Object.freeze(Object.keys(METRICS));
 export const isMetric = name => Object.prototype.hasOwnProperty.call(METRICS, name);
+
+// The closed list of criteria the model scores (verdict step, health-verdict.mjs). They are NOT metric names (metrics are scored
+// by threshold), and a fixed list keeps the history of a scope comparable from run to run. The step gives each weight 1.
+export const REVIEW_CRITERIA = Object.freeze(['maintainability', 'test-quality', 'structure']);
+export const REVIEW_WEIGHT = 1;

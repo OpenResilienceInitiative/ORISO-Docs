@@ -35,8 +35,8 @@ const rec = (capability, at, [size, ratio, lint, dup], commit, extra = {}) => bu
   measurements: {size: m(size), 'test-ratio': m(ratio), lint: m(lint), duplication: m(dup)}, model: extra.model ?? null, startedAt: at, verdict: extra.verdict ?? [],
 });
 const OLD = rec('chat', '2026-05-01T08:00:00Z', [900, 0.25, 4, 2.5], SHA1);
-const MID = rec('chat', '2026-08-01T08:00:00Z', [600, 0.3, 2, 2.5], SHA2, {model: 'claude-test', verdict: [{criterion: 'readability', score: 40, weight: 1, reasons: ['Two 600 line files mix rendering and state.']}]});
-const NEW = rec('chat', '2026-10-24T10:15:00Z', [300, 0.5, 0, 4], SHA3, {model: 'claude-test', verdict: [{criterion: 'readability', score: 70, weight: 1, reasons: ['Split into small files.']}]});
+const MID = rec('chat', '2026-08-01T08:00:00Z', [600, 0.3, 2, 2.5], SHA2, {model: 'claude-test', verdict: [{criterion: 'maintainability', score: 40, weight: 1, reasons: ['Two 600 line files mix rendering and state.']}]});
+const NEW = rec('chat', '2026-10-24T10:15:00Z', [300, 0.5, 0, 4], SHA3, {model: 'claude-test', verdict: [{criterion: 'maintainability', score: 70, weight: 1, reasons: ['Split into small files.']}]});
 const SOLO = rec('case-handover', '2026-10-20T08:00:00Z', [900, 0.25, 4, 2.5], SHA1);
 const HEALTH = JSON.stringify(buildHealthDoc([OLD, MID, NEW, SOLO]));
 
@@ -140,7 +140,7 @@ test('Compare with latest: the deltas in DE and EN, with direction and reasons',
     await cmp.locator('.hd-o').waitFor();
     const body = await cmp.innerText();
     assert.match(body, lang === 'en' ? /Compare with latest/ : /Mit letztem Lauf vergleichen/);
-    const size = cmp.locator('[data-metric="size"]'), dup = cmp.locator('[data-metric="duplication"]'), read = cmp.locator('[data-criterion="readability"]');
+    const size = cmp.locator('[data-metric="size"]'), dup = cmp.locator('[data-metric="duplication"]'), read = cmp.locator('[data-criterion="maintainability"]');
     assert.equal(await size.getAttribute('data-direction'), 'better'); assert.equal(await dup.getAttribute('data-direction'), 'worse');
     assert.equal(await read.getAttribute('data-direction'), 'better');
     assert.match(await size.innerText(), /600 → 300/); assert.match(await size.innerText(), /−300/);

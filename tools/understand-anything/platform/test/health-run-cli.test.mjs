@@ -81,7 +81,7 @@ test('refusals: dirty checkout, unknown capability, bad commit, overwrite, verdi
   assert.throws(() => runHealth({ ...base, commit: 'abc' }), /40-character/);
   runHealth(base);
   assert.throws(() => runHealth(base), /never overwritten/);
-  const verdict = path.join(out, 'v.json'); fs.writeFileSync(verdict, JSON.stringify([{ criterion: 'readability', score: 40, reasons: ['why'] }]));
+  const verdict = path.join(out, 'v.json'); fs.writeFileSync(verdict, JSON.stringify([{ criterion: 'maintainability', score: 40, reasons: ['why'] }]));
   assert.throws(() => runHealth({ ...base, now: '2026-10-24T12:00:00Z', verdict }), /model/);
   const withModel = runHealth({ ...base, now: '2026-10-24T12:00:00Z', verdict, model: 'claude-test' }).record;
   assert.equal(withModel.model, 'claude-test'); assert.equal(withModel.verdict[0].weight, 1);

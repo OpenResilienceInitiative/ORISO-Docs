@@ -38,7 +38,7 @@ const FAIR = {
   lint: {value: null, source: 'eslint', details: {reason: 'no linter configuration (eslint) in the checkout'}}, duplication: {value: 2.5, source: 'health-run duplication', details: {}},
 };
 const BAD = {size: {value: 1200, source: 'health-run size', details: {}}, 'test-ratio': {value: 0.1, source: 'health-run test-ratio', details: {}}, lint: {value: 40, source: 'eslint', details: {}}, duplication: {value: 20, source: 'health-run duplication', details: {}}};
-const CHAT = rec('chat', '2026-10-24T10:15:00Z', FAIR, {model: 'claude-test', verdict: [{criterion: 'readability', score: 40, weight: 1, reasons: ['Two 600 line files mix rendering and state.']}]});
+const CHAT = rec('chat', '2026-10-24T10:15:00Z', FAIR, {model: 'claude-test', verdict: [{criterion: 'maintainability', score: 40, weight: 1, reasons: ['Two 600 line files mix rendering and state.']}]});
 const OLD_CHAT = rec('chat', '2026-09-01T08:00:00Z', BAD);
 const HANDOVER = rec('case-handover', '2026-10-20T08:00:00Z', BAD);
 const RECORDS = [OLD_CHAT, CHAT, HANDOVER];

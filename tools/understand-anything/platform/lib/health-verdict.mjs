@@ -15,9 +15,9 @@ import { createHash } from 'node:crypto';
 import { CODE_REPOS } from './capabilities.mjs';
 import { criteriaVersion } from './health-run.mjs';
 
-// The closed list of criteria the model scores. They are NOT metric names (metrics are scored by threshold),
-// and a fixed list keeps the history of a scope comparable from run to run.
-export const REVIEW_CRITERIA = Object.freeze(['maintainability', 'test-quality', 'structure']);
+// The closed list of criteria the model scores lives in health-metrics.mjs (validateRunRecord checks records against it too).
+import { REVIEW_CRITERIA, REVIEW_WEIGHT } from './health-metrics.mjs';
+export { REVIEW_CRITERIA };
 // Repositories whose content may go to a model without asking. Everything else counts as private.
 export const PUBLIC_REPOS = Object.freeze([...CODE_REPOS, 'ORISO-Docs']);
 export const isPublicRepo = repo => PUBLIC_REPOS.includes(repo);
@@ -73,7 +73,7 @@ export function parseVerdict(text) {
     if (typeof v.score !== 'number' || !Number.isFinite(v.score) || v.score < 0 || v.score > 100) throw invalid(`${v.criterion}: score must be a number from 0 to 100`);
     if (!Array.isArray(v.reasons) || !v.reasons.length || v.reasons.length > MAX_REASONS || v.reasons.some(r => typeof r !== 'string' || !r.trim() || r.length > MAX_REASON_CHARS))
       throw invalid(`${v.criterion}: 1 to ${MAX_REASONS} non-empty reasons of at most ${MAX_REASON_CHARS} characters`);
-    byName.set(v.criterion, { criterion: v.criterion, score: Math.round(v.score), weight: 1, reasons: v.reasons.map(r => r.trim()) });
+    byName.set(v.criterion, { criterion: v.criterion, score: Math.round(v.score), weight: REVIEW_WEIGHT, reasons: v.reasons.map(r => r.trim()) });
   }
   const missing = REVIEW_CRITERIA.filter(c => !byName.has(c));
   if (missing.length) throw invalid(`missing criteria: ${missing.join(', ')}`);

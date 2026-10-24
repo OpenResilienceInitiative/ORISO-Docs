@@ -86,9 +86,9 @@ test('criteria version is the hash of what the run was judged by; origin files d
 });
 
 test('a model verdict is stored per criterion with mandatory reasons and joins the overall', () => {
-  const r = build({ model: 'claude-test', verdict: [{ criterion: 'readability', score: 40, weight: 2, reasons: ['Two 600 line files mix rendering and state.'] }] });
+  const r = build({ model: 'claude-test', verdict: [{ criterion: 'maintainability', score: 40, weight: 1, reasons: ['Two 600 line files mix rendering and state.'] }] });
   assert.deepEqual(validateRunRecord(r), []);
-  assert.equal(r.overall, Math.round((300 + 80) / 6)); // 300 from the metrics (weights 4), 40 * 2 from the verdict
+  assert.equal(r.overall, Math.round((300 + 40) / 5)); // 300 from the metrics (weights 4), 40 * 1 from the verdict
   assert.throws(() => build({ model: 'm', verdict: [{ criterion: 'x', score: 10, weight: 1, reasons: [] }] }), /reasons/);
   assert.throws(() => build({ model: null, verdict: [{ criterion: 'x', score: 10, weight: 1, reasons: ['r'] }] }), /model/);
   assert.throws(() => build({ model: 'm', verdict: [{ criterion: 'size', score: 10, weight: 1, reasons: ['r'] }] }), /metric/);
@@ -121,7 +121,7 @@ test('semantic rules: unknown metric, fake numbers, wrong overall, commit that i
   assert.match(rec(r => { r.scope.capability = 'invented'; }), /capability/);
   assert.match(rec(r => { r.links.graphNode = 'capability:other'; }), /graphNode/);
   assert.match(rec(r => { r.links.source = 'https://github.com/x/y/tree/' + SHA; }), /source/);
-  assert.match(rec(r => { r.model = null; r.verdict = [{ criterion: 'q', score: 1, weight: 1, reasons: ['r'] }]; }), /model/);
+  assert.match(rec(r => { r.model = null; r.verdict = [{ criterion: 'structure', score: 1, weight: 1, reasons: ['r'] }]; }), /model/);
   assert.match(rec(r => { r.metrics[0].details = { blob: 'x'.repeat(21000) }; }), /20000/);
   assert.match(rec(r => { r.startedAt = '2026-10-24 10:15'; }), /startedAt/);
 });
@@ -178,4 +178,20 @@ test('a broken file stops the load: invalid record, record in the wrong folder, 
   root = tmp(); fs.mkdirSync(path.join(root, 'health/runs/chat/ORISO-Frontend'), { recursive: true });
   fs.writeFileSync(path.join(root, 'health/runs/chat/ORISO-Frontend/20261024T101500Z.json'), '{nope');
   assert.throws(() => loadRuns(root), /not JSON/);
+});
+
+// ORISO-Docs#213 review (finding 9): a verdict criterion is one of the review criteria the verdict step asks for, with the weight the
+// step produces (1); the scope's repository is one of the code repositories. A record that says otherwise did not come from the tooling.
+test('validateRunRecord: verdict criteria must be review criteria with weight 1, scope.repo must be a code repository', async () => {
+  const { REVIEW_CRITERIA } = await import('../lib/health-verdict.mjs');
+  const { CODE_REPOS } = await import('../lib/capabilities.mjs');
+  const ok = build({ model: 'm', verdict: REVIEW_CRITERIA.map(c => ({ criterion: c, score: 50, weight: 1, reasons: ['r'] })) });
+  assert.deepEqual(validateRunRecord(ok), []);
+  const rec = mut => { const r = structuredClone(ok); mut(r); return validateRunRecord(r).join('\n'); };
+  assert.match(rec(r => { r.verdict[0].criterion = 'readability'; }), /verdict\[0\] readability: not a review criterion \(maintainability, test-quality, structure\)/);
+  assert.match(rec(r => { r.verdict[1].weight = 2; r.overall = null; }), /verdict\[1\] test-quality: weight must be 1/);
+  assert.match(rec(r => { r.verdict.push({ ...r.verdict[0] }); }), /duplicate verdict criterion maintainability/);
+  assert.ok(!CODE_REPOS.includes('ORISO-E2E'));
+  assert.match(rec(r => { r.scope.repo = 'ORISO-E2E'; r.run.commits = { 'ORISO-E2E': r.commit }; r.links.source = r.links.source.replace('ORISO-Frontend', 'ORISO-E2E'); }), /scope\.repo: ORISO-E2E is not a code repository/);
+  assert.throws(() => build({ model: 'm', verdict: [{ criterion: 'readability', score: 40, reasons: ['r'] }] }), /review criterion/);
 });

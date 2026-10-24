@@ -30,7 +30,7 @@ const record = (scope = { capability: "email-templates", repo: "ORISO-Frontend",
     lint: { value: null, source: "eslint", details: { reason: "no linter configuration" } },
   },
   model: "claude-test", startedAt: AT,
-  verdict: [{ criterion: "readability", score: 35, weight: 1, reasons: ["Templates mix markup and logic. Ping @someone about it #12"] }, { criterion: "naming", score: 90, weight: 1, reasons: ["Names are clear."] }],
+  verdict: [{ criterion: "maintainability", score: 35, weight: 1, reasons: ["Templates mix markup and logic. Ping @someone about it #12"] }, { criterion: "structure", score: 90, weight: 1, reasons: ["Names are clear."] }],
   ...over,
 });
 
@@ -71,7 +71,7 @@ test("the body links the run record, lists the findings, carries the scope marke
   assert.match(body, /size/); // failed metric
   assert.match(body, /test-ratio/);
   assert.match(body, /lint[^\n]*not available/i); // not measured is named, not hidden
-  assert.match(body, /readability[^\n]*35/); // verdict below 60
+  assert.match(body, /maintainability[^\n]*35/); // verdict below 60
   assert.doesNotMatch(body, /naming/); // verdict 90 is not a finding
   assert.match(body, /<!-- oriso:refactor:v1 scope=email-templates:ORISO-Frontend:src\/mails -->/);
   for (const h of ["## Why", "## What to build", "## Acceptance", "### Reviewer test plan"]) assert.ok(body.includes(h), h);

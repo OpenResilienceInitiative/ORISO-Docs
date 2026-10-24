@@ -87,7 +87,7 @@ test('malformed records are dropped, never half shown', () => {
 const text = html => html.replace(/<[^>]+>/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/\s+/g, ' ');
 
 test('the panel shows date, model, commit, every metric with its value against the threshold and its source, and the links', () => {
-  const r = record({model: 'claude-test', verdict: [{criterion: 'readability', score: 40, weight: 1, reasons: ['Two 600 line files mix rendering and state.']}]});
+  const r = record({model: 'claude-test', verdict: [{criterion: 'maintainability', score: 40, weight: 1, reasons: ['Two 600 line files mix rendering and state.']}]});
   load(r);
   const html = health.panel(BLOCK, 'en', 'capability:chat'), t = text(html);
   assert.match(t, /Latest health run/); assert.match(t, /2026-10-24 10:15 UTC/); assert.match(t, /claude-test/); assert.match(t, new RegExp('Commit ' + SHA.slice(0, 7)));
@@ -96,7 +96,7 @@ test('the panel shows date, model, commit, every metric with its value against t
   assert.match(t, /lint.*not available.*no linter configuration \(eslint\) in the checkout/);
   assert.doesNotMatch(t, /Lint lint Value/, 'a not-available metric shows no value');
   assert.match(t, /Lint lint not available Threshold ≤ 0/);
-  assert.match(t, /readability.*Score 40.*Two 600 line files/);
+  assert.match(t, /maintainability.*Score 40.*Two 600 line files/);
   assert.match(html, /<a data-health-source href="https:\/\/github\.com\/OpenResilienceInitiative\/ORISO-Frontend\/tree\/d{40}" target="_blank" rel="noopener noreferrer">/);
   assert.match(t, /Graph node capability:chat/);
   assert.match(html, /data-hband="/);
@@ -157,7 +157,7 @@ function traces(html, records, lang) {
 }
 
 test('No invented data: every number in the run panel is a field of the record it comes from, DE and EN', () => {
-  const main = record({model: 'claude-test', verdict: [{criterion: 'readability', score: 40, weight: 2, reasons: ['Two 600 line files mix rendering and state.']}]});
+  const main = record({model: 'claude-test', verdict: [{criterion: 'maintainability', score: 40, weight: 1, reasons: ['Two 600 line files mix rendering and state.']}]});
   const other = record({at: '2026-09-01T08:00:00Z', measurements: {...MEAS, size: {...MEAS.size, value: 500}}});
   const folder = record({at: '2026-10-20T08:00:00Z', path: 'src/chat/sub'});
   load(main, other, folder);

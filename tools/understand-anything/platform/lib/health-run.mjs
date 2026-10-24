@@ -9,8 +9,8 @@ import { createHash } from 'node:crypto';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { validate } from '../../../planning-map/lib/schema.mjs';
-import { METRICS, isMetric } from './health-metrics.mjs';
-import { CAPABILITY_IDS } from './capabilities.mjs';
+import { METRICS, isMetric, REVIEW_CRITERIA, REVIEW_WEIGHT } from './health-metrics.mjs';
+import { CAPABILITY_IDS, CODE_REPOS } from './capabilities.mjs';
 
 export const RECORD_VERSION = 1;
 export const RUNS_DIR = 'health/runs';
@@ -106,8 +106,9 @@ export function buildRunRecord({ manifest, scope, commit, effective, measurement
   for (const v of verdict) {
     if (!Array.isArray(v.reasons) || !v.reasons.length || v.reasons.some(r => typeof r !== 'string' || !r.trim())) throw new Error(`verdict "${v.criterion}" needs reasons`);
     if (metrics.some(m => m.name === v.criterion)) throw new Error(`verdict criterion "${v.criterion}" is a metric name: metrics are scored by threshold`);
+    if (!REVIEW_CRITERIA.includes(v.criterion)) throw new Error(`verdict criterion "${v.criterion}" is not a review criterion (${REVIEW_CRITERIA.join(', ')})`);
   }
-  const verdictOut = verdict.map(v => ({ criterion: v.criterion, score: v.score, weight: v.weight ?? 1, reasons: v.reasons }));
+  const verdictOut = verdict.map(v => ({ criterion: v.criterion, score: v.score, weight: v.weight ?? REVIEW_WEIGHT, reasons: v.reasons }));
   const rec = {
     schemaVersion: RECORD_VERSION, run: manifest, scope: { capability: scope.capability, repo: scope.repo, path: scope.path },
     commit, criteriaVersion: criteriaVersion(effective), model, startedAt, metrics, verdict: verdictOut,
@@ -129,6 +130,7 @@ export function validateRunRecord(rec) {
   if (errors.length) return errors;
   const e = msg => errors.push(msg);
   if (!CAPABILITY_IDS.includes(rec.scope.capability)) e(`scope.capability: unknown capability ${rec.scope.capability}`);
+  if (!CODE_REPOS.includes(rec.scope.repo)) e(`scope.repo: ${rec.scope.repo} is not a code repository (${CODE_REPOS.join(', ')})`);
   if (rec.scope.path !== null && !okPath(rec.scope.path)) e(`scope.path: "${rec.scope.path}" is not a folder inside the repository`);
   if (rec.run.commits[rec.scope.repo] !== rec.commit) e(`commit: run.commits does not list ${rec.commit} for ${rec.scope.repo}`);
   const seen = new Set();
@@ -149,8 +151,13 @@ export function validateRunRecord(rec) {
     if (JSON.stringify(m.details).length > DETAILS_MAX_BYTES) e(`${at}: details exceed ${DETAILS_MAX_BYTES} bytes`);
   });
   if (rec.model === null && rec.verdict.length) e('model: null (metrics only) but a verdict is present');
+  const judged = new Set();
   rec.verdict.forEach((v, i) => {
     const at = `verdict[${i}] ${v.criterion}`;
+    if (!REVIEW_CRITERIA.includes(v.criterion)) e(`${at}: not a review criterion (${REVIEW_CRITERIA.join(', ')})`);
+    if (judged.has(v.criterion)) e(`${at}: duplicate verdict criterion ${v.criterion}`);
+    judged.add(v.criterion);
+    if (v.weight !== REVIEW_WEIGHT) e(`${at}: weight must be ${REVIEW_WEIGHT} (what the verdict step gives)`);
     if (!(v.score >= 0 && v.score <= 100)) e(`${at}: score must be between 0 and 100`);
     if (!v.reasons.length || v.reasons.some(r => typeof r !== 'string' || !r.trim())) e(`${at}: reasons are mandatory`);
     if (seen.has(v.criterion)) e(`${at}: criterion is a metric name`);
