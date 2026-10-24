@@ -72,6 +72,18 @@
         }
       }
     },
+    "verdictStatus": {"description": "Optional (ORISO-Docs#220). ran: a model wrote the verdict. skipped: the verdict step did not run (no secret, no model configured, private repository, model error); then model is null and verdict is empty. Records without the field come from runs that never tried.", "enum": ["ran", "skipped"]},
+    "verdictNote": {"description": "Optional. Why the verdict was skipped. Never contains a secret.", "type": "string", "maxLength": 400},
+    "inputs": {
+      "description": "Optional (ORISO-Docs#220). Hashes of what the verdict step was given, so a run is reproducible and comparable. criteria equals criteriaVersion. steering is the sha256 of the member comments used, or null when there was no steering source.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["criteria", "steering"],
+      "properties": {
+        "criteria": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "steering": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
     "overall": {"description": "Weighted mean of the scored criteria (metric scores and verdict scores), rounded to an integer; null when nothing was scored.", "type": ["number", "null"]},
     "links": {
       "type": "object",

@@ -15,6 +15,7 @@ import { CAPABILITY_IDS } from './capabilities.mjs';
 export const RECORD_VERSION = 1;
 export const RUNS_DIR = 'health/runs';
 export const DETAILS_MAX_BYTES = 20000;
+export const VERDICT_NOTE_MAX = 400;
 export const SCHEMA = JSON.parse(readFileSync(new URL('../health-run.schema.json', import.meta.url), 'utf8'));
 export const GITHUB_ORG = 'OpenResilienceInitiative';
 
@@ -88,7 +89,7 @@ export const scopeKey = scope => `${scope.capability}|${scope.repo}|${scope.path
 // ---- build ----
 // measurements: { <metric name>: { value: number|null, source: string, details: object } } from the metric runner.
 // Which metrics exist, their threshold, weight and unit come from the effective criteria, never from the caller.
-export function buildRunRecord({ manifest, scope, commit, effective, measurements, model = null, startedAt, verdict = [] }) {
+export function buildRunRecord({ manifest, scope, commit, effective, measurements, model = null, startedAt, verdict = [], verdictStatus, verdictNote, inputs }) {
   if (scope.path !== null && !okPath(scope.path)) throw new Error(`scope path "${scope.path}" is not a folder inside the repository`);
   const metrics = [];
   for (const [name, c] of Object.entries(effective.metrics)) {
@@ -112,6 +113,10 @@ export function buildRunRecord({ manifest, scope, commit, effective, measurement
     commit, criteriaVersion: criteriaVersion(effective), model, startedAt, metrics, verdict: verdictOut,
     overall: computeOverall(metrics, verdictOut), links: { graphNode: graphNodeOf(scope), source: sourceUrlOf(scope, commit) },
   };
+  // Additive fields (ORISO-Docs#220): only present when the AI verdict step was tried, so older runs and records are unchanged.
+  if (verdictStatus !== undefined) rec.verdictStatus = verdictStatus;
+  if (verdictNote) rec.verdictNote = String(verdictNote).slice(0, VERDICT_NOTE_MAX);
+  if (inputs !== undefined) rec.inputs = { criteria: inputs.criteria, steering: inputs.steering };
   const errors = validateRunRecord(rec);
   if (errors.length) throw new Error('run record invalid: ' + errors.join('; '));
   return rec;
@@ -150,6 +155,10 @@ export function validateRunRecord(rec) {
     if (!v.reasons.length || v.reasons.some(r => typeof r !== 'string' || !r.trim())) e(`${at}: reasons are mandatory`);
     if (seen.has(v.criterion)) e(`${at}: criterion is a metric name`);
   });
+  if (rec.verdictStatus === 'skipped' && (rec.model !== null || rec.verdict.length)) e('verdictStatus: skipped means model null and an empty verdict');
+  if (rec.verdictStatus === 'ran' && (rec.model === null || !rec.verdict.length)) e('verdictStatus: ran needs a model and a verdict');
+  if (typeof rec.verdictNote === 'string' && rec.verdictNote.length > VERDICT_NOTE_MAX) e(`verdictNote: longer than ${VERDICT_NOTE_MAX} characters`);
+  if (rec.inputs && rec.inputs.criteria !== rec.criteriaVersion) e('inputs.criteria: must equal criteriaVersion');
   if (rec.overall !== computeOverall(rec.metrics, rec.verdict)) e(`overall: ${rec.overall} is not the weighted mean of the scores`);
   if (rec.links.graphNode !== graphNodeOf(rec.scope)) e(`links.graphNode: expected ${graphNodeOf(rec.scope)}`);
   if (rec.links.source !== sourceUrlOf(rec.scope, rec.commit)) e(`links.source: expected ${sourceUrlOf(rec.scope, rec.commit)}`);
