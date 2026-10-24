@@ -9,16 +9,22 @@
 //   node tools/planning-map/plan.mjs set-gate --issue Org/Repo#123 --gate "R3 Human review" [--expect <gate>|none] [--apply]
 //   (set-gate needs the Gate project field; until a project admin creates it, it answers FIELD_MISSING)
 //
+//   node tools/planning-map/plan.mjs propose-refactor --scope <capability[:repo[:path]]> --epic Org/Repo#n [--record <run record.json>] [--apply]
+//   (ORISO-Docs#222) a health finding becomes ONE planned task: issue type Task, label `refactoring`, body with the run record and its
+//   findings, sub-issue of the epic, added to the board. Dry run unless --apply. Never automatic.
 // Exit codes: 0 ok, 1 a planning error (typed, printed as JSON), 2 usage error.
 import { execFileSync } from "node:child_process";
+import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { assignRelease, setGate } from "./lib/planning-api.mjs";
+import { proposeRefactor } from "./lib/refactor.mjs";
 
-export const COMMANDS = ["assign-release", "set-gate"];
+export const COMMANDS = ["assign-release", "set-gate", "propose-refactor"];
 
 export function parseArgs(argv) {
   const [command, ...rest] = argv;
   if (!COMMANDS.includes(command)) throw new Error(`Unknown command ${JSON.stringify(command)}. Use ${COMMANDS.join(" or ")}.`);
+  if (command === "propose-refactor") return parseRefactorArgs(rest);
   const o = { command, issues: [], expects: undefined, release: null, gate: null, withSubIssues: false, expect: undefined, apply: false };
   let dry = false;
   for (let i = 0; i < rest.length; i++) {
@@ -45,7 +51,29 @@ export function parseArgs(argv) {
   return o;
 }
 
+function parseRefactorArgs(rest) {
+  const o = { command: "propose-refactor", scope: null, epic: null, record: null, apply: false };
+  let dry = false;
+  for (let i = 0; i < rest.length; i++) {
+    const a = rest[i];
+    const value = () => { if (i + 1 >= rest.length) throw new Error(`${a} needs a value`); return rest[++i]; };
+    if (a === "--scope") o.scope = value();
+    else if (a === "--epic") o.epic = value();
+    else if (a === "--record") o.record = value();
+    else if (a === "--apply") o.apply = true;
+    else if (a === "--dry-run") dry = true;
+    else throw new Error(`Unknown option ${a}`);
+  }
+  if (o.apply && dry) throw new Error("Use either --apply or --dry-run, not both");
+  return o;
+}
+
 function validate(o) {
+  if (o.command === "propose-refactor") {
+    if (!o.scope) throw new Error("--scope <capability[:repo[:path]]> is required");
+    if (!o.epic) throw new Error("--epic Org/Repo#123 is required");
+    return;
+  }
   if (!o.issues.length) throw new Error("At least one --issue Org/Repo#123 is required");
   if (o.command === "assign-release" && !o.release) throw new Error("--release is required");
   if (o.command === "set-gate" && !o.gate) throw new Error("--gate is required");
@@ -66,6 +94,19 @@ export function ghTransport({ exec = execFileSync } = {}) {
 export async function main(argv, { transport = ghTransport(), log = console.log, err = console.error } = {}) {
   let o;
   try { o = parseArgs(argv); validate(o); } catch (e) { err(`plan.mjs: ${e.message}`); return 2; }
+  if (o.command === "propose-refactor") {
+    let record;
+    try { record = o.record ? JSON.parse(readFileSync(o.record, "utf8")) : undefined; } catch (e) { err(`plan.mjs: cannot read the --record file (${o.record}): ${e.message}`); return 2; }
+    try {
+      const r = await proposeRefactor(o.scope, o.epic, { record, dryRun: !o.apply, transport });
+      log(JSON.stringify({ ok: r.ok, dryRun: !o.apply, command: o.command, preflight: r.ok ? "passed" : "failed", runs: [r] }, null, 2));
+      if (r.ok && !o.apply) err("Dry run: nothing was written. Add --apply to write to GitHub.");
+      return r.ok ? 0 : 1;
+    } catch (e) {
+      log(JSON.stringify({ ok: false, dryRun: !o.apply, command: o.command, runs: [{ ok: false, error: { code: "TRANSPORT", message: `plan.mjs failed: ${e?.message ?? e}` } }] }, null, 2));
+      return 1;
+    }
+  }
   try {
     return await run(o, { transport, log, err });
   } catch (e) {

@@ -54,8 +54,8 @@ mutation PlanSetRelease($input: SetIssueFieldValueInput!) {
 export const releaseWriteVariables = (issueId, fieldId, optionId) => ({ input: { issueId, issueFields: [{ fieldId, multiSelectOptionIds: [optionId] }] } });
 
 // ───────── shared plumbing ─────────
-const fail = (code, message, extra = {}) => ({ code, message, ...extra });
-const refString = (r) => `${r.owner}/${r.name}#${r.number}`;
+export const fail = (code, message, extra = {}) => ({ code, message, ...extra });
+export const refString = (r) => `${r.owner}/${r.name}#${r.number}`;
 
 export function parseIssueRef(ref, org = DEFAULT_ORG) {
   let repository, number;
@@ -95,7 +95,7 @@ function classifyEmptyBody(res, issue) {
 
 // Run one operation; returns {data} or {error}. Never throws.
 // partial: a body with data AND errors is handed back as {data, errors} (null nodes in a list, see readSubIssues).
-async function call(transport, query, variables, issue, { partial = false } = {}) {
+export async function call(transport, query, variables, issue, { partial = false } = {}) {
   let res;
   try {
     res = await transport(query, variables);
@@ -152,7 +152,7 @@ async function readSubIssues(transport, parent, parentRef) {
 
 // The command bodies may meet answers of an unexpected shape. Whatever they throw becomes a typed TRANSPORT
 // error that still lists what was written before it, so callers never see an exception.
-function neverThrows(body) {
+export function neverThrows(body) {
   return async (...args) => {
     const applied = [];
     try {
