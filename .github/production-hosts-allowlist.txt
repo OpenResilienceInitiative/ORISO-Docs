@@ -137,3 +137,4 @@ tools/understand-anything/site/hub/README.md # documents the https link guard of
 tools/understand-anything/site/hub/test/fixtures/ideas.json # fixture with idea page links
 tools/understand-anything/site/hub/test/ideas-render.test.mjs # pins the idea page links in the rendered map
 tools/understand-anything/site/hub/test/ideas-view.test.mjs # pins the idea page links and the https guard
+tools/understand-anything/site/hub/test/health-history-view.test.mjs # pins the https guard of the run links to the Understand viewer
