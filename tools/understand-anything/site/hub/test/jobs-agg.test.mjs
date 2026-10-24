@@ -140,3 +140,13 @@ test('filter chips: one per filter with counts and a pressed state; hidden when 
   assert.match(html, /waiting for a human/);
   assert.equal(J.filterHTML(J.applyFilter(ev(), idx, 'all', 1), 'en'), '');
 });
+
+test('page contract: jobs.js loads before map.js, is published, and uses no inline style, network or eval', () => {
+  const read = p => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
+  const page = read('map/index.html'), src = read('map/jobs.js'), pub = read('publication.mjs');
+  assert.ok(page.indexOf('/map/jobs.js') > 0 && page.indexOf('/map/jobs.js') < page.indexOf('/map/map.js'));
+  assert.match(pub, /jobs\\\.js/); // allowed pattern
+  assert.match(pub, /'map\/jobs\.js'/); // static input
+  assert.match(pub, /tools\/planning-map\/lib\/job\.mjs/); // producer input of the exporter
+  assert.ok(!/style\s*=|\.style\b|eval\(|new Function|fetch\(|XMLHttpRequest|api\.github\.com/.test(src));
+});

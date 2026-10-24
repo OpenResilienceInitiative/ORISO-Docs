@@ -150,7 +150,7 @@ test('the set-gate command parses back with --gate and --expect', () => {
 
 test('every error code the planning API can return has a reason in the UI', async () => {
   const {ERROR_CODES} = await import('../../../../planning-map/lib/planning-api.mjs');
-  for (const code of ERROR_CODES) assert.ok(code in PlanMove.REASONS || code === 'BAD_REQUEST', code);
+  for (const code of ERROR_CODES) assert.ok(code in PlanMove.REASONS || code === 'BAD_REQUEST' || code === 'BAD_MARKERS', code); // BAD_MARKERS: job section only (#216), not reachable from the move dialog
 });
 
 // ───── per-issue expectations and displaced sub-issues (review of #210) ─────

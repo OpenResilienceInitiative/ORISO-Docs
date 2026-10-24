@@ -120,12 +120,12 @@
     row(t.report, j.report ? link(j.report, String(j.report).replace(/^https:\/\//, '')) : '');
     row(t.branches, (j.branches || []).length ? (j.branches || []).map(function (b) { return '<code>' + esc(b) + '</code>'; }).join(' ') : '');
     row(t.prs, (j.prs || []).length ? (j.prs || []).map(esc).join(', ') : '');
-    return '<section class="jobcard" data-job-state="' + esc(j.state) + '">' +
+    return '<div class="jobcard" data-job-state="' + esc(j.state) + '">' +
       (head ? '<h4>' + link(x.url, x.title) + ' <span class="c">' + esc(x.repository.replace('ORISO-', '')) + ' #' + x.number + '</span></h4>' : '') +
       '<p class="jobline"><span class="jobpill" data-job-state="' + esc(j.state) + '">' + esc(t.state[j.state] || j.state) + '</span>' +
       (x.stale ? ' <span class="jobpill" data-job-stale="1">' + esc(t.stale) + '</span>' : '') + '</p>' +
       (x.stale ? '<p class="dmeta jobstale">' + esc(t.staleLine(x.stale)) + '</p>' : '') +
-      '<dl class="jobdl">' + dl + '</dl></section>';
+      '<dl class="jobdl">' + dl + '</dl></div>';
   }
 
   /* Block for the top of #workdlg. */
