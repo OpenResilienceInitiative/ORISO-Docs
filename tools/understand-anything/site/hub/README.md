@@ -112,7 +112,7 @@ deterministic. `test/map-render.test.mjs` renders the page from
 ### Views: State | Health | Plan (`map/views.js`, ORISO-Docs#214)
 
 One switch above the layer toggles. The three views share the same squares, zoom path and selection; only the layer on top differs.
-`State` is the map as before. `Health` (#217/#218) and `Plan` (#223) draw a neutral layer and a one-line "coming" note until their tickets land.
+`State` is the map as before. `Health` draws a neutral layer plus the criteria box (#217, below); its colours come with #218. `Plan` (#223) draws a neutral layer and a one-line "coming" note until its ticket lands.
 
 The URL hash carries the view and the node: `#view=health&node=<node id>`. The node id is the one of the deep links (#199) and stands
 for the deepest open capability, folder or file, so switching views keeps the same area open. `#node=<id>` without a view is the State view,
@@ -124,8 +124,16 @@ Add a layer by filling in your view in `MapViews.VIEWS` (classic script `map/vie
       title:  {de, en},          // label on the switch
       legend: function (lang),   // plain text under the map; '' keeps the default State legend
       colour: function (block),  // token name from assets/tokens.css / map.css (without "--") that fills the squares of this block; null = State layers
-      panel:  function (block, lang) // HTML added on top of the block detail (escape your own text); '' = nothing
+      panel:  function (block, lang, node) // HTML added on top of the block detail (escape your own text); '' = nothing; node = "capability:<id>" of the block or null
     }
+
+Health criteria box (#217): `views.js` renders `map/data/criteria.json`, an optional asset announced in `links.json` and handed over with
+`MapViews.setCriteria`. It is built by `publication.mjs` (`criteriaAsset`) from `platform/capabilities/health/*.md` (format and resolver:
+`platform/lib/health-criteria.mjs`, metric names: `platform/lib/health-metrics.mjs`). The box shows the effective criteria of the capability, the file
+each key comes from, the reviewer instruction (escaped) and an "Edit" link to the GitHub web editor on branch `dev` for every file involved. Only
+`https://github.com/OpenResilienceInitiative/ORISO-Docs/edit/dev/<path>` is ever rendered. Criteria that apply only to a path inside the capability
+(for example CRAP for the frontend repositories) are listed as narrower rules. Without `criteria.json` the panel says so. Up to 980 px the box is
+in the bottom sheet that the Details button opens. Tests: `test/map-criteria.test.mjs` (panel, escaping, guard), `test/map-criteria-render.test.mjs` (Playwright).
 
 `map.js` sets the fill through the CSSOM (`--view-fill` on each square), never through a `style` attribute. Colours need a light and a dark value.
 Render tests: `test/map-views-render.test.mjs` (Playwright, strict CSP, 320/390/1440 px).

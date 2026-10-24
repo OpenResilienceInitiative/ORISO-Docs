@@ -76,7 +76,8 @@ test('Health and Plan draw a neutral layer and say in one line that the view is 
     for (const lang of ['de', 'en']) {
       const legend = VIEWS[v].legend(lang);
       assert.ok(legend.length > 10 && !/\n/.test(legend));
-      assert.match(VIEWS[v].panel({id: 'x'}, lang), new RegExp(legend.slice(0, 10).replace(/[()]/g, '.')));
+      // Health's panel is the criteria box since #217 (test/map-criteria.test.mjs); Plan still shows the note.
+      if (v === 'plan') assert.match(VIEWS[v].panel({id: 'x'}, lang), new RegExp(legend.slice(0, 10).replace(/[()]/g, '.')));
     }
   }
   assert.match(VIEWS.health.legend('en'), /coming/i);
