@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { ITEMS_QUERY, META_QUERY } from "./queries.mjs";
 import { validate } from "./schema.mjs";
 import { evaluateItem } from "./watchers.mjs";
+import { buildWork } from "./work.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 export const SCHEMA_VERSION = 1;
@@ -89,7 +90,7 @@ export function driftCheck(live, ct = contract, { strict = false } = {}) {
   return { ok: problems.length === 0, problems, unpinned };
 }
 
-export function buildBoard({ meta, items: rawItems, totalCount, title }, { syncedAt = new Date().toISOString(), owner, number, ct = contract } = {}) {
+export function buildBoard({ meta, items: rawItems, totalCount, title }, { syncedAt = new Date().toISOString(), owner, number, ct = contract, branchIndex = new Map() } = {}) {
   const privateRepos = new Set(ct.privateRepositories);
   const warnings = [];
   const items = [];
@@ -152,6 +153,7 @@ export function buildBoard({ meta, items: rawItems, totalCount, title }, { synce
       // null = not known for this content type (the watcher then does not guess); [] = known to be unassigned.
       assignees: c.assignees ? (c.assignees.nodes ?? []).map((a) => a.login) : null,
     };
+    if (c.__typename === "Issue") item.work = buildWork(c, repo, { branchIndex, isHidden: (r, flag) => !!flag || privateRepos.has(r) });
     item.findings = evaluateItem(item, { now: syncedAt });
     for (const f of item.findings) findingCounts[f.rule] = (findingCounts[f.rule] ?? 0) + 1;
     if (item.platformRelease) releaseCounts.set(item.platformRelease, (releaseCounts.get(item.platformRelease) ?? 0) + 1);

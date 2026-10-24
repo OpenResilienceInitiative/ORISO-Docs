@@ -2,6 +2,35 @@
 // issue fields are exposed as Issue.issueFieldValues (union of IssueField*Value types) and
 // org definitions as Organization.issueFields. If the live schema differs, only this file
 // and normalizeIssueFieldValue/normalizeIssueFieldDefs in board.mjs need adjusting.
+// ORISO-Docs#215. UNVERIFIED against the live schema (GitHub GraphQL is not reachable from the
+// sandbox). All branch/PR field names live in this block; if one is wrong, fix only it:
+//   Issue.linkedBranches -> LinkedBranch.ref (Ref.target Commit.committedDate)
+//   Issue.closedByPullRequestsReferences(first, includeClosedPrs)
+//   Issue.timelineItems(itemTypes: [CROSS_REFERENCED_EVENT]) -> CrossReferencedEvent.source (PullRequest)
+//   PullRequest.isDraft / reviewDecision / headRefName / headRepository / commits(last:1).commit.statusCheckRollup.state
+//   Repository.refs(refPrefix: "refs/heads/") -> Ref.name, Ref.target Commit.committedDate
+const PR_WORK_FRAGMENT = `
+fragment PrWork on PullRequest {
+  number title url state isDraft reviewDecision updatedAt headRefName
+  repository { nameWithOwner isPrivate }
+  headRepository { nameWithOwner isPrivate }
+  commits(last: 1) { nodes { commit { committedDate statusCheckRollup { state } } } }
+}`;
+const ISSUE_WORK_FIELDS = `
+  linkedBranches(first: 10) { nodes { ref { name repository { nameWithOwner isPrivate } target { ... on Commit { committedDate } } } } }
+  closedByPullRequestsReferences(first: 10, includeClosedPrs: true) { nodes { ...PrWork } }
+  timelineItems(first: 20, itemTypes: [CROSS_REFERENCED_EVENT]) { nodes { __typename ... on CrossReferencedEvent { source { __typename ...PrWork } } } }`;
+
+export const REPO_BRANCHES_QUERY = `
+query RepoBranches($owner: String!, $name: String!, $after: String) {
+  repository(owner: $owner, name: $name) {
+    refs(refPrefix: "refs/heads/", first: 100, after: $after) {
+      pageInfo { hasNextPage endCursor }
+      nodes { name target { ... on Commit { committedDate } } }
+    }
+  }
+}`;
+
 export const ITEMS_QUERY = `
 query($owner: String!, $number: Int!, $after: String) {
   organization(login: $owner) {
@@ -24,6 +53,7 @@ query($owner: String!, $number: Int!, $after: String) {
               issueType { name }
               assignees(first: 20) { nodes { login } }
               parent { number repository { nameWithOwner isPrivate } }
+              ${ISSUE_WORK_FIELDS}
               issueFieldValues(first: 20) {
                 nodes {
                   __typename
@@ -42,7 +72,8 @@ query($owner: String!, $number: Int!, $after: String) {
       }
     }
   }
-}`;
+}
+${PR_WORK_FRAGMENT}`;
 
 export const META_QUERY = `
 query($owner: String!, $number: Int!) {

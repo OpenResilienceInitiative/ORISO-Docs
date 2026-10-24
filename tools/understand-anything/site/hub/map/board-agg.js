@@ -147,6 +147,51 @@
       gate: gate, gateCounts: gateCounts, gateAvailable: items.some(function (it) { return !!it.gate; }), segments: segments, groups: groups
     };
   }
+  /* ───── Branches and pull requests per task and per epic (ORISO-Docs#215) ─────
+     board.json items carry `work` {branches, prs, hidden} (additive; boards from before #215 have none).
+     A branch counts once per repository and name, however many tasks found it. `prs` counts OPEN pull requests;
+     merged and closed ones are listed in the pop-up only. `hidden` = references in private repositories (a count, never names).
+     Returns null when no item has work data, so the page shows no badge instead of zeros it does not know. */
+  function itemSummary(it) {
+    var wk = it.work, open = 0;
+    (wk.prs || []).forEach(function (p) { if (p.state === 'OPEN') open++; });
+    return {repository: repoName(it.repository), number: it.number, title: it.title, url: it.url,
+      branches: (wk.branches || []).length, prs: open, hidden: wk.hidden || 0, branchList: wk.branches || [], prList: wk.prs || []};
+  }
+  function workIndex(board, epics) {
+    var items = (board && board.items) || [], byItem = {}, any = false, repos = (epics && epics.repos) || [];
+    items.forEach(function (it) {
+      if (it.contentType !== 'Issue' || !it.repository || typeof it.number !== 'number' || !it.work) return;
+      any = true; byItem[key(it.repository, it.number)] = itemSummary(it);
+    });
+    if (!any) return null;
+    var children = {};
+    items.forEach(function (it) {
+      if (it.contentType === 'Issue' && it.parent && byItem[key(it.repository, it.number)]) {
+        var pk = key(it.parent.repository, it.parent.number);
+        (children[pk] || (children[pk] = [])).push(key(it.repository, it.number));
+      }
+    });
+    var byEpic = {};
+    ((epics && epics.epics) || []).forEach(function (e, i) {
+      var ek = key(repos[e.r], e.n), keys = {}, order = [];
+      function take(k) { if (byItem[k] && !keys[k]) { keys[k] = 1; order.push(k); } }
+      take(ek);
+      (children[ek] || []).forEach(take);
+      (e.subs || []).forEach(function (s) { take(key(repos[s[0]], s[1])); });
+      var branches = {}, prs = {}, hidden = 0, issues = [];
+      order.forEach(function (k) {
+        var x = byItem[k];
+        hidden += x.hidden;
+        x.branchList.forEach(function (b) { branches[b.repository + '\u0000' + b.name] = 1; });
+        x.prList.forEach(function (p) { if (p.state === 'OPEN') prs[p.repository + '#' + p.number] = 1; });
+        if (x.branchList.length || x.prList.length) issues.push(x);
+      });
+      issues.sort(function (a, b) { return a.number - b.number; });
+      byEpic[i] = {branches: Object.keys(branches).length, prs: Object.keys(prs).length, hidden: hidden, issues: issues};
+    });
+    return {byItem: byItem, byEpic: byEpic};
+  }
   /* Release scope (ORISO-Docs#209): what each Platform release holds, grouped into reviewed milestones. */
   var EFFORT_DAYS = {S: 2, M: 4, L: 8};
   var PRIORITIES = ['Urgent', 'High', 'Medium', 'Low'];
@@ -212,5 +257,5 @@
     var r = name && rel && rel.byName && rel.byName[name];
     return r ? r.capabilities.slice() : [];
   }
-  return {GATES: GATES, gateStep: gateStep, STATUSES: STATUSES, GROUP: GROUP, TOKEN: TOKEN, FILTERS: FILTERS, EFFORT_DAYS: EFFORT_DAYS, PRIORITIES: PRIORITIES, capabilityIndex: capabilityIndex, aggregate: aggregate, epicView: epicView, releases: releases, milestones: milestones, releaseCapabilities: releaseCapabilities};
+  return {GATES: GATES, gateStep: gateStep, STATUSES: STATUSES, GROUP: GROUP, TOKEN: TOKEN, FILTERS: FILTERS, EFFORT_DAYS: EFFORT_DAYS, PRIORITIES: PRIORITIES, capabilityIndex: capabilityIndex, aggregate: aggregate, epicView: epicView, workIndex: workIndex, releases: releases, milestones: milestones, releaseCapabilities: releaseCapabilities};
 });
