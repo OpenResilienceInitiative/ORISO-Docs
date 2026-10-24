@@ -5,7 +5,9 @@
 // Every command returns a typed result and never throws:
 //   {ok: true,  ..., results: [{issue, role, before, after, changed, wrote}]}
 //   {ok: false, error: {code, message, issue?, detail?}, applied: ["Org/Repo#1", ...]}
-// Error codes: see ERROR_CODES (NO_WRITE_RIGHTS, CONFLICT, NOT_FOUND, NOT_ON_BOARD, UNKNOWN_RELEASE, UNKNOWN_GATE, FIELD_MISSING, BAD_REQUEST, TRANSPORT, GITHUB_ERROR).
+// Error codes: see ERROR_CODES (NO_WRITE_RIGHTS, CONFLICT, NOT_FOUND, NOT_ON_BOARD, UNKNOWN_RELEASE, UNKNOWN_GATE, FIELD_MISSING, BAD_REQUEST, BAD_MARKERS, TRANSPORT, GITHUB_ERROR).
+
+import { applySection, bodyHash, parseSection, renderSection, validateJob } from "./job.mjs";
 
 export const DEFAULT_ORG = "OpenResilienceInitiative";
 export const PROJECT_ID = "PVT_kwDODkeBP84BHH8p"; // ORISO Roadmap (project #1)
@@ -13,7 +15,7 @@ export const PLATFORM_RELEASE_FIELD_ID = "IFMS_kgDOArcqMA"; // org ISSUE field (
 export const PLATFORM_RELEASE_FIELD_NAME = "Platform release";
 export const GATE_FIELD_NAME = "Gate";
 
-export const ERROR_CODES = ["NO_WRITE_RIGHTS", "CONFLICT", "NOT_FOUND", "NOT_ON_BOARD", "UNKNOWN_RELEASE", "UNKNOWN_GATE", "FIELD_MISSING", "BAD_REQUEST", "TRANSPORT", "GITHUB_ERROR"];
+export const ERROR_CODES = ["NO_WRITE_RIGHTS", "CONFLICT", "NOT_FOUND", "NOT_ON_BOARD", "UNKNOWN_RELEASE", "UNKNOWN_GATE", "FIELD_MISSING", "BAD_REQUEST", "BAD_MARKERS", "TRANSPORT", "GITHUB_ERROR"];
 
 const ISSUE_FIELDS = `
   id number viewerCanUpdate
@@ -262,4 +264,71 @@ export const setGate = neverThrows(async (_applied, issue, gate, { expectedGate,
     row.wrote = true;
   }
   return { ok: true, gate, dryRun, results: [row] };
+});
+
+// ───────── writeJobSection (ORISO-Docs#216) ─────────
+// Writes the agent job section into the issue DESCRIPTION, between the oriso:job markers (lib/job.mjs). Everything
+// outside the markers stays byte-identical; without markers the section is appended.
+//   job: the job object, or (existingJob|null) => job (merge / heartbeat on what is already there).
+//   expectedUpdatedAt / expectedBodyHash: what the caller last saw; a different live value is a CONFLICT.
+// GitHub's updateIssue has no compare-and-set, so the issue is read twice: once to plan and again right before the
+// write. If the description changed in between, nothing is written. A human edit in the few milliseconds after the
+// second read can still be overwritten; GitHub's edit history keeps that text.
+// UNVERIFIED against the live API (no org access from the sandbox): the mutation is the documented updateIssue.
+export const JOB_ISSUE_QUERY = `
+query PlanJobIssue($owner: String!, $name: String!, $number: Int!) {
+  repository(owner: $owner, name: $name) { issue(number: $number) { id number body updatedAt viewerCanUpdate repository { nameWithOwner } } }
+}`;
+export const SET_BODY_MUTATION = `
+mutation PlanSetBody($input: UpdateIssueInput!) {
+  updateIssue(input: $input) { issue { id updatedAt } }
+}`;
+
+export const writeJobSection = neverThrows(async (_applied, issue, job, { expectedUpdatedAt, expectedBodyHash, dryRun = false, transport } = {}) => {
+  const bad = (message, detail) => ({ ok: false, error: fail("BAD_REQUEST", message, detail ? { detail } : {}), applied: [] });
+  if (typeof transport !== "function") return bad("writeJobSection needs a transport");
+  const ref = parseIssueRef(issue);
+  if (!ref) return bad(`Not an issue reference: ${JSON.stringify(issue)} (expected Org/Repo#123)`);
+  if (typeof job !== "function" && (!job || typeof job !== "object")) return bad("job must be an object or a function");
+  const name = refString(ref);
+  const none = (error) => ({ ok: false, error, applied: [] });
+  const read = async () => {
+    const r = await call(transport, JOB_ISSUE_QUERY, { owner: ref.owner, name: ref.name, number: ref.number }, name);
+    if (r.error) return r;
+    const node = r.data?.repository?.issue;
+    return node ? { node } : { error: fail("NOT_FOUND", `${name} does not exist or is not visible`, { issue: name }) };
+  };
+
+  const first = await read();
+  if (first.error) return none(first.error);
+  const node = first.node;
+  if (!node.viewerCanUpdate) return none(fail("NO_WRITE_RIGHTS", `No write rights on ${name}`, { issue: name }));
+  const body = node.body ?? "";
+  const before = { updatedAt: node.updatedAt ?? null, bodyHash: bodyHash(body) };
+  if ((expectedUpdatedAt !== undefined && expectedUpdatedAt !== before.updatedAt) || (expectedBodyHash !== undefined && expectedBodyHash !== before.bodyHash)) {
+    return none(fail("CONFLICT", `The description of ${name} changed since it was read (now updated ${before.updatedAt}); read it again`, { issue: name, detail: { expectedUpdatedAt: expectedUpdatedAt ?? null, actualUpdatedAt: before.updatedAt, expectedBodyHash: expectedBodyHash ?? null, actualBodyHash: before.bodyHash } }));
+  }
+
+  const existing = parseSection(body);
+  const next = typeof job === "function" ? job(existing?.job ?? null) : job;
+  const problems = validateJob(next);
+  if (problems.length) return bad(`Invalid job section: ${problems.join("; ")}`, { problems });
+  const applied = applySection(body, renderSection(next));
+  if (!applied.ok) return none({ ...applied.error, issue: name });
+
+  const changed = applied.mode !== "unchanged";
+  const row = { issue: name, role: "issue", before: existing?.job?.state ?? null, after: next.state, changed, wrote: false };
+  const result = { ok: true, dryRun, issue: name, mode: applied.mode, changed, wrote: false, before, bodyBefore: body, bodyAfter: applied.body, job: next, results: [row] };
+  if (changed && !dryRun) {
+    const again = await read();
+    if (again.error) return none(again.error);
+    if ((again.node.body ?? "") !== body || again.node.updatedAt !== node.updatedAt) {
+      return none(fail("CONFLICT", `The description of ${name} was edited while the job section was prepared; nothing was written`, { issue: name, detail: { actualUpdatedAt: again.node.updatedAt ?? null } }));
+    }
+    const w = await call(transport, SET_BODY_MUTATION, { input: { id: node.id, body: applied.body } }, name);
+    if (w.error) return none({ ...w.error, issue: name });
+    row.wrote = result.wrote = true;
+    result.after = { updatedAt: w.data?.updateIssue?.issue?.updatedAt ?? null, bodyHash: bodyHash(applied.body) };
+  }
+  return result;
 });

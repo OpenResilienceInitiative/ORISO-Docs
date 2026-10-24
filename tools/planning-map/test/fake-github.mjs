@@ -13,7 +13,7 @@ export function createFakeGitHub({
   const byId = new Map();
   let nextId = 1;
   for (const raw of issues) {
-    const issue = { canUpdate: true, release: null, subIssues: [], gate: null, onBoard: true, ...raw, id: `I_${nextId}`, itemId: `PVTI_${nextId}` };
+    const issue = { canUpdate: true, release: null, subIssues: [], gate: null, onBoard: true, body: "", updatedAt: "2026-10-24T08:00:00Z", ...raw, id: `I_${nextId}`, itemId: `PVTI_${nextId}` };
     nextId++;
     byRef.set(`${issue.repository}#${issue.number}`, issue);
     byId.set(issue.id, issue);
@@ -91,6 +91,20 @@ export function createFakeGitHub({
         i.gate = name;
         fake.writes.push({ kind: "gate", issue: `${i.repository}#${i.number}`, value: name });
         return { data: { updateProjectV2ItemFieldValue: { projectV2Item: { id: itemId } } } };
+      }
+      // ORISO-Docs#216: issue description for the job section. A write bumps updatedAt like GitHub does.
+      case "PlanJobIssue": {
+        const i = byRef.get(`${variables.owner}/${variables.name}#${variables.number}`);
+        return { data: { repository: { issue: i ? { id: i.id, number: i.number, body: i.body, updatedAt: i.updatedAt, viewerCanUpdate: i.canUpdate, repository: { nameWithOwner: i.repository } } : null } } };
+      }
+      case "PlanSetBody": {
+        const { id, body } = variables.input;
+        const i = byId.get(id);
+        if (!i || !i.canUpdate) return denied();
+        i.body = body;
+        i.updatedAt = new Date(Date.parse(i.updatedAt) + 60000).toISOString().replace(".000Z", "Z");
+        fake.writes.push({ kind: "body", issue: `${i.repository}#${i.number}`, value: body });
+        return { data: { updateIssue: { issue: { id: i.id, updatedAt: i.updatedAt } } } };
       }
       default:
         throw new Error(`fake GitHub: unexpected operation ${op}`);
