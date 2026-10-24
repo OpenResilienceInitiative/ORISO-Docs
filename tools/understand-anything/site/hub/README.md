@@ -231,3 +231,19 @@ Every capability, folder and file in the map links to its Understand node (`?nod
 - a Jobs filter in the epic view (all, running, stopped, waiting for a human, stale), combined with the status and gate filters; `running` includes stale ones, `stale` is only the stale ones. It is hidden when no issue of the epic has a job.
 
 `map.js` only calls it (`JOBS`, `badges()`, `applyFilter`/`filterHTML` in `epicBoardHTML`, the pop-up, the `job-stale` finding text, the `data-jfilter` click). No job content exists for private repositories, drafts or redacted items: the export never writes it.
+
+### Refactoring in the Health view (ORISO-Docs#222)
+
+Refactoring tasks are issues of type Task with the label `refactoring` (`tools/planning-map/README.md`, "Refactoring tasks"). Their state comes from the board status only:
+
+| State | Rule |
+| --- | --- |
+| planned | open, not started (Backlog, Ready, On hold, no status) |
+| running | In progress, In review, QA internal |
+| done | QA external, Done, or closed |
+
+- `BoardAgg.refactoring(board, epics)` (`map/board-agg.js`, test `refactor-agg.test.mjs`) returns `{bySlug, byBlock, unmapped}`. The scope of the task picks the capability (`bySlug`); a task without a scope goes through `capabilityIndex`, the existing epic mapping (`byBlock`); a task that maps nowhere is only counted.
+- `MapViews.setRefactoring(index, slugFn)` (`map/views.js`) hands it to the Health view. `VIEWS.health.refactor(block, lang)` returns `{state, word, text}` for the marker; `map.js` `applyView` writes `data-rf`, `data-rft` (full text) and `data-rfw` (the word) on the top-level squares and repeats the text in the square's `aria-label`. No board or no task: no marker and no number.
+- The panel part is the single function `refactorBox` (wrapped by `withRefactoring`): counts with words, the task list with GitHub links (https links to issues of OpenResilienceInitiative only, anything else stays text), and the exact command `plan.mjs propose-refactor --scope <capability[:repo[:path]]> [--record health/runs/...] --epic <Org/Repo#n> [--apply]`. The scope and record file come from the latest run of the square; the epic is for you to fill in.
+- Styles: `map/refactor.css` (own file; section 1 = square marker, section 2 = panel). The marker's border style repeats the state (dashed planned, thick running) but the word carries it. The smallest squares show the word only, clipped, and rely on the `aria-label` and the panel; the status badges of the State view are hidden in the other views because they share the corner.
+- Tests: `refactor-view.test.mjs` (unit), `map-refactor-render.test.mjs` (Playwright under the strict CSP, 320/390/1440 px, light and dark, DE and EN; `REFACTOR_SHOTS=<dir>` writes screenshots).
