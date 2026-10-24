@@ -36,7 +36,7 @@ test('hub home links to the map in both languages', () => {
 test('page loads exactly the generated data files, and they are shipped next to it', () => {
   const js = read('map/map.js');
   for (const file of DATA_FILES) assert.ok(js.includes("'" + file + "'"), file);
-  assert.match(js, /OPTIONAL_DATA\s*=\s*\[\s*'board\.json'\s*,\s*'milestones\.json'\s*\]/);
+  assert.match(js, /OPTIONAL_DATA\s*=\s*\[\s*'board\.json'\s*,\s*'milestones\.json'\s*,\s*'ideas\.json'\s*\]/);
   for (const file of DATA_FILES) assert.ok(existsSync(new URL('../map/data/' + file, import.meta.url)), file);
 });
 

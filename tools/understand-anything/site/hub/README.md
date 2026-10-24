@@ -112,7 +112,7 @@ deterministic. `test/map-render.test.mjs` renders the page from
 ### Views: State | Health | Plan (`map/views.js`, ORISO-Docs#214)
 
 One switch above the layer toggles. The three views share the same squares, zoom path and selection; only the layer on top differs.
-`State` is the map as before. `Health` (#217/#218) and `Plan` (#223) draw a neutral layer and a one-line "coming" note until their tickets land.
+`State` is the map as before. `Health` (#217/#218) draws a neutral layer and a one-line "coming" note until its tickets land. `Plan` is the idea canvas (#223, below).
 
 The URL hash carries the view and the node: `#view=health&node=<node id>`. The node id is the one of the deep links (#199) and stands
 for the deepest open capability, folder or file, so switching views keeps the same area open. `#node=<id>` without a view is the State view,
@@ -125,10 +125,30 @@ Add a layer by filling in your view in `MapViews.VIEWS` (classic script `map/vie
       legend: function (lang),   // plain text under the map; '' keeps the default State legend
       colour: function (block),  // token name from assets/tokens.css / map.css (without "--") that fills the squares of this block; null = State layers
       panel:  function (block, lang) // HTML added on top of the block detail (escape your own text); '' = nothing
+      mark:   function (block),  // true: the square gets the idea frame (class vmark)
+      tools:  function (lang, labelOf) // optional HTML for the tool row above the map (#viewTools)
     }
 
 `map.js` sets the fill through the CSSOM (`--view-fill` on each square), never through a `style` attribute. Colours need a light and a dark value.
 Render tests: `test/map-views-render.test.mjs` (Playwright, strict CSP, 320/390/1440 px).
+
+#### Plan canvas and idea pages (ORISO-Docs#223)
+
+An idea is a bilingual page in the feature-page structure: `product/ideas/<slug>.mdx` (English, canonical) with the German page at
+`site/translations/de/product/ideas/<slug>.mdx`, a `site/page-catalog.json` entry and a `docs.json` entry in the group "Ideas", so it is
+published like a feature page. Start from `product/ideas/idea-template.mdx` (`template: true` keeps it off the canvas). Front matter:
+
+    status: idea | discussed | specified | epic   # flow shown on the idea
+    capabilities: [case-handover, notifications]   # ids of capability-rules.json; an unknown id fails the build
+    epic: OpenResilienceInitiative/ORISO-Frontend#42   # optional (required for "epic"); public repositories only
+    draftItems: 3                                  # optional, a count, never titles
+
+`tools/planning-map/lib/ideas.mjs` validates all of it, and that the German page carries the same status, capabilities and epic.
+`publication.mjs` (`ideasAsset`) emits `map/data/ideas.json` (optional data, announced in `links.json`; tests: `test/ideas-publication.test.mjs`,
+`tools/planning-map/test/ideas.test.mjs`). The Plan view lists the ideas; picking one frames the squares it touches (overview level), shows the
+flow idea > discussed > specified > epic and the links to the German and English page and to the epic (https links to `docs.oriso.org` and
+`github.com` only). In State and Health ideas are hidden; the toggle "Show ideas" frames the touched squares with a dashed outline.
+Selection and toggle are page state, not part of the URL. Render tests: `test/ideas-render.test.mjs`, pure model: `test/ideas-view.test.mjs`.
 
 ### Planning board on the map (`board.json`, ORISO-Docs#208)
 
