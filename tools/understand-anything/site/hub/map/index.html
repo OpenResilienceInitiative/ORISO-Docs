@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="de" data-lang="de" data-title-de="ORISO Fähigkeiten-Karte — ORISO Understand" data-title-en="ORISO Capability map — ORISO Understand">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ORISO Fähigkeiten-Karte — ORISO Understand</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="Was Ratsuchende, Beratende und Träger mit ORISO heute tun können – und wie viel davon schon im Ausgangscode steckte." data-description-de="Was Ratsuchende, Beratende und Träger mit ORISO heute tun können – und wie viel davon schon im Ausgangscode steckte." data-description-en="What help-seekers, counsellors and providers can do with ORISO today – and how much of it was already in the starting code.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/assets/tokens.css">
+<link rel="stylesheet" href="/map/map.css">
+<script src="/assets/lang.js"></script>
+<script src="/map/board-agg.js" defer></script>
+<script src="/map/plan-ui.js" defer></script>
+<script src="/map/map.js" defer></script>
+</head>
+<body>
+<div class="appbar"><div class="appbar-in">
+  <span class="brandname"><a href="/">ORISO Understand</a></span>
+  <span class="sub"><span lang="de">Fähigkeiten: vorher, heute, geplant</span><span lang="en">Capabilities: before, today, planned</span></span>
+  <span class="sp"></span>
+  <span class="badge"><span lang="de">Prototyp</span><span lang="en">Prototype</span></span>
+  <span class="langswitch" role="group" aria-label="Sprache / Language">
+    <button type="button" data-lang="de" aria-pressed="true">DE</button>
+    <button type="button" data-lang="en" aria-pressed="false">EN</button>
+  </span>
+</div></div>
+
+<header><div class="band-in"><div class="headcard">
+  <div class="eyebrow"><span lang="de">Online-Beratung für die Caritas</span><span lang="en">Online counselling for Caritas</span></div>
+  <h1><span lang="de">Was man mit ORISO heute tun kann – was vorher da war und was als Nächstes kommt</span><span lang="en">What people can do with ORISO today – what was already there and what comes next</span></h1>
+  <p class="lead">
+    <span lang="de">Jeder Block ist eine Fähigkeit, so wie Ratsuchende, Beratende und Träger sie erleben. In der Mitte liegt die Funktion: das Quadrat oben links ist der Ausgangscode (schwächste Farbstufe), darum herum ist gewachsen, was beauftragt war (kräftige Stufe) und was wir zusätzlich geliefert haben (kräftigste Stufe). Der schraffierte Rand ist das Sicherheitsnetz aus Tests. Ein Klick auf einen Block zoomt hinein, bis zu den Ordnern und Dateien. Jede Zahl im Detail lässt sich bis zur einzelnen Datei, Story oder Aufgabe aufklappen.</span>
+    <span lang="en">Each block is a capability as help-seekers, counsellors and providers experience it. The function sits in the middle: the square in the top-left corner is the starting code (faintest colour step); around it grew what was commissioned (strong step) and what we delivered in addition (strongest step). The hatched border is the safety net of tests. Clicking a block zooms in, down to folders and files. Every number in the detail view opens down to the single file, story or task.</span>
+  </p>
+  <div class="totals" id="totals"></div>
+</div></div></header>
+
+<main class="wrap">
+  <section id="karte" aria-labelledby="h-karte">
+    <div class="ch"><span class="chapter-no">1</span><h2 id="h-karte"><span lang="de">Fähigkeiten-Karte</span><span lang="en">Capability map</span></h2>
+      <span class="sub2"><span lang="de">Ein Block wählen, dann tiefer klicken</span><span lang="en">Pick a block, then click deeper</span></span></div>
+
+    <div class="controls">
+      <div class="crow"><span class="clab"><span lang="de">Anzeigen</span><span lang="en">Show</span></span>
+        <span class="crow" id="layerTogs" role="group" aria-describedby="layerHelp"></span></div>
+      <p class="lhelp" id="layerHelp"></p>
+    </div>
+
+    <div class="planlog" id="planlog" role="status" aria-live="polite" hidden></div>
+
+    <div class="mapcols">
+    <button type="button" class="relopen" id="relopen" aria-controls="relpanel" aria-expanded="false"><span lang="de">Releases</span><span lang="en">Releases</span></button>
+    <div class="relback" id="relback" hidden></div>
+    <aside class="relpanel" id="relpanel" aria-label="Meilensteine und Releases / Milestones and releases">
+      <div class="relhead"><h3><span lang="de">Meilensteine und Releases</span><span lang="en">Milestones and releases</span></h3>
+        <button type="button" class="relclose" id="relclose" aria-label="Schließen / Close">×</button></div>
+      <div id="relbody"></div>
+    </aside>
+    <div class="layout">
+      <div class="stage">
+        <div class="zbar" id="zbar"></div>
+        <div class="tm" id="tm" role="group" aria-label="Fähigkeiten-Karte / Capability map"></div>
+        <div class="stagefoot" id="stagefoot"></div>
+      </div>
+      <aside class="panel" id="panel" aria-label="Details"></aside>
+    </div>
+    </div>
+  </section>
+
+  <section id="geplant" aria-labelledby="h-plan">
+    <div class="ch"><span class="chapter-no">2</span><h2 id="h-plan"><span lang="de">Geplante Arbeit</span><span lang="en">Planned work</span></h2>
+      <span class="sub2"><span lang="de">Epics aus GitHub je Fähigkeit, mit Fortschritt der Teilaufgaben</span><span lang="en">Epics from GitHub per capability, with the state of their sub-issues</span></span></div>
+    <div class="planned">
+      <div class="filters" id="stageFilters" role="group" aria-label="Stufe / Stage"></div>
+      <div class="pgrid" id="pgrid"></div>
+      <div class="mock" id="mock"></div>
+    </div>
+  </section>
+
+  <section id="faehigkeiten" aria-labelledby="h-cards">
+    <div class="ch"><span class="chapter-no">3</span><h2 id="h-cards"><span lang="de">Alle Fähigkeiten</span><span lang="en">All capabilities</span></h2>
+      <span class="sub2"><span lang="de">Nutzen zuerst, dann die Zahlen</span><span lang="en">Benefit first, then the figures</span></span></div>
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <section id="zahlen" aria-labelledby="h-zahlen">
+    <div class="ch"><span class="chapter-no">4</span><h2 id="h-zahlen"><span lang="de">Eckzahlen</span><span lang="en">Key figures</span></h2>
+      <span class="sub2"><span lang="de">Ausgangscode 2024/2025 gegenüber ORISO heute (Leistungsübersicht)</span><span lang="en">Starting code 2024/2025 compared with ORISO today (service overview)</span></span></div>
+    <div class="kpis" id="kpis"></div>
+  </section>
+
+  <section id="graph" aria-labelledby="h-graph">
+    <div class="ch"><span class="chapter-no">5</span><h2 id="h-graph"><span lang="de">Verbindung zu ORISO Understand</span><span lang="en">Link to ORISO Understand</span></h2>
+      <span class="sub2"><span lang="de">Wie diese Karte Teil von understand.oriso.org werden kann</span><span lang="en">How this map can become part of understand.oriso.org</span></span></div>
+    <div class="how" id="how"></div>
+  </section>
+</main>
+
+<footer>
+  <div class="fl">
+    <a href="https://docs.oriso.org/"><span lang="de">Dokumentation</span><span lang="en">Documentation</span> · docs.oriso.org</a>
+    <a href="https://docs.oriso.org/decisions/"><span lang="de">Architekturentscheidungen</span><span lang="en">Architecture decisions</span></a>
+    <a href="https://understand.oriso.org/">ORISO Understand</a>
+    <a href="https://dev.oriso.org/storybook-frontend/"><span lang="de">Storybook Beratungs-App</span><span lang="en">Storybook counselling app</span></a>
+    <a href="https://dev.oriso.org/storybook-admin/"><span lang="de">Storybook Verwaltung</span><span lang="en">Storybook administration</span></a>
+  </div>
+  <div class="meas" id="meas"></div>
+</footer>
+
+<dialog id="movedlg" aria-labelledby="mvTitle"><form method="dialog" class="mvform" id="mvform">
+  <h3 id="mvTitle" tabindex="-1"></h3><p class="mvwhat" id="mvWhat"></p>
+  <label class="mvlab" for="mvrel" id="mvrelL"></label><select id="mvrel"></select>
+  <label class="mvchk" id="mvsubsW"><input type="checkbox" id="mvsubs"><span id="mvsubsL"></span></label>
+  <div class="mvbtns"><button type="button" class="mvcancel" id="mvcancel"></button><button type="submit" class="mvgo" id="mvgo"></button></div>
+</form></dialog>
+<dialog id="sheet" aria-label="Details"><div class="sheet-in" id="sheetIn"><div class="grab" aria-hidden="true"></div><div id="sheetBody"></div></div></dialog>
+</body>
+</html>

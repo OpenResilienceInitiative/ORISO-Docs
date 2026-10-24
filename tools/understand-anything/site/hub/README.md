@@ -66,3 +66,89 @@ Run the producer's full test command in the repository checkout (`npm ci && npm 
 from `tools/understand-anything`) with `UA_CORE` pointing to the installed pinned
 patched consumer. Source-bound hub tests need both tracked ADR bytes and Git history;
 a copied installed tooling directory alone does not provide that context.
+
+## Shared state colours
+
+`assets/tokens.json` is the single source for state colours (code origin ramp, test
+hatch, deleted, planned, board status), light and dark. `node build-tokens.mjs`
+regenerates `assets/tokens.css` from it; `test/colour-tokens.test.mjs` checks WCAG
+contrast of text on fills and the lightness steps per ramp, also under deuteranopia
+and protanopia simulation. The hub documents the scheme in the "Colour scheme" section.
+
+## Capability map (`/map/`)
+
+Every data file carries the run manifest of the unified run (`run`, see `tools/planning-map/README.md`). The footer shows one "Stand" and the commit per repo, and warns when files come from different runs or are unstamped. `build-map-data.mjs --run run.json` stamps the files.
+
+`map/` is the hub's "Fähigkeiten-Karte" page: `index.html` (shell), `map.css`,
+`map.js` and generated data in `map/data/` (`counts.json`, `drill.json`,
+`zoom.json`, `epics.json`, `descriptions.json`, `links.json`). The page has no
+inline script, style or style attribute and loads the data with same-origin
+`fetch`. `map.js` merges every data file into one `MEAS` object; files named in
+`links.json` under `optional` (allowed names: `OPTIONAL_DATA` in `map.js`, today
+`board.json`) are loaded when present and kept whole under their file name
+(`board.json` -> `MEAS.board`, shape: `tools/planning-map/board.schema.json`).
+
+Status bars (#205): `map/board-agg.js` (classic script, also run by
+`test/board-agg.test.mjs`) maps every issue of `MEAS.board` to a capability through
+the epics of this map (the epic itself, its sub-issue list, or the `parent` link),
+counts issues per Status, Urgent/High and Readiness (average of scored issues, raw
+scale, board-wide maximum, count of unscored). Colours come from `assets/tokens.css`
+(`--ua-status-*`); widths are set through `data-css` + CSSOM, never style attributes.
+Without `board.json` the page shows no bars. `map/data/board.json` is produced by
+Epic side view (#206): clicking an epic opens its sub-issues by board status (`BoardAgg.epicView`, same epic links as above) with a stacked bar and the filters accepted (Done), developed on Dev (QA internal), on Staging (QA external) and open. Side panel on desktop, bottom sheet on phones (Esc or swipe down closes). Private sub-issues appear only as the epic's `hid` count.
+`tools/planning-map/export-board.mjs` and is not committed.
+
+Regenerate the data from the measured intermediate files (code counts, tests,
+stories, graph links):
+
+    node map/build-map-data.mjs --inputs DIR --out map/data
+
+`DIR` holds `agg`, `rel`, `drill`, `epics`, `zoom`, `planned`, `desc`, `live`
+and `car15` as `.json` files (see `test/fixtures/map-inputs/`). Output is
+deterministic. `test/map-render.test.mjs` renders the page from
+`test/fixtures/map-data/` in a browser under a strict CSP; it needs Playwright
+(`UA_PLAYWRIGHT=/path/to/playwright/index.mjs`) and is skipped without it.
+
+### Planning board on the map (`board.json`, ORISO-Docs#208)
+
+`.github/workflows/planning-board-sync.yml` exports the ORISO Roadmap project hourly and on
+"Run workflow". The map footer shows "Board synchronisiert <syncedAt>" and a "Jetzt synchronisieren" link to that
+workflow's page; no token reaches the browser. The page's one "Stand" comes from the run manifest (#201).
+
+How `board.json` reaches the page, and why:
+
+- The sync workflow stores `board.json` as the workflow artifact `planning-board` (7 days). It is
+  never committed, so no board data lands in Git history.
+- `publication.mjs --board FILE` validates it against the v1 schema, refuses items of private
+  repositories, writes `map/data/board.json` and adds it to `links.json` `optional`. The
+  `produce` job of `ua-public-site.yml` downloads the newest artifact before building and passes
+  `--board` when one exists; without one the map simply has no board data.
+- Chosen over a data branch (needs a write token and puts board data into Git) and over writing
+  to the live hub (the hub is installed as an immutable, hash-checked generation; changing a file
+  in place would break that contract). The cost: the map's "Stand" moves when the hub is next
+  published, not at the end of each sync run. Closing that gap needs an operator-side step that
+  re-installs the hub, which this change deliberately does not add.
+- Without the secret `ORISO_BOARD_READ_TOKEN` the workflow runs on the recorded fixture and
+  publishes nothing. Exit code 2 of the export (drift) fails the run.
+
+### Milestones and releases panel (ORISO-Docs#209)
+
+Left side panel of the map: reviewed milestones (`tools/planning-map/milestones.json`, validated by
+`lib/milestones.mjs`) with their Platform releases. Each release shows counts by status and priority and
+the summed effort (S = 2, M = 4, L = 8 person-days; issues without effort are counted apart, not guessed).
+Picking a release highlights the capabilities it touches (overview level). Aggregation lives in `map/board-agg.js`
+(`releases`, `milestones`, `releaseCapabilities`). The config ships as optional `map/data/milestones.json`
+(`publication.mjs` `milestonesAsset`). Releases on the board but not in the config appear under "Not assigned".
+Docked at 1561 px and wider; below that it is a drawer opened by the "Releases" button.
+
+### Planning moves (#210)
+
+`map/plan-ui.js` (classic script, run by `test/plan-move.test.mjs`) holds the planning intents. A capability block (overview level) or an epic card can be dragged onto a release in the left panel, or moved with the button "Move to release…" in the epic view (and "Move all epics…" in a block's epic list). Both open one dialog: release and "move sub-issues too". The move shows on the map at once (optimistic). The static hub has no backend, so the page writes only through an optional `window.PlanningTransport = {assignRelease(intent), setGate(intent)}` returning `{ok:true}` or `{ok:false, error:{code,message}, applied?:[...]}`. On failure the move is rolled back and the reason shown in the log above the map (`#planlog`). Without a transport the log shows the exact `tools/planning-map/plan.mjs` command (dry run, or with `--apply`) and an Undo button. On narrow screens the release drawer opens while dragging; touch users use the button.
+
+### Gate step indicator and filter (#211)
+
+`BoardAgg.GATES` (same eight gates as `tools/planning-map/gate-options.json`, compared by `test/gate-agg.test.mjs`). `BoardAgg.epicView(..., filter, gate)` adds `gate`/`gateStep` per sub-issue, `gateCounts` and `gateAvailable`; `gate` is `all`, `none` or a gate name and combines with the status filter. The epic view shows a step indicator per gated sub-issue (`role="img"`, spoken label "Gate R3 Human review, step 7 of 8", criteria as tooltip), a gate select and a collapsible list of the criteria. Nothing is shown while no issue has a gate (the field is created by a project admin).
+
+### Deep links
+
+Every capability, folder and file in the map links to its Understand node (`?node=<id>` on the viewer; ids `capability:<slug>`, `<repo>::folder:<dir>`, `<repo>::file:<path>`). The viewer links back with `/map/#node=<id>`: the map zooms to that capability, folder or file, and an unknown id shows a "not found" notice above the controls (`.map-notfound`).

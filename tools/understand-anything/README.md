@@ -161,3 +161,11 @@ while a reader may still be using it.
 
 See `provenance/imported-sources.json` for the preserved PreDev input hashes, and
 `provenance/remediation-matrix.md` for the acceptance and verification record.
+
+## Bilingual summaries ("Was ist das?")
+
+`summaries-i18n-<key>.json` (next to `enrich-<key>.json`) holds `{schemaVersion, meta.generatedBy, summaries: {"folder:<dir>"|"<fileNodeId>": {de, en, commit, generatedAt}}}`.
+`ua-enrich-merge.mjs` validates it, stores it in `graph.metadata.summariesI18n` and logs coverage plus every missing folder/top file.
+Produce missing entries: `ua-summary-coverage.mjs report --graph G --requests req.json`, answer the list with the production model, then
+`UA_SUMMARY_MODEL=<model> ua-summary-coverage.mjs ingest --responses ans.json --commit <sha> --out enrichments/summaries-i18n-<key>.json`.
+The tooling never calls a model itself.
