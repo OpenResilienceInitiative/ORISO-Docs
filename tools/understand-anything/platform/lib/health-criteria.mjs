@@ -10,6 +10,7 @@
 // Effective criteria for (capability, path): the file with the most specific matching scope is the nearest file;
 // it and its "inherits" chain are merged, nearest wins per key (a metric, "tests", "instruction"), and the
 // file each key came from is recorded.
+import { criteriaVersion } from './health-run.mjs';
 import { createHash } from 'node:crypto';
 import { readFileSync, readdirSync } from 'node:fs';
 import { METRICS, isMetric } from './health-metrics.mjs';
@@ -262,6 +263,8 @@ function reaches(glob, repo, rulePath) {
   const full = `${repo}/${rulePath}`;
   return braceAlternatives(glob).some(g => { const lit = g.slice(0, literalLength(g)); return full.startsWith(lit) || lit.startsWith(full); });
 }
+// byRepo: the effective criteria of every repository the capability has code in, resolved like a run resolves its scope
+// (path "<repo>/", health-run.mjs), with the criteria version a run record of that scope carries (criteriaVersion).
 export function buildCriteriaDoc(files, rules) {
   const capabilityIds = Object.keys(rules.capabilities);
   const entries = [...(rules.rules ?? []).map(r => [r.capability, r.repo, r.prefix]), ...(rules.overrides ?? []).map(o => [o.capability, o.repo, o.path])];
@@ -276,7 +279,12 @@ export function buildCriteriaDoc(files, rules) {
         || (f.scope.capability === '*' && !files.some(g => g.scope.glob === null && g.scope.capability === capability)))
       && entries.some(([c, repo, p]) => c === capability && reaches(f.scope.glob, repo, p)))
       .map(f => ({ file: f.id, scope: f.scope.raw, effective: plain(merge(files, f, capability, null)) }));
-    doc.capabilities[capability] = { effective: plain(resolveCriteria(files, { capability })), inside };
+    const byRepo = {};
+    for (const repo of [...new Set(entries.filter(([c]) => c === capability).map(([, r]) => r))].sort()) {
+      const e = resolveCriteria(files, { capability, path: `${repo}/` });
+      byRepo[repo] = { effective: plain(e), version: criteriaVersion(e) };
+    }
+    doc.capabilities[capability] = { effective: plain(resolveCriteria(files, { capability })), inside, byRepo };
   }
   return doc;
 }

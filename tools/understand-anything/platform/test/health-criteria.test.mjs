@@ -235,3 +235,18 @@ test('doc: nothing in it is HTML or a secret; it is plain JSON data', () => {
   const round = JSON.parse(JSON.stringify(doc));
   assert.deepEqual(round, doc);
 });
+
+// ORISO-Docs#213 review (finding 8): runs resolve with path "<repo>/", the box resolved with path null, so the box could show other
+// criteria than the record was judged by. The doc now carries the effective criteria per repository the capability has code in.
+test('doc: byRepo holds the effective criteria of every repository the capability has code in, resolved like a run ("<repo>/")', async () => {
+  const { criteriaVersion } = await import('../lib/health-run.mjs');
+  const repos = [...new Set([...(rules.rules ?? []).filter(r => r.capability === 'chat').map(r => r.repo), ...(rules.overrides ?? []).filter(o => o.capability === 'chat').map(o => o.repo)])].sort();
+  assert.deepEqual(Object.keys(doc.capabilities.chat.byRepo), repos);
+  assert.ok(repos.includes('ORISO-Frontend'));
+  const fe = doc.capabilities.chat.byRepo['ORISO-Frontend'];
+  assert.equal(fe.effective.matched, 'frontend');
+  assert.equal(fe.effective.metrics.crap.threshold, 30);
+  assert.equal(fe.version, criteriaVersion(resolveCriteria(seed, { capability: 'chat', path: 'ORISO-Frontend/' })));
+  assert.equal(doc.capabilities.chat.effective.matched, 'default', 'the capability-wide set stays as it was');
+  for (const [id, c] of Object.entries(doc.capabilities)) for (const [repo, x] of Object.entries(c.byRepo)) assert.match(x.version, /^[0-9a-f]{64}$/, `${id}/${repo}`);
+});

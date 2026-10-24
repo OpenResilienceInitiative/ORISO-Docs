@@ -59,11 +59,13 @@
     de: {head: 'Kriterien', none: 'Keine Kriterien veröffentlicht: Die Kriteriendatei fehlt, die Quadrate bleiben neutral.',
       unknown: 'Keine Kriterien für diesen Bereich.', rules: 'Regeldatei', metric: 'Kennzahl', weight: 'Gewicht', off: 'aus', from: 'aus',
       tests: 'Tests', noTests: 'keine festgelegt', instr: 'Prüfanweisung', inside: 'Engere Regeln in diesem Bereich', files: 'Dateien',
-      edit: 'Bearbeiten', editFor: 'Datei auf GitHub bearbeiten (Pull Request): ', path: 'Pfad'},
+      edit: 'Bearbeiten', editFor: 'Datei auf GitHub bearbeiten (Pull Request): ', path: 'Pfad',
+      perRepo: 'Wirksam je Repository (so bewertet ein Prüflauf)', version: 'Version', same: 'gleich wie oben', latest: 'vom letzten Prüflauf verwendet'},
     en: {head: 'Criteria', none: 'No criteria published: the criteria file is missing, the squares stay neutral.',
       unknown: 'No criteria for this area.', rules: 'Criteria file', metric: 'Metric', weight: 'Weight', off: 'off', from: 'from',
       tests: 'Tests', noTests: 'none defined', instr: 'Reviewer instruction', inside: 'Narrower rules inside this area', files: 'Files',
-      edit: 'Edit', editFor: 'Edit file on GitHub (opens a pull request): ', path: 'Path'}
+      edit: 'Edit', editFor: 'Edit file on GitHub (opens a pull request): ', path: 'Path',
+      perRepo: 'Effective per repository (what a health run is judged by)', version: 'Version', same: 'same as above', latest: 'used by the latest run'}
   };
   var MT = {
     'size': {de: ['Größe', 'Zeilen je Datei'], en: ['Size', 'lines per file']},
@@ -109,6 +111,29 @@
     into[eff.matched] = 1; into[eff.tests.origin] = 1; into[eff.instruction.origin] = 1;
     Object.keys(eff.metrics).forEach(function (n) { into[eff.metrics[n].origin] = 1; });
   }
+  /* Effective criteria per repository (criteria.json byRepo, ORISO-Docs#213 review): a run resolves its scope with the path
+     "<repo>/", so a frontend repository can be judged by narrower rules than the capability-wide set above. One block per
+     repository the capability has code in; the one of the latest run is marked (data-crit-latest). */
+  function repoEntry(cap, repo) {
+    var c = CRITERIA && HAS.call(CRITERIA.capabilities, cap) ? CRITERIA.capabilities[cap] : null;
+    var e = c && isObj(c.byRepo) && HAS.call(c.byRepo, repo) ? c.byRepo[repo] : null;
+    return e && isObj(e.effective) && isObj(e.effective.metrics) && typeof e.version === 'string' ? e : null;
+  }
+  function repoBlocks(c, block, lang, T, used) {
+    if (!isObj(c.byRepo)) return '';
+    var latest = recordOf(block), wide = c.effective;
+    var repos = Object.keys(c.byRepo).sort().filter(function (r) { return /^[A-Za-z0-9_.-]{1,100}$/.test(r) && isObj(c.byRepo[r]) && isObj(c.byRepo[r].effective) && isObj(c.byRepo[r].effective.metrics); });
+    if (!repos.length) return '';
+    return '<div class="crit-k crit-repos"><h5>' + T.perRepo + '</h5>' + repos.map(function (repo) {
+      var x = c.byRepo[repo], e = x.effective, isLatest = !!latest && latest.scope.repo === repo;
+      origins(e, used);
+      var same = e.matched === wide.matched && JSON.stringify(e.metrics) === JSON.stringify(wide.metrics);
+      return '<div class="crit-in" data-crit-repo="' + esc(repo) + '"' + (isLatest ? ' data-crit-latest' : '') + '><p class="crit-meta"><code>' + esc(repo) + '</code> → <code>' + esc(fileName(e.matched)) + '</code>' +
+        (typeof x.version === 'string' ? ' · ' + T.version + ' <code title="' + esc(x.version) + '">' + esc(x.version.slice(0, 12)) + '</code>' : '') +
+        (isLatest ? ' · <strong>' + T.latest + '</strong>' : '') + '</p>' +
+        (same ? '<p class="crit-none">' + T.same + '</p>' : metricList(e, lang, T)) + '</div>';
+    }).join('') + '</div>';
+  }
   function criteriaBox(block, lang, node) {
     var T = CT[lang === 'en' ? 'en' : 'de'];
     lang = lang === 'en' ? 'en' : 'de';
@@ -132,6 +157,7 @@
           metricList(x.effective, lang, T, x.file) + '</div>';
       }).join('') + '</div>';
     }
+    out += repoBlocks(c, block, lang, T, used);
     var links = Object.keys(used).sort().map(function (id) {
       var url = editUrl(id);
       return '<li><code>' + esc(fileName(id)) + '</code>' + (url ? ' <a data-crit-edit="' + esc(id) + '" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer" aria-label="' +
@@ -211,12 +237,12 @@
   var HT = {
     de: {head: 'Letzter Prüflauf', none: 'Kein Prüflauf für diese Fähigkeit: keine Daten.', noScore: 'Gesamtwert: keine Daten (kein Kriterium konnte bewertet werden).',
       overall: 'Gesamtwert', date: 'Datum', model: 'Modell', noModel: 'keines (nur Kennzahlen)', commit: 'Commit', repo: 'Repository', path: 'Ordner', whole: 'ganze Fähigkeit',
-      crit: 'Kriterien-Version', run: 'Lauf', metrics: 'Kennzahlen', value: 'Wert', limit: 'Schwelle', met: 'erfüllt', missed: 'nicht erfüllt', na: 'nicht verfügbar',
+      crit: 'Kriterien-Version', run: 'Lauf', critSet: 'Kriterien des Repositorys', critMatch: 'vom Lauf verwendet', critChanged: 'Kriterien haben sich seit diesem Lauf geändert', metrics: 'Kennzahlen', value: 'Wert', limit: 'Schwelle', met: 'erfüllt', missed: 'nicht erfüllt', na: 'nicht verfügbar',
       src: 'Quelle', verdict: 'Urteil des Modells', score: 'Punkte', links: 'Verweise', github: 'Quelltext auf GitHub', node: 'Graph-Knoten', others: 'Weitere Läufe in dieser Fähigkeit',
       band: {good: 'gut', fair: 'mittel', weak: 'schwach', poor: 'kritisch'}},
     en: {head: 'Latest health run', none: 'No health run for this capability: no data.', noScore: 'Overall: no data (no criterion could be scored).',
       overall: 'Overall', date: 'Date', model: 'Model', noModel: 'none (metrics only)', commit: 'Commit', repo: 'Repository', path: 'Folder', whole: 'whole capability',
-      crit: 'Criteria version', run: 'Run', metrics: 'Metrics', value: 'Value', limit: 'Threshold', met: 'met', missed: 'not met', na: 'not available',
+      crit: 'Criteria version', run: 'Run', critSet: 'Criteria of the repository', critMatch: 'used by this run', critChanged: 'criteria changed since this run', metrics: 'Metrics', value: 'Value', limit: 'Threshold', met: 'met', missed: 'not met', na: 'not available',
       src: 'Source', verdict: 'Model verdict', score: 'Score', links: 'Links', github: 'Source on GitHub', node: 'Graph node', others: 'Other runs in this capability',
       band: {good: 'good', fair: 'fair', weak: 'weak', poor: 'critical'}}
   };
@@ -256,6 +282,14 @@
         (o.overall === null ? esc(T.na) : T.overall + ' ' + from('overall', num(o.overall, lang))) + '</li>';
     }).join('') + '</ul></div>';
   }
+  /* The criteria set of the record's repository (criteria.json byRepo) next to the record, and whether the run used it. */
+  function runCriteria(r, T) {
+    var e = CRITERIA ? repoEntry(r.scope.capability, r.scope.repo) : null;
+    if (!e) return '';
+    var match = r.criteriaVersion === e.version;
+    return '<dt>' + T.critSet + '</dt><dd data-run-criteria="' + (match ? 'match' : 'changed') + '"><code>' + esc(fileName(e.effective.matched)) + '</code> · ' +
+      esc(match ? T.critMatch : T.critChanged) + '</dd>';
+  }
   function runBox(r, lang, T, others) {
     var out = '<section class="hrun" aria-label="' + T.head + '"><h4 class="crit-h">' + T.head + '</h4>';
     if (r.overall === null) out += '<p class="vnote hnos">' + T.noScore + '</p>';
@@ -267,7 +301,7 @@
       '<dt>' + T.repo + '</dt><dd><code data-from="scope.repo">' + esc(r.scope.repo) + '</code></dd>' +
       '<dt>' + T.path + '</dt><dd>' + (r.scope.path === null ? esc(T.whole) : '<code data-from="scope.path">' + esc(r.scope.path) + '</code>') + '</dd>' +
       (r.criteriaVersion ? '<dt>' + T.crit + '</dt><dd><code data-from="criteriaVersion" title="' + esc(r.criteriaVersion) + '">' + esc(r.criteriaVersion.slice(0, 12)) + '</code></dd>' : '') +
-      (r.runId ? '<dt>' + T.run + '</dt><dd><code data-from="run.runId">' + esc(r.runId) + '</code></dd>' : '') + '</dl>';
+      (r.runId ? '<dt>' + T.run + '</dt><dd><code data-from="run.runId">' + esc(r.runId) + '</code></dd>' : '') + runCriteria(r, T) + '</dl>';
     out += runMetrics(r, lang, T) + runVerdict(r, lang, T);
     var links = [];
     if (r.source) links.push('<li><a data-health-source href="' + esc(r.source) + '" target="_blank" rel="noopener noreferrer">' + T.github + '</a></li>');

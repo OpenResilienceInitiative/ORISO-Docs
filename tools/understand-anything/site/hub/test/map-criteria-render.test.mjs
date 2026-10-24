@@ -67,8 +67,10 @@ async function showBox(page, width) {
 test('Health, a frontend area: the box lists CRAP with its threshold and the file it comes from, plus an Edit link', {skip}, async () => {
   const {page, context, problems} = await open('#view=health&node=' + encodeURIComponent(CHAT), {lang: 'en'});
   await box(page).waitFor();
-  const crap = page.locator('.crit .crit-in .crit-m li', {hasText: 'crap'});
+  const crap = page.locator('.crit .crit-k:not(.crit-repos) .crit-in .crit-m li', {hasText: 'crap'});
   assert.equal(await crap.count(), 1);
+  // per repository (what a run is judged by): the frontend repository carries CRAP 30 too (ORISO-Docs#213 review)
+  assert.match(await page.locator('.crit [data-crit-repo="ORISO-Frontend"] .crit-m li', {hasText: 'crap'}).innerText(), /≤ 30/);
   const t = await crap.innerText();
   assert.match(t, /≤ 30/); assert.match(t, /frontend\.md/);
   const edit = page.locator('.crit [data-crit-edit="frontend"]');

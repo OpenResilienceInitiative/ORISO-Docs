@@ -135,7 +135,10 @@ Health criteria box (#217): `views.js` renders `map/data/criteria.json`, an opti
 `platform/lib/health-criteria.mjs`, metric names: `platform/lib/health-metrics.mjs`). The box shows the effective criteria of the capability, the file
 each key comes from, the reviewer instruction (escaped) and an "Edit" link to the GitHub web editor on branch `dev` for every file involved. Only
 `https://github.com/OpenResilienceInitiative/ORISO-Docs/edit/dev/<path>` is ever rendered. Criteria that apply only to a path inside the capability
-(for example CRAP for the frontend repositories) are listed as narrower rules. Without `criteria.json` the panel says so. Up to 980 px the box is
+(for example CRAP for the frontend repositories) are listed as narrower rules. Without `criteria.json` the panel says so. Because a run resolves its scope
+with the path `<repo>/`, `criteria.json` also carries `byRepo` per capability (the effective set and its criteria version for every repository
+the capability has code in); the box shows one block per repository, marks the one of the latest run, and the run panel says whether the run
+used that set or the criteria changed since. Up to 980 px the box is
 in the bottom sheet that the Details button opens. Tests: `test/map-criteria.test.mjs` (panel, escaping, guard), `test/map-criteria-render.test.mjs` (Playwright).
 
 Health run records (#218): `views.js` renders `map/data/health.json`, an optional asset (`{schemaVersion: 1, records: [...]}`, the latest run record per scope),

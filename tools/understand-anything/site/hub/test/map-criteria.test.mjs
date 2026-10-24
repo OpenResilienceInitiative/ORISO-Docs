@@ -96,3 +96,33 @@ test('without a run record the square stays neutral grey and the panel says "no 
   assert.match(MapViews.VIEWS.health.legend('en'), /no data/);
   assert.match(text(panel('chat', 'en')), /No health run for this capability: no data[^]*Criteria/);
 });
+
+// ORISO-Docs#213 review (finding 8): the box shows the effective criteria per repository, so it matches what a run record was judged by.
+test('the criteria box has one block per repository the capability has code in; ORISO-Frontend shows CRAP 30 from frontend.md', () => {
+  const h = panel('chat');
+  const repos = Object.keys(DOC.capabilities.chat.byRepo);
+  for (const repo of repos) assert.match(h, new RegExp('data-crit-repo="' + repo + '"'), repo);
+  const fe = h.slice(h.indexOf('data-crit-repo="ORISO-Frontend"'));
+  assert.match(text(fe.slice(0, fe.indexOf('</div>'))), /frontend\.md/);
+  assert.match(text(fe), /crap[^]*30/i);
+});
+
+test('next to the latest run the panel names the criteria set of its repository and says whether the run used it', async () => {
+  const {buildRunRecord} = await import('../../../platform/lib/health-run.mjs');
+  const {createRunManifest} = await import('../../../../planning-map/lib/run-manifest.mjs');
+  const {resolveCriteria} = await import('../../../platform/lib/health-criteria.mjs');
+  const files = loadCriteria(undefined, {capabilityIds: CAPABILITY_IDS, repos: CODE_REPOS});
+  const effective = resolveCriteria(files, {capability: 'chat', path: 'ORISO-Frontend/'});
+  const at = '2026-10-24T10:15:00Z', commit = 'd'.repeat(40);
+  const rec = JSON.parse(JSON.stringify(buildRunRecord({manifest: createRunManifest({at, commits: {'ORISO-Frontend': commit}}), scope: {capability: 'chat', repo: 'ORISO-Frontend', path: null}, commit, effective, measurements: {}, startedAt: at})));
+  assert.equal(rec.criteriaVersion, DOC.capabilities.chat.byRepo['ORISO-Frontend'].version, 'a run is judged by the per-repository set');
+  const show = (r) => { MapViews.setCriteria(DOC); MapViews.setHealth({schemaVersion: 1, records: [r]}, () => 'chat'); return MapViews.VIEWS.health.panel({id: 'chat'}, 'en', 'capability:chat'); };
+  const same = show(rec);
+  assert.match(same, /data-run-criteria="match"/);
+  assert.match(text(same.slice(same.indexOf('data-run-criteria'))), /frontend\.md/);
+  assert.match(same, /data-crit-repo="ORISO-Frontend" data-crit-latest/);
+  const other = show({...rec, criteriaVersion: 'f'.repeat(64)});
+  assert.match(other, /data-run-criteria="changed"/);
+  assert.match(text(other), /criteria changed since this run/i);
+  MapViews.setHealth(null);
+});
