@@ -63,6 +63,13 @@
       "note": "Project field Gate (ORISO-Docs#211). Absent on the live board until a project admin creates it (see gate-options.json); drift is checked only when it exists."
     }
   },
+  "categories": {
+    "refactoring": {
+      "kind": "label",
+      "name": "refactoring",
+      "note": "Category of a refactoring task (ORISO-Docs#222). ORISO has four native issue types (Task, Bug, Feature, Epic) and no category field on the board, and a board field is never invented, so the category is this repository label on a Task. plan.mjs propose-refactor creates it; the export reads it as items[].refactor."
+    }
+  },
   "driftChecked": [
     "status",
     "readiness",

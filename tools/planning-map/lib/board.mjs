@@ -6,6 +6,7 @@ import { validate } from "./schema.mjs";
 import { evaluateItem } from "./watchers.mjs";
 import { buildWork } from "./work.mjs";
 import { parseSection } from "./job.mjs";
+import { hasRefactoringLabel, parseMarker } from "./refactor-marker.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 export const SCHEMA_VERSION = 1;
@@ -161,6 +162,8 @@ export function buildBoard({ meta, items: rawItems, totalCount, title }, { synce
       if (parsed?.job) item.job = parsed.job;
       else if (parsed) warnings.push(`Job section on ${c.url ?? raw.id} ignored: ${parsed.problems.join("; ")}`);
     }
+    // ORISO-Docs#222. The category is the label `refactoring`; only its scope (from the body marker) leaves this function.
+    if (c.__typename === "Issue" && hasRefactoringLabel(c.labels?.nodes)) item.refactor = { scope: parseMarker(c.body) };
     item.findings = evaluateItem(item, { now: syncedAt });
     for (const f of item.findings) findingCounts[f.rule] = (findingCounts[f.rule] ?? 0) + 1;
     if (item.platformRelease) releaseCounts.set(item.platformRelease, (releaseCounts.get(item.platformRelease) ?? 0) + 1);

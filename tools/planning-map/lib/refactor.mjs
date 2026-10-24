@@ -11,14 +11,14 @@
 // GraphQL documents are UNVERIFIED against the live API (no org access from the sandbox); adjust only the block below.
 import { call, fail, neverThrows, parseIssueRef, refString, PROJECT_ID, ERROR_CODES as PLANNING_CODES } from "./planning-api.mjs";
 import { contract } from "./board.mjs";
+import { REFACTORING_LABEL, parseMarker } from "./refactor-marker.mjs";
+export { REFACTORING_LABEL, MARKER_RE } from "./refactor-marker.mjs";
 import { CAPABILITY_IDS, CODE_REPOS, loadRules } from "../../understand-anything/platform/lib/capabilities.mjs";
 import { SCHEMA, runFile, validateRunRecord } from "../../understand-anything/platform/lib/health-run.mjs";
 
-export const REFACTORING_LABEL = "refactoring";
 export const ISSUE_TYPE = "Task";
 export const ERROR_CODES = [...PLANNING_CODES, "PRIVATE_REPO"];
 export const FINDING_BELOW = 60; // a model verdict under this score is a finding (the "fair" band of the Health view starts at 60)
-export const MARKER_RE = /<!--\s*oriso:refactor:v1\s+scope=([a-z][a-z0-9-]*(?::[A-Za-z0-9_.-]+(?::[A-Za-z0-9_.@\/-]+)?)?)\s*-->/;
 const DOCS_BLOB = "https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/dev/";
 const MAX_PAGES = 20;
 
@@ -177,7 +177,7 @@ export const proposeRefactor = neverThrows(async (applied, scopeText0, epicRef, 
   if (!taskType) return none(fail("FIELD_MISSING", `Repository ${ref.owner}/${ref.name} has no issue type "${ISSUE_TYPE}"`, { issue: name }));
 
   const common = { scope, epic: name, repository: `${ref.owner}/${ref.name}`, issueType: ISSUE_TYPE, labels: [REFACTORING_LABEL], dryRun };
-  const found = subs.find((s) => s.state === "OPEN" && typeof s.body === "string" && MARKER_RE.exec(s.body)?.[1] === scopeText(scope));
+  const found = subs.find((s) => s.state === "OPEN" && typeof s.body === "string" && parseMarker(s.body) === scopeText(scope));
   if (found) {
     return { ok: true, ...common, action: "exists", wrote: false, issue: { number: found.number, url: found.url, repository: common.repository },
       results: [{ issue: `${common.repository}#${found.number}`, role: "task", before: "exists", after: "exists", changed: false, wrote: false }] };

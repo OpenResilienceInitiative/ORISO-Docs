@@ -52,6 +52,7 @@ query($owner: String!, $number: Int!, $after: String) {
               body
               repository { nameWithOwner isPrivate }
               issueType { name }
+              labels(first: 30) { nodes { name } }
               assignees(first: 20) { nodes { login } }
               parent { number repository { nameWithOwner isPrivate } }
               ${ISSUE_WORK_FIELDS}
