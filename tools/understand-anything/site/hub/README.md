@@ -156,6 +156,19 @@ with author and date, escaped, plus the link "Add a comment on GitHub" to the ca
 `OpenResilienceInitiative/ORISO-Docs/issues/<n>` only). The view repeats the export's member check. An area without a steering issue shows the exact command
 `node tools/planning-map/steering.mjs ensure --capability <id> --apply`. Producer and format: tools/planning-map README, "Human steering". Tests:
 `test/map-steering.test.mjs`, `test/map-steering-render.test.mjs` (Playwright, XSS payload), `test/steering-publication.test.mjs`.
+History section (#219): `withHistory()` appends a "History" section after the criteria box (before Steering). `health.json` carries, next to `records`, a
+`history` list (`[{scope, total, runs}]`, `historyCap: 50`): per scope the newest 50 runs, oldest first, each compact: `file` (path of the full record in the docs
+repository, `health/runs/...`), `startedAt`, `model`, `commit`, `criteriaVersion`, `overall`, `metrics[{name,value,threshold,better,score}]`, `verdict[{criterion,score}]`.
+Reasons and details stay in the full record; `total` says how many runs exist, the panel then reads "last 50 of N runs". Built by `buildHealthDoc` in
+`platform/lib/health-run.mjs`. The section shows a trend line (an SVG built with DOM APIs in `trendSvg()`, time on x, overall 0 to 100 on y, a run without a score is a
+gap; colours only through the classes `hh-*` and `--ua-health-*` tokens), the list of runs newest first with date, model, commit and overall, and under every earlier run
+a "Compare with latest" `<details>`. The comparison is `MapViews.compareRuns(earlier, later)` (pure, language free): per metric and per model criterion the delta and a
+direction `better | worse | same | unknown` (metrics by their `better` of `platform/lib/health-metrics.mjs`, criteria and overall higher is better), reason codes
+(`into-threshold`, `out-of-threshold`, `threshold-changed`, `not-measured-before`, `only-in-later`, ...) and the reason texts of the records. It never computes a delta
+against a metric that could not be measured. A changed `criteriaVersion` is flagged. Each run links to its Understand node through `MapViews.setNodeLink` (map.js hands
+over its `uaNodeHref` deep-link helper; only `https://understand.oriso.org/` links are rendered) and to `github.com/OpenResilienceInitiative/<repo>/tree/<commit>` (https
+guard on the whole URL). Tests: `test/health-compare.test.mjs`, `test/health-history-view.test.mjs`, `test/map-history-render.test.mjs` (Playwright, strict CSP, 320/390/1440 px,
+light and dark, DE and EN), `platform/test/health-history.test.mjs`.
 
 `map.js` sets the fill through the CSSOM (`--view-fill` on each square), never through a `style` attribute. Colours need a light and a dark value.
 Render tests: `test/map-views-render.test.mjs` (Playwright, strict CSP, 320/390/1440 px).

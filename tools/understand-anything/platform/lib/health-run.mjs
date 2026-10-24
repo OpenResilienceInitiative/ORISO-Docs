@@ -189,7 +189,28 @@ export function latestPerScope(records) {
   }
   return [...best.entries()].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)).map(([, r]) => r);
 }
-// map/data/health.json
+// History per scope (ORISO-Docs#219): the newest HISTORY_CAP runs, oldest first, in a compact form the map can draw a trend and a
+// comparison from without fetching every record: date, model, commit, overall, one entry per metric (value, threshold, better, score)
+// and per verdict criterion (score). Reasons and details stay in the full record, reachable by `file` (path in the docs repository).
+export const HISTORY_CAP = 50;
+const byTime = (a, b) => (a.startedAt < b.startedAt ? -1 : a.startedAt > b.startedAt ? 1 : a.run.runId < b.run.runId ? -1 : a.run.runId > b.run.runId ? 1 : 0);
+function compactRun(r) {
+  return {
+    file: runFile(r), startedAt: r.startedAt, model: r.model, commit: r.commit, criteriaVersion: r.criteriaVersion, overall: r.overall,
+    metrics: r.metrics.map(m => ({ name: m.name, value: m.value, threshold: m.threshold, better: m.better, score: m.score })),
+    verdict: r.verdict.map(v => ({ criterion: v.criterion, score: v.score })),
+  };
+}
+export function buildHistory(records) {
+  const groups = new Map();
+  for (const r of records) { const k = scopeKey(r.scope); if (!groups.has(k)) groups.set(k, []); groups.get(k).push(r); }
+  return [...groups.entries()].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)).map(([, list]) => {
+    list.sort(byTime);
+    const s = list[0].scope;
+    return { scope: { capability: s.capability, repo: s.repo, path: s.path }, total: list.length, runs: list.slice(-HISTORY_CAP).map(compactRun) };
+  });
+}
+// map/data/health.json: the latest full record per scope, plus the compact history per scope
 export function buildHealthDoc(records) {
-  return { schemaVersion: 1, records: latestPerScope(records) };
+  return { schemaVersion: 1, records: latestPerScope(records), history: buildHistory(records), historyCap: HISTORY_CAP };
 }

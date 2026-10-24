@@ -284,6 +284,12 @@ var LIVE = MEAS.live || [];
 MapViews.setIdeas(MEAS.ideas, function(id){ return SLUG[id] || null; });
 /* Prüfläufe der Ansicht Health (health.json, optional; ORISO-Docs#218): jeder gezeigte Wert ist ein Feld des Laufprotokolls. */
 MapViews.setHealth(MEAS.health || null, function(id){ return id === 'base' ? 'shared' : (SLUG[id] || null); });
+/* Verlauf in der Ansicht Health (#219): jeder Lauf verweist mit dem Deep-Link-Helfer uaNodeHref auf seinen Understand-Knoten. */
+MapViews.setNodeLink(function(id){
+  var m = /^([^:]+)::/.exec(id), key = m ? null : 'sg';
+  if (m) Object.keys(REPOID).forEach(function(k){ if (REPOID[k] === m[1]) key = k; });
+  return key && UA[key] ? uaNodeHref(UA[key], id) : null;
+});
 var CODE_REPOS = ['ORISO-Frontend','ORISO-Admin','ORISO-UserService','ORISO-TenantService','ORISO-AgencyService','ORISO-ConsultingTypeService'];
 var GH = 'https://github.com/OpenResilienceInitiative/';
 var SBH = ['storybook-frontend','storybook-admin'];

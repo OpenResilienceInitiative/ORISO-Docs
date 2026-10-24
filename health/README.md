@@ -21,6 +21,12 @@ health/runs/<capability>/<repo>/at/<folder path>/<timestamp>.json   one folder o
 
 The latest record per scope (newest `startedAt`) goes into `map/data/health.json`. Before and after of two runs is a comparison of two files.
 
+`health.json` also holds a compact **history** per scope (ORISO-Docs#219): `history: [{scope, total, runs}]`, `historyCap: 50`. `runs` are the newest 50 runs of the scope,
+oldest first; each has `file` (path of its full record under `health/runs/`), `startedAt`, `model`, `commit`, `criteriaVersion`, `overall`, the value, threshold, `better`
+and score of every metric, and the score of every verdict criterion. Reasons and `details` are not copied: the map keeps the file small (about 600 bytes per run) and the
+full record stays reachable by `file`. When a scope has more than 50 runs, `total` says so and the panel shows "last 50 of N runs". Raising the cap is a change of
+`HISTORY_CAP` in `platform/lib/health-run.mjs`.
+
 ## Record (schema: `tools/understand-anything/platform/health-run.schema.json`, version 1)
 
 | Field | Meaning |
