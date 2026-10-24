@@ -620,3 +620,33 @@ dialog#workdlg::backdrop{background:rgba(20,16,15,.35)}
 .crit-f li{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px}
 .crit-f a{display:inline-flex;align-items:center;min-height:32px;padding:2px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:12.5px;font-weight:600}
 .crit-f a:hover{border-color:var(--brand);text-decoration:none}
+/* Plan-Leinwand und Ideen (#223): Werkzeugzeile über der Karte, Ideenliste, Fluss, Markierung der berührten Quadrate. */
+.vtools[hidden]{display:none}
+.vtools{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;margin:10px 0 0;min-width:0}
+.vtools .vnote{margin:0}
+.ideas-toggle{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.ihead{margin:0 0 8px;font-size:15px}
+.icount{color:var(--ink-2);font-weight:400;font-size:13px}
+.idealist{list-style:none;margin:0 0 12px;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.idea{appearance:none;display:inline-flex;flex-wrap:wrap;align-items:center;gap:4px 8px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:13px;font-weight:500;padding:6px 11px;border-radius:999px;cursor:pointer;min-height:36px;max-width:100%;text-align:left}
+.idea[aria-pressed="true"]{background:var(--ink);color:var(--card);border-color:var(--ink)}
+.idt{overflow-wrap:anywhere}
+.ist{display:inline-block;font-size:11.5px;font-weight:600;padding:1px 8px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.idetail{border-top:1px solid var(--line);padding-top:12px;min-width:0}
+.itit{margin:0 0 6px;font-size:15px;overflow-wrap:anywhere}
+.isum{margin:0 0 10px;color:var(--ink-2);font-size:13.5px}
+.iflow{list-style:none;margin:0 0 12px;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.iflow-step{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;padding:3px 10px;border-radius:999px;border:1px dashed var(--line);color:var(--ink-3)}
+.iflow-step::before{content:"○";font-size:11px}
+.iflow-step.is-done{border-style:solid;color:var(--ink-2)}
+.iflow-step.is-done::before{content:"✓"}
+.iflow-step.is-current{border:2px solid var(--brand);color:var(--ink);font-weight:600;background:var(--brand-wash)}
+.iflow-step.is-current::before{content:"●";color:var(--brand)}
+.sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.ilab{margin:0 0 4px;font-size:12.5px;color:var(--ink-2)}
+.icaps{list-style:none;margin:0 0 10px;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.icap{font-size:12.5px;padding:2px 9px;border-radius:6px;background:var(--sunken);border:1px solid var(--line);overflow-wrap:anywhere}
+.ilinks{margin:0;font-size:13px;overflow-wrap:anywhere}
+.ipanel ul{margin:6px 0 0;padding-left:18px}
+.tm .blk.vmark{outline:3px dashed var(--brand);outline-offset:-3px;z-index:2}
+.tm.vview .blk.vmark{outline-style:solid}

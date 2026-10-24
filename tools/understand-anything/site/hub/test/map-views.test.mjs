@@ -70,8 +70,8 @@ test('State keeps today\'s map: no colour override, no extra panel, no legend of
   assert.equal(VIEWS.state.legend('de'), '');
 });
 
-test('Health and Plan draw a neutral layer and say in one line that the view is coming, in DE and EN', () => {
-  for (const v of ['health', 'plan']) {
+test('Health draws a neutral layer and says in one line that the view is coming, in DE and EN (Plan: ideas-view.test.mjs)', () => {
+  for (const v of ['health']) {
     assert.equal(VIEWS[v].colour({id: 'x'}), 'neutral');
     for (const lang of ['de', 'en']) {
       const legend = VIEWS[v].legend(lang);

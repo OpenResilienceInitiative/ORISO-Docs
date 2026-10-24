@@ -83,7 +83,7 @@ test('without published criteria, or for an unknown area, the panel says so inst
   assert.match(text(panel('nope', 'en')), /No criteria for this area/);
   assert.match(text(MapViews.VIEWS.health.panel({id: 'x'}, 'en')), /No criteria for this area/, 'a block without a capability node');
   assert.equal(MapViews.VIEWS.state.panel({id: 'chat'}, 'en'), '', 'State is untouched');
-  assert.match(MapViews.VIEWS.plan.panel({id: 'chat'}, 'en'), /Plan is coming/, 'Plan is untouched');
+  assert.doesNotMatch(MapViews.VIEWS.plan.panel({id: 'chat'}, 'en'), /criteria|crit/i, 'Plan (#223) shows no criteria box');
 });
 
 test('a malformed criteria document is ignored, not half rendered', () => {

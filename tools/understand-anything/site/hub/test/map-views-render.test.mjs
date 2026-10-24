@@ -67,8 +67,8 @@ test('the switch offers State | Health | Plan, State is on by default, labels fo
   await context.close();
 });
 
-test('Health and Plan show neutral squares and a one-line coming note', {skip}, async () => {
-  for (const [view, lang, note] of [['health', 'en', /Health is coming/], ['plan', 'de', /Plan folgt/]]) {
+test('Health and Plan show neutral squares and a one-line note (Plan without ideas says so)', {skip}, async () => {
+  for (const [view, lang, note] of [['health', 'en', /Health is coming/], ['plan', 'de', /Noch keine Ideen/]]) {
     const {page, context, problems} = await open('#view=' + view, {lang});
     assert.equal(await pressed(page), view);
     assert.equal(await page.locator('#tm.vview').count(), 1);
@@ -93,7 +93,7 @@ test('zoom and selection are kept when the view changes, and the hash follows', 
   await page.click('#viewSwitch [data-mview="plan"]');
   assert.equal(await title(page), first);
   assert.match(await hashOf(page), /^#view=plan&node=capability%3A/);
-  assert.match(await page.locator('#panel').innerText(), /Plan is coming/);
+  assert.match(await page.locator('#stagefoot').innerText(), /No ideas yet/);
   await context.close();
 });
 

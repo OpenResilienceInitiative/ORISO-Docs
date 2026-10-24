@@ -279,6 +279,8 @@ var KPIS = [
 PLANNED_FEATURES = []; /* stillgelegt; nicht mit PLAN (Planungsabsichten, unten) verwechseln */
 var SLUG = {chat:'chat',notify:'notifications',handover:'case-handover',teamdisc:'team-consultation',supervision:'supervision',groups:'self-help-groups',calls:'calls-voice',livechat:'live-chat',upload:'files-media',practice:'training-tours',i18n:'multilingual',legal:'legal-texts',permissions:'feature-permissions',mailadmin:'email-templates',invites:'invitations-onboarding',branding:'branding',stats:'statistics',tenants:'tenants-agencies',auth:'auth-2fa',e2ee:'encryption-keys',deletion:'deletion'};
 var LIVE = MEAS.live || [];
+/* Ideen der Plan-Ansicht (ideas.json, optional; ORISO-Docs#223): Fähigkeits-ID je Quadrat über SLUG. */
+MapViews.setIdeas(MEAS.ideas, function(id){ return SLUG[id] || null; });
 var CODE_REPOS = ['ORISO-Frontend','ORISO-Admin','ORISO-UserService','ORISO-TenantService','ORISO-AgencyService','ORISO-ConsultingTypeService'];
 var GH = 'https://github.com/OpenResilienceInitiative/';
 var SBH = ['storybook-frontend','storybook-admin'];
@@ -657,8 +659,30 @@ function applyView(){
   Array.prototype.forEach.call(tm.querySelectorAll('.blk'), function(e){
     var id = e.dataset.id || curBlock(), tok = id && BY[id] ? v.colour(BY[id]) : null;
     if (tok) e.style.setProperty('--view-fill', 'var(--'+tok+')'); else e.style.removeProperty('--view-fill');
+    /* Ideen-Markierung nur auf den Quadraten der Übersicht (data-id), mit Rahmen statt nur Farbe. */
+    e.classList.toggle('vmark', !!(e.dataset.id && BY[e.dataset.id] && v.mark(BY[e.dataset.id])));
   });
 }
+/* Werkzeugzeile über der Karte: Ideenliste in Plan, „Ideen anzeigen“ in Zustand und Gesundheit (views.js). */
+function capLabel(slug){ for (var id in SLUG) if (SLUG[id]===slug && BY[id]) return L(BY[id].t); return null; }
+function drawViewTools(){
+  var host = document.getElementById('viewTools'); if (!host) return;
+  var html = MapViews.tools(view, lang, capLabel);
+  host.innerHTML = html; host.hidden = html === '';
+}
+function ideasChanged(focusSel){
+  drawViewTools(); drawStageFoot(); applyView();
+  if (stack.length) renderView();
+  var f = focusSel && document.querySelector('#viewTools ' + focusSel); if (f) f.focus({preventScroll:true});
+}
+(function(){
+  var host = document.getElementById('viewTools');
+  host.addEventListener('click', function(e){
+    var i = e.target.closest('[data-idea]'), t = e.target.closest('[data-ideatoggle]');
+    if (i){ var id = i.getAttribute('data-idea'); MapViews.selectIdea(id); ideasChanged('[data-idea="'+id+'"]'); }
+    else if (t){ MapViews.toggleIdeas(); ideasChanged('[data-ideatoggle]'); }
+  });
+})();
 function setView(next, push){
   if (MapViews.VIEW_IDS.indexOf(next) < 0 || next === view) return;
   view = next; document.getElementById('layerRow').hidden = view !== MapViews.DEFAULT_VIEW; document.getElementById('layerHelp').hidden = view !== MapViews.DEFAULT_VIEW;
@@ -676,6 +700,7 @@ function drawViewSwitch(){
     b.addEventListener('click', function(){ setView(id, true); });
     box.appendChild(b);
   });
+  drawViewTools();
 }
 function rampLegend(){
   var d = de();
@@ -1744,7 +1769,7 @@ renderAll(); lastW = tm.clientWidth; applyHash(); hashReady = true; syncHash(fal
    (Erzeuger: build-map-data.mjs). OPTIONAL_DATA sind Dateien, die nur geladen werden, wenn links.json sie
    unter "optional" meldet; ihr Inhalt liegt in MEAS unter dem Dateinamen ohne .json (board.json wird zu MEAS.board). */
 var DATA_FILES = ['counts.json', 'descriptions.json', 'drill.json', 'epics.json', 'links.json', 'zoom.json'];
-var OPTIONAL_DATA = ['board.json', 'milestones.json', 'criteria.json'];
+var OPTIONAL_DATA = ['board.json', 'milestones.json', 'criteria.json', 'ideas.json'];
 /* Optionale Dateien, die der vereinheitlichte Lauf stempelt (tools/planning-map/nightly-run.mjs). */
 var RUN_DATA = ['board.json'];
 function fetchJson(name, optional){

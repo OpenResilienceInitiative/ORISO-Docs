@@ -15,7 +15,7 @@ test('the page has a left panel and a drawer button, both labelled in DE and EN'
 });
 
 test('milestones.json is optional data, loaded only when announced', () => {
-  assert.match(js, /OPTIONAL_DATA\s*=\s*\[\s*'board\.json'\s*,\s*'milestones\.json'\s*,\s*'criteria\.json'\s*\]/);
+  assert.match(js, /OPTIONAL_DATA\s*=\s*\[\s*'board\.json'\s*,\s*'milestones\.json'\s*,\s*'criteria\.json'\s*,\s*'ideas\.json'\s*\]/);
   assert.match(js, /MEAS\.milestones/);
   assert.match(js, /BoardAgg\.milestones\(/);
 });
