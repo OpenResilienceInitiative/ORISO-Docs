@@ -525,6 +525,9 @@
                     }
                   }
                 }
+              },
+              "truncated": {
+                "type": "boolean"
               }
             }
           },

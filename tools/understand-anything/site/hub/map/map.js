@@ -1597,23 +1597,26 @@ var WK = {
     last:'letzter Commit', src:{linked:'auf GitHub verknüpft', pr:'über Pull Request', name:'nur über den Namen zugeordnet'},
     state:{OPEN:'offen', MERGED:'gemergt', CLOSED:'geschlossen'}, draft:'Entwurf', checks:{SUCCESS:'Prüfungen grün', FAILURE:'Prüfungen fehlgeschlagen', ERROR:'Prüfungen fehlgeschlagen', PENDING:'Prüfungen laufen', EXPECTED:'Prüfungen laufen'},
     review:{APPROVED:'freigegeben', CHANGES_REQUESTED:'Änderungen angefordert', REVIEW_REQUIRED:'Review ausstehend'}, none:'Keine Branches oder Pull Requests.',
-    hidden:function(n){ return n+(n===1?' Verweis':' Verweise')+' in einem privaten Repository, nur gezählt'; }, forEpic:'Epic', pri:'Pull Requests'},
+    hidden:function(n){ return n+(n===1?' Verweis':' Verweise')+' in einem privaten Repository, nur gezählt'; }, forEpic:'Epic', pri:'Pull Requests',
+    truncated:'GitHub hat nicht alle Verweise geliefert (höchstens 10 verknüpfte Branches, 10 schließende und 20 erwähnende Pull Requests je Aufgabe): Es gibt mehr, „+“ an der Zahl.'},
   en:{branch:['branch','branches'], pr:['PR','PRs'], title:'Branches, pull requests and jobs', close:'Close', open:'Show branches and pull requests',
     last:'last commit', src:{linked:'linked on GitHub', pr:'via pull request', name:'matched by name only'},
     state:{OPEN:'open', MERGED:'merged', CLOSED:'closed'}, draft:'draft', checks:{SUCCESS:'checks passing', FAILURE:'checks failing', ERROR:'checks failing', PENDING:'checks running', EXPECTED:'checks running'},
     review:{APPROVED:'approved', CHANGES_REQUESTED:'changes requested', REVIEW_REQUIRED:'review required'}, none:'No branches or pull requests.',
-    hidden:function(n){ return n+(n===1?' reference':' references')+' in a private repository, counted only'; }, forEpic:'Epic', pri:'Pull requests'}
+    hidden:function(n){ return n+(n===1?' reference':' references')+' in a private repository, counted only'; }, forEpic:'Epic', pri:'Pull requests',
+    truncated:'GitHub did not return every reference (at most 10 linked branches, 10 closing and 20 mentioning pull requests per task): there are more, "+" on the number.'}
 };
 function wk(){ return WK[de()?'de':'en']; }
 function workOf(ref){
   if (!WORKIDX || typeof ref!=='string') return null;
   var m = /^(epic|item):(.+)$/.exec(ref); if (!m) return null;
-  if (m[1]==='epic') { var s = WORKIDX.byEpic[+m[2]]; return s ? {kind:'epic', branches:s.branches, prs:s.prs, hidden:s.hidden, issues:s.issues} : null; }
-  var x = WORKIDX.byItem[m[2]]; return x ? {kind:'item', branches:x.branches, prs:x.prs, hidden:x.hidden, issues:[x]} : null;
+  if (m[1]==='epic') { var s = WORKIDX.byEpic[+m[2]]; return s ? {kind:'epic', branches:s.branches, prs:s.prs, hidden:s.hidden, truncated:s.truncated, issues:s.issues} : null; }
+  var x = WORKIDX.byItem[m[2]]; return x ? {kind:'item', branches:x.branches, prs:x.prs, hidden:x.hidden, truncated:x.truncated, issues:[x]} : null;
 }
 function workLabel(s){
   var t = wk();
-  return fmt(s.branches)+' '+t.branch[s.branches===1?0:1]+' · '+fmt(s.prs)+' '+t.pr[s.prs===1?0:1];
+  var plus = s.truncated ? '+' : '';
+  return fmt(s.branches)+plus+' '+t.branch[s.branches===1&&!plus?0:1]+' · '+fmt(s.prs)+plus+' '+t.pr[s.prs===1&&!plus?0:1];
 }
 function workBadge(ref){
   var s = workOf(ref); if (!s || (!s.branches && !s.prs)) return '';
@@ -1652,7 +1655,8 @@ function openWork(ref, opener){
   document.getElementById('wkTitle').textContent = item ? '#'+item.number+' '+item.title : s.title || t.title+' · '+(EP[+ref.slice(5)]||{}).t;
   document.getElementById('wkclose').textContent = t.close;
   document.getElementById('wkBody').innerHTML = jobs+(s.issues.length ? s.issues.map(function(x){ return wkIssueHTML(x, s.kind==='epic'); }).join('') : jobs ? '' : '<p class="dmeta">'+esc(t.none)+'</p>')+
-    (s.hidden ? '<p class="dmeta wkpriv">'+esc(t.hidden(s.hidden))+'</p>' : '');
+    (s.hidden ? '<p class="dmeta wkpriv">'+esc(t.hidden(s.hidden))+'</p>' : '')+
+    (s.truncated ? '<p class="dmeta wktrunc" data-wk-truncated>'+esc(t.truncated)+'</p>' : '');
   workdlg.showModal();
   document.getElementById('wkTitle').focus({preventScroll:true});
 }

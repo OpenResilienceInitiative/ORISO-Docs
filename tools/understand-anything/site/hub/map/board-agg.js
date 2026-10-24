@@ -156,8 +156,9 @@
     var wk = it.work, open = 0;
     (wk.prs || []).forEach(function (p) { if (p.state === 'OPEN') open++; });
     return {repository: repoName(it.repository), number: it.number, title: it.title, url: it.url,
-      branches: (wk.branches || []).length, prs: open, hidden: wk.hidden || 0, branchList: wk.branches || [], prList: wk.prs || []};
+      branches: (wk.branches || []).length, prs: open, hidden: wk.hidden || 0, truncated: wk.truncated === true, branchList: wk.branches || [], prList: wk.prs || []};
   }
+  function countText(n, truncated) { return String(n) + (truncated ? '+' : ''); }
   function workIndex(board, epics) {
     var items = (board && board.items) || [], byItem = {}, any = false, repos = (epics && epics.repos) || [];
     items.forEach(function (it) {
@@ -179,16 +180,17 @@
       take(ek);
       (children[ek] || []).forEach(take);
       (e.subs || []).forEach(function (s) { take(key(repos[s[0]], s[1])); });
-      var branches = {}, prs = {}, hidden = 0, issues = [];
+      var branches = {}, prs = {}, hidden = 0, issues = [], truncated = false;
       order.forEach(function (k) {
         var x = byItem[k];
         hidden += x.hidden;
+        if (x.truncated) truncated = true;
         x.branchList.forEach(function (b) { branches[b.repository + '\u0000' + b.name] = 1; });
         x.prList.forEach(function (p) { if (p.state === 'OPEN') prs[p.repository + '#' + p.number] = 1; });
         if (x.branchList.length || x.prList.length) issues.push(x);
       });
       issues.sort(function (a, b) { return a.number - b.number; });
-      byEpic[i] = {branches: Object.keys(branches).length, prs: Object.keys(prs).length, hidden: hidden, issues: issues};
+      byEpic[i] = {branches: Object.keys(branches).length, prs: Object.keys(prs).length, hidden: hidden, truncated: truncated, issues: issues};
     });
     return {byItem: byItem, byEpic: byEpic};
   }
@@ -286,5 +288,5 @@
     var r = name && rel && rel.byName && rel.byName[name];
     return r ? r.capabilities.slice() : [];
   }
-  return {GATES: GATES, gateStep: gateStep, STATUSES: STATUSES, GROUP: GROUP, TOKEN: TOKEN, FILTERS: FILTERS, EFFORT_DAYS: EFFORT_DAYS, PRIORITIES: PRIORITIES, capabilityIndex: capabilityIndex, aggregate: aggregate, epicView: epicView, workIndex: workIndex, refactoring: refactoring, refactorState: refactorState, REFACTORING_LABEL: REFACTORING_LABEL, releases: releases, milestones: milestones, releaseCapabilities: releaseCapabilities};
+  return {GATES: GATES, gateStep: gateStep, STATUSES: STATUSES, GROUP: GROUP, TOKEN: TOKEN, FILTERS: FILTERS, EFFORT_DAYS: EFFORT_DAYS, PRIORITIES: PRIORITIES, capabilityIndex: capabilityIndex, aggregate: aggregate, epicView: epicView, workIndex: workIndex, countText: countText, refactoring: refactoring, refactorState: refactorState, REFACTORING_LABEL: REFACTORING_LABEL, releases: releases, milestones: milestones, releaseCapabilities: releaseCapabilities};
 });

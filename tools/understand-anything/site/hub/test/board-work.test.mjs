@@ -39,7 +39,7 @@ test('an epic sums its own work, its children and its sub-issue list; a branch s
 });
 
 test('an epic without work has zero sums; the index is null for a board exported before #215', () => {
-  assert.deepEqual(workIndex(board(), epics).byEpic[1], {branches: 0, prs: 0, hidden: 0, issues: []});
+  assert.deepEqual(workIndex(board(), epics).byEpic[1], {branches: 0, prs: 0, hidden: 0, truncated: false, issues: []});
   const old = board(); old.items.forEach(i => { delete i.work; });
   assert.equal(sandbox.BoardAgg.workIndex(old, epics), null);
   assert.equal(sandbox.BoardAgg.workIndex(null, epics), null);
@@ -50,4 +50,17 @@ test('pull request board items and issues without work data never get a summary'
   const idx = workIndex(b, epics);
   assert.equal(idx.byItem['ORISO-Frontend#99'], undefined);
   assert.deepEqual(Object.keys(idx.byItem).sort(), ['ORISO-Admin#900', 'ORISO-Frontend#10', 'ORISO-Frontend#11', 'ORISO-Frontend#12', 'ORISO-Frontend#5']);
+});
+
+// ───── review of #215 (epic #213): lists GitHub cut off show as "20+" ─────
+test('a truncated work block marks the task and every epic that contains it; countText adds the "+"', () => {
+  const b = board();
+  b.items[1].work.truncated = true; // #11, child of epic 10
+  const idx = workIndex(b, epics);
+  assert.equal(idx.byItem['ORISO-Frontend#11'].truncated, true);
+  assert.equal(idx.byItem['ORISO-Frontend#10'].truncated, false);
+  assert.equal(idx.byEpic[0].truncated, true);
+  assert.equal(idx.byEpic[1].truncated, false);
+  assert.equal(sandbox.BoardAgg.countText(20, true), '20+');
+  assert.equal(sandbox.BoardAgg.countText(3, false), '3');
 });

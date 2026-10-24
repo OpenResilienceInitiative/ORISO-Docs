@@ -69,7 +69,7 @@ test("the strongest source wins when one branch is found several ways, and its P
 });
 
 test("issues without any branch or PR get an empty work block", () => {
-  assert.deepEqual(work(build([issue(50)]), 50), { branches: [], prs: [], hidden: 0 });
+  assert.deepEqual(work(build([issue(50)]), 50), { branches: [], prs: [], hidden: 0, truncated: false });
 });
 
 test("private repos, drafts and redacted items export no names, only counts", () => {
@@ -81,7 +81,7 @@ test("private repos, drafts and redacted items export no names, only counts", ()
   });
   const b = build([priv, draft, redacted, pub], new Map([["O/Priv", [{ name: "secret/7-z", committedDate: "2026-10-01T00:00:00Z" }]]]));
   assert.equal(JSON.stringify(b).includes("secret"), false);
-  assert.deepEqual(work(b, 50), { branches: [], prs: [], hidden: 1 });
+  assert.deepEqual(work(b, 50), { branches: [], prs: [], hidden: 1, truncated: false });
   assert.deepEqual(validateBoard(b), []);
 });
 
@@ -109,3 +109,47 @@ test("a failing branch listing degrades to a warning, not a crash", async () => 
 });
 
 test("contract still loads (sanity)", () => assert.ok(contract.project));
+
+// ───── review of #215 (epic #213) ─────
+const names = (n, list) => work(build([issue(n)], new Map([[REPO, list.map((name) => ({ name, committedDate: "2026-10-01T00:00:00Z" }))]])), n).branches.map((x) => x.name);
+
+test("name matching: the number must be a delimited token, never next to a dot or a digit", () => {
+  const list = ["release/v2.0.12", "release/2.0.12", "v2.0.18-hotfix", "feat/213-215-branches", "fix/#18-typo", "feat/x_12", "chore/12.5-bump", "feat/a12-b"];
+  assert.deepEqual(names(2, list), []);
+  assert.deepEqual(names(12, list), ["feat/x_12"]);
+  assert.deepEqual(names(18, list), ["fix/#18-typo"]);
+  assert.deepEqual(names(213, list), ["feat/213-215-branches"]);
+  assert.deepEqual(names(215, list), ["feat/213-215-branches"]);
+});
+
+test("name matching skips dependabot/ and renovate/ branches and version-like names", () => {
+  const list = ["dependabot/npm_and_yarn/types/node-18", "dependabot/github_actions/actions/checkout-2", "renovate/node-12.x", "renovate/major-18", "release/v2-12", "hotfix/2.0.12/18"];
+  for (const n of [2, 12, 18]) assert.deepEqual(names(n, list), [], `#${n}`);
+});
+
+test("lists GitHub cut off are flagged: work.truncated when a total or an older page says there is more", () => {
+  const node = (i) => ({ ref: { name: `feat/50-${i}`, repository: { nameWithOwner: REPO, isPrivate: false }, target: null } });
+  const full = build([issue(50, { linkedBranches: { totalCount: 2, nodes: [node(1), node(2)] }, closedByPullRequestsReferences: { totalCount: 0, nodes: [] }, timelineItems: { pageInfo: { hasPreviousPage: false }, nodes: [] } })]);
+  assert.equal(work(full, 50).truncated, false);
+  const cases = [
+    { linkedBranches: { totalCount: 14, nodes: [node(1)] } },
+    { closedByPullRequestsReferences: { totalCount: 11, nodes: [pr()] } },
+    { timelineItems: { pageInfo: { hasPreviousPage: true }, nodes: [] } },
+  ];
+  for (const c of cases) {
+    const b = build([issue(50, c)]);
+    assert.equal(work(b, 50).truncated, true, Object.keys(c)[0]);
+    assert.deepEqual(validateBoard(b), []);
+  }
+});
+
+test("the query reads the newest 20 cross-references and asks for totals or page info of every capped list", async () => {
+  const { ITEMS_QUERY } = await import("../lib/queries.mjs");
+  assert.match(ITEMS_QUERY, /timelineItems\(last: 20, itemTypes: \[CROSS_REFERENCED_EVENT\]\) \{ pageInfo \{ hasPreviousPage \}/);
+  assert.match(ITEMS_QUERY, /linkedBranches\(first: 10\) \{ totalCount /);
+  assert.match(ITEMS_QUERY, /closedByPullRequestsReferences\(first: 10, includeClosedPrs: true\) \{ totalCount /);
+  const schema = JSON.parse(readFileSync(resolve(here, "../board.schema.json"), "utf8"));
+  const w = schema.properties.items.items.properties.work;
+  assert.deepEqual(w.properties.truncated, { type: "boolean" });
+  assert.ok(!w.required.includes("truncated"), "boards from before keep validating");
+});

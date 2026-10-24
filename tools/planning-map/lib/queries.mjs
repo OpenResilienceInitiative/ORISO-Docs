@@ -6,7 +6,8 @@
 // sandbox). All branch/PR field names live in this block; if one is wrong, fix only it:
 //   Issue.linkedBranches -> LinkedBranch.ref (Ref.target Commit.committedDate)
 //   Issue.closedByPullRequestsReferences(first, includeClosedPrs)
-//   Issue.timelineItems(itemTypes: [CROSS_REFERENCED_EVENT]) -> CrossReferencedEvent.source (PullRequest)
+//   Issue.timelineItems(last, itemTypes: [CROSS_REFERENCED_EVENT]) -> CrossReferencedEvent.source (PullRequest), newest first
+//   totalCount (linkedBranches, closedByPullRequestsReferences) and pageInfo.hasPreviousPage (timeline) -> work.truncated
 //   PullRequest.isDraft / reviewDecision / headRefName / headRepository / commits(last:1).commit.statusCheckRollup.state
 //   Repository.refs(refPrefix: "refs/heads/") -> Ref.name, Ref.target Commit.committedDate
 const PR_WORK_FRAGMENT = `
@@ -17,9 +18,9 @@ fragment PrWork on PullRequest {
   commits(last: 1) { nodes { commit { committedDate statusCheckRollup { state } } } }
 }`;
 const ISSUE_WORK_FIELDS = `
-  linkedBranches(first: 10) { nodes { ref { name repository { nameWithOwner isPrivate } target { ... on Commit { committedDate } } } } }
-  closedByPullRequestsReferences(first: 10, includeClosedPrs: true) { nodes { ...PrWork } }
-  timelineItems(first: 20, itemTypes: [CROSS_REFERENCED_EVENT]) { nodes { __typename ... on CrossReferencedEvent { source { __typename ...PrWork } } } }`;
+  linkedBranches(first: 10) { totalCount nodes { ref { name repository { nameWithOwner isPrivate } target { ... on Commit { committedDate } } } } }
+  closedByPullRequestsReferences(first: 10, includeClosedPrs: true) { totalCount nodes { ...PrWork } }
+  timelineItems(last: 20, itemTypes: [CROSS_REFERENCED_EVENT]) { pageInfo { hasPreviousPage } nodes { __typename ... on CrossReferencedEvent { source { __typename ...PrWork } } } }`;
 
 export const REPO_BRANCHES_QUERY = `
 query RepoBranches($owner: String!, $name: String!, $after: String) {
