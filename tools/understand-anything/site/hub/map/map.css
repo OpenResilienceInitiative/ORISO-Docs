@@ -534,3 +534,7 @@ dialog#movedlg::backdrop{background:rgba(20,16,15,.5)}
 .glegend{font-size:12.5px;color:var(--ink-2)}
 .glegend summary{cursor:pointer;min-height:32px;display:flex;align-items:center}
 .glegend ol{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
+
+/* Deep-Link: unbekannte Knoten-ID */
+.map-notfound{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;margin:0 0 12px;padding:10px 14px;border:1px solid var(--warn-line);border-radius:var(--radius);background:var(--warn-wash);color:var(--warn);font-size:13.5px}
+.map-notfound code{font-family:var(--mono);font-size:12px;overflow-wrap:anywhere;max-width:100%;color:var(--ink-2)}

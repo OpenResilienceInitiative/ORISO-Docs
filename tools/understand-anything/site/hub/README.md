@@ -112,8 +112,8 @@ deterministic. `test/map-render.test.mjs` renders the page from
 ### Planning board on the map (`board.json`, ORISO-Docs#208)
 
 `.github/workflows/planning-board-sync.yml` exports the ORISO Roadmap project hourly and on
-"Run workflow". The map footer shows "Stand <syncedAt>" and a "Jetzt synchronisieren" link to that
-workflow's page; no token reaches the browser.
+"Run workflow". The map footer shows "Board synchronisiert <syncedAt>" and a "Jetzt synchronisieren" link to that
+workflow's page; no token reaches the browser. The page's one "Stand" comes from the run manifest (#201).
 
 How `board.json` reaches the page, and why:
 
@@ -148,3 +148,7 @@ Docked at 1561 px and wider; below that it is a drawer opened by the "Releases" 
 ### Gate step indicator and filter (#211)
 
 `BoardAgg.GATES` (same eight gates as `tools/planning-map/gate-options.json`, compared by `test/gate-agg.test.mjs`). `BoardAgg.epicView(..., filter, gate)` adds `gate`/`gateStep` per sub-issue, `gateCounts` and `gateAvailable`; `gate` is `all`, `none` or a gate name and combines with the status filter. The epic view shows a step indicator per gated sub-issue (`role="img"`, spoken label "Gate R3 Human review, step 7 of 8", criteria as tooltip), a gate select and a collapsible list of the criteria. Nothing is shown while no issue has a gate (the field is created by a project admin).
+
+### Deep links
+
+Every capability, folder and file in the map links to its Understand node (`?node=<id>` on the viewer; ids `capability:<slug>`, `<repo>::folder:<dir>`, `<repo>::file:<path>`). The viewer links back with `/map/#node=<id>`: the map zooms to that capability, folder or file, and an unknown id shows a "not found" notice above the controls (`.map-notfound`).
