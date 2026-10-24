@@ -18,8 +18,11 @@ export function hasLinterConfig(root) {
   try { return 'eslintConfig' in JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')); } catch { return false; }
 }
 
-export function measureLint({ root, files }) {
-  const na = reason => ({ value: null, source, details: { reason } });
+export const CI_NO_CHECKOUT_TOOLS = 'not run in the scheduled workflow: the checkout\'s own eslint is never executed in the job that holds the model secret (run health-run.mjs run on a trusted checkout to score lint)';
+// checkoutTools: false = never execute anything of the checkout (scheduled runs, ORISO-Docs#220): "not available", state ci-setup.
+export function measureLint({ root, files, checkoutTools = true }) {
+  const na = (reason, extra = {}) => ({ value: null, source, details: { reason, ...extra } });
+  if (!checkoutTools) return na(CI_NO_CHECKOUT_TOOLS, { state: 'ci-setup' });
   if (!hasLinterConfig(root)) return na('no linter configuration (eslint) in the checkout');
   const bin = join(root, 'node_modules/.bin/eslint');
   if (!existsSync(bin)) return na('eslint is not installed in the checkout (node_modules/.bin/eslint)');

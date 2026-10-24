@@ -3,6 +3,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import path from 'node:path';
+import { existsSync as require_exists } from 'node:fs';
 import { mkRepo, lines, RULES } from './health-fixture.mjs';
 import { measureScope } from '../lib/health-measure/index.mjs';
 import { functionsOf } from '../lib/health-measure/crap.mjs';
@@ -82,6 +83,16 @@ test('lint: zero findings with a working linter is a measured 0; a linter that c
   assert.equal(r.lint.value, null); assert.match(r.lint.details.reason, /Oops, config broken/);
 });
 
+// ORISO-Docs#213 review, finding 10: the scheduled job holds the model secret, so the checkout's own eslint (code of the
+// measured repository) is never executed there. checkoutTools: false makes lint "not available" with that reason.
+test('lint: with checkoutTools false the checkout\'s eslint is never executed; the metric is not available and says why', () => {
+  const root = mkRepo({ '.eslintrc.json': '{}', 'node_modules/.bin/eslint': '#!/usr/bin/env node\nrequire("fs").writeFileSync(__dirname + "/../../RAN", "x");process.stdout.write("[]");', 'src/chat/a.ts': 'debugger;\n' });
+  const r = run(root, ['lint'], { checkoutTools: false });
+  assert.equal(r.lint.value, null);
+  assert.match(r.lint.details.reason, /not run in the scheduled workflow/);
+  assert.equal(r.lint.details.state, 'ci-setup');
+  assert.ok(!require_exists(path.join(root, 'RAN')), 'the stand-in eslint did not run');
+});
 // ---------------------------------------------------------------- duplication
 const block = (n, tag) => lines(n, i => `x${i} = call${i}(arg${i});`).replace(/^/, `// ${tag}\n`);
 test('duplication: a block of 20 lines that appears in two files is 40 of 80 code lines', () => {

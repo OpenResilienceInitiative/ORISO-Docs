@@ -81,6 +81,29 @@ test('without the secret a run writes a record with model null, an empty verdict
   assert.deepEqual(r.written.length, 1);
 });
 
+test('runSelected with checkoutTools false (the scheduled workflow) never runs the checkout\'s eslint; lint is not available with the CI reason', async () => {
+  const w = world();
+  fs.writeFileSync(path.join(w.repo, '.eslintrc.json'), '{}');
+  fs.mkdirSync(path.join(w.repo, 'node_modules/.bin'), { recursive: true });
+  fs.writeFileSync(path.join(w.repo, 'node_modules/.bin/eslint'), '#!/usr/bin/env node\nrequire("fs").writeFileSync(__dirname + "/../../RAN", "x");process.stdout.write("[]");', { mode: 0o755 });
+  const sel = detectScopes({ root: w.root, checkouts: w.checkouts, rules: RULES, limit: 1, scope: 'chat/ORISO-Frontend' });
+  await runSelected({ ...w, rules: RULES, selection: sel, now: '2026-10-24T10:00:00Z', env: {}, checkoutTools: false });
+  const lint = loadRuns(w.root)[0].record.metrics.find(m => m.name === 'lint');
+  assert.equal(lint.status, 'not-available');
+  assert.match(lint.details.reason, /not run in the scheduled workflow/);
+  assert.ok(!fs.existsSync(path.join(w.repo, 'RAN')));
+});
+
+test('CLI: run-selected --no-checkout-tools is accepted and passed on', () => {
+  const w = world();
+  const sel = path.join(w.root, 'sel.json');
+  fs.writeFileSync(sel, JSON.stringify(detectScopes({ root: w.root, checkouts: w.checkouts, rules: RULES, limit: 1, scope: 'chat/ORISO-Frontend' })));
+  const r = spawnSync(process.execPath, [CLI, 'run-selected', '--selection', sel, '--checkouts', w.checkouts, '--root', w.root, '--no-checkout-tools', '--now', '2026-10-24T10:00:00Z'], { encoding: 'utf8', env: { ...process.env, HEALTH_MODEL_API_KEY: '' } });
+  assert.equal(r.status, 0, r.stderr);
+  const lint = loadRuns(w.root)[0].record.metrics.find(m => m.name === 'lint');
+  assert.match(lint.details.reason, /not run in the scheduled workflow/);
+});
+
 test('with the secret and a fake model the record has the verdict, model, and the hash of the steering comments', async () => {
   const w = world();
   const t = fake(GOOD);

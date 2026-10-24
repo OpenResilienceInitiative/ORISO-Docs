@@ -12,6 +12,12 @@ name: Health runs
 #
 # The cron uses the default branch (main); a manual run may use dev. Both jobs refuse any other ref, so a record
 # that reaches a pull request was measured by the reviewed workflow and tooling of a protected branch.
+# The records the run compares against are the ones of dev (where the pull requests land), not of the ref that started
+# the run: a second, data-only checkout of dev (sparse: health/ only) is the --root of detect and run-selected. Nothing
+# from that checkout is executed; the tooling is always the trusted ref.
+# Scheduled runs cannot score lint and crap yet: the job holds the model secret, so the code repositories' own eslint is
+# never executed here (--no-checkout-tools), and there is no coverage step. Both metrics are "not available" in the
+# records, with that reason; the Health view says so.
 # Pull requests opened with the workflow token do not start other workflows; the repository setting
 # "Allow GitHub Actions to create pull requests" must be on, and the checks run when a person pushes to the branch or re-opens it.
 
@@ -30,8 +36,9 @@ on:
 permissions:
   contents: read
 
+# Measure runs (schedule, dispatch) share one group and run one at a time; a pull request only waits for itself.
 concurrency:
-  group: health-runs
+  group: health-runs-${{ github.event_name == 'pull_request' && github.ref || 'measure' }}
   cancel-in-progress: false
 
 jobs:
@@ -44,6 +51,8 @@ jobs:
         with: {persist-credentials: false}
       - uses: actions/setup-node@v4
         with: {node-version: '24'}
+      - run: npm ci
+        working-directory: tools/understand-anything
       - run: node --test tools/understand-anything/platform/test/*.test.mjs tools/planning-map/test/*.test.mjs
   measure:
     if: github.event_name != 'pull_request' && github.repository == 'OpenResilienceInitiative/ORISO-Docs' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
@@ -55,6 +64,8 @@ jobs:
       issues: read
     outputs:
       records: ${{ steps.collect.outputs.count || '0' }}
+    env:
+      HEALTH_RECORDS: ${{ github.workspace }}/.health-records
     steps:
       - name: Stop when a health pull request is still open
         id: guard
@@ -72,6 +83,14 @@ jobs:
       - uses: actions/checkout@v4
         if: steps.guard.outputs.skip != 'true'
         with: {persist-credentials: false}
+      - name: Check out the run records of dev (data only, never executed)
+        if: steps.guard.outputs.skip != 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+          path: .health-records
+          persist-credentials: false
+          sparse-checkout: health
       - uses: actions/setup-node@v4
         if: steps.guard.outputs.skip != 'true'
         with: {node-version: '24'}
@@ -90,7 +109,7 @@ jobs:
           SCOPE: ${{ inputs.scope }}
         run: |
           set -euo pipefail
-          args=(--checkouts "$RUNNER_TEMP/src" --out "$RUNNER_TEMP/selection.json")
+          args=(--checkouts "$RUNNER_TEMP/src" --root "$HEALTH_RECORDS" --out "$RUNNER_TEMP/selection.json")
           if [ -n "$SCOPE" ]; then args+=(--scope "$SCOPE"); fi
           node tools/understand-anything/platform/health-run.mjs detect "${args[@]}"
       - name: Member steering comments (optional)
@@ -115,14 +134,19 @@ jobs:
           if [ -s "$RUNNER_TEMP/steering.json" ]; then steering=(--steering "$RUNNER_TEMP/steering.json"); fi
           node tools/understand-anything/platform/health-run.mjs run-selected \
             --selection "$RUNNER_TEMP/selection.json" --checkouts "$RUNNER_TEMP/src" \
-            --root "$RUNNER_TEMP/health-out" "${steering[@]}"
+            --root "$HEALTH_RECORDS" --no-checkout-tools "${steering[@]}"
       - name: Collect and validate the new records
         id: collect
         if: steps.guard.outputs.skip != 'true'
         run: |
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/health-out/health/runs"
-          node tools/understand-anything/platform/health-run.mjs validate --root "$RUNNER_TEMP/health-out"
+          node tools/understand-anything/platform/health-run.mjs validate --root "$HEALTH_RECORDS"
+          # New records = files under health/runs that dev does not have yet.
+          git -C "$HEALTH_RECORDS" ls-files --others --exclude-standard -- health/runs | while IFS= read -r f; do
+            mkdir -p "$RUNNER_TEMP/health-out/$(dirname "$f")"
+            cp "$HEALTH_RECORDS/$f" "$RUNNER_TEMP/health-out/$f"
+          done
           count=$(find "$RUNNER_TEMP/health-out/health/runs" -name '*.json' | wc -l)
           echo "count=$count" >> "$GITHUB_OUTPUT"
           echo "$count new health record(s)." >> "$GITHUB_STEP_SUMMARY"

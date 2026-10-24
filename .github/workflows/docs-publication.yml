@@ -34,6 +34,8 @@ jobs:
       - uses: pnpm/action-setup@v4
         with: {version: '10.6.2'}
       - run: pnpm --dir site install --frozen-lockfile
+      - run: npm ci
+        working-directory: tools/understand-anything
       - run: node --test site/tests/*.test.mjs site/scripts/page-catalog.test.mjs site/scripts/catalog/*.test.mjs tools/truth-chain/test/*.test.mjs tools/docs-publication/test/*.test.mjs tools/planning-map/test/*.test.mjs tools/understand-anything/site/hub/test/*.test.mjs tools/understand-anything/hosted-viewer/*.test.mjs
       - uses: actions/setup-python@v5
         with: {python-version: '3.13'}

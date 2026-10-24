@@ -11,6 +11,7 @@
 //   node platform/health-run.mjs detect --checkouts <dir> [--limit <n>] [--scope <capability>/<repo>] [--out <file>] [--root <docs repo>]
 //        which scopes need a run: never run, or files of the capability changed since the commit of the latest record
 //   node platform/health-run.mjs run-selected --selection <detect.json> --checkouts <dir> [--steering <steering.json>] [--now <UTC time>] [--root <docs repo>]
+//        [--no-checkout-tools]   never execute anything of the checkouts (their eslint): lint is then "not available" (state ci-setup)
 //        metrics for every selected scope, then the AI verdict step. Secret and model come from the environment only:
 //        HEALTH_MODEL_API_KEY, HEALTH_MODEL, HEALTH_MODEL_PROVIDER (anthropic | openai), HEALTH_MODEL_BASE_URL, HEALTH_MODEL_ALLOW_PRIVATE.
 //        Without the key the verdict is skipped and the record says so (verdictStatus skipped).
@@ -74,7 +75,7 @@ function prepareRun(o) {
   const effective = resolveCriteria(criteria, { capability: scope.capability, path: scope.path === null ? `${scope.repo}/` : `${scope.repo}/${scope.path}/` });
   const rules = o.rules ?? loadRules();
   const names = Object.entries(effective.metrics).filter(([, m]) => m.weight > 0).map(([n]) => n);
-  const measurements = measureScope({ root: checkout, repo: scope.repo, scope: { capability: scope.capability, path: scope.path }, rules, metrics: names, coverage: o.coverage ? resolve(o.coverage) : null });
+  const measurements = measureScope({ root: checkout, repo: scope.repo, scope: { capability: scope.capability, path: scope.path }, rules, metrics: names, coverage: o.coverage ? resolve(o.coverage) : null, checkoutTools: o.checkoutTools !== false });
   const startedAt = o.now ?? new Date().toISOString().replace(/\.\d+Z$/, 'Z');
   let verdict = [];
   if (o.verdict) verdict = JSON.parse(readFileSync(o.verdict, 'utf8'));
@@ -133,7 +134,7 @@ export async function runSelected(o) {
     try {
       let steering = null;
       if (steeringDoc) { try { steering = steeringFor(capability, { doc: steeringDoc }); } catch (e) { process.stderr.write(`health-run: steering not used for ${capability} (${e.message})\n`); } }
-      const r = await runHealthAi({ capability, repo, path, checkout: join(resolve(o.checkouts), repo), root: o.root, rules: o.rules, now: o.now, coverage: o.coverage, ai: { env, transport: o.transport, steering } });
+      const r = await runHealthAi({ capability, repo, path, checkout: join(resolve(o.checkouts), repo), root: o.root, rules: o.rules, now: o.now, coverage: o.coverage, checkoutTools: o.checkoutTools, ai: { env, transport: o.transport, steering } });
       written.push(r.file);
     } catch (e) { failed.push({ scope: sel.scope, message: e.message }); }
   }
@@ -141,13 +142,15 @@ export async function runSelected(o) {
 }
 
 function parseArgs(argv) {
-  const o = {}, flags = new Set(['allow-dirty', 'dry-run']);
+  const o = {}, flags = new Set(['allow-dirty', 'dry-run', 'no-checkout-tools']);
+  const flagKey = { 'allow-dirty': 'allowDirty', 'dry-run': 'dryRun' };
   const map = { selection: 'selection', checkouts: 'checkouts', steering: 'steeringFile', limit: 'limit', scope: 'scope', out: 'out', capability: 'capability', repo: 'repo', checkout: 'checkout', path: 'path', coverage: 'coverage', commit: 'commit', model: 'model', verdict: 'verdict', root: 'root', now: 'now' };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (!a.startsWith('--')) throw new Error(`unexpected argument ${a}`);
     const k = a.slice(2);
-    if (flags.has(k)) o[k === 'allow-dirty' ? 'allowDirty' : 'dryRun'] = true;
+    if (k === 'no-checkout-tools') o.checkoutTools = false;
+    else if (flags.has(k)) o[flagKey[k]] = true;
     else if (map[k]) { if (argv[i + 1] === undefined) throw new Error(`--${k} needs a value`); o[map[k]] = argv[++i]; }
     else throw new Error(`unknown option ${a}`);
   }

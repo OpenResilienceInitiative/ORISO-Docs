@@ -15,8 +15,9 @@ const MEASURES = {
 };
 // root: checkout folder; repo: repository name; scope: { capability, path|null }; rules: capability rules (capabilities.mjs);
 // metrics: names to compute; coverage: path of an lcov / istanbul file or null.
-export function measureScope({ root, repo, scope, rules, metrics = METRIC_NAMES, coverage = null }) {
+// checkoutTools: false = nothing of the checkout is executed (its eslint); the scheduled workflow passes it (ORISO-Docs#220).
+export function measureScope({ root, repo, scope, rules, metrics = METRIC_NAMES, coverage = null, checkoutTools = true }) {
   for (const m of metrics) if (!isMetric(m)) throw new Error(`unknown metric ${m}`);
   const files = scopeFiles({ root, repo, scope, rules });
-  return Object.fromEntries(metrics.map(m => [m, MEASURES[m]({ root, repo, files, coverage })]));
+  return Object.fromEntries(metrics.map(m => [m, MEASURES[m]({ root, repo, files, coverage, checkoutTools })]));
 }
