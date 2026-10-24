@@ -16,7 +16,8 @@
    Idea layer (#223): setIdeas(doc, slugOf) takes map/data/ideas.json, tools(view, lang, labelOf) returns the HTML of the
    tool row above the map (idea list in Plan, "Show ideas" toggle in State and Health), selectIdea/toggleIdeas change it.
    #217 fills VIEWS.health.panel (criteria box), #218 its colours. Details: hub README, "Views".
-   setCriteria(doc): hands over map/data/criteria.json (optional asset, ORISO-Docs#217); map.js calls it once at start. */
+   setCriteria(doc): hands over map/data/criteria.json (optional asset, ORISO-Docs#217); map.js calls it once at start.
+   setSteering(doc): hands over map/data/steering.json (optional asset, ORISO-Docs#221): the Health panel appends a Steering section. */
 (function (root, factory) {
   root.MapViews = factory();
 })(typeof self !== 'undefined' ? self : globalThis, function () {
@@ -137,6 +138,71 @@
       en: 'Health is coming: the squares stay neutral until the health runs are connected.'});
     base.panel = function (block, lang, node) { try { return criteriaBox(block, lang, node); } catch (e) { return '<p class="vnote">' + CT[lang === 'en' ? 'en' : 'de'].unknown + '</p>'; } };
     return base;
+  }
+
+  /* ───────── Health: steering comments (ORISO-Docs#221) ─────────
+     Data: steering.json (optional asset, built by tools/planning-map/steering.mjs export). Only comments of OWNER, MEMBER and
+     COLLABORATOR are exported; the check is repeated here, so a hand-edited file cannot show an outside voice. Every string is
+     escaped, links are https links to issues of OpenResilienceInitiative/ORISO-Docs and nothing else. The section is appended to
+     the output of the Health panel by withSteering() below, it does not touch the criteria box. */
+  var STEERING = null;
+  var ST_REPO = 'https://github.com/OpenResilienceInitiative/ORISO-Docs/issues/';
+  var ST_ISSUE = /^https:\/\/github\.com\/OpenResilienceInitiative\/ORISO-Docs\/issues\/[1-9][0-9]*$/;
+  var ST_COMMENT = /^https:\/\/github\.com\/OpenResilienceInitiative\/ORISO-Docs\/issues\/[1-9][0-9]*#issuecomment-[0-9]+$/;
+  var ST_LOGIN = /^[A-Za-z0-9][A-Za-z0-9-]{0,38}$/;
+  var ST_DATE = /^(\d{4})-(\d{2})-(\d{2})T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/;
+  var ST_ID = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+  var ST_MEMBER = ['OWNER', 'MEMBER', 'COLLABORATOR'];
+  function setSteering(doc) {
+    STEERING = (isObj(doc) && doc.schemaVersion === 1 && isObj(doc.capabilities)) ? doc : null;
+  }
+  var ST = {
+    de: {head: 'Steuerung', note: 'Hinweise von Mitgliedern für diesen Bereich. Agenten lesen sie vor der Arbeit.', none: 'Noch keine Hinweise von Mitgliedern.',
+      add: 'Kommentar auf GitHub hinzufügen', noIssue: 'Für diesen Bereich gibt es noch kein Steuerungs-Issue. Anlegen mit (ohne --apply ist es ein Probelauf):',
+      cut: 'gekürzt, ganzer Kommentar auf GitHub', by: 'von'},
+    en: {head: 'Steering', note: 'Direction from members for this area. Agents read it before they work.', none: 'No steering comments yet.',
+      add: 'Add a comment on GitHub', noIssue: 'There is no steering issue for this area yet. Create it with (without --apply it is a dry run):',
+      cut: 'cut short, full comment on GitHub', by: 'by'}
+  };
+  function stDate(iso, lang) {
+    var m = ST_DATE.exec(iso);
+    return lang === 'de' ? m[3] + '.' + m[2] + '.' + m[1] : m[1] + '-' + m[2] + '-' + m[3];
+  }
+  function stComments(list) {
+    return (Array.isArray(list) ? list : []).filter(function (c) {
+      return isObj(c) && ST_MEMBER.indexOf(c.authorAssociation) >= 0 && typeof c.author === 'string' && ST_LOGIN.test(c.author) &&
+        typeof c.createdAt === 'string' && ST_DATE.test(c.createdAt) && typeof c.body === 'string';
+    }).sort(function (a, b) { return a.createdAt < b.createdAt ? 1 : a.createdAt > b.createdAt ? -1 : 0; });
+  }
+  function steeringBox(lang, node) {
+    lang = lang === 'en' ? 'en' : 'de';
+    var T = ST[lang];
+    var id = typeof node === 'string' && node.indexOf('capability:') === 0 ? node.slice(11) : null;
+    if (id === null || id.length > 64 || !ST_ID.test(id)) return '';
+    var entry = STEERING && HAS.call(STEERING.capabilities, id) && isObj(STEERING.capabilities[id]) ? STEERING.capabilities[id] : null;
+    var url = entry && isObj(entry.issue) && typeof entry.issue.url === 'string' && ST_ISSUE.test(entry.issue.url) ? entry.issue.url : null;
+    var out = '<section class="steer" aria-label="' + T.head + '"><h4 class="steer-h">' + T.head + '</h4><p class="steer-note">' + T.note + '</p>';
+    if (!url) {
+      return out + '<p class="steer-none">' + T.noIssue + '</p><pre class="steer-cmd"><code data-steer-cmd>node tools/planning-map/steering.mjs ensure --capability ' + id + ' --apply</code></pre></section>';
+    }
+    var list = stComments(entry.comments);
+    out += list.length ? '<ul class="steer-l">' + list.map(function (c) {
+      var link = typeof c.url === 'string' && ST_COMMENT.test(c.url) ? c.url : null;
+      var when = '<time datetime="' + esc(c.createdAt) + '">' + stDate(c.createdAt, lang) + '</time>';
+      return '<li class="steer-c"><p class="steer-m"><strong>' + esc(c.author) + '</strong> <span class="steer-o">' + esc(c.authorAssociation.toLowerCase()) + '</span> · ' +
+        (link ? '<a href="' + esc(link) + '" target="_blank" rel="noopener noreferrer">' + when + '</a>' : when) + '</p>' +
+        '<div class="steer-b">' + esc(c.body.slice(0, 2000)) + '</div>' +
+        (c.truncated === true && link ? '<p class="steer-o"><a href="' + esc(link) + '" target="_blank" rel="noopener noreferrer">' + T.cut + '</a></p>' : '') + '</li>';
+    }).join('') + '</ul>' : '<p class="steer-none">' + T.none + '</p>';
+    return out + '<p class="steer-add"><a data-steer-add href="' + esc(url + '#new_comment_field') + '" target="_blank" rel="noopener noreferrer">' + T.add + ' ↗</a></p></section>';
+  }
+  function withSteering(view) {
+    var inner = view.panel;
+    view.panel = function (block, lang, node) {
+      var extra = '';
+      try { extra = steeringBox(lang, node); } catch (e) { extra = ''; }
+      return inner(block, lang, node) + extra;
+    };
   }
 
   /* ───────── Ideas (ORISO-Docs#223) ───────── */
@@ -263,6 +329,7 @@
   };
   VIEWS.health.mark = VIEWS.state.mark;
   VIEWS.health.tools = toggleTools;
+  withSteering(VIEWS.health);
 
   function decode(s) { try { return decodeURIComponent(s); } catch (e) { return null; } }
   function validNode(id) { return id !== null && id.length > 0 && id.length <= NODE_MAX && !/[\u0000-\u001f\u007f]/.test(id); }
@@ -292,7 +359,7 @@
   function tools(view, lang, labelOf) { var v = VIEWS[view]; return v && v.tools ? v.tools(lang, labelOf) : ''; }
 
   return {
-    DEFAULT_VIEW: DEFAULT_VIEW, VIEW_IDS: VIEW_IDS, VIEWS: VIEWS, setCriteria: setCriteria, parseHash: parseHash, buildHash: buildHash,
+    DEFAULT_VIEW: DEFAULT_VIEW, VIEW_IDS: VIEW_IDS, VIEWS: VIEWS, setCriteria: setCriteria, setSteering: setSteering, parseHash: parseHash, buildHash: buildHash,
     setIdeas: setIdeas, ideaCount: function () { return IDEAS.length; }, selectIdea: selectIdea, selectedIdea: function () { return selected; },
     toggleIdeas: toggleIdeas, showIdeas: function () { return shown; }, markedCapabilities: markedSquares, tools: tools
   };

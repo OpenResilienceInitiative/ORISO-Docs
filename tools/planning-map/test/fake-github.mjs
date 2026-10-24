@@ -8,6 +8,8 @@ export function createFakeGitHub({
   releases = ["v2.0.12", "v2.0.13"],
   issues = [],
   gateOptions = null, // null: the project has no Gate field yet
+  steering = [], // ORISO-Docs#221: issues of ORISO-Docs as {number, title, body, state?, labels?, comments: [{author, association, createdAt, body, bot?, minimized?}]}
+  labelExists = true, // does the label area-steering exist yet?
 } = {}) {
   const byRef = new Map();
   const byId = new Map();
@@ -46,6 +48,8 @@ export function createFakeGitHub({
     fake.calls.push({ op, variables });
     if (fake.hooks[op]) await fake.hooks[op](variables, fake);
     if (fake.respond[op]) return fake.respond[op](variables, fake);
+    const st = op?.startsWith("Steering") ? fake.steeringTransport(op, variables) : null;
+    if (st) return st;
     switch (op) {
       case "PlanReleaseField":
         return { data: { organization: { issueFields: { nodes: [
@@ -109,6 +113,58 @@ export function createFakeGitHub({
       default:
         throw new Error(`fake GitHub: unexpected operation ${op}`);
     }
+  };
+  // ORISO-Docs#221: steering issues, their labels and comments (GraphQL shape of lib/steering.mjs).
+  const REPO_NAME = `${ORG}/ORISO-Docs`;
+  const sIssues = [];
+  let sNext = 900;
+  let labelId = labelExists ? "LA_steering" : null;
+  const sComment = (n, c, i) => ({
+    author: c.author === null ? null : { __typename: c.bot ? "Bot" : "User", login: c.author },
+    createdAt: c.createdAt, url: `https://github.com/${REPO_NAME}/issues/${n}#issuecomment-${n}${String(i).padStart(3, "0")}`,
+    authorAssociation: c.association, body: c.body, isMinimized: !!c.minimized,
+  });
+  const addSteering = (raw) => {
+    const number = raw.number ?? sNext++;
+    const issue = { id: `S_${number}`, number, title: raw.title ?? "Steering", body: raw.body ?? "", state: raw.state ?? "OPEN", labels: raw.labels ?? ["area-steering"], url: `https://github.com/${REPO_NAME}/issues/${number}`, comments: (raw.comments ?? []).map((c, i) => sComment(number, c, i)) };
+    sIssues.push(issue);
+    return issue;
+  };
+  steering.forEach(addSteering);
+  const page = (list, after, size) => {
+    const start = after ? Number(after) : 0;
+    const nodes = list.slice(start, start + size);
+    return { pageInfo: { hasNextPage: start + nodes.length < list.length, endCursor: String(start + nodes.length) }, nodes };
+  };
+  const issueOut = (i) => ({ id: i.id, number: i.number, title: i.title, url: i.url, state: i.state, body: i.body, comments: page(i.comments, null, fake.commentPageSize ?? 100) });
+  fake.steeringIssues = sIssues;
+  fake.steeringTransport = (op, v) => {
+    switch (op) {
+      case "SteeringIssues": {
+        const list = sIssues.filter((i) => (v.labels ?? []).every((l) => i.labels.includes(l)));
+        const p = page(list, v.after, fake.issuePageSize ?? 50);
+        return { data: { repository: { issues: { pageInfo: p.pageInfo, nodes: p.nodes.map(issueOut) } } } };
+      }
+      case "SteeringComments": {
+        const i = sIssues.find((x) => x.id === v.id);
+        return { data: { node: i ? { comments: page(i.comments, v.after, fake.commentPageSize ?? 100) } : null } };
+      }
+      case "SteeringRepo":
+        return { data: { repository: { id: "R_docs", label: labelId ? { id: labelId } : null } } };
+      case "SteeringCreateLabel":
+        if (v.input.repositoryId !== "R_docs") return { data: null, errors: [{ type: "NOT_FOUND", message: "unknown repository" }] };
+        labelId = "LA_steering";
+        fake.writes.push({ kind: "label", value: v.input.name });
+        return { data: { createLabel: { label: { id: labelId } } } };
+      case "SteeringCreate": {
+        const { repositoryId, title, body, labelIds } = v.input;
+        if (repositoryId !== "R_docs" || !labelIds.includes(labelId)) return { data: null, errors: [{ type: "NOT_FOUND", message: "unknown repository or label" }] };
+        const issue = addSteering({ title, body });
+        fake.writes.push({ kind: "steering-issue", issue: `${REPO_NAME}#${issue.number}`, value: { title, body } });
+        return { data: { createIssue: { issue: { id: issue.id, number: issue.number, url: issue.url } } } };
+      }
+    }
+    return null;
   };
   fake.issue = (ref) => byRef.get(ref);
   return fake;

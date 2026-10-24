@@ -137,6 +137,13 @@ each key comes from, the reviewer instruction (escaped) and an "Edit" link to th
 (for example CRAP for the frontend repositories) are listed as narrower rules. Without `criteria.json` the panel says so. Up to 980 px the box is
 in the bottom sheet that the Details button opens. Tests: `test/map-criteria.test.mjs` (panel, escaping, guard), `test/map-criteria-render.test.mjs` (Playwright).
 
+Steering section (#221): the Health panel appends a "Steering" section after the criteria box (`withSteering()` wraps `VIEWS.health.panel`, so the
+box and the colouring of #218 are untouched). It renders `map/data/steering.json` (optional asset, `MapViews.setSteering`): member comments newest first
+with author and date, escaped, plus the link "Add a comment on GitHub" to the capability's steering issue (https links to
+`OpenResilienceInitiative/ORISO-Docs/issues/<n>` only). The view repeats the export's member check. An area without a steering issue shows the exact command
+`node tools/planning-map/steering.mjs ensure --capability <id> --apply`. Producer and format: tools/planning-map README, "Human steering". Tests:
+`test/map-steering.test.mjs`, `test/map-steering-render.test.mjs` (Playwright, XSS payload), `test/steering-publication.test.mjs`.
+
 `map.js` sets the fill through the CSSOM (`--view-fill` on each square), never through a `style` attribute. Colours need a light and a dark value.
 Render tests: `test/map-views-render.test.mjs` (Playwright, strict CSP, 320/390/1440 px).
 
