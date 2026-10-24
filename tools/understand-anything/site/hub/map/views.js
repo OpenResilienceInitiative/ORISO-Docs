@@ -32,7 +32,7 @@
 
   var VIEWS = {
     state: {
-      title: {de: 'Stand', en: 'State'},
+      title: {de: 'Zustand', en: 'State'},
       legend: function () { return ''; },
       colour: function () { return null; },
       panel: function () { return ''; }

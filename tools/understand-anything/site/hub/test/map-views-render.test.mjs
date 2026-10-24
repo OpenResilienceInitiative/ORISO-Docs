@@ -58,7 +58,7 @@ test.after(async () => { await browser?.close(); server?.close(); });
 
 test('the switch offers State | Health | Plan, State is on by default, labels follow the language', {skip}, async () => {
   const {page, context, problems} = await open('');
-  assert.deepEqual(await page.locator('#viewSwitch button').allInnerTexts(), ['Stand', 'Gesundheit', 'Plan']);
+  assert.deepEqual(await page.locator('#viewSwitch button').allInnerTexts(), ['Zustand', 'Gesundheit', 'Plan']);
   assert.equal(await pressed(page), 'state');
   assert.equal(await page.locator('#tm.vview').count(), 0, 'State is today\'s map');
   await page.click('.langswitch button[data-lang="en"]');
