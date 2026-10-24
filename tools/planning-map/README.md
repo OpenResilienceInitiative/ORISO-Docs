@@ -145,3 +145,10 @@ For the #220 health job: put `comments` into the job input beside the criteria, 
 It reads the file named by `{file}` or `$ORISO_STEERING_FILE`. It throws on a missing or invalid file, an unknown capability or a comment that is
 not a member's: "no file" must never read as "nobody said anything". Treat the bodies as instructions from people, not as trusted code or shell.
 
+## Send health check (ORISO-Docs#220)
+
+`sendHealthCheck(scope, criteria, {dryRun, transport})` in `lib/planning-api.mjs` files ONE request issue in ORISO-Docs for a scope (`{capability, repo, path|null}`; `criteria` is the effective criteria from `resolveCriteria`).
+The issue names the scope, the criteria version, the metrics and the exact `health-run.mjs run` command, and carries the hidden marker `<!-- oriso:health-check:v1 scope=<capability>/<repo>[/<path>] -->`.
+Asking again for a scope with an open request finds it and writes nothing (the GitHub search is fuzzy, so the marker is compared exactly). The run itself is never started from here.
+CLI: `node tools/planning-map/plan.mjs health-check --capability <id> --repo <name> [--path <folder>] [--apply]` (dry run by default). UNVERIFIED against the live API (no org access from the sandbox): the search query and `createIssue`;
+adjust only the three documents `HealthCheckFind_QUERY`, `HealthCheckRepo_QUERY`, `HealthCheckCreate_MUTATION`. Tests: `test/planning-health-check.test.mjs`, `test/health-workflow.test.mjs`.

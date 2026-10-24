@@ -124,7 +124,7 @@ Add a layer by filling in your view in `MapViews.VIEWS` (classic script `map/vie
       title:  {de, en},          // label on the switch
       legend: function (lang),   // plain text under the map; '' keeps the default State legend
       colour: function (block),  // token name from assets/tokens.css / map.css (without "--") that fills the squares of this block; null = State layers
-      panel:  function (block, lang, node) // HTML added on top of the block detail (escape your own text); '' = nothing; node = "capability:<id>" of the block or null
+      panel:  function (block, lang, node, ctx) // HTML added on top of the block detail (escape your own text); '' = nothing; node = "capability:<id>" of the block or null; ctx = {hcheck} (#220), forward it when wrapping
       mark:   function (block),  // true: the square gets the idea frame (class vmark)
       badge:  function (block),  // optional {band, text}: small score badge on a top-level square (data-hband, data-hs)
       tools:  function (lang, labelOf) // optional HTML for the tool row above the map (#viewTools)
@@ -169,6 +169,12 @@ against a metric that could not be measured. A changed `criteriaVersion` is flag
 over its `uaNodeHref` deep-link helper; only `https://understand.oriso.org/` links are rendered) and to `github.com/OpenResilienceInitiative/<repo>/tree/<commit>` (https
 guard on the whole URL). Tests: `test/health-compare.test.mjs`, `test/health-history-view.test.mjs`, `test/map-history-render.test.mjs` (Playwright, strict CSP, 320/390/1440 px,
 light and dark, DE and EN), `platform/test/health-history.test.mjs`.
+
+"Send health check" section (#220): a separate function `MapViews.healthCheck(scopes, lang)` in `views.js`, placed by `map.js` (`hcheckScopes`, `hcheckHTML`) in the Health view only:
+after the criteria and steering boxes of a capability, and right after the title of a folder or file view. It shows the exact command
+`node tools/planning-map/plan.mjs health-check --capability <id> --repo <name> [--path <folder>]` (a dry run) with "Copy command" and "Copy with --apply", the same pattern as the
+release move without a transport (`plan-ui.js`). A capability gets one command per repository it has code in; a file is checked as its folder and the section says so.
+A scope that is not a plain capability id, repository name and relative folder gets no command. Tests: `test/health-check-view.test.mjs`, `test/map-health-check-render.test.mjs` (Playwright).
 
 `map.js` sets the fill through the CSSOM (`--view-fill` on each square), never through a `style` attribute. Colours need a light and a dark value.
 Render tests: `test/map-views-render.test.mjs` (Playwright, strict CSP, 320/390/1440 px).

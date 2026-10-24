@@ -8,6 +8,8 @@
 // Error codes: see ERROR_CODES (NO_WRITE_RIGHTS, CONFLICT, NOT_FOUND, NOT_ON_BOARD, UNKNOWN_RELEASE, UNKNOWN_GATE, FIELD_MISSING, BAD_REQUEST, BAD_MARKERS, TRANSPORT, GITHUB_ERROR).
 
 import { applySection, bodyHash, parseSection, renderSection, validateJob } from "./job.mjs";
+import { CAPABILITY_IDS, CODE_REPOS } from "../../understand-anything/platform/lib/capabilities.mjs";
+import { criteriaVersion } from "../../understand-anything/platform/lib/health-run.mjs";
 
 export const DEFAULT_ORG = "OpenResilienceInitiative";
 export const PROJECT_ID = "PVT_kwDODkeBP84BHH8p"; // ORISO Roadmap (project #1)
@@ -331,4 +333,101 @@ export const writeJobSection = neverThrows(async (_applied, issue, job, { expect
     result.after = { updatedAt: w.data?.updateIssue?.issue?.updatedAt ?? null, bodyHash: bodyHash(applied.body) };
   }
   return result;
+});
+
+
+// ───────── sendHealthCheck (ORISO-Docs#220, epic #213; spec stories 22 and 29) ─────────
+// "Send health check" for one scope (a capability inside a repository, optionally one folder): files ONE request issue in
+// ORISO-Docs that an operator or an agent picks up. The issue carries a hidden marker with the scope, the version of the
+// effective criteria and the exact command that makes the run, so the work is small, findable and not started twice:
+// asking again for a scope that has an open request returns that issue and writes nothing. The run itself is never started
+// from here; it writes its record through the scheduled workflow or a pull request, like every other run.
+// UNVERIFIED against the live API (no org access from the sandbox): the search query and createIssue. If the first live
+// --apply fails, adjust only the three documents below.
+export const HEALTH_CHECK_OWNER = DEFAULT_ORG;
+export const HEALTH_CHECK_REPO = "ORISO-Docs";
+export const HealthCheckFind_QUERY = `
+query PlanHealthCheckFind($q: String!) {
+  search(query: $q, type: ISSUE, first: 20) { nodes { ... on Issue { id number url title state body } } }
+}`;
+export const HealthCheckRepo_QUERY = `
+query PlanHealthCheckRepo($owner: String!, $name: String!) { repository(owner: $owner, name: $name) { id } }`;
+export const HealthCheckCreate_MUTATION = `
+mutation PlanHealthCheckCreate($input: CreateIssueInput!) { createIssue(input: $input) { issue { id number url } } }`;
+
+const HC_PATH = /^[A-Za-z0-9_.@-]+(\/[A-Za-z0-9_.@-]+)*$/;
+const HC_MARKER = /<!--\s*oriso:health-check:v1\s+scope=([A-Za-z0-9_.@\/-]+)\s*-->/;
+export const healthScopeKey = (s) => `${s.capability}/${s.repo}${s.path ? `/${s.path}` : ""}`;
+export const healthCheckMarker = (s) => `<!-- oriso:health-check:v1 scope=${healthScopeKey(s)} -->`;
+export const parseHealthCheckMarker = (body) => (typeof body === "string" ? HC_MARKER.exec(body)?.[1] ?? null : null);
+// The command the map shows for the same scope (map/views.js keeps a copy of this text; a test compares them).
+export const healthCheckCommand = (s) =>
+  `node tools/understand-anything/platform/health-run.mjs run --capability ${s.capability} --repo ${s.repo}${s.path ? ` --path ${s.path}` : ""} --checkout <path to your ${s.repo} checkout>`;
+
+function checkScope(s) {
+  if (!s || typeof s !== "object") return "scope must be {capability, repo, path}";
+  if (!CAPABILITY_IDS.includes(s.capability)) return `unknown capability ${JSON.stringify(s.capability)}`;
+  if (!CODE_REPOS.includes(s.repo)) return `unknown repository ${JSON.stringify(s.repo)}; known: ${CODE_REPOS.join(", ")}`;
+  if (s.path !== null && s.path !== undefined) {
+    if (typeof s.path !== "string" || !HC_PATH.test(s.path) || s.path.split("/").some((x) => x === "." || x === "..")) return `path ${JSON.stringify(s.path)} is not a folder inside the repository`;
+  }
+  return null;
+}
+
+const healthTitle = (s) => `Health check: ${s.capability} / ${s.repo}${s.path ? ` / ${s.path}` : ""}`;
+function healthBody(s, criteria) {
+  const metrics = Object.entries(criteria.metrics ?? {}).filter(([, m]) => m.weight > 0).map(([n, m]) => `- \`${n}\`: threshold ${m.threshold}, weight ${m.weight}`);
+  return [
+    `Health check requested for \`${s.capability}\` in \`${s.repo}\`${s.path ? `, folder \`${s.path}\`` : ", the whole capability"}.`,
+    "",
+    `Criteria version: \`${criteriaVersion(criteria).slice(0, 12)}\` (the run records the full hash).`,
+    "",
+    "Measured against:",
+    ...(metrics.length ? metrics : ["- no metrics"]),
+    "",
+    "Run it from a clean checkout:",
+    "",
+    "```",
+    healthCheckCommand(s),
+    "```",
+    "",
+    "Agents: read the steering comments of the capability (label `area-steering`, `steeringFor()`) before you start. The run writes `health/runs/...` through a pull request; creating refactoring tasks from the result is a separate planning step.",
+    "",
+    healthCheckMarker(s),
+    "",
+  ].join("\n");
+}
+
+// sendHealthCheck(scope, criteria, {dryRun, transport}); criteria = the effective criteria of the scope (resolveCriteria).
+export const sendHealthCheck = neverThrows(async (_applied, scope, criteria, { dryRun = false, transport } = {}) => {
+  const bad = (message) => ({ ok: false, error: fail("BAD_REQUEST", message), applied: [] });
+  if (typeof transport !== "function") return bad("sendHealthCheck needs a transport");
+  const problem = checkScope(scope);
+  if (problem) return bad(problem);
+  if (!criteria || typeof criteria !== "object" || !criteria.metrics || !criteria.tests || !criteria.instruction) return bad("criteria must be the effective criteria of the scope");
+  const s = { capability: scope.capability, repo: scope.repo, path: scope.path ?? null };
+  const key = healthScopeKey(s);
+  const none = (error) => ({ ok: false, error, applied: [] });
+  const q = `repo:${HEALTH_CHECK_OWNER}/${HEALTH_CHECK_REPO} is:issue is:open in:body "oriso:health-check:v1 scope=${key}"`;
+  const found = await call(transport, HealthCheckFind_QUERY, { q }, key);
+  if (found.error) return none(found.error);
+  // The search is fuzzy: only an open issue whose marker names exactly this scope is the request.
+  const hit = (found.data?.search?.nodes ?? []).filter((n) => n && n.state === "OPEN" && parseHealthCheckMarker(n.body) === key).sort((a, b) => a.number - b.number)[0];
+  const common = { ok: true, dryRun, scope: s };
+  if (hit) {
+    const issue = { number: hit.number, url: hit.url, title: hit.title, state: hit.state };
+    return { ...common, action: "exists", wrote: false, issue, results: [{ issue: `${HEALTH_CHECK_OWNER}/${HEALTH_CHECK_REPO}#${hit.number}`, role: "health-check", before: "open", after: "open", changed: false, wrote: false }] };
+  }
+  const title = healthTitle(s), body = healthBody(s, criteria);
+  const plan = { ...common, title, body };
+  if (dryRun) return { ...plan, action: "create", wrote: false, results: [{ issue: null, role: "health-check", before: null, after: "open", changed: true, wrote: false }] };
+  const repo = await call(transport, HealthCheckRepo_QUERY, { owner: HEALTH_CHECK_OWNER, name: HEALTH_CHECK_REPO }, key);
+  if (repo.error) return none(repo.error);
+  const repositoryId = repo.data?.repository?.id;
+  if (!repositoryId) return none(fail("NOT_FOUND", `${HEALTH_CHECK_OWNER}/${HEALTH_CHECK_REPO} is not readable`));
+  const made = await call(transport, HealthCheckCreate_MUTATION, { input: { repositoryId, title, body } }, key);
+  if (made.error) return none(made.error);
+  const issue = made.data?.createIssue?.issue;
+  if (!issue) return none(fail("GITHUB_ERROR", "GitHub did not return the new issue"));
+  return { ...plan, action: "created", wrote: true, issue: { number: issue.number, url: issue.url, title, state: "OPEN" }, results: [{ issue: `${HEALTH_CHECK_OWNER}/${HEALTH_CHECK_REPO}#${issue.number}`, role: "health-check", before: null, after: "open", changed: true, wrote: true }] };
 });

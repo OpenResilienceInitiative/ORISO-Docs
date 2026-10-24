@@ -40,6 +40,9 @@ full record stays reachable by `file`. When a scope has more than 50 runs, `tota
 | `startedAt` | UTC ISO time. |
 | `metrics[]` | `name` (closed list, `platform/lib/health-metrics.mjs`), `status` (`measured` or `not-available`), `value`, `threshold`, `better`, `unit`, `weight`, `pass`, `score`, `source`, `details`. |
 | `verdict[]` | Per criterion judged by the model: `criterion`, `score` 0 to 100, `weight`, `reasons` (at least one). Empty when `model` is `null`. A verdict criterion is never a metric name: metrics are scored by threshold. |
+| `verdictStatus` | Optional (#220). `ran`: a model wrote the verdict. `skipped`: the AI step did not run (no secret, no model configured, private repository, model error); then `model` is `null` and `verdict` is empty. Absent in records of runs that never tried. |
+| `verdictNote` | Optional. Why the verdict was skipped. Never contains a secret. |
+| `inputs` | Optional (#220). `criteria`: sha256 of the criteria the model was given, equal to `criteriaVersion`. `steering`: sha256 of the member steering comments it was given (author, time, text), or `null` when no steering source was available. |
 | `overall` | Weighted mean of all scored criteria (metric scores and verdict scores), rounded to an integer; `null` when nothing was scored. |
 | `links` | `graphNode` (`capability:<id>` or `<repo>::folder:<path>`), `source` (GitHub tree URL of the measured folder at `commit`). |
 
@@ -81,3 +84,25 @@ clean unless `--commit` or `--allow-dirty` is given, because the record names th
 
 Tests: `platform/test/health-run.test.mjs` (schema, scoring, layout), `platform/test/health-measure.test.mjs` (one fixture repository per metric),
 `platform/test/health-run-cli.test.mjs`. Map side: `tools/understand-anything/site/hub/README.md`, "Views".
+
+## Scheduled runs and the AI verdict (#220)
+
+`.github/workflows/health-runs.yml` runs nightly and on demand (optional input `scope`, `<capability>/<repo>`), on `main` or `dev` only.
+
+1. **measure**: clones the public code repositories (`health-run.mjs repos`, branch `dev`, full history), then
+   `health-run.mjs detect` selects the scopes that are new (never run) or whose files changed since the commit of their latest record
+   (`git diff <commit>..HEAD`, files assigned to capabilities by the same rules as the map; at most 6 per run, never-run first, then the longest wait).
+   `health-run.mjs run-selected` measures them and then calls the verdict step.
+2. **propose**: validates the new records and opens one pull request against `dev` (`bot/health-runs-<run id>`, `Refs ...#213`). Nothing is merged by the workflow.
+   While such a pull request is open, the next run stops before it does any work.
+
+The verdict step (`platform/lib/health-verdict.mjs`) gives the model the effective criteria, the member steering comments of the capability and the metrics just measured,
+and no source code. It scores three review criteria (`maintainability`, `test-quality`, `structure`) from 0 to 100 with reasons; metrics stay scored by threshold.
+Configuration is environment only: `HEALTH_MODEL_API_KEY` (secret), `HEALTH_MODEL` (model name), `HEALTH_MODEL_PROVIDER` (`anthropic` default, or `openai` for any
+OpenAI-compatible endpoint with `HEALTH_MODEL_BASE_URL`). Without the key or the model name the record is metrics only (`verdictStatus: skipped`). Repositories that are not known
+public are never sent unless `HEALTH_MODEL_ALLOW_PRIVATE=true` (the workflow never sets it). A model error or an unusable answer also leaves a skipped verdict with the reason.
+
+Metrics that need an installed checkout (`lint`, `crap` coverage) are `not-available` in the workflow runs; they are measured when a run is made on a prepared checkout.
+
+"Send health check" for one scope: `node tools/planning-map/plan.mjs health-check --capability <id> --repo <name> [--path <folder>] [--apply]` files one request issue in ORISO-Docs
+(dry run without `--apply`; an open request for the same scope is found, not duplicated). The Health panel shows this command for the capability, folder or file the map is drilled into.

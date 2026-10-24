@@ -1,0 +1,178 @@
+name: Health runs
+
+# Scheduled and on-demand health runs for the capability map (ORISO-Docs#220, epic #213).
+#
+#   measure  checks out the public code repositories, finds the scopes whose files changed since their latest record
+#            (or that never had a run), measures them, and asks the model for a verdict on the numbers.
+#   propose  validates the new run records and opens ONE pull request against dev with them. Nothing is merged here.
+#
+# Without the HEALTH_MODEL_API_KEY secret the runs are metrics only: each record says "verdictStatus: skipped" and
+# carries model null. Private repositories are never cloned and never sent to a model. The model gets the criteria,
+# the member steering comments and the measured numbers, not source code.
+#
+# The cron uses the default branch (main); a manual run may use dev. Both jobs refuse any other ref, so a record
+# that reaches a pull request was measured by the reviewed workflow and tooling of a protected branch.
+# Pull requests opened with the workflow token do not start other workflows; the repository setting
+# "Allow GitHub Actions to create pull requests" must be on, and the checks run when a person pushes to the branch or re-opens it.
+
+on:
+  schedule:
+    - cron: '43 3 * * *'
+  workflow_dispatch:
+    inputs:
+      scope:
+        description: 'One scope, <capability>/<repo> (for example chat/ORISO-Frontend). Empty: every scope that is new or changed.'
+        required: false
+        type: string
+  pull_request:
+    paths: ['tools/understand-anything/platform/**', 'tools/planning-map/**', '.github/workflows/health-runs.yml', 'health/**']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: health-runs
+  cancel-in-progress: false
+
+jobs:
+  tests:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24'}
+      - run: node --test tools/understand-anything/platform/test/*.test.mjs tools/planning-map/test/*.test.mjs
+  measure:
+    if: github.event_name != 'pull_request' && github.repository == 'OpenResilienceInitiative/ORISO-Docs' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      pull-requests: read
+      issues: read
+    outputs:
+      records: ${{ steps.collect.outputs.count || '0' }}
+    steps:
+      - name: Stop when a health pull request is still open
+        id: guard
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          open=$(gh pr list --repo "$GITHUB_REPOSITORY" --state open --limit 100 --json headRefName --jq '[.[] | select(.headRefName | startswith("bot/health-runs-"))] | length')
+          if [ "$open" -gt 0 ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Health runs wait::$open health pull request(s) are still open. Review or close them first; new runs would measure the same scopes again."
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.guard.outputs.skip != 'true'
+        with: {persist-credentials: false}
+      - uses: actions/setup-node@v4
+        if: steps.guard.outputs.skip != 'true'
+        with: {node-version: '24'}
+      - name: Clone the public code repositories (full history, files on demand)
+        if: steps.guard.outputs.skip != 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/src"
+          for repo in $(node tools/understand-anything/platform/health-run.mjs repos); do
+            git clone --quiet --filter=blob:none --no-tags --branch dev "https://github.com/OpenResilienceInitiative/$repo" "$RUNNER_TEMP/src/$repo" \
+              || echo "::warning title=Clone failed::$repo could not be cloned; its scopes are skipped this time."
+          done
+      - name: Find the scopes that need a run
+        if: steps.guard.outputs.skip != 'true'
+        env:
+          SCOPE: ${{ inputs.scope }}
+        run: |
+          set -euo pipefail
+          args=(--checkouts "$RUNNER_TEMP/src" --out "$RUNNER_TEMP/selection.json")
+          if [ -n "$SCOPE" ]; then args+=(--scope "$SCOPE"); fi
+          node tools/understand-anything/platform/health-run.mjs detect "${args[@]}"
+      - name: Member steering comments (optional)
+        if: steps.guard.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node tools/planning-map/steering.mjs export --out "$RUNNER_TEMP/steering.json" || echo "::warning title=Steering export failed::The verdict is written without steering comments this time."
+      - name: Measure, then judge
+        if: steps.guard.outputs.skip != 'true'
+        env:
+          HEALTH_MODEL_API_KEY: ${{ secrets.HEALTH_MODEL_API_KEY }}
+          HEALTH_MODEL: ${{ vars.HEALTH_MODEL }}
+          HEALTH_MODEL_PROVIDER: ${{ vars.HEALTH_MODEL_PROVIDER }}
+          HEALTH_MODEL_BASE_URL: ${{ vars.HEALTH_MODEL_BASE_URL }}
+        run: |
+          set -euo pipefail
+          if [ -z "$HEALTH_MODEL_API_KEY" ]; then
+            echo "::notice title=Metrics only::HEALTH_MODEL_API_KEY is not set: the records carry no verdict (verdictStatus skipped)."
+          fi
+          steering=()
+          if [ -s "$RUNNER_TEMP/steering.json" ]; then steering=(--steering "$RUNNER_TEMP/steering.json"); fi
+          node tools/understand-anything/platform/health-run.mjs run-selected \
+            --selection "$RUNNER_TEMP/selection.json" --checkouts "$RUNNER_TEMP/src" \
+            --root "$RUNNER_TEMP/health-out" "${steering[@]}"
+      - name: Collect and validate the new records
+        id: collect
+        if: steps.guard.outputs.skip != 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/health-out/health/runs"
+          node tools/understand-anything/platform/health-run.mjs validate --root "$RUNNER_TEMP/health-out"
+          count=$(find "$RUNNER_TEMP/health-out/health/runs" -name '*.json' | wc -l)
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+          echo "$count new health record(s)." >> "$GITHUB_STEP_SUMMARY"
+      - name: Keep the new records for the pull request
+        if: steps.guard.outputs.skip != 'true' && steps.collect.outputs.count != '0'
+        uses: actions/upload-artifact@v4
+        with:
+          name: health-runs
+          path: ${{ runner.temp }}/health-out/health/runs/
+          if-no-files-found: error
+          retention-days: 7
+  propose:
+    needs: measure
+    if: needs.measure.outputs.records != '0' && github.repository == 'OpenResilienceInitiative/ORISO-Docs' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: dev, persist-credentials: true}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24'}
+      - uses: actions/download-artifact@v4
+        with:
+          name: health-runs
+          path: ${{ runner.temp }}/health-in
+      - name: Open the pull request against dev
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p health/runs
+          cp -r "$RUNNER_TEMP/health-in/." health/runs/
+          node tools/understand-anything/platform/health-run.mjs validate
+          if [ -z "$(git status --porcelain health/runs/)" ]; then echo "Nothing new to propose."; exit 0; fi
+          count=$(git status --porcelain --untracked-files=all health/runs/ | wc -l)
+          branch="bot/health-runs-${GITHUB_RUN_ID}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$branch"
+          git add health/runs/
+          git commit -m "chore(health): $count health run record(s) from workflow run ${GITHUB_RUN_ID}"
+          git push origin "$branch"
+          {
+            echo "Health run records written by [workflow run ${GITHUB_RUN_ID}](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}): scopes that were new, or whose files changed since their last record."
+            echo
+            echo "Only files under \`health/runs/\` change. A record without a verdict says \`verdictStatus: skipped\` and names why (no secret, no model configured, model error)."
+            echo
+            echo "Refs OpenResilienceInitiative/ORISO-Docs#213"
+          } > "$RUNNER_TEMP/pr-body.md"
+          gh pr create --base dev --head "$branch" --title "chore(health): $count health run record(s)" --body-file "$RUNNER_TEMP/pr-body.md"

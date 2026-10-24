@@ -10,6 +10,7 @@ export function createFakeGitHub({
   gateOptions = null, // null: the project has no Gate field yet
   steering = [], // ORISO-Docs#221: issues of ORISO-Docs as {number, title, body, state?, labels?, comments: [{author, association, createdAt, body, bot?, minimized?}]}
   labelExists = true, // does the label area-steering exist yet?
+  healthIssues = [], // ORISO-Docs#220: health check request issues of ORISO-Docs as {number, title, body, state?}
 } = {}) {
   const byRef = new Map();
   const byId = new Map();
@@ -50,6 +51,7 @@ export function createFakeGitHub({
     if (fake.respond[op]) return fake.respond[op](variables, fake);
     const st = op?.startsWith("Steering") ? fake.steeringTransport(op, variables) : null;
     if (st) return st;
+    if (op?.startsWith("PlanHealthCheck")) return fake.healthTransport(op, variables);
     switch (op) {
       case "PlanReleaseField":
         return { data: { organization: { issueFields: { nodes: [
@@ -165,6 +167,37 @@ export function createFakeGitHub({
       }
     }
     return null;
+  };
+  // ORISO-Docs#220: health check requests (search, repository id, createIssue). The search is as fuzzy as GitHub's:
+  // it returns every issue that carries the marker prefix, and the client has to check the exact scope itself.
+  const hIssues = [];
+  let hNext = 950;
+  const addHealth = (raw) => {
+    const number = raw.number ?? hNext++;
+    const issue = { id: `H_${number}`, number, title: raw.title ?? "Health check", body: raw.body ?? "", state: raw.state ?? "OPEN", url: `https://github.com/${REPO_NAME}/issues/${number}` };
+    hIssues.push(issue);
+    return issue;
+  };
+  healthIssues.forEach(addHealth);
+  fake.healthIssues = hIssues;
+  fake.healthTransport = (op, v) => {
+    switch (op) {
+      case "PlanHealthCheckFind": {
+        const onlyOpen = /\bis:open\b/.test(v.q);
+        const nodes = hIssues.filter((i) => (!onlyOpen || i.state === "OPEN") && i.body.includes("oriso:health-check:v1"));
+        return { data: { search: { nodes: nodes.map((i) => ({ id: i.id, number: i.number, url: i.url, title: i.title, state: i.state, body: i.body })) } } };
+      }
+      case "PlanHealthCheckRepo":
+        return { data: { repository: { id: "R_docs" } } };
+      case "PlanHealthCheckCreate": {
+        const { repositoryId, title, body } = v.input;
+        if (repositoryId !== "R_docs") return { data: null, errors: [{ type: "NOT_FOUND", message: "unknown repository" }] };
+        const issue = addHealth({ title, body });
+        fake.writes.push({ kind: "health-check-issue", issue: `${REPO_NAME}#${issue.number}`, value: { title, body } });
+        return { data: { createIssue: { issue: { id: issue.id, number: issue.number, url: issue.url } } } };
+      }
+    }
+    throw new Error(`fake GitHub: unexpected health check operation ${op}`);
   };
   fake.issue = (ref) => byRef.get(ref);
   return fake;
