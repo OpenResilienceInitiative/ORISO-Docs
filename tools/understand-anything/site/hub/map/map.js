@@ -300,6 +300,8 @@ var BOARD = (MEAS.board && typeof BoardAgg !== 'undefined') ? BoardAgg.aggregate
 var WORKIDX = (MEAS.board && typeof BoardAgg !== 'undefined' && BoardAgg.workIndex) ? BoardAgg.workIndex(MEAS.board, MEAS.epics) : null;
 /* Agent-Jobs aus dem Abschnitt der Issue-Beschreibung (ORISO-Docs#216, map/jobs.js); null, solange kein Issue einen Job meldet. */
 var JOBS = (MEAS.board && typeof MapJobs !== 'undefined') ? MapJobs.index(MEAS.board, MEAS.epics) : null;
+/* Refactoring-Aufgaben je Fähigkeit (ORISO-Docs#222): Label refactoring, Stand aus dem Board-Status; ohne Board null (keine Marke, kein Zahlenwert). */
+MapViews.setRefactoring((MEAS.board && typeof BoardAgg !== 'undefined' && BoardAgg.refactoring) ? BoardAgg.refactoring(MEAS.board, MEAS.epics) : null, function(id){ return id === 'base' ? 'shared' : (SLUG[id] || null); });
 
 /* ───────── Hilfen ───────── */
 var lang = document.documentElement.getAttribute('data-lang')==='en' ? 'en' : 'de';
@@ -671,6 +673,12 @@ function applyView(){
     /* Gesundheits-Merkmal (Band und Wert aus dem Laufprotokoll) nur auf den Quadraten der Übersicht; Farbe allein trägt nie die Aussage. */
     var hb = e.dataset.id && BY[e.dataset.id] && v.badge ? v.badge(BY[e.dataset.id]) : null;
     if (hb){ e.dataset.hband = hb.band; e.dataset.hs = hb.text; } else { delete e.dataset.hband; delete e.dataset.hs; }
+    /* Refactoring-Marke (geplant / läuft / erledigt, immer als Wort) nur auf den Quadraten der Übersicht (ORISO-Docs#222). */
+    var rf = e.dataset.id && BY[e.dataset.id] && v.refactor ? v.refactor(BY[e.dataset.id], lang) : null;
+    if (rf){ e.dataset.rf = rf.state; e.dataset.rft = rf.text; e.dataset.rfw = rf.word; } else { delete e.dataset.rf; delete e.dataset.rft; delete e.dataset.rfw; }
+    /* Die Quadrate tragen ein aria-label; die Marke steht dann auch darin, sonst hörten Screenreader sie nicht. */
+    if (e.dataset.arb === undefined && rf && e.hasAttribute('aria-label')) e.dataset.arb = e.getAttribute('aria-label');
+    if (e.dataset.arb !== undefined){ if (rf) e.setAttribute('aria-label', e.dataset.arb+' – '+rf.text); else { e.setAttribute('aria-label', e.dataset.arb); delete e.dataset.arb; } }
     /* Ideen-Markierung nur auf den Quadraten der Übersicht (data-id), mit Rahmen statt nur Farbe. */
     e.classList.toggle('vmark', !!(e.dataset.id && BY[e.dataset.id] && v.mark(BY[e.dataset.id])));
   });

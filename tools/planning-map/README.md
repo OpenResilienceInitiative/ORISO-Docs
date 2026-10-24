@@ -152,3 +152,20 @@ The issue names the scope, the criteria version, the metrics and the exact `heal
 Asking again for a scope with an open request finds it and writes nothing (the GitHub search is fuzzy, so the marker is compared exactly). The run itself is never started from here.
 CLI: `node tools/planning-map/plan.mjs health-check --capability <id> --repo <name> [--path <folder>] [--apply]` (dry run by default). UNVERIFIED against the live API (no org access from the sandbox): the search query and `createIssue`;
 adjust only the three documents `HealthCheckFind_QUERY`, `HealthCheckRepo_QUERY`, `HealthCheckCreate_MUTATION`. Tests: `test/planning-health-check.test.mjs`, `test/health-workflow.test.mjs`.
+
+## Refactoring tasks (ORISO-Docs#222)
+
+A health finding that needs work becomes planned work, never an automatic change (spec stories 25, 26).
+
+```
+node tools/planning-map/plan.mjs propose-refactor --scope <capability[:repo[:path]]> --epic Org/Repo#n [--record <run record.json>] [--apply]
+```
+
+- **Category.** ORISO has four native issue types (Task, Bug, Feature, Epic) and no category field on the board, and a board field is never invented. So "refactoring" is the **repository label `refactoring`** on an issue of type **Task** (pinned in `board-contract.json`, `categories`). `--apply` creates the label in the epic's repository when it is missing.
+- **What `--apply` writes**: one Task in the epic's repository (title `Refactor <capability> (<repo>/<path>)`), a body with Why / What to build / Acceptance / Reviewer test plan, the link to the run record (`health/runs/...`, on `dev`) and its findings (failed metrics, metrics that could not be measured, model verdicts below 60), then `addSubIssue` to the epic and `addProjectV2ItemById` to the ORISO Roadmap. The scope sits in a hidden marker `<!-- oriso:refactor:v1 scope=<capability>[:<repo>[:<path>]] -->` that the export reads. Record text is cleaned (no `@` mentions, no `#12` links).
+- **Dry run by default.** Without `--apply` it reads, checks rights and prints the plan (title, body, labels) and writes nothing. The same scope proposed twice finds the open task through its marker and answers `exists`.
+- **`--record`** is a run record of `platform/health-run.mjs`; it is validated and must be the run of the scope (capability, repository, folder; parts the scope leaves out are taken from the record). Without it the task says "No run record attached".
+- **Typed errors** (exit 1, JSON as for the other commands): `NO_WRITE_RIGHTS`, `NOT_FOUND` (epic or repository), `PRIVATE_REPO` (epic or scope repository is private: nothing about it is planned from the public map), `FIELD_MISSING` (no issue type Task), `BAD_REQUEST` (scope, epic or record), `TRANSPORT`, `GITHUB_ERROR`. If the task was created but the link to the epic or the board failed, the error names the task in `applied`: do not create it twice.
+- The GraphQL documents are unverified against the live API (no org access from the sandbox); if the first live `--apply` fails, adjust only the block at the top of `lib/refactor.mjs`.
+- **Export.** `board.json` items with the label carry `refactor: {scope}` (scope from the marker, `null` for a task made by hand). Private repositories, drafts and redacted items never contribute. Older boards without the field stay valid.
+- **State** (map side, `BoardAgg.refactoring`): planned = open and not started (Backlog, Ready, On hold, no status); running = In progress, In review, QA internal; done = QA external, Done or closed. A task goes to the capability named in its scope; a task without a scope goes through the existing epic mapping.

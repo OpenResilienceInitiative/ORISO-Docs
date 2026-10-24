@@ -29,7 +29,7 @@ test('an invalid idea page fails publication', t => {
 
 test('the allow-list and the static inputs ship views.js and ideas.json (the Plan view needs both)', () => {
   const src = fs.readFileSync(hub + 'publication.mjs', 'utf8');
-  assert.match(src, /map\\\/\(index\\\.html\|map\\\.css\|map\\\.js\|board-agg\\\.js\|jobs\\\.js\|plan-ui\\\.js\|views\\\.js\|data\\\/\([^)]*\|ideas\|steering\)/);
+  assert.match(src, /map\\\/\(index\\\.html\|map\\\.css\|refactor\\\.css\|map\\\.js\|board-agg\\\.js\|jobs\\\.js\|plan-ui\\\.js\|views\\\.js\|data\\\/\([^)]*\|ideas\|steering\)/);
   assert.match(src, /'map\/views\.js'/);
   assert.match(src, /ideasAsset\(root/);
   assert.match(fs.readFileSync(hub + 'map/index.html', 'utf8'), /\/map\/views\.js/);

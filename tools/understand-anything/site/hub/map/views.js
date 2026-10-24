@@ -20,8 +20,11 @@
    badge(block) {band, text}|null  optional: data for the small score badge of a top-level square (Health); map.js sets data-hband and data-hs from it.
    setCriteria(doc): hands over map/data/criteria.json (optional asset, ORISO-Docs#217); map.js calls it once at start.
    setHealth(doc, slugFn): hands over map/data/health.json (optional asset, ORISO-Docs#218): the latest run record per scope.
+   refactor(block, lang) {state, text}|null  optional: the small refactoring marker of a top-level square (Health, ORISO-Docs#222); map.js sets data-rf and data-rft from it.
+   setRefactoring(index, slugFn): hands over BoardAgg.refactoring(board, epics) (ORISO-Docs#222): marker on the squares and the "Refactoring" section of the Health panel.
    setSteering(doc): hands over map/data/steering.json (optional asset, ORISO-Docs#221): the Health panel appends a Steering section.
-   healthCheck(scopes, lang): HTML of the "Send health check" section for the drilled-in scope (ORISO-Docs#220); map.js places it in Health only. */
+   healthCheck(scopes, lang): HTML of the "Send health check" section for the drilled-in scope (ORISO-Docs#220); in Health only: the block panel
+                              gets it through withHealthCheck (ctx.hcheck), folder and file views from map.js. */
 (function (root, factory) {
   root.MapViews = factory();
 })(typeof self !== 'undefined' ? self : globalThis, function () {
@@ -661,6 +664,105 @@
     };
   }
 
+  /* ───────── Health: refactoring tasks (ORISO-Docs#222) ─────────
+     Data: BoardAgg.refactoring(board, epics) of board-agg.js, handed over by map.js through setRefactoring(index, slugFn).
+     index = {bySlug: {<capability id>: slot}, byBlock: {<block id>: slot}}, slot = {planned, running, done, total, items[]}.
+     NO INVENTED DATA: without a board there is no marker and the panel says the state is unknown; a square without a task has
+     no marker either. The marker always carries the state as a word (never colour only). Task links must be https links to an
+     issue of OpenResilienceInitiative, anything else is shown as text. Own section function (refactorBox) and own wrapper
+     (withRefactoring); the criteria box, the run panel and the steering section are not touched. */
+  var RFX = null, RFSLUG = function () { return null; };
+  var RF_URL = /^https:\/\/github\.com\/OpenResilienceInitiative\/[A-Za-z0-9_.-]+\/issues\/[1-9][0-9]*$/;
+  var RF_SAFE = /^[A-Za-z0-9_.@\/-]+$/;
+  var RF_STATES = ['running', 'planned', 'done'];
+  var RFT = {
+    de: {head: 'Refactoring', word: {planned: 'geplant', running: 'läuft', done: 'erledigt'}, marker: 'Refactoring',
+      noBoard: 'Board noch nicht synchronisiert: Der Stand der Refactoring-Aufgaben ist unbekannt.', none: 'Noch keine Refactoring-Aufgabe für diese Fähigkeit.',
+      cmd: 'Refactoring für diesen Bereich vorschlagen (ohne --apply ist es ein Probelauf, es wird nichts angelegt):', epic: 'Epic', status: 'Status'},
+    en: {head: 'Refactoring', word: {planned: 'planned', running: 'running', done: 'done'}, marker: 'Refactoring',
+      noBoard: 'Board not synced yet: the state of the refactoring tasks is unknown.', none: 'No refactoring task yet for this capability.',
+      cmd: 'Propose a refactoring for this area (a dry run unless --apply, nothing is created):', epic: 'Epic', status: 'Status'}
+  };
+  function setRefactoring(index, slugFn) {
+    RFX = isObj(index) && (isObj(index.bySlug) || isObj(index.byBlock)) ? index : null;
+    RFSLUG = typeof slugFn === 'function' ? slugFn : function () { return null; };
+  }
+  function rfItems(slot) {
+    if (!isObj(slot) || !Array.isArray(slot.items)) return [];
+    return slot.items.filter(function (i) { return isObj(i) && RF_STATES.indexOf(i.state) >= 0 && Number.isInteger(i.number) && i.number > 0; });
+  }
+  /* All tasks of a square: found by their scope (capability id) plus found by the epic mapping (block id). */
+  function rfTasks(block) {
+    if (!RFX || !block) return [];
+    var cap = RFSLUG(block.id), out = [];
+    if (cap && isObj(RFX.bySlug) && HAS.call(RFX.bySlug, cap)) out = out.concat(rfItems(RFX.bySlug[cap]));
+    if (isObj(RFX.byBlock) && HAS.call(RFX.byBlock, block.id)) out = out.concat(rfItems(RFX.byBlock[block.id]));
+    return out;
+  }
+  function rfCounts(tasks) {
+    var c = {planned: 0, running: 0, done: 0};
+    tasks.forEach(function (t) { c[t.state]++; });
+    return c;
+  }
+  /* {state, word, text} for the small marker on the square, or null. The word is part of the text. */
+  function refactorMarker(block, lang) {
+    var tasks = rfTasks(block);
+    if (!tasks.length) return null;
+    var T = RFT[lang === 'en' ? 'en' : 'de'], c = rfCounts(tasks), state = null;
+    RF_STATES.forEach(function (s) { if (!state && c[s] > 0) state = s; });
+    return {state: state, word: T.word[state], text: T.marker + ': ' + T.word[state] + (tasks.length > 1 ? ' (' + tasks.length + ')' : '')};
+  }
+  function rfCommand(block, node) {
+    var cap = RFSLUG(block.id) || (typeof node === 'string' && node.indexOf('capability:') === 0 ? node.slice(11) : null);
+    if (!cap || !RF_SAFE.test(cap)) return '';
+    var scope = cap, rec = '', r = recordOf(block);
+    if (r && RF_SAFE.test(r.scope.repo) && (r.scope.path === null || RF_SAFE.test(r.scope.path))) {
+      var stamp = r.startedAt.replace(/\.\d+Z$/, 'Z').replace(/[-:]/g, '');
+      scope += ':' + r.scope.repo + (r.scope.path === null ? '' : ':' + r.scope.path);
+      rec = ' --record health/runs/' + cap + '/' + r.scope.repo + '/' + (r.scope.path === null ? '' : 'at/' + r.scope.path + '/') + stamp + '.json';
+    }
+    return 'node tools/planning-map/plan.mjs propose-refactor --scope ' + scope + rec + ' --epic <Org/Repo#n> [--apply]';
+  }
+  function refactorBox(block, lang, node) {
+    lang = lang === 'en' ? 'en' : 'de';
+    var T = RFT[lang], out = '<section class="rfx" data-refactor aria-label="' + T.head + '"><h4 class="rfx-h">' + T.head + '</h4>';
+    var tasks = rfTasks(block);
+    if (!RFX) out += '<p class="rfx-none">' + T.noBoard + '</p>';
+    else if (!tasks.length) out += '<p class="rfx-none">' + T.none + '</p>';
+    else {
+      var c = rfCounts(tasks);
+      out += '<p class="rfx-sum">' + ['planned', 'running', 'done'].map(function (s) { return T.word[s] + ' <strong>' + c[s] + '</strong>'; }).join(' · ') + '</p><ul class="rfx-l">';
+      tasks.forEach(function (t) {
+        var label = (typeof t.repository === 'string' ? t.repository : '') + ' #' + t.number + (typeof t.title === 'string' && t.title ? ' ' + t.title : '');
+        var href = typeof t.url === 'string' && RF_URL.test(t.url) ? t.url : null;
+        out += '<li class="rfx-t" data-rf-task="' + t.number + '" data-rf-state="' + t.state + '"><span class="rfx-s" data-rf-word>' + esc(T.word[t.state]) + '</span> ' +
+          (href ? '<a data-rf-link href="' + esc(href) + '" target="_blank" rel="noopener noreferrer">' + esc(label) + ' ↗</a>' : '<span>' + esc(label) + '</span>') +
+          (typeof t.status === 'string' && t.status ? ' <span class="rfx-st">' + T.status + ': ' + esc(t.status) + '</span>' : '') + '</li>';
+      });
+      out += '</ul>';
+    }
+    var cmd = rfCommand(block, node);
+    if (cmd) out += '<p class="rfx-cmdh">' + T.cmd + '</p><pre class="rfx-cmd"><code data-rf-cmd>' + esc(cmd) + '</code></pre>';
+    return out + '</section>';
+  }
+  function withRefactoring(view) {
+    var inner = view.panel;
+    view.panel = function (block, lang, node, ctx) {
+      var extra = '';
+      try { extra = refactorBox(block, lang, node); } catch (e) { extra = ''; }
+      return inner(block, lang, node, ctx) + extra;
+    };
+    var legend = view.legend;
+    view.legend = function (lang) {
+      var base = legend(lang), any = false;
+      try { any = !!RFX && (Object.keys(RFX.bySlug || {}).length > 0 || Object.keys(RFX.byBlock || {}).length > 0); } catch (e) { any = false; }
+      if (!any) return base;
+      return base + (lang === 'en' ? ' Refactoring: a marker in the square says planned, running or done, from the board status of the refactoring tasks.'
+        : ' Refactoring: Eine Marke im Quadrat nennt geplant, läuft oder erledigt, nach dem Board-Status der Refactoring-Aufgaben.');
+    };
+    view.refactor = function (block, lang) { try { return refactorMarker(block, lang); } catch (e) { return null; } };
+  }
+
   /* ───────── Ideas (ORISO-Docs#223) ───────── */
   var FLOW = ['idea', 'discussed', 'specified', 'epic'];
   var FLOW_L = {
@@ -787,6 +889,7 @@
   VIEWS.health.tools = toggleTools;
   /* Health panel order: run record (#218), criteria box (#217), health check (#220), refactoring (#222), history (#219), steering (#221, last). */
   withHealthCheck(VIEWS.health);
+  withRefactoring(VIEWS.health);
   withHistory(VIEWS.health);
   withSteering(VIEWS.health);
 
@@ -819,7 +922,7 @@
 
   return {
     DEFAULT_VIEW: DEFAULT_VIEW, VIEW_IDS: VIEW_IDS, VIEWS: VIEWS, setCriteria: setCriteria, setHealth: setHealth, healthBand: bandOf, parseHash: parseHash, buildHash: buildHash,
-    setSteering: setSteering, healthCheck: healthCheck, healthCheckCommand: healthCheckCommand,
+    setSteering: setSteering, healthCheck: healthCheck, healthCheckCommand: healthCheckCommand, setRefactoring: setRefactoring,
     compareRuns: compareRuns, setNodeLink: setNodeLink, setIdeas: setIdeas, ideaCount: function () { return IDEAS.length; }, selectIdea: selectIdea, selectedIdea: function () { return selected; },
     toggleIdeas: toggleIdeas, showIdeas: function () { return shown; }, markedCapabilities: markedSquares, tools: tools
   };

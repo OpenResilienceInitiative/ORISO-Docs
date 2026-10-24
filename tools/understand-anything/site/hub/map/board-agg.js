@@ -192,6 +192,35 @@
     });
     return {byItem: byItem, byEpic: byEpic};
   }
+  /* ───── Refactoring tasks per capability (ORISO-Docs#222) ─────
+     Category = the label `refactoring` (items[].refactor in board.json, tools/planning-map/board-contract.json "categories").
+     State of one task, from the board status and open/closed only:
+       done    = closed, or QA external / Done
+       running = In progress / In review / QA internal
+       planned = everything else that is open (Backlog, Ready, On hold, no status)
+     Capability: the scope the task carries (capability id, e.g. "email-templates") goes to bySlug, because a refactoring epic
+     usually spans many capabilities; a task without a scope goes through the existing epic mapping (capabilityIndex) to byBlock.
+     Both maps hold {planned, running, done, total, items[]}; a task that maps nowhere is only counted in `unmapped`. */
+  var REFACTORING_LABEL = 'refactoring';
+  var RUNNING = ['In progress', 'In review', 'QA internal'], DONE = ['QA external', 'Done'];
+  function refactorState(it) {
+    if (it.state === 'CLOSED' || DONE.indexOf(it.status) >= 0) return 'done';
+    return RUNNING.indexOf(it.status) >= 0 ? 'running' : 'planned';
+  }
+  function refactoring(board, epics) {
+    var idx = capabilityIndex(epics), out = {byBlock: {}, bySlug: {}, unmapped: 0};
+    function slot(map, id) { return map[id] || (map[id] = {planned: 0, running: 0, done: 0, total: 0, items: []}); }
+    ((board && board.items) || []).forEach(function (it) {
+      if (it.contentType !== 'Issue' || !it.refactor || !it.repository || typeof it.number !== 'number') return;
+      var scope = typeof it.refactor.scope === 'string' ? it.refactor.scope : null, slug = scope ? scope.split(':')[0] : null;
+      var block = slug ? null : capabilityOf(it, idx);
+      if (!slug && !block) { out.unmapped++; return; }
+      var s = slot(slug ? out.bySlug : out.byBlock, slug || block), st = refactorState(it);
+      s[st]++; s.total++;
+      s.items.push({repository: repoName(it.repository), number: it.number, title: it.title, url: it.url, state: st, status: it.status || null, scope: scope});
+    });
+    return out;
+  }
   /* Release scope (ORISO-Docs#209): what each Platform release holds, grouped into reviewed milestones. */
   var EFFORT_DAYS = {S: 2, M: 4, L: 8};
   var PRIORITIES = ['Urgent', 'High', 'Medium', 'Low'];
@@ -257,5 +286,5 @@
     var r = name && rel && rel.byName && rel.byName[name];
     return r ? r.capabilities.slice() : [];
   }
-  return {GATES: GATES, gateStep: gateStep, STATUSES: STATUSES, GROUP: GROUP, TOKEN: TOKEN, FILTERS: FILTERS, EFFORT_DAYS: EFFORT_DAYS, PRIORITIES: PRIORITIES, capabilityIndex: capabilityIndex, aggregate: aggregate, epicView: epicView, workIndex: workIndex, releases: releases, milestones: milestones, releaseCapabilities: releaseCapabilities};
+  return {GATES: GATES, gateStep: gateStep, STATUSES: STATUSES, GROUP: GROUP, TOKEN: TOKEN, FILTERS: FILTERS, EFFORT_DAYS: EFFORT_DAYS, PRIORITIES: PRIORITIES, capabilityIndex: capabilityIndex, aggregate: aggregate, epicView: epicView, workIndex: workIndex, refactoring: refactoring, refactorState: refactorState, REFACTORING_LABEL: REFACTORING_LABEL, releases: releases, milestones: milestones, releaseCapabilities: releaseCapabilities};
 });

@@ -605,6 +605,22 @@
                 "pattern": "^https://"
               }
             }
+          },
+          "refactor": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "scope"
+            ],
+            "properties": {
+              "scope": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^[a-z][a-z0-9-]*(:[A-Za-z0-9_.-]+(:[A-Za-z0-9_.@/-]+)?)?$"
+              }
+            }
           }
         }
       }
