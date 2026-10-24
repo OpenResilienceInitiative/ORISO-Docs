@@ -77,6 +77,8 @@ and protanopia simulation. The hub documents the scheme in the "Colour scheme" s
 
 ## Capability map (`/map/`)
 
+Every data file carries the run manifest of the unified run (`run`, see `tools/planning-map/README.md`). The footer shows one "Stand" and the commit per repo, and warns when files come from different runs or are unstamped. `build-map-data.mjs --run run.json` stamps the files.
+
 `map/` is the hub's "Fähigkeiten-Karte" page: `index.html` (shell), `map.css`,
 `map.js` and generated data in `map/data/` (`counts.json`, `drill.json`,
 `zoom.json`, `epics.json`, `descriptions.json`, `links.json`). The page has no

@@ -15,7 +15,8 @@ export function loadInputs(dir) {
   return Object.fromEntries(INPUTS.map(name => [name, JSON.parse(readFileSync(new URL(name + '.json', base), 'utf8'))]));
 }
 
-export function buildMapData(inputs) {
+// `run` is the run manifest (tools/planning-map/lib/run-manifest.mjs); when given it is stamped into every file.
+export function buildMapData(inputs, run) {
   for (const name of INPUTS) if (inputs[name] === undefined) throw new Error('Missing map input: ' + name);
   const tot = {};
   for (const counts of Object.values(inputs.agg)) for (const [k, v] of Object.entries(counts)) tot[k] = (tot[k] || 0) + v;
@@ -30,7 +31,7 @@ export function buildMapData(inputs) {
       if (!list.some(x => x[0] === repo && x[1] === number)) list.push([repo, number, title]);
     }
   }
-  const doc = body => ({schemaVersion: 1, ...body});
+  const doc = body => ({schemaVersion: 1, ...body, ...(run ? {run} : {})});
   return {
     'counts.json': doc({agg: inputs.agg, rel: inputs.rel, tot}),
     'descriptions.json': doc({desc: inputs.desc}),
@@ -45,6 +46,8 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const arg = name => { const i = process.argv.indexOf('--' + name); if (i < 0 || !process.argv[i + 1]) throw new Error('Usage: build-map-data.mjs --inputs DIR --out DIR'); return process.argv[i + 1]; };
   const out = path.resolve(arg('out'));
   mkdirSync(out, {recursive: true});
-  const files = buildMapData(loadInputs(path.resolve(arg('inputs')) + '/'));
+  const runIndex = process.argv.indexOf('--run');
+  const run = runIndex < 0 ? undefined : JSON.parse(readFileSync(path.resolve(process.argv[runIndex + 1]), 'utf8'));
+  const files = buildMapData(loadInputs(path.resolve(arg('inputs')) + '/'), run);
   for (const [name, doc] of Object.entries(files)) writeFileSync(path.join(out, name), JSON.stringify(doc) + '\n');
 }

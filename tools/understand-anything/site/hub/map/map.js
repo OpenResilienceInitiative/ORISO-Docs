@@ -1234,20 +1234,40 @@ function syncLine(){
   var at = MEAS.syncedAt, when = '';
   if (at){ var d = new Date(at); when = isNaN(d) ? String(at) : d.toLocaleString(de() ? 'de-DE' : 'en-GB', {dateStyle:'medium', timeStyle:'short'}); }
   var link = '<a href="'+SYNC_URL+'" target="_blank" rel="noopener">'+(de()?'Jetzt synchronisieren':'Sync now')+'</a>';
-  return '<div id="boardSync"><b>'+(at ? (de()?'Stand ':'As of ')+esc(when) : (de()?'Board noch nicht synchronisiert':'Board not synced yet'))+'.</b> '+
+  /* Kein zweites "Stand": der eine Stand der Seite kommt aus dem Lauf-Manifest (standHtml, #201). */
+  return '<div id="boardSync"><b>'+(at ? (de()?'Board synchronisiert ':'Board synced ')+esc(when) : (de()?'Board noch nicht synchronisiert':'Board not synced yet'))+'.</b> '+
     (de()?'Planungsstand aus dem GitHub-Board. ':'Planning status from the GitHub board. ')+link+'</div>';
 }
+/* Ein Stand für die ganze Seite: kommt aus dem Lauf-Manifest, das jede Datendatei trägt.
+   Weichen die Läufe der Dateien voneinander ab oder fehlt das Manifest, steht eine Warnung dabei. */
+function standInfo(){
+  var docs = MEAS.runs || [], ref = null, problems = [];
+  docs.forEach(function(d){ if (!d.run) problems.push(d.file + (de() ? ' ohne Lauf-Manifest' : ' has no run manifest')); else if (!ref) ref = d.run; });
+  docs.forEach(function(d){ if (d.run && ref && (d.run.runId !== ref.runId || d.run.generatedAt !== ref.generatedAt)) problems.push(d.file + ' (' + d.run.runId + ')'); });
+  return {ref: ref, problems: problems};
+}
+function standHtml(){
+  var s = standInfo(), r = s.ref;
+  var when = r ? r.generatedAt.replace('T', ' ').replace(/:\d\d(\.\d+)?Z$/, ' UTC') : null;
+  var h = '<b>' + (de() ? 'Stand ' : 'As of ') + esc(when || (de() ? 'unbekannt' : 'unknown')) + '.</b>';
+  if (r) h += ' ' + (de() ? 'Lauf ' : 'Run ') + esc(r.runId) + ', ' + (de() ? 'Commits: ' : 'commits: ') +
+    Object.keys(r.commits).sort().map(function(k){ return esc(k) + ' ' + esc(r.commits[k].slice(0, 7)); }).join(', ') + '.';
+  var w = '';
+  if (s.problems.length) w = '<div id="stand-warning" role="alert" class="standwarn"><b>' + (de() ? 'Achtung: Die Daten stammen aus verschiedenen Läufen oder sind nicht gestempelt:' : 'Warning: the data comes from different runs or is unstamped:') + '</b> ' + s.problems.map(esc).join(', ') + '.</div>';
+  return {line: h, warning: w};
+}
 function drawMeas(){
-  var o=MEAS.tot;
-  document.getElementById('meas').innerHTML = syncLine() + (de()
-   ? '<div><b>Stand 22.10.2026.</b> Vergleichsbasis: onlineBeratung-frontend (04/2024), vi-saas-admin (02/2026) und die vi-saas-Dienste (2025) gegen ORISO-Frontend, ORISO-Admin und die vier ORISO-Dienste, Zweig dev.</div>'+
-     '<div><b>Gemessen:</b> Zeilen Programm- und Testcode, Testfälle und Testdateien je Block (jede Datei genau einmal, zugeordnet über Stichworte im Pfad); Testfälle: Java @Test, @ParameterizedTest, @RepeatedTest; TypeScript it( / test( in .test-, .spec- und .cy-Dateien. Summe '+fmt(o.old_l)+' → '+fmt(o.new_l)+' Zeilen, '+fmt(o.old_t)+' → '+fmt(o.new_t)+' Tests (Leistungsübersicht: 136.955 → 512.923 Zeilen, 3.117 → 20.902 Tests; Abweichung durch die Auswahl der Dateiarten). Unverändert / umgearbeitet / gelöscht: alte Datei am selben Pfad und Anteil ihrer Zeilen ab 12 Zeichen, die wörtlich noch vorkommen. Storybook-Ansichten: veröffentlichte Story-Verzeichnisse auf dev.oriso.org. Epics, Teilaufgaben, Priorität, Aufwand, Release: GitHub-Issues in ORISO-Frontend, ORISO-Admin und ORISO-Docs, Stand 22.10.2026; Teilaufgaben aus privaten Repositorien sind nicht aufgeführt.</div>'+
-     '<div><b>Geplant (Schätzung):</b> offene Teilaufgaben der Epics je Block (sowie Epics ohne Teilaufgaben) in den sechs Code-Repositorien; Aufwand S = 2, M = 4, L = 8 Personentage, fehlender Aufwand = M; mal '+PLF+' Zeilen je Personentag. Der Faktor ist die Zahl neuer Zeilen in Frontend und Verwaltung geteilt durch den Aufwand aller erledigten Aufgaben dort (gleiche Regel). „In Arbeit“ = mindestens ein Pull Request verweist auf die Aufgabe; der Projektstatus (Backlog, Ready, In progress) ist hier nicht lesbar. Nur auf der Übersicht; Ordner und Dateien haben keinen eigenen Plan. Beschreibungen „Was ist das?“: Datei-Zusammenfassungen aus den Understand-Anreicherungen (englisch, nur ein Teil der Dateien); „Hängt zusammen mit“: Import- und Aufruf-Kanten des Understand-Graphen (Stand 14.08.2026).</div>'+
+  var o=MEAS.tot, st=standHtml();
+  var html = de()
+   ? '<div>'+st.line+' Vergleichsbasis: onlineBeratung-frontend (04/2024), vi-saas-admin (02/2026) und die vi-saas-Dienste (2025) gegen ORISO-Frontend, ORISO-Admin und die vier ORISO-Dienste, Zweig dev.</div>'+
+     '<div><b>Gemessen:</b> Zeilen Programm- und Testcode, Testfälle und Testdateien je Block (jede Datei genau einmal, zugeordnet über Stichworte im Pfad); Testfälle: Java @Test, @ParameterizedTest, @RepeatedTest; TypeScript it( / test( in .test-, .spec- und .cy-Dateien. Summe '+fmt(o.old_l)+' → '+fmt(o.new_l)+' Zeilen, '+fmt(o.old_t)+' → '+fmt(o.new_t)+' Tests (Leistungsübersicht: 136.955 → 512.923 Zeilen, 3.117 → 20.902 Tests; Abweichung durch die Auswahl der Dateiarten). Unverändert / umgearbeitet / gelöscht: alte Datei am selben Pfad und Anteil ihrer Zeilen ab 12 Zeichen, die wörtlich noch vorkommen. Storybook-Ansichten: veröffentlichte Story-Verzeichnisse auf dev.oriso.org. Epics, Teilaufgaben, Priorität, Aufwand, Release: GitHub-Issues in ORISO-Frontend, ORISO-Admin und ORISO-Docs zum Zeitpunkt des Laufs; Teilaufgaben aus privaten Repositorien sind nicht aufgeführt.</div>'+
+     '<div><b>Geplant (Schätzung):</b> offene Teilaufgaben der Epics je Block (sowie Epics ohne Teilaufgaben) in den sechs Code-Repositorien; Aufwand S = 2, M = 4, L = 8 Personentage, fehlender Aufwand = M; mal '+PLF+' Zeilen je Personentag. Der Faktor ist die Zahl neuer Zeilen in Frontend und Verwaltung geteilt durch den Aufwand aller erledigten Aufgaben dort (gleiche Regel). „In Arbeit“ = mindestens ein Pull Request verweist auf die Aufgabe; der Projektstatus (Backlog, Ready, In progress) ist hier nicht lesbar. Nur auf der Übersicht; Ordner und Dateien haben keinen eigenen Plan. Beschreibungen „Was ist das?“: Datei-Zusammenfassungen aus den Understand-Anreicherungen (englisch, nur ein Teil der Dateien); „Hängt zusammen mit“: Import- und Aufruf-Kanten des Understand-Graphen aus demselben Lauf.</div>'+
      '<div><b>Geschätzt:</b> die Aufteilung neuer Zeilen in beauftragt und zusätzlich (Verhältnis der Testzahlen der Bausteine in der Leistungsübersicht), die Zuordnung der Epics zu Blöcken (nach Titel) und die Stufe der Epics (aus erledigten Teilaufgaben statt Reifegrad). Gezählt wird Menge, nicht Qualität.</div>'
-   : '<div><b>As of 22 October 2026.</b> Baseline: onlineBeratung-frontend (04/2024), vi-saas-admin (02/2026) and the vi-saas services (2025) against ORISO-Frontend, ORISO-Admin and the four ORISO services, branch dev.</div>'+
-     '<div><b>Measured:</b> lines of program and test code, test cases and test files per block (each file exactly once, assigned by keywords in its path); test cases: Java @Test, @ParameterizedTest, @RepeatedTest; TypeScript it( / test( in .test, .spec and .cy files. Total '+fmt(o.old_l)+' → '+fmt(o.new_l)+' lines, '+fmt(o.old_t)+' → '+fmt(o.new_t)+' tests (service overview: 136,955 → 512,923 lines, 3,117 → 20,902 tests; the gap comes from the choice of file types). Unchanged / reworked / deleted: old file at the same path and the share of its lines of 12+ characters that still occur verbatim. Storybook views: published story indexes on dev.oriso.org. Epics, sub-issues, priority, effort, release: GitHub issues in ORISO-Frontend, ORISO-Admin and ORISO-Docs as of 22 Oct 2026; sub-issues in private repositories are not listed.</div>'+
-     '<div><b>Planned (estimate):</b> open sub-issues of the epics per block (and epics without sub-issues) in the six code repositories; effort S = 2, M = 4, L = 8 person-days, missing effort = M; times '+PLF+' lines per person-day. The factor is the number of new lines in frontend and administration divided by the effort of all completed issues there (same rule). “In progress” = at least one pull request references the issue; the project status (Backlog, Ready, In progress) cannot be read here. Overview only; folders and files have no plan of their own. “What is this?” descriptions: file summaries from the Understand enrichments (only part of the files); “Connected with”: import and call edges of the Understand graph (as of 14 Aug 2026).</div>'+
-     '<div><b>Estimated:</b> the split of new lines into commissioned and additional (ratio of the building blocks’ test counts in the service overview), the assignment of epics to blocks (by title) and the epics’ stage (from completed sub-issues instead of maturity). This counts quantity, not quality.</div>');
+   : '<div>'+st.line+' Baseline: onlineBeratung-frontend (04/2024), vi-saas-admin (02/2026) and the vi-saas services (2025) against ORISO-Frontend, ORISO-Admin and the four ORISO services, branch dev.</div>'+
+     '<div><b>Measured:</b> lines of program and test code, test cases and test files per block (each file exactly once, assigned by keywords in its path); test cases: Java @Test, @ParameterizedTest, @RepeatedTest; TypeScript it( / test( in .test, .spec and .cy files. Total '+fmt(o.old_l)+' → '+fmt(o.new_l)+' lines, '+fmt(o.old_t)+' → '+fmt(o.new_t)+' tests (service overview: 136,955 → 512,923 lines, 3,117 → 20,902 tests; the gap comes from the choice of file types). Unchanged / reworked / deleted: old file at the same path and the share of its lines of 12+ characters that still occur verbatim. Storybook views: published story indexes on dev.oriso.org. Epics, sub-issues, priority, effort, release: GitHub issues in ORISO-Frontend, ORISO-Admin and ORISO-Docs at the time of the run; sub-issues in private repositories are not listed.</div>'+
+     '<div><b>Planned (estimate):</b> open sub-issues of the epics per block (and epics without sub-issues) in the six code repositories; effort S = 2, M = 4, L = 8 person-days, missing effort = M; times '+PLF+' lines per person-day. The factor is the number of new lines in frontend and administration divided by the effort of all completed issues there (same rule). “In progress” = at least one pull request references the issue; the project status (Backlog, Ready, In progress) cannot be read here. Overview only; folders and files have no plan of their own. “What is this?” descriptions: file summaries from the Understand enrichments (only part of the files); “Connected with”: import and call edges of the Understand graph from the same run.</div>'+
+     '<div><b>Estimated:</b> the split of new lines into commissioned and additional (ratio of the building blocks’ test counts in the service overview), the assignment of epics to blocks (by title) and the epics’ stage (from completed sub-issues instead of maturity). This counts quantity, not quality.</div>';
+  document.getElementById('meas').innerHTML = syncLine() + html + st.warning;
 }
 
 /* ───────── Meilensteine und Releases (ORISO-Docs#209): linke Seitenleiste, schreibgeschützt ───────── */
@@ -1526,25 +1546,37 @@ renderAll(); lastW = tm.clientWidth;
    unter "optional" meldet; ihr Inhalt liegt in MEAS unter dem Dateinamen ohne .json (board.json wird zu MEAS.board). */
 var DATA_FILES = ['counts.json', 'descriptions.json', 'drill.json', 'epics.json', 'links.json', 'zoom.json'];
 var OPTIONAL_DATA = ['board.json', 'milestones.json'];
+/* Optionale Dateien, die der vereinheitlichte Lauf stempelt (tools/planning-map/nightly-run.mjs). */
+var RUN_DATA = ['board.json'];
 function fetchJson(name, optional){
   return fetch('/map/data/' + name, {credentials: 'same-origin'}).then(function(r){
     if (!r.ok){ if (optional) return null; throw new Error(name + ' ' + r.status); }
     return r.json();
   }).catch(function(e){ if (optional) return null; throw e; });
 }
-function mergeDocs(docs){
+function mergeDocs(docs, names, runs){
   var meas = {};
-  docs.forEach(function(doc){ if (!doc) return; Object.keys(doc).forEach(function(k){ if (k !== 'schemaVersion') meas[k] = doc[k]; }); });
+  docs.forEach(function(doc, i){
+    if (!doc) return;
+    if (runs) runs.push({file: names[i], run: doc.run || null});
+    Object.keys(doc).forEach(function(k){ if (k !== 'schemaVersion' && k !== 'run') meas[k] = doc[k]; });
+  });
   return meas;
 }
 function loadMeasurements(){
   return Promise.all(DATA_FILES.map(function(n){ return fetchJson(n, false); })).then(function(docs){
-    var meas = mergeDocs(docs);
+    var runs = [], meas = mergeDocs(docs, DATA_FILES, runs);
     /* Optionale Dateien nur laden, wenn der Erzeuger sie in links.json meldet (kein 404 in der Konsole). */
     var wanted = (meas.optional || []).filter(function(n){ return OPTIONAL_DATA.indexOf(n) >= 0; });
     return Promise.all(wanted.map(function(n){ return fetchJson(n, true); })).then(function(extra){
-      /* Optionale Dateien behalten ihre Form (board.json folgt tools/planning-map/board.schema.json) und liegen unter ihrem Dateinamen: MEAS.board. */
-      extra.forEach(function(doc, i){ if (doc) meas[wanted[i].replace(/\.json$/, '')] = doc; });
+      /* Optionale Dateien behalten ihre Form (board.json folgt tools/planning-map/board.schema.json) und liegen unter ihrem Dateinamen: MEAS.board.
+         Erzeugnisse des Laufs (RUN_DATA, nicht die gepflegte milestones.json) zählen trotzdem für den gemeinsamen Stand (#201). */
+      extra.forEach(function(doc, i){
+        if (!doc) return;
+        if (RUN_DATA.indexOf(wanted[i]) >= 0) runs.push({file: wanted[i], run: doc.run || null});
+        meas[wanted[i].replace(/\.json$/, '')] = doc;
+      });
+      meas.runs = runs;
       return meas;
     });
   });
