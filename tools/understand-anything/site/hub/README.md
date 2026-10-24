@@ -173,3 +173,13 @@ Docked at 1561 px and wider; below that it is a drawer opened by the "Releases" 
 ### Deep links
 
 Every capability, folder and file in the map links to its Understand node (`?node=<id>` on the viewer; ids `capability:<slug>`, `<repo>::folder:<dir>`, `<repo>::file:<path>`). The viewer links back with `/map/#node=<id>`: the map zooms to that capability, folder or file, and an unknown id shows a "not found" notice above the controls (`.map-notfound`).
+
+### Agent jobs on the map (`map/jobs.js`, ORISO-Docs#216)
+
+`map/jobs.js` (classic script, run by `test/jobs-agg.test.mjs`, rendered by `test/map-jobs-render.test.mjs`) reads `items[].job` and the finding `job-stale` from `board.json` (written by `tools/planning-map`, see its README, "Agent jobs"). It adds, without touching the branch logic:
+
+- a job badge next to the branch badge on epic cards, in the epic header and on every task in the epic view (`Job: running · stale`, epics sum `Jobs: 3 running · 1 stale · 1 waiting for a human`); both badges open `#workdlg` through the same `data-work` ref, also for a job without any branch;
+- a job block at the top of the pop-up: state, where (runner, machine label), started and updated (UTC), model, next step, report link (https only, anything else stays text), branches and PRs as the agent reported them, and the stale reason;
+- a Jobs filter in the epic view (all, running, stopped, waiting for a human, stale), combined with the status and gate filters; `running` includes stale ones, `stale` is only the stale ones. It is hidden when no issue of the epic has a job.
+
+`map.js` only calls it (`JOBS`, `badges()`, `applyFilter`/`filterHTML` in `epicBoardHTML`, the pop-up, the `job-stale` finding text, the `data-jfilter` click). No job content exists for private repositories, drafts or redacted items: the export never writes it.
