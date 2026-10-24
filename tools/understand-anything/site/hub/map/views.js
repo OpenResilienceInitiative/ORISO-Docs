@@ -721,12 +721,12 @@
   var RFX = null, RFSLUG = function () { return null; };
   var RF_URL = /^https:\/\/github\.com\/OpenResilienceInitiative\/[A-Za-z0-9_.-]+\/issues\/[1-9][0-9]*$/;
   var RF_SAFE = /^[A-Za-z0-9_.@\/-]+$/;
-  var RF_STATES = ['running', 'planned', 'done'];
+  var RF_STATES = ['running', 'planned', 'done', 'dropped']; /* dropped: closed as not planned or duplicate, never shown as done */
   var RFT = {
-    de: {head: 'Refactoring', word: {planned: 'geplant', running: 'läuft', done: 'erledigt'}, marker: 'Refactoring',
+    de: {head: 'Refactoring', word: {planned: 'geplant', running: 'läuft', done: 'erledigt', dropped: 'verworfen'}, marker: 'Refactoring',
       noBoard: 'Board noch nicht synchronisiert: Der Stand der Refactoring-Aufgaben ist unbekannt.', none: 'Noch keine Refactoring-Aufgabe für diese Fähigkeit.',
       cmd: 'Refactoring für diesen Bereich vorschlagen (ohne --apply ist es ein Probelauf, es wird nichts angelegt):', epic: 'Epic', status: 'Status'},
-    en: {head: 'Refactoring', word: {planned: 'planned', running: 'running', done: 'done'}, marker: 'Refactoring',
+    en: {head: 'Refactoring', word: {planned: 'planned', running: 'running', done: 'done', dropped: 'dropped'}, marker: 'Refactoring',
       noBoard: 'Board not synced yet: the state of the refactoring tasks is unknown.', none: 'No refactoring task yet for this capability.',
       cmd: 'Propose a refactoring for this area (a dry run unless --apply, nothing is created):', epic: 'Epic', status: 'Status'}
   };
@@ -747,7 +747,7 @@
     return out;
   }
   function rfCounts(tasks) {
-    var c = {planned: 0, running: 0, done: 0};
+    var c = {planned: 0, running: 0, done: 0, dropped: 0};
     tasks.forEach(function (t) { c[t.state]++; });
     return c;
   }
@@ -778,7 +778,7 @@
     else if (!tasks.length) out += '<p class="rfx-none">' + T.none + '</p>';
     else {
       var c = rfCounts(tasks);
-      out += '<p class="rfx-sum">' + ['planned', 'running', 'done'].map(function (s) { return T.word[s] + ' <strong>' + c[s] + '</strong>'; }).join(' · ') + '</p><ul class="rfx-l">';
+      out += '<p class="rfx-sum">' + ['planned', 'running', 'done', 'dropped'].filter(function (s) { return s !== 'dropped' || c.dropped; }).map(function (s) { return T.word[s] + ' <strong>' + c[s] + '</strong>'; }).join(' · ') + '</p><ul class="rfx-l">';
       tasks.forEach(function (t) {
         var label = (typeof t.repository === 'string' ? t.repository : '') + ' #' + t.number + (typeof t.title === 'string' && t.title ? ' ' + t.title : '');
         var href = typeof t.url === 'string' && RF_URL.test(t.url) ? t.url : null;

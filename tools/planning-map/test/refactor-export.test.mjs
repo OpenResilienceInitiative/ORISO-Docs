@@ -58,3 +58,18 @@ test("boards from before #222 stay valid (refactor is optional)", () => {
   const old = JSON.parse(readFileSync(new URL("../fixtures/board.sample.json", import.meta.url), "utf8"));
   assert.deepEqual(validateBoard(old), []);
 });
+
+// ORISO-Docs#213 review (finding 11): a task closed as "not planned" or as a duplicate was dropped, not done. The export carries
+// GitHub's stateReason (additive) so the map can tell them apart.
+test("Issue.stateReason is fetched and exported (additive, null when open or unknown)", () => {
+  assert.match(ITEMS_QUERY, /\.\.\. on Issue \{\s*number title url state stateReason updatedAt/);
+  const closed = issue(1, { labels: ["refactoring"] });
+  closed.content.state = "CLOSED"; closed.content.stateReason = "NOT_PLANNED";
+  const open = issue(2, { labels: ["refactoring"] });
+  const board = build([closed, open]);
+  assert.equal(item(board, 1).stateReason, "NOT_PLANNED");
+  assert.equal(item(board, 2).stateReason, null);
+  assert.deepEqual(validateBoard(board), []);
+  const schema = JSON.parse(readFileSync(new URL("../board.schema.json", import.meta.url), "utf8"));
+  assert.ok(!schema.properties.items.items.required.includes("stateReason"), "boards from before stay valid");
+});

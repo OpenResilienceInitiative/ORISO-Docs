@@ -142,3 +142,18 @@ test('a hand-edited index cannot break the page: wrong shapes are ignored', () =
     assert.equal(MapViews.VIEWS.health.refactor({id: 'chat'}, 'en'), null);
   }
 });
+
+// ORISO-Docs#213 review (finding 11): a dropped task is named as a word, never shown as done.
+test('a dropped task shows the word "dropped" (DE "verworfen") and is not counted as done', () => {
+  const items = [it(1, 'dropped'), it(2, 'done')];
+  set(index({chat: {...slot(items), dropped: 1}}));
+  const h = panel();
+  assert.match(h, /data-rf-task="1" data-rf-state="dropped"><span class="rfx-s" data-rf-word>dropped</);
+  assert.match(text(h), /done 1/);
+  assert.match(text(h), /dropped 1/);
+  assert.match(text(panel('chat', 'de')), /verworfen/);
+  set(index({chat: {...slot([it(3, 'dropped')]), dropped: 1}}));
+  assert.equal(marker().state, 'dropped');
+  assert.match(marker().text, /dropped/);
+  set(null);
+});

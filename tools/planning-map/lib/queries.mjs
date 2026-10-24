@@ -49,7 +49,7 @@ query($owner: String!, $number: Int!, $after: String) {
           content {
             __typename
             ... on Issue {
-              number title url state updatedAt
+              number title url state stateReason updatedAt
               body
               repository { nameWithOwner isPrivate }
               issueType { name }

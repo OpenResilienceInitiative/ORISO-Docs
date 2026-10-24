@@ -155,6 +155,7 @@ export function buildBoard({ meta, items: rawItems, totalCount, title }, { synce
       // null = not known for this content type (the watcher then does not guess); [] = known to be unassigned.
       assignees: c.assignees ? (c.assignees.nodes ?? []).map((a) => a.login) : null,
     };
+    if (c.__typename === "Issue") item.stateReason = c.stateReason ?? null; // COMPLETED, NOT_PLANNED, DUPLICATE, REOPENED (additive, #213 review)
     if (c.__typename === "Issue") item.work = buildWork(c, repo, { branchIndex, isHidden: (r, flag) => !!flag || privateRepos.has(r) });
     if (c.__typename === "Issue" && typeof c.body === "string" && c.body.includes("oriso:job:")) {
       // ORISO-Docs#216. Only the parsed, validated section leaves this function; the description itself never does.

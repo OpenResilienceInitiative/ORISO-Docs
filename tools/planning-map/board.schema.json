@@ -283,6 +283,12 @@
               null
             ]
           },
+          "stateReason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "updatedAt": {
             "type": [
               "string",

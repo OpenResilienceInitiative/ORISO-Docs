@@ -100,3 +100,15 @@ test('the shared fixture board stays valid with a refactoring item', () => {
   b.items.at(-1).refactor = {scope: 'Chat'};
   assert.notDeepEqual(validateBoard(b), []);
 });
+
+// ORISO-Docs#213 review (finding 11): closed as not planned or duplicate = dropped, a state of its own, never done.
+test('a refactoring task closed as NOT_PLANNED or DUPLICATE is "dropped", not done; COMPLETED or no reason stays done', () => {
+  assert.equal(BA.refactorState({state: 'CLOSED', stateReason: 'NOT_PLANNED', status: 'Done'}), 'dropped');
+  assert.equal(BA.refactorState({state: 'CLOSED', stateReason: 'DUPLICATE', status: 'Backlog'}), 'dropped');
+  assert.equal(BA.refactorState({state: 'CLOSED', stateReason: 'COMPLETED', status: 'Backlog'}), 'done');
+  assert.equal(BA.refactorState({state: 'CLOSED', status: 'Backlog'}), 'done', 'boards from before carry no reason');
+  const r = plain(BA.refactoring(board([task('Backlog', {state: 'CLOSED', stateReason: 'NOT_PLANNED'}), task('Done', {state: 'CLOSED', stateReason: 'COMPLETED'}), task('Ready')]), epics));
+  const e = r.bySlug['email-templates'];
+  assert.deepEqual([e.planned, e.running, e.done, e.dropped, e.total], [1, 0, 1, 1, 3]);
+  assert.deepEqual(e.items.map(i => i.state), ['dropped', 'done', 'planned']);
+});

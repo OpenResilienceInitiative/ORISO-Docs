@@ -196,22 +196,24 @@
   }
   /* ───── Refactoring tasks per capability (ORISO-Docs#222) ─────
      Category = the label `refactoring` (items[].refactor in board.json, tools/planning-map/board-contract.json "categories").
-     State of one task, from the board status and open/closed only:
-       done    = closed, or QA external / Done
+     State of one task, from the board status, open/closed and GitHub's close reason (stateReason, additive):
+       dropped = closed as not planned or as a duplicate (stateReason NOT_PLANNED / DUPLICATE): a state of its own, never done
+       done    = closed (completed, or no reason known), or QA external / Done
        running = In progress / In review / QA internal
        planned = everything else that is open (Backlog, Ready, On hold, no status)
      Capability: the scope the task carries (capability id, e.g. "email-templates") goes to bySlug, because a refactoring epic
      usually spans many capabilities; a task without a scope goes through the existing epic mapping (capabilityIndex) to byBlock.
-     Both maps hold {planned, running, done, total, items[]}; a task that maps nowhere is only counted in `unmapped`. */
+     Both maps hold {planned, running, done, dropped, total, items[]}; a task that maps nowhere is only counted in `unmapped`. */
   var REFACTORING_LABEL = 'refactoring';
-  var RUNNING = ['In progress', 'In review', 'QA internal'], DONE = ['QA external', 'Done'];
+  var RUNNING = ['In progress', 'In review', 'QA internal'], DONE = ['QA external', 'Done'], DROPPED_REASONS = ['NOT_PLANNED', 'DUPLICATE'];
   function refactorState(it) {
+    if (it.state === 'CLOSED' && DROPPED_REASONS.indexOf(it.stateReason) >= 0) return 'dropped';
     if (it.state === 'CLOSED' || DONE.indexOf(it.status) >= 0) return 'done';
     return RUNNING.indexOf(it.status) >= 0 ? 'running' : 'planned';
   }
   function refactoring(board, epics) {
     var idx = capabilityIndex(epics), out = {byBlock: {}, bySlug: {}, unmapped: 0};
-    function slot(map, id) { return map[id] || (map[id] = {planned: 0, running: 0, done: 0, total: 0, items: []}); }
+    function slot(map, id) { return map[id] || (map[id] = {planned: 0, running: 0, done: 0, dropped: 0, total: 0, items: []}); }
     ((board && board.items) || []).forEach(function (it) {
       if (it.contentType !== 'Issue' || !it.refactor || !it.repository || typeof it.number !== 'number') return;
       var scope = typeof it.refactor.scope === 'string' ? it.refactor.scope : null, slug = scope ? scope.split(':')[0] : null;
