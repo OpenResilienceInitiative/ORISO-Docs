@@ -57,3 +57,9 @@ test('reader sees exact repository revision and generation time while a failed l
  assert.equal(rows.length,1);const row=rows[0];assert.equal(row.children[0].children[0].textContent,'ORISO-Docs');assert.equal(row.children[1].children[0].textContent,'a'.repeat(40));assert.equal(row.children[2].textContent,'refs/tags/v2.0.7');assert.equal(row.children[3].textContent,'2026-10-01T09:00:00Z');
  assert.match(attempt.textContent,/v2.0.8/);assert.match(attempt.textContent,/GENERATION_FAILED/);assert.match(attempt.textContent,/v2.0.7/);
 });
+
+test('the hub home page has no inline style attributes (strict CSP)', () => {
+ const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+ assert.doesNotMatch(html, /<a class="fcard" href="\/map\/"[^>]*style=/);
+ assert.match(html, /<a class="fcard[^"]*" href="\/map\/"/);
+});

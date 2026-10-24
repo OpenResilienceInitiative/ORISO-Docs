@@ -1,7 +1,7 @@
 name: Understand public hub and source viewer
 on:
   pull_request:
-    paths: ['tools/understand-anything/**', 'tools/truth-chain/public-repositories.json', 'product/features/**', 'site/translations/**', 'site/page-catalog.json', '.github/workflows/ua-public-site.yml']
+    paths: ['tools/understand-anything/**', 'tools/planning-map/**', 'tools/truth-chain/public-repositories.json', 'product/features/**', 'site/translations/**', 'site/page-catalog.json', '.github/workflows/ua-public-site.yml']
   push:
     branches: [dev]
     paths: ['tools/understand-anything/**', 'tools/truth-chain/public-repositories.json', 'product/features/**', 'site/translations/**', '.github/workflows/ua-public-site.yml']
@@ -63,6 +63,9 @@ jobs:
     needs: contracts
     if: github.event_name == 'repository_dispatch' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
     timeout-minutes: 80
     outputs:
       revision: ${{ steps.revision.outputs.revision }}
@@ -92,19 +95,29 @@ jobs:
       - run: UNDERSTAND_TEST_UPSTREAM="$RUNNER_TEMP/ua-runtime/current/upstream" node --test tools/understand-anything/hosted-viewer/production.test.mjs
       - run: PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tools/understand-anything/hosted-viewer -p "*_test.py"
       - run: node --test tools/understand-anything/glossary/test/*.test.mjs tools/understand-anything/site/hub/test/*.test.mjs tools/understand-anything/hosted-viewer/*.test.mjs
+      - name: Fetch the latest synced planning board (optional, ORISO-Docs#208)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/planning-board"
+          for id in $(gh run list --workflow planning-board-sync.yml --status success --limit 50 --json databaseId,headBranch,createdAt --jq '[.[] | select(.headBranch == "dev" or .headBranch == "main")] | sort_by(.createdAt) | reverse | .[].databaseId'); do
+            if gh run download "$id" --name planning-board --dir "$RUNNER_TEMP/planning-board" 2>/dev/null; then echo "planning board from run $id"; break; fi
+          done || true
       - name: Produce public-only validated generation
         env:
           UA_MOUNT_ROOT: ${{ runner.temp }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
+          BOARD_ARGS=(); [ -f "$RUNNER_TEMP/planning-board/board.json" ] && BOARD_ARGS=(--board "$RUNNER_TEMP/planning-board/board.json")
+          [ -f "$RUNNER_TEMP/planning-board/steering.json" ] && BOARD_ARGS+=(--steering "$RUNNER_TEMP/planning-board/steering.json")
           UA_TOOLING="$RUNNER_TEMP/ua-runtime/current/tooling"
           python3 .github/scripts/ua_sources.py --tooling "$UA_TOOLING" --base "$RUNNER_TEMP/ua-base" --inventory "$RUNNER_TEMP/ua-inventory.json" --repo-args "$RUNNER_TEMP/ua-args.txt" --release-manifest "$RUNNER_TEMP/platform-release.json" --require-release --documentation-revision "$(git rev-parse HEAD)"
           mapfile -t REPO_ARGS < "$RUNNER_TEMP/ua-args.txt"
           PYTHONPATH="$UA_TOOLING" python3 -m bundle refresh --base "$RUNNER_TEMP/ua-base" --tools "$UA_TOOLING" --publish-root "$RUNNER_TEMP/ua-published" "${REPO_ARGS[@]}"
           PYTHONPATH="$UA_TOOLING" python3 -m bundle refresh verify --base "$RUNNER_TEMP/ua-base" --tools "$UA_TOOLING" --publish-root "$RUNNER_TEMP/ua-published" "${REPO_ARGS[@]}"
           PYTHONPATH="$UA_TOOLING" python3 -m bundle validate "$RUNNER_TEMP/ua-published/current"
-          node tools/understand-anything/site/hub/publication.mjs --root "$PWD" --out "$RUNNER_TEMP/ua-artifact/hub" --generation "$RUNNER_TEMP/ua-published/current" --origin https://understand.oriso.org --revision "$(git rev-parse HEAD)" --release-manifest "$RUNNER_TEMP/platform-release.json"
+          node tools/understand-anything/site/hub/publication.mjs --root "$PWD" --out "$RUNNER_TEMP/ua-artifact/hub" --generation "$RUNNER_TEMP/ua-published/current" --origin https://understand.oriso.org --revision "$(git rev-parse HEAD)" --release-manifest "$RUNNER_TEMP/platform-release.json" "${BOARD_ARGS[@]}"
           node tools/understand-anything/hosted-viewer/production.mjs --build --dist "$RUNNER_TEMP/ua-runtime/current/upstream/understand-anything-plugin/packages/dashboard/dist" --out "$RUNNER_TEMP/ua-artifact/viewer" --revision "$(git rev-parse HEAD)"
           cp -R -L "$RUNNER_TEMP/ua-published/current" "$RUNNER_TEMP/ua-artifact/generation"
       - uses: actions/upload-artifact@v4

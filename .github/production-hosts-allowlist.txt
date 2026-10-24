@@ -125,3 +125,16 @@ tools/understand-anything/glossary/sources/naming-audit.md # Dated audit documen
 tools/understand-anything/site/hub/glossary/index.html # Generated glossary retains canonical ORISO Docs navigation
 tools/understand-anything/site/hub/render-glossary.mjs # Glossary renderer links ORISO own canonical public documentation
 tools/understand-anything/site/hub/test/language.test.mjs # Regression fixture verifies canonical ORISO Docs navigation across DE and EN
+tools/understand-anything/site/hub/map/index.html # Capability map page links ORISO own docs, graph viewers and Storybook
+tools/understand-anything/site/hub/map/map.js # Capability map client links ORISO own docs, graph viewers and Storybook
+tools/understand-anything/site/hub/map/map.css # Capability map stylesheet names the ORISO own hub it follows in a comment
+tools/understand-anything/site/hub/map/data/epics.json # Generated planned-work data carries links to ORISO own docs and graph viewers
+
+# Idea pages (ORISO-Docs#223): links from the Plan view to ORISO's own docs pages and the tests that pin them.
+tools/planning-map/lib/ideas.mjs # builds the links to the published idea pages on ORISO's own docs site
+tools/planning-map/test/ideas.test.mjs # pins those links
+tools/understand-anything/site/hub/README.md # documents the https link guard of the Plan view
+tools/understand-anything/site/hub/test/fixtures/ideas.json # fixture with idea page links
+tools/understand-anything/site/hub/test/ideas-render.test.mjs # pins the idea page links in the rendered map
+tools/understand-anything/site/hub/test/ideas-view.test.mjs # pins the idea page links and the https guard
+tools/understand-anything/site/hub/test/health-history-view.test.mjs # pins the https guard of the run links to the Understand viewer

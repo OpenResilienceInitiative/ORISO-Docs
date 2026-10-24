@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "milestones": [
+    {
+      "id": "platform-2-0",
+      "title": { "de": "Plattform 2.0", "en": "Platform 2.0" },
+      "releases": ["v2.0.12", "v2.0.13"]
+    }
+  ]
+}
