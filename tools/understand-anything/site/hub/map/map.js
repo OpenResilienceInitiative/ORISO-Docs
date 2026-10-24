@@ -1236,7 +1236,7 @@ function drawHow(){
 var SYNC_URL = 'https://github.com/OpenResilienceInitiative/ORISO-Docs/actions/workflows/planning-board-sync.yml';
 /* Stand der Board-Synchronisierung (board.json, optional) und Link zur Seite mit dem "Run workflow"-Knopf. Kein Token im Browser. */
 function syncLine(){
-  var at = MEAS.syncedAt, when = '';
+  var at = (MEAS.board && MEAS.board.syncedAt) || MEAS.syncedAt, when = '';
   if (at){ var d = new Date(at); when = isNaN(d) ? String(at) : d.toLocaleString(de() ? 'de-DE' : 'en-GB', {dateStyle:'medium', timeStyle:'short'}); }
   var link = '<a href="'+SYNC_URL+'" target="_blank" rel="noopener">'+(de()?'Jetzt synchronisieren':'Sync now')+'</a>';
   /* Kein zweites "Stand": der eine Stand der Seite kommt aus dem Lauf-Manifest (standHtml, #201). */

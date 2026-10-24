@@ -79,6 +79,15 @@ test('map renders the three groups from fixture JSON without console errors', {s
   await context.close();
 });
 
+test('the footer shows when the board was synced, read from board.json (EN)', {skip}, async () => {
+  const {page, context} = await open({lang: 'en'});
+  const line = page.locator('#boardSync');
+  await line.waitFor();
+  assert.match(await line.innerText(), /Board synced .*2026/);
+  assert.doesNotMatch(await line.innerText(), /not synced yet/);
+  await context.close();
+});
+
 test('clicking a capability zooms into it and Escape zooms out', {skip}, async () => {
   const {page, context} = await open({lang: 'en'});
   const before = await page.locator('#tm .blk').count();
