@@ -289,6 +289,7 @@ var WORKIDX = (MEAS.board && typeof BoardAgg !== 'undefined' && BoardAgg.workInd
 
 /* ───────── Hilfen ───────── */
 var lang = document.documentElement.getAttribute('data-lang')==='en' ? 'en' : 'de';
+var view = MapViews.DEFAULT_VIEW;
 var layers = {p:true, old:true, gone:true, b:true, x:true, t:true, d:true}, stack = [];
 var stageOn = {idea:true, work:true, near:true, done:false};
 function L(o){ return o ? (o[lang]!==undefined ? o[lang] : o.de) : ''; }
@@ -639,7 +640,38 @@ function drawMap(animFrom){
     }
   }
   applyLayers(); markSel(); drawZbar(st); if (typeof markRelease === 'function' && RSCOPE) markRelease();
-  document.getElementById('stagefoot').innerHTML = rampLegend() + '<span>'+esc(tt().area(layers.t?'show':'hide'))+'</span>' + boardLegend();
+  drawStageFoot(); applyView();
+}
+/* Ansicht State | Health | Plan: die Haken je Ansicht stehen in views.js (MapViews.VIEWS). */
+function drawStageFoot(){
+  var own = MapViews.VIEWS[view].legend(lang);
+  document.getElementById('stagefoot').innerHTML = own ? '<span class="vnote">'+esc(own)+'</span>' : rampLegend() + '<span>'+esc(tt().area(layers.t?'show':'hide'))+'</span>' + boardLegend();
+}
+function applyView(){
+  var v = MapViews.VIEWS[view];
+  tm.classList.toggle('vview', view !== MapViews.DEFAULT_VIEW);
+  Array.prototype.forEach.call(tm.querySelectorAll('.blk'), function(e){
+    var id = e.dataset.id || curBlock(), tok = id && BY[id] ? v.colour(BY[id]) : null;
+    if (tok) e.style.setProperty('--view-fill', 'var(--'+tok+')'); else e.style.removeProperty('--view-fill');
+  });
+}
+function setView(next, push){
+  if (MapViews.VIEW_IDS.indexOf(next) < 0 || next === view) return;
+  view = next; document.getElementById('layerRow').hidden = view !== MapViews.DEFAULT_VIEW; document.getElementById('layerHelp').hidden = view !== MapViews.DEFAULT_VIEW;
+  if (push) syncHash(true); /* vor dem Neuzeichnen, sonst ersetzt renderView den Eintrag still */
+  drawViewSwitch(); drawStageFoot(); applyView();
+  if (stack.length) renderView();
+}
+function drawViewSwitch(){
+  var box = document.getElementById('viewSwitch'); box.innerHTML = '';
+  box.setAttribute('aria-label', de() ? 'Ansicht' : 'View');
+  MapViews.VIEW_IDS.forEach(function(id){
+    var b = el('button','tog vsw'); b.type = 'button'; b.dataset.mview = id;
+    b.textContent = MapViews.VIEWS[id].title[lang];
+    b.setAttribute('aria-pressed', id === view ? 'true' : 'false');
+    b.addEventListener('click', function(){ setView(id, true); });
+    box.appendChild(b);
+  });
 }
 function rampLegend(){
   var d = de();
@@ -708,6 +740,7 @@ function markSel(){
 
 /* ───────── Steuerung ───────── */
 function drawControls(){
+  drawViewSwitch();
   var tg = document.getElementById('layerTogs'); tg.innerHTML='';
   var defs = de() ? [
     ['p','p','Geplant','Schätzung: geplante Arbeit aus offenen GitHub-Aufgaben, als gestrichelte Erweiterung des Blocks; grau = nicht begonnen, blau = in Arbeit'],
@@ -1059,7 +1092,7 @@ function viewFile(b, v){
     (f[1]!==2 ? '<p class="links"><a href="'+GH+repo+'/blob/dev/'+ghPath(z,f)+'" target="_blank" rel="noopener">'+(d?'Auf GitHub öffnen':'Open on GitHub')+' ↗</a>'+graphLink(z, ghPath(z,f), true)+'</p>' : '');
 }
 function renderView(){
-  if (!stack.length){ renderEmpty(); syncMap(); return; }
+  if (!stack.length){ renderEmpty(); syncMap(); syncHash(false); return; }
   var v = stack[stack.length-1], b = BY[curBlock() || ''], inner;
   if (v.v==='block') inner = viewBlock(BY[v.id]);
   else if (v.v==='lines') inner = viewLines(b);
@@ -1073,12 +1106,13 @@ function renderView(){
   else if (v.v==='mods') inner = viewMods(b, v);
   else if (v.v==='mod') inner = viewMod(b, v);
   else if (v.v==='file') inner = viewFile(b, v);
+  if (v.v==='block') inner = MapViews.VIEWS[view].panel(BY[v.id], lang) + inner;
   var sheetMode = useSheet();
   var host = sheetMode ? sheetBody : panel;
   host.innerHTML = frame(inner, sheetMode);
   wire(host);
   if (!sheetMode) panel.scrollTop = 0; else document.getElementById('sheetIn').scrollTop = 0;
-  syncMap();
+  syncMap(); syncHash(false);
 }
 function focusTitle(){ var h = (useSheet()? sheetBody : panel).querySelector('#pdTitle'); if (h) h.focus({preventScroll:true}); }
 function push(v){ stack.push(v); renderView(); focusTitle(); }
@@ -1633,11 +1667,27 @@ function resolveNode(id){
   }
   return null;
 }
-function hashNodeId(){
-  var m = /^#node=(.+)$/.exec(location.hash || ''), id;
-  if (!m) return null;
-  try { id = decodeURIComponent(m[1]); } catch (e) { return null; }
-  return id.length <= 512 && !/[\u0000-\u001f\u007f]/.test(id) ? id : null;
+/* Der Hash trägt Ansicht und Knoten: #view=<ansicht>&node=<id>. #node=<id> allein ist die Ansicht State (#199, #214). */
+function nodeOfStack(){
+  for (var i=stack.length-1;i>=0;i--){
+    var v = stack[i], z;
+    if (v.v==='block') return capNodeId(v.id);
+    if (v.v==='file' || v.v==='mod'){
+      z = Z[curBlockAt(i)][v.m]; if (!z) continue;
+      if (v.v==='mod'){ if (z[2] && z[4] && CODE_REPOS[z[0]]) return CODE_REPOS[z[0]]+'::folder:'+z[2]; continue; }
+      var f = z[12][v.f]; if (f && f[1]!==2 && CODE_REPOS[z[0]]) return CODE_REPOS[z[0]]+'::file:'+ghPath(z, f);
+    }
+  }
+  return null;
+}
+function curBlockAt(i){ for (;i>=0;i--) if (stack[i].v==='block') return stack[i].id; return null; }
+var hashReady = false;
+function syncHash(push){
+  if (!hashReady) return;
+  var node = stack.length ? nodeOfStack() : notFoundId, h = MapViews.buildHash(view, node);
+  if (h === (location.hash || '')) return;
+  var url = location.pathname + location.search + h;
+  if (push) history.pushState(null, '', url); else history.replaceState(null, '', url);
 }
 var notFoundId = null;
 function drawNotice(){
@@ -1649,8 +1699,17 @@ function drawNotice(){
     : 'The map has no entry for this link. Showing the overview.')+'</span> <code>'+esc(notFoundId)+'</code>';
   var host = document.getElementById('karte'); host.insertBefore(n, host.querySelector('.controls'));
 }
+/* Während der Hash gelesen wird, schreibt syncHash ihn nicht zurück (sonst überschreibt der alte Stapel den neuen Link). */
 function applyHash(){
-  var id = hashNodeId(); if (id === null) return;
+  var was = hashReady; hashReady = false;
+  try { applyHashNow(); } finally { hashReady = was; }
+  syncHash(false);
+}
+function applyHashNow(){
+  var h = MapViews.parseHash(location.hash);
+  if (h.hasView && h.view !== view) setView(h.view, false);
+  else if (!h.hasView && h.node !== null && view !== MapViews.DEFAULT_VIEW) setView(MapViews.DEFAULT_VIEW, false);
+  var id = h.node; if (id === null) return;
   var path = resolveNode(id);
   notFoundId = path ? null : id;
   drawNotice();
@@ -1663,7 +1722,7 @@ window.addEventListener('hashchange', applyHash);
 function renderAll(){ drawNotice(); drawPlanLog(); drawRelPanel(); drawTotals(); drawControls(); drawMap(); drawPlanned(); drawCards(); drawKpis(); drawHow(); drawMeas(); if (stack.length) renderView(); else renderEmpty(); }
 var rt=null, lastW=0;
 window.addEventListener('resize', function(){ clearTimeout(rt); rt=setTimeout(function(){ if (tm.clientWidth!==lastW){ lastW=tm.clientWidth; drawMap(); } },120); });
-renderAll(); lastW = tm.clientWidth; applyHash();
+renderAll(); lastW = tm.clientWidth; applyHash(); hashReady = true; syncHash(false);
 }
 
 /* ───────── Daten ─────────

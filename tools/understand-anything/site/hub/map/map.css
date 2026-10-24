@@ -561,3 +561,17 @@ dialog#workdlg::backdrop{background:rgba(20,16,15,.35)}
 .wklist li{justify-content:flex-start;gap:2px 8px}
 .wklist .c{white-space:normal}
 .dlist li:has(.wkbadge){flex-wrap:wrap}
+
+/* Ansichten State | Health | Plan (#214): Umschalter und neutrale Ebene. Die Füllung kommt aus MapViews.VIEWS[view].colour (--view-fill, per CSSOM gesetzt). */
+:root{--neutral:#E9E3DD}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){--neutral:#34302E} }
+:root[data-theme="dark"]{--neutral:#34302E}
+.vsw{justify-content:center}
+.vsw[aria-pressed="true"]{background:var(--ink);color:var(--card);border-color:var(--ink)}
+.vsw[aria-pressed="false"]{color:var(--ink);background:var(--card)}
+.tm.vview .blk{background:var(--view-fill,var(--neutral))}
+.tm.vview .blk .ly{display:none}
+#layerRow[hidden]{display:none}
+.tm.vview .blk .docb,.tm.vview .blk .sbar,.tm.vview .blk .fbadge{display:none}
+.vnote{color:var(--ink-2);font-size:13px}
+.panel .vnote{display:block;margin:0 0 12px;padding:8px 10px;border:1px dashed var(--line);border-radius:6px;background:var(--sunken)}
