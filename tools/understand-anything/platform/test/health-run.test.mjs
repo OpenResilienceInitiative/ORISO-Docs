@@ -148,7 +148,7 @@ test('file layout: health/runs/<capability>/<repo>/[at/<path>/]<timestamp>.json,
 const tmp = () => fs.mkdtempSync(path.join(os.tmpdir(), 'health-runs-'));
 const put = (root, rec, file = runFile(rec)) => { const p = path.join(root, file); fs.mkdirSync(path.dirname(p), { recursive: true }); fs.writeFileSync(p, JSON.stringify(rec, null, 2) + '\n'); return p; };
 
-test('latest record per scope; older runs stay as history; the doc for the map holds only the latest', () => {
+test('latest record per scope; older runs stay as history; the doc for the map holds the latest in full and the rest as compact history (#219)', () => {
   const root = tmp();
   const old = build({ startedAt: '2026-09-01T08:00:00Z', manifest: createRunManifest({ at: '2026-09-01T08:00:00Z', commits: { 'ORISO-Frontend': 'b'.repeat(40) } }), commit: 'b'.repeat(40) });
   const fresh = build();
@@ -163,7 +163,7 @@ test('latest record per scope; older runs stay as history; the doc for the map h
   const doc = buildHealthDoc(runs);
   assert.equal(doc.schemaVersion, 1); assert.equal(doc.records.length, 3);
   assert.deepEqual(doc.records.map(r => r.scope.repo + '/' + (r.scope.path ?? '')), ['ORISO-Admin/', 'ORISO-Frontend/', 'ORISO-Frontend/src/x'], 'stable order');
-  assert.deepEqual(buildHealthDoc([]), { schemaVersion: 1, records: [] }, 'no records is a valid, empty doc');
+  assert.deepEqual(buildHealthDoc([]), { schemaVersion: 1, records: [], history: [], historyCap: 50 }, 'no records is a valid, empty doc');
   assert.equal(loadRuns(path.join(root, 'nothing-here')).length, 0, 'a missing health folder is an empty history');
 });
 

@@ -690,3 +690,48 @@ dialog#workdlg::backdrop{background:rgba(20,16,15,.35)}
 .hm .hsrc,.hm .hrs{flex:1 1 100%;color:var(--ink-2);font-size:12px;overflow-wrap:anywhere}
 .hver ul{margin:2px 0 0 18px;padding:0}
 .hno,.hnos{margin:0 0 12px}
+/* Health-Verlauf (ORISO-Docs#219): Trendlinie (SVG, Farben nur über Klassen und Tokens), Liste früherer Läufe, Vergleich mit dem letzten Lauf. */
+.hhist{margin:0 0 14px;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--sunken);min-width:0}
+.hh-note{margin:0 0 6px;font-size:13px;color:var(--ink-2)}
+.hh-fig{margin:0 0 10px}
+.hh-svg{display:block;width:100%;height:auto;max-width:100%;background:var(--card);border:1px solid var(--line);border-radius:6px}
+.hh-grid{stroke:var(--line);stroke-width:1}
+.hh-line{fill:none;stroke:var(--ink-2);stroke-width:2;stroke-linejoin:round}
+.hh-t{fill:var(--ink-2);font:10px var(--mono)}
+.hh-ty{text-anchor:end}
+.hh-pt{stroke-width:2}
+.hh-last{stroke-width:3}
+.hh-b-poor{fill:var(--ua-health-poor);stroke:var(--ua-health-poor-edge)}
+.hh-b-weak{fill:var(--ua-health-weak);stroke:var(--ua-health-weak-edge)}
+.hh-b-fair{fill:var(--ua-health-fair);stroke:var(--ua-health-fair-edge)}
+.hh-b-good{fill:var(--ua-health-good);stroke:var(--ua-health-good-edge)}
+.hh-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.hh-run{padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--card);min-width:0;font-size:13px}
+.hh-isLast{border-left:4px solid var(--brand)}
+.hh-head,.hh-meta,.hh-links{margin:0 0 4px;overflow-wrap:anywhere}
+.hh-meta{color:var(--ink-2);font-size:12px}
+.hh-file{font-size:11px}
+.hh-tag{font-size:12px;font-weight:600;padding:0 6px;border:1px solid var(--line);border-radius:6px}
+.hh-score{display:inline-flex;gap:4px;align-items:baseline;padding:1px 8px;border-radius:6px;border:2px solid var(--line)}
+.hh-score[data-hband="poor"]{background:var(--ua-health-poor);color:var(--ua-health-poor-on);border-color:var(--ua-health-poor-edge)}
+.hh-score[data-hband="weak"]{background:var(--ua-health-weak);color:var(--ua-health-weak-on);border-color:var(--ua-health-weak-edge)}
+.hh-score[data-hband="fair"]{background:var(--ua-health-fair);color:var(--ua-health-fair-on);border-color:var(--ua-health-fair-edge)}
+.hh-score[data-hband="good"]{background:var(--ua-health-good);color:var(--ua-health-good-on);border-color:var(--ua-health-good-edge)}
+.hh-links a{margin-right:12px}
+.hh-cmp{margin:6px 0 0}
+.hh-cmp summary{cursor:pointer;font-weight:600;padding:4px 0}
+.hd-sum{margin:6px 0;color:var(--ink-2)}
+.hd-h{margin:10px 0 4px;font-size:13px}
+.hd-l{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.hd{display:flex;flex-wrap:wrap;gap:2px 10px;align-items:baseline;margin:0;padding:6px 8px;border:1px solid var(--line);border-left-width:4px;border-radius:6px;min-width:0}
+.hd-o{margin:0 0 6px}
+.hd-better{border-left-color:var(--ok)}
+.hd-worse{border-left-color:var(--warn)}
+.hd-same{border-left-style:dotted}
+.hd-unknown{border-style:dashed}
+.hd-better .hd-w{color:var(--ok)}
+.hd-worse .hd-w{color:var(--warn)}
+.hd-w,.hd-d{font-weight:600}
+.hd-n1{flex:1 1 100%;font-weight:600;overflow-wrap:anywhere}
+.hd-r,.hd-n{flex:1 1 100%;color:var(--ink-2);font-size:12px;overflow-wrap:anywhere}
+.hd-warn{margin:0 0 6px}

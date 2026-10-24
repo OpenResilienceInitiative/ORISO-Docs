@@ -32,6 +32,9 @@ test('the latest record per scope becomes map/data/health.json and is announced 
   assert.equal(doc.records.length, 1);
   assert.equal(doc.records[0].startedAt, '2026-10-24T10:15:00Z');
   assert.equal(doc.records[0].metrics[0].value, 300);
+  assert.equal(doc.historyCap, 50);
+  assert.deepEqual(doc.history[0].runs.map(r => r.startedAt), ['2026-09-01T08:00:00Z', '2026-10-24T10:15:00Z'], 'the earlier run stays reachable as compact history (#219)');
+  assert.equal(doc.history[0].runs[0].file, runFile(record('2026-09-01T08:00:00Z', 900)), 'and its full record by path');
   assert.deepEqual(JSON.parse(r.links).optional, ['board.json', 'health.json']);
   assert.ok(r.health.endsWith('\n'));
   assert.equal(healthAsset(root, Buffer.from(r.links)).links, r.links, 'announcing twice changes nothing');
@@ -39,7 +42,7 @@ test('the latest record per scope becomes map/data/health.json and is announced 
 
 test('no health folder yet: an empty but valid health.json (every square shows "no data")', () => {
   const r = healthAsset(fs.mkdtempSync(path.join(os.tmpdir(), 'health-empty-')), links);
-  assert.deepEqual(JSON.parse(r.health), {schemaVersion: 1, records: []});
+  assert.deepEqual(JSON.parse(r.health), {schemaVersion: 1, records: [], history: [], historyCap: 50});
 });
 
 test('one invalid record stops the build; nothing half-published', () => {

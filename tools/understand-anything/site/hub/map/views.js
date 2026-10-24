@@ -179,6 +179,7 @@
   function setHealth(doc, slugFn) {
     RECORDS = isObj(doc) && doc.schemaVersion === 1 && Array.isArray(doc.records) ? doc.records.map(cleanRecord).filter(Boolean) : [];
     HSLUG = typeof slugFn === 'function' ? slugFn : function () { return null; };
+    HISTORY = cleanHistory(doc);
   }
   function newest(a, b) { return !a || b.startedAt > a.startedAt ? b : a; }
   /* The record a square shows: the newest run of the whole capability (no folder path). */
@@ -360,6 +361,251 @@
     };
   }
 
+  /* ───────── Health: history, comparison, links (ORISO-Docs#219) ─────────
+     compareRuns(a, b): a = the earlier run, b = the later one. Each is a full run record (as cleaned for the panel, or raw) or a compact
+     history entry of health.json; both have metrics[{name,value,threshold,better,score}], verdict[{criterion,score}] and overall.
+     Pure: language free. It returns codes (reasons) and the texts the records carry (notes); historyBox() turns them into DE/EN. */
+  function round6(x) { return Math.round(x * 1e6) / 1e6; }
+  function dir(delta, better) { return delta === 0 ? 'same' : (delta < 0) === (better === 'lower') ? 'better' : 'worse'; }
+  function textsOf(list) {
+    return (Array.isArray(list) ? list : []).map(function (x) { return typeof x === 'string' ? x : isObj(x) && typeof x.text === 'string' ? x.text : null; }).filter(Boolean);
+  }
+  function within(v, t, better) { return better === 'higher' ? v >= t : v <= t; }
+  function metricNote(m) { var r = m ? (typeof m.reason === 'string' ? m.reason : isObj(m.details) && typeof m.details.reason === 'string' ? m.details.reason : null) : null; return r ? [r] : []; }
+  function compareMetric(x, y) {
+    var one = y || x, better = one.better === 'higher' ? 'higher' : 'lower';
+    var out = {name: one.name, better: better, from: x && isNum(x.value) ? x.value : null, to: y && isNum(y.value) ? y.value : null, delta: null, direction: 'unknown',
+      scoreFrom: x && isNum(x.score) ? x.score : null, scoreTo: y && isNum(y.score) ? y.score : null, scoreDelta: null,
+      thresholdFrom: x && isNum(x.threshold) ? x.threshold : null, thresholdTo: y && isNum(y.threshold) ? y.threshold : null, reasons: [], notes: {from: metricNote(x), to: metricNote(y)}};
+    if (out.scoreFrom !== null && out.scoreTo !== null) out.scoreDelta = round6(out.scoreTo - out.scoreFrom);
+    if (!x) out.reasons.push('only-in-later');
+    else if (!y) out.reasons.push('only-in-earlier');
+    else if (out.from === null) out.reasons.push('not-measured-before');
+    else if (out.to === null) out.reasons.push('not-measured-now');
+    else {
+      out.delta = round6(out.to - out.from);
+      out.direction = dir(out.delta, better);
+      var was = out.thresholdFrom !== null && within(out.from, out.thresholdFrom, better), is = out.thresholdTo !== null && within(out.to, out.thresholdTo, better);
+      out.reasons.push(out.delta === 0 ? 'unchanged' : !was && is ? 'into-threshold' : was && !is ? 'out-of-threshold' : was ? 'within-both' : 'beyond-both');
+    }
+    if (x && y && out.thresholdFrom !== out.thresholdTo) out.reasons.push('threshold-changed');
+    return out;
+  }
+  function compareCriterion(x, y) {
+    var out = {criterion: (y || x).criterion, from: x && isNum(x.score) ? x.score : null, to: y && isNum(y.score) ? y.score : null, delta: null, direction: 'unknown', reasons: [],
+      notes: {from: textsOf(x && x.reasons), to: textsOf(y && y.reasons)}};
+    if (!x) out.reasons.push('only-in-later');
+    else if (!y) out.reasons.push('only-in-earlier');
+    else if (out.from !== null && out.to !== null) { out.delta = round6(out.to - out.from); out.direction = dir(out.delta, 'higher'); out.reasons.push(out.delta === 0 ? 'unchanged' : 'score-changed'); }
+    return out;
+  }
+  function runLike(r) { return isObj(r) && Array.isArray(r.metrics) && (r.overall === null || isNum(r.overall)); }
+  function union(a, b, key) {
+    var seen = {}, out = [];
+    b.concat(a).forEach(function (x) { if (isObj(x) && typeof x[key] === 'string' && !HAS.call(seen, x[key])) { seen[x[key]] = true; out.push(x[key]); } });
+    return out;
+  }
+  function pick(list, key, name) { for (var i = 0; i < list.length; i++) if (isObj(list[i]) && list[i][key] === name) return list[i]; return null; }
+  function compareRuns(a, b) {
+    if (!runLike(a) || !runLike(b)) return null;
+    var va = Array.isArray(a.verdict) ? a.verdict : [], vb = Array.isArray(b.verdict) ? b.verdict : [];
+    var metrics = union(a.metrics, b.metrics, 'name').map(function (n) { return compareMetric(pick(a.metrics, 'name', n), pick(b.metrics, 'name', n)); });
+    var criteria = union(va, vb, 'criterion').map(function (n) { return compareCriterion(pick(va, 'criterion', n), pick(vb, 'criterion', n)); });
+    var overall = {from: a.overall, to: b.overall, delta: null, direction: 'unknown'};
+    if (a.overall !== null && b.overall !== null) { overall.delta = round6(b.overall - a.overall); overall.direction = dir(overall.delta, 'higher'); }
+    var counts = {better: 0, worse: 0, same: 0, unknown: 0};
+    metrics.concat(criteria).forEach(function (x) { counts[x.direction]++; });
+    return {overall: overall, metrics: metrics, criteria: criteria, counts: counts,
+      criteriaChanged: typeof a.criteriaVersion === 'string' && typeof b.criteriaVersion === 'string' && a.criteriaVersion !== b.criteriaVersion};
+  }
+
+  /* History data: health.json "history" = [{scope, total, runs: [compact run, oldest first]}], built by platform/lib/health-run.mjs
+     (at most 50 runs per scope). Every field is checked here again; an entry that fails is dropped, never repaired. */
+  var HISTORY = [], NODE_LINK = null;
+  var FILE_RE = /^health\/runs\/[A-Za-z0-9_.@\/-]+\.json$/, TREE_RE = /^https:\/\/github\.com\/OpenResilienceInitiative\/[A-Za-z0-9_.-]+\/tree\/[0-9a-f]{40}(?:\/[A-Za-z0-9_.@\/-]+)?$/;
+  var VIEWER_RE = /^https:\/\/understand\.oriso\.org\//;
+  function safePath(p) { return typeof p === 'string' && p.split('/').every(function (seg) { return seg !== '' && seg !== '.' && seg !== '..'; }); }
+  function cleanHMetric(m) {
+    if (!isObj(m) || !txt(m.name, 64) || (m.better !== 'lower' && m.better !== 'higher') || !isNum(m.threshold)) return null;
+    if ((m.value !== null && !isNum(m.value)) || (m.score !== null && !isNum(m.score))) return null;
+    return {name: m.name, value: m.value, threshold: m.threshold, better: m.better, score: m.score};
+  }
+  function cleanHRun(r) {
+    if (!isObj(r) || typeof r.startedAt !== 'string' || !ISO_RE.test(r.startedAt) || !SHA_RE.test(r.commit)) return null;
+    if (typeof r.file !== 'string' || !FILE_RE.test(r.file) || !safePath(r.file)) return null;
+    if (r.overall !== null && !(isNum(r.overall) && r.overall >= 0 && r.overall <= 100)) return null;
+    if (!Array.isArray(r.metrics) || !Array.isArray(r.verdict) || (r.model !== null && !txt(r.model, 100))) return null;
+    var verdict = r.verdict.map(function (v) { return isObj(v) && txt(v.criterion, 100) && isNum(v.score) ? {criterion: v.criterion, score: v.score} : null; });
+    if (verdict.indexOf(null) >= 0) return null;
+    var metrics = r.metrics.map(cleanHMetric);
+    if (metrics.indexOf(null) >= 0) return null;
+    return {file: r.file, startedAt: r.startedAt, commit: r.commit, model: r.model, overall: r.overall, criteriaVersion: txt(r.criteriaVersion, 64) || '', metrics: metrics, verdict: verdict};
+  }
+  function cleanHistory(doc) {
+    var list = isObj(doc) && Array.isArray(doc.history) ? doc.history : [];
+    return list.map(function (h) {
+      if (!isObj(h) || !isObj(h.scope) || !Array.isArray(h.runs)) return null;
+      var cap = txt(h.scope.capability, 64), repo = txt(h.scope.repo, 100);
+      var path = h.scope.path === null ? null : txt(h.scope.path, 300);
+      if (!cap || !repo || /^\.+$/.test(repo) || !/^[A-Za-z0-9_.-]+$/.test(repo) || (path !== null && (!path || !safePath(path)))) return null;
+      var runs = h.runs.map(cleanHRun).filter(Boolean).sort(function (a, b) { return a.startedAt < b.startedAt ? -1 : a.startedAt > b.startedAt ? 1 : 0; });
+      var total = isNum(h.total) && h.total >= runs.length && Math.floor(h.total) === h.total ? h.total : runs.length;
+      return runs.length ? {scope: {capability: cap, repo: repo, path: path}, total: total, runs: runs} : null;
+    }).filter(Boolean);
+  }
+  /* fn(nodeId) -> URL of the Understand viewer for that node (map.js passes its deep-link helper). Anything but https on the viewer host is dropped. */
+  function setNodeLink(fn) { NODE_LINK = typeof fn === 'function' ? fn : null; }
+  function nodeHref(scope) {
+    if (!NODE_LINK) return null;
+    var id = scope.path === null ? 'capability:' + scope.capability : scope.repo + '::folder:' + scope.path, u;
+    try { u = NODE_LINK(id); } catch (e) { return null; }
+    return typeof u === 'string' && VIEWER_RE.test(u) ? u : null;
+  }
+  function treeHref(scope, commit) {
+    var u = 'https://github.com/OpenResilienceInitiative/' + scope.repo + '/tree/' + commit + (scope.path === null ? '' : '/' + scope.path);
+    return TREE_RE.test(u) ? u : null;
+  }
+  function historyOf(r) {
+    if (!r) return null;
+    for (var i = 0; i < HISTORY.length; i++) {
+      var s = HISTORY[i].scope;
+      if (s.capability === r.scope.capability && s.repo === r.scope.repo && s.path === r.scope.path) return HISTORY[i];
+    }
+    return null;
+  }
+
+  var HH = {
+    de: {head: 'Verlauf', runs: function (n) { return n + (n === 1 ? ' Lauf' : ' Läufe'); }, lastOf: function (n, t) { return 'letzte ' + n + ' von ' + t + ' Läufen'; },
+      trend: 'Verlauf des Gesamtwerts', latest: 'letzter Lauf', noScore: 'ohne Wert', noModel: 'keines (nur Kennzahlen)', overall: 'Gesamtwert',
+      node: 'Graph-Knoten', source: 'Quelltext auf GitHub', file: 'Laufprotokoll', compare: 'Mit letztem Lauf vergleichen', alone: 'Kein früherer Lauf zum Vergleichen.',
+      later: 'letzter Lauf', earlier: 'dieser Lauf', changed: 'Die Kriterien haben sich zwischen den Läufen geändert, der Vergleich gilt mit Vorbehalt.',
+      metrics: 'Kennzahlen', criteria: 'Kriterien des Modells', score: 'Punkte', value: 'Wert', limit: 'Schwelle', na: 'nicht verfügbar',
+      summary: function (c) { return c.better + ' besser, ' + c.worse + ' schlechter, ' + c.same + ' unverändert, ' + c.unknown + ' nicht vergleichbar'; },
+      reasonsLater: 'Begründung (letzter Lauf)', reasonsEarlier: 'Begründung (dieser Lauf)',
+      dir: {better: 'besser', worse: 'schlechter', same: 'unverändert', unknown: 'nicht vergleichbar'},
+      why: {'into-threshold': 'jetzt innerhalb der Schwelle', 'out-of-threshold': 'jetzt außerhalb der Schwelle', 'within-both': 'in beiden Läufen innerhalb der Schwelle',
+        'beyond-both': 'in beiden Läufen außerhalb der Schwelle', unchanged: 'unverändert', 'threshold-changed': 'Schwelle geändert', 'not-measured-before': 'im früheren Lauf nicht messbar',
+        'not-measured-now': 'im letzten Lauf nicht messbar', 'only-in-later': 'nur im letzten Lauf', 'only-in-earlier': 'nur im früheren Lauf', 'score-changed': 'Urteil des Modells geändert'}},
+    en: {head: 'History', runs: function (n) { return n + (n === 1 ? ' run' : ' runs'); }, lastOf: function (n, t) { return 'last ' + n + ' of ' + t + ' runs'; },
+      trend: 'Trend of the overall score', latest: 'latest run', noScore: 'no score', noModel: 'none (metrics only)', overall: 'Overall',
+      node: 'Graph node', source: 'Source on GitHub', file: 'Run record', compare: 'Compare with latest', alone: 'No earlier run to compare with.',
+      later: 'latest run', earlier: 'this run', changed: 'The criteria changed between the runs; read the comparison with care.',
+      metrics: 'Metrics', criteria: 'Criteria judged by the model', score: 'Score', value: 'Value', limit: 'Threshold', na: 'not available',
+      summary: function (c) { return c.better + ' better, ' + c.worse + ' worse, ' + c.same + ' unchanged, ' + c.unknown + ' not comparable'; },
+      reasonsLater: 'Reasons (latest run)', reasonsEarlier: 'Reasons (this run)',
+      dir: {better: 'better', worse: 'worse', same: 'unchanged', unknown: 'not comparable'},
+      why: {'into-threshold': 'now within the threshold', 'out-of-threshold': 'now beyond the threshold', 'within-both': 'within the threshold in both runs',
+        'beyond-both': 'beyond the threshold in both runs', unchanged: 'unchanged', 'threshold-changed': 'threshold changed', 'not-measured-before': 'could not be measured in the earlier run',
+        'not-measured-now': 'could not be measured in the latest run', 'only-in-later': 'only in the later run', 'only-in-earlier': 'only in the earlier run', 'score-changed': 'verdict of the model changed'}}
+  };
+  var DIR_MARK = {better: '↑', worse: '↓', same: '=', unknown: '?'};
+  function signed(d, lang) { return d === null ? '' : d === 0 ? '0' : (d > 0 ? '+' : '−') + num(Math.abs(d), lang); }
+
+  /* The trend: an SVG built with DOM APIs, coloured by CSS classes only (no style attribute). Without a DOM (node tests of other modules) it is left out. */
+  var SVGNS = 'http://www.w3.org/2000/svg', TW = 320, TH = 150, TL = 30, TR = 12, TT = 10, TB = 26;
+  function svgEl(tag, attrs, text) {
+    var e = document.createElementNS(SVGNS, tag);
+    Object.keys(attrs).forEach(function (k) { e.setAttribute(k, String(attrs[k])); });
+    if (text !== undefined) e.textContent = text;
+    return e;
+  }
+  function trendSvg(runs, T, lang) {
+    if (typeof document === 'undefined' || !document || typeof document.createElementNS !== 'function') return '';
+    var svg = svgEl('svg', {viewBox: '0 0 ' + TW + ' ' + TH, 'class': 'hh-svg', role: 'img', 'aria-label': T.trend + ': ' + T.runs(runs.length) + ', ' + runs[0].startedAt.slice(0, 10) + ' – ' + runs[runs.length - 1].startedAt.slice(0, 10)});
+    var t0 = Date.parse(runs[0].startedAt), t1 = Date.parse(runs[runs.length - 1].startedAt), pw = TW - TL - TR, ph = TH - TT - TB;
+    function X(r) { return t1 === t0 ? TL + pw / 2 : TL + pw * (Date.parse(r.startedAt) - t0) / (t1 - t0); }
+    function Y(s) { return TT + ph * (100 - s) / 100; }
+    [0, 40, 60, 80, 100].forEach(function (g) {
+      svg.appendChild(svgEl('line', {'class': 'hh-grid', x1: TL, x2: TW - TR, y1: Y(g).toFixed(1), y2: Y(g).toFixed(1)}));
+      svg.appendChild(svgEl('text', {'class': 'hh-t hh-ty', x: TL - 4, y: (Y(g) + 3).toFixed(1)}, String(g)));
+    });
+    var seg = [];
+    function flush() { if (seg.length > 1) svg.appendChild(svgEl('polyline', {'class': 'hh-line', points: seg.join(' ')})); seg = []; }
+    runs.forEach(function (r) { if (r.overall === null) flush(); else seg.push(X(r).toFixed(1) + ',' + Y(r.overall).toFixed(1)); });
+    flush();
+    runs.forEach(function (r, i) {
+      if (r.overall === null) return;
+      var c = svgEl('circle', {'class': 'hh-pt hh-b-' + bandOf(r.overall) + (i === runs.length - 1 ? ' hh-last' : ''), cx: X(r).toFixed(1), cy: Y(r.overall).toFixed(1), r: i === runs.length - 1 ? 5 : 4, 'data-start': r.startedAt});
+      c.appendChild(svgEl('title', {}, when(r.startedAt) + ': ' + num(r.overall, lang)));
+      svg.appendChild(c);
+    });
+    svg.appendChild(svgEl('text', {'class': 'hh-t hh-tx', x: runs.length > 1 ? TL : TL + pw / 2, y: TH - 8, 'text-anchor': runs.length > 1 ? 'start' : 'middle'}, runs[0].startedAt.slice(0, 10)));
+    if (runs.length > 1) svg.appendChild(svgEl('text', {'class': 'hh-t hh-tx', x: TW - TR, y: TH - 8, 'text-anchor': 'end'}, runs[runs.length - 1].startedAt.slice(0, 10)));
+    return svg.outerHTML;
+  }
+
+  function sideNotes(list, label) {
+    return list.length ? '<span class="hd-n"><em>' + esc(label) + ':</em> ' + list.map(esc).join(' · ') + '</span>' : '';
+  }
+  function whyText(codes, T, item) {
+    return codes.map(function (c) {
+      var t = T.why[c] || c;
+      return c === 'threshold-changed' ? t + ' (' + num(item.thresholdFrom, T === HH.de ? 'de' : 'en') + ' → ' + num(item.thresholdTo, T === HH.de ? 'de' : 'en') + ')' : t;
+    }).join(', ');
+  }
+  function cmpBox(c, T, lang) {
+    var out = '<p class="hd-sum" data-cmp-counts>' + esc(T.summary(c.counts)) + '</p>';
+    if (c.criteriaChanged) out += '<p class="vnote hd-warn" data-cmp-changed>' + T.changed + '</p>';
+    var o = c.overall;
+    out += '<p class="hd hd-o" data-overall-delta="' + (o.delta === null ? '' : o.delta) + '" data-direction="' + o.direction + '"><strong>' + T.overall + '</strong> ' +
+      (o.from === null ? esc(T.noScore) : '<span data-cmp-from>' + num(o.from, lang) + '</span>') + ' → ' + (o.to === null ? esc(T.noScore) : '<span data-cmp-to>' + num(o.to, lang) + '</span>') +
+      (o.delta === null ? '' : ' <span class="hd-d">' + signed(o.delta, lang) + '</span>') + ' <span class="hd-w"><span aria-hidden="true">' + DIR_MARK[o.direction] + '</span> ' + esc(T.dir[o.direction]) + '</span></p>';
+    if (c.metrics.length) out += '<h5 class="hd-h">' + T.metrics + '</h5><ul class="hd-l">' + c.metrics.map(function (m) {
+      return '<li class="hd hd-' + m.direction + '" data-metric="' + esc(m.name) + '" data-direction="' + m.direction + '">' +
+        '<span class="hd-n1">' + esc(metricLabel(m.name, lang)) + ' <code>' + esc(m.name) + '</code></span> ' +
+        '<span class="hd-v">' + (m.from === null ? esc(T.na) : num(m.from, lang)) + ' → ' + (m.to === null ? esc(T.na) : num(m.to, lang)) + '</span>' +
+        (m.delta === null ? '' : ' <span class="hd-d">' + signed(m.delta, lang) + '</span>') + ' <span class="hd-w"><span aria-hidden="true">' + DIR_MARK[m.direction] + '</span> ' + esc(T.dir[m.direction]) + '</span>' +
+        '<span class="hd-r">' + esc(whyText(m.reasons, T, m)) + '</span>' + sideNotes(m.notes.from, T.earlier) + sideNotes(m.notes.to, T.later) + '</li>';
+    }).join('') + '</ul>';
+    if (c.criteria.length) out += '<h5 class="hd-h">' + T.criteria + '</h5><ul class="hd-l">' + c.criteria.map(function (m) {
+      return '<li class="hd hd-' + m.direction + '" data-criterion="' + esc(m.criterion) + '" data-direction="' + m.direction + '">' +
+        '<span class="hd-n1">' + esc(m.criterion) + '</span> <span class="hd-v">' + T.score + ' ' + (m.from === null ? esc(T.na) : num(m.from, lang)) + ' → ' + (m.to === null ? esc(T.na) : num(m.to, lang)) + '</span>' +
+        (m.delta === null ? '' : ' <span class="hd-d">' + signed(m.delta, lang) + '</span>') + ' <span class="hd-w"><span aria-hidden="true">' + DIR_MARK[m.direction] + '</span> ' + esc(T.dir[m.direction]) + '</span>' +
+        '<span class="hd-r">' + esc(whyText(m.reasons, T, m)) + '</span>' + sideNotes(m.notes.from, T.reasonsEarlier) + sideNotes(m.notes.to, T.reasonsLater) + '</li>';
+    }).join('') + '</ul>';
+    return out;
+  }
+  function runItem(r, scope, latest, latestFull, T, lang) {
+    var isLast = r === latest, node = nodeHref(scope), src = treeHref(scope, r.commit);
+    var out = '<li class="hh-run' + (isLast ? ' hh-isLast' : '') + '" data-run-start="' + esc(r.startedAt) + '"><p class="hh-head"><time datetime="' + esc(r.startedAt) + '" data-from="startedAt">' + esc(when(r.startedAt)) + '</time> ' +
+      (isLast ? '<span class="hh-tag">' + T.latest + '</span> ' : '') +
+      (r.overall === null ? '<span class="hh-na">' + T.noScore + '</span>' : '<span class="hh-score" data-hband="' + bandOf(r.overall) + '"><span class="hl">' + T.overall + '</span> <strong data-from="overall">' + num(r.overall, lang) + '</strong></span>') +
+      '</p><p class="hh-meta">' + (r.model === null ? '<span data-from="model">' + esc(T.noModel) + '</span>' : '<code data-from="model">' + esc(r.model) + '</code>') +
+      ' · <code data-from="commit" title="' + esc(r.commit) + '">' + esc(r.commit.slice(0, 7)) + '</code> · <code class="hh-file" data-from="file">' + esc(r.file) + '</code></p>';
+    var links = [];
+    if (node) links.push('<a data-hh-node href="' + esc(node) + '" target="_blank" rel="noopener noreferrer">' + T.node + ' ↗</a>');
+    if (src) links.push('<a data-hh-source href="' + esc(src) + '" target="_blank" rel="noopener noreferrer">' + T.source + ' ↗</a>');
+    if (links.length) out += '<p class="hh-links">' + links.join(' ') + '</p>';
+    if (!isLast) {
+      var c = compareRuns(r, latestFull);
+      if (c) out += '<details class="hh-cmp"><summary>' + T.compare + '</summary>' + cmpBox(c, T, lang) + '</details>';
+    }
+    return out + '</li>';
+  }
+  /* The section of the Health panel. full = the cleaned latest record the run box shows (has the reasons), used as "after" when it is the newest run. */
+  function historyBox(block, lang) {
+    lang = lang === 'en' ? 'en' : 'de';
+    var T = HH[lang], r = recordOf(block), h = historyOf(r);
+    if (!h) return '';
+    var runs = h.runs, last = runs[runs.length - 1];
+    var full = r && r.startedAt === last.startedAt && r.commit === last.commit ? r : last;
+    var out = '<section class="hhist" aria-label="' + T.head + '"><h4 class="crit-h">' + T.head + '</h4><p class="hh-note" data-hh-count>' +
+      (h.total > runs.length ? T.lastOf(runs.length, h.total) : T.runs(runs.length)) + '</p>';
+    var svg = trendSvg(runs, T, lang);
+    if (svg) out += '<figure class="hh-fig">' + svg + '</figure>';
+    if (runs.length < 2) out += '<p class="vnote hh-alone">' + T.alone + '</p>';
+    out += '<ol class="hh-list">' + runs.slice().reverse().map(function (x) { return runItem(x, h.scope, last, full, T, lang); }).join('') + '</ol>';
+    return out + '</section>';
+  }
+  function withHistory(view) {
+    var inner = view.panel;
+    view.panel = function (block, lang, node) {
+      var extra = '';
+      try { extra = historyBox(block, lang); } catch (e) { extra = ''; }
+      return inner(block, lang, node) + extra;
+    };
+  }
+
   /* ───────── Ideas (ORISO-Docs#223) ───────── */
   var FLOW = ['idea', 'discussed', 'specified', 'epic'];
   var FLOW_L = {
@@ -484,6 +730,7 @@
   };
   VIEWS.health.mark = VIEWS.state.mark;
   VIEWS.health.tools = toggleTools;
+  withHistory(VIEWS.health);
   withSteering(VIEWS.health);
 
   function decode(s) { try { return decodeURIComponent(s); } catch (e) { return null; } }
@@ -516,7 +763,7 @@
   return {
     DEFAULT_VIEW: DEFAULT_VIEW, VIEW_IDS: VIEW_IDS, VIEWS: VIEWS, setCriteria: setCriteria, setHealth: setHealth, healthBand: bandOf, parseHash: parseHash, buildHash: buildHash,
     setSteering: setSteering,
-    setIdeas: setIdeas, ideaCount: function () { return IDEAS.length; }, selectIdea: selectIdea, selectedIdea: function () { return selected; },
+    compareRuns: compareRuns, setNodeLink: setNodeLink, setIdeas: setIdeas, ideaCount: function () { return IDEAS.length; }, selectIdea: selectIdea, selectedIdea: function () { return selected; },
     toggleIdeas: toggleIdeas, showIdeas: function () { return shown; }, markedCapabilities: markedSquares, tools: tools
   };
 });
