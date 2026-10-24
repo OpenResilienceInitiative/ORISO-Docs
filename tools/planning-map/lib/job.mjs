@@ -201,3 +201,21 @@ export function parseSection(body) {
   const all = [...problems, ...validateJob({ ...Object.fromEntries(Object.entries(raw).filter(([, v]) => v !== undefined)) })];
   return all.length ? { job: null, problems: all } : { job, problems: [] };
 }
+
+// ───────── diff for the dry run ─────────
+// One changed block (common head and tail cut away) with two lines of context; "" when nothing differs.
+export function diffText(before, after, context = 2) {
+  const a = String(before ?? "").split("\n").map((l) => l.replace(/\r$/, ""));
+  const b = String(after ?? "").split("\n").map((l) => l.replace(/\r$/, ""));
+  let head = 0;
+  while (head < a.length && head < b.length && a[head] === b[head]) head++;
+  let tail = 0;
+  while (tail < a.length - head && tail < b.length - head && a[a.length - 1 - tail] === b[b.length - 1 - tail]) tail++;
+  if (head === a.length && head === b.length) return "";
+  const out = [];
+  for (let i = Math.max(0, head - context); i < head; i++) out.push(` ${a[i]}`);
+  for (let i = head; i < a.length - tail; i++) out.push(`-${a[i]}`);
+  for (let i = head; i < b.length - tail; i++) out.push(`+${b[i]}`);
+  for (let i = a.length - tail; i < Math.min(a.length, a.length - tail + context); i++) out.push(` ${a[i]}`);
+  return out.join("\n");
+}
