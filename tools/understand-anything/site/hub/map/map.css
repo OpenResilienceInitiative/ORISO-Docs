@@ -620,6 +620,19 @@ dialog#workdlg::backdrop{background:rgba(20,16,15,.35)}
 .crit-f li{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px}
 .crit-f a{display:inline-flex;align-items:center;min-height:32px;padding:2px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:12.5px;font-weight:600}
 .crit-f a:hover{border-color:var(--brand);text-decoration:none}
+/* Steering comments in the Health panel (ORISO-Docs#221) */
+.steer{display:grid;gap:8px;margin:0 0 14px;padding:12px 14px;border:1px solid var(--line);border-radius:var(--radius);background:var(--card);min-width:0;overflow-wrap:anywhere}
+.steer-h{font-size:13px;color:var(--brand-deep);margin:0}
+.steer-note,.steer-none,.steer-o{font-size:12.5px;color:var(--ink-2);margin:0}
+.steer-l{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.steer-c{padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--brand-wash);min-width:0}
+.steer-m{font-size:12.5px;color:var(--ink-2);margin:0 0 4px}
+.steer-m strong{color:var(--ink)}
+.steer-b{white-space:pre-wrap;font-size:13.5px;min-width:0;overflow-wrap:anywhere}
+.steer-cmd{margin:0;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--brand-wash);white-space:pre-wrap;overflow-wrap:anywhere;font-family:var(--mono);font-size:12px;min-width:0}
+.steer-add{margin:0}
+.steer-add a{display:inline-flex;align-items:center;min-height:32px;padding:2px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:12.5px;font-weight:600}
+.steer-add a:hover{border-color:var(--brand);text-decoration:none}
 /* Plan-Leinwand und Ideen (#223): Werkzeugzeile über der Karte, Ideenliste, Fluss, Markierung der berührten Quadrate. */
 .vtools[hidden]{display:none}
 .vtools{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;margin:10px 0 0;min-width:0}

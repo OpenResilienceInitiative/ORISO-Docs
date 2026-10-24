@@ -52,7 +52,7 @@ test('one invalid record stops the build; nothing half-published', () => {
 
 test('the allow-list, the producer inputs and the build ship health.json and its validator', () => {
   const src = fs.readFileSync(new URL('../publication.mjs', import.meta.url), 'utf8');
-  assert.match(src, /data\\\/\([^)]*\|health\|ideas\)\\\.json/);
+  assert.match(src, /data\\\/\([^)]*\|health\|ideas\|steering\)\\\.json/);
   assert.match(src, /platform\/lib\/health-run\.mjs/);
   assert.match(src, /platform\/health-run\.schema\.json/);
   assert.match(src, /healthAsset\(root/);

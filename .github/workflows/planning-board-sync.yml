@@ -62,11 +62,16 @@ jobs:
             echo "::error title=Planning board drift::Project fields or options differ from tools/planning-map/board-contract.json. Update the contract (or the board) and re-run."
           fi
           [ "$code" -eq 0 ] || exit "$code"
-      - name: Keep board.json for the next hub publication
+          # Steering comments (member comments only, ORISO-Docs#221). A failure here must not hold back the board:
+          # the hub then simply publishes no steering.json.
+          if [ -n "$GH_TOKEN" ]; then
+            node tools/planning-map/steering.mjs export --out "$OUT_DIR/steering.json" || echo "::warning title=Steering export failed::steering.json is not published this hour; the board is unaffected."
+          fi
+      - name: Keep board.json (and steering.json) for the next hub publication
         if: steps.export.outputs.mode == 'live'
         uses: actions/upload-artifact@v4
         with:
           name: planning-board
-          path: ${{ runner.temp }}/planning-board/board.json
+          path: ${{ runner.temp }}/planning-board/
           if-no-files-found: error
           retention-days: 7

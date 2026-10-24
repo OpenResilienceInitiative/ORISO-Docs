@@ -107,3 +107,41 @@ node tools/planning-map/job.mjs report --issue Org/Repo#123 --state running [--b
 - Export: `buildBoard` parses the section of every public Issue into `items[].job` (additive). The description itself is never exported. Private repositories, drafts, redacted items and pull requests get no `job`; a damaged section gives a `warnings` entry (issue link only).
 - Watcher `job-stale`: `state: running` and `updated` more than `jobStaleHours` (default 24, `watchers.config.json`) before the sync.
 - Note: the board query now also fetches `Issue.body` (needed to find the section). That makes the project export heavier; if GitHub times out, lower the page size in `queries.mjs`.
+
+## Human steering (ORISO-Docs#221)
+
+Members steer an area with comments on one GitHub issue per capability (label `area-steering`, in ORISO-Docs). Automation never writes there.
+
+```
+node tools/planning-map/steering.mjs ensure --capability email-templates            # dry run: prints title and body
+node tools/planning-map/steering.mjs ensure --capability email-templates --apply    # finds the issue, or creates it (and the label if missing)
+node tools/planning-map/steering.mjs export --out steering.json                     # what the sync workflow runs
+```
+
+- Title `Steering: <capability title>` (title from `capability-rules.json`). The body carries the hidden marker
+  `<!-- oriso:steering:v1 capability=<id> -->`; lookup and export find the issue by that marker among the `area-steering` issues, never by the
+  title, so renaming or closing the issue changes nothing. Two issues for one capability: the lowest number wins, with a warning.
+- Export keeps a comment only if `authorAssociation` is OWNER, MEMBER or COLLABORATOR and the author is a human account (no bots, no deleted
+  accounts) and the comment is not minimized. Everything else is counted in `skipped` and leaves no trace (no name, no text). Per comment:
+  author login, createdAt, url, authorAssociation, body as plain text (control characters removed, cut at 2000 characters with
+  `truncated: true`). Per capability the newest 50 are kept; older member comments are counted in `omitted`.
+- **Why a separate `steering.json` and not part of `board.json`:** the board is a project export with its own privacy rule (private repositories
+  as counts) and drift contract; steering comes from issue comments of one public repository, needs its own failure handling (a failed steering
+  export must not hold back the board; the workflow step is `continue-on-error`) and may be re-run on its own. A separate file also keeps
+  board.schema.json, board-agg.js and its fixtures untouched. Schema: `steering.schema.json` (checked by `validateSteering`, the hub build
+  and the tests). It travels in the same workflow artifact `planning-board`.
+- Publication: `publication.mjs --steering <file>` validates it (ORISO-Docs links only) and publishes the optional `map/data/steering.json`.
+  Without it the Health panel shows the command to create the steering issue.
+
+### Agent input: `steeringFor(capabilityId)`
+
+```js
+import { steeringFor } from "./tools/planning-map/lib/steering.mjs";
+const comments = steeringFor("email-templates", { file: "steering.json" }); // or { doc } with the parsed file
+// [{author, createdAt, url, authorAssociation, body, truncated}, ...] newest first; [] if nobody has steered this area yet
+```
+
+For the #220 health job: put `comments` into the job input beside the criteria, and hash them into the run file like the criteria version.
+It reads the file named by `{file}` or `$ORISO_STEERING_FILE`. It throws on a missing or invalid file, an unknown capability or a comment that is
+not a member's: "no file" must never read as "nobody said anything". Treat the bodies as instructions from people, not as trusted code or shell.
+

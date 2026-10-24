@@ -150,6 +150,12 @@ and its source, the model verdict with reasons, the GitHub source link (only a t
 **No invented data:** every number sits in an element with `data-from="<path in the record>"`; `test/health-view.test.mjs` checks that each equals that
 record field and that no digit is left outside such elements; the page computes nothing but the band. Record texts are untrusted and rendered as text.
 Tests: `test/health-view.test.mjs` (colours, panel, tracing), `test/health-publication.test.mjs`, `test/map-health-render.test.mjs` (Playwright, 320/390/1440 px, light and dark, DE and EN).
+Steering section (#221): the Health panel appends a "Steering" section after the criteria box (`withSteering()` wraps `VIEWS.health.panel`, so the
+box and the colouring of #218 are untouched). It renders `map/data/steering.json` (optional asset, `MapViews.setSteering`): member comments newest first
+with author and date, escaped, plus the link "Add a comment on GitHub" to the capability's steering issue (https links to
+`OpenResilienceInitiative/ORISO-Docs/issues/<n>` only). The view repeats the export's member check. An area without a steering issue shows the exact command
+`node tools/planning-map/steering.mjs ensure --capability <id> --apply`. Producer and format: tools/planning-map README, "Human steering". Tests:
+`test/map-steering.test.mjs`, `test/map-steering-render.test.mjs` (Playwright, XSS payload), `test/steering-publication.test.mjs`.
 
 `map.js` sets the fill through the CSSOM (`--view-fill` on each square), never through a `style` attribute. Colours need a light and a dark value.
 Render tests: `test/map-views-render.test.mjs` (Playwright, strict CSP, 320/390/1440 px).
