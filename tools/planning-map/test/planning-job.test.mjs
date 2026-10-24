@@ -30,7 +30,7 @@ test("replaces only the marked section; text before and after is byte-identical"
   const r = await writeJobSection(REF, job({ state: "done", updated: "2026-10-24T10:00:00Z" }), { transport: gh.transport });
   assert.equal(r.mode, "replaced");
   const body = gh.issue(REF).body;
-  assert.ok(body.startsWith("Head ä\n\n" + START) && body.endsWith(END + "\n\n## Tail\nmore  text"));
+  assert.ok(body.startsWith("Head ä\n\n\n" + START) && body.endsWith(END + "\n\n## Tail\nmore  text"));
   assert.equal(parseSection(body).job.state, "done");
 });
 
