@@ -19,7 +19,8 @@
    badge(block) {band, text}|null  optional: data for the small score badge of a top-level square (Health); map.js sets data-hband and data-hs from it.
    setCriteria(doc): hands over map/data/criteria.json (optional asset, ORISO-Docs#217); map.js calls it once at start.
    setHealth(doc, slugFn): hands over map/data/health.json (optional asset, ORISO-Docs#218): the latest run record per scope.
-   setSteering(doc): hands over map/data/steering.json (optional asset, ORISO-Docs#221): the Health panel appends a Steering section. */
+   setSteering(doc): hands over map/data/steering.json (optional asset, ORISO-Docs#221): the Health panel appends a Steering section.
+   healthCheck(scopes, lang): HTML of the "Send health check" section for the drilled-in scope (ORISO-Docs#220); map.js places it in Health only. */
 (function (root, factory) {
   root.MapViews = factory();
 })(typeof self !== 'undefined' ? self : globalThis, function () {
@@ -360,6 +361,48 @@
     };
   }
 
+  /* ───────── Health: "Send health check" (ORISO-Docs#220) ─────────
+     One separate section, its own function: healthCheck(scopes, lang). It shows the EXACT command that files a health check
+     request for the scope the map is drilled into (capability, folder or file), the same pattern as the release move without
+     a transport (plan-ui.js): the static map has no write path, an operator runs the command with their own gh login. The
+     command is a dry run; "Copy with --apply" adds --apply. map.js builds the scopes from the open view, copies on [data-copy].
+     scopes: [{capability, repo, path: folder|null, kind: 'capability'|'folder'|'file', file?}]. A scope that is not a plain
+     capability id, repository name and relative folder gets NO command: nothing is built from text that could carry shell syntax. */
+  var HC_RUNNER = 'node tools/planning-map/plan.mjs health-check';
+  var HC_CAP = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/, HC_REPO = /^[A-Za-z0-9_.-]{1,100}$/, HC_PATH = /^[A-Za-z0-9_.@-]+(?:\/[A-Za-z0-9_.@-]+)*$/;
+  function healthCheckCommand(s, apply) {
+    if (!isObj(s) || typeof s.capability !== 'string' || !HC_CAP.test(s.capability) || typeof s.repo !== 'string' || !HC_REPO.test(s.repo)) return null;
+    if (s.path !== null && s.path !== undefined) {
+      if (typeof s.path !== 'string' || s.path.length > 300 || !HC_PATH.test(s.path) || s.path.split('/').some(function (p) { return p === '.' || p === '..'; })) return null;
+    }
+    return HC_RUNNER + ' --capability ' + s.capability + ' --repo ' + s.repo + (s.path ? ' --path ' + s.path : '') + (apply ? ' --apply' : '');
+  }
+  var HCT = {
+    de: {head: 'Gesundheitsprüfung senden', note: 'Legt auf GitHub eine Anfrage für diesen Bereich an, die ein Agent oder eine Person abarbeitet. Die Karte schreibt selbst nichts: Der Befehl läuft auf Ihrem Rechner mit Ihrem gh-Login.',
+      dry: 'Ohne --apply ist es ein Probelauf und schreibt nichts. Gibt es für den Bereich schon eine offene Anfrage, wird sie gefunden und es entsteht keine zweite.',
+      folder: 'Ordner', whole: 'ganze Fähigkeit', file: 'Datei', asFolder: 'Eine Datei wird als ihr Ordner geprüft:', copy: 'Befehl kopieren', copyApply: 'Mit --apply kopieren', none: 'Für diesen Bereich gibt es keinen Befehl.'},
+    en: {head: 'Send health check', note: 'Files a request on GitHub for this area, to be picked up by an agent or a person. The map writes nothing itself: the command runs on your machine with your gh login.',
+      dry: 'Without --apply it is a dry run and writes nothing. If the area already has an open request, it is found and no second one is made.',
+      folder: 'Folder', whole: 'whole capability', file: 'File', asFolder: 'A file is checked as its folder:', copy: 'Copy command', copyApply: 'Copy with --apply', none: 'There is no command for this area.'}
+  };
+  function healthCheck(scopes, lang) {
+    if (!Array.isArray(scopes) || !scopes.length) return '';
+    var T = HCT[lang === 'en' ? 'en' : 'de'];
+    var items = scopes.map(function (s) {
+      var cmd = healthCheckCommand(s, false);
+      if (!isObj(s)) return '';
+      var where = '<code>' + esc(String(s.repo)) + '</code> · ' + (s.path ? T.folder + ' <code>' + esc(String(s.path)) + '</code>' : T.whole);
+      var file = s.kind === 'file' && typeof s.file === 'string' ? '<p class="hcheck-note">' + T.file + ' <code>' + esc(s.file) + '</code>. ' + T.asFolder + '</p>' : '';
+      if (!cmd) return '<li class="hcheck-i"><p class="hcheck-w">' + where + '</p><p class="hcheck-note">' + T.none + '</p></li>';
+      return '<li class="hcheck-i" data-hcheck-scope="' + esc(s.capability + '/' + s.repo + (s.path ? '/' + s.path : '')) + '"><p class="hcheck-w">' + where + '</p>' + file +
+        '<pre class="hcheck-cmd"><code data-hcheck-cmd>' + esc(cmd) + '</code></pre>' +
+        '<p class="hcheck-b"><button type="button" class="hcheck-copy" data-copy="' + esc(cmd) + '">' + T.copy + '</button> ' +
+        '<button type="button" class="hcheck-copy" data-copy="' + esc(healthCheckCommand(s, true)) + '">' + T.copyApply + '</button></p></li>';
+    }).join('');
+    return '<section class="hcheck" aria-label="' + esc(T.head) + '" data-hcheck><h4 class="hcheck-h">' + T.head + '</h4><p class="hcheck-note">' + T.note + '</p>' +
+      '<ul class="hcheck-l">' + items + '</ul><p class="hcheck-note">' + T.dry + '</p></section>';
+  }
+
   /* ───────── Ideas (ORISO-Docs#223) ───────── */
   var FLOW = ['idea', 'discussed', 'specified', 'epic'];
   var FLOW_L = {
@@ -515,7 +558,7 @@
 
   return {
     DEFAULT_VIEW: DEFAULT_VIEW, VIEW_IDS: VIEW_IDS, VIEWS: VIEWS, setCriteria: setCriteria, setHealth: setHealth, healthBand: bandOf, parseHash: parseHash, buildHash: buildHash,
-    setSteering: setSteering,
+    setSteering: setSteering, healthCheck: healthCheck, healthCheckCommand: healthCheckCommand,
     setIdeas: setIdeas, ideaCount: function () { return IDEAS.length; }, selectIdea: selectIdea, selectedIdea: function () { return selected; },
     toggleIdeas: toggleIdeas, showIdeas: function () { return shown; }, markedCapabilities: markedSquares, tools: tools
   };

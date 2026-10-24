@@ -1128,6 +1128,33 @@ function viewFile(b, v){
     fileDescHTML(b, v.m, v.f)+fileRelHTML(b, v.m, v.f)+
     (f[1]!==2 ? '<p class="links"><a href="'+GH+repo+'/blob/dev/'+ghPath(z,f)+'" target="_blank" rel="noopener">'+(d?'Auf GitHub öffnen':'Open on GitHub')+' ↗</a>'+graphLink(z, ghPath(z,f), true)+'</p>' : '');
 }
+/* "Gesundheitsprüfung senden" (ORISO-Docs#220): nur in der Ansicht Health, für den geöffneten Bereich (Fähigkeit, Ordner, Datei).
+   Der Befehl je Bereich kommt aus MapViews.healthCheck; eine Datei wird als ihr Ordner geprüft. */
+function hcheckScopes(v, b){
+  var cap = b && capNodeId(b.id); if (!cap) return null;
+  cap = cap.slice('capability:'.length);
+  if (v.v==='block'){
+    var seen = {}, list = [];
+    (Z[b.id]||[]).forEach(function(z){ var r = CODE_REPOS[z[0]]; if (r && !seen[r]){ seen[r] = 1; list.push(r); } });
+    return list.sort().map(function(r){ return {capability:cap, repo:r, path:null, kind:'capability'}; });
+  }
+  var z = Z[b.id] && Z[b.id][v.m]; if (!z) return null;
+  var repo = CODE_REPOS[z[0]];
+  if (v.v==='mod') return [{capability:cap, repo:repo, path: z[2] ? String(z[2]).replace(/\/+$/, '') || null : null, kind:'folder'}];
+  var f = z[12][v.f]; if (!f || f[1]===2) return null;
+  var p = ghPath(z, f), i = p.lastIndexOf('/');
+  return [{capability:cap, repo:repo, path: i<0 ? null : p.slice(0, i), kind:'file', file: p.slice(i+1)}];
+}
+function hcheckHTML(v, b){
+  if (view !== 'health') return '';
+  try { return MapViews.healthCheck(hcheckScopes(v, b), lang); } catch (e) { return ''; }
+}
+/* Fügt HTML hinter den ersten Titel (h3) der Ansicht ein; ohne Titel davor. */
+function afterTitle(inner, html){
+  if (!html) return inner;
+  var i = inner.indexOf('</h3>');
+  return i < 0 ? html + inner : inner.slice(0, i + 5) + html + inner.slice(i + 5);
+}
 function renderView(){
   if (!stack.length){ renderEmpty(); syncMap(); syncHash(false); return; }
   var v = stack[stack.length-1], b = BY[curBlock() || ''], inner;
@@ -1143,7 +1170,8 @@ function renderView(){
   else if (v.v==='mods') inner = viewMods(b, v);
   else if (v.v==='mod') inner = viewMod(b, v);
   else if (v.v==='file') inner = viewFile(b, v);
-  if (v.v==='block') inner = MapViews.VIEWS[view].panel(BY[v.id], lang, capNodeId(v.id)) + inner;
+  if (v.v==='block') inner = MapViews.VIEWS[view].panel(BY[v.id], lang, capNodeId(v.id)) + hcheckHTML(v, b) + inner;
+  else if (v.v==='mod' || v.v==='file') inner = afterTitle(inner, hcheckHTML(v, b));
   var sheetMode = useSheet();
   var host = sheetMode ? sheetBody : panel;
   host.innerHTML = frame(inner, sheetMode);
@@ -1620,6 +1648,11 @@ document.getElementById('wkclose').addEventListener('click', closeWork);
 document.addEventListener('click', function(e){
   var b = e.target.closest && e.target.closest('[data-work]'); if (!b) return;
   e.preventDefault(); e.stopPropagation(); openWork(b.getAttribute('data-work'), b);
+});
+/* Knöpfe mit data-copy (Gesundheitsprüfung, ORISO-Docs#220) kopieren ihren Befehl. */
+document.addEventListener('click', function(e){
+  var b = e.target.closest && e.target.closest('[data-copy]'); if (!b) return;
+  e.preventDefault(); copyText(b.getAttribute('data-copy'), b);
 });
 function copyText(txt, btn){
   function done(){ var t = btn.textContent; btn.textContent = de() ? 'Kopiert' : 'Copied'; setTimeout(function(){ btn.textContent = t; }, 1600); }

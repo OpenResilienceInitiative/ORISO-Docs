@@ -157,6 +157,12 @@ with author and date, escaped, plus the link "Add a comment on GitHub" to the ca
 `node tools/planning-map/steering.mjs ensure --capability <id> --apply`. Producer and format: tools/planning-map README, "Human steering". Tests:
 `test/map-steering.test.mjs`, `test/map-steering-render.test.mjs` (Playwright, XSS payload), `test/steering-publication.test.mjs`.
 
+"Send health check" section (#220): a separate function `MapViews.healthCheck(scopes, lang)` in `views.js`, placed by `map.js` (`hcheckScopes`, `hcheckHTML`) in the Health view only:
+after the criteria and steering boxes of a capability, and right after the title of a folder or file view. It shows the exact command
+`node tools/planning-map/plan.mjs health-check --capability <id> --repo <name> [--path <folder>]` (a dry run) with "Copy command" and "Copy with --apply", the same pattern as the
+release move without a transport (`plan-ui.js`). A capability gets one command per repository it has code in; a file is checked as its folder and the section says so.
+A scope that is not a plain capability id, repository name and relative folder gets no command. Tests: `test/health-check-view.test.mjs`, `test/map-health-check-render.test.mjs` (Playwright).
+
 `map.js` sets the fill through the CSSOM (`--view-fill` on each square), never through a `style` attribute. Colours need a light and a dark value.
 Render tests: `test/map-views-render.test.mjs` (Playwright, strict CSP, 320/390/1440 px).
 
