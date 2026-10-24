@@ -812,3 +812,116 @@ test('a data file without a run is reported as unstamped', {skip}, async () => {
     await context.close();
   } finally { overrides = {}; }
 });
+
+// ───── Branches and pull requests: badge and pop-up on task and epic cards (ORISO-Docs#215) ─────
+const FR = 'https://github.com/OpenResilienceInitiative/ORISO-Frontend/';
+const WORK = doc => {
+  const br = (name, source, prs = [], url = FR + 'tree/' + name) => ({name, repository: 'OpenResilienceInitiative/ORISO-Frontend', source, lastCommitDate: '2026-10-20T10:00:00Z', url, prs});
+  const w = {
+    1734: {branches: [br('feat/1734-a', 'linked')], prs: [], hidden: 0},
+    1801: {branches: [br('feat/1801-x', 'pr', [7]), br('fix/1801-y', 'name')], prs: [{number: 7, repository: 'OpenResilienceInitiative/ORISO-Frontend', title: 'Add waiting room', url: FR + 'pull/7', state: 'OPEN', isDraft: true, checks: 'FAILURE', reviewDecision: 'REVIEW_REQUIRED', updatedAt: '2026-10-21T10:00:00Z', branch: 'feat/1801-x'}], hidden: 0},
+    1802: {branches: [br('wip/1802', 'name')], prs: [], hidden: 1},
+  };
+  doc.items.forEach(i => { if (i.repository.endsWith('ORISO-Frontend') && w[i.number]) i.work = w[i.number]; });
+};
+const BADGE = '[data-work]';
+const badgeText = async loc => (await loc.innerText()).replace(/\s+/g, ' ').trim();
+
+test('epic card and epic header show the sum; a task shows its own badge; no work data, no badge (EN)', {skip}, async () => {
+  const {page, problems, context} = await open({lang: 'en', board: WORK});
+  assert.equal(await badgeText(page.locator(`#pgrid ${BADGE}[data-work="epic:0"]`)), '4 branches · 1 PR');
+  await openEpic(page);
+  assert.equal(await badgeText(page.locator(`#panel ${BADGE}[data-work="epic:0"]`)), '4 branches · 1 PR');
+  assert.equal(await badgeText(page.locator(`#panel ${BADGE}[data-work="item:ORISO-Frontend#1801"]`)), '2 branches · 1 PR');
+  assert.equal(await badgeText(page.locator(`#panel ${BADGE}[data-work="item:ORISO-Frontend#1802"]`)), '1 branch · 0 PRs');
+  assert.equal(await page.locator(`#panel ${BADGE}[data-work="item:ORISO-Frontend#1803"]`).count(), 0);
+  assert.deepEqual(problems, []);
+  await context.close();
+  const plain = await open({lang: 'en'});
+  assert.equal(await plain.page.locator(BADGE).count(), 0);
+  await plain.context.close();
+});
+
+test('German badge', {skip}, async () => {
+  const {page, context} = await open({lang: 'de', board: WORK});
+  assert.equal(await badgeText(page.locator(`#pgrid ${BADGE}[data-work="epic:0"]`)), '4 Branches · 1 PR');
+  await context.close();
+});
+
+test('the badge opens a pop-up with branches and PRs; the epic stays; Escape closes it and focus returns (EN)', {skip}, async () => {
+  const {page, problems, context} = await open({lang: 'en', board: WORK});
+  await openEpic(page);
+  const badge = page.locator(`#panel ${BADGE}[data-work="epic:0"]`);
+  const before = await page.locator('#panel').innerHTML();
+  await badge.focus();
+  await page.keyboard.press('Enter');
+  await page.waitForSelector('#workdlg[open]');
+  assert.equal(await page.locator('#workdlg').getAttribute('aria-labelledby'), 'wkTitle');
+  assert.ok(await page.locator('#panel .estat').isVisible(), 'the epic stays visible');
+  const links = await page.locator('#workdlg a').evaluateAll(a => a.map(x => [x.textContent.trim(), x.getAttribute('href'), x.rel, x.target]));
+  assert.ok(links.length >= 4 && links.every(([, h, rel, t]) => /^https:\/\//.test(h) && /noopener/.test(rel) && t === '_blank'));
+  const text = await page.locator('#workdlg').innerText();
+  assert.match(text, /feat\/1734-a/);
+  assert.match(text, /fix\/1801-y[\s\S]*matched by name only/i);
+  assert.match(text, /#7[\s\S]*Add waiting room/);
+  assert.match(text, /draft/i);
+  assert.match(text, /checks failing/i);
+  assert.equal(await page.locator('#workdlg [style]').count(), 0);
+  await page.keyboard.press('Escape');
+  assert.equal(await page.locator('#workdlg[open]').count(), 0);
+  assert.equal(await page.evaluate(() => document.activeElement.getAttribute('data-work')), 'epic:0');
+  assert.equal(await page.locator('#panel').innerHTML(), before, 'the epic view was not redrawn');
+  assert.ok(await page.locator('#panel .estat').isVisible());
+  assert.deepEqual(problems, []);
+  await context.close();
+});
+
+test('a badge on the planned-work card opens the pop-up without opening the epic', {skip}, async () => {
+  const {page, context} = await open({lang: 'en', board: WORK});
+  await page.locator(`#pgrid ${BADGE}[data-work="epic:0"]`).click();
+  await page.waitForSelector('#workdlg[open]');
+  assert.equal(await page.locator('#panel .estat').count(), 0);
+  await page.locator('#wkclose').click();
+  assert.equal(await page.evaluate(() => document.activeElement.getAttribute('data-work')), 'epic:0');
+  await context.close();
+});
+
+test('private references are a count; hostile names and a javascript: URL stay text', {skip}, async () => {
+  const {page, problems, context} = await open({lang: 'en', board: doc => {
+    WORK(doc);
+    const i = doc.items.find(x => x.number === 1801);
+    i.work.branches[1].name = '<img src=x onerror=alert(1)>';
+    i.work.branches[1].url = 'javascript:alert(1)';
+    i.work.prs[0].title = '<b>bold</b>';
+  }});
+  await openEpic(page);
+  await page.locator(`#panel ${BADGE}[data-work="epic:0"]`).click();
+  await page.waitForSelector('#workdlg[open]');
+  assert.equal(await page.locator('#workdlg img, #workdlg b').count(), 0);
+  assert.equal(await page.locator('#workdlg a[href^="javascript"]').count(), 0);
+  assert.match(await page.locator('#workdlg').innerText(), /<img src=x onerror=alert\(1\)>/);
+  assert.match(await page.locator('#workdlg').innerText(), /1 reference in a private repository, counted only/);
+  assert.equal(await page.locator('#workdlg').getByText('wip/1802').count(), 1); // public branch of a public issue
+  assert.deepEqual(problems, []);
+  await context.close();
+});
+
+for (const width of [320, 390, 1440]) {
+  test(`${width}px: badge and pop-up fit, no horizontal overflow (light DE, dark EN)`, {skip}, async () => {
+    for (const [scheme, lang] of [['light', 'de'], ['dark', 'en']]) {
+      const {page, problems, context} = await open({width, scheme, lang, board: WORK});
+      await page.locator(`#pgrid ${BADGE}[data-work="epic:0"]`).click();
+      await page.waitForSelector('#workdlg[open]');
+      const box = await page.locator('#workdlg').boundingBox();
+      assert.ok(box.x >= 0 && box.x + box.width <= width + 1, 'dialog inside the viewport');
+      assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), 'no horizontal overflow');
+      const inner = await page.locator('#wkBody').evaluate(e => e.scrollWidth <= e.clientWidth + 1);
+      assert.ok(inner, 'dialog content does not overflow sideways');
+      if (process.env.UA_SHOTS) await page.screenshot({path: `${process.env.UA_SHOTS}/work-${width}-${scheme}-${lang}.png`});
+      await page.keyboard.press('Escape');
+      assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth));
+      assert.deepEqual(problems, []);
+      await context.close();
+    }
+  });
+}

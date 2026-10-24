@@ -397,6 +397,135 @@
               "string",
               "null"
             ]
+          },
+          "work": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "branches",
+              "prs",
+              "hidden"
+            ],
+            "properties": {
+              "hidden": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "branches": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "name",
+                    "repository",
+                    "source",
+                    "lastCommitDate",
+                    "url",
+                    "prs"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "repository": {
+                      "type": "string"
+                    },
+                    "source": {
+                      "enum": [
+                        "linked",
+                        "pr",
+                        "name"
+                      ]
+                    },
+                    "lastCommitDate": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "url": {
+                      "type": "string",
+                      "pattern": "^https://"
+                    },
+                    "prs": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              },
+              "prs": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "number",
+                    "repository",
+                    "title",
+                    "url",
+                    "state",
+                    "isDraft",
+                    "checks",
+                    "reviewDecision",
+                    "updatedAt",
+                    "branch"
+                  ],
+                  "properties": {
+                    "number": {
+                      "type": "integer"
+                    },
+                    "repository": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string",
+                      "pattern": "^https://"
+                    },
+                    "state": {
+                      "enum": [
+                        "OPEN",
+                        "CLOSED",
+                        "MERGED"
+                      ]
+                    },
+                    "isDraft": {
+                      "type": "boolean"
+                    },
+                    "checks": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "reviewDecision": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "updatedAt": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "branch": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }

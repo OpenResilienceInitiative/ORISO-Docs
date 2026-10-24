@@ -284,6 +284,8 @@ var SBH = ['storybook-frontend','storybook-admin'];
 var EP = MEAS.epics.epics, EPR = MEAS.epics.repos;
 /* Board-Stand je Fähigkeit (board.json, optional): Aggregation in board-agg.js, Zuordnung über die Epics dieser Karte. */
 var BOARD = (MEAS.board && typeof BoardAgg !== 'undefined') ? BoardAgg.aggregate(MEAS.board, MEAS.epics) : null;
+/* Branches und Pull Requests je Aufgabe und Epic (ORISO-Docs#215); null, solange das Board keine work-Daten kennt. */
+var WORKIDX = (MEAS.board && typeof BoardAgg !== 'undefined' && BoardAgg.workIndex) ? BoardAgg.workIndex(MEAS.board, MEAS.epics) : null;
 
 /* ───────── Hilfen ───────── */
 var lang = document.documentElement.getAttribute('data-lang')==='en' ? 'en' : 'de';
@@ -890,9 +892,9 @@ function viewRel(b){
 function epicCard(i){
   var e=EP[i], s=stageOf(e), t=tt();
   var pct = e.tot ? Math.round(100*e.done/e.tot) : (e.s==='c'?100:0);
-  return '<button type="button" class="epic" data-epic="'+i+'"><span class="et">'+esc(e.t)+'</span>'+
+  return '<div class="epicw"><button type="button" class="epic" data-epic="'+i+'"><span class="et">'+esc(e.t)+'</span>'+
     '<span class="em">'+stagePill(s)+'<span class="k">'+esc(EPR[e.r].replace('ORISO-',''))+' #'+e.n+'</span><span>'+esc(t.subs)+' '+e.done+'/'+e.tot+'</span>'+(currentReleaseOf(e)?'<span>'+esc(currentReleaseOf(e))+'</span>':'')+'</span>'+
-    '<span class="prog" aria-hidden="true"><i data-css="width:'+pct+'%"></i></span></button>';
+    '<span class="prog" aria-hidden="true"><i data-css="width:'+pct+'%"></i></span></button>'+workBadge('epic:'+i)+'</div>';
 }
 function viewEpics(b){
   var t=tt();
@@ -941,7 +943,7 @@ function epicBoardHTML(v){
     return '<div class="dgroup egroup"><h5><span>'+(g.status ? '<i class="sw sseg" data-status="'+esc(g.status)+'" data-group="'+g.group+'"></i> ' : '')+esc(name)+'</span><span class="c">'+fmt(g.count)+'</span></h5><ul class="dlist">'+g.items.map(function(x){
       /* Nur https-Links (wie bei den Befunden): alles andere aus board.json wird Text, nie ein href. */
       var link = /^https:\/\//.test(x.url||'') ? '<a href="'+esc(x.url)+'" target="_blank" rel="noopener">'+esc(x.title)+'</a>' : '<span class="nolink">'+esc(x.title)+'</span>';
-      return '<li'+(x.gate?' class="hasgate"':'')+'>'+link+'<span class="c">'+(x.state==='CLOSED'?'✓ ':'○ ')+esc(x.repository.replace('ORISO-',''))+' #'+x.number+'</span>'+gateStepsHTML(x)+'</li>';
+      return '<li'+(x.gate?' class="hasgate"':'')+'>'+link+'<span class="c">'+(x.state==='CLOSED'?'✓ ':'○ ')+esc(x.repository.replace('ORISO-',''))+' #'+x.number+'</span>'+gateStepsHTML(x)+workBadge('item:'+x.repository+'#'+x.number)+'</li>';
     }).join('')+'</ul></div>';
   }).join('');
   return '<div class="estat" role="group" aria-label="'+esc(t.onBoardBar)+'"><h4>'+esc(t.onBoardBar)+'</h4>'+sbarHTML(ev,'big')+'<ul class="slist">'+legend+'</ul></div>'+
@@ -961,6 +963,7 @@ function viewEpic(v){
     '<div class="prog"><i data-css="width:'+pct+'%"></i></div>'+
     '<p><a href="'+GH+EPR[e.r]+'/issues/'+e.n+'" target="_blank" rel="noopener">'+esc(t.openGh)+' · '+esc(EPR[e.r])+' #'+e.n+' ↗</a></p>'+
     moveButton({kind:'epic', i:i})+
+    (workBadge('epic:'+i) ? '<p class="wkrow">'+workBadge('epic:'+i)+'</p>' : '')+
     board+
     (subs ? '<div class="dgroup"><h5><span>'+esc(t.subs)+'</span><span class="c">'+e.subs.length+'</span></h5><ul class="dlist">'+subs+'</ul></div>' : '')+
     (!board && e.hid ? '<p class="dmeta">'+esc(t.hiddenSubs(e.hid))+'</p>' : '');
@@ -1468,6 +1471,77 @@ function submitMove(){
 document.getElementById('mvform').addEventListener('submit', function(e){ e.preventDefault(); submitMove(); });
 document.getElementById('mvcancel').addEventListener('click', closeMove);
 movedlg.addEventListener('cancel', function(){ mvSub = null; });
+/* ───── Branches und Pull Requests: Badge und Pop-up (ORISO-Docs#215) ───── */
+var WK = {
+  de:{branch:['Branch','Branches'], pr:['PR','PRs'], title:'Branches und Pull Requests', close:'Schließen', open:'Branches und Pull Requests zeigen',
+    last:'letzter Commit', src:{linked:'auf GitHub verknüpft', pr:'über Pull Request', name:'nur über den Namen zugeordnet'},
+    state:{OPEN:'offen', MERGED:'gemergt', CLOSED:'geschlossen'}, draft:'Entwurf', checks:{SUCCESS:'Prüfungen grün', FAILURE:'Prüfungen fehlgeschlagen', ERROR:'Prüfungen fehlgeschlagen', PENDING:'Prüfungen laufen', EXPECTED:'Prüfungen laufen'},
+    review:{APPROVED:'freigegeben', CHANGES_REQUESTED:'Änderungen angefordert', REVIEW_REQUIRED:'Review ausstehend'}, none:'Keine Branches oder Pull Requests.',
+    hidden:function(n){ return n+(n===1?' Verweis':' Verweise')+' in einem privaten Repository, nur gezählt'; }, forEpic:'Epic', pri:'Pull Requests'},
+  en:{branch:['branch','branches'], pr:['PR','PRs'], title:'Branches and pull requests', close:'Close', open:'Show branches and pull requests',
+    last:'last commit', src:{linked:'linked on GitHub', pr:'via pull request', name:'matched by name only'},
+    state:{OPEN:'open', MERGED:'merged', CLOSED:'closed'}, draft:'draft', checks:{SUCCESS:'checks passing', FAILURE:'checks failing', ERROR:'checks failing', PENDING:'checks running', EXPECTED:'checks running'},
+    review:{APPROVED:'approved', CHANGES_REQUESTED:'changes requested', REVIEW_REQUIRED:'review required'}, none:'No branches or pull requests.',
+    hidden:function(n){ return n+(n===1?' reference':' references')+' in a private repository, counted only'; }, forEpic:'Epic', pri:'Pull requests'}
+};
+function wk(){ return WK[de()?'de':'en']; }
+function workOf(ref){
+  if (!WORKIDX || typeof ref!=='string') return null;
+  var m = /^(epic|item):(.+)$/.exec(ref); if (!m) return null;
+  if (m[1]==='epic') { var s = WORKIDX.byEpic[+m[2]]; return s ? {kind:'epic', branches:s.branches, prs:s.prs, hidden:s.hidden, issues:s.issues} : null; }
+  var x = WORKIDX.byItem[m[2]]; return x ? {kind:'item', branches:x.branches, prs:x.prs, hidden:x.hidden, issues:[x]} : null;
+}
+function workLabel(s){
+  var t = wk();
+  return fmt(s.branches)+' '+t.branch[s.branches===1?0:1]+' · '+fmt(s.prs)+' '+t.pr[s.prs===1?0:1];
+}
+function workBadge(ref){
+  var s = workOf(ref); if (!s || (!s.branches && !s.prs)) return '';
+  return '<button type="button" class="wkbadge" data-work="'+esc(ref)+'" aria-haspopup="dialog" title="'+esc(wk().open)+'">'+esc(workLabel(s))+'</button>';
+}
+/* Nur https-Links: alles andere aus board.json bleibt Text, nie ein href (wie bei den Teilaufgaben). */
+function wkLink(url, text){ return /^https:\/\//.test(url||'') ? '<a href="'+esc(url)+'" target="_blank" rel="noopener">'+esc(text)+'</a>' : '<span class="nolink">'+esc(text)+'</span>'; }
+function wkDate(d){ return /^\d{4}-\d{2}-\d{2}/.test(d||'') ? d.slice(0,10) : ''; }
+function wkIssueHTML(x, head){
+  var t = wk();
+  var bl = x.branchList.map(function(b){
+    var when = wkDate(b.lastCommitDate), prs = (b.prs||[]).map(function(n){ return '#'+n; }).join(' ');
+    return '<li>'+wkLink(b.url, b.name)+' <span class="wksrc" data-source="'+esc(b.source)+'">'+esc(t.src[b.source]||b.source)+'</span>'+
+      (when ? ' <span class="c">'+esc(t.last)+' '+esc(when)+'</span>' : '')+(prs ? ' <span class="c">'+esc(prs)+'</span>' : '')+'</li>';
+  }).join('');
+  var pl = x.prList.map(function(p){
+    var bits = [t.state[p.state]||p.state];
+    if (p.isDraft) bits.push(t.draft);
+    if (p.checks && t.checks[p.checks]) bits.push(t.checks[p.checks]);
+    if (p.reviewDecision && t.review[p.reviewDecision]) bits.push(t.review[p.reviewDecision]);
+    return '<li>'+wkLink(p.url, '#'+p.number+' '+p.title)+' <span class="c">'+esc(bits.join(' · '))+'</span></li>';
+  }).join('');
+  return '<section class="wkissue">'+(head ? '<h4>'+wkLink(x.url, x.title)+' <span class="c">'+esc(x.repository.replace('ORISO-',''))+' #'+x.number+'</span></h4>' : '')+
+    (bl ? '<ul class="dlist wklist">'+bl+'</ul>' : '')+(pl ? '<h5 class="wkh">'+esc(t.pri)+'</h5><ul class="dlist wklist">'+pl+'</ul>' : '')+'</section>';
+}
+var workdlg = document.getElementById('workdlg'), wkOpener = null, wkRef = null;
+function openWork(ref, opener){
+  var s = workOf(ref); if (!s) return;
+  var t = wk(), item = s.kind==='item' ? s.issues[0] : null;
+  wkRef = ref; wkOpener = opener || document.activeElement;
+  document.getElementById('wkTitle').textContent = item ? '#'+item.number+' '+item.title : t.title+' · '+(EP[+ref.slice(5)]||{}).t;
+  document.getElementById('wkclose').textContent = t.close;
+  document.getElementById('wkBody').innerHTML = (s.issues.length ? s.issues.map(function(x){ return wkIssueHTML(x, s.kind==='epic'); }).join('') : '<p class="dmeta">'+esc(t.none)+'</p>')+
+    (s.hidden ? '<p class="dmeta wkpriv">'+esc(t.hidden(s.hidden))+'</p>' : '');
+  workdlg.showModal();
+  document.getElementById('wkTitle').focus({preventScroll:true});
+}
+function closeWork(){ if (workdlg.open) workdlg.close(); }
+workdlg.addEventListener('close', function(){
+  var o = wkOpener && document.contains(wkOpener) ? wkOpener : (wkRef ? document.querySelector('[data-work="'+wkRef.replace(/"/g,'')+'"]') : null);
+  wkOpener = null; if (o) o.focus();
+});
+workdlg.addEventListener('click', function(e){ if (e.target===workdlg) closeWork(); }); /* Klick auf den Hintergrund */
+document.getElementById('wkclose').addEventListener('click', closeWork);
+document.addEventListener('click', function(e){
+  var b = e.target.closest && e.target.closest('[data-work]'); if (!b) return;
+  e.preventDefault(); e.stopPropagation(); openWork(b.getAttribute('data-work'), b);
+});
 function copyText(txt, btn){
   function done(){ var t = btn.textContent; btn.textContent = de() ? 'Kopiert' : 'Copied'; setTimeout(function(){ btn.textContent = t; }, 1600); }
   if (navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(done, function(){ btn.textContent = de() ? 'Bitte von Hand kopieren' : 'Please copy by hand'; }); }

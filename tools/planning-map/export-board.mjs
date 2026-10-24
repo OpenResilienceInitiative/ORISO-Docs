@@ -3,6 +3,7 @@
 import { spawnSync } from "node:child_process";
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
+import { fetchRepoBranches } from "./lib/work.mjs";
 import { buildBoard, contract, driftCheck, fetchAll, liveOptions, validateBoard } from "./lib/board.mjs";
 
 export function ghRunner(query, variables) {
@@ -22,6 +23,7 @@ export function ghRunner(query, variables) {
 export function fixtureRunner(file) {
   const fx = JSON.parse(readFileSync(file, "utf8"));
   return (query, vars) => {
+    if ("name" in vars) return fx.branches?.[`${vars.owner}/${vars.name}`] ?? { data: { repository: { refs: { pageInfo: { hasNextPage: false, endCursor: null }, nodes: [] } } } };
     if (!("after" in vars)) return fx.meta;
     const idx = vars.after == null ? 0 : fx.pages.findIndex((p) => p.cursorBefore === vars.after);
     if (idx < 0) throw new Error(`fixture has no page after cursor ${vars.after}`);
@@ -42,7 +44,13 @@ export async function main(argv) {
     console.log("drift check passed");
     return 0;
   }
-  const board = buildBoard(data, { owner, number });
+  // Name-only branch matches need one bounded, cached listing per public repo that has issues.
+  const privateRepos = new Set(contract.privateRepositories);
+  const repos = data.items.filter((i) => i.content?.__typename === "Issue" && !i.content.repository?.isPrivate && !privateRepos.has(i.content.repository?.nameWithOwner)).map((i) => i.content.repository.nameWithOwner);
+  const { index: branchIndex, truncated, errors: listErrors } = await fetchRepoBranches(run, repos);
+  const board = buildBoard(data, { owner, number, branchIndex });
+  for (const r of truncated) board.warnings.push(`Branch listing of ${r} was cut off; name-only matches may be incomplete`);
+  for (const e of listErrors) board.warnings.push(`Branch listing failed, name-only matches missing: ${e}`);
   const errors = validateBoard(board);
   if (errors.length) { console.error(`board.json invalid:\n- ${errors.join("\n- ")}`); return 1; }
   mkdirSync(dirname(out), { recursive: true });
