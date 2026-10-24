@@ -69,3 +69,12 @@ test('a not-available metric keeps value and score null in the history; no recor
   assert.deepEqual([m.value, m.score], [null, null]);
   assert.deepEqual(buildHealthDoc([]), { schemaVersion: 1, records: [], history: [], historyCap: 50 });
 });
+
+// ORISO-Docs#213 review (finding 16): the map links a record by its path in the docs repository; health.json carries it (records[].file),
+// so the page never re-derives the path from scope and time.
+test('health.json records carry file, the record path of runFile', () => {
+  const r = rec({ at: '2026-10-02T08:00:00Z', path: 'src/components/chat' });
+  const doc = buildHealthDoc([r]);
+  assert.equal(doc.records[0].file, runFile(r));
+  assert.equal(doc.history[0].runs[0].file, runFile(r));
+});

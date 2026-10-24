@@ -214,7 +214,9 @@
       scope: {capability: cap, repo: repo, path: path}, commit: r.commit, startedAt: r.startedAt, model: r.model === null ? null : txt(r.model, 100),
       criteriaVersion: txt(r.criteriaVersion, 64) || '', runId: txt(r.run.runId, 64) || '', overall: r.overall,
       metrics: r.metrics.map(cleanMetric).filter(Boolean), verdict: Array.isArray(r.verdict) ? r.verdict.map(cleanVerdict).filter(Boolean) : [],
-      source: src, graphNode: txt(r.links.graphNode, 512)
+      source: src, graphNode: txt(r.links.graphNode, 512),
+      /* path of the record in the docs repository, as health.json carries it (runFile); only a plain path under health/runs is kept */
+      file: typeof r.file === 'string' && r.file.length <= 400 && /^health\/runs\/[A-Za-z0-9_.@\/-]+\.json$/.test(r.file) && !/(^|\/)\.\.?(\/|$)/.test(r.file) ? r.file : null
     };
   }
   /* doc: map/data/health.json; slugFn(blockId) -> capability id of the square, or null. */
@@ -673,6 +675,8 @@
      capability id, repository name and relative folder gets NO command: nothing is built from text that could carry shell syntax. */
   var HC_RUNNER = 'node tools/planning-map/plan.mjs health-check';
   var HC_CAP = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/, HC_REPO = /^[A-Za-z0-9_.-]{1,100}$/, HC_PATH = /^[A-Za-z0-9_.@-]+(?:\/[A-Za-z0-9_.@-]+)*$/;
+  /* Same text as healthCheckCommand of tools/planning-map/lib/planning-api.mjs (the page cannot import it); test/planning-health-check.test.mjs
+     in tools/planning-map compares the two and parses the text back with plan.mjs. */
   function healthCheckCommand(s, apply) {
     if (!isObj(s) || typeof s.capability !== 'string' || !HC_CAP.test(s.capability) || typeof s.repo !== 'string' || !HC_REPO.test(s.repo)) return null;
     if (s.path !== null && s.path !== undefined) {
@@ -770,9 +774,9 @@
     if (!cap || !RF_SAFE.test(cap)) return '';
     var scope = cap, rec = '', r = recordOf(block);
     if (r && RF_SAFE.test(r.scope.repo) && (r.scope.path === null || RF_SAFE.test(r.scope.path))) {
-      var stamp = r.startedAt.replace(/\.\d+Z$/, 'Z').replace(/[-:]/g, '');
       scope += ':' + r.scope.repo + (r.scope.path === null ? '' : ':' + r.scope.path);
-      rec = ' --record health/runs/' + cap + '/' + r.scope.repo + '/' + (r.scope.path === null ? '' : 'at/' + r.scope.path + '/') + stamp + '.json';
+      /* the record path comes from health.json (records[].file = runFile of health-run.mjs), never rebuilt here */
+      if (r.file) rec = ' --record ' + r.file;
     }
     return 'node tools/planning-map/plan.mjs propose-refactor --scope ' + scope + rec + ' --epic <Org/Repo#n> [--apply]';
   }

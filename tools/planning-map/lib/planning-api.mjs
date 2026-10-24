@@ -366,9 +366,13 @@ const HC_MARKER = /<!--\s*oriso:health-check:v1\s+scope=([A-Za-z0-9_.@\/-]+)\s*-
 export const healthScopeKey = (s) => `${s.capability}/${s.repo}${s.path ? `/${s.path}` : ""}`;
 export const healthCheckMarker = (s) => `<!-- oriso:health-check:v1 scope=${healthScopeKey(s)} -->`;
 export const parseHealthCheckMarker = (body) => (typeof body === "string" ? HC_MARKER.exec(body)?.[1] ?? null : null);
-// The command the map shows for the same scope (map/views.js keeps a copy of this text; a test compares them).
-export const healthCheckCommand = (s) =>
+// The command that makes the run (it goes into the request issue body).
+export const healthRunCommand = (s) =>
   `node tools/understand-anything/platform/health-run.mjs run --capability ${s.capability} --repo ${s.repo}${s.path ? ` --path ${s.path}` : ""} --checkout <path to your ${s.repo} checkout>`;
+// The command that files the request (plan.mjs health-check): the map shows the same text (map/views.js healthCheckCommand keeps a
+// copy, the page cannot import this module; test/planning-health-check.test.mjs compares the two and parses it back with plan.mjs).
+export const healthCheckCommand = (s, apply = false) =>
+  `node tools/planning-map/plan.mjs health-check --capability ${s.capability} --repo ${s.repo}${s.path ? ` --path ${s.path}` : ""}${apply ? " --apply" : ""}`;
 
 function checkScope(s) {
   if (!s || typeof s !== "object") return "scope must be {capability, repo, path}";
@@ -394,7 +398,7 @@ function healthBody(s, criteria) {
     "Run it from a clean checkout:",
     "",
     "```",
-    healthCheckCommand(s),
+    healthRunCommand(s),
     "```",
     "",
     "Agents: read the steering comments of the capability (label `area-steering`, `steeringFor()`) before you start. The run writes `health/runs/...` through a pull request; creating refactoring tasks from the result is a separate planning step.",

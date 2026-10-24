@@ -159,27 +159,41 @@
       branches: (wk.branches || []).length, prs: open, hidden: wk.hidden || 0, truncated: wk.truncated === true, branchList: wk.branches || [], prList: wk.prs || []};
   }
   function countText(n, truncated) { return String(n) + (truncated ? '+' : ''); }
+  /* Members of one epic, the one rule for the branch sums (workIndex) and the job index (jobs.js): the epic itself, its children by
+     `parent`, then the sub-issue list of the epics data; each key once and only when has(key). kids = childIndex(board), optional
+     (pass it when calling for every epic). */
+  function childIndex(board) {
+    var kids = {};
+    ((board && board.items) || []).forEach(function (it) {
+      if (it.contentType === 'Issue' && it.parent && it.repository && typeof it.number === 'number') {
+        var pk = key(it.parent.repository, it.parent.number);
+        (kids[pk] || (kids[pk] = [])).push(key(it.repository, it.number));
+      }
+    });
+    return kids;
+  }
+  function epicMembers(board, epics, index, has, kids) {
+    var repos = (epics && epics.repos) || [], e = epics && epics.epics && epics.epics[index], seen = {}, out = [];
+    if (!e) return out;
+    var ek = key(repos[e.r], e.n);
+    kids = kids || childIndex(board);
+    function take(k) { if (has(k) && !seen[k]) { seen[k] = 1; out.push(k); } }
+    take(ek);
+    (kids[ek] || []).forEach(take);
+    (e.subs || []).forEach(function (s) { take(key(repos[s[0]], s[1])); });
+    return out;
+  }
   function workIndex(board, epics) {
-    var items = (board && board.items) || [], byItem = {}, any = false, repos = (epics && epics.repos) || [];
+    var items = (board && board.items) || [], byItem = {}, any = false;
     items.forEach(function (it) {
       if (it.contentType !== 'Issue' || !it.repository || typeof it.number !== 'number' || !it.work) return;
       any = true; byItem[key(it.repository, it.number)] = itemSummary(it);
     });
     if (!any) return null;
-    var children = {};
-    items.forEach(function (it) {
-      if (it.contentType === 'Issue' && it.parent && byItem[key(it.repository, it.number)]) {
-        var pk = key(it.parent.repository, it.parent.number);
-        (children[pk] || (children[pk] = [])).push(key(it.repository, it.number));
-      }
-    });
+    var kids = childIndex(board), has = function (k) { return !!byItem[k]; };
     var byEpic = {};
     ((epics && epics.epics) || []).forEach(function (e, i) {
-      var ek = key(repos[e.r], e.n), keys = {}, order = [];
-      function take(k) { if (byItem[k] && !keys[k]) { keys[k] = 1; order.push(k); } }
-      take(ek);
-      (children[ek] || []).forEach(take);
-      (e.subs || []).forEach(function (s) { take(key(repos[s[0]], s[1])); });
+      var order = epicMembers(board, epics, i, has, kids);
       var branches = {}, prs = {}, hidden = 0, issues = [], truncated = false;
       order.forEach(function (k) {
         var x = byItem[k];
@@ -290,5 +304,5 @@
     var r = name && rel && rel.byName && rel.byName[name];
     return r ? r.capabilities.slice() : [];
   }
-  return {GATES: GATES, gateStep: gateStep, STATUSES: STATUSES, GROUP: GROUP, TOKEN: TOKEN, FILTERS: FILTERS, EFFORT_DAYS: EFFORT_DAYS, PRIORITIES: PRIORITIES, capabilityIndex: capabilityIndex, aggregate: aggregate, epicView: epicView, workIndex: workIndex, countText: countText, refactoring: refactoring, refactorState: refactorState, REFACTORING_LABEL: REFACTORING_LABEL, releases: releases, milestones: milestones, releaseCapabilities: releaseCapabilities};
+  return {GATES: GATES, gateStep: gateStep, STATUSES: STATUSES, GROUP: GROUP, TOKEN: TOKEN, FILTERS: FILTERS, EFFORT_DAYS: EFFORT_DAYS, PRIORITIES: PRIORITIES, capabilityIndex: capabilityIndex, aggregate: aggregate, epicView: epicView, workIndex: workIndex, countText: countText, epicMembers: epicMembers, childIndex: childIndex, refactoring: refactoring, refactorState: refactorState, REFACTORING_LABEL: REFACTORING_LABEL, releases: releases, milestones: milestones, releaseCapabilities: releaseCapabilities};
 });

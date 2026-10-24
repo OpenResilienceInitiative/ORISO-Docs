@@ -226,7 +226,8 @@ export function buildHistory(records) {
     return { scope: { capability: s.capability, repo: s.repo, path: s.path }, total: list.length, runs: list.slice(-HISTORY_CAP).map(compactRun) };
   });
 }
-// map/data/health.json: the latest full record per scope, plus the compact history per scope
+// map/data/health.json: the latest full record per scope (plus `file`, its path in the docs repository, so the map never re-derives
+// it), and the compact history per scope
 export function buildHealthDoc(records) {
-  return { schemaVersion: 1, records: latestPerScope(records), history: buildHistory(records), historyCap: HISTORY_CAP };
+  return { schemaVersion: 1, records: latestPerScope(records).map(r => ({ ...r, file: runFile(r) })), history: buildHistory(records), historyCap: HISTORY_CAP };
 }

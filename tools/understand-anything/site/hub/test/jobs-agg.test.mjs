@@ -5,6 +5,7 @@ import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 
 const sandbox = {}; sandbox.self = sandbox;
+vm.runInNewContext(readFileSync(new URL('../map/board-agg.js', import.meta.url), 'utf8'), sandbox); // jobs.js uses BoardAgg.epicMembers, as on the page
 vm.runInNewContext(readFileSync(new URL('../map/jobs.js', import.meta.url), 'utf8'), sandbox);
 const J = sandbox.MapJobs;
 const plain = v => JSON.parse(JSON.stringify(v));

@@ -2,7 +2,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { criteriaVersion } from "../../understand-anything/platform/lib/health-run.mjs";
-import { sendHealthCheck, healthCheckMarker, healthCheckCommand, parseHealthCheckMarker, ERROR_CODES } from "../lib/planning-api.mjs";
+import { sendHealthCheck, healthCheckMarker, healthCheckCommand, healthRunCommand, parseHealthCheckMarker, ERROR_CODES } from "../lib/planning-api.mjs";
 import { main, parseArgs } from "../plan.mjs";
 import { createFakeGitHub } from "./fake-github.mjs";
 
@@ -28,7 +28,7 @@ test("it creates one issue in ORISO-Docs that names the scope, the criteria vers
   assert.equal(parseHealthCheckMarker(body), "chat/ORISO-Frontend/src/components/chat");
   assert.ok(body.includes(`Criteria version: \`${criteriaVersion(criteria).slice(0, 12)}\``));
   assert.match(body, /crap/);
-  assert.ok(body.includes(healthCheckCommand(scope)));
+  assert.ok(body.includes(healthRunCommand(scope)));
   assert.match(body, /steering/i);
   assert.deepEqual(r.results.map((x) => [x.role, x.changed, x.wrote]), [["health-check", true, true]]);
 });
@@ -80,10 +80,10 @@ test("typed errors from GitHub: no rights, transport failure", async () => {
   assert.ok(ERROR_CODES.includes(down.error.code));
 });
 
-test("the command for a scope is the same one the map shows", () => {
-  assert.equal(healthCheckCommand({ capability: "chat", repo: "ORISO-Frontend", path: null }),
+test("the run command in the request body names the scope (healthRunCommand)", () => {
+  assert.equal(healthRunCommand({ capability: "chat", repo: "ORISO-Frontend", path: null }),
     "node tools/understand-anything/platform/health-run.mjs run --capability chat --repo ORISO-Frontend --checkout <path to your ORISO-Frontend checkout>");
-  assert.equal(healthCheckCommand(scope),
+  assert.equal(healthRunCommand(scope),
     "node tools/understand-anything/platform/health-run.mjs run --capability chat --repo ORISO-Frontend --path src/components/chat --checkout <path to your ORISO-Frontend checkout>");
 });
 
@@ -127,4 +127,22 @@ test("the dry run uses the real effective criteria of the scope", async () => {
   const r = await run(["health-check", "--capability", "chat", "--repo", "ORISO-Frontend"], gh);
   assert.match(r.out.result.body, /Criteria version: `[0-9a-f]{12}`/);
   assert.match(r.out.result.body, /crap/, "frontend criteria add CRAP");
+});
+
+// ORISO-Docs#213 review (finding 16): the map shows the plan.mjs command that files the request; planning-api builds the same text,
+// and plan.mjs parses it back into the same scope. (The comment in planning-api claimed this test existed; now it does.)
+test("healthCheckCommand (the filing command) is the text the map shows, and plan.mjs parses it back", async () => {
+  const { readFileSync } = await import("node:fs");
+  const vm = await import("node:vm");
+  const { parseArgs } = await import("../plan.mjs");
+  const sandbox = {}; sandbox.self = sandbox;
+  vm.runInNewContext(readFileSync(new URL("../../understand-anything/site/hub/map/views.js", import.meta.url), "utf8"), sandbox);
+  for (const s of [{ capability: "chat", repo: "ORISO-Frontend", path: null }, scope, { capability: "email-templates", repo: "ORISO-UserService", path: "src/main/resources/templates" }]) {
+    for (const apply of [false, true]) {
+      const text = healthCheckCommand(s, apply);
+      assert.equal(sandbox.MapViews.healthCheckCommand(s, apply), text, JSON.stringify(s));
+      const o = parseArgs(text.replace(/^node tools\/planning-map\/plan\.mjs /, "").split(" "));
+      assert.deepEqual([o.command, o.capability, o.repo, o.path ?? null, o.apply], ["health-check", s.capability, s.repo, s.path ?? null, apply]);
+    }
+  }
 });

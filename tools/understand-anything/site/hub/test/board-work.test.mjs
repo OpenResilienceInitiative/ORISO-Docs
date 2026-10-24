@@ -64,3 +64,14 @@ test('a truncated work block marks the task and every epic that contains it; cou
   assert.equal(sandbox.BoardAgg.countText(20, true), '20+');
   assert.equal(sandbox.BoardAgg.countText(3, false), '3');
 });
+
+// ORISO-Docs#213 review (finding 16): one epic membership rule, shared by the branch sums and the job index (jobs.js).
+test('epicMembers: the epic itself, its children by parent, then its sub-issue list, each once, only keys that pass the filter', () => {
+  const b = board();
+  const keys = sandbox.BoardAgg.epicMembers(b, epics, 0, () => true);
+  assert.deepEqual(plain(keys), ['ORISO-Frontend#10', 'ORISO-Frontend#11', 'ORISO-Frontend#12', 'ORISO-Admin#900']);
+  assert.deepEqual(plain(sandbox.BoardAgg.epicMembers(b, epics, 0, k => k !== 'ORISO-Frontend#12')), ['ORISO-Frontend#10', 'ORISO-Frontend#11', 'ORISO-Admin#900']);
+  const src = readFileSync(new URL('../map/jobs.js', import.meta.url), 'utf8');
+  assert.match(src, /BA\.epicMembers\(/, 'jobs.js uses the shared rule (BA = root.BoardAgg)');
+  assert.doesNotMatch(src, /children\[pk\]/, 'and no copy of it');
+});

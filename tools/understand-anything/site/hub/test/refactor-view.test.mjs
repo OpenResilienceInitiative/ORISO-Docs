@@ -119,7 +119,8 @@ test('the command is the exact propose-refactor call for the scope; a dry run un
 test('with a health run for the square the command carries its scope and its record file', () => {
   const SHA = 'a'.repeat(40);
   const rec = (path) => ({schemaVersion: 1, run: {schemaVersion: 1, runId: '20261024T101500Z-aaaaaaaa', generatedAt: '2026-10-24T10:15:00Z', commits: {'ORISO-Frontend': SHA}}, scope: {capability: 'chat', repo: 'ORISO-Frontend', path}, commit: SHA,
-    criteriaVersion: 'b'.repeat(64), model: null, startedAt: '2026-10-24T10:15:00Z', metrics: [], verdict: [], overall: 55, links: {graphNode: 'capability:chat', source: `https://github.com/OpenResilienceInitiative/ORISO-Frontend/tree/${SHA}`}});
+    criteriaVersion: 'b'.repeat(64), model: null, startedAt: '2026-10-24T10:15:00Z', metrics: [], verdict: [], overall: 55, links: {graphNode: 'capability:chat', source: `https://github.com/OpenResilienceInitiative/ORISO-Frontend/tree/${SHA}`},
+    file: 'health/runs/chat/ORISO-Frontend/20261024T101500Z.json'}); // health.json carries the record path (buildHealthDoc)
   MapViews.setHealth({schemaVersion: 1, records: [rec(null)]}, slug);
   set(index({}));
   const cmd = h => text(/<code[^>]*data-rf-cmd[^>]*>(.*?)<\/code>/.exec(h)[1]);
@@ -156,4 +157,19 @@ test('a dropped task shows the word "dropped" (DE "verworfen") and is not counte
   assert.equal(marker().state, 'dropped');
   assert.match(marker().text, /dropped/);
   set(null);
+});
+
+// ORISO-Docs#213 review (finding 16): the propose-refactor command uses the record path health.json carries (records[].file).
+test('the propose-refactor command uses the record file from health.json, not a path rebuilt on the page', () => {
+  const rec = {schemaVersion: 1, run: {runId: 'r1'}, scope: {capability: 'chat', repo: 'ORISO-Frontend', path: 'src/chat'}, commit: 'a'.repeat(40), startedAt: '2026-10-24T10:15:00Z',
+    overall: 50, metrics: [], verdict: [], links: {graphNode: 'ORISO-Frontend::folder:src/chat', source: null}, file: 'health/runs/chat/ORISO-Frontend/at/src/chat/20261024T101500Z.json'};
+  rec.scope.path = null; rec.links.graphNode = 'capability:chat'; rec.file = 'health/runs/chat/ORISO-Frontend/20261024T101500Z.json';
+  MapViews.setHealth({schemaVersion: 1, records: [rec]}, slug);
+  set(index({chat: slot([it(1, 'planned')])}));
+  assert.match(panel(), /--record health\/runs\/chat\/ORISO-Frontend\/20261024T101500Z\.json/);
+  MapViews.setHealth({schemaVersion: 1, records: [{...rec, file: 'health/runs/chat/ORISO-Frontend/OTHER.json'}]}, slug);
+  assert.match(panel(), /--record health\/runs\/chat\/ORISO-Frontend\/OTHER\.json/, 'the file comes from the data, it is not recomputed');
+  MapViews.setHealth({schemaVersion: 1, records: [{...rec, file: '../../etc/passwd'}]}, slug);
+  assert.doesNotMatch(panel(), /--record/, 'a file outside health/runs is not used');
+  MapViews.setHealth(null); set(null);
 });

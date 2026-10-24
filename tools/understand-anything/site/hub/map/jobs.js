@@ -5,8 +5,8 @@
    wrote: private, draft and redacted items never reach board.json items, so they have no job here either.
    Everything that comes from board.json is escaped; links must be https, anything else stays text. */
 (function (root, factory) {
-  root.MapJobs = factory();
-})(typeof self !== 'undefined' ? self : globalThis, function () {
+  root.MapJobs = factory(root);
+})(typeof self !== 'undefined' ? self : globalThis, function (root) {
   'use strict';
   var FILTERS = ['all', 'running', 'stopped', 'waiting-human', 'stale'];
   var STATES = ['running', 'waiting-human', 'stopped', 'failed', 'done'];
@@ -44,29 +44,19 @@
     return {repository: repoName(it.repository), number: it.number, title: it.title, url: it.url, job: it.job, stale: st};
   }
 
-  /* Epic membership is the one of the branch sums (board-agg.js workIndex): the epic itself, its children by
-     `parent`, and the sub-issue list of the epics data. Returns null when no item has a job. */
+  /* Epic membership is the one of the branch sums: BoardAgg.epicMembers (board-agg.js, loaded before this file on the page).
+     Returns null when no item has a job. */
   function index(board, epics) {
-    var items = (board && board.items) || [], byItem = {}, any = false, repos = (epics && epics.repos) || [];
+    var items = (board && board.items) || [], byItem = {}, any = false, BA = root.BoardAgg;
     items.forEach(function (it) {
       if (it.contentType !== 'Issue' || !it.repository || typeof it.number !== 'number' || !it.job) return;
       any = true; byItem[key(it.repository, it.number)] = entryOf(it);
     });
     if (!any) return null;
-    var children = {};
-    items.forEach(function (it) {
-      if (it.contentType === 'Issue' && it.parent && byItem[key(it.repository, it.number)]) {
-        var pk = key(it.parent.repository, it.parent.number);
-        (children[pk] || (children[pk] = [])).push(key(it.repository, it.number));
-      }
-    });
+    var kids = BA.childIndex(board), has = function (k) { return !!byItem[k]; };
     var byEpic = {};
     ((epics && epics.epics) || []).forEach(function (e, i) {
-      var ek = key(repos[e.r], e.n), seen = {}, list = [];
-      function take(k) { if (byItem[k] && !seen[k]) { seen[k] = 1; list.push(byItem[k]); } }
-      take(ek);
-      (children[ek] || []).forEach(take);
-      (e.subs || []).forEach(function (s) { take(key(repos[s[0]], s[1])); });
+      var list = BA.epicMembers(board, epics, i, has, kids).map(function (k) { return byItem[k]; });
       list.sort(function (a, b) { return a.number - b.number; });
       var counts = {running: 0, stopped: 0, 'waiting-human': 0, done: 0, failed: 0}, stale = 0;
       list.forEach(function (x) { counts[x.job.state]++; if (x.stale) stale++; });
