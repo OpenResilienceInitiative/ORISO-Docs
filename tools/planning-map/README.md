@@ -124,7 +124,8 @@ node tools/planning-map/steering.mjs export --out steering.json                 
 - Export keeps a comment only if `authorAssociation` is OWNER, MEMBER or COLLABORATOR and the author is a human account (no bots, no deleted
   accounts) and the comment is not minimized. Everything else is counted in `skipped` and leaves no trace (no name, no text). Per comment:
   author login, createdAt, url, authorAssociation, body as plain text (control characters removed, cut at 2000 characters with
-  `truncated: true`). Per capability the newest 50 are kept; older member comments are counted in `omitted`.
+  `truncated: true`). Per capability the newest 50 are kept; older member comments are counted in `omitted`. Comments are read newest first (`last:`/`before:`),
+  so a long thread keeps its newest comments; when the page cap (`MAX_PAGES`) stops the read of a thread or of the issue list, `warnings` says so.
 - **Why a separate `steering.json` and not part of `board.json`:** the board is a project export with its own privacy rule (private repositories
   as counts) and drift contract; steering comes from issue comments of one public repository, needs its own failure handling (a failed steering
   export must not hold back the board; the workflow step is `continue-on-error`) and may be re-run on its own. A separate file also keeps

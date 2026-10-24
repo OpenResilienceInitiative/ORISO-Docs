@@ -36,12 +36,15 @@ test('a steering issue without member comments says so and still offers the link
   assert.match(h, /data-steer-add/);
 });
 
-test('no steering issue yet: the exact command to create one, no link', () => {
+test('no steering issue yet: the exact command to create one as a dry run (the text says so), --apply only on the copy button, no link', () => {
   const h = panel(doc([cm('frank', '20', 'x')]), 'branding');
-  assert.match(h, /<code[^>]*data-steer-cmd[^>]*>node tools\/planning-map\/steering\.mjs ensure --capability branding --apply<\/code>/);
+  assert.match(h, /<code[^>]*data-steer-cmd[^>]*>node tools\/planning-map\/steering\.mjs ensure --capability branding<\/code>/);
+  assert.match(h, /without --apply it is a dry run/);
+  assert.match(h, /data-copy="node tools\/planning-map\/steering\.mjs ensure --capability branding"/);
+  assert.match(h, /data-copy="node tools\/planning-map\/steering\.mjs ensure --capability branding --apply"/);
   assert.doesNotMatch(h, /data-steer-add/);
   const none = panel(null, 'branding');
-  assert.match(none, /ensure --capability branding --apply/, 'also without any steering file');
+  assert.match(none, /data-steer-cmd>node tools\/planning-map\/steering\.mjs ensure --capability branding</, 'also without any steering file');
 });
 
 test('everything is escaped: markup in a comment, in the author name and in the title stays text', () => {

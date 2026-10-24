@@ -138,7 +138,13 @@ export function createFakeGitHub({
     const nodes = list.slice(start, start + size);
     return { pageInfo: { hasNextPage: start + nodes.length < list.length, endCursor: String(start + nodes.length) }, nodes };
   };
-  const issueOut = (i) => ({ id: i.id, number: i.number, title: i.title, url: i.url, state: i.state, body: i.body, comments: page(i.comments, null, fake.commentPageSize ?? 100) });
+  // comments(last:, before:): pages backwards from the newest, each page in chronological order (as GitHub does)
+  const pageBack = (list, before, size) => {
+    const end = before ? Number(before) : list.length;
+    const start = Math.max(0, end - size);
+    return { pageInfo: { hasPreviousPage: start > 0, startCursor: String(start) }, nodes: list.slice(start, end) };
+  };
+  const issueOut = (i) => ({ id: i.id, number: i.number, title: i.title, url: i.url, state: i.state, body: i.body, comments: pageBack(i.comments, null, fake.commentPageSize ?? 100) });
   fake.steeringIssues = sIssues;
   fake.steeringTransport = (op, v) => {
     switch (op) {
@@ -149,7 +155,7 @@ export function createFakeGitHub({
       }
       case "SteeringComments": {
         const i = sIssues.find((x) => x.id === v.id);
-        return { data: { node: i ? { comments: page(i.comments, v.after, fake.commentPageSize ?? 100) } : null } };
+        return { data: { node: i ? { comments: pageBack(i.comments, v.before, fake.commentPageSize ?? 100) } : null } };
       }
       case "SteeringRepo":
         return { data: { repository: { id: "R_docs", label: labelId ? { id: labelId } : null } } };

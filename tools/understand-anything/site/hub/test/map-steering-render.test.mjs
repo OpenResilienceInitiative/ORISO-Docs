@@ -102,7 +102,8 @@ test('German labels and date; the criteria box comes first and the steering sect
 test('an area without a steering issue shows the exact command and no link', {skip}, async () => {
   const {page, context} = await open('#view=health&node=' + encodeURIComponent(MAIL), {lang: 'en'});
   await sec(page).waitFor();
-  assert.equal((await page.locator('.steer [data-steer-cmd]').innerText()), 'node tools/planning-map/steering.mjs ensure --capability email-templates --apply');
+  assert.equal((await page.locator('.steer [data-steer-cmd]').innerText()), 'node tools/planning-map/steering.mjs ensure --capability email-templates');
+  assert.equal(await page.locator('.steer [data-copy$="--apply"]').count(), 1, 'the --apply variant is a copy button, like the health check');
   assert.equal(await page.locator('.steer [data-steer-add]').count(), 0);
   await context.close();
 });
@@ -110,7 +111,7 @@ test('an area without a steering issue shows the exact command and no link', {sk
 test('without a published steering.json the section still shows the command and nothing breaks', {skip}, async () => {
   const {page, context, problems} = await open('#view=health&node=' + encodeURIComponent(CHAT), {lang: 'en', base: bareOrigin});
   await sec(page).waitFor();
-  assert.match(await page.locator('.steer [data-steer-cmd]').innerText(), /ensure --capability chat --apply/);
+  assert.match(await page.locator('.steer [data-steer-cmd]').innerText(), /ensure --capability chat$/);
   assert.deepEqual(problems, []);
   await context.close();
 });

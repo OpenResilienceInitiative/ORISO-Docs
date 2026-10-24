@@ -367,9 +367,11 @@
   var ST = {
     de: {head: 'Steuerung', note: 'Hinweise von Mitgliedern für diesen Bereich. Agenten lesen sie vor der Arbeit.', none: 'Noch keine Hinweise von Mitgliedern.',
       add: 'Kommentar auf GitHub hinzufügen', noIssue: 'Für diesen Bereich gibt es noch kein Steuerungs-Issue. Anlegen mit (ohne --apply ist es ein Probelauf):',
+      copy: 'Befehl kopieren', copyApply: 'Mit --apply kopieren',
       cut: 'gekürzt, ganzer Kommentar auf GitHub', by: 'von'},
     en: {head: 'Steering', note: 'Direction from members for this area. Agents read it before they work.', none: 'No steering comments yet.',
       add: 'Add a comment on GitHub', noIssue: 'There is no steering issue for this area yet. Create it with (without --apply it is a dry run):',
+      copy: 'Copy command', copyApply: 'Copy with --apply',
       cut: 'cut short, full comment on GitHub', by: 'by'}
   };
   function stDate(iso, lang) {
@@ -391,7 +393,11 @@
     var url = entry && isObj(entry.issue) && typeof entry.issue.url === 'string' && ST_ISSUE.test(entry.issue.url) ? entry.issue.url : null;
     var out = '<section class="steer" aria-label="' + T.head + '"><h4 class="steer-h">' + T.head + '</h4><p class="steer-note">' + T.note + '</p>';
     if (!url) {
-      return out + '<p class="steer-none">' + T.noIssue + '</p><pre class="steer-cmd"><code data-steer-cmd>node tools/planning-map/steering.mjs ensure --capability ' + id + ' --apply</code></pre></section>';
+      /* The dry run is shown, as the text says and as the health check section does; --apply only on the second copy button. */
+      var cmd = 'node tools/planning-map/steering.mjs ensure --capability ' + id;
+      return out + '<p class="steer-none">' + T.noIssue + '</p><pre class="steer-cmd"><code data-steer-cmd>' + esc(cmd) + '</code></pre>' +
+        '<p class="hcheck-b"><button type="button" class="hcheck-copy" data-copy="' + esc(cmd) + '">' + T.copy + '</button> ' +
+        '<button type="button" class="hcheck-copy" data-copy="' + esc(cmd + ' --apply') + '">' + T.copyApply + '</button></p></section>';
     }
     var list = stComments(entry.comments);
     out += list.length ? '<ul class="steer-l">' + list.map(function (c) {

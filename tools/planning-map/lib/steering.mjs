@@ -23,7 +23,7 @@ export const LABEL = "area-steering";
 export const MEMBER_ASSOCIATIONS = Object.freeze(["OWNER", "MEMBER", "COLLABORATOR"]);
 export const MAX_BODY = 2000; // characters per comment
 export const MAX_COMMENTS = 50; // newest member comments kept per capability
-const MAX_PAGES = 20; // safety stop for paging
+export const MAX_PAGES = 20; // safety stop for paging (per issue list and per comment thread); hitting it adds a warning
 const MARKER = /<!--\s*oriso:steering:v1\s+capability=([a-z0-9]+(?:-[a-z0-9]+)*)\s*-->/;
 const LOGIN = /^[A-Za-z0-9][A-Za-z0-9-]{0,38}$/;
 const TS = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/;
@@ -33,14 +33,14 @@ query SteeringIssues($owner: String!, $name: String!, $labels: [String!], $after
   repository(owner: $owner, name: $name) {
     issues(labels: $labels, first: 50, after: $after, states: [OPEN, CLOSED], orderBy: {field: CREATED_AT, direction: ASC}) {
       pageInfo { hasNextPage endCursor }
-      nodes { id number title url state body comments(first: 100) { pageInfo { hasNextPage endCursor } nodes { ...SteeringComment } } }
+      nodes { id number title url state body comments(last: 100) { pageInfo { hasPreviousPage startCursor } nodes { ...SteeringComment } } }
     }
   }
 }
 fragment SteeringComment on IssueComment { author { __typename login } createdAt url authorAssociation body isMinimized }`;
 export const SteeringComments_QUERY = `
-query SteeringComments($id: ID!, $after: String) {
-  node(id: $id) { ... on Issue { comments(first: 100, after: $after) { pageInfo { hasNextPage endCursor } nodes { ...SteeringComment } } } }
+query SteeringComments($id: ID!, $before: String) {
+  node(id: $id) { ... on Issue { comments(last: 100, before: $before) { pageInfo { hasPreviousPage startCursor } nodes { ...SteeringComment } } } }
 }
 fragment SteeringComment on IssueComment { author { __typename login } createdAt url authorAssociation body isMinimized }`;
 export const SteeringRepo_QUERY = `
@@ -89,29 +89,35 @@ async function call(transport, query, variables) {
 const typed = (e) => ({ ok: false, error: { code: e instanceof GhError ? e.code : "TRANSPORT", message: e?.message ?? String(e) } });
 
 // ───── reading ─────
-async function allComments(transport, issue) {
-  const out = [...issue.comments.nodes];
+// Comments newest first: GitHub pages backwards from the newest (last/before), so a thread longer than the cap still gives its
+// newest comments. warnings (optional) gets a line when the cap stops the read.
+async function allComments(transport, issue, warnings = []) {
+  const pages = [issue.comments.nodes];
   let info = issue.comments.pageInfo;
-  for (let n = 0; info.hasNextPage && n < MAX_PAGES; n++) {
-    const data = await call(transport, SteeringComments_QUERY, { id: issue.id, after: info.endCursor });
+  let n = 0;
+  for (; info.hasPreviousPage && n < MAX_PAGES; n++) {
+    const data = await call(transport, SteeringComments_QUERY, { id: issue.id, before: info.startCursor });
     const conn = data.node?.comments;
     if (!conn) throw new GhError("GITHUB_ERROR", `comments of #${issue.number} not readable`);
-    out.push(...conn.nodes);
+    pages.push(conn.nodes);
     info = conn.pageInfo;
   }
-  return out;
+  if (info.hasPreviousPage) warnings.push(`#${issue.number} has more comments than the export reads (${MAX_PAGES + 1} pages); the oldest were not read`);
+  return pages.reverse().flat();
 }
-async function steeringIssues(transport) {
+async function steeringIssues(transport, warnings = []) {
   const out = [];
   let after = null;
-  for (let n = 0; n < MAX_PAGES; n++) {
+  let more = true;
+  for (let n = 0; more && n < MAX_PAGES; n++) {
     const data = await call(transport, SteeringIssues_QUERY, { owner: OWNER, name: REPO, labels: [LABEL], after });
     const conn = data.repository?.issues;
     if (!conn) throw new GhError("NOT_FOUND", `${OWNER}/${REPO} not readable`);
     out.push(...conn.nodes);
-    if (!conn.pageInfo.hasNextPage) break;
+    more = conn.pageInfo.hasNextPage;
     after = conn.pageInfo.endCursor;
   }
+  if (more) warnings.push(`There are more steering issues than the export reads (${MAX_PAGES} pages); the newest issues were not read`);
   return out;
 }
 
@@ -155,7 +161,7 @@ const issueUrl = /^https:\/\/github\.com\/[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+\/issu
 
 export async function exportSteering(transport, { now = new Date().toISOString().replace(/\.\d+Z$/, "Z") } = {}) {
   const warnings = [];
-  const issues = (await steeringIssues(transport)).sort((a, b) => a.number - b.number);
+  const issues = (await steeringIssues(transport, warnings)).sort((a, b) => a.number - b.number);
   const capabilities = {};
   for (const issue of issues) {
     const id = parseMarker(issue.body);
@@ -165,7 +171,7 @@ export async function exportSteering(transport, { now = new Date().toISOString()
     if (!issueUrl.test(issue.url)) { warnings.push(`#${issue.number} has an unexpected url; ignored`); continue; }
     const kept = [];
     let skipped = 0;
-    for (const cm of await allComments(transport, issue)) {
+    for (const cm of await allComments(transport, issue, warnings)) {
       const member = MEMBER_ASSOCIATIONS.includes(cm.authorAssociation);
       const human = cm.author && cm.author.__typename === "User" && LOGIN.test(cm.author.login ?? "");
       if (!member || !human || cm.isMinimized || !TS.test(cm.createdAt ?? "") || !issueUrl.test(cm.url ?? "")) { skipped++; continue; }

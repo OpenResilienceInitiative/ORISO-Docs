@@ -160,7 +160,7 @@ Steering section (#221): the Health panel appends a "Steering" section after the
 box and the colouring of #218 are untouched). It renders `map/data/steering.json` (optional asset, `MapViews.setSteering`): member comments newest first
 with author and date, escaped, plus the link "Add a comment on GitHub" to the capability's steering issue (https links to
 `OpenResilienceInitiative/ORISO-Docs/issues/<n>` only). The view repeats the export's member check. An area without a steering issue shows the exact command
-`node tools/planning-map/steering.mjs ensure --capability <id> --apply`. Producer and format: tools/planning-map README, "Human steering". Tests:
+`node tools/planning-map/steering.mjs ensure --capability <id>` (a dry run, as the text says) with "Copy command" and "Copy with --apply", like the health check. Producer and format: tools/planning-map README, "Human steering". Tests:
 `test/map-steering.test.mjs`, `test/map-steering-render.test.mjs` (Playwright, XSS payload), `test/steering-publication.test.mjs`.
 History section (#219): `withHistory()` appends a "History" section after the criteria box (before Steering). `health.json` carries, next to `records`, a
 `history` list (`[{scope, total, runs}]`, `historyCap: 50`): per scope the newest 50 runs, oldest first, each compact: `file` (path of the full record in the docs

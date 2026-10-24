@@ -5,7 +5,7 @@ import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createFakeGitHub } from "./fake-github.mjs";
-import { ensureSteering, exportSteering, steeringFor, steeringTitle, steeringBody, parseMarker, validateSteering, MEMBER_ASSOCIATIONS, MAX_BODY, MAX_COMMENTS } from "../lib/steering.mjs";
+import { ensureSteering, exportSteering, steeringFor, steeringTitle, steeringBody, parseMarker, validateSteering, MEMBER_ASSOCIATIONS, MAX_BODY, MAX_COMMENTS, MAX_PAGES, SteeringIssues_QUERY, SteeringComments_QUERY } from "../lib/steering.mjs";
 
 const NOW = "2026-10-24T12:00:00Z";
 const REPO = "OpenResilienceInitiative/ORISO-Docs";
@@ -198,4 +198,26 @@ test("steeringFor reads a steering.json file and never returns outside comments,
   assert.throws(() => steeringFor("chat", { file }), /invalid/);
   assert.throws(() => steeringFor("chat", { file: join(dir, "missing.json") }), /steering\.json/);
   assert.throws(() => steeringFor("chat", {}), /steering\.json/, "no silent empty answer without a source");
+});
+
+// ───── review of #221 (epic #213): newest comments first, and a warning when a cap cuts the read ─────
+test("comments are read newest first (last:/before:), so a thread longer than the page cap keeps its newest comments and warns", async () => {
+  assert.match(SteeringIssues_QUERY, /comments\(last: 100\) \{ pageInfo \{ hasPreviousPage startCursor \}/);
+  assert.match(SteeringComments_QUERY, /comments\(last: 100, before: \$before\) \{ pageInfo \{ hasPreviousPage startCursor \}/);
+  const total = MAX_PAGES * 3 + 10; // more than MAX_PAGES pages of 3
+  const many = Array.from({ length: total }, (_, i) => c("frank", "OWNER", 1, `n${i}`, { createdAt: new Date(Date.UTC(2026, 8, 1, 0, i)).toISOString().replace(/\.\d+Z$/, "Z") }));
+  const gh = createFakeGitHub({ steering: [issueFor("chat", many)] });
+  gh.commentPageSize = 3;
+  const { doc, warnings } = await exportSteering(gh.transport, { now: NOW });
+  assert.equal(doc.capabilities.chat.comments[0].body, `n${total - 1}`, "the newest comment is there although the thread is longer than the cap");
+  assert.equal(doc.capabilities.chat.comments.length, MAX_COMMENTS);
+  assert.ok(warnings.some((w) => /#\d+ has more comments than the export reads/.test(w)), warnings.join("\n"));
+  assert.deepEqual(doc.warnings, warnings);
+});
+
+test("more steering issues than the page cap: a warning says the list was cut", async () => {
+  const gh = createFakeGitHub({ steering: Array.from({ length: MAX_PAGES + 2 }, (_, i) => ({ number: 300 + i, title: `x${i}`, body: "no marker", comments: [] })) });
+  gh.issuePageSize = 1;
+  const { warnings } = await exportSteering(gh.transport, { now: NOW });
+  assert.ok(warnings.some((w) => /more steering issues than the export reads/.test(w)), warnings.join("\n"));
 });
