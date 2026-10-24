@@ -61,7 +61,7 @@ test("thresholds live in one config file and cover every rule", () => {
   assert.deepEqual(watchConfig, file);
   assert.equal(typeof file.stalledDays["In progress"], "number");
   assert.equal(file.qaExternalAssignee, "BjoernLudwig");
-  assert.deepEqual(RULES, ["stalled", "closed-not-done", "qa-external-no-bjoern", "epic-no-readiness", "gate-status-mismatch"]);
+  assert.deepEqual(RULES, ["stalled", "closed-not-done", "qa-external-no-bjoern", "epic-no-readiness", "gate-status-mismatch", "job-stale"]);
 });
 
 test("export writes findings per item into board.json, valid against the schema, never for private items", async () => {

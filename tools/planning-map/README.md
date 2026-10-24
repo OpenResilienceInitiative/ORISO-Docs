@@ -49,7 +49,7 @@ Platform release is an org multi-select issue field (read via `IssueFieldMultiSe
 
 ## Watchers (ORISO-Docs#207)
 
-`lib/watchers.mjs` runs inside `buildBoard` and writes `findings[]` (rule, severity, detail) plus `assignees[]` onto every public item, and `findingCounts` at the top level (all additive; v1 boards without them still validate). Rules: `stalled`, `closed-not-done`, `qa-external-no-bjoern`, `epic-no-readiness`, `gate-status-mismatch` (no-op until a Gate field exists, #211). All thresholds and the QA external reviewer live in `watchers.config.json`. Stalled = open item in a status with a configured limit, last updated more than that many days before `syncedAt`.
+`lib/watchers.mjs` runs inside `buildBoard` and writes `findings[]` (rule, severity, detail) plus `assignees[]` onto every public item, and `findingCounts` at the top level (all additive; v1 boards without them still validate). Rules: `stalled`, `closed-not-done`, `qa-external-no-bjoern`, `epic-no-readiness`, `gate-status-mismatch` (no-op until a Gate field exists, #211), `job-stale` (#216, see "Agent jobs"). All thresholds and the QA external reviewer live in `watchers.config.json`. Stalled = open item in a status with a configured limit, last updated more than that many days before `syncedAt`.
 
 ## Planning API and runner (ORISO-Docs#210)
 
@@ -89,3 +89,21 @@ gh project field-create 1 --owner OpenResilienceInitiative --name Gate --data-ty
 - Map: in the epic view each sub-issue with a gate shows a step indicator (8 steps, current one marked, criteria on hover) and a gate filter (all, no gate, one gate) that combines with the status filter. Both appear only once some issue has a gate.
 
 UNVERIFIED: `SET_GATE_MUTATION` and `GATE_FIELD_QUERY` use the documented Projects v2 API shapes but were not run against the live board.
+
+## Agent jobs (ORISO-Docs#216)
+
+An agent reports its status into a marked section of the issue DESCRIPTION, so comments stay clean and GitHub keeps the edit history.
+
+```
+node tools/planning-map/job.mjs report --issue Org/Repo#123 --state running [--branch feat/x] [--pr "#5"] [--report https://...] \
+     [--next "what comes next"] [--model name] [--machine label] [--runner local|cloud] [--apply]
+```
+
+- Dry run by default: prints the diff of the description. `--apply` writes. Uses the operator's `gh` login like `plan.mjs`. Exit 0 ok, 1 typed error (JSON), 2 usage.
+- Every call merges into the section already there (`started` kept, branches and PRs added, `updated` = now), so repeating it is a heartbeat. After `done`/`failed`, a new `running` report starts a fresh run.
+- The section sits between `<!-- oriso:job:start v1 -->` and `<!-- oriso:job:end -->` (each alone on its line, outside code fences). Only that text is replaced; without markers the section is appended; broken or doubled markers are refused (`BAD_MARKERS`). Text outside is byte-identical (tested).
+- `writeJobSection(issue, job | (existing) => job, {expectedUpdatedAt, expectedBodyHash, dryRun, transport})` in `lib/planning-api.mjs`. The issue is read, planned, read again and only then written; a changed `updatedAt` or body is a `CONFLICT`. GitHub has no compare-and-set for `updateIssue`, so a human edit in the milliseconds between the second read and the write could still be overwritten (the edit history keeps it). UNVERIFIED against the live API: the `updateIssue` mutation and `Issue.body`/`updatedAt` reads.
+- Section: a short Markdown summary plus a fenced `yaml` block with `state` (running, stopped, waiting-human, done, failed), `runner` (local, cloud), `machine`, `started`, `updated`, `model`, `branches`, `prs`, `next`, `report`. Validated (`lib/job.mjs`): closed enums, ISO UTC times, `machine` is a short label (no dots, so no host name; no `@`), secret patterns and addresses are refused in every text field, `report` must be an https link without credentials or token-like query keys. No host name or user name is ever added by the tool.
+- Export: `buildBoard` parses the section of every public Issue into `items[].job` (additive). The description itself is never exported. Private repositories, drafts, redacted items and pull requests get no `job`; a damaged section gives a `warnings` entry (issue link only).
+- Watcher `job-stale`: `state: running` and `updated` more than `jobStaleHours` (default 24, `watchers.config.json`) before the sync.
+- Note: the board query now also fetches `Issue.body` (needed to find the section). That makes the project export heavier; if GitHub times out, lower the page size in `queries.mjs`.

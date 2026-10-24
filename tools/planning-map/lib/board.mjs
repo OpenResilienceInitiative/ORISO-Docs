@@ -5,6 +5,7 @@ import { ITEMS_QUERY, META_QUERY } from "./queries.mjs";
 import { validate } from "./schema.mjs";
 import { evaluateItem } from "./watchers.mjs";
 import { buildWork } from "./work.mjs";
+import { parseSection } from "./job.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 export const SCHEMA_VERSION = 1;
@@ -154,6 +155,12 @@ export function buildBoard({ meta, items: rawItems, totalCount, title }, { synce
       assignees: c.assignees ? (c.assignees.nodes ?? []).map((a) => a.login) : null,
     };
     if (c.__typename === "Issue") item.work = buildWork(c, repo, { branchIndex, isHidden: (r, flag) => !!flag || privateRepos.has(r) });
+    if (c.__typename === "Issue" && typeof c.body === "string" && c.body.includes("oriso:job:")) {
+      // ORISO-Docs#216. Only the parsed, validated section leaves this function; the description itself never does.
+      const parsed = parseSection(c.body);
+      if (parsed?.job) item.job = parsed.job;
+      else if (parsed) warnings.push(`Job section on ${c.url ?? raw.id} ignored: ${parsed.problems.join("; ")}`);
+    }
     item.findings = evaluateItem(item, { now: syncedAt });
     for (const f of item.findings) findingCounts[f.rule] = (findingCounts[f.rule] ?? 0) + 1;
     if (item.platformRelease) releaseCounts.set(item.platformRelease, (releaseCounts.get(item.platformRelease) ?? 0) + 1);

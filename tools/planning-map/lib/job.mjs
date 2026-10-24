@@ -175,7 +175,7 @@ function parseYaml(lines) {
   for (const line of lines) {
     if (!line.trim() || /^\s*#/.test(line)) continue;
     const m = /^([A-Za-z_]+):\s*(.*?)\s*$/.exec(line);
-    if (!m) { problems.push(`unreadable line: ${line.slice(0, 60)}`); continue; }
+    if (!m) { problems.push("unreadable line in the yaml block"); continue; }
     let [, key, val] = m;
     if (key in raw) { problems.push(`${key}: given twice`); continue; }
     if (val === "" || val === "~" || val === "null") raw[key] = null;

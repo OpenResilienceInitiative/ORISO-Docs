@@ -6,9 +6,11 @@ import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
 export const watchConfig = JSON.parse(readFileSync(resolve(here, "../watchers.config.json"), "utf8"));
-export const RULES = ["stalled", "closed-not-done", "qa-external-no-bjoern", "epic-no-readiness", "gate-status-mismatch"];
+export const RULES = ["stalled", "closed-not-done", "qa-external-no-bjoern", "epic-no-readiness", "gate-status-mismatch", "job-stale"];
 
 const DAY = 86400000;
+const HOUR = 3600000;
+const DEFAULT_JOB_STALE_HOURS = 24;
 const isClosed = (i) => i.state === "CLOSED" || i.state === "MERGED";
 const isOpen = (i) => i.state === "OPEN" || (i.state == null && i.contentType === "DraftIssue");
 
@@ -34,6 +36,13 @@ const checks = {
     if (!i.gate) return null; // no Gate field yet (#211): no-op
     const allowed = config.gate?.allowedStatuses?.[i.gate];
     return allowed && !allowed.includes(i.status) ? { severity: "warn", detail: { gate: i.gate, status: i.status } } : null;
+  },
+  // ORISO-Docs#216: a job that says "running" but has not touched its section for more than the limit (default 24 h).
+  "job-stale"(i, { now, config }) {
+    if (!i.job || i.job.state !== "running" || !isOpen(i)) return null;
+    const threshold = config.jobStaleHours ?? DEFAULT_JOB_STALE_HOURS;
+    const hours = Math.floor((Date.parse(now) - Date.parse(i.job.updated)) / HOUR);
+    return hours >= 0 && Date.parse(now) - Date.parse(i.job.updated) > threshold * HOUR ? { severity: "warn", detail: { hours, threshold } } : null;
   },
 };
 

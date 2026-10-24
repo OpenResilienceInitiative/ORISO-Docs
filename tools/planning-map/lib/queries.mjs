@@ -49,6 +49,7 @@ query($owner: String!, $number: Int!, $after: String) {
             __typename
             ... on Issue {
               number title url state updatedAt
+              body
               repository { nameWithOwner isPrivate }
               issueType { name }
               assignees(first: 20) { nodes { login } }
