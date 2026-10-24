@@ -538,3 +538,17 @@ dialog#movedlg::backdrop{background:rgba(20,16,15,.5)}
 /* Deep-Link: unbekannte Knoten-ID */
 .map-notfound{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;margin:0 0 12px;padding:10px 14px;border:1px solid var(--warn-line);border-radius:var(--radius);background:var(--warn-wash);color:var(--warn);font-size:13.5px}
 .map-notfound code{font-family:var(--mono);font-size:12px;overflow-wrap:anywhere;max-width:100%;color:var(--ink-2)}
+
+/* Ansichten State | Health | Plan (#214): Umschalter und neutrale Ebene. Die Füllung kommt aus MapViews.VIEWS[view].colour (--view-fill, per CSSOM gesetzt). */
+:root{--neutral:#E9E3DD}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){--neutral:#34302E} }
+:root[data-theme="dark"]{--neutral:#34302E}
+.vsw{justify-content:center}
+.vsw[aria-pressed="true"]{background:var(--ink);color:var(--card);border-color:var(--ink)}
+.vsw[aria-pressed="false"]{color:var(--ink);background:var(--card)}
+.tm.vview .blk{background:var(--view-fill,var(--neutral))}
+.tm.vview .blk .ly{display:none}
+#layerRow[hidden]{display:none}
+.tm.vview .blk .docb,.tm.vview .blk .sbar,.tm.vview .blk .fbadge{display:none}
+.vnote{color:var(--ink-2);font-size:13px}
+.panel .vnote{display:block;margin:0 0 12px;padding:8px 10px;border:1px dashed var(--line);border-radius:6px;background:var(--sunken)}

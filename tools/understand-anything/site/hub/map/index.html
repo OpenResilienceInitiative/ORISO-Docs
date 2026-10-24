@@ -14,6 +14,7 @@
 <script src="/assets/lang.js"></script>
 <script src="/map/board-agg.js" defer></script>
 <script src="/map/plan-ui.js" defer></script>
+<script src="/map/views.js" defer></script>
 <script src="/map/map.js" defer></script>
 </head>
 <body>
@@ -44,7 +45,9 @@
       <span class="sub2"><span lang="de">Ein Block wählen, dann tiefer klicken</span><span lang="en">Pick a block, then click deeper</span></span></div>
 
     <div class="controls">
-      <div class="crow"><span class="clab"><span lang="de">Anzeigen</span><span lang="en">Show</span></span>
+      <div class="crow"><span class="clab" id="viewLab"><span lang="de">Ansicht</span><span lang="en">View</span></span>
+        <span class="crow" id="viewSwitch" role="group" aria-labelledby="viewLab"></span></div>
+      <div class="crow" id="layerRow"><span class="clab"><span lang="de">Anzeigen</span><span lang="en">Show</span></span>
         <span class="crow" id="layerTogs" role="group" aria-describedby="layerHelp"></span></div>
       <p class="lhelp" id="layerHelp"></p>
     </div>

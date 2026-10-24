@@ -109,6 +109,27 @@ deterministic. `test/map-render.test.mjs` renders the page from
 `test/fixtures/map-data/` in a browser under a strict CSP; it needs Playwright
 (`UA_PLAYWRIGHT=/path/to/playwright/index.mjs`) and is skipped without it.
 
+### Views: State | Health | Plan (`map/views.js`, ORISO-Docs#214)
+
+One switch above the layer toggles. The three views share the same squares, zoom path and selection; only the layer on top differs.
+`State` is the map as before. `Health` (#217/#218) and `Plan` (#223) draw a neutral layer and a one-line "coming" note until their tickets land.
+
+The URL hash carries the view and the node: `#view=health&node=<node id>`. The node id is the one of the deep links (#199) and stands
+for the deepest open capability, folder or file, so switching views keeps the same area open. `#node=<id>` without a view is the State view,
+so all existing links keep working; State links are written in exactly that form. Switching a view adds a history entry, zooming only replaces it.
+
+Add a layer by filling in your view in `MapViews.VIEWS` (classic script `map/views.js`, tested by `test/map-views.test.mjs`); `map.js` needs no change:
+
+    VIEWS[view] = {
+      title:  {de, en},          // label on the switch
+      legend: function (lang),   // plain text under the map; '' keeps the default State legend
+      colour: function (block),  // token name from assets/tokens.css / map.css (without "--") that fills the squares of this block; null = State layers
+      panel:  function (block, lang) // HTML added on top of the block detail (escape your own text); '' = nothing
+    }
+
+`map.js` sets the fill through the CSSOM (`--view-fill` on each square), never through a `style` attribute. Colours need a light and a dark value.
+Render tests: `test/map-views-render.test.mjs` (Playwright, strict CSP, 320/390/1440 px).
+
 ### Planning board on the map (`board.json`, ORISO-Docs#208)
 
 `.github/workflows/planning-board-sync.yml` exports the ORISO Roadmap project hourly and on
