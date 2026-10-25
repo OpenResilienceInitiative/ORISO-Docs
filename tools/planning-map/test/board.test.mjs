@@ -21,6 +21,27 @@ test("pagination follows cursors and collects every item", async () => {
   assert.deepEqual(calls, [undefined, null, "CUR1", "CUR2"]); // meta call has no `after`
 });
 
+test("pages start small and halve after a gateway error, then retry the same cursor", async () => {
+  const run = fixtureRunner(FX);
+  const sizes = [];
+  let failed = false;
+  const data = await fetchAll((q, v) => {
+    if (v.first !== undefined) sizes.push([v.after, v.first]);
+    if (v.after === "CUR1" && !failed) { failed = true; throw new Error("gh api graphql failed: gh: HTTP 502"); }
+    return run(q, v);
+  }, { owner: "o", number: 1 });
+  assert.equal(data.items.length, 6);
+  assert.deepEqual(sizes, [[null, 25], ["CUR1", 25], ["CUR1", 12], ["CUR2", 12]]);
+});
+
+test("a gateway error at the smallest page size, or any other error, is not retried", async () => {
+  const run = fixtureRunner(FX);
+  await assert.rejects(fetchAll((q, v) => { if (v.first !== undefined) throw new Error("gh: HTTP 502"); return run(q, v); }, { owner: "o", number: 1 }), /502/);
+  let n = 0;
+  await assert.rejects(fetchAll((q, v) => { if (v.first !== undefined) { n++; throw new Error("GraphQL errors: bad field"); } return run(q, v); }, { owner: "o", number: 1 }), /bad field/);
+  assert.equal(n, 1);
+});
+
 test("fixture board validates against the v1 schema", async () => {
   const board = await build();
   assert.deepEqual(validateBoard(board), []);

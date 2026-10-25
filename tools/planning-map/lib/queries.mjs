@@ -33,11 +33,11 @@ query RepoBranches($owner: String!, $name: String!, $after: String) {
 }`;
 
 export const ITEMS_QUERY = `
-query($owner: String!, $number: Int!, $after: String) {
+query($owner: String!, $number: Int!, $after: String, $first: Int!) {
   organization(login: $owner) {
     projectV2(number: $number) {
       title
-      items(first: 100, after: $after) {
+      items(first: $first, after: $after) {
         totalCount
         pageInfo { hasNextPage endCursor }
         nodes {

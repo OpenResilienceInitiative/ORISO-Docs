@@ -16,14 +16,26 @@ export const schema = JSON.parse(readFileSync(resolve(here, "../board.schema.jso
 export const validateBoard = (board) => validate(schema, board);
 
 // run(query, variables) -> parsed GraphQL JSON ({data}); injected so tests use recorded fixtures.
+export const PAGE_START = 25, PAGE_MIN = 5;
+const GATEWAY = /HTTP 50[234]|timed? ?out|Something went wrong while executing your query/i;
+
 export async function fetchAll(run, { owner, number }) {
   const meta = (await run(META_QUERY, { owner, number })).data.organization;
   const items = [];
   let after = null;
   let title = meta.projectV2.title;
   let totalCount = null;
+  // Each item carries branches, PRs and check states (#215), so a page of 100 makes GitHub time out (HTTP 502).
+  // Start at 25 and halve after a gateway error, retrying the same cursor; other errors are not retried.
+  let first = PAGE_START;
   for (;;) {
-    const conn = (await run(ITEMS_QUERY, { owner, number, after })).data.organization.projectV2;
+    let res;
+    try { res = await run(ITEMS_QUERY, { owner, number, after, first }); }
+    catch (e) {
+      if (first > PAGE_MIN && GATEWAY.test(String(e?.message ?? e))) { first = Math.max(PAGE_MIN, Math.floor(first / 2)); continue; }
+      throw e;
+    }
+    const conn = res.data.organization.projectV2;
     title = conn.title ?? title;
     totalCount = conn.items.totalCount;
     items.push(...conn.items.nodes);
