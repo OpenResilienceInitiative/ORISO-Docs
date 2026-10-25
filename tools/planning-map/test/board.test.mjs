@@ -167,6 +167,24 @@ test("redacted items and items without content are private: counted, never liste
   assert.deepEqual(board.readinessRange, { min: null, max: null });
 });
 
+test("issues from repositories outside the public allow-list are counted only, and such parents are dropped", async () => {
+  const d = await load();
+  const base = d.items.find((i) => i.content?.__typename === "Issue" && i.content.repository?.nameWithOwner === "OpenResilienceInitiative/ORISO-Docs");
+  const other = JSON.parse(JSON.stringify(base));
+  other.id = "PVTI_GH"; other.content.repository = { nameWithOwner: "OpenResilienceInitiative/.github", isPrivate: false };
+  other.content.title = "LEAK unlisted"; other.content.url = "https://github.com/OpenResilienceInitiative/.github/issues/7";
+  const child = JSON.parse(JSON.stringify(base));
+  child.content.parent = { number: 7, title: "LEAK parent", repository: { nameWithOwner: "OpenResilienceInitiative/.github", isPrivate: false } };
+  const board = await withItems([other, child]);
+  assert.deepEqual(validateBoard(board), []);
+  assert.equal(board.items.length, 1);
+  assert.equal(board.items[0].parent, null);
+  assert.equal(JSON.stringify(board).includes("LEAK"), false);
+  assert.equal(JSON.stringify(board).includes(".github"), false);
+  assert.equal(board.hiddenCounts.unlisted.count, 1);
+  assert.equal(board.totals.private, 1);
+});
+
 test("draft issues are not public: counted by status, no title, no id", async () => {
   const board = await build();
   assert.equal(board.items.some((i) => i.contentType === "DraftIssue"), false);

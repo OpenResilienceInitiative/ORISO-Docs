@@ -104,8 +104,14 @@ export function driftCheck(live, ct = contract, { strict = false } = {}) {
   return { ok: problems.length === 0, problems, unpinned };
 }
 
-export function buildBoard({ meta, items: rawItems, totalCount, title }, { syncedAt = new Date().toISOString(), owner, number, ct = contract, branchIndex = new Map() } = {}) {
+// Allow-list, as the hub publication checks it: only repositories named in the public policy reach board.json.
+// Anything else (a public repo that is not on the list yet, e.g. the org's .github) is counted, never listed.
+export const PUBLIC_REPOSITORIES = new Set(JSON.parse(readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), "../../truth-chain/public-repositories.json"), "utf8")).repositories);
+
+export function buildBoard({ meta, items: rawItems, totalCount, title }, { syncedAt = new Date().toISOString(), owner, number, ct = contract, branchIndex = new Map(), publicRepos = PUBLIC_REPOSITORIES } = {}) {
   const privateRepos = new Set(ct.privateRepositories);
+  const org = (owner ?? ct.project.owner) + "/";
+  const listed = (r) => typeof r === "string" && r.startsWith(org) && publicRepos.has(r.slice(org.length));
   const warnings = [];
   const items = [];
   const privateMap = new Map();
@@ -115,7 +121,7 @@ export function buildBoard({ meta, items: rawItems, totalCount, title }, { synce
   let readinessMin = null;
   let readinessMax = null;
   // Not public, counted only: items GitHub redacts (no content or type REDACTED) and draft issues.
-  const hidden = { redacted: { count: 0, byStatus: {} }, drafts: { count: 0, byStatus: {} } };
+  const hidden = { redacted: { count: 0, byStatus: {} }, drafts: { count: 0, byStatus: {} }, unlisted: { count: 0, byStatus: {} } };
   const hide = (bucket, status) => { bucket.count++; bucket.byStatus[status ?? "(none)"] = (bucket.byStatus[status ?? "(none)"] ?? 0) + 1; };
 
   for (const raw of rawItems) {
@@ -135,10 +141,11 @@ export function buildBoard({ meta, items: rawItems, totalCount, title }, { synce
       privateMap.set(repo, p);
       continue; // counts only: no id, title, url
     }
+    if (!listed(repo)) { hide(hidden.unlisted, status); continue; }
 
     const f = normalizeIssueFieldValues(c?.issueFieldValues?.nodes);
     const par = c?.parent;
-    const parent = par && !par.repository?.isPrivate && !privateRepos.has(par.repository?.nameWithOwner)
+    const parent = par && !par.repository?.isPrivate && !privateRepos.has(par.repository?.nameWithOwner) && listed(par.repository?.nameWithOwner)
       ? { repository: par.repository.nameWithOwner, number: par.number }
       : null;
     if (readiness != null) {
@@ -184,7 +191,7 @@ export function buildBoard({ meta, items: rawItems, totalCount, title }, { synce
   }
 
   const live = liveOptions(meta);
-  const privateCount = [...privateMap.values()].reduce((s, p) => s + p.count, 0) + hidden.redacted.count;
+  const privateCount = [...privateMap.values()].reduce((s, p) => s + p.count, 0) + hidden.redacted.count + hidden.unlisted.count;
   if (totalCount != null && totalCount !== rawItems.length) warnings.push(`Project reports ${totalCount} items but ${rawItems.length} were fetched`);
   const releaseNames = live.platformRelease ?? [...releaseCounts.keys()];
   return {

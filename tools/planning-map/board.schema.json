@@ -696,6 +696,27 @@
               }
             }
           }
+        },
+        "unlisted": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "count",
+            "byStatus"
+          ],
+          "properties": {
+            "count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "byStatus": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
         }
       }
     }
