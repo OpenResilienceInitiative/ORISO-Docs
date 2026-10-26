@@ -5,7 +5,11 @@
 // Every command returns a typed result and never throws:
 //   {ok: true,  ..., results: [{issue, role, before, after, changed, wrote}]}
 //   {ok: false, error: {code, message, issue?, detail?}, applied: ["Org/Repo#1", ...]}
-// Error codes: see ERROR_CODES (NO_WRITE_RIGHTS, CONFLICT, NOT_FOUND, NOT_ON_BOARD, UNKNOWN_RELEASE, UNKNOWN_GATE, FIELD_MISSING, BAD_REQUEST, TRANSPORT, GITHUB_ERROR).
+// Error codes: see ERROR_CODES (NO_WRITE_RIGHTS, CONFLICT, NOT_FOUND, NOT_ON_BOARD, UNKNOWN_RELEASE, UNKNOWN_GATE, FIELD_MISSING, BAD_REQUEST, BAD_MARKERS, BAD_SECTION, TRANSPORT, GITHUB_ERROR).
+
+import { applySection, bodyHash, parseSection, renderSection, validateJob } from "./job.mjs";
+import { CAPABILITY_IDS, CODE_REPOS } from "../../understand-anything/platform/lib/capabilities.mjs";
+import { criteriaVersion } from "../../understand-anything/platform/lib/health-run.mjs";
 
 export const DEFAULT_ORG = "OpenResilienceInitiative";
 export const PROJECT_ID = "PVT_kwDODkeBP84BHH8p"; // ORISO Roadmap (project #1)
@@ -13,7 +17,7 @@ export const PLATFORM_RELEASE_FIELD_ID = "IFMS_kgDOArcqMA"; // org ISSUE field (
 export const PLATFORM_RELEASE_FIELD_NAME = "Platform release";
 export const GATE_FIELD_NAME = "Gate";
 
-export const ERROR_CODES = ["NO_WRITE_RIGHTS", "CONFLICT", "NOT_FOUND", "NOT_ON_BOARD", "UNKNOWN_RELEASE", "UNKNOWN_GATE", "FIELD_MISSING", "BAD_REQUEST", "TRANSPORT", "GITHUB_ERROR"];
+export const ERROR_CODES = ["NO_WRITE_RIGHTS", "CONFLICT", "NOT_FOUND", "NOT_ON_BOARD", "UNKNOWN_RELEASE", "UNKNOWN_GATE", "FIELD_MISSING", "BAD_REQUEST", "BAD_MARKERS", "BAD_SECTION", "TRANSPORT", "GITHUB_ERROR"];
 
 const ISSUE_FIELDS = `
   id number viewerCanUpdate
@@ -52,8 +56,8 @@ mutation PlanSetRelease($input: SetIssueFieldValueInput!) {
 export const releaseWriteVariables = (issueId, fieldId, optionId) => ({ input: { issueId, issueFields: [{ fieldId, multiSelectOptionIds: [optionId] }] } });
 
 // ───────── shared plumbing ─────────
-const fail = (code, message, extra = {}) => ({ code, message, ...extra });
-const refString = (r) => `${r.owner}/${r.name}#${r.number}`;
+export const fail = (code, message, extra = {}) => ({ code, message, ...extra });
+export const refString = (r) => `${r.owner}/${r.name}#${r.number}`;
 
 export function parseIssueRef(ref, org = DEFAULT_ORG) {
   let repository, number;
@@ -93,7 +97,7 @@ function classifyEmptyBody(res, issue) {
 
 // Run one operation; returns {data} or {error}. Never throws.
 // partial: a body with data AND errors is handed back as {data, errors} (null nodes in a list, see readSubIssues).
-async function call(transport, query, variables, issue, { partial = false } = {}) {
+export async function call(transport, query, variables, issue, { partial = false } = {}) {
   let res;
   try {
     res = await transport(query, variables);
@@ -150,7 +154,7 @@ async function readSubIssues(transport, parent, parentRef) {
 
 // The command bodies may meet answers of an unexpected shape. Whatever they throw becomes a typed TRANSPORT
 // error that still lists what was written before it, so callers never see an exception.
-function neverThrows(body) {
+export function neverThrows(body) {
   return async (...args) => {
     const applied = [];
     try {
@@ -262,4 +266,178 @@ export const setGate = neverThrows(async (_applied, issue, gate, { expectedGate,
     row.wrote = true;
   }
   return { ok: true, gate, dryRun, results: [row] };
+});
+
+// ───────── writeJobSection (ORISO-Docs#216) ─────────
+// Writes the agent job section into the issue DESCRIPTION, between the oriso:job markers (lib/job.mjs). Everything
+// outside the markers stays byte-identical; without markers the section is appended.
+//   job: the job object, or (existingJob|null) => job (merge / heartbeat on what is already there).
+//   expectedUpdatedAt / expectedBodyHash: what the caller last saw; a different live value is a CONFLICT.
+//   force: an existing section that does not validate is a BAD_SECTION error (with its problems) unless force is true; then
+//          it is overwritten and the job function gets null. Broken markers stay BAD_MARKERS either way (fix them by hand).
+// GitHub's updateIssue has no compare-and-set, so the issue is read twice: once to plan and again right before the
+// write. If the description changed in between, nothing is written. A human edit in the few milliseconds after the
+// second read can still be overwritten; GitHub's edit history keeps that text.
+// UNVERIFIED against the live API (no org access from the sandbox): the mutation is the documented updateIssue.
+export const JOB_ISSUE_QUERY = `
+query PlanJobIssue($owner: String!, $name: String!, $number: Int!) {
+  repository(owner: $owner, name: $name) { issue(number: $number) { id number body updatedAt viewerCanUpdate repository { nameWithOwner } } }
+}`;
+export const SET_BODY_MUTATION = `
+mutation PlanSetBody($input: UpdateIssueInput!) {
+  updateIssue(input: $input) { issue { id updatedAt } }
+}`;
+
+export const writeJobSection = neverThrows(async (_applied, issue, job, { expectedUpdatedAt, expectedBodyHash, dryRun = false, force = false, transport } = {}) => {
+  const bad = (message, detail) => ({ ok: false, error: fail("BAD_REQUEST", message, detail ? { detail } : {}), applied: [] });
+  if (typeof transport !== "function") return bad("writeJobSection needs a transport");
+  const ref = parseIssueRef(issue);
+  if (!ref) return bad(`Not an issue reference: ${JSON.stringify(issue)} (expected Org/Repo#123)`);
+  if (typeof job !== "function" && (!job || typeof job !== "object")) return bad("job must be an object or a function");
+  const name = refString(ref);
+  const none = (error) => ({ ok: false, error, applied: [] });
+  const read = async () => {
+    const r = await call(transport, JOB_ISSUE_QUERY, { owner: ref.owner, name: ref.name, number: ref.number }, name);
+    if (r.error) return r;
+    const node = r.data?.repository?.issue;
+    return node ? { node } : { error: fail("NOT_FOUND", `${name} does not exist or is not visible`, { issue: name }) };
+  };
+
+  const first = await read();
+  if (first.error) return none(first.error);
+  const node = first.node;
+  if (!node.viewerCanUpdate) return none(fail("NO_WRITE_RIGHTS", `No write rights on ${name}`, { issue: name }));
+  const body = node.body ?? "";
+  const before = { updatedAt: node.updatedAt ?? null, bodyHash: bodyHash(body) };
+  if ((expectedUpdatedAt !== undefined && expectedUpdatedAt !== before.updatedAt) || (expectedBodyHash !== undefined && expectedBodyHash !== before.bodyHash)) {
+    return none(fail("CONFLICT", `The description of ${name} changed since it was read (now updated ${before.updatedAt}); read it again`, { issue: name, detail: { expectedUpdatedAt: expectedUpdatedAt ?? null, actualUpdatedAt: before.updatedAt, expectedBodyHash: expectedBodyHash ?? null, actualBodyHash: before.bodyHash } }));
+  }
+
+  const existing = parseSection(body);
+  if (existing?.code === "BAD_MARKERS") return none(fail("BAD_MARKERS", existing.problems[0], { issue: name }));
+  if (existing?.code === "BAD_SECTION" && !force) {
+    return none(fail("BAD_SECTION", `The job section of ${name} is there but not valid (${existing.problems.join("; ")}); fix it by hand, or overwrite it deliberately with --force`, { issue: name, detail: { problems: existing.problems } }));
+  }
+  const next = typeof job === "function" ? job(existing?.job ?? null) : job;
+  const problems = validateJob(next);
+  if (problems.length) return bad(`Invalid job section: ${problems.join("; ")}`, { problems });
+  const applied = applySection(body, renderSection(next));
+  if (!applied.ok) return none({ ...applied.error, issue: name });
+
+  const changed = applied.mode !== "unchanged";
+  const row = { issue: name, role: "issue", before: existing?.job?.state ?? null, after: next.state, changed, wrote: false };
+  const result = { ok: true, dryRun, issue: name, mode: applied.mode, changed, wrote: false, before, bodyBefore: body, bodyAfter: applied.body, job: next, results: [row] };
+  if (changed && !dryRun) {
+    const again = await read();
+    if (again.error) return none(again.error);
+    if ((again.node.body ?? "") !== body || again.node.updatedAt !== node.updatedAt) {
+      return none(fail("CONFLICT", `The description of ${name} was edited while the job section was prepared; nothing was written`, { issue: name, detail: { actualUpdatedAt: again.node.updatedAt ?? null } }));
+    }
+    const w = await call(transport, SET_BODY_MUTATION, { input: { id: node.id, body: applied.body } }, name);
+    if (w.error) return none({ ...w.error, issue: name });
+    row.wrote = result.wrote = true;
+    result.after = { updatedAt: w.data?.updateIssue?.issue?.updatedAt ?? null, bodyHash: bodyHash(applied.body) };
+  }
+  return result;
+});
+
+
+// ───────── sendHealthCheck (ORISO-Docs#220, epic #213; spec stories 22 and 29) ─────────
+// "Send health check" for one scope (a capability inside a repository, optionally one folder): files ONE request issue in
+// ORISO-Docs that an operator or an agent picks up. The issue carries a hidden marker with the scope, the version of the
+// effective criteria and the exact command that makes the run, so the work is small, findable and not started twice:
+// asking again for a scope that has an open request returns that issue and writes nothing. The run itself is never started
+// from here; it writes its record through the scheduled workflow or a pull request, like every other run.
+// UNVERIFIED against the live API (no org access from the sandbox): the search query and createIssue. If the first live
+// --apply fails, adjust only the three documents below.
+export const HEALTH_CHECK_OWNER = DEFAULT_ORG;
+export const HEALTH_CHECK_REPO = "ORISO-Docs";
+export const HealthCheckFind_QUERY = `
+query PlanHealthCheckFind($q: String!) {
+  search(query: $q, type: ISSUE, first: 20) { nodes { ... on Issue { id number url title state body } } }
+}`;
+export const HealthCheckRepo_QUERY = `
+query PlanHealthCheckRepo($owner: String!, $name: String!) { repository(owner: $owner, name: $name) { id } }`;
+export const HealthCheckCreate_MUTATION = `
+mutation PlanHealthCheckCreate($input: CreateIssueInput!) { createIssue(input: $input) { issue { id number url } } }`;
+
+const HC_PATH = /^[A-Za-z0-9_.@-]+(\/[A-Za-z0-9_.@-]+)*$/;
+const HC_MARKER = /<!--\s*oriso:health-check:v1\s+scope=([A-Za-z0-9_.@\/-]+)\s*-->/;
+export const healthScopeKey = (s) => `${s.capability}/${s.repo}${s.path ? `/${s.path}` : ""}`;
+export const healthCheckMarker = (s) => `<!-- oriso:health-check:v1 scope=${healthScopeKey(s)} -->`;
+export const parseHealthCheckMarker = (body) => (typeof body === "string" ? HC_MARKER.exec(body)?.[1] ?? null : null);
+// The command that makes the run (it goes into the request issue body).
+export const healthRunCommand = (s) =>
+  `node tools/understand-anything/platform/health-run.mjs run --capability ${s.capability} --repo ${s.repo}${s.path ? ` --path ${s.path}` : ""} --checkout <path to your ${s.repo} checkout>`;
+// The command that files the request (plan.mjs health-check): the map shows the same text (map/views.js healthCheckCommand keeps a
+// copy, the page cannot import this module; test/planning-health-check.test.mjs compares the two and parses it back with plan.mjs).
+export const healthCheckCommand = (s, apply = false) =>
+  `node tools/planning-map/plan.mjs health-check --capability ${s.capability} --repo ${s.repo}${s.path ? ` --path ${s.path}` : ""}${apply ? " --apply" : ""}`;
+
+function checkScope(s) {
+  if (!s || typeof s !== "object") return "scope must be {capability, repo, path}";
+  if (!CAPABILITY_IDS.includes(s.capability)) return `unknown capability ${JSON.stringify(s.capability)}`;
+  if (!CODE_REPOS.includes(s.repo)) return `unknown repository ${JSON.stringify(s.repo)}; known: ${CODE_REPOS.join(", ")}`;
+  if (s.path !== null && s.path !== undefined) {
+    if (typeof s.path !== "string" || !HC_PATH.test(s.path) || s.path.split("/").some((x) => x === "." || x === "..")) return `path ${JSON.stringify(s.path)} is not a folder inside the repository`;
+  }
+  return null;
+}
+
+const healthTitle = (s) => `Health check: ${s.capability} / ${s.repo}${s.path ? ` / ${s.path}` : ""}`;
+function healthBody(s, criteria) {
+  const metrics = Object.entries(criteria.metrics ?? {}).filter(([, m]) => m.weight > 0).map(([n, m]) => `- \`${n}\`: threshold ${m.threshold}, weight ${m.weight}`);
+  return [
+    `Health check requested for \`${s.capability}\` in \`${s.repo}\`${s.path ? `, folder \`${s.path}\`` : ", the whole capability"}.`,
+    "",
+    `Criteria version: \`${criteriaVersion(criteria).slice(0, 12)}\` (the run records the full hash).`,
+    "",
+    "Measured against:",
+    ...(metrics.length ? metrics : ["- no metrics"]),
+    "",
+    "Run it from a clean checkout:",
+    "",
+    "```",
+    healthRunCommand(s),
+    "```",
+    "",
+    "Agents: read the steering comments of the capability (label `area-steering`, `steeringFor()`) before you start. The run writes `health/runs/...` through a pull request; creating refactoring tasks from the result is a separate planning step.",
+    "",
+    healthCheckMarker(s),
+    "",
+  ].join("\n");
+}
+
+// sendHealthCheck(scope, criteria, {dryRun, transport}); criteria = the effective criteria of the scope (resolveCriteria).
+export const sendHealthCheck = neverThrows(async (_applied, scope, criteria, { dryRun = false, transport } = {}) => {
+  const bad = (message) => ({ ok: false, error: fail("BAD_REQUEST", message), applied: [] });
+  if (typeof transport !== "function") return bad("sendHealthCheck needs a transport");
+  const problem = checkScope(scope);
+  if (problem) return bad(problem);
+  if (!criteria || typeof criteria !== "object" || !criteria.metrics || !criteria.tests || !criteria.instruction) return bad("criteria must be the effective criteria of the scope");
+  const s = { capability: scope.capability, repo: scope.repo, path: scope.path ?? null };
+  const key = healthScopeKey(s);
+  const none = (error) => ({ ok: false, error, applied: [] });
+  const q = `repo:${HEALTH_CHECK_OWNER}/${HEALTH_CHECK_REPO} is:issue is:open in:body "oriso:health-check:v1 scope=${key}"`;
+  const found = await call(transport, HealthCheckFind_QUERY, { q }, key);
+  if (found.error) return none(found.error);
+  // The search is fuzzy: only an open issue whose marker names exactly this scope is the request.
+  const hit = (found.data?.search?.nodes ?? []).filter((n) => n && n.state === "OPEN" && parseHealthCheckMarker(n.body) === key).sort((a, b) => a.number - b.number)[0];
+  const common = { ok: true, dryRun, scope: s };
+  if (hit) {
+    const issue = { number: hit.number, url: hit.url, title: hit.title, state: hit.state };
+    return { ...common, action: "exists", wrote: false, issue, results: [{ issue: `${HEALTH_CHECK_OWNER}/${HEALTH_CHECK_REPO}#${hit.number}`, role: "health-check", before: "open", after: "open", changed: false, wrote: false }] };
+  }
+  const title = healthTitle(s), body = healthBody(s, criteria);
+  const plan = { ...common, title, body };
+  if (dryRun) return { ...plan, action: "create", wrote: false, results: [{ issue: null, role: "health-check", before: null, after: "open", changed: true, wrote: false }] };
+  const repo = await call(transport, HealthCheckRepo_QUERY, { owner: HEALTH_CHECK_OWNER, name: HEALTH_CHECK_REPO }, key);
+  if (repo.error) return none(repo.error);
+  const repositoryId = repo.data?.repository?.id;
+  if (!repositoryId) return none(fail("NOT_FOUND", `${HEALTH_CHECK_OWNER}/${HEALTH_CHECK_REPO} is not readable`));
+  const made = await call(transport, HealthCheckCreate_MUTATION, { input: { repositoryId, title, body } }, key);
+  if (made.error) return none(made.error);
+  const issue = made.data?.createIssue?.issue;
+  if (!issue) return none(fail("GITHUB_ERROR", "GitHub did not return the new issue"));
+  return { ...plan, action: "created", wrote: true, issue: { number: issue.number, url: issue.url, title, state: "OPEN" }, results: [{ issue: `${HEALTH_CHECK_OWNER}/${HEALTH_CHECK_REPO}#${issue.number}`, role: "health-check", before: null, after: "open", changed: true, wrote: true }] };
 });

@@ -26,6 +26,10 @@ not its `_artifacts/` subfolder). The series was re-synchronised on 2026-08-17 f
   product owner (ORISO-UserService#1264): a global, default-off platform switch that limits
   every agency to one topic; the data model stays multi-topic.
 
+- `ADR-028-capability-map-stays-in-hub-health-in-viewer-node-panel.md` — proposed 2026-10-24
+  (Docs#224): keep the capability map in the hub, add a health section to the viewer node panel
+  through a bounded patch after the run-record schema exists; fork rejected for now.
+
 New decisions in this section are repository-owned records and are not part of the unchanged
 19-file import described above.
 

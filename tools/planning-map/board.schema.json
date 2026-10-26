@@ -283,6 +283,12 @@
               null
             ]
           },
+          "stateReason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "updatedAt": {
             "type": [
               "string",
@@ -370,7 +376,8 @@
                     "closed-not-done",
                     "qa-external-no-bjoern",
                     "epic-no-readiness",
-                    "gate-status-mismatch"
+                    "gate-status-mismatch",
+                    "job-stale"
                   ]
                 },
                 "severity": {
@@ -397,6 +404,232 @@
               "string",
               "null"
             ]
+          },
+          "work": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "branches",
+              "prs",
+              "hidden"
+            ],
+            "properties": {
+              "hidden": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "branches": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "name",
+                    "repository",
+                    "source",
+                    "lastCommitDate",
+                    "url",
+                    "prs"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "repository": {
+                      "type": "string"
+                    },
+                    "source": {
+                      "enum": [
+                        "linked",
+                        "pr",
+                        "name"
+                      ]
+                    },
+                    "lastCommitDate": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "url": {
+                      "type": "string",
+                      "pattern": "^https://"
+                    },
+                    "prs": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              },
+              "prs": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "number",
+                    "repository",
+                    "title",
+                    "url",
+                    "state",
+                    "isDraft",
+                    "checks",
+                    "reviewDecision",
+                    "updatedAt",
+                    "branch"
+                  ],
+                  "properties": {
+                    "number": {
+                      "type": "integer"
+                    },
+                    "repository": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string",
+                      "pattern": "^https://"
+                    },
+                    "state": {
+                      "enum": [
+                        "OPEN",
+                        "CLOSED",
+                        "MERGED"
+                      ]
+                    },
+                    "isDraft": {
+                      "type": "boolean"
+                    },
+                    "checks": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "reviewDecision": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "updatedAt": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "branch": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            }
+          },
+          "job": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "state",
+              "runner",
+              "machine",
+              "started",
+              "updated",
+              "model",
+              "branches",
+              "prs",
+              "next",
+              "report"
+            ],
+            "properties": {
+              "state": {
+                "enum": [
+                  "running",
+                  "stopped",
+                  "waiting-human",
+                  "done",
+                  "failed"
+                ]
+              },
+              "runner": {
+                "enum": [
+                  "local",
+                  "cloud"
+                ]
+              },
+              "machine": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "started": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+              },
+              "updated": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+              },
+              "model": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "branches": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "prs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "next": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "report": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^https://"
+              }
+            }
+          },
+          "refactor": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "scope"
+            ],
+            "properties": {
+              "scope": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^[a-z][a-z0-9-]*(:[A-Za-z0-9_.-]+(:[A-Za-z0-9_.@/-]+)?)?$"
+              }
+            }
           }
         }
       }
@@ -444,6 +677,27 @@
           }
         },
         "drafts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "count",
+            "byStatus"
+          ],
+          "properties": {
+            "count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "byStatus": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        },
+        "unlisted": {
           "type": "object",
           "additionalProperties": false,
           "required": [

@@ -71,3 +71,8 @@ test("the Understand contract workflow runs when tools/planning-map changes (the
   assert.equal(blocks.length, 2);
   for (const b of blocks) assert.match(b.split(/^permissions:/m)[0], /- 'tools\/planning-map\/\*\*'/);
 });
+
+test("steering.json is exported with the board (live only) and a failing steering export does not fail the job (ORISO-Docs#221)", () => {
+  assert.match(wf, /node tools\/planning-map\/steering\.mjs export --out "\$OUT_DIR\/steering\.json" \|\| echo "::warning/);
+  assert.match(wf, /path: \$\{\{ runner\.temp \}\}\/planning-board\/\n/);
+});

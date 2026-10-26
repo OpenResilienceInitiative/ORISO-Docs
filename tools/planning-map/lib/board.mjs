@@ -4,6 +4,9 @@ import { fileURLToPath } from "node:url";
 import { ITEMS_QUERY, META_QUERY } from "./queries.mjs";
 import { validate } from "./schema.mjs";
 import { evaluateItem } from "./watchers.mjs";
+import { buildWork } from "./work.mjs";
+import { parseSection } from "./job.mjs";
+import { hasRefactoringLabel, parseMarker } from "./refactor-marker.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 export const SCHEMA_VERSION = 1;
@@ -13,14 +16,26 @@ export const schema = JSON.parse(readFileSync(resolve(here, "../board.schema.jso
 export const validateBoard = (board) => validate(schema, board);
 
 // run(query, variables) -> parsed GraphQL JSON ({data}); injected so tests use recorded fixtures.
+export const PAGE_START = 25, PAGE_MIN = 5;
+const GATEWAY = /HTTP 50[234]|timed? ?out|Something went wrong while executing your query/i;
+
 export async function fetchAll(run, { owner, number }) {
   const meta = (await run(META_QUERY, { owner, number })).data.organization;
   const items = [];
   let after = null;
   let title = meta.projectV2.title;
   let totalCount = null;
+  // Each item carries branches, PRs and check states (#215), so a page of 100 makes GitHub time out (HTTP 502).
+  // Start at 25 and halve after a gateway error, retrying the same cursor; other errors are not retried.
+  let first = PAGE_START;
   for (;;) {
-    const conn = (await run(ITEMS_QUERY, { owner, number, after })).data.organization.projectV2;
+    let res;
+    try { res = await run(ITEMS_QUERY, { owner, number, after, first }); }
+    catch (e) {
+      if (first > PAGE_MIN && GATEWAY.test(String(e?.message ?? e))) { first = Math.max(PAGE_MIN, Math.floor(first / 2)); continue; }
+      throw e;
+    }
+    const conn = res.data.organization.projectV2;
     title = conn.title ?? title;
     totalCount = conn.items.totalCount;
     items.push(...conn.items.nodes);
@@ -89,8 +104,14 @@ export function driftCheck(live, ct = contract, { strict = false } = {}) {
   return { ok: problems.length === 0, problems, unpinned };
 }
 
-export function buildBoard({ meta, items: rawItems, totalCount, title }, { syncedAt = new Date().toISOString(), owner, number, ct = contract } = {}) {
+// Allow-list, as the hub publication checks it: only repositories named in the public policy reach board.json.
+// Anything else (a public repo that is not on the list yet, e.g. the org's .github) is counted, never listed.
+export const PUBLIC_REPOSITORIES = new Set(JSON.parse(readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), "../../truth-chain/public-repositories.json"), "utf8")).repositories);
+
+export function buildBoard({ meta, items: rawItems, totalCount, title }, { syncedAt = new Date().toISOString(), owner, number, ct = contract, branchIndex = new Map(), publicRepos = PUBLIC_REPOSITORIES } = {}) {
   const privateRepos = new Set(ct.privateRepositories);
+  const org = (owner ?? ct.project.owner) + "/";
+  const listed = (r) => typeof r === "string" && r.startsWith(org) && publicRepos.has(r.slice(org.length));
   const warnings = [];
   const items = [];
   const privateMap = new Map();
@@ -100,7 +121,7 @@ export function buildBoard({ meta, items: rawItems, totalCount, title }, { synce
   let readinessMin = null;
   let readinessMax = null;
   // Not public, counted only: items GitHub redacts (no content or type REDACTED) and draft issues.
-  const hidden = { redacted: { count: 0, byStatus: {} }, drafts: { count: 0, byStatus: {} } };
+  const hidden = { redacted: { count: 0, byStatus: {} }, drafts: { count: 0, byStatus: {} }, unlisted: { count: 0, byStatus: {} } };
   const hide = (bucket, status) => { bucket.count++; bucket.byStatus[status ?? "(none)"] = (bucket.byStatus[status ?? "(none)"] ?? 0) + 1; };
 
   for (const raw of rawItems) {
@@ -120,10 +141,11 @@ export function buildBoard({ meta, items: rawItems, totalCount, title }, { synce
       privateMap.set(repo, p);
       continue; // counts only: no id, title, url
     }
+    if (!listed(repo)) { hide(hidden.unlisted, status); continue; }
 
     const f = normalizeIssueFieldValues(c?.issueFieldValues?.nodes);
     const par = c?.parent;
-    const parent = par && !par.repository?.isPrivate && !privateRepos.has(par.repository?.nameWithOwner)
+    const parent = par && !par.repository?.isPrivate && !privateRepos.has(par.repository?.nameWithOwner) && listed(par.repository?.nameWithOwner)
       ? { repository: par.repository.nameWithOwner, number: par.number }
       : null;
     if (readiness != null) {
@@ -152,6 +174,16 @@ export function buildBoard({ meta, items: rawItems, totalCount, title }, { synce
       // null = not known for this content type (the watcher then does not guess); [] = known to be unassigned.
       assignees: c.assignees ? (c.assignees.nodes ?? []).map((a) => a.login) : null,
     };
+    if (c.__typename === "Issue") item.stateReason = c.stateReason ?? null; // COMPLETED, NOT_PLANNED, DUPLICATE, REOPENED (additive, #213 review)
+    if (c.__typename === "Issue") item.work = buildWork(c, repo, { branchIndex, isHidden: (r, flag) => !!flag || privateRepos.has(r) });
+    if (c.__typename === "Issue" && typeof c.body === "string" && c.body.includes("oriso:job:")) {
+      // ORISO-Docs#216. Only the parsed, validated section leaves this function; the description itself never does.
+      const parsed = parseSection(c.body);
+      if (parsed?.job) item.job = parsed.job;
+      else if (parsed) warnings.push(`Job section on ${c.url ?? raw.id} ignored: ${parsed.problems.join("; ")}`);
+    }
+    // ORISO-Docs#222. The category is the label `refactoring`; only its scope (from the body marker) leaves this function.
+    if (c.__typename === "Issue" && hasRefactoringLabel(c.labels?.nodes)) item.refactor = { scope: parseMarker(c.body) };
     item.findings = evaluateItem(item, { now: syncedAt });
     for (const f of item.findings) findingCounts[f.rule] = (findingCounts[f.rule] ?? 0) + 1;
     if (item.platformRelease) releaseCounts.set(item.platformRelease, (releaseCounts.get(item.platformRelease) ?? 0) + 1);
@@ -159,7 +191,7 @@ export function buildBoard({ meta, items: rawItems, totalCount, title }, { synce
   }
 
   const live = liveOptions(meta);
-  const privateCount = [...privateMap.values()].reduce((s, p) => s + p.count, 0) + hidden.redacted.count;
+  const privateCount = [...privateMap.values()].reduce((s, p) => s + p.count, 0) + hidden.redacted.count + hidden.unlisted.count;
   if (totalCount != null && totalCount !== rawItems.length) warnings.push(`Project reports ${totalCount} items but ${rawItems.length} were fetched`);
   const releaseNames = live.platformRelease ?? [...releaseCounts.keys()];
   return {

@@ -2,6 +2,8 @@
 
 function startMap(MEAS){
 'use strict';
+MapViews.setCriteria(MEAS.criteria || null); /* Gesundheitskriterien (criteria.json, optional): Kriterienbox der Ansicht Health */
+MapViews.setSteering(MEAS.steering || null); /* Steuerung (steering.json, optional): Kommentare von Mitgliedern in der Ansicht Health */
 
 /* ───────── Verweise ───────── */
 var UA = {
@@ -278,15 +280,32 @@ var KPIS = [
 PLANNED_FEATURES = []; /* stillgelegt; nicht mit PLAN (Planungsabsichten, unten) verwechseln */
 var SLUG = {chat:'chat',notify:'notifications',handover:'case-handover',teamdisc:'team-consultation',supervision:'supervision',groups:'self-help-groups',calls:'calls-voice',livechat:'live-chat',upload:'files-media',practice:'training-tours',i18n:'multilingual',legal:'legal-texts',permissions:'feature-permissions',mailadmin:'email-templates',invites:'invitations-onboarding',branding:'branding',stats:'statistics',tenants:'tenants-agencies',auth:'auth-2fa',e2ee:'encryption-keys',deletion:'deletion'};
 var LIVE = MEAS.live || [];
+/* Ideen der Plan-Ansicht (ideas.json, optional; ORISO-Docs#223): Fähigkeits-ID je Quadrat über SLUG. */
+MapViews.setIdeas(MEAS.ideas, function(id){ return SLUG[id] || null; });
+/* Prüfläufe der Ansicht Health (health.json, optional; ORISO-Docs#218): jeder gezeigte Wert ist ein Feld des Laufprotokolls. */
+MapViews.setHealth(MEAS.health || null, function(id){ return id === 'base' ? 'shared' : (SLUG[id] || null); });
+/* Verlauf in der Ansicht Health (#219): jeder Lauf verweist mit dem Deep-Link-Helfer uaNodeHref auf seinen Understand-Knoten. */
+MapViews.setNodeLink(function(id){
+  var m = /^([^:]+)::/.exec(id), key = m ? null : 'sg';
+  if (m) Object.keys(REPOID).forEach(function(k){ if (REPOID[k] === m[1]) key = k; });
+  return key && UA[key] ? uaNodeHref(UA[key], id) : null;
+});
 var CODE_REPOS = ['ORISO-Frontend','ORISO-Admin','ORISO-UserService','ORISO-TenantService','ORISO-AgencyService','ORISO-ConsultingTypeService'];
 var GH = 'https://github.com/OpenResilienceInitiative/';
 var SBH = ['storybook-frontend','storybook-admin'];
 var EP = MEAS.epics.epics, EPR = MEAS.epics.repos;
 /* Board-Stand je Fähigkeit (board.json, optional): Aggregation in board-agg.js, Zuordnung über die Epics dieser Karte. */
 var BOARD = (MEAS.board && typeof BoardAgg !== 'undefined') ? BoardAgg.aggregate(MEAS.board, MEAS.epics) : null;
+/* Branches und Pull Requests je Aufgabe und Epic (ORISO-Docs#215); null, solange das Board keine work-Daten kennt. */
+var WORKIDX = (MEAS.board && typeof BoardAgg !== 'undefined' && BoardAgg.workIndex) ? BoardAgg.workIndex(MEAS.board, MEAS.epics) : null;
+/* Agent-Jobs aus dem Abschnitt der Issue-Beschreibung (ORISO-Docs#216, map/jobs.js); null, solange kein Issue einen Job meldet. */
+var JOBS = (MEAS.board && typeof MapJobs !== 'undefined') ? MapJobs.index(MEAS.board, MEAS.epics) : null;
+/* Refactoring-Aufgaben je Fähigkeit (ORISO-Docs#222): Label refactoring, Stand aus dem Board-Status; ohne Board null (keine Marke, kein Zahlenwert). */
+MapViews.setRefactoring((MEAS.board && typeof BoardAgg !== 'undefined' && BoardAgg.refactoring) ? BoardAgg.refactoring(MEAS.board, MEAS.epics) : null, function(id){ return id === 'base' ? 'shared' : (SLUG[id] || null); });
 
 /* ───────── Hilfen ───────── */
 var lang = document.documentElement.getAttribute('data-lang')==='en' ? 'en' : 'de';
+var view = MapViews.DEFAULT_VIEW;
 var layers = {p:true, old:true, gone:true, b:true, x:true, t:true, d:true}, stack = [];
 var stageOn = {idea:true, work:true, near:true, done:false};
 function L(o){ return o ? (o[lang]!==undefined ? o[lang] : o.de) : ''; }
@@ -461,6 +480,7 @@ var RULE_T = {
   'closed-not-done': function(d){ return de() ? 'Geschlossen, aber Status '+(d.status ? L2(STATUS_L[d.status]||[d.status,d.status]) : 'leer')+' statt Fertig' : 'Closed, but status is '+(d.status ? L2(STATUS_L[d.status]||[d.status,d.status]) : 'empty')+' instead of Done'; },
   'qa-external-no-bjoern': function(d){ return de() ? 'QA extern ohne '+d.expected+' zugewiesen' : 'QA external without '+d.expected+' assigned'; },
   'epic-no-readiness': function(){ return de() ? 'Epic ohne Reife-Wert' : 'Epic without Readiness'; },
+  'job-stale': function(d){ return de() ? 'Agent-Job meldet "läuft", aber seit '+fmt(d.hours)+' Std. keine Aktualisierung (Grenze '+fmt(d.threshold)+' Std.)' : 'Agent job says running, but no update for '+fmt(d.hours)+' h (limit '+fmt(d.threshold)+' h)'; },
   'gate-status-mismatch': function(d){ return de() ? 'Gate '+d.gate+' passt nicht zum Status '+d.status : 'Gate '+d.gate+' does not fit status '+d.status; }
 };
 function findingText(rule, d){ return RULE_T[rule] ? RULE_T[rule](d||{}) : rule; }
@@ -637,7 +657,70 @@ function drawMap(animFrom){
     }
   }
   applyLayers(); markSel(); drawZbar(st); if (typeof markRelease === 'function' && RSCOPE) markRelease();
-  document.getElementById('stagefoot').innerHTML = rampLegend() + '<span>'+esc(tt().area(layers.t?'show':'hide'))+'</span>' + boardLegend();
+  drawStageFoot(); applyView();
+}
+/* Ansicht State | Health | Plan: die Haken je Ansicht stehen in views.js (MapViews.VIEWS). */
+function drawStageFoot(){
+  var own = MapViews.VIEWS[view].legend(lang);
+  document.getElementById('stagefoot').innerHTML = own ? '<span class="vnote">'+esc(own)+'</span>' : rampLegend() + '<span>'+esc(tt().area(layers.t?'show':'hide'))+'</span>' + boardLegend();
+}
+function applyView(){
+  var v = MapViews.VIEWS[view];
+  tm.classList.toggle('vview', view !== MapViews.DEFAULT_VIEW);
+  Array.prototype.forEach.call(tm.querySelectorAll('.blk'), function(e){
+    var id = e.dataset.id || curBlock(), tok = id && BY[id] ? v.colour(BY[id]) : null;
+    if (tok) e.style.setProperty('--view-fill', 'var(--'+tok+')'); else e.style.removeProperty('--view-fill');
+    /* Gesundheits-Merkmal (Band und Wert aus dem Laufprotokoll) nur auf den Quadraten der Übersicht; Farbe allein trägt nie die Aussage. */
+    var hb = e.dataset.id && BY[e.dataset.id] && v.badge ? v.badge(BY[e.dataset.id]) : null;
+    if (hb){ e.dataset.hband = hb.band; e.dataset.hs = hb.text; } else { delete e.dataset.hband; delete e.dataset.hs; }
+    /* Refactoring-Marke (geplant / läuft / erledigt, immer als Wort) nur auf den Quadraten der Übersicht (ORISO-Docs#222). */
+    var rf = e.dataset.id && BY[e.dataset.id] && v.refactor ? v.refactor(BY[e.dataset.id], lang) : null;
+    if (rf){ e.dataset.rf = rf.state; e.dataset.rft = rf.text; e.dataset.rfw = rf.word; } else { delete e.dataset.rf; delete e.dataset.rft; delete e.dataset.rfw; }
+    /* Die Quadrate tragen ein aria-label; die Marke steht dann auch darin, sonst hörten Screenreader sie nicht. */
+    if (e.dataset.arb === undefined && rf && e.hasAttribute('aria-label')) e.dataset.arb = e.getAttribute('aria-label');
+    if (e.dataset.arb !== undefined){ if (rf) e.setAttribute('aria-label', e.dataset.arb+' – '+rf.text); else { e.setAttribute('aria-label', e.dataset.arb); delete e.dataset.arb; } }
+    /* Ideen-Markierung nur auf den Quadraten der Übersicht (data-id), mit Rahmen statt nur Farbe. */
+    e.classList.toggle('vmark', !!(e.dataset.id && BY[e.dataset.id] && v.mark(BY[e.dataset.id])));
+  });
+}
+/* Werkzeugzeile über der Karte: Ideenliste in Plan, „Ideen anzeigen“ in Zustand und Gesundheit (views.js). */
+function capLabel(slug){ for (var id in SLUG) if (SLUG[id]===slug && BY[id]) return L(BY[id].t); return null; }
+function drawViewTools(){
+  var host = document.getElementById('viewTools'); if (!host) return;
+  var html = MapViews.tools(view, lang, capLabel);
+  host.innerHTML = html; host.hidden = html === '';
+}
+function ideasChanged(focusSel){
+  drawViewTools(); drawStageFoot(); applyView();
+  if (stack.length) renderView();
+  var f = focusSel && document.querySelector('#viewTools ' + focusSel); if (f) f.focus({preventScroll:true});
+}
+(function(){
+  var host = document.getElementById('viewTools');
+  host.addEventListener('click', function(e){
+    var i = e.target.closest('[data-idea]'), t = e.target.closest('[data-ideatoggle]');
+    if (i){ var id = i.getAttribute('data-idea'); MapViews.selectIdea(id); ideasChanged('[data-idea="'+id+'"]'); }
+    else if (t){ MapViews.toggleIdeas(); ideasChanged('[data-ideatoggle]'); }
+  });
+})();
+function setView(next, push){
+  if (MapViews.VIEW_IDS.indexOf(next) < 0 || next === view) return;
+  view = next; document.getElementById('layerRow').hidden = view !== MapViews.DEFAULT_VIEW; document.getElementById('layerHelp').hidden = view !== MapViews.DEFAULT_VIEW;
+  if (push) syncHash(true); /* vor dem Neuzeichnen, sonst ersetzt renderView den Eintrag still */
+  drawViewSwitch(); drawStageFoot(); applyView();
+  if (stack.length) renderView();
+}
+function drawViewSwitch(){
+  var box = document.getElementById('viewSwitch'); box.innerHTML = '';
+  box.setAttribute('aria-label', de() ? 'Ansicht' : 'View');
+  MapViews.VIEW_IDS.forEach(function(id){
+    var b = el('button','tog vsw'); b.type = 'button'; b.dataset.mview = id;
+    b.textContent = MapViews.VIEWS[id].title[lang];
+    b.setAttribute('aria-pressed', id === view ? 'true' : 'false');
+    b.addEventListener('click', function(){ setView(id, true); });
+    box.appendChild(b);
+  });
+  drawViewTools();
 }
 function rampLegend(){
   var d = de();
@@ -706,6 +789,7 @@ function markSel(){
 
 /* ───────── Steuerung ───────── */
 function drawControls(){
+  drawViewSwitch();
   var tg = document.getElementById('layerTogs'); tg.innerHTML='';
   var defs = de() ? [
     ['p','p','Geplant','Schätzung: geplante Arbeit aus offenen GitHub-Aufgaben, als gestrichelte Erweiterung des Blocks; grau = nicht begonnen, blau = in Arbeit'],
@@ -890,9 +974,9 @@ function viewRel(b){
 function epicCard(i){
   var e=EP[i], s=stageOf(e), t=tt();
   var pct = e.tot ? Math.round(100*e.done/e.tot) : (e.s==='c'?100:0);
-  return '<button type="button" class="epic" data-epic="'+i+'"><span class="et">'+esc(e.t)+'</span>'+
+  return '<div class="epicw"><button type="button" class="epic" data-epic="'+i+'"><span class="et">'+esc(e.t)+'</span>'+
     '<span class="em">'+stagePill(s)+'<span class="k">'+esc(EPR[e.r].replace('ORISO-',''))+' #'+e.n+'</span><span>'+esc(t.subs)+' '+e.done+'/'+e.tot+'</span>'+(currentReleaseOf(e)?'<span>'+esc(currentReleaseOf(e))+'</span>':'')+'</span>'+
-    '<span class="prog" aria-hidden="true"><i data-css="width:'+pct+'%"></i></span></button>';
+    '<span class="prog" aria-hidden="true"><i data-css="width:'+pct+'%"></i></span></button>'+badges('epic:'+i)+'</div>';
 }
 function viewEpics(b){
   var t=tt();
@@ -930,6 +1014,7 @@ var FILTER_KEY = {all:'fAll', accepted:'fAccepted', dev:'fDev', staging:'fStagin
 function epicBoardHTML(v){
   var t = tt(), ev = BOARD && BoardAgg.epicView(VIEWB || MEAS.board, MEAS.epics, v.i, v.f, v.g);
   if (!ev || (!ev.total && !ev.privateCount)) return '';
+  var jf = JOBS ? MapJobs.applyFilter(ev, JOBS, v.j, v.i) : null; if (jf) ev = jf.ev; /* Jobs-Filter (#216): schneidet die Gruppen zu */
   var chips = BoardAgg.FILTERS.map(function(f){
     return '<button type="button" class="tog efilt" data-efilter="'+f+'" aria-pressed="'+(ev.filter===f)+'"><span class="tl">'+esc(t[FILTER_KEY[f]])+'</span> <span class="c">'+fmt(ev.filterCounts[f])+'</span></button>';
   }).join('');
@@ -941,12 +1026,13 @@ function epicBoardHTML(v){
     return '<div class="dgroup egroup"><h5><span>'+(g.status ? '<i class="sw sseg" data-status="'+esc(g.status)+'" data-group="'+g.group+'"></i> ' : '')+esc(name)+'</span><span class="c">'+fmt(g.count)+'</span></h5><ul class="dlist">'+g.items.map(function(x){
       /* Nur https-Links (wie bei den Befunden): alles andere aus board.json wird Text, nie ein href. */
       var link = /^https:\/\//.test(x.url||'') ? '<a href="'+esc(x.url)+'" target="_blank" rel="noopener">'+esc(x.title)+'</a>' : '<span class="nolink">'+esc(x.title)+'</span>';
-      return '<li'+(x.gate?' class="hasgate"':'')+'>'+link+'<span class="c">'+(x.state==='CLOSED'?'✓ ':'○ ')+esc(x.repository.replace('ORISO-',''))+' #'+x.number+'</span>'+gateStepsHTML(x)+'</li>';
+      return '<li'+(x.gate?' class="hasgate"':'')+'>'+link+'<span class="c">'+(x.state==='CLOSED'?'✓ ':'○ ')+esc(x.repository.replace('ORISO-',''))+' #'+x.number+'</span>'+gateStepsHTML(x)+badges('item:'+x.repository+'#'+x.number)+'</li>';
     }).join('')+'</ul></div>';
   }).join('');
   return '<div class="estat" role="group" aria-label="'+esc(t.onBoardBar)+'"><h4>'+esc(t.onBoardBar)+'</h4>'+sbarHTML(ev,'big')+'<ul class="slist">'+legend+'</ul></div>'+
     '<div class="efilters" role="group" aria-label="'+esc(t.filterBy)+'">'+chips+'</div>'+
     (ev.gateAvailable ? gateFilterHTML(ev) : '')+
+    (jf ? MapJobs.filterHTML(jf, lang) : '')+
     (groups || '<p class="dmeta">'+esc(t.noneShown)+'</p>')+
     (ev.privateCount ? '<p class="dmeta epriv">'+esc(t.privSubs(ev.privateCount))+'</p>' : '');
 }
@@ -961,6 +1047,7 @@ function viewEpic(v){
     '<div class="prog"><i data-css="width:'+pct+'%"></i></div>'+
     '<p><a href="'+GH+EPR[e.r]+'/issues/'+e.n+'" target="_blank" rel="noopener">'+esc(t.openGh)+' · '+esc(EPR[e.r])+' #'+e.n+' ↗</a></p>'+
     moveButton({kind:'epic', i:i})+
+    (badges('epic:'+i) ? '<p class="wkrow">'+badges('epic:'+i)+'</p>' : '')+
     board+
     (subs ? '<div class="dgroup"><h5><span>'+esc(t.subs)+'</span><span class="c">'+e.subs.length+'</span></h5><ul class="dlist">'+subs+'</ul></div>' : '')+
     (!board && e.hid ? '<p class="dmeta">'+esc(t.hiddenSubs(e.hid))+'</p>' : '');
@@ -1055,8 +1142,39 @@ function viewFile(b, v){
     fileDescHTML(b, v.m, v.f)+fileRelHTML(b, v.m, v.f)+
     (f[1]!==2 ? '<p class="links"><a href="'+GH+repo+'/blob/dev/'+ghPath(z,f)+'" target="_blank" rel="noopener">'+(d?'Auf GitHub öffnen':'Open on GitHub')+' ↗</a>'+graphLink(z, ghPath(z,f), true)+'</p>' : '');
 }
+/* "Gesundheitsprüfung senden" (ORISO-Docs#220): nur in der Ansicht Health, für den geöffneten Bereich (Fähigkeit, Ordner, Datei).
+   Der Befehl je Bereich kommt aus MapViews.healthCheck; eine Datei wird als ihr Ordner geprüft. */
+function hcheckScopes(v, b){
+  var cap = b && capNodeId(b.id); if (!cap) return null;
+  cap = cap.slice('capability:'.length);
+  if (v.v==='block'){
+    var seen = {}, list = [];
+    (Z[b.id]||[]).forEach(function(z){ var r = CODE_REPOS[z[0]]; if (r && !seen[r]){ seen[r] = 1; list.push(r); } });
+    return list.sort().map(function(r){ return {capability:cap, repo:r, path:null, kind:'capability'}; });
+  }
+  var z = Z[b.id] && Z[b.id][v.m]; if (!z) return null;
+  var repo = CODE_REPOS[z[0]];
+  if (v.v==='mod') return [{capability:cap, repo:repo, path: z[2] ? String(z[2]).replace(/\/+$/, '') || null : null, kind:'folder'}];
+  var f = z[12][v.f]; if (!f || f[1]===2) return null;
+  var p = ghPath(z, f), i = p.lastIndexOf('/');
+  return [{capability:cap, repo:repo, path: i<0 ? null : p.slice(0, i), kind:'file', file: p.slice(i+1)}];
+}
+function hcheckCtx(v, b){
+  if (view !== 'health') return null;
+  try { return hcheckScopes(v, b); } catch (e) { return null; }
+}
+function hcheckHTML(v, b){
+  if (view !== 'health') return '';
+  try { return MapViews.healthCheck(hcheckScopes(v, b), lang); } catch (e) { return ''; }
+}
+/* Fügt HTML hinter den ersten Titel (h3) der Ansicht ein; ohne Titel davor. */
+function afterTitle(inner, html){
+  if (!html) return inner;
+  var i = inner.indexOf('</h3>');
+  return i < 0 ? html + inner : inner.slice(0, i + 5) + html + inner.slice(i + 5);
+}
 function renderView(){
-  if (!stack.length){ renderEmpty(); syncMap(); return; }
+  if (!stack.length){ renderEmpty(); syncMap(); syncHash(false); return; }
   var v = stack[stack.length-1], b = BY[curBlock() || ''], inner;
   if (v.v==='block') inner = viewBlock(BY[v.id]);
   else if (v.v==='lines') inner = viewLines(b);
@@ -1070,12 +1188,14 @@ function renderView(){
   else if (v.v==='mods') inner = viewMods(b, v);
   else if (v.v==='mod') inner = viewMod(b, v);
   else if (v.v==='file') inner = viewFile(b, v);
+  if (v.v==='block') inner = MapViews.VIEWS[view].panel(BY[v.id], lang, capNodeId(v.id), {hcheck: hcheckCtx(v, b)}) + inner;
+  else if (v.v==='mod' || v.v==='file') inner = afterTitle(inner, hcheckHTML(v, b));
   var sheetMode = useSheet();
   var host = sheetMode ? sheetBody : panel;
   host.innerHTML = frame(inner, sheetMode);
   wire(host);
   if (!sheetMode) panel.scrollTop = 0; else document.getElementById('sheetIn').scrollTop = 0;
-  syncMap();
+  syncMap(); syncHash(false);
 }
 function focusTitle(){ var h = (useSheet()? sheetBody : panel).querySelector('#pdTitle'); if (h) h.focus({preventScroll:true}); }
 function push(v){ stack.push(v); renderView(); focusTitle(); }
@@ -1101,6 +1221,9 @@ function wire(root){
   });
   var gs = root.querySelector('[data-gfilter]');
   if (gs) gs.addEventListener('change', function(){ var v=stack[stack.length-1]; v.g=gs.value; renderView(); var h=(useSheet()?sheetBody:panel).querySelector('[data-gfilter]'); if (h) h.focus({preventScroll:true}); });
+  Array.prototype.forEach.call(root.querySelectorAll('[data-jfilter]'), function(c){
+    c.addEventListener('click', function(){ var v=stack[stack.length-1]; v.j=c.getAttribute('data-jfilter'); renderView(); var h=(useSheet()?sheetBody:panel).querySelector('[data-jfilter="'+v.j+'"]'); if (h) h.focus({preventScroll:true}); });
+  });
   var bk = root.querySelector('[data-back]'); if (bk) bk.addEventListener('click', back);
   var x = root.querySelector('[data-close]'); if (x) x.addEventListener('click', function(){ sheet.close(); });
   var more = root.querySelector('[data-more]'); if (more) more.addEventListener('click', function(){ var v=stack[stack.length-1]; v.n=(v.n||LIMIT)+LIMIT; renderView(); });
@@ -1468,6 +1591,91 @@ function submitMove(){
 document.getElementById('mvform').addEventListener('submit', function(e){ e.preventDefault(); submitMove(); });
 document.getElementById('mvcancel').addEventListener('click', closeMove);
 movedlg.addEventListener('cancel', function(){ mvSub = null; });
+/* ───── Branches und Pull Requests: Badge und Pop-up (ORISO-Docs#215) ───── */
+var WK = {
+  de:{branch:['Branch','Branches'], pr:['PR','PRs'], title:'Branches, Pull Requests und Jobs', close:'Schließen', open:'Branches und Pull Requests zeigen',
+    last:'letzter Commit', src:{linked:'auf GitHub verknüpft', pr:'über Pull Request', name:'nur über den Namen zugeordnet'},
+    state:{OPEN:'offen', MERGED:'gemergt', CLOSED:'geschlossen'}, draft:'Entwurf', checks:{SUCCESS:'Prüfungen grün', FAILURE:'Prüfungen fehlgeschlagen', ERROR:'Prüfungen fehlgeschlagen', PENDING:'Prüfungen laufen', EXPECTED:'Prüfungen laufen'},
+    review:{APPROVED:'freigegeben', CHANGES_REQUESTED:'Änderungen angefordert', REVIEW_REQUIRED:'Review ausstehend'}, none:'Keine Branches oder Pull Requests.',
+    hidden:function(n){ return n+(n===1?' Verweis':' Verweise')+' in einem privaten Repository, nur gezählt'; }, forEpic:'Epic', pri:'Pull Requests',
+    truncated:'GitHub hat nicht alle Verweise geliefert (höchstens 10 verknüpfte Branches, 10 schließende und 20 erwähnende Pull Requests je Aufgabe): Es gibt mehr, „+“ an der Zahl.'},
+  en:{branch:['branch','branches'], pr:['PR','PRs'], title:'Branches, pull requests and jobs', close:'Close', open:'Show branches and pull requests',
+    last:'last commit', src:{linked:'linked on GitHub', pr:'via pull request', name:'matched by name only'},
+    state:{OPEN:'open', MERGED:'merged', CLOSED:'closed'}, draft:'draft', checks:{SUCCESS:'checks passing', FAILURE:'checks failing', ERROR:'checks failing', PENDING:'checks running', EXPECTED:'checks running'},
+    review:{APPROVED:'approved', CHANGES_REQUESTED:'changes requested', REVIEW_REQUIRED:'review required'}, none:'No branches or pull requests.',
+    hidden:function(n){ return n+(n===1?' reference':' references')+' in a private repository, counted only'; }, forEpic:'Epic', pri:'Pull requests',
+    truncated:'GitHub did not return every reference (at most 10 linked branches, 10 closing and 20 mentioning pull requests per task): there are more, "+" on the number.'}
+};
+function wk(){ return WK[de()?'de':'en']; }
+function workOf(ref){
+  if (!WORKIDX || typeof ref!=='string') return null;
+  var m = /^(epic|item):(.+)$/.exec(ref); if (!m) return null;
+  if (m[1]==='epic') { var s = WORKIDX.byEpic[+m[2]]; return s ? {kind:'epic', branches:s.branches, prs:s.prs, hidden:s.hidden, truncated:s.truncated, issues:s.issues} : null; }
+  var x = WORKIDX.byItem[m[2]]; return x ? {kind:'item', branches:x.branches, prs:x.prs, hidden:x.hidden, truncated:x.truncated, issues:[x]} : null;
+}
+function workLabel(s){
+  var t = wk();
+  var plus = s.truncated ? '+' : '';
+  return fmt(s.branches)+plus+' '+t.branch[s.branches===1&&!plus?0:1]+' · '+fmt(s.prs)+plus+' '+t.pr[s.prs===1&&!plus?0:1];
+}
+function workBadge(ref){
+  var s = workOf(ref); if (!s || (!s.branches && !s.prs)) return '';
+  return '<button type="button" class="wkbadge" data-work="'+esc(ref)+'" aria-haspopup="dialog" title="'+esc(wk().open)+'">'+esc(workLabel(s))+'</button>';
+}
+/* Branch- und Job-Badge nebeneinander (beide öffnen #workdlg über data-work). */
+function badges(ref){
+  var a = workBadge(ref), b = JOBS ? MapJobs.badgeHTML(JOBS, ref, lang) : '';
+  return a && b ? '<span class="wkbadges">'+a+b+'</span>' : a || b;
+}
+/* Nur https-Links: alles andere aus board.json bleibt Text, nie ein href (wie bei den Teilaufgaben). */
+function wkLink(url, text){ return /^https:\/\//.test(url||'') ? '<a href="'+esc(url)+'" target="_blank" rel="noopener">'+esc(text)+'</a>' : '<span class="nolink">'+esc(text)+'</span>'; }
+function wkDate(d){ return /^\d{4}-\d{2}-\d{2}/.test(d||'') ? d.slice(0,10) : ''; }
+function wkIssueHTML(x, head){
+  var t = wk();
+  var bl = x.branchList.map(function(b){
+    var when = wkDate(b.lastCommitDate), prs = (b.prs||[]).map(function(n){ return '#'+n; }).join(' ');
+    return '<li>'+wkLink(b.url, b.name)+' <span class="wksrc" data-source="'+esc(b.source)+'">'+esc(t.src[b.source]||b.source)+'</span>'+
+      (when ? ' <span class="c">'+esc(t.last)+' '+esc(when)+'</span>' : '')+(prs ? ' <span class="c">'+esc(prs)+'</span>' : '')+'</li>';
+  }).join('');
+  var pl = x.prList.map(function(p){
+    var bits = [t.state[p.state]||p.state];
+    if (p.isDraft) bits.push(t.draft);
+    if (p.checks && t.checks[p.checks]) bits.push(t.checks[p.checks]);
+    if (p.reviewDecision && t.review[p.reviewDecision]) bits.push(t.review[p.reviewDecision]);
+    return '<li>'+wkLink(p.url, '#'+p.number+' '+p.title)+' <span class="c">'+esc(bits.join(' · '))+'</span></li>';
+  }).join('');
+  return '<section class="wkissue">'+(head ? '<h4>'+wkLink(x.url, x.title)+' <span class="c">'+esc(x.repository.replace('ORISO-',''))+' #'+x.number+'</span></h4>' : '')+
+    (bl ? '<ul class="dlist wklist">'+bl+'</ul>' : '')+(pl ? '<h5 class="wkh">'+esc(t.pri)+'</h5><ul class="dlist wklist">'+pl+'</ul>' : '')+'</section>';
+}
+var workdlg = document.getElementById('workdlg'), wkOpener = null, wkRef = null;
+function openWork(ref, opener){
+  var s = workOf(ref) || (JOBS && MapJobs.stub(JOBS, ref)); if (!s) return;
+  var t = wk(), item = s.kind==='item' ? s.issues[0] : null, jobs = JOBS ? MapJobs.popupHTML(JOBS, ref, lang) : '';
+  wkRef = ref; wkOpener = opener || document.activeElement;
+  document.getElementById('wkTitle').textContent = item ? '#'+item.number+' '+item.title : s.title || t.title+' · '+(EP[+ref.slice(5)]||{}).t;
+  document.getElementById('wkclose').textContent = t.close;
+  document.getElementById('wkBody').innerHTML = jobs+(s.issues.length ? s.issues.map(function(x){ return wkIssueHTML(x, s.kind==='epic'); }).join('') : jobs ? '' : '<p class="dmeta">'+esc(t.none)+'</p>')+
+    (s.hidden ? '<p class="dmeta wkpriv">'+esc(t.hidden(s.hidden))+'</p>' : '')+
+    (s.truncated ? '<p class="dmeta wktrunc" data-wk-truncated>'+esc(t.truncated)+'</p>' : '');
+  workdlg.showModal();
+  document.getElementById('wkTitle').focus({preventScroll:true});
+}
+function closeWork(){ if (workdlg.open) workdlg.close(); }
+workdlg.addEventListener('close', function(){
+  var o = wkOpener && document.contains(wkOpener) ? wkOpener : (wkRef ? document.querySelector('[data-work="'+wkRef.replace(/"/g,'')+'"]') : null);
+  wkOpener = null; if (o) o.focus();
+});
+workdlg.addEventListener('click', function(e){ if (e.target===workdlg) closeWork(); }); /* Klick auf den Hintergrund */
+document.getElementById('wkclose').addEventListener('click', closeWork);
+document.addEventListener('click', function(e){
+  var b = e.target.closest && e.target.closest('[data-work]'); if (!b) return;
+  e.preventDefault(); e.stopPropagation(); openWork(b.getAttribute('data-work'), b);
+});
+/* Knöpfe mit data-copy (Gesundheitsprüfung, ORISO-Docs#220) kopieren ihren Befehl. */
+document.addEventListener('click', function(e){
+  var b = e.target.closest && e.target.closest('[data-copy]'); if (!b) return;
+  e.preventDefault(); copyText(b.getAttribute('data-copy'), b);
+});
 function copyText(txt, btn){
   function done(){ var t = btn.textContent; btn.textContent = de() ? 'Kopiert' : 'Copied'; setTimeout(function(){ btn.textContent = t; }, 1600); }
   if (navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(done, function(){ btn.textContent = de() ? 'Bitte von Hand kopieren' : 'Please copy by hand'; }); }
@@ -1559,11 +1767,27 @@ function resolveNode(id){
   }
   return null;
 }
-function hashNodeId(){
-  var m = /^#node=(.+)$/.exec(location.hash || ''), id;
-  if (!m) return null;
-  try { id = decodeURIComponent(m[1]); } catch (e) { return null; }
-  return id.length <= 512 && !/[\u0000-\u001f\u007f]/.test(id) ? id : null;
+/* Der Hash trägt Ansicht und Knoten: #view=<ansicht>&node=<id>. #node=<id> allein ist die Ansicht State (#199, #214). */
+function nodeOfStack(){
+  for (var i=stack.length-1;i>=0;i--){
+    var v = stack[i], z;
+    if (v.v==='block') return capNodeId(v.id);
+    if (v.v==='file' || v.v==='mod'){
+      z = Z[curBlockAt(i)][v.m]; if (!z) continue;
+      if (v.v==='mod'){ if (z[2] && z[4] && CODE_REPOS[z[0]]) return CODE_REPOS[z[0]]+'::folder:'+z[2]; continue; }
+      var f = z[12][v.f]; if (f && f[1]!==2 && CODE_REPOS[z[0]]) return CODE_REPOS[z[0]]+'::file:'+ghPath(z, f);
+    }
+  }
+  return null;
+}
+function curBlockAt(i){ for (;i>=0;i--) if (stack[i].v==='block') return stack[i].id; return null; }
+var hashReady = false;
+function syncHash(push){
+  if (!hashReady) return;
+  var node = stack.length ? nodeOfStack() : notFoundId, h = MapViews.buildHash(view, node);
+  if (h === (location.hash || '')) return;
+  var url = location.pathname + location.search + h;
+  if (push) history.pushState(null, '', url); else history.replaceState(null, '', url);
 }
 var notFoundId = null;
 function drawNotice(){
@@ -1575,8 +1799,17 @@ function drawNotice(){
     : 'The map has no entry for this link. Showing the overview.')+'</span> <code>'+esc(notFoundId)+'</code>';
   var host = document.getElementById('karte'); host.insertBefore(n, host.querySelector('.controls'));
 }
+/* Während der Hash gelesen wird, schreibt syncHash ihn nicht zurück (sonst überschreibt der alte Stapel den neuen Link). */
 function applyHash(){
-  var id = hashNodeId(); if (id === null) return;
+  var was = hashReady; hashReady = false;
+  try { applyHashNow(); } finally { hashReady = was; }
+  syncHash(false);
+}
+function applyHashNow(){
+  var h = MapViews.parseHash(location.hash);
+  if (h.hasView && h.view !== view) setView(h.view, false);
+  else if (!h.hasView && h.node !== null && view !== MapViews.DEFAULT_VIEW) setView(MapViews.DEFAULT_VIEW, false);
+  var id = h.node; if (id === null) return;
   var path = resolveNode(id);
   notFoundId = path ? null : id;
   drawNotice();
@@ -1589,7 +1822,7 @@ window.addEventListener('hashchange', applyHash);
 function renderAll(){ drawNotice(); drawPlanLog(); drawRelPanel(); drawTotals(); drawControls(); drawMap(); drawPlanned(); drawCards(); drawKpis(); drawHow(); drawMeas(); if (stack.length) renderView(); else renderEmpty(); }
 var rt=null, lastW=0;
 window.addEventListener('resize', function(){ clearTimeout(rt); rt=setTimeout(function(){ if (tm.clientWidth!==lastW){ lastW=tm.clientWidth; drawMap(); } },120); });
-renderAll(); lastW = tm.clientWidth; applyHash();
+renderAll(); lastW = tm.clientWidth; applyHash(); hashReady = true; syncHash(false);
 }
 
 /* ───────── Daten ─────────
@@ -1597,7 +1830,7 @@ renderAll(); lastW = tm.clientWidth; applyHash();
    (Erzeuger: build-map-data.mjs). OPTIONAL_DATA sind Dateien, die nur geladen werden, wenn links.json sie
    unter "optional" meldet; ihr Inhalt liegt in MEAS unter dem Dateinamen ohne .json (board.json wird zu MEAS.board). */
 var DATA_FILES = ['counts.json', 'descriptions.json', 'drill.json', 'epics.json', 'links.json', 'zoom.json'];
-var OPTIONAL_DATA = ['board.json', 'milestones.json'];
+var OPTIONAL_DATA = ['board.json', 'milestones.json', 'criteria.json', 'ideas.json', 'health.json', 'steering.json'];
 /* Optionale Dateien, die der vereinheitlichte Lauf stempelt (tools/planning-map/nightly-run.mjs). */
 var RUN_DATA = ['board.json'];
 function fetchJson(name, optional){

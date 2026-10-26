@@ -147,6 +147,98 @@
       gate: gate, gateCounts: gateCounts, gateAvailable: items.some(function (it) { return !!it.gate; }), segments: segments, groups: groups
     };
   }
+  /* ───── Branches and pull requests per task and per epic (ORISO-Docs#215) ─────
+     board.json items carry `work` {branches, prs, hidden} (additive; boards from before #215 have none).
+     A branch counts once per repository and name, however many tasks found it. `prs` counts OPEN pull requests;
+     merged and closed ones are listed in the pop-up only. `hidden` = references in private repositories (a count, never names).
+     Returns null when no item has work data, so the page shows no badge instead of zeros it does not know. */
+  function itemSummary(it) {
+    var wk = it.work, open = 0;
+    (wk.prs || []).forEach(function (p) { if (p.state === 'OPEN') open++; });
+    return {repository: repoName(it.repository), number: it.number, title: it.title, url: it.url,
+      branches: (wk.branches || []).length, prs: open, hidden: wk.hidden || 0, truncated: wk.truncated === true, branchList: wk.branches || [], prList: wk.prs || []};
+  }
+  function countText(n, truncated) { return String(n) + (truncated ? '+' : ''); }
+  /* Members of one epic, the one rule for the branch sums (workIndex) and the job index (jobs.js): the epic itself, its children by
+     `parent`, then the sub-issue list of the epics data; each key once and only when has(key). kids = childIndex(board), optional
+     (pass it when calling for every epic). */
+  function childIndex(board) {
+    var kids = {};
+    ((board && board.items) || []).forEach(function (it) {
+      if (it.contentType === 'Issue' && it.parent && it.repository && typeof it.number === 'number') {
+        var pk = key(it.parent.repository, it.parent.number);
+        (kids[pk] || (kids[pk] = [])).push(key(it.repository, it.number));
+      }
+    });
+    return kids;
+  }
+  function epicMembers(board, epics, index, has, kids) {
+    var repos = (epics && epics.repos) || [], e = epics && epics.epics && epics.epics[index], seen = {}, out = [];
+    if (!e) return out;
+    var ek = key(repos[e.r], e.n);
+    kids = kids || childIndex(board);
+    function take(k) { if (has(k) && !seen[k]) { seen[k] = 1; out.push(k); } }
+    take(ek);
+    (kids[ek] || []).forEach(take);
+    (e.subs || []).forEach(function (s) { take(key(repos[s[0]], s[1])); });
+    return out;
+  }
+  function workIndex(board, epics) {
+    var items = (board && board.items) || [], byItem = {}, any = false;
+    items.forEach(function (it) {
+      if (it.contentType !== 'Issue' || !it.repository || typeof it.number !== 'number' || !it.work) return;
+      any = true; byItem[key(it.repository, it.number)] = itemSummary(it);
+    });
+    if (!any) return null;
+    var kids = childIndex(board), has = function (k) { return !!byItem[k]; };
+    var byEpic = {};
+    ((epics && epics.epics) || []).forEach(function (e, i) {
+      var order = epicMembers(board, epics, i, has, kids);
+      var branches = {}, prs = {}, hidden = 0, issues = [], truncated = false;
+      order.forEach(function (k) {
+        var x = byItem[k];
+        hidden += x.hidden;
+        if (x.truncated) truncated = true;
+        x.branchList.forEach(function (b) { branches[b.repository + '\u0000' + b.name] = 1; });
+        x.prList.forEach(function (p) { if (p.state === 'OPEN') prs[p.repository + '#' + p.number] = 1; });
+        if (x.branchList.length || x.prList.length) issues.push(x);
+      });
+      issues.sort(function (a, b) { return a.number - b.number; });
+      byEpic[i] = {branches: Object.keys(branches).length, prs: Object.keys(prs).length, hidden: hidden, truncated: truncated, issues: issues};
+    });
+    return {byItem: byItem, byEpic: byEpic};
+  }
+  /* ───── Refactoring tasks per capability (ORISO-Docs#222) ─────
+     Category = the label `refactoring` (items[].refactor in board.json, tools/planning-map/board-contract.json "categories").
+     State of one task, from the board status, open/closed and GitHub's close reason (stateReason, additive):
+       dropped = closed as not planned or as a duplicate (stateReason NOT_PLANNED / DUPLICATE): a state of its own, never done
+       done    = closed (completed, or no reason known), or QA external / Done
+       running = In progress / In review / QA internal
+       planned = everything else that is open (Backlog, Ready, On hold, no status)
+     Capability: the scope the task carries (capability id, e.g. "email-templates") goes to bySlug, because a refactoring epic
+     usually spans many capabilities; a task without a scope goes through the existing epic mapping (capabilityIndex) to byBlock.
+     Both maps hold {planned, running, done, dropped, total, items[]}; a task that maps nowhere is only counted in `unmapped`. */
+  var REFACTORING_LABEL = 'refactoring';
+  var RUNNING = ['In progress', 'In review', 'QA internal'], DONE = ['QA external', 'Done'], DROPPED_REASONS = ['NOT_PLANNED', 'DUPLICATE'];
+  function refactorState(it) {
+    if (it.state === 'CLOSED' && DROPPED_REASONS.indexOf(it.stateReason) >= 0) return 'dropped';
+    if (it.state === 'CLOSED' || DONE.indexOf(it.status) >= 0) return 'done';
+    return RUNNING.indexOf(it.status) >= 0 ? 'running' : 'planned';
+  }
+  function refactoring(board, epics) {
+    var idx = capabilityIndex(epics), out = {byBlock: {}, bySlug: {}, unmapped: 0};
+    function slot(map, id) { return map[id] || (map[id] = {planned: 0, running: 0, done: 0, dropped: 0, total: 0, items: []}); }
+    ((board && board.items) || []).forEach(function (it) {
+      if (it.contentType !== 'Issue' || !it.refactor || !it.repository || typeof it.number !== 'number') return;
+      var scope = typeof it.refactor.scope === 'string' ? it.refactor.scope : null, slug = scope ? scope.split(':')[0] : null;
+      var block = slug ? null : capabilityOf(it, idx);
+      if (!slug && !block) { out.unmapped++; return; }
+      var s = slot(slug ? out.bySlug : out.byBlock, slug || block), st = refactorState(it);
+      s[st]++; s.total++;
+      s.items.push({repository: repoName(it.repository), number: it.number, title: it.title, url: it.url, state: st, status: it.status || null, scope: scope});
+    });
+    return out;
+  }
   /* Release scope (ORISO-Docs#209): what each Platform release holds, grouped into reviewed milestones. */
   var EFFORT_DAYS = {S: 2, M: 4, L: 8};
   var PRIORITIES = ['Urgent', 'High', 'Medium', 'Low'];
@@ -212,5 +304,5 @@
     var r = name && rel && rel.byName && rel.byName[name];
     return r ? r.capabilities.slice() : [];
   }
-  return {GATES: GATES, gateStep: gateStep, STATUSES: STATUSES, GROUP: GROUP, TOKEN: TOKEN, FILTERS: FILTERS, EFFORT_DAYS: EFFORT_DAYS, PRIORITIES: PRIORITIES, capabilityIndex: capabilityIndex, aggregate: aggregate, epicView: epicView, releases: releases, milestones: milestones, releaseCapabilities: releaseCapabilities};
+  return {GATES: GATES, gateStep: gateStep, STATUSES: STATUSES, GROUP: GROUP, TOKEN: TOKEN, FILTERS: FILTERS, EFFORT_DAYS: EFFORT_DAYS, PRIORITIES: PRIORITIES, capabilityIndex: capabilityIndex, aggregate: aggregate, epicView: epicView, workIndex: workIndex, countText: countText, epicMembers: epicMembers, childIndex: childIndex, refactoring: refactoring, refactorState: refactorState, REFACTORING_LABEL: REFACTORING_LABEL, releases: releases, milestones: milestones, releaseCapabilities: releaseCapabilities};
 });

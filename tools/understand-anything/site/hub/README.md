@@ -109,6 +109,100 @@ deterministic. `test/map-render.test.mjs` renders the page from
 `test/fixtures/map-data/` in a browser under a strict CSP; it needs Playwright
 (`UA_PLAYWRIGHT=/path/to/playwright/index.mjs`) and is skipped without it.
 
+### Views: State | Health | Plan (`map/views.js`, ORISO-Docs#214)
+
+One switch above the layer toggles. The three views share the same squares, zoom path and selection; only the layer on top differs.
+`State` is the map as before. `Health` colours the squares by the overall score of the latest run record and shows the run panel plus the criteria box (#218 and #217, below). `Plan` is the idea canvas (#223, below).
+
+The URL hash carries the view and the node: `#view=health&node=<node id>`. The node id is the one of the deep links (#199) and stands
+for the deepest open capability, folder or file, so switching views keeps the same area open. `#node=<id>` without a view is the State view,
+so all existing links keep working; State links are written in exactly that form. Switching a view adds a history entry, zooming only replaces it.
+
+Add a layer by filling in your view in `MapViews.VIEWS` (classic script `map/views.js`, tested by `test/map-views.test.mjs`); `map.js` needs no change:
+
+    VIEWS[view] = {
+      title:  {de, en},          // label on the switch
+      legend: function (lang),   // plain text under the map; '' keeps the default State legend
+      colour: function (block),  // token name from assets/tokens.css / map.css (without "--") that fills the squares of this block; null = State layers
+      panel:  function (block, lang, node, ctx) // HTML added on top of the block detail (escape your own text); '' = nothing; node = "capability:<id>" of the block or null; ctx = {hcheck} (#220), forward it when wrapping
+      mark:   function (block),  // true: the square gets the idea frame (class vmark)
+      badge:  function (block),  // optional {band, text}: small score badge on a top-level square (data-hband, data-hs)
+      tools:  function (lang, labelOf) // optional HTML for the tool row above the map (#viewTools)
+    }
+
+Health criteria box (#217): `views.js` renders `map/data/criteria.json`, an optional asset announced in `links.json` and handed over with
+`MapViews.setCriteria`. It is built by `publication.mjs` (`criteriaAsset`) from `platform/capabilities/health/*.md` (format and resolver:
+`platform/lib/health-criteria.mjs`, metric names: `platform/lib/health-metrics.mjs`). The box shows the effective criteria of the capability, the file
+each key comes from, the reviewer instruction (escaped) and an "Edit" link to the GitHub web editor on branch `dev` for every file involved. Only
+`https://github.com/OpenResilienceInitiative/ORISO-Docs/edit/dev/<path>` is ever rendered. Criteria that apply only to a path inside the capability
+(for example CRAP for the frontend repositories) are listed as narrower rules. Without `criteria.json` the panel says so. Because a run resolves its scope
+with the path `<repo>/`, `criteria.json` also carries `byRepo` per capability (the effective set and its criteria version for every repository
+the capability has code in); the box shows one block per repository, marks the one of the latest run, and the run panel says whether the run
+used that set or the criteria changed since. Up to 980 px the box is
+in the bottom sheet that the Details button opens. Tests: `test/map-criteria.test.mjs` (panel, escaping, guard), `test/map-criteria-render.test.mjs` (Playwright).
+
+Health run records (#218): `views.js` renders `map/data/health.json`, an optional asset (`{schemaVersion: 1, records: [...]}`, the latest run record per scope),
+handed over with `MapViews.setHealth(doc, slugFn)`. `publication.mjs` (`healthAsset`) builds it from `health/runs/` at the repository root after validating every
+record (schema, scores, file path; one invalid file stops the build). Format, layout, scoring and the metric runner: `health/README.md`.
+A square shows its capability's newest run for the whole capability (folder runs are listed in the panel, they do not colour the square). Colour bands
+of the overall score, tokens `--ua-health-*` in `assets/tokens.json` (light and dark, contrast and colour-vision tests in `test/colour-tokens.test.mjs`):
+good from 80, fair from 60, weak from 40, otherwise critical. Grey (`--neutral`) means "no data": no record, or a record whose criteria could not be scored
+(`overall: null`). The score also stands as a number in the square (`data-hs`, CSS `attr()`), so colour never carries the meaning alone.
+The panel shows date, model, commit (7 characters, full id in the title), criteria version, run id, every metric with value against threshold, its state
+and its source, the model verdict with reasons, the GitHub source link (only a tree URL of the organisation is rendered) and the graph node id.
+Scheduled runs cannot score lint and crap yet: the job that holds the model secret never runs the repositories' eslint (`--no-checkout-tools`,
+`details.state: ci-setup`) and has no coverage step (`details.state: no-coverage`). Such a metric is "not available" and the panel adds a short note
+(`data-ci-note`) with the reason taken from `details.reason`.
+**No invented data:** every number sits in an element with `data-from="<path in the record>"`; `test/health-view.test.mjs` checks that each equals that
+record field and that no digit is left outside such elements; the page computes nothing but the band. Record texts are untrusted and rendered as text.
+Tests: `test/health-view.test.mjs` (colours, panel, tracing), `test/health-publication.test.mjs`, `test/map-health-render.test.mjs` (Playwright, 320/390/1440 px, light and dark, DE and EN).
+Steering section (#221): the Health panel appends a "Steering" section after the criteria box (`withSteering()` wraps `VIEWS.health.panel`, so the
+box and the colouring of #218 are untouched). It renders `map/data/steering.json` (optional asset, `MapViews.setSteering`): member comments newest first
+with author and date, escaped, plus the link "Add a comment on GitHub" to the capability's steering issue (https links to
+`OpenResilienceInitiative/ORISO-Docs/issues/<n>` only). The view repeats the export's member check. An area without a steering issue shows the exact command
+`node tools/planning-map/steering.mjs ensure --capability <id>` (a dry run, as the text says) with "Copy command" and "Copy with --apply", like the health check. Producer and format: tools/planning-map README, "Human steering". Tests:
+`test/map-steering.test.mjs`, `test/map-steering-render.test.mjs` (Playwright, XSS payload), `test/steering-publication.test.mjs`.
+History section (#219): `withHistory()` appends a "History" section after the criteria box (before Steering). `health.json` carries, next to `records`, a
+`history` list (`[{scope, total, runs}]`, `historyCap: 50`): per scope the newest 50 runs, oldest first, each compact: `file` (path of the full record in the docs
+repository, `health/runs/...`), `startedAt`, `model`, `commit`, `criteriaVersion`, `overall`, `metrics[{name,value,threshold,better,score}]`, `verdict[{criterion,score}]`.
+Reasons and details stay in the full record; `total` says how many runs exist, the panel then reads "last 50 of N runs". Built by `buildHealthDoc` in
+`platform/lib/health-run.mjs`. The section shows a trend line (an SVG built with DOM APIs in `trendSvg()`, time on x, overall 0 to 100 on y, a run without a score is a
+gap; colours only through the classes `hh-*` and `--ua-health-*` tokens), the list of runs newest first with date, model, commit and overall, and under every earlier run
+a "Compare with latest" `<details>`. The comparison is `MapViews.compareRuns(earlier, later)` (pure, language free): per metric and per model criterion the delta and a
+direction `better | worse | same | unknown` (metrics by their `better` of `platform/lib/health-metrics.mjs`, criteria and overall higher is better), reason codes
+(`into-threshold`, `out-of-threshold`, `threshold-changed`, `not-measured-before`, `only-in-later`, ...) and the reason texts of the records. It never computes a delta
+against a metric that could not be measured. A changed `criteriaVersion` is flagged. Each run links to its Understand node through `MapViews.setNodeLink` (map.js hands
+over its `uaNodeHref` deep-link helper; only `https://understand.oriso.org/` links are rendered) and to `github.com/OpenResilienceInitiative/<repo>/tree/<commit>` (https
+guard on the whole URL). Tests: `test/health-compare.test.mjs`, `test/health-history-view.test.mjs`, `test/map-history-render.test.mjs` (Playwright, strict CSP, 320/390/1440 px,
+light and dark, DE and EN), `platform/test/health-history.test.mjs`.
+
+"Send health check" section (#220): a separate function `MapViews.healthCheck(scopes, lang)` in `views.js`, placed by `map.js` (`hcheckScopes`, `hcheckHTML`) in the Health view only:
+after the criteria and steering boxes of a capability, and right after the title of a folder or file view. It shows the exact command
+`node tools/planning-map/plan.mjs health-check --capability <id> --repo <name> [--path <folder>]` (a dry run) with "Copy command" and "Copy with --apply", the same pattern as the
+release move without a transport (`plan-ui.js`). A capability gets one command per repository it has code in; a file is checked as its folder and the section says so.
+A scope that is not a plain capability id, repository name and relative folder gets no command. Tests: `test/health-check-view.test.mjs`, `test/map-health-check-render.test.mjs` (Playwright).
+
+`map.js` sets the fill through the CSSOM (`--view-fill` on each square), never through a `style` attribute. Colours need a light and a dark value.
+Render tests: `test/map-views-render.test.mjs` (Playwright, strict CSP, 320/390/1440 px).
+
+#### Plan canvas and idea pages (ORISO-Docs#223)
+
+An idea is a bilingual page in the feature-page structure: `product/ideas/<slug>.mdx` (English, canonical) with the German page at
+`site/translations/de/product/ideas/<slug>.mdx`, a `site/page-catalog.json` entry and a `docs.json` entry in the group "Ideas", so it is
+published like a feature page. Start from `product/ideas/idea-template.mdx` (`template: true` keeps it off the canvas). Front matter:
+
+    status: idea | discussed | specified | epic   # flow shown on the idea
+    capabilities: [case-handover, notifications]   # ids of capability-rules.json; an unknown id fails the build
+    epic: OpenResilienceInitiative/ORISO-Frontend#42   # optional (required for "epic"); public repositories only
+    draftItems: 3                                  # optional, a count, never titles
+
+`tools/planning-map/lib/ideas.mjs` validates all of it, and that the German page carries the same status, capabilities and epic.
+`publication.mjs` (`ideasAsset`) emits `map/data/ideas.json` (optional data, announced in `links.json`; tests: `test/ideas-publication.test.mjs`,
+`tools/planning-map/test/ideas.test.mjs`). The Plan view lists the ideas; picking one frames the squares it touches (overview level), shows the
+flow idea > discussed > specified > epic and the links to the German and English page and to the epic (https links to `docs.oriso.org` and
+`github.com` only). In State and Health ideas are hidden; the toggle "Show ideas" frames the touched squares with a dashed outline.
+Selection and toggle are page state, not part of the URL. Render tests: `test/ideas-render.test.mjs`, pure model: `test/ideas-view.test.mjs`.
+
 ### Planning board on the map (`board.json`, ORISO-Docs#208)
 
 `.github/workflows/planning-board-sync.yml` exports the ORISO Roadmap project hourly and on
@@ -152,3 +246,29 @@ Docked at 1561 px and wider; below that it is a drawer opened by the "Releases" 
 ### Deep links
 
 Every capability, folder and file in the map links to its Understand node (`?node=<id>` on the viewer; ids `capability:<slug>`, `<repo>::folder:<dir>`, `<repo>::file:<path>`). The viewer links back with `/map/#node=<id>`: the map zooms to that capability, folder or file, and an unknown id shows a "not found" notice above the controls (`.map-notfound`).
+
+### Agent jobs on the map (`map/jobs.js`, ORISO-Docs#216)
+
+`map/jobs.js` (classic script, run by `test/jobs-agg.test.mjs`, rendered by `test/map-jobs-render.test.mjs`) reads `items[].job` and the finding `job-stale` from `board.json` (written by `tools/planning-map`, see its README, "Agent jobs"). It adds, without touching the branch logic:
+
+- a job badge next to the branch badge on epic cards, in the epic header and on every task in the epic view (`Job: running · stale`, epics sum `Jobs: 3 running · 1 stale · 1 waiting for a human`); both badges open `#workdlg` through the same `data-work` ref, also for a job without any branch;
+- a job block at the top of the pop-up: state, where (runner, machine label), started and updated (UTC), model, next step, report link (https only, anything else stays text), branches and PRs as the agent reported them, and the stale reason;
+- a Jobs filter in the epic view (all, running, stopped, waiting for a human, stale), combined with the status and gate filters; `running` includes stale ones, `stale` is only the stale ones. It is hidden when no issue of the epic has a job.
+
+`map.js` only calls it (`JOBS`, `badges()`, `applyFilter`/`filterHTML` in `epicBoardHTML`, the pop-up, the `job-stale` finding text, the `data-jfilter` click). No job content exists for private repositories, drafts or redacted items: the export never writes it.
+
+### Refactoring in the Health view (ORISO-Docs#222)
+
+Refactoring tasks are issues of type Task with the label `refactoring` (`tools/planning-map/README.md`, "Refactoring tasks"). Their state comes from the board status only:
+
+| State | Rule |
+| --- | --- |
+| planned | open, not started (Backlog, Ready, On hold, no status) |
+| running | In progress, In review, QA internal |
+| done | QA external, Done, or closed |
+
+- `BoardAgg.refactoring(board, epics)` (`map/board-agg.js`, test `refactor-agg.test.mjs`) returns `{bySlug, byBlock, unmapped}`. The scope of the task picks the capability (`bySlug`); a task without a scope goes through `capabilityIndex`, the existing epic mapping (`byBlock`); a task that maps nowhere is only counted.
+- `MapViews.setRefactoring(index, slugFn)` (`map/views.js`) hands it to the Health view. `VIEWS.health.refactor(block, lang)` returns `{state, word, text}` for the marker; `map.js` `applyView` writes `data-rf`, `data-rft` (full text) and `data-rfw` (the word) on the top-level squares and repeats the text in the square's `aria-label`. No board or no task: no marker and no number.
+- The panel part is the single function `refactorBox` (wrapped by `withRefactoring`): counts with words, the task list with GitHub links (https links to issues of OpenResilienceInitiative only, anything else stays text), and the exact command `plan.mjs propose-refactor --scope <capability[:repo[:path]]> [--record health/runs/...] --epic <Org/Repo#n> [--apply]`. The scope and record file come from the latest run of the square; the epic is for you to fill in.
+- Styles: `map/refactor.css` (own file; section 1 = square marker, section 2 = panel). The marker's border style repeats the state (dashed planned, thick running) but the word carries it. The smallest squares show the word only, clipped, and rely on the `aria-label` and the panel; the status badges of the State view are hidden in the other views because they share the corner.
+- Tests: `refactor-view.test.mjs` (unit), `map-refactor-render.test.mjs` (Playwright under the strict CSP, 320/390/1440 px, light and dark, DE and EN; `REFACTOR_SHOTS=<dir>` writes screenshots).

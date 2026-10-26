@@ -2193,6 +2193,30 @@
       }
     },
     {
+      "id": "product/ideas/idea-template",
+      "source": "product/ideas/idea-template.mdx",
+      "route": "produkt/ideas/idea-template",
+      "aliases": [
+        "product/ideas/idea-template",
+        "product/ideas/idea-template.md",
+        "product/ideas/idea-template.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/product/ideas/idea-template.mdx",
+          "sourceHash": "e5e439615d069e11399f7efecb7349e937e573127e53992bbbd70ef90056fcb1",
+          "reviewedAt": "2026-10-24"
+        },
+        "de": {
+          "path": "site/translations/de/product/ideas/idea-template.mdx",
+          "sourceHash": "e5e439615d069e11399f7efecb7349e937e573127e53992bbbd70ef90056fcb1",
+          "reviewedAt": "2026-10-24"
+        }
+      }
+    },
+    {
       "id": "product/figma-analysis-2026-05",
       "source": "product/figma-analysis-2026-05.mdx",
       "route": "produkt/design-und-quality/figma-analysis-2026-05",

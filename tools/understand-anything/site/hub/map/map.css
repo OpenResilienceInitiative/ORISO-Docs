@@ -538,3 +538,212 @@ dialog#movedlg::backdrop{background:rgba(20,16,15,.5)}
 /* Deep-Link: unbekannte Knoten-ID */
 .map-notfound{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;margin:0 0 12px;padding:10px 14px;border:1px solid var(--warn-line);border-radius:var(--radius);background:var(--warn-wash);color:var(--warn);font-size:13.5px}
 .map-notfound code{font-family:var(--mono);font-size:12px;overflow-wrap:anywhere;max-width:100%;color:var(--ink-2)}
+
+/* Branches und Pull Requests (ORISO-Docs#215) */
+.epicw{display:grid;gap:4px;min-width:0}
+.wkrow{margin:8px 0}
+.wkbadge{appearance:none;font:inherit;font-size:11.5px;font-family:var(--mono);color:var(--ink-2);background:var(--sunken);border:1px solid var(--line);border-radius:999px;padding:3px 10px;min-height:28px;cursor:pointer;justify-self:start;max-width:100%;white-space:normal;text-align:left}
+.wkbadge:hover,.wkbadge:focus-visible{border-color:var(--brand);color:var(--ink)}
+.dlist li .wkbadge{margin-left:auto}
+dialog#workdlg{border:1px solid var(--line);border-top:4px solid var(--brand);border-radius:var(--radius);background:var(--card);color:var(--ink);padding:0;width:min(520px,calc(100vw - 32px));max-height:min(80vh,640px);max-height:min(80dvh,640px);overflow:hidden}
+dialog#workdlg[open]{display:flex;flex-direction:column}
+dialog#workdlg::backdrop{background:rgba(20,16,15,.35)}
+.wkform{display:flex;flex-direction:column;min-height:0;min-width:0}
+.wkhead{display:flex;align-items:flex-start;gap:12px;justify-content:space-between;padding:14px 16px 8px}
+.wkhead h3{margin:0;font-size:15px;line-height:1.35;overflow-wrap:anywhere;min-width:0}
+.wkbody{padding:0 16px 16px;overflow:auto;overflow-wrap:anywhere;min-width:0}
+.wkissue{margin-top:10px}
+.wkissue h4{margin:0 0 4px;font-size:13px}
+.wkh{margin:8px 0 2px;font-size:11.5px;color:var(--ink-3);font-weight:600}
+.wklist li{flex-wrap:wrap}
+.wksrc{font-size:11px;color:var(--ink-3);border:1px solid var(--line);border-radius:999px;padding:0 7px}
+.wksrc[data-source="name"]{border-style:dashed;color:var(--ink)}
+.wklist li{justify-content:flex-start;gap:2px 8px}
+.wklist .c{white-space:normal}
+.dlist li:has(.wkbadge){flex-wrap:wrap}
+
+/* Ansichten State | Health | Plan (#214): Umschalter und neutrale Ebene. Die Füllung kommt aus MapViews.VIEWS[view].colour (--view-fill, per CSSOM gesetzt). */
+:root{--neutral:#E9E3DD}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){--neutral:#34302E} }
+:root[data-theme="dark"]{--neutral:#34302E}
+.vsw{justify-content:center}
+.vsw[aria-pressed="true"]{background:var(--ink);color:var(--card);border-color:var(--ink)}
+.vsw[aria-pressed="false"]{color:var(--ink);background:var(--card)}
+.tm.vview .blk{background:var(--view-fill,var(--neutral))}
+.tm.vview .blk .ly{display:none}
+#layerRow[hidden]{display:none}
+.tm.vview .blk .docb,.tm.vview .blk .sbar,.tm.vview .blk .fbadge{display:none}
+.vnote{color:var(--ink-2);font-size:13px}
+.panel .vnote{display:block;margin:0 0 12px;padding:8px 10px;border:1px dashed var(--line);border-radius:6px;background:var(--sunken)}
+
+/* Agent-Jobs (ORISO-Docs#216): Badge neben dem Branch-Badge, Block im Pop-up, Jobs-Filter. Farbe nie allein: das Wort steht immer im Badge. */
+.wkbadges{display:flex;flex-wrap:wrap;gap:4px 6px;min-width:0;max-width:100%;justify-self:start}
+.dlist li .wkbadges{margin-left:auto}
+.wkbadges .wkbadge,.dlist li .wkbadges .wkbadge{margin-left:0}
+.jobbadge[data-job-state="running"]{border-color:var(--info-line);background:var(--info-wash);color:var(--info)}
+.jobbadge[data-job-state="waiting-human"]{border-color:var(--warn-line);background:var(--warn-wash);color:var(--warn)}
+.jobbadge[data-job-state="failed"]{border-color:var(--brand-line);background:var(--brand-wash);color:var(--brand)}
+.jobbadge[data-job-state="done"]{border-color:var(--ok-line);background:var(--ok-wash);color:var(--ok)}
+.jobbadge[data-job-stale]{border-style:dashed;border-color:var(--warn)}
+.jobbadge:hover,.jobbadge:focus-visible{border-color:var(--brand);color:var(--ink)}
+.jobs{margin:0 0 6px}
+.jobcard{margin:6px 0;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--sunken);min-width:0}
+.jobcard h4{margin:0 0 4px;font-size:13px}
+.jobline{margin:0 0 4px;display:flex;flex-wrap:wrap;gap:4px 6px}
+.jobpill{font-size:11.5px;font-weight:600;padding:1px 8px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+.jobpill[data-job-state="running"]{border-color:var(--info-line);background:var(--info-wash);color:var(--info)}
+.jobpill[data-job-state="waiting-human"]{border-color:var(--warn-line);background:var(--warn-wash);color:var(--warn)}
+.jobpill[data-job-state="failed"]{border-color:var(--brand-line);background:var(--brand-wash);color:var(--brand)}
+.jobpill[data-job-state="done"]{border-color:var(--ok-line);background:var(--ok-wash);color:var(--ok)}
+.jobpill[data-job-stale]{border-style:dashed;border-color:var(--warn);color:var(--warn);background:var(--warn-wash)}
+.jobstale{margin:0 0 4px;color:var(--warn)}
+.jobdl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:2px 10px;margin:4px 0 0;font-size:12.5px}
+.jobdl dt{color:var(--ink-3)}
+.jobdl dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.jobdl code{font-family:var(--mono);font-size:11.5px}
+.jfilters{align-items:center;margin-top:6px}
+.jlab{font-size:11.5px;font-weight:600;color:var(--ink-3);margin-right:2px}
+.crit{display:grid;gap:10px;margin:0 0 14px;padding:12px 14px;border:1px solid var(--brand-line);border-radius:var(--radius);background:var(--brand-wash);min-width:0;overflow-wrap:anywhere}
+.crit-h{font-size:13px;color:var(--brand-deep)}
+.crit h5{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin:0 0 4px}
+.crit h5 .crit-o{text-transform:none;letter-spacing:0;font-weight:400}
+.crit code{font-family:var(--mono);font-size:12px}
+.crit-meta{font-size:13px;color:var(--ink-2)}
+.crit-m,.crit-k ul{list-style:none;padding:0;display:grid;gap:6px}
+.crit-m li{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px;font-size:13.5px;padding:6px 8px;background:var(--card);border:1px solid var(--line);border-radius:6px;min-width:0}
+.crit-n{font-weight:600}
+.crit-v{font-family:var(--mono);font-weight:600;font-variant-numeric:tabular-nums}
+.crit-u,.crit-w,.crit-o,.crit-none{color:var(--ink-2);font-size:12.5px}
+.crit-k ul{font-size:13px}
+.crit-in{display:grid;gap:6px;padding-top:6px}
+.crit-instr{white-space:pre-wrap;font-size:13px;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:8px 10px;min-width:0}
+.crit-f li{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px}
+.crit-f a{display:inline-flex;align-items:center;min-height:32px;padding:2px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:12.5px;font-weight:600}
+.crit-f a:hover{border-color:var(--brand);text-decoration:none}
+/* Steering comments in the Health panel (ORISO-Docs#221) */
+.steer{display:grid;gap:8px;margin:0 0 14px;padding:12px 14px;border:1px solid var(--line);border-radius:var(--radius);background:var(--card);min-width:0;overflow-wrap:anywhere}
+.steer-h{font-size:13px;color:var(--brand-deep);margin:0}
+.steer-note,.steer-none,.steer-o{font-size:12.5px;color:var(--ink-2);margin:0}
+.steer-l{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.steer-c{padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--brand-wash);min-width:0}
+.steer-m{font-size:12.5px;color:var(--ink-2);margin:0 0 4px}
+.steer-m strong{color:var(--ink)}
+.steer-b{white-space:pre-wrap;font-size:13.5px;min-width:0;overflow-wrap:anywhere}
+.steer-cmd{margin:0;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--brand-wash);white-space:pre-wrap;overflow-wrap:anywhere;font-family:var(--mono);font-size:12px;min-width:0}
+.steer-add{margin:0}
+.steer-add a{display:inline-flex;align-items:center;min-height:32px;padding:2px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:12.5px;font-weight:600}
+.steer-add a:hover{border-color:var(--brand);text-decoration:none}
+/* Plan-Leinwand und Ideen (#223): Werkzeugzeile über der Karte, Ideenliste, Fluss, Markierung der berührten Quadrate. */
+.vtools[hidden]{display:none}
+.vtools{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;margin:10px 0 0;min-width:0}
+.vtools .vnote{margin:0}
+.ideas-toggle{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.ihead{margin:0 0 8px;font-size:15px}
+.icount{color:var(--ink-2);font-weight:400;font-size:13px}
+.idealist{list-style:none;margin:0 0 12px;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.idea{appearance:none;display:inline-flex;flex-wrap:wrap;align-items:center;gap:4px 8px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:13px;font-weight:500;padding:6px 11px;border-radius:999px;cursor:pointer;min-height:36px;max-width:100%;text-align:left}
+.idea[aria-pressed="true"]{background:var(--ink);color:var(--card);border-color:var(--ink)}
+.idt{overflow-wrap:anywhere}
+.ist{display:inline-block;font-size:11.5px;font-weight:600;padding:1px 8px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.idetail{border-top:1px solid var(--line);padding-top:12px;min-width:0}
+.itit{margin:0 0 6px;font-size:15px;overflow-wrap:anywhere}
+.isum{margin:0 0 10px;color:var(--ink-2);font-size:13.5px}
+.iflow{list-style:none;margin:0 0 12px;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.iflow-step{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;padding:3px 10px;border-radius:999px;border:1px dashed var(--line);color:var(--ink-3)}
+.iflow-step::before{content:"○";font-size:11px}
+.iflow-step.is-done{border-style:solid;color:var(--ink-2)}
+.iflow-step.is-done::before{content:"✓"}
+.iflow-step.is-current{border:2px solid var(--brand);color:var(--ink);font-weight:600;background:var(--brand-wash)}
+.iflow-step.is-current::before{content:"●";color:var(--brand)}
+.sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.ilab{margin:0 0 4px;font-size:12.5px;color:var(--ink-2)}
+.icaps{list-style:none;margin:0 0 10px;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.icap{font-size:12.5px;padding:2px 9px;border-radius:6px;background:var(--sunken);border:1px solid var(--line);overflow-wrap:anywhere}
+.ilinks{margin:0;font-size:13px;overflow-wrap:anywhere}
+.ipanel ul{margin:6px 0 0;padding-left:18px}
+.tm .blk.vmark{outline:3px dashed var(--brand);outline-offset:-3px;z-index:2}
+.tm.vview .blk.vmark{outline-style:solid}
+
+/* Health-Ansicht (ORISO-Docs#218): Farben aus tokens.css (--ua-health-*), Grau (--neutral) = keine Daten.
+   Der Wert steht als Zahl im Quadrat (data-hs aus dem Laufprotokoll), die Farbe allein sagt nichts. */
+.tm.vview .blk[data-hs]::after{content:attr(data-hs);position:absolute;top:4px;right:4px;min-width:26px;padding:1px 6px;border-radius:10px;font:700 12px/1.4 var(--mono);text-align:center;background:var(--label-bg);color:var(--ink);border:1px solid var(--line);pointer-events:none}
+.tm.vview .blk[data-hband]{border-color:var(--tile-gap)}
+.hrun{margin:0 0 14px;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--sunken);min-width:0}
+.hrun .hband{display:inline-flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px;margin:4px 0 10px;padding:4px 10px;border-radius:6px;border:2px solid var(--line)}
+.hrun .hband strong{font-size:22px;line-height:1.2}
+.hband[data-hband="poor"]{background:var(--ua-health-poor);color:var(--ua-health-poor-on);border-color:var(--ua-health-poor-edge)}
+.hband[data-hband="weak"]{background:var(--ua-health-weak);color:var(--ua-health-weak-on);border-color:var(--ua-health-weak-edge)}
+.hband[data-hband="fair"]{background:var(--ua-health-fair);color:var(--ua-health-fair-on);border-color:var(--ua-health-fair-edge)}
+.hband[data-hband="good"]{background:var(--ua-health-good);color:var(--ua-health-good-on);border-color:var(--ua-health-good-edge)}
+.hmeta{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:2px 12px;margin:0 0 10px;font-size:13px}
+.hmeta dt{color:var(--ink-2)}
+.hmeta dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.hk{margin:10px 0 0}
+.hk h5{margin:0 0 4px;font-size:13px}
+.hmet,.hver,.hlinks,.hother{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.hm{display:flex;flex-wrap:wrap;gap:2px 10px;align-items:baseline;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--card);font-size:13px;min-width:0}
+.hm[data-state="missed"]{border-left:4px solid var(--warn)}
+.hm[data-state="met"]{border-left:4px solid var(--ok)}
+.hm[data-state="na"]{border-style:dashed}
+.hm .crit-n{flex:1 1 100%;font-weight:600}
+.hm .hst{font-weight:600}
+.hm .hsrc,.hm .hrs{flex:1 1 100%;color:var(--ink-2);font-size:12px;overflow-wrap:anywhere}
+.hver ul{margin:2px 0 0 18px;padding:0}
+.hno,.hnos{margin:0 0 12px}
+/* Health-Verlauf (ORISO-Docs#219): Trendlinie (SVG, Farben nur über Klassen und Tokens), Liste früherer Läufe, Vergleich mit dem letzten Lauf. */
+.hhist{margin:0 0 14px;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--sunken);min-width:0}
+.hh-note{margin:0 0 6px;font-size:13px;color:var(--ink-2)}
+.hh-fig{margin:0 0 10px}
+.hh-svg{display:block;width:100%;height:auto;max-width:100%;background:var(--card);border:1px solid var(--line);border-radius:6px}
+.hh-grid{stroke:var(--line);stroke-width:1}
+.hh-line{fill:none;stroke:var(--ink-2);stroke-width:2;stroke-linejoin:round}
+.hh-t{fill:var(--ink-2);font:10px var(--mono)}
+.hh-ty{text-anchor:end}
+.hh-pt{stroke-width:2}
+.hh-last{stroke-width:3}
+.hh-b-poor{fill:var(--ua-health-poor);stroke:var(--ua-health-poor-edge)}
+.hh-b-weak{fill:var(--ua-health-weak);stroke:var(--ua-health-weak-edge)}
+.hh-b-fair{fill:var(--ua-health-fair);stroke:var(--ua-health-fair-edge)}
+.hh-b-good{fill:var(--ua-health-good);stroke:var(--ua-health-good-edge)}
+.hh-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.hh-run{padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--card);min-width:0;font-size:13px}
+.hh-isLast{border-left:4px solid var(--brand)}
+.hh-head,.hh-meta,.hh-links{margin:0 0 4px;overflow-wrap:anywhere}
+.hh-meta{color:var(--ink-2);font-size:12px}
+.hh-file{font-size:11px}
+.hh-tag{font-size:12px;font-weight:600;padding:0 6px;border:1px solid var(--line);border-radius:6px}
+.hh-score{display:inline-flex;gap:4px;align-items:baseline;padding:1px 8px;border-radius:6px;border:2px solid var(--line)}
+.hh-score[data-hband="poor"]{background:var(--ua-health-poor);color:var(--ua-health-poor-on);border-color:var(--ua-health-poor-edge)}
+.hh-score[data-hband="weak"]{background:var(--ua-health-weak);color:var(--ua-health-weak-on);border-color:var(--ua-health-weak-edge)}
+.hh-score[data-hband="fair"]{background:var(--ua-health-fair);color:var(--ua-health-fair-on);border-color:var(--ua-health-fair-edge)}
+.hh-score[data-hband="good"]{background:var(--ua-health-good);color:var(--ua-health-good-on);border-color:var(--ua-health-good-edge)}
+.hh-links a{margin-right:12px}
+.hh-cmp{margin:6px 0 0}
+.hh-cmp summary{cursor:pointer;font-weight:600;padding:4px 0}
+.hd-sum{margin:6px 0;color:var(--ink-2)}
+.hd-h{margin:10px 0 4px;font-size:13px}
+.hd-l{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.hd{display:flex;flex-wrap:wrap;gap:2px 10px;align-items:baseline;margin:0;padding:6px 8px;border:1px solid var(--line);border-left-width:4px;border-radius:6px;min-width:0}
+.hd-o{margin:0 0 6px}
+.hd-better{border-left-color:var(--ok)}
+.hd-worse{border-left-color:var(--warn)}
+.hd-same{border-left-style:dotted}
+.hd-unknown{border-style:dashed}
+.hd-better .hd-w{color:var(--ok)}
+.hd-worse .hd-w{color:var(--warn)}
+.hd-w,.hd-d{font-weight:600}
+.hd-n1{flex:1 1 100%;font-weight:600;overflow-wrap:anywhere}
+.hd-r,.hd-n{flex:1 1 100%;color:var(--ink-2);font-size:12px;overflow-wrap:anywhere}
+.hd-warn{margin:0 0 6px}
+
+/* Gesundheitsprüfung senden (ORISO-Docs#220): ein eigener Abschnitt der Ansicht Health */
+.hcheck{display:grid;gap:8px;margin:0 0 14px;padding:12px 14px;border:1px solid var(--line);border-radius:var(--radius);background:var(--card);min-width:0;overflow-wrap:anywhere}
+.hcheck-h{font-size:13px;color:var(--brand-deep);margin:0}
+.hcheck-note{font-size:12.5px;color:var(--ink-2);margin:0}
+.hcheck-l{list-style:none;padding:0;margin:0;display:grid;gap:10px;min-width:0}
+.hcheck-i{display:grid;gap:6px;min-width:0}
+.hcheck-w{margin:0;font-size:12.5px;color:var(--ink-2)}
+.hcheck-cmd{margin:0;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--brand-wash);white-space:pre-wrap;overflow-wrap:anywhere;font-family:var(--mono);font-size:12px;min-width:0}
+.hcheck-b{display:flex;flex-wrap:wrap;gap:6px;margin:0}
+.hcheck-copy{appearance:none;font:inherit;font-size:13px;font-weight:600;border:1px solid var(--brand-line);background:var(--brand-wash);color:var(--brand-deep);border-radius:999px;padding:8px 14px;min-height:44px;cursor:pointer}
+.hcheck-copy:focus-visible{outline:3px solid var(--ink);outline-offset:2px}

@@ -110,6 +110,7 @@ jobs:
         run: |
           set -euo pipefail
           BOARD_ARGS=(); [ -f "$RUNNER_TEMP/planning-board/board.json" ] && BOARD_ARGS=(--board "$RUNNER_TEMP/planning-board/board.json")
+          [ -f "$RUNNER_TEMP/planning-board/steering.json" ] && BOARD_ARGS+=(--steering "$RUNNER_TEMP/planning-board/steering.json")
           UA_TOOLING="$RUNNER_TEMP/ua-runtime/current/tooling"
           python3 .github/scripts/ua_sources.py --tooling "$UA_TOOLING" --base "$RUNNER_TEMP/ua-base" --inventory "$RUNNER_TEMP/ua-inventory.json" --repo-args "$RUNNER_TEMP/ua-args.txt" --release-manifest "$RUNNER_TEMP/platform-release.json" --require-release --documentation-revision "$(git rev-parse HEAD)"
           mapfile -t REPO_ARGS < "$RUNNER_TEMP/ua-args.txt"
