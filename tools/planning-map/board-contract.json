@@ -1,0 +1,71 @@
+{
+  "contractVersion": 1,
+  "project": {
+    "owner": "OpenResilienceInitiative",
+    "number": 1,
+    "title": "ORISO Roadmap"
+  },
+  "privateRepositories": [
+    "OpenResilienceInitiative/ORISO-E2E"
+  ],
+  "fields": {
+    "status": {
+      "kind": "single_select",
+      "options": [
+        "Backlog",
+        "Ready",
+        "On hold",
+        "In progress",
+        "In review",
+        "QA internal",
+        "QA external",
+        "Done"
+      ]
+    },
+    "readiness": {
+      "kind": "number"
+    },
+    "priority": {
+      "kind": "issue_field_single_select",
+      "options": [
+        "Urgent",
+        "High",
+        "Medium",
+        "Low"
+      ]
+    },
+    "effort": {
+      "kind": "issue_field_single_select",
+      "options": [
+        "S",
+        "M",
+        "L"
+      ]
+    },
+    "platformRelease": {
+      "kind": "issue_field_single_select",
+      "options": [],
+      "note": "Option list is filled from the first live export; until then drift on this field is reported as 'unpinned' and fails with --strict only."
+    },
+    "gate": {
+      "kind": "single_select",
+      "optional": true,
+      "options": [
+        "P1 Framed",
+        "P2 Specified",
+        "P3 Sliced",
+        "P4 Ready for agent",
+        "R1 Checks green",
+        "R2 AI review",
+        "R3 Human review",
+        "R4 Verified on Dev"
+      ],
+      "note": "Project field Gate (ORISO-Docs#211). Absent on the live board until a project admin creates it (see gate-options.json); drift is checked only when it exists."
+    }
+  },
+  "driftChecked": [
+    "status",
+    "readiness",
+    "platformRelease"
+  ]
+}
