@@ -44,6 +44,12 @@
             ]
           },
           {
+            "group": "Ideas",
+            "pages": [
+              "product/ideas/idea-template"
+            ]
+          },
+          {
             "group": "Flows & Internals",
             "pages": [
               "product/user-flows",

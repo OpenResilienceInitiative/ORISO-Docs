@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:oriso:health:run-record:v1",
+  "title": "ORISO health run record",
+  "description": "One file per run and scope under health/runs/. Written by platform/health-run.mjs, read by the map (map/data/health.json) and, later, the viewer node panel (ADR-028). Every number the map shows is a field of this record. Semantic rules that JSON Schema cannot say (overall recomputed from the scores, path equals scope, status/value/pass agree) are checked in platform/lib/health-run.mjs.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "run", "scope", "commit", "criteriaVersion", "model", "startedAt", "metrics", "verdict", "overall", "links"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "run": {
+      "description": "The run manifest of tools/planning-map/lib/run-manifest.mjs (#201). commits[scope.repo] equals commit.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "runId", "generatedAt", "commits"],
+      "properties": {
+        "schemaVersion": {"const": 1},
+        "runId": {"type": "string", "pattern": "^\\d{8}T\\d{6}Z-[0-9a-f]{8}$"},
+        "generatedAt": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"},
+        "commits": {"type": "object", "additionalProperties": {"type": "string", "pattern": "^[0-9a-f]{40}$"}},
+        "trigger": {"type": "string"}
+      }
+    },
+    "scope": {
+      "description": "What was measured: a capability id inside one repository, optionally narrowed to a folder (path relative to the repository root, no leading or trailing slash).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["capability", "repo", "path"],
+      "properties": {
+        "capability": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+        "repo": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+$"},
+        "path": {"type": ["string", "null"], "pattern": "^[A-Za-z0-9_.@-]+(/[A-Za-z0-9_.@-]+)*$"}
+      }
+    },
+    "commit": {"description": "Commit of the repository that was measured.", "type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "criteriaVersion": {"description": "sha256 of the effective criteria (metrics with threshold and weight, tests, instruction) the run was judged by.", "type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "model": {"description": "Model that wrote the verdict; null for a metrics-only run.", "type": ["string", "null"]},
+    "startedAt": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"},
+    "metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "status", "value", "threshold", "better", "unit", "weight", "pass", "score", "source", "details"],
+        "properties": {
+          "name": {"description": "One of the closed list in platform/lib/health-metrics.mjs.", "type": "string"},
+          "status": {"description": "measured, or not-available (no tool, no coverage, no templates ...). A metric that is not available has value, pass and score null, never 0; details.reason says why.", "enum": ["measured", "not-available"]},
+          "value": {"type": ["number", "null"]},
+          "threshold": {"type": "number", "minimum": 0},
+          "better": {"enum": ["lower", "higher"]},
+          "unit": {"type": "string"},
+          "weight": {"type": "number", "minimum": 0},
+          "pass": {"type": ["boolean", "null"]},
+          "score": {"description": "0-100 from value and threshold (see README).", "type": ["number", "null"]},
+          "source": {"description": "What produced the value: tool, input files, coverage file.", "type": "string"},
+          "details": {"description": "Free JSON object, at most 20000 bytes: the worst offenders, counts, the reason a metric is not available.", "type": "object"}
+        }
+      }
+    },
+    "verdict": {
+      "description": "Model verdict per criterion. Empty array when no model ran (model is null).",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["criterion", "score", "weight", "reasons"],
+        "properties": {
+          "criterion": {"type": "string"},
+          "score": {"type": "number"},
+          "weight": {"type": "number", "minimum": 0},
+          "reasons": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "verdictStatus": {"description": "Optional (ORISO-Docs#220). ran: a model wrote the verdict. skipped: the verdict step did not run (no secret, no model configured, private repository, model error); then model is null and verdict is empty. Records without the field come from runs that never tried.", "enum": ["ran", "skipped"]},
+    "verdictNote": {"description": "Optional. Why the verdict was skipped. Never contains a secret.", "type": "string", "maxLength": 400},
+    "inputs": {
+      "description": "Optional (ORISO-Docs#220). Hashes of what the verdict step was given, so a run is reproducible and comparable. criteria equals criteriaVersion. steering is the sha256 of the member comments used, or null when there was no steering source.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["criteria", "steering"],
+      "properties": {
+        "criteria": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "steering": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "overall": {"description": "Weighted mean of the scored criteria (metric scores and verdict scores), rounded to an integer; null when nothing was scored.", "type": ["number", "null"]},
+    "links": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["graphNode", "source"],
+      "properties": {
+        "graphNode": {"description": "Understand-Anything node id: capability:<id> or <repo>::folder:<path>.", "type": "string"},
+        "source": {"description": "GitHub tree URL of the measured folder at the measured commit.", "type": "string", "pattern": "^https://github\\.com/OpenResilienceInitiative/[A-Za-z0-9_.-]+/tree/[0-9a-f]{40}(/[A-Za-z0-9_.@/-]+)?$"}
+      }
+    }
+  }
+}

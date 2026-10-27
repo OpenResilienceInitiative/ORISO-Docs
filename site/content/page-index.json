@@ -2820,7 +2820,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/decisions/ADR-002-silent-room-membership-and-access-control-curtain.md",
-      "sourceHash": "bcbc03e27b5a0a5a7beb919e3d2446e71fd35a054caf8ed4bdc05b91c188ff29",
+      "sourceHash": "b0bb76a6714688757f407e5e887297f5c6d899e4f03675b62501d3765f316c3d",
       "locales": {
         "de": {
           "available": true,
@@ -2845,7 +2845,9 @@
             "implementation-notes-added-2026-07-30-after-905-made-§1-live": "implementation-notes-added-2026-07-30-after-905-made-§1-live",
             "implementierungshinweise-ergänzt-am-2026-07-30-nachdem-905-§1-bereitstellte": "implementation-notes-added-2026-07-30-after-905-made-§1-live",
             "addendum-2026-09-05--case-handover-gains-a-push-direction-no-third-consent-gate-no-room-clearing": "addendum-2026-09-05--case-handover-gains-a-push-direction-no-third-consent-gate-no-room-clearing",
-            "ergänzung-2026-09-05--fallübergabe-erhält-abgaberichtung-keine-dritte-einwilligungsschranke-und-keine-raumleerung": "addendum-2026-09-05--case-handover-gains-a-push-direction-no-third-consent-gate-no-room-clearing"
+            "ergänzung-2026-09-05--fallübergabe-erhält-abgaberichtung-keine-dritte-einwilligungsschranke-und-keine-raumleerung": "addendum-2026-09-05--case-handover-gains-a-push-direction-no-third-consent-gate-no-room-clearing",
+            "addendum-2026-10-14--optional-explanations-with-a-per-reason-policy": "addendum-2026-10-14--optional-explanations-with-a-per-reason-policy",
+            "nachtrag-2026-10-14--optionale-erläuterungen-mit-einer-richtlinie-je-grund": "addendum-2026-10-14--optional-explanations-with-a-per-reason-policy"
           }
         },
         "en": {
@@ -2861,11 +2863,12 @@
             "reveal-lifecycle-decided-2026-06-25": "reveal-lifecycle-decided-2026-06-25",
             "resolved-design-session-2026-06-25": "resolved-design-session-2026-06-25",
             "implementation-notes-added-2026-07-30-after-905-made-§1-live": "implementation-notes-added-2026-07-30-after-905-made-§1-live",
-            "addendum-2026-09-05--case-handover-gains-a-push-direction-no-third-consent-gate-no-room-clearing": "addendum-2026-09-05--case-handover-gains-a-push-direction-no-third-consent-gate-no-room-clearing"
+            "addendum-2026-09-05--case-handover-gains-a-push-direction-no-third-consent-gate-no-room-clearing": "addendum-2026-09-05--case-handover-gains-a-push-direction-no-third-consent-gate-no-room-clearing",
+            "addendum-2026-10-14--optional-explanations-with-a-per-reason-policy": "addendum-2026-10-14--optional-explanations-with-a-per-reason-policy"
           }
         }
       },
-      "sourceRevision": "2d1d56dd0acffbcad266154ddbc8664a6c1dc340",
+      "sourceRevision": "7b09a5a70ca0f9303aac70e60fc941f71a60bf66",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },

@@ -15,6 +15,8 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { decoratePlatform } from './platform/lib/platform-navigation.mjs';
 
 import {projectConceptBridges} from './platform/lib/concept-bridges.mjs';
+import {loadRules as loadCapabilityRules} from './platform/lib/capabilities.mjs';
+import {emitCapabilityNodes} from './platform/lib/capability-nodes.mjs';
 
 const CORE = process.env.UA_CORE ?? "/opt/oriso-understand/understand-anything-plugin/understand-anything-plugin/packages/core/dist/index.js";
 const c = await import(CORE);
@@ -157,8 +159,24 @@ projectConceptBridges({graphs:sourceGraphs,
   addEdge(edge){if(!edges.some(e=>e.source===edge.source&&e.target===edge.target&&e.type===edge.type))edges.push(edge);}
 });
 
-// final layer order: platform map, tiers, then per-repo (repo order = REPO_INFO order)
-const layers = [archLayer, ...tierLayers.filter(t => t.nodeIds.length), ...perRepoLayers];
+// Capability concept nodes (Docs#198): one concept per feature-page slug (+ "shared"),
+// `contains` edges to the folders the reviewed rules assign to it. Membership comes from
+// platform/capabilities/capability-rules.json, never from keyword guessing. Unmatched
+// production files are logged here and fail the contract test in CI.
+const capabilityLayer = {
+  id: "layer:capabilities", name: "Capabilities",
+  description: "Product capabilities (feature-page slugs) and the folders each one contains, from the reviewed capability rules.",
+  nodeIds: [],
+};
+{
+  const cap = emitCapabilityNodes({nodes}, loadCapabilityRules());
+  for (const n of cap.nodes) { if (!nodes.some(x => x.id === n.id)) { nodes.push(n); capabilityLayer.nodeIds.push(n.id); } }
+  for (const e of cap.edges) edges.push(e);
+  if (cap.unmatched.length) console.error(`capabilities: ${cap.unmatched.length} production files match no rule (first: ${cap.unmatched[0]})`);
+}
+
+// final layer order: platform map, tiers, capabilities, then per-repo (repo order = REPO_INFO order)
+const layers = [archLayer, ...tierLayers.filter(t => t.nodeIds.length), capabilityLayer, ...perRepoLayers];
 
 // aggregated deterministic cross-repo dependency edges
 let crossEdges = 0;

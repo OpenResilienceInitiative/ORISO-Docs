@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/tokens.css">
 <link rel="stylesheet" href="/assets/hub.css">
 <script src="/assets/lang.js"></script>
 <script src="/assets/status.js" defer></script>
@@ -53,6 +54,8 @@
     <a href="#code"><span class="no">2</span><span lang="de">Code</span><span lang="en">Code</span></a>
     <a href="#doku"><span class="no">3</span><span lang="de">Doku &amp; Rechtliches</span><span lang="en">Docs &amp; legal</span></a>
     <a href="#frische"><span class="no">4</span><span lang="de">Frische</span><span lang="en">Freshness</span></a>
+    <a href="#colour-scheme"><span class="no">5</span><span lang="de">Farbschema</span><span lang="en">Colour scheme</span></a>
+    <a href="/map/"><span lang="de">Fähigkeiten-Karte</span><span lang="en">Capability map</span></a>
     <a href="/glossary/"><span lang="de">Fachliches Glossar</span><span lang="en">Domain glossary</span></a>
   </div>
 </nav>
@@ -91,6 +94,15 @@
             beteiligte Dienste und Entscheidungen. Das Abgeben durch die bisherige Beraterin wird gerade entwickelt.</span>
           <span lang="en">Taking a case, consent of the person seeking advice, reading along or taking over,
             the services and decisions involved. Handing a case over is currently being developed.</span>
+        </p>
+      </a>
+      <a class="fcard sc-brand" href="/map/">
+        <div class="eb"><span><span lang="de">Fähigkeiten-Karte</span><span lang="en">Capability map</span></span><span class="status warn"><span lang="de">Prototyp</span><span lang="en">prototype</span></span></div>
+        <h3><span lang="de">Was man mit ORISO heute tun kann</span><span lang="en">What people can do with ORISO today</span></h3>
+        <p class="q"><span lang="de">„Was war schon da, was haben wir gebaut, was kommt als Nächstes?"</span><span lang="en">"What was already there, what did we build, what comes next?"</span></p>
+        <p class="d">
+          <span lang="de">Eine Karte aller Fähigkeiten für Ratsuchende, Beratende und Träger: Code, Tests, Stories und geplante Arbeit, bis zur einzelnen Datei.</span>
+          <span lang="en">A map of all capabilities for help-seekers, counsellors and providers: code, tests, stories and planned work, down to the single file.</span>
         </p>
       </a>
       <div class="fcard" style="--sc:var(--ink-3)">
@@ -218,6 +230,51 @@
     <p class="src" data-ua="attempt" role="status" aria-live="polite"><span lang="de">Aktualisierungsnachweis wird geladen.</span><span lang="en">Loading refresh receipt.</span></p>
     <div class="source-table" tabindex="0" role="region" aria-label="Quellrevisionen / Source revisions">
       <table><thead><tr><th>Repository</th><th><span lang="de">Vollständige Quellrevision</span><span lang="en">Full source revision</span></th><th><span lang="de">Quellreferenz</span><span lang="en">Source ref</span></th><th><span lang="de">Generation erstellt</span><span lang="en">Generation created</span></th></tr></thead><tbody data-ua="source-list"></tbody></table>
+    </div>
+  </section>
+
+  <section id="colour-scheme">
+    <div class="ch"><span class="chapter-no">5</span><h2><span lang="de">Farbschema</span><span lang="en">Colour scheme</span></h2>
+      <span class="sub2"><span lang="de">Ein Zustand, eine Farbe: in der Planungskarte und im Wissensgraphen</span><span lang="en">One state, one colour: in the planning map and in the knowledge graph</span></span></div>
+    <div class="prose">
+      <p><span lang="de">Alle Zustandsfarben kommen aus einer gemeinsamen Datei (<a href="/assets/tokens.css"><code>tokens.css</code></a>, auch als <a href="/assets/tokens.json"><code>tokens.json</code></a>). Hell und dunkel sind getrennt abgestimmt. Text auf Flächen erreicht mindestens 4,5:1; die Stufen innerhalb einer Rampe unterscheiden sich in der Helligkeit, damit sie auch bei Rot-Grün-Schwäche (Deuteranopie, Protanopie) auseinanderzuhalten sind. Die Farbe ist nie der einzige Hinweis: Tests sind schraffiert, Gelöschtes ist gestrichelt umrandet, jeder Zustand hat einen Namen.</span>
+      <span lang="en">All state colours come from one shared file (<a href="/assets/tokens.css"><code>tokens.css</code></a>, also as <a href="/assets/tokens.json"><code>tokens.json</code></a>). Light and dark are tuned separately. Text on fills reaches at least 4.5:1; steps within a ramp differ in lightness so they stay apart under red-green colour-vision deficiency (deuteranopia, protanopia). Colour is never the only cue: tests are hatched, deleted items have a dashed outline, every state has a name.</span></p>
+      <h3><span lang="de">Code-Herkunft (Teal-Rampe, hell nach dunkel: alt → zusätzlich)</span><span lang="en">Code origin (teal ramp, light to dark: old → additional)</span></h3>
+      <ul class="scheme">
+        <li><span class="ua-sw" data-token="origin-unchanged" aria-hidden="true">Aa</span><span><span lang="de">Code unverändert (alt)</span><span lang="en">Code unchanged (old)</span> <code>--ua-origin-unchanged</code></span></li>
+        <li><span class="ua-sw" data-token="origin-reworked" aria-hidden="true">Aa</span><span><span lang="de">Code überarbeitet</span><span lang="en">Code reworked</span> <code>--ua-origin-reworked</code></span></li>
+        <li><span class="ua-sw" data-token="origin-commissioned" aria-hidden="true">Aa</span><span><span lang="de">Code beauftragt</span><span lang="en">Code commissioned</span> <code>--ua-origin-commissioned</code></span></li>
+        <li><span class="ua-sw" data-token="origin-additional" aria-hidden="true">Aa</span><span><span lang="de">Code zusätzlich</span><span lang="en">Code additional</span> <code>--ua-origin-additional</code></span></li>
+      </ul>
+      <h3><span lang="de">Tests und Gelöschtes</span><span lang="en">Tests and deleted</span></h3>
+      <ul class="scheme">
+        <li><span class="ua-sw hatch" data-token="test-new" aria-hidden="true"></span><span><span lang="de">Tests (Schraffur)</span><span lang="en">Tests (hatch)</span> <code>--ua-test-new</code></span></li>
+        <li><span class="ua-sw hatch" data-token="test-old" aria-hidden="true"></span><span><span lang="de">Tests, alt (Schraffur)</span><span lang="en">Tests, old (hatch)</span> <code>--ua-test-old</code></span></li>
+        <li><span class="ua-sw" data-token="deleted" aria-hidden="true">Aa</span><span><span lang="de">Gelöscht (Ziegelrot)</span><span lang="en">Deleted (brick)</span> <code>--ua-deleted</code></span></li>
+      </ul>
+      <h3><span lang="de">Planung</span><span lang="en">Planning</span></h3>
+      <ul class="scheme">
+        <li><span class="ua-sw" data-token="plan-not-started" aria-hidden="true">Aa</span><span><span lang="de">Geplant, nicht begonnen (grau)</span><span lang="en">Planned, not started (grey)</span> <code>--ua-plan-not-started</code></span></li>
+        <li><span class="ua-sw" data-token="plan-in-progress" aria-hidden="true">Aa</span><span><span lang="de">Geplant, in Arbeit (blau)</span><span lang="en">Planned, in progress (blue)</span> <code>--ua-plan-in-progress</code></span></li>
+      </ul>
+      <h3><span lang="de">Board-Status (Grün-Rampe: QA intern → QA extern → Done; Backlog, Ready, On hold neutral; In progress, In review blau)</span><span lang="en">Board status (green ramp: QA internal → QA external → Done; Backlog, Ready, On hold neutral; In progress, In review blue)</span></h3>
+      <ul class="scheme">
+        <li><span class="ua-sw" data-token="status-backlog" aria-hidden="true">Aa</span><span><span lang="de">Board: Backlog</span><span lang="en">Board: Backlog</span> <code>--ua-status-backlog</code></span></li>
+        <li><span class="ua-sw" data-token="status-ready" aria-hidden="true">Aa</span><span><span lang="de">Board: Ready</span><span lang="en">Board: Ready</span> <code>--ua-status-ready</code></span></li>
+        <li><span class="ua-sw" data-token="status-on-hold" aria-hidden="true">Aa</span><span><span lang="de">Board: On hold</span><span lang="en">Board: On hold</span> <code>--ua-status-on-hold</code></span></li>
+        <li><span class="ua-sw" data-token="status-in-progress" aria-hidden="true">Aa</span><span><span lang="de">Board: In progress</span><span lang="en">Board: In progress</span> <code>--ua-status-in-progress</code></span></li>
+        <li><span class="ua-sw" data-token="status-in-review" aria-hidden="true">Aa</span><span><span lang="de">Board: In review</span><span lang="en">Board: In review</span> <code>--ua-status-in-review</code></span></li>
+        <li><span class="ua-sw" data-token="status-qa-internal" aria-hidden="true">Aa</span><span><span lang="de">Board: QA internal</span><span lang="en">Board: QA internal</span> <code>--ua-status-qa-internal</code></span></li>
+        <li><span class="ua-sw" data-token="status-qa-external" aria-hidden="true">Aa</span><span><span lang="de">Board: QA external</span><span lang="en">Board: QA external</span> <code>--ua-status-qa-external</code></span></li>
+        <li><span class="ua-sw" data-token="status-done" aria-hidden="true">Aa</span><span><span lang="de">Board: Done</span><span lang="en">Board: Done</span> <code>--ua-status-done</code></span></li>
+      </ul>
+      <h3><span lang="de">Gesundheit (Ansicht Health der Karte: kritisch → gut, nach Gesamtwert des letzten Prüflaufs; grau = keine Daten)</span><span lang="en">Health (Health view of the map: critical → good, by the overall score of the latest run; grey = no data)</span></h3>
+      <ul class="scheme">
+        <li><span class="ua-sw" data-token="health-poor" aria-hidden="true">Aa</span><span><span lang="de">Gesundheit: kritisch (unter 40)</span><span lang="en">Health: critical (below 40)</span> <code>--ua-health-poor</code></span></li>
+        <li><span class="ua-sw" data-token="health-weak" aria-hidden="true">Aa</span><span><span lang="de">Gesundheit: schwach (40 bis 59)</span><span lang="en">Health: weak (40 to 59)</span> <code>--ua-health-weak</code></span></li>
+        <li><span class="ua-sw" data-token="health-fair" aria-hidden="true">Aa</span><span><span lang="de">Gesundheit: mittel (60 bis 79)</span><span lang="en">Health: fair (60 to 79)</span> <code>--ua-health-fair</code></span></li>
+        <li><span class="ua-sw" data-token="health-good" aria-hidden="true">Aa</span><span><span lang="de">Gesundheit: gut (ab 80)</span><span lang="en">Health: good (80 and above)</span> <code>--ua-health-good</code></span></li>
+      </ul>
     </div>
   </section>
 
