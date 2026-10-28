@@ -69,12 +69,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
-          "sourceRevision": "656d6474caf4b1f3365b2ee3018c0a0537b6a5cd",
-          "sourceHash": "1ca3a10a5e0e35cdfa9811a962e205894dc4037c42c932b133bc31ea2ca22643",
+          "sourceRevision": "ea60b56d7f7aa85c9fdfa17d67d0368bee7ad95b",
+          "sourceHash": "abbedd2d5f9703dd9ba8ab57ba5ba08a7ffd26f6aa86bde0ff4cc0fb60cb2cb9",
           "title": "ADR-023: The Platform Services Agreement, living templates, and proportionate escalation",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-15",
+          "reviewedAt": "2026-10-28",
           "reviewedBy": "coding-agent; source compatibility only, no new human or legal approval"
         },
         {
@@ -174,12 +174,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
-          "sourceRevision": "656d6474caf4b1f3365b2ee3018c0a0537b6a5cd",
-          "sourceHash": "1ca3a10a5e0e35cdfa9811a962e205894dc4037c42c932b133bc31ea2ca22643",
+          "sourceRevision": "ea60b56d7f7aa85c9fdfa17d67d0368bee7ad95b",
+          "sourceHash": "abbedd2d5f9703dd9ba8ab57ba5ba08a7ffd26f6aa86bde0ff4cc0fb60cb2cb9",
           "title": "ADR-023: The Platform Services Agreement, living templates, and proportionate escalation",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-15",
+          "reviewedAt": "2026-10-28",
           "reviewedBy": "coding-agent; source compatibility only, no new human or legal approval"
         },
         {
@@ -1310,12 +1310,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
-          "sourceRevision": "656d6474caf4b1f3365b2ee3018c0a0537b6a5cd",
-          "sourceHash": "1ca3a10a5e0e35cdfa9811a962e205894dc4037c42c932b133bc31ea2ca22643",
+          "sourceRevision": "ea60b56d7f7aa85c9fdfa17d67d0368bee7ad95b",
+          "sourceHash": "abbedd2d5f9703dd9ba8ab57ba5ba08a7ffd26f6aa86bde0ff4cc0fb60cb2cb9",
           "title": "ADR-023: The Platform Services Agreement, living templates, and proportionate escalation",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-15",
+          "reviewedAt": "2026-10-28",
           "reviewedBy": "coding-agent; source compatibility only, no new human or legal approval"
         },
         {
@@ -2445,12 +2445,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
-          "sourceRevision": "656d6474caf4b1f3365b2ee3018c0a0537b6a5cd",
-          "sourceHash": "1ca3a10a5e0e35cdfa9811a962e205894dc4037c42c932b133bc31ea2ca22643",
+          "sourceRevision": "ea60b56d7f7aa85c9fdfa17d67d0368bee7ad95b",
+          "sourceHash": "abbedd2d5f9703dd9ba8ab57ba5ba08a7ffd26f6aa86bde0ff4cc0fb60cb2cb9",
           "title": "ADR-023: The Platform Services Agreement, living templates, and proportionate escalation",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-15",
+          "reviewedAt": "2026-10-28",
           "reviewedBy": "coding-agent; source compatibility only, no new human or legal approval"
         },
         {
@@ -2539,12 +2539,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
-          "sourceRevision": "656d6474caf4b1f3365b2ee3018c0a0537b6a5cd",
-          "sourceHash": "1ca3a10a5e0e35cdfa9811a962e205894dc4037c42c932b133bc31ea2ca22643",
+          "sourceRevision": "ea60b56d7f7aa85c9fdfa17d67d0368bee7ad95b",
+          "sourceHash": "abbedd2d5f9703dd9ba8ab57ba5ba08a7ffd26f6aa86bde0ff4cc0fb60cb2cb9",
           "title": "ADR-023: The Platform Services Agreement, living templates, and proportionate escalation",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-15",
+          "reviewedAt": "2026-10-28",
           "reviewedBy": "coding-agent; source compatibility only, no new human or legal approval"
         },
         {
@@ -2624,12 +2624,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
-          "sourceRevision": "656d6474caf4b1f3365b2ee3018c0a0537b6a5cd",
-          "sourceHash": "1ca3a10a5e0e35cdfa9811a962e205894dc4037c42c932b133bc31ea2ca22643",
+          "sourceRevision": "ea60b56d7f7aa85c9fdfa17d67d0368bee7ad95b",
+          "sourceHash": "abbedd2d5f9703dd9ba8ab57ba5ba08a7ffd26f6aa86bde0ff4cc0fb60cb2cb9",
           "title": "ADR-023: The Platform Services Agreement, living templates, and proportionate escalation",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-15",
+          "reviewedAt": "2026-10-28",
           "reviewedBy": "coding-agent; source compatibility only, no new human or legal approval"
         },
         {
@@ -2694,12 +2694,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
-          "sourceRevision": "656d6474caf4b1f3365b2ee3018c0a0537b6a5cd",
-          "sourceHash": "1ca3a10a5e0e35cdfa9811a962e205894dc4037c42c932b133bc31ea2ca22643",
+          "sourceRevision": "ea60b56d7f7aa85c9fdfa17d67d0368bee7ad95b",
+          "sourceHash": "abbedd2d5f9703dd9ba8ab57ba5ba08a7ffd26f6aa86bde0ff4cc0fb60cb2cb9",
           "title": "ADR-023: The Platform Services Agreement, living templates, and proportionate escalation",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-15",
+          "reviewedAt": "2026-10-28",
           "reviewedBy": "coding-agent; source compatibility only, no new human or legal approval"
         },
         {
@@ -2783,12 +2783,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
-          "sourceRevision": "656d6474caf4b1f3365b2ee3018c0a0537b6a5cd",
-          "sourceHash": "1ca3a10a5e0e35cdfa9811a962e205894dc4037c42c932b133bc31ea2ca22643",
+          "sourceRevision": "ea60b56d7f7aa85c9fdfa17d67d0368bee7ad95b",
+          "sourceHash": "abbedd2d5f9703dd9ba8ab57ba5ba08a7ffd26f6aa86bde0ff4cc0fb60cb2cb9",
           "title": "ADR-023: The Platform Services Agreement, living templates, and proportionate escalation",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-15",
+          "reviewedAt": "2026-10-28",
           "reviewedBy": "coding-agent; source compatibility only, no new human or legal approval"
         },
         {
@@ -2855,12 +2855,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
-          "sourceRevision": "656d6474caf4b1f3365b2ee3018c0a0537b6a5cd",
-          "sourceHash": "1ca3a10a5e0e35cdfa9811a962e205894dc4037c42c932b133bc31ea2ca22643",
+          "sourceRevision": "ea60b56d7f7aa85c9fdfa17d67d0368bee7ad95b",
+          "sourceHash": "abbedd2d5f9703dd9ba8ab57ba5ba08a7ffd26f6aa86bde0ff4cc0fb60cb2cb9",
           "title": "ADR-023: The Platform Services Agreement, living templates, and proportionate escalation",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-15",
+          "reviewedAt": "2026-10-28",
           "reviewedBy": "coding-agent; source compatibility only, no new human or legal approval"
         },
         {
@@ -2923,12 +2923,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
-          "sourceRevision": "656d6474caf4b1f3365b2ee3018c0a0537b6a5cd",
-          "sourceHash": "1ca3a10a5e0e35cdfa9811a962e205894dc4037c42c932b133bc31ea2ca22643",
+          "sourceRevision": "ea60b56d7f7aa85c9fdfa17d67d0368bee7ad95b",
+          "sourceHash": "abbedd2d5f9703dd9ba8ab57ba5ba08a7ffd26f6aa86bde0ff4cc0fb60cb2cb9",
           "title": "ADR-023: The Platform Services Agreement, living templates, and proportionate escalation",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-15",
+          "reviewedAt": "2026-10-28",
           "reviewedBy": "coding-agent; source compatibility only, no new human or legal approval"
         },
         {
@@ -3292,12 +3292,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
-          "sourceRevision": "656d6474caf4b1f3365b2ee3018c0a0537b6a5cd",
-          "sourceHash": "1ca3a10a5e0e35cdfa9811a962e205894dc4037c42c932b133bc31ea2ca22643",
+          "sourceRevision": "ea60b56d7f7aa85c9fdfa17d67d0368bee7ad95b",
+          "sourceHash": "abbedd2d5f9703dd9ba8ab57ba5ba08a7ffd26f6aa86bde0ff4cc0fb60cb2cb9",
           "title": "ADR-023: The Platform Services Agreement, living templates, and proportionate escalation",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-15",
+          "reviewedAt": "2026-10-28",
           "reviewedBy": "coding-agent; source compatibility only, no new human or legal approval"
         },
         {
@@ -3375,12 +3375,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
-          "sourceRevision": "656d6474caf4b1f3365b2ee3018c0a0537b6a5cd",
-          "sourceHash": "1ca3a10a5e0e35cdfa9811a962e205894dc4037c42c932b133bc31ea2ca22643",
+          "sourceRevision": "ea60b56d7f7aa85c9fdfa17d67d0368bee7ad95b",
+          "sourceHash": "abbedd2d5f9703dd9ba8ab57ba5ba08a7ffd26f6aa86bde0ff4cc0fb60cb2cb9",
           "title": "ADR-023: The Platform Services Agreement, living templates, and proportionate escalation",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-15",
+          "reviewedAt": "2026-10-28",
           "reviewedBy": "coding-agent; source compatibility only, no new human or legal approval"
         },
         {
@@ -3803,12 +3803,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
-          "sourceRevision": "656d6474caf4b1f3365b2ee3018c0a0537b6a5cd",
-          "sourceHash": "1ca3a10a5e0e35cdfa9811a962e205894dc4037c42c932b133bc31ea2ca22643",
+          "sourceRevision": "ea60b56d7f7aa85c9fdfa17d67d0368bee7ad95b",
+          "sourceHash": "abbedd2d5f9703dd9ba8ab57ba5ba08a7ffd26f6aa86bde0ff4cc0fb60cb2cb9",
           "title": "ADR-023: The Platform Services Agreement, living templates, and proportionate escalation",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-15",
+          "reviewedAt": "2026-10-28",
           "reviewedBy": "coding-agent; source compatibility only, no new human or legal approval"
         },
         {
