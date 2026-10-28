@@ -2651,7 +2651,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/coding-standards.mdx",
-      "sourceHash": "22867d0faf289afd230f7ac2a177991371a6c83fb18efaeeb56bd5cf15b6286f",
+      "sourceHash": "65e3237d71491aaa5384c7b56df395801cbfd8e0a585e3180dded8890ee05b15",
       "locales": {
         "de": {
           "available": true,
@@ -2699,7 +2699,7 @@
           }
         }
       },
-      "sourceRevision": "645863292ef7736cb682c2b8e81e59fb5025df56",
+      "sourceRevision": "9d2b156576b7a8207a0741a42a2d94d76beac8da",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
