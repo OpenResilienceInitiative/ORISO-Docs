@@ -26,6 +26,20 @@ not its `_artifacts/` subfolder). The series was re-synchronised on 2026-08-17 f
   product owner (ORISO-UserService#1264): a global, default-off platform switch that limits
   every agency to one topic; the data model stays multi-topic.
 
+- `ADR-028-capability-map-stays-in-hub-health-in-viewer-node-panel.md` — proposed 2026-10-24
+  (Docs#224): keep the capability map in the hub, add a health section to the viewer node panel
+  through a bounded patch after the run-record schema exists; fork rejected for now.
+
+- `ADR-029-direct-links-knock-first-admission-and-temporary-accounts.md` — accepted by the
+  product owner 2026-10-27 (epic ORISO-Frontend#974): persistent direct links under the
+  AgencyInviteLink model, knock-first admission for calls, temporary accounts always with
+  username and password, platform-set lifetimes and message retention. Amends ADR-020 §2, §3, §7.
+
+- `ADR-030-activity-timeline-read-state-filters-and-preview.md` — proposed 2026-09-05
+  (ORISO-Frontend#1200), numbered and updated 2026-10-28: bulk read touches activity events only,
+  data-driven family chips without an "Alle" chip, and a working Timeline preview that never
+  registers an active view (product decision 2026-10-21, ORISO-Frontend#1824). Needs product sign-off.
+
 New decisions in this section are repository-owned records and are not part of the unchanged
 19-file import described above.
 

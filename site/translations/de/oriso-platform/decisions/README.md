@@ -12,6 +12,24 @@ Dieses Verzeichnis enthält die Architekturentscheidungsprotokolle (ADRs) auf Pl
 
 - `ADR-014-amendment-2026-09-25-one-topic-per-agency-policy.md` — am 2026-09-26 vom Produktverantwortlichen angenommen (ORISO-UserService#1264): ein globaler, standardmäßig ausgeschalteter Plattformschalter, der jede Beratungsstelle auf ein Thema beschränkt; das Datenmodell bleibt mehrthemig.
 
+- `ADR-028-capability-map-stays-in-hub-health-in-viewer-node-panel.md` — vorgeschlagen am 2026-10-24
+  (Docs#224): Die Capability-Map bleibt im Hub. Sobald das Schema für Ausführungsprotokolle vorliegt,
+  ergänzt eine begrenzte Änderung den Knotenbereich des Viewers um den Systemzustand; ein Fork ist
+  vorerst verworfen.
+
+- `ADR-029-direct-links-knock-first-admission-and-temporary-accounts.md` — vom Produktverantwortlichen
+  am 2026-10-27 angenommen (Epic ORISO-Frontend#974): dauerhafte Direktlinks im Modell
+  AgencyInviteLink, Anklopfen vor dem Zutritt zu Anrufen, vorübergehende Konten immer mit
+  Benutzername und Passwort sowie von der Plattform festgelegte Gültigkeitsdauern und
+  Aufbewahrung von Nachrichten. Ändert ADR-020 §2, §3 und §7.
+
+- `ADR-030-activity-timeline-read-state-filters-and-preview.md` — vorgeschlagen am 2026-09-05
+  (ORISO-Frontend#1200), am 2026-10-28 nummeriert und aktualisiert: Das gesammelte Markieren als
+  gelesen betrifft nur Aktivitätsereignisse. Hinzu kommen datenbasierte Filterchips nach
+  Ereignisfamilie ohne „Alle“-Chip und eine funktionsfähige Timeline-Vorschau, die nie eine aktive
+  Ansicht registriert (Produktentscheidung vom 2026-10-21, ORISO-Frontend#1824). Die Produktfreigabe
+  steht noch aus.
+
 Neue Entscheidungen in diesem Abschnitt gehören zum Repository und sind kein Teil des oben beschriebenen unveränderten Imports von 19 Dateien.
 
 ## Bekannte Probleme

@@ -1,5 +1,7 @@
 # ADR-020: Scheduled calls, secure invitations, and a unified contact calendar
 
+> **Amended by ADR-029** (`ADR-029-direct-links-knock-first-admission-and-temporary-accounts.md`, 2026-10-27): §2 admission and one-time-guest identity, §3 step 3, §7.
+
 - **Status:** Accepted — 2026-08-12
 - **Date:** 2026-08-12
 - **Deciders:** Frank (product) + architecture refinement session

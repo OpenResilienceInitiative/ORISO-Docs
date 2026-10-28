@@ -1,5 +1,7 @@
 # ADR-020: Geplante Anrufe, sichere Einladungen und gemeinsamer Kontaktkalender
 
+> **Durch ADR-029 geändert** (`ADR-029-direct-links-knock-first-admission-and-temporary-accounts.md`, 2026-10-27): §2 Zutritt und Einmalgast-Identität, §3 Schritt 3, §7.
+
 - **Status:** Angenommen — 2026-08-12
 - **Datum:** 2026-08-12
 - **Entscheider:** Frank (Produkt) und Architekturverfeinerungssitzung
