@@ -101,13 +101,15 @@ A permission **"Direkteinladung erlauben"** (allow direct invitation) exists per
 |---|---|
 | `AgencyInviteLink` (direct links), redemption, 1:1 conversation creation, temporary accounts, cleanup job | ORISO-UserService with Keycloak/Matrix adapters |
 | Permission inheritance "Direkteinladung erlauben", lifetimes, retention mode | ORISO-TenantService (settings), ORISO-Admin (UI) |
+
+> **Superseded 2026-10-28 (lifetimes, retention mode):** the temporary-account settings live in ORISO-UserService, not ORISO-TenantService. Only the permission "Direkteinladung erlauben" stays with ORISO-TenantService. See Amendment §7.
 | Link management, knock-first waiting room, admit/admit all, consent step, retention label and prompt | ORISO-Frontend |
 
 ## Amendment 2026-10-28 — "Direkteinladung erlauben" replaces the call policy; admission holds per conversation
 
 - **Status:** Accepted by the product owner — Frank, 2026-10-28. Technical backend review (Keycloak/Matrix feasibility) open.
-- **Changes:** §3 last paragraph (the tenant policies no longer remain), §2 (an admission holds per conversation). §1, §4, §5, §6 and §7 are unchanged.
-- **Issues:** [ORISO-Docs#231](https://github.com/OpenResilienceInitiative/ORISO-Docs/issues/231), [ORISO-Admin#1242](https://github.com/OpenResilienceInitiative/ORISO-Admin/issues/1242), [ORISO-TenantService#332](https://github.com/OpenResilienceInitiative/ORISO-TenantService/pull/332), [ORISO-TenantService#175](https://github.com/OpenResilienceInitiative/ORISO-TenantService/issues/175), [ORISO-Admin#703](https://github.com/OpenResilienceInitiative/ORISO-Admin/issues/703)
+- **Changes:** §3 last paragraph (the tenant policies no longer remain), §2 (an admission holds per conversation and per call), §4 and §5 plus the bounded-context table (the temporary-account settings live in UserService), §5 mode 2 (no answer means deleted), §6 ("Meine Direktlinks" hidden while the permission is off). §1 and §7 are unchanged.
+- **Issues:** [ORISO-Docs#231](https://github.com/OpenResilienceInitiative/ORISO-Docs/issues/231), [ORISO-Admin#1242](https://github.com/OpenResilienceInitiative/ORISO-Admin/issues/1242), [ORISO-TenantService#332](https://github.com/OpenResilienceInitiative/ORISO-TenantService/pull/332), [ORISO-TenantService#175](https://github.com/OpenResilienceInitiative/ORISO-TenantService/issues/175), [ORISO-Admin#703](https://github.com/OpenResilienceInitiative/ORISO-Admin/issues/703), [ORISO-UserService#1486](https://github.com/OpenResilienceInitiative/ORISO-UserService/pull/1486), [ORISO-Admin#1251](https://github.com/OpenResilienceInitiative/ORISO-Admin/pull/1251)
 
 **1. "Direkteinladung erlauben" replaces the tenant call policy.**
 §3 said the tenant policies `REGISTERED_ONLY` and `REGISTERED_OR_ONE_TIME_GUEST` from ADR-020 §2 remain. They do not. The permission "Direkteinladung erlauben" from §6 — per conversation type (chat, audio call, video call), platform force-allow / force-deny → Träger → Beratungsstelle — is the one switch for link access. There is no second, tenant-wide call policy beside it. The work planned for the old policy ([ORISO-TenantService#175](https://github.com/OpenResilienceInitiative/ORISO-TenantService/issues/175), [ORISO-Admin#703](https://github.com/OpenResilienceInitiative/ORISO-Admin/issues/703)) is replaced by [ORISO-Admin#1242](https://github.com/OpenResilienceInitiative/ORISO-Admin/issues/1242) and [ORISO-TenantService#332](https://github.com/OpenResilienceInitiative/ORISO-TenantService/pull/332). A person without an ORISO account who redeems a permitted link gets a temporary account under §3. All three conversation types start as allowed (Frank, 2026-10-28, recorded on ORISO-TenantService#332).
@@ -126,3 +128,21 @@ A guest let into a call joins the call room only, never the counsellor's source 
 
 **6. The "keep my messages?" question is not a consent gate — ADR-022 stands.**
 The question from §5 mode 2 ([ORISO-Frontend#1869](https://github.com/OpenResilienceInitiative/ORISO-Frontend/issues/1869)) asks the guest what happens to their own messages when their temporary account is deleted. It is a retention choice, not agreement to a legal text, and it does not decide whether the person may enter. The one-tap consent in §2 is ADR-022's **gate 2** (the Beratungsstelle document of the agency that owns the link), shown before entry instead of inside the room — ADR-022 already treats both placements as equivalent. Gate 1 (the platform policy, or the Träger's replacement) is unchanged. So there are still exactly two gates, and [ADR-022](ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md) is not amended.
+
+**7. The temporary-account settings live in ORISO-UserService.**
+The lifetimes (§4), the switch that hides the password field (§3) and the message-retention mode (§5) are platform settings owned by **ORISO-UserService**, the service that creates and deletes temporary accounts ([ORISO-UserService#1486](https://github.com/OpenResilienceInitiative/ORISO-UserService/pull/1486)). The platform admin edits them in Admin → Global settings ([ORISO-Admin#1251](https://github.com/OpenResilienceInitiative/ORISO-Admin/pull/1251)). ORISO-TenantService keeps only the permission "Direkteinladung erlauben" (§6). This replaces the TenantService owner for lifetimes and retention in the bounded-context table. Snapshotting at account creation (§4) is unchanged.
+
+**8. No answer to "keep my messages?" means the messages are deleted.**
+Under §5 mode 2 ("warn and let the guest decide", setting value `GUEST_DECIDES`), a guest who never answers the question has their messages deleted together with the account, as in mode 1. Messages are kept only after an explicit "keep". Until then they carry the "will be deleted" label.
+
+**9. Knock notices and "Alle einlassen" are scoped to the current call.**
+The counsellor's knock notice shows only the knocks of the call that is running now, not knocks from other conversations or earlier calls. "Alle einlassen" lets in only the people knocking on that call.
+
+**10. A knock carries the person's display name.**
+The counsellor sees who is knocking by the display name the person entered or was given. Internal identifiers are not shown.
+
+**11. "Meine Direktlinks" is hidden while the permission is off.**
+When "Direkteinladung erlauben" (§6) is off for every conversation type the counsellor could use, the clock entry "Meine Direktlinks" and Settings → "Meine Links" are not shown. Hiding them is for clarity only; the backend still enforces the permission at creation and redemption (§6).
+
+**12. A call share link's public context keeps agencyId, consultingTypeId and topicId (accepted risk).**
+The public context that the entry room reads for a call share link, before anyone signs in, keeps `agencyId`, `consultingTypeId` and `topicId`. The entry room needs them to show the right legal texts and to register the person with the right Beratungsstelle and topic. This is an accepted risk: the values are internal IDs only, with no names or personal data, and the link works only while the call runs.
