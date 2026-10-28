@@ -1,8 +1,8 @@
 # Understand shared vocabulary
 
 `catalog.json` is the maintained DE/EN vocabulary source used by the glossary,
-curated graph projection and publication. It contains79 concepts:47 reviewed
-seed concepts plus32 project terms, with36 explicit dispositions for Björn's
+curated graph projection and publication. It contains81 concepts:47 reviewed
+seed concepts plus34 project terms, with36 explicit dispositions for Björn's
 original rows. New human copy uses Provider, Counselling Centre, Counsellor and
 Help-seeker. Aliases and expandable mappings explain inherited names; application
 identifiers, database schemas, permissions and API contracts remain unchanged.
