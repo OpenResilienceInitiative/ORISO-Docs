@@ -45,6 +45,24 @@ class Other { void accept(String value) {} }
   assert.deepEqual(renamed.functions.map((fn) => fn.name), analysis.functions.map((fn) => fn.name));
 });
 
+test('Java enum constant bodies own their overrides, so they never collide with the enum method', async () => {
+  const { plugin } = await parser();
+  const src = `package sample;
+enum Scope {
+  AGENCY { @Override boolean permits(String a, Long id) { return check(a); } },
+  PLATFORM { @Override boolean permits(String a, Long id) { return true; } };
+  abstract boolean permits(String a, Long id);
+  static boolean check(String a) { return a != null; }
+}
+`;
+  const analysis = plugin.analyzeFile('Scope.java', src);
+  const names = analysis.functions.map((fn) => fn.name);
+  assert.equal(new Set(names).size, names.length, `duplicate Java identities: ${names}`);
+  assert.ok(names.includes('sample.Scope.permits(String,Long)'));
+  assert.ok(names.includes('sample.Scope.AGENCY.permits(String,Long)'));
+  assert.ok(names.includes('sample.Scope.PLATFORM.permits(String,Long)'));
+});
+
 test('Java call attribution uses exact caller and reports overloaded targets instead of last-name wins', async () => {
   const { plugin, core } = await parser();
   const f = fixture({ 'src/IdentityManager.java': `package sample;

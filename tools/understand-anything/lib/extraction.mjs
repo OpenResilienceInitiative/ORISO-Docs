@@ -111,6 +111,13 @@ export function createJavaExtractor(base) {
         for (const child of node.namedChildren) visit(child, { owner, variables: fields, fields, method: null, typeParameters: context.typeParameters });
         return;
       }
+      // An enum constant body is its own subclass: its overrides must not share the enum method's identity.
+      if (node.type === 'class_body' && node.parent?.type === 'enum_constant') {
+        const owner = `${context.owner}.${field(node.parent, 'name')?.text ?? `<constant:${node.startPosition.row + 1}>`}`;
+        const fields = new Map([...(context.fields ?? []), ...variableTypes(node, context.typeParameters)]);
+        for (const child of node.namedChildren) visit(child, { owner, variables: fields, fields, method: null, typeParameters: context.typeParameters });
+        return;
+      }
       if (['method_declaration', 'constructor_declaration', 'compact_constructor_declaration'].includes(node.type)) {
         const name = field(node, 'name')?.text;
         if (!name) throw new Error('Java callable has no name');
