@@ -141,3 +141,22 @@ with an unsanitised `dangerouslySetInnerHTML`.
   wave across all running counselling sessions.
 - **Block a second session on the same topic.** Rejected — it produces second accounts, which is the
   outcome with the worst privacy properties.
+
+## Addendum 2026-10-28: additional enquiries and topic collisions (ORISO-Frontend#1876)
+
+Decided with the product owner on 2026-10-28. It refines decisions 1 and 7 without adding a gate.
+
+- **Gate 2 moves forward for an additional enquiry.** When a registered help-seeker starts an
+  additional enquiry (*Folgeanfrage*), from the profile or from a counsellor's recommendation card,
+  the chosen Beratungsstelle's statement is confirmed in the request dialog right after the centre
+  is chosen. It is shown every time, also for the same centre. It is the same gate 2, not a third
+  one: the version is pinned on the new session, so the new room does not ask again.
+- **The topic notice waits for acceptance.** The notice from decision 7 is posted into the older
+  chat only once the new enquiry has been **accepted**, not when it is sent. Both sides of the older
+  chat see it, it never names the other Beratungsstelle, and its counsellor gets the normal
+  notification once. Only in this case may the help-seeker end the newer conversation; a note in the
+  older chat then says that the second counselling on the topic has ended.
+- **How a collision is handled is a platform setting.** The default is "inform the existing
+  counsellor once". Informing both centres, informing on every message and blocking are reserved
+  options (ORISO-Frontend#1878). Blocking would reverse the rejected alternative below, so enabling
+  it needs a new decision.
