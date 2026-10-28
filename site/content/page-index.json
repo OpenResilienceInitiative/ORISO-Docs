@@ -3538,7 +3538,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md",
-      "sourceHash": "f37a8ec5a53c64cdde6e7348c21817ca69e92eb7256d9558c5c9b3c1553568b8",
+      "sourceHash": "d7d5b0646f752e26a97ecc1027bf16168a0b084aeb28d4c63f44d39b9e2912e9",
       "locales": {
         "de": {
           "available": true,
@@ -3554,8 +3554,8 @@
             "erwogene-optionen": "considered-options",
             "consequences": "consequences",
             "folgen": "consequences",
-            "addendum-2026-09-05-§3-was-wrong--there-is-no-archive-auto-deletion-a-dedicated-purge-job-is-decided": "addendum-2026-09-05-§3-was-wrong--there-is-no-archive-auto-deletion-a-dedicated-purge-job-is-decided",
-            "nachtrag-2026-09-05-§3-war-falsch--keine-automatische-archivlöschung-eigener-löschlauf-beschlossen": "addendum-2026-09-05-§3-was-wrong--there-is-no-archive-auto-deletion-a-dedicated-purge-job-is-decided"
+            "addendum-2026-09-05-§3-was-wrong--there-is-no-archive-auto-deletion-a-dedicated-purge-run-replaces-it": "addendum-2026-09-05-§3-was-wrong--there-is-no-archive-auto-deletion-a-dedicated-purge-run-replaces-it",
+            "nachtrag-2026-09-05-§3-war-falsch--es-gibt-keine-automatische-archivlöschung-ein-eigener-löschlauf-ersetzt-sie": "addendum-2026-09-05-§3-was-wrong--there-is-no-archive-auto-deletion-a-dedicated-purge-run-replaces-it"
           }
         },
         "en": {
@@ -3567,11 +3567,11 @@
             "decision": "decision",
             "considered-options": "considered-options",
             "consequences": "consequences",
-            "addendum-2026-09-05-§3-was-wrong--there-is-no-archive-auto-deletion-a-dedicated-purge-job-is-decided": "addendum-2026-09-05-§3-was-wrong--there-is-no-archive-auto-deletion-a-dedicated-purge-job-is-decided"
+            "addendum-2026-09-05-§3-was-wrong--there-is-no-archive-auto-deletion-a-dedicated-purge-run-replaces-it": "addendum-2026-09-05-§3-was-wrong--there-is-no-archive-auto-deletion-a-dedicated-purge-run-replaces-it"
           }
         }
       },
-      "sourceRevision": "58834bd2b70f2c6878e523c4512cbe5cc265c232",
+      "sourceRevision": "329f0c3bb71f72740589b408dbd21bee1a183e8d",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
