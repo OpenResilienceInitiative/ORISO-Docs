@@ -1457,12 +1457,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md",
-          "sourceRevision": "7b544fbb0faca5ec941db4369855b4bcfa28207c",
-          "sourceHash": "f37a8ec5a53c64cdde6e7348c21817ca69e92eb7256d9558c5c9b3c1553568b8",
+          "sourceRevision": "329f0c3bb71f72740589b408dbd21bee1a183e8d",
+          "sourceHash": "d7d5b0646f752e26a97ecc1027bf16168a0b084aeb28d4c63f44d39b9e2912e9",
           "title": "ADR-016: Team-Besprechung — separate side room per open enquiry, hard close at acceptance",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-06"
+          "reviewedAt": "2026-10-28"
         },
         {
           "repository": "ORISO-Docs",
@@ -1533,12 +1533,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md",
-          "sourceRevision": "7b544fbb0faca5ec941db4369855b4bcfa28207c",
-          "sourceHash": "f37a8ec5a53c64cdde6e7348c21817ca69e92eb7256d9558c5c9b3c1553568b8",
+          "sourceRevision": "329f0c3bb71f72740589b408dbd21bee1a183e8d",
+          "sourceHash": "d7d5b0646f752e26a97ecc1027bf16168a0b084aeb28d4c63f44d39b9e2912e9",
           "title": "ADR-016: Team-Besprechung — separate side room per open enquiry, hard close at acceptance",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-06"
+          "reviewedAt": "2026-10-28"
         },
         {
           "repository": "ORISO-Docs",
@@ -2091,12 +2091,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md",
-          "sourceRevision": "7b544fbb0faca5ec941db4369855b4bcfa28207c",
-          "sourceHash": "f37a8ec5a53c64cdde6e7348c21817ca69e92eb7256d9558c5c9b3c1553568b8",
+          "sourceRevision": "329f0c3bb71f72740589b408dbd21bee1a183e8d",
+          "sourceHash": "d7d5b0646f752e26a97ecc1027bf16168a0b084aeb28d4c63f44d39b9e2912e9",
           "title": "ADR-016: Team-Besprechung — separate side room per open enquiry, hard close at acceptance",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-06"
+          "reviewedAt": "2026-10-28"
         },
         {
           "repository": "ORISO-Docs",
