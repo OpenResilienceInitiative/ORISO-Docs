@@ -5976,7 +5976,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "product/features/handover.mdx",
-      "sourceHash": "bb7bac58093c4be0aa62d8562c03216f28cf1a901952c4d1d330733404a0a2cc",
+      "sourceHash": "89823ddec4d25d66c71feb279f975dfc135a118173e685456286d7862b275584",
       "locales": {
         "de": {
           "available": true,
@@ -6021,7 +6021,7 @@
           }
         }
       },
-      "sourceRevision": "796a8390b17a60725600215a61557f903e3e2212",
+      "sourceRevision": "39b5d2b226ef2e8162ff200ffefb8d92f6ab1525",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },

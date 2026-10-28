@@ -37,7 +37,14 @@ In Figma bestätigt:
 | `custom` | Eigene Erklärung | Zustimmung von Beratenden und Ratsuchenden | Standard |
 
 <Callout>
-Jeder Träger kann die Standard-Einwilligungsregeln in der Matrix **Berechtigungen** überschreiben (siehe [Rollen und Berechtigungen §3.7](/de/produkt/architecture-und-roles/roles-permissions#37-per-chat-type-permissions-matrix)).
+**Korrigiert am 2026-09-08 (ORISO-Docs#73).** Hier stand früher, jeder Träger könne die
+Standard-Einwilligungsregeln in der Matrix **Berechtigungen** überschreiben. Das geht nicht und ging nie:
+`case_handover_reason_policy` gilt plattformweit und hat keine Spalte `tenant_id`, eine Regel pro
+Träger ist also **nicht abbildbar** (ADR-002) — das sagt auch der Kopfkommentar der Admin-Karte.
+Die Tabelle oben ist die plattformweite Taxonomie, keine Träger-Konfiguration; ihre Spalte
+„Standard-Einwilligungsregel“ ist selbst überholt, siehe §4.7.3 und §4.7.5. Die rollenbezogenen Rechte
+in [Rollen und Berechtigungen §3.7](/de/produkt/architecture-und-roles/roles-permissions#37-per-chat-type-permissions-matrix)
+sind eine andere Achse und davon nicht betroffen.
 </Callout>
 
 ## 4.7.3 Einwilligungsmatrix

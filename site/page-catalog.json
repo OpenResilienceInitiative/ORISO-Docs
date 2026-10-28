@@ -2061,13 +2061,13 @@
       "translations": {
         "en": {
           "path": "site/translations/en/product/features/handover.mdx",
-          "sourceHash": "bb7bac58093c4be0aa62d8562c03216f28cf1a901952c4d1d330733404a0a2cc",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "89823ddec4d25d66c71feb279f975dfc135a118173e685456286d7862b275584",
+          "reviewedAt": "2026-10-28"
         },
         "de": {
           "path": "site/translations/de/product/features/handover.mdx",
-          "sourceHash": "bb7bac58093c4be0aa62d8562c03216f28cf1a901952c4d1d330733404a0a2cc",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "89823ddec4d25d66c71feb279f975dfc135a118173e685456286d7862b275584",
+          "reviewedAt": "2026-10-28"
         }
       }
     },
