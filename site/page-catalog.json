@@ -1252,13 +1252,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/ADR-020-scheduled-calls-secure-invitations-and-unified-contact-calendar.md",
-          "sourceHash": "637b998f140cd76e5ffa9c990669bccd3afbe24cbfb77c74ea53930741256b1e",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "4069bc7e91c834ebf2b5a3c16dc447a1b029cf23633458c878302c2a418505e1",
+          "reviewedAt": "2026-10-28"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/ADR-020-scheduled-calls-secure-invitations-and-unified-contact-calendar.md",
-          "sourceHash": "637b998f140cd76e5ffa9c990669bccd3afbe24cbfb77c74ea53930741256b1e",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "4069bc7e91c834ebf2b5a3c16dc447a1b029cf23633458c878302c2a418505e1",
+          "reviewedAt": "2026-10-28"
         }
       }
     },
@@ -1413,13 +1413,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/README.md",
-          "sourceHash": "e84bfa1611a8c4c5e6e7206075327f535cff02941d51ee8ea5a642301a504771",
-          "reviewedAt": "2026-10-07"
+          "sourceHash": "625e97f2c462da5c8a702fa79244b574e0d394ef565abcda85debe866f6794cc",
+          "reviewedAt": "2026-10-28"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/README.md",
-          "sourceHash": "e84bfa1611a8c4c5e6e7206075327f535cff02941d51ee8ea5a642301a504771",
-          "reviewedAt": "2026-10-07"
+          "sourceHash": "625e97f2c462da5c8a702fa79244b574e0d394ef565abcda85debe866f6794cc",
+          "reviewedAt": "2026-10-28"
         }
       }
     },
@@ -2037,13 +2037,13 @@
       "translations": {
         "en": {
           "path": "site/translations/en/product/features/self-help-groups.mdx",
-          "sourceHash": "c3895cb4b286def3ebb24f4ddbe8c90d7b3e79d1d37ba25ac141458cfef3b010",
-          "reviewedAt": "2026-10-05"
+          "sourceHash": "3b59e4adf9ce694ac33497fadf4b9db552b61e81491d655fcb00494a282117f1",
+          "reviewedAt": "2026-10-28"
         },
         "de": {
           "path": "site/translations/de/product/features/self-help-groups.mdx",
-          "sourceHash": "c3895cb4b286def3ebb24f4ddbe8c90d7b3e79d1d37ba25ac141458cfef3b010",
-          "reviewedAt": "2026-10-05"
+          "sourceHash": "3b59e4adf9ce694ac33497fadf4b9db552b61e81491d655fcb00494a282117f1",
+          "reviewedAt": "2026-10-28"
         }
       }
     },

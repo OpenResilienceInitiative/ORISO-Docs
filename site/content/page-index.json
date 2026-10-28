@@ -3717,7 +3717,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/decisions/ADR-020-scheduled-calls-secure-invitations-and-unified-contact-calendar.md",
-      "sourceHash": "637b998f140cd76e5ffa9c990669bccd3afbe24cbfb77c74ea53930741256b1e",
+      "sourceHash": "4069bc7e91c834ebf2b5a3c16dc447a1b029cf23633458c878302c2a418505e1",
       "locales": {
         "de": {
           "available": true,
@@ -3754,7 +3754,13 @@
             "consequences": "consequences",
             "folgen": "consequences",
             "required-implementation-slices": "required-implementation-slices",
-            "erforderliche-implementierungsteile": "required-implementation-slices"
+            "erforderliche-implementierungsteile": "required-implementation-slices",
+            "amendment-2026-10-28--knock-first-and-the-call-guest-join-path": "amendment-2026-10-28--knock-first-and-the-call-guest-join-path",
+            "änderung-2026-10-28--zuerst-anklopfen-und-der-beitrittsweg-des-anrufgasts": "amendment-2026-10-28--knock-first-and-the-call-guest-join-path",
+            "a-knock-first-decided-in-adr-029": "a-knock-first-decided-in-adr-029",
+            "a-zuerst-anklopfen-entschieden-in-adr-029": "a-knock-first-decided-in-adr-029",
+            "b-the-call-guest-joins-the-call-room-only-decided-here": "b-the-call-guest-joins-the-call-room-only-decided-here",
+            "b-der-anrufgast-tritt-nur-dem-anrufraum-bei-hier-entschieden": "b-the-call-guest-joins-the-call-room-only-decided-here"
           }
         },
         "en": {
@@ -3776,11 +3782,14 @@
             "bounded-context-ownership": "bounded-context-ownership",
             "considered-options-rejected": "considered-options-rejected",
             "consequences": "consequences",
-            "required-implementation-slices": "required-implementation-slices"
+            "required-implementation-slices": "required-implementation-slices",
+            "amendment-2026-10-28--knock-first-and-the-call-guest-join-path": "amendment-2026-10-28--knock-first-and-the-call-guest-join-path",
+            "a-knock-first-decided-in-adr-029": "a-knock-first-decided-in-adr-029",
+            "b-the-call-guest-joins-the-call-room-only-decided-here": "b-the-call-guest-joins-the-call-room-only-decided-here"
           }
         }
       },
-      "sourceRevision": "b02af4254a944f33fb24e11c82ab6b961e4ec01b",
+      "sourceRevision": "f3de4683d653da260a09b6b808f365f4b372f5eb",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -4094,7 +4103,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/decisions/README.md",
-      "sourceHash": "e84bfa1611a8c4c5e6e7206075327f535cff02941d51ee8ea5a642301a504771",
+      "sourceHash": "625e97f2c462da5c8a702fa79244b574e0d394ef565abcda85debe866f6794cc",
       "locales": {
         "de": {
           "available": true,
@@ -4121,7 +4130,7 @@
           }
         }
       },
-      "sourceRevision": "74fd6f3314b373f8bd1397d2ae1c8779bffd62fe",
+      "sourceRevision": "94fea82ba8909bc15c10e382ea0bb2ba965128a9",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -6296,7 +6305,7 @@
       "locales": {
         "de": {
           "available": true,
-          "translationState": "stale",
+          "translationState": "current",
           "sectionAliases": {
             "4101-the-invite-link": "4101-the-invite-link",
             "4101-der-einladungslink": "4101-the-invite-link",
@@ -6318,7 +6327,7 @@
         },
         "en": {
           "available": true,
-          "translationState": "stale",
+          "translationState": "current",
           "sectionAliases": {
             "4101-the-invite-link": "4101-the-invite-link",
             "4102-who-opens-the-link-and-where-they-land": "4102-who-opens-the-link-and-where-they-land",
@@ -6331,8 +6340,8 @@
           }
         }
       },
-      "sourceRevision": "029e785e0ff893cabca7ab5911ef273255b20632",
-      "sourceState": "working-copy",
+      "sourceRevision": "30ce6775a8248a0a1dbe87d8cf9494ae7830a7ef",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     },
     {
@@ -6647,6 +6656,57 @@
         }
       },
       "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
+      "sourceState": "committed",
+      "factsStatus": "source-only"
+    },
+    {
+      "id": "product/ideas/idea-template",
+      "route": "produkt/ideas/idea-template",
+      "aliases": [
+        "product/ideas/idea-template",
+        "product/ideas/idea-template.md",
+        "product/ideas/idea-template.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "source": "product/ideas/idea-template.mdx",
+      "sourceHash": "e5e439615d069e11399f7efecb7349e937e573127e53992bbbd70ef90056fcb1",
+      "locales": {
+        "de": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "front-matter": "front-matter",
+            "kopfbereich-front-matter": "front-matter",
+            "the-problem-from-the-users-view": "the-problem-from-the-users-view",
+            "das-problem-aus-sicht-der-nutzenden": "the-problem-from-the-users-view",
+            "the-flow": "the-flow",
+            "der-ablauf": "the-flow",
+            "roles": "roles",
+            "rollen": "roles",
+            "where-it-would-land": "where-it-would-land",
+            "wo-die-idee-landet": "where-it-would-land",
+            "open-questions": "open-questions",
+            "offene-fragen": "open-questions",
+            "from-idea-to-epic": "from-idea-to-epic",
+            "von-der-idee-zum-epic": "from-idea-to-epic"
+          }
+        },
+        "en": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "front-matter": "front-matter",
+            "the-problem-from-the-users-view": "the-problem-from-the-users-view",
+            "the-flow": "the-flow",
+            "roles": "roles",
+            "where-it-would-land": "where-it-would-land",
+            "open-questions": "open-questions",
+            "from-idea-to-epic": "from-idea-to-epic"
+          }
+        }
+      },
+      "sourceRevision": "b6e762a30fe1a3427c41b9200b3acf82412766ee",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -7169,18 +7229,9 @@
     }
   ],
   "coverage": {
-    "currentPages": 93,
-    "completePairs": 92,
+    "currentPages": 94,
+    "completePairs": 94,
     "missing": [],
-    "stale": [
-      {
-        "id": "product/features/self-help-groups",
-        "locale": "de"
-      },
-      {
-        "id": "product/features/self-help-groups",
-        "locale": "en"
-      }
-    ]
+    "stale": []
   }
 }

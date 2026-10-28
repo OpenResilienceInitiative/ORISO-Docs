@@ -12,6 +12,12 @@ Dieses Verzeichnis enthält die Architekturentscheidungsprotokolle (ADRs) auf Pl
 
 - `ADR-014-amendment-2026-09-25-one-topic-per-agency-policy.md` — am 2026-09-26 vom Produktverantwortlichen angenommen (ORISO-UserService#1264): ein globaler, standardmäßig ausgeschalteter Plattformschalter, der jede Beratungsstelle auf ein Thema beschränkt; das Datenmodell bleibt mehrthemig.
 
+- `ADR-028-capability-map-stays-in-hub-health-in-viewer-node-panel.md` — vorgeschlagen am 2026-10-24 (Docs#224): Die Fähigkeitskarte bleibt im Hub; ein Gesundheitsabschnitt kommt über einen begrenzten Patch in das Knotenpanel des Viewers, sobald das Schema für Laufprotokolle existiert; ein Fork ist vorerst verworfen.
+
+- `ADR-029-direct-links-knock-first-admission-and-temporary-accounts.md` — am 2026-10-27 vom Produktverantwortlichen angenommen (Epic ORISO-Frontend#974): dauerhafte Direktlinks im Modell AgencyInviteLink, Einlass nach Anklopfen bei Anrufen, temporäre Konten immer mit Benutzername und Passwort, von der Plattform festgelegte Lebensdauern und Nachrichtenaufbewahrung. Ändert ADR-020 §2, §3, §7. Geändert am 2026-10-28 (ORISO-Docs#231): Die Berechtigung „Direkteinladung erlauben“ ersetzt die Anrufrichtlinie des Trägers, und ein Einlass gilt pro Gespräch. ADR-020 bekam am selben Tag eine passende Änderung: zuerst anklopfen, und ein Anrufgast tritt nur dem Anrufraum bei (der Beitrittsweg des Gasts steht dort).
+
+- `ADR-030-activity-timeline-read-state-filters-and-preview.md` — vorgeschlagen am 2026-09-05 (ORISO-Frontend#1200), nummeriert und aktualisiert am 2026-10-28: Massenhaftes Als-gelesen-Markieren betrifft nur Aktivitätsereignisse, datengetriebene Familien-Chips ohne „Alle“-Chip und eine funktionierende Timeline-Vorschau, die nie eine aktive Ansicht registriert (Produktentscheidung 2026-10-21, ORISO-Frontend#1824). Braucht noch die Freigabe durch das Produkt.
+
 Neue Entscheidungen in diesem Abschnitt gehören zum Repository und sind kein Teil des oben beschriebenen unveränderten Imports von 19 Dateien.
 
 ## Bekannte Probleme
