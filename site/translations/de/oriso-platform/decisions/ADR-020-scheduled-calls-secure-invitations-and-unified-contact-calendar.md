@@ -1,5 +1,7 @@
 # ADR-020: Geplante Anrufe, sichere Einladungen und gemeinsamer Kontaktkalender
 
+> **Geändert durch ADR-029 (27.10.2026) und am 28.10.2026** — maßgeblich ist `oriso-platform/decisions/ADR-020-scheduled-calls-secure-invitations-and-unified-contact-calendar.md`: Ein gültiger Link führt nicht mehr direkt in den Anruf; jeder Link klopft zuerst an, und die Beratungsperson lässt jede Person einzeln ein. Die Träger-Anrufrichtlinie ist durch die Berechtigung „Direkteinladung erlauben“ ersetzt. Ein Anrufgast wird nur in den Anrufraum eingeladen. Diese Kopie ist noch nicht neu übersetzt.
+
 - **Status:** Angenommen — 2026-08-12
 - **Datum:** 2026-08-12
 - **Entscheider:** Frank (Produkt) und Architekturverfeinerungssitzung

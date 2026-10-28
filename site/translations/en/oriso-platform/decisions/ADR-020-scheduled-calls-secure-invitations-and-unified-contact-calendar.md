@@ -1,5 +1,7 @@
 # ADR-020: Scheduled calls, secure invitations, and a unified contact calendar
 
+> **Amended by ADR-029 (2026-10-27) and on 2026-10-28** — see the canonical record `oriso-platform/decisions/ADR-020-scheduled-calls-secure-invitations-and-unified-contact-calendar.md`: a valid link no longer enters directly; every link knocks first and the counsellor lets each person in; the tenant call policy is replaced by the permission "Direkteinladung erlauben"; a call guest joins the call room only. This copy has not been retranslated yet.
+
 - **Status:** Accepted — 2026-08-12
 - **Date:** 2026-08-12
 - **Deciders:** Frank (product) + architecture refinement session

@@ -1,6 +1,7 @@
 # ADR-029: Direct links, knock-first admission and temporary accounts
 
 - **Status:** Accepted by the product owner — 2026-10-27. Technical review open.
+- **Amended:** 2026-10-28 — see [Amendment 2026-10-28](#amendment-2026-10-28--direkteinladung-erlauben-replaces-the-call-policy-admission-holds-per-conversation) at the end. It replaces the tenant call policy and makes an admission hold per conversation.
 - **Date:** 2026-10-27 (product decisions taken 2026-10-17 and 2026-10-27)
 - **Decision owner:** Frank Gerhardt (product owner)
 - **Amends:** ADR-020 §2 (admission and the one-time-guest identity), §3 step 3 and §7 (persistent links never reach a live room)
@@ -47,6 +48,8 @@ A person without an ORISO account who redeems a link gets a **temporary account*
 The reason is the security architecture: identity lives in Keycloak and Matrix, and E2EE keys must belong to an account that can sign in again. A platform setting may **hide the password field** (ORISO then uses the suggested password silently), but it may never remove the password from the account.
 
 This replaces ADR-020's wording of a "short-lived identity" wherever it could be read as an account without a password. The tenant policies `REGISTERED_ONLY` and `REGISTERED_OR_ONE_TIME_GUEST` from ADR-020 §2 remain; "one-time guest" now means a temporary account under this section.
+
+> **Superseded 2026-10-28:** the tenant policies do **not** remain. They are replaced by the permission "Direkteinladung erlauben" (§6). See the amendment at the end of this record.
 
 ### 4. Lifetimes are platform settings
 
@@ -99,3 +102,27 @@ A permission **"Direkteinladung erlauben"** (allow direct invitation) exists per
 | `AgencyInviteLink` (direct links), redemption, 1:1 conversation creation, temporary accounts, cleanup job | ORISO-UserService with Keycloak/Matrix adapters |
 | Permission inheritance "Direkteinladung erlauben", lifetimes, retention mode | ORISO-TenantService (settings), ORISO-Admin (UI) |
 | Link management, knock-first waiting room, admit/admit all, consent step, retention label and prompt | ORISO-Frontend |
+
+## Amendment 2026-10-28 — "Direkteinladung erlauben" replaces the call policy; admission holds per conversation
+
+- **Status:** Accepted by the product owner — Frank, 2026-10-28. Technical backend review (Keycloak/Matrix feasibility) open.
+- **Changes:** §3 last paragraph (the tenant policies no longer remain), §2 (an admission holds per conversation). §1, §4, §5, §6 and §7 are unchanged.
+- **Issues:** [ORISO-Docs#231](https://github.com/OpenResilienceInitiative/ORISO-Docs/issues/231), [ORISO-Admin#1242](https://github.com/OpenResilienceInitiative/ORISO-Admin/issues/1242), [ORISO-TenantService#332](https://github.com/OpenResilienceInitiative/ORISO-TenantService/pull/332), [ORISO-TenantService#175](https://github.com/OpenResilienceInitiative/ORISO-TenantService/issues/175), [ORISO-Admin#703](https://github.com/OpenResilienceInitiative/ORISO-Admin/issues/703)
+
+**1. "Direkteinladung erlauben" replaces the tenant call policy.**
+§3 said the tenant policies `REGISTERED_ONLY` and `REGISTERED_OR_ONE_TIME_GUEST` from ADR-020 §2 remain. They do not. The permission "Direkteinladung erlauben" from §6 — per conversation type (chat, audio call, video call), platform force-allow / force-deny → Träger → Beratungsstelle — is the one switch for link access. There is no second, tenant-wide call policy beside it. The work planned for the old policy ([ORISO-TenantService#175](https://github.com/OpenResilienceInitiative/ORISO-TenantService/issues/175), [ORISO-Admin#703](https://github.com/OpenResilienceInitiative/ORISO-Admin/issues/703)) is replaced by [ORISO-Admin#1242](https://github.com/OpenResilienceInitiative/ORISO-Admin/issues/1242) and [ORISO-TenantService#332](https://github.com/OpenResilienceInitiative/ORISO-TenantService/pull/332). A person without an ORISO account who redeems a permitted link gets a temporary account under §3. All three conversation types start as allowed (Frank, 2026-10-28, recorded on ORISO-TenantService#332).
+
+**2. Knock first: a valid link alone never enters a call.**
+§2 stands: a person who opens a call link (direct link or call-share link) waits until the counsellor lets them in. A valid link is a reason to knock, not a key to the room. This record is the one place for the admission rule; ADR-020 links here. The chat rule in §2 is not changed by this amendment: a chat direct link creates the person's own new 1:1 conversation with the counsellor and never puts them into an existing room.
+
+**3. An admission holds per conversation ("let in once").**
+Once the counsellor has let a person in, that person does not knock again in the same conversation — not after a reconnect and not for a later call in that conversation. A new conversation (another link, or another redemption of the same link) starts with a knock again. Revoking or removing the person (ADR-020 §2) still ends their access at once.
+
+**4. Temporary accounts: unchanged, confirmed.**
+§3 stands as written: a temporary account always has a unique username and a password. A platform setting may hide the password field, never remove the password.
+
+**5. Where the call guest ends up is decided in ADR-020.**
+A guest let into a call joins the call room only, never the counsellor's source chat room, and loses access when the call ends. That decision lives in [ADR-020, Amendment 2026-10-28 §B](ADR-020-scheduled-calls-secure-invitations-and-unified-contact-calendar.md#amendment-2026-10-28--knock-first-and-the-call-guest-join-path), because ADR-020 owns the Call Session and its room membership.
+
+**6. The "keep my messages?" question is not a consent gate — ADR-022 stands.**
+The question from §5 mode 2 ([ORISO-Frontend#1869](https://github.com/OpenResilienceInitiative/ORISO-Frontend/issues/1869)) asks the guest what happens to their own messages when their temporary account is deleted. It is a retention choice, not agreement to a legal text, and it does not decide whether the person may enter. The one-tap consent in §2 is ADR-022's **gate 2** (the Beratungsstelle document of the agency that owns the link), shown before entry instead of inside the room — ADR-022 already treats both placements as equivalent. Gate 1 (the platform policy, or the Träger's replacement) is unchanged. So there are still exactly two gates, and [ADR-022](ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md) is not amended.
