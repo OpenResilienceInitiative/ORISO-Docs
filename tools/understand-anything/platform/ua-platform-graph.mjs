@@ -11,6 +11,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync, readdirSync, statSy
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { decoratePlatform } from './lib/platform-navigation.mjs';
 
 import {
 	normalizePath,
@@ -69,7 +70,8 @@ function parseArgs(argv) {
 // Constants
 // ---------------------------------------------------------------------------
 
-// The 17 ORISO repos (ORISO-Kubernetes excluded per spec — deprecated).
+// Retain every supported source in the vector. Kubernetes is retired history,
+// not an active service; its inclusion must not imply current deployment.
 const ALL_REPOS = [
 	'ORISO-Admin',
 	'ORISO-AgencyService',
@@ -83,6 +85,7 @@ const ALL_REPOS = [
 	'ORISO-Helm',
 	'ORISO-Infra',
 	'ORISO-Keycloak',
+	'ORISO-Kubernetes',
 	'ORISO-Livekit',
 	'ORISO-SigNoz',
 	'ORISO-Status',
@@ -1062,11 +1065,12 @@ function main() {
 	for (const repo of ALL_REPOS) {
 		addNode({
 			id: `service:${repo}`,
-			type: 'service',
+			type: repo === 'ORISO-Kubernetes' ? 'module' : 'service',
 			name: repo,
 			filePath: null,
-			summary: `ORISO platform service: ${repo}`,
-			tags: ['service'],
+			summary: repo === 'ORISO-Kubernetes' ? 'Retired Kubernetes configuration retained as historical source; current deployment is not established.' : `ORISO platform service: ${repo}`,
+			tags: repo === 'ORISO-Kubernetes' ? ['repository', 'retired'] : ['service'],
+			...(repo === 'ORISO-Kubernetes' ? { metadata: { lifecycle: 'retired' } } : {}),
 			sourceRepo: repo
 		});
 	}
@@ -1443,6 +1447,8 @@ function main() {
 			stats
 		}
 	};
+
+	decoratePlatform(graph, { repositoryGraphs: graphs, expectedRepositories: ALL_REPOS });
 
 	// -------------------------------------------------------------------
 	// Size cap: truncate progressively until under MAX_BYTES

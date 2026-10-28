@@ -78,3 +78,41 @@ test('a missing target concept is reported, the rest still bridges', () => {
 	assert.ok(out(edges, from).includes('ORISO-Keycloak::concept:otp-config-rest-api'));
 	assert.match(result.skipped[0].reason, /email-otp-second-factor/);
 });
+
+
+function reviewedGraphs() {
+  const g = graphs(), sha = 'a'.repeat(40), fingerprint = 'b'.repeat(64);
+  for (const [repo, {graph}] of Object.entries(g)) {
+    graph.project = {gitCommitHash: sha};
+    const implementation = graph.nodes.find(n => n.type === 'file');
+    implementation.type = 'class'; implementation.lineRange = [1, 3]; implementation.metadata = {sourceCommit: sha, sourceFingerprint: fingerprint};
+    for (const concept of graph.nodes.filter(n => n.type === 'concept')) {
+      concept.metadata = {semanticClaim: {sourceCommit: sha, generationId: 'review-fixture', generatedAt: '2026-01-01T00:00:00Z', reviewedAt: '2026-01-02T00:00:00Z', reviewedBy: {kind: 'agent', name: 'Fixture reviewer'}, confidence: 'source-reviewed', evidence: [{nodeId: implementation.id, kind: 'source', sourceCommit: sha, sourceRange: [1, 3], sourceFingerprint: fingerprint}]}};
+      graph.edges = graph.edges.filter(edge => edge.source !== concept.id);
+      graph.edges.push({id: 'relation:' + concept.id, source: concept.id, target: implementation.id, type: 'related'});
+    }
+  }
+  return g;
+}
+test('shared owning class is presented once per bridge while both concept provenance entries survive', () => {
+  const {edges} = run([], reviewedGraphs());
+  const direct = edges.filter(edge => edge.source === from && edge.target === `ORISO-Keycloak::${SPI}`);
+  assert.equal(direct.length, 1);
+  assert.deepEqual(direct[0].metadata.provenance.map(item => item.conceptId).sort(), ['concept:email-otp-second-factor', 'concept:otp-config-rest-api']);
+  assert.equal(new Set(direct[0].metadata.provenance.map(item => item.relationshipId)).size, 2);
+});
+test('owning-class labels are supplied by a bridge definition rather than a second-factor special case', () => {
+  const edges = [], definition = {...bridges[0], implementationLabel: 'owning mail implementation'};
+  projectConceptBridges({graphs: reviewedGraphs(), bridges: [definition], addNode() {}, addEdge(edge) {edges.push(edge);}});
+  assert.equal(edges.find(edge => edge.target === `ORISO-Keycloak::${SPI}` && edge.source === from).label, 'owning mail implementation');
+});
+test('missing target fingerprint, metadata or source revision never emits a reviewed owning class or throws', () => {
+  for (const missing of ['metadata', 'fingerprint', 'revision']) {
+    const g = reviewedGraphs(), graph = g['ORISO-Keycloak'].graph, target = graph.nodes.find(node => node.id === SPI);
+    if (missing === 'metadata') delete target.metadata;
+    if (missing === 'fingerprint') delete target.metadata.sourceFingerprint;
+    if (missing === 'revision') delete graph.project.gitCommitHash;
+    const {edges} = run([match], g);
+    assert.equal(edges.some(edge => edge.source === from && edge.target === `ORISO-Keycloak::${SPI}`), false);
+  }
+});

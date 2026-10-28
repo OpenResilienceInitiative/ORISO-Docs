@@ -126,6 +126,35 @@ class ApprovalGateTests(unittest.TestCase):
    snapshot={'historic.html':digest(path.read_bytes())};validate_historical(repo,snapshot)
    path.write_bytes(b'overwritten')
    with self.assertRaises(ValueError):validate_historical(repo,snapshot)
+ def test_historical_chapter_copy_retains_the_original_binding_and_provenance(self):
+  from dsfa_draft import digest
+  manifest=json.loads((self.root/'manifest.json').read_text())
+  original='oriso-platform/dsfa-text/kap-06-verfahren-und-technik.md'
+  archive='oriso-platform/dsfa-text/drafts/2026-09-30-v5-draft/historical-source/kap-06-verfahren-und-technik.md'
+  expected='a210a0a255203ad54052ff1226166f1872576bebf82d848b3ab68692059be728'
+  self.assertEqual(manifest['historicalSnapshotHashes'].get(archive),expected)
+  self.assertNotIn(original,manifest['historicalSnapshotHashes'])
+  self.assertEqual(manifest['upstreamInputs'][original],expected)
+  captured=(Path(__file__).resolve().parents[1]/archive).read_bytes()
+  self.assertEqual(len(captured),58638)
+  self.assertEqual(digest(captured),expected)
+ def test_authoring_changes_are_allowed_but_archived_chapter_tampering_is_rejected(self):
+  from dsfa_draft import validate_historical
+  import shutil
+  source_repo=Path(__file__).resolve().parents[1]
+  manifest=json.loads((self.root/'manifest.json').read_text())
+  snapshots=manifest['historicalSnapshotHashes']
+  original='oriso-platform/dsfa-text/kap-06-verfahren-und-technik.md'
+  archive='oriso-platform/dsfa-text/drafts/2026-09-30-v5-draft/historical-source/kap-06-verfahren-und-technik.md'
+  with tempfile.TemporaryDirectory() as folder:
+   repo=Path(folder)
+   for name in set(snapshots)|{original}:
+    path=repo/name;path.parent.mkdir(parents=True,exist_ok=True)
+    shutil.copyfile(source_repo/name,path)
+   (repo/original).write_bytes((repo/original).read_bytes()+b'\nSynthetic authoring update.\n')
+   validate_historical(repo,snapshots)
+   (repo/archive).write_bytes((repo/archive).read_bytes()+b'\nSynthetic archived-source tampering.\n')
+   with self.assertRaisesRegex(ValueError,'Historical snapshot changed: '+archive):validate_historical(repo,snapshots)
  def test_activation_public_latest_cli_fail_closed(self):
   import subprocess,sys
   tool=Path(__file__).resolve().parent/'dsfa_draft.py'

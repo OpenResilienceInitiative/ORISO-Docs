@@ -47,4 +47,33 @@ class ReleaseLockTests(unittest.TestCase):
    self.assertEqual(fetch_source(clone,'refs/tags/v2.0.7',expected_sha=first),first);self.assertEqual(fetch_source(clone,first,expected_sha=first),first)
    (remote/'file').write_text('two');subprocess.run(['git','-C',str(remote),'add','.'],check=True);subprocess.run(commit+['two'],check=True);subprocess.run(['git','-C',str(remote),'tag','-f','v2.0.7'],check=True,stdout=subprocess.DEVNULL)
    with self.assertRaisesRegex(ContractError,'released source SHA'):fetch_source(clone,'refs/tags/v2.0.7',expected_sha=first)
+class PreviewDocumentationInputsTests(unittest.TestCase):
+ def test_preview_catalogue_comes_from_the_checked_out_docs_commit_not_moving_dev(self):
+  import ua_sources
+  entries=[{'name':'ORISO-Docs','branch':'dev','enrichment':'enrich-docs.json'},{'name':'ORISO-TenantService','branch':'dev','enrichment':'enrich-tenantservice.json'}]
+  selected=ua_sources.select_preview_entries(entries,'b'*40)
+  self.assertEqual(selected[0]['branch'],'b'*40);self.assertEqual(selected[0]['sourceSHA'],'b'*40)
+  self.assertEqual(selected[1],entries[1]);self.assertEqual(entries[0]['branch'],'dev')
+  for invalid in [None,'dev','refs/pull/162/merge','b'*39,'b'*40+';echo bad']:
+   with self.subTest(invalid=invalid):
+    with self.assertRaisesRegex(ValueError,'Exact documentation revision'):ua_sources.select_preview_entries(entries,invalid)
+ def test_preview_requires_the_docs_repository_and_invalid_input_never_creates_clone_output(self):
+  import ua_sources
+  with self.assertRaisesRegex(ValueError,'Docs source'):ua_sources.select_preview_entries([], 'b'*40)
+  with tempfile.TemporaryDirectory() as name:
+   p=pathlib.Path(name);result=subprocess.run([sys.executable,str(pathlib.Path(__file__).with_name('ua_sources.py')),'--tooling',str(TOOLS),'--base',str(p/'sources'),'--inventory',str(p/'inventory.json'),'--repo-args',str(p/'args'),'--documentation-revision','dev'],capture_output=True,text=True)
+   self.assertNotEqual(result.returncode,0);self.assertFalse((p/'sources').exists())
+ def test_container_git_trust_applies_to_only_the_checked_out_workspace(self):
+  import os,re
+  workflow=(TOOLS.parents[1]/'.github/workflows/ua-tooling.yml').read_text()
+  command=re.search(r'name: Trust the checked-out workspace in the ephemeral container\n\s+run: (.+)',workflow).group(1)
+  with tempfile.TemporaryDirectory() as name:
+   p=pathlib.Path(name);workspace=p/'workspace';other=p/'other'
+   for repo in [workspace,other]:subprocess.run(['git','init','-q',str(repo)],check=True)
+   env={**os.environ,'GIT_CONFIG_GLOBAL':str(p/'gitconfig'),'GIT_CONFIG_NOSYSTEM':'1','GIT_TEST_ASSUME_DIFFERENT_OWNER':'1','GITHUB_WORKSPACE':str(workspace)}
+   probe=lambda repo:subprocess.run(['git','-C',str(repo),'status','--short'],env=env,capture_output=True,text=True)
+   self.assertIn('dubious ownership',probe(workspace).stderr)
+   subprocess.run(['bash','-euc',command],env=env,check=True)
+   self.assertEqual(probe(workspace).returncode,0);self.assertIn('dubious ownership',probe(other).stderr)
+   self.assertEqual(subprocess.check_output(['git','config','--global','--get-all','safe.directory'],env=env,text=True).strip(),str(workspace))
 if __name__=='__main__':unittest.main()

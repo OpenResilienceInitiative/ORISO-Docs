@@ -57,3 +57,5 @@ they need manual reconciliation first:
   series that happens to reuse the same numbering.
 
 Both need a human to reconcile against the series imported here before they can be merged in.
+
+- `ADR-027-restricted-task-identities-and-keycloak-commands.md` — proposed 2026-10-07 under ORISO-Helm#367; additional bounded account/SMTP provider and task credential boundaries. Human technical approval remains open. Shared contract: `../contracts/technical-task-identities.md`.

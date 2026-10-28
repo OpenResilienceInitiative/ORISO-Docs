@@ -838,13 +838,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/ADR-002-silent-room-membership-and-access-control-curtain.md",
-          "sourceHash": "bcbc03e27b5a0a5a7beb919e3d2446e71fd35a054caf8ed4bdc05b91c188ff29",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "b0bb76a6714688757f407e5e887297f5c6d899e4f03675b62501d3765f316c3d",
+          "reviewedAt": "2026-10-20"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/ADR-002-silent-room-membership-and-access-control-curtain.md",
-          "sourceHash": "bcbc03e27b5a0a5a7beb919e3d2446e71fd35a054caf8ed4bdc05b91c188ff29",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "b0bb76a6714688757f407e5e887297f5c6d899e4f03675b62501d3765f316c3d",
+          "reviewedAt": "2026-10-20"
         }
       }
     },
@@ -1321,13 +1321,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
-          "sourceHash": "6592caa757811e78c6c4213e453556a7e76bb4f2caa097b13979d3a238541e2e",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "1ca3a10a5e0e35cdfa9811a962e205894dc4037c42c932b133bc31ea2ca22643",
+          "reviewedAt": "2026-10-06"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
-          "sourceHash": "6592caa757811e78c6c4213e453556a7e76bb4f2caa097b13979d3a238541e2e",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "1ca3a10a5e0e35cdfa9811a962e205894dc4037c42c932b133bc31ea2ca22643",
+          "reviewedAt": "2026-10-06"
         }
       }
     },
@@ -1344,13 +1344,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/ADR-024-notification-matrix-two-lists-not-one-filtered.md",
-          "sourceHash": "8e76843785c65229ca1ea5857ca873b466cc03aa317871d21d984aa9b8f1760e",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "b960c89d8c1513ca766ce9b6ad964dbd08afcb2111b36fe7a61dbe52e5b494cc",
+          "reviewedAt": "2026-10-07"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/ADR-024-notification-matrix-two-lists-not-one-filtered.md",
-          "sourceHash": "8e76843785c65229ca1ea5857ca873b466cc03aa317871d21d984aa9b8f1760e",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "b960c89d8c1513ca766ce9b6ad964dbd08afcb2111b36fe7a61dbe52e5b494cc",
+          "reviewedAt": "2026-10-07"
         }
       }
     },
@@ -1413,13 +1413,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/README.md",
-          "sourceHash": "c3f2fc53454bb3c341dfb119ef7c217f1cdd84cb3fd2e9279cec85b810b28800",
-          "reviewedAt": "2026-10-05"
+          "sourceHash": "e84bfa1611a8c4c5e6e7206075327f535cff02941d51ee8ea5a642301a504771",
+          "reviewedAt": "2026-10-07"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/README.md",
-          "sourceHash": "c3f2fc53454bb3c341dfb119ef7c217f1cdd84cb3fd2e9279cec85b810b28800",
-          "reviewedAt": "2026-10-05"
+          "sourceHash": "e84bfa1611a8c4c5e6e7206075327f535cff02941d51ee8ea5a642301a504771",
+          "reviewedAt": "2026-10-07"
         }
       }
     },
@@ -2013,13 +2013,37 @@
       "translations": {
         "en": {
           "path": "site/translations/en/product/features/group-chats.mdx",
-          "sourceHash": "873c5c15d4d1fe8bc49514af11e236ff11f19b37436d54a1a6388be5a8d1fbd5",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "3296648a4cc97bf9152273444b2d8f7a803072f25852206e54c4bfa31623fcb9",
+          "reviewedAt": "2026-10-05"
         },
         "de": {
           "path": "site/translations/de/product/features/group-chats.mdx",
-          "sourceHash": "873c5c15d4d1fe8bc49514af11e236ff11f19b37436d54a1a6388be5a8d1fbd5",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "3296648a4cc97bf9152273444b2d8f7a803072f25852206e54c4bfa31623fcb9",
+          "reviewedAt": "2026-10-05"
+        }
+      }
+    },
+    {
+      "id": "product/features/self-help-groups",
+      "source": "product/features/self-help-groups.mdx",
+      "route": "produkt/core-features/self-help-groups",
+      "aliases": [
+        "product/features/self-help-groups",
+        "product/features/self-help-groups.md",
+        "product/features/self-help-groups.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/product/features/self-help-groups.mdx",
+          "sourceHash": "c3895cb4b286def3ebb24f4ddbe8c90d7b3e79d1d37ba25ac141458cfef3b010",
+          "reviewedAt": "2026-10-05"
+        },
+        "de": {
+          "path": "site/translations/de/product/features/self-help-groups.mdx",
+          "sourceHash": "c3895cb4b286def3ebb24f4ddbe8c90d7b3e79d1d37ba25ac141458cfef3b010",
+          "reviewedAt": "2026-10-05"
         }
       }
     },
@@ -2062,13 +2086,13 @@
       "translations": {
         "en": {
           "path": "site/translations/en/product/features/index.mdx",
-          "sourceHash": "5d61551d859eeae8947aece8c094a049d0e829be240a292535bb7a08cc832cad",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "ed58a1f1af3ca258e06cd0159449a7a1dd185d6c45e02d3d29ffdcd4aa48f6eb",
+          "reviewedAt": "2026-10-05"
         },
         "de": {
           "path": "site/translations/de/product/features/index.mdx",
-          "sourceHash": "5d61551d859eeae8947aece8c094a049d0e829be240a292535bb7a08cc832cad",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "ed58a1f1af3ca258e06cd0159449a7a1dd185d6c45e02d3d29ffdcd4aa48f6eb",
+          "reviewedAt": "2026-10-05"
         }
       }
     },
@@ -2189,6 +2213,30 @@
           "path": "site/translations/de/product/features/transcription.mdx",
           "sourceHash": "393a0d62429677f97010e820a0fe31cd4b3318daacccf125a4a937277a5ac7cb",
           "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "product/ideas/idea-template",
+      "source": "product/ideas/idea-template.mdx",
+      "route": "produkt/ideas/idea-template",
+      "aliases": [
+        "product/ideas/idea-template",
+        "product/ideas/idea-template.md",
+        "product/ideas/idea-template.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/product/ideas/idea-template.mdx",
+          "sourceHash": "e5e439615d069e11399f7efecb7349e937e573127e53992bbbd70ef90056fcb1",
+          "reviewedAt": "2026-10-24"
+        },
+        "de": {
+          "path": "site/translations/de/product/ideas/idea-template.mdx",
+          "sourceHash": "e5e439615d069e11399f7efecb7349e937e573127e53992bbbd70ef90056fcb1",
+          "reviewedAt": "2026-10-24"
         }
       }
     },

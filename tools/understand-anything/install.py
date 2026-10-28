@@ -99,6 +99,8 @@ def _install_locked(root, profile=None, docker=False):
             run('git', '-C', str(upstream), 'apply', str(tooling / patch['path']))
         shutil.copyfile(tooling / 'hosted-viewer/source-location.mjs', upstream / 'understand-anything-plugin/packages/dashboard/source-location.mjs')
         shutil.copyfile(tooling / 'hosted-viewer/source-location.d.mts', upstream / 'understand-anything-plugin/packages/dashboard/source-location.d.mts')
+        for name in ('deep-link.mjs', 'deep-link.d.mts'):
+            shutil.copyfile(tooling / 'hosted-viewer' / name, upstream / 'understand-anything-plugin/packages/dashboard' / name)
         def runtime(args, cwd):
             if docker:
                 run('docker', 'run', '--rm', '-v', f'{root}:{root}', '-w', str(cwd), lock['nodeImage'], *args)
@@ -107,7 +109,7 @@ def _install_locked(root, profile=None, docker=False):
         pnpm = ['npm', 'exec', '--yes', '--package=pnpm@' + lock['pnpm'], '--', 'pnpm']
         runtime(pnpm + ['install', '--frozen-lockfile'], upstream)
         runtime(pnpm + ['--filter', '@understand-anything/core', 'build'], upstream)
-        runtime(pnpm + ['--filter', '@understand-anything/dashboard', 'build'], upstream)
+        runtime(pnpm + ['--filter', '@understand-anything/dashboard', 'build', '--base=./'], upstream)
         runtime(['npm', 'ci', '--ignore-scripts', '--no-audit', '--no-fund'], tooling)
         # Content address includes the custom source, not merely the upstream version.
         files = sorted(p for p in tooling.rglob('*') if p.is_file() and 'node_modules' not in p.parts)

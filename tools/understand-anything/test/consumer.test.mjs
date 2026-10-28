@@ -30,3 +30,21 @@ test('symlinked consumer CLI cannot silently skip invalid generation validation'
     assert.match(result.stderr,/ORISO strict consumer schema is required/);
   } finally {rmSync(root,{recursive:true,force:true});}
 });
+
+test('real consumer preserves call direction, recursion, overloads, call-site certainty and containment',()=>{
+  const graph=fixture();
+  const ids=['ORISO-UserService::function:Caller.java:Caller.go()', 'ORISO-Keycloak::function:Otp.java:Otp.accept(String)', 'ORISO-Keycloak::function:Otp.java:Otp.accept(Integer)', 'ORISO-UserService::file:Caller.java'];
+  graph.nodes=ids.map((id,index)=>({id,type:index===3?'file':'function',name:index===0?'go':'accept',summary:'',tags:[],complexity:'simple'}));
+  graph.edges=[
+    {source:ids[0],target:ids[1],type:'calls',direction:'forward',weight:1,metadata:{lineNumber:7}},
+    {source:ids[0],target:ids[1],type:'calls_unconfirmed',direction:'forward',weight:1,metadata:{lineNumber:9,reason:'java-typechecking-unavailable'}},
+    {source:ids[0],target:ids[2],type:'calls_unconfirmed',direction:'forward',weight:1},
+    {source:ids[0],target:ids[0],type:'calls',direction:'forward',weight:1},
+    {source:ids[3],target:ids[0],type:'contains',direction:'forward',weight:1},
+  ];
+  graph.layers=[{id:'all',name:'All',description:'All',nodeIds:ids}];
+  const result=validateGraph(graph);
+  assert.equal(result.success,true);
+  assert.deepEqual(result.issues,[]);
+  assert.deepEqual(result.data,graph);
+});

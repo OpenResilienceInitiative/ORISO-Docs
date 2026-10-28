@@ -12,7 +12,7 @@ Rebuilt 2026-08-14T01:08:36.463Z by ua-build-supergraph.mjs (deterministic).
 - ORISO-Keycloak: 356 nodes / 348 edges @ 367e488d
 - ORISO-Kubernetes: 147 nodes / 13 edges @ 10232408
 - ORISO-Helm: 480 nodes / 298 edges @ c45eaaab
-- ORISO-E2E: 208 nodes / 231 edges @ 2a90b0cc
-- ORISO-Infra: 19 nodes / 24 edges @ 8d3acd2f
 
 Cross-repo dependency edges: 40 (keyword inference, evidence-count >= 2).
+
+ORISO-E2E and ORISO-Infra were removed from this aggregate on 2026-09-21 (ORISO-Docs#129): both repositories are private, and their structure must not be published.

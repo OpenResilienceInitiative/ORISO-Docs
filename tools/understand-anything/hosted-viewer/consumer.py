@@ -19,7 +19,7 @@ def install_sources(generation,source_root,clone=clone_public):
         if (target/'graph-generation/manifest.json').read_bytes()!=(generation/'manifest.json').read_bytes():raise ValueError('Immutable source generation manifest changed')
         for source in manifest['sources']:
             repo=target/source['repository']
-            if subprocess.check_output(['git','-C',str(repo),'rev-parse','HEAD'],text=True).strip()!=source['sourceSHA'] or subprocess.check_output(['git','-C',str(repo),'status','--porcelain'],text=True).strip():raise ValueError('Immutable source checkout changed')
+            if subprocess.check_output(['git','-C',str(repo),'rev-parse','HEAD'],text=True).strip()!=source['sourceSHA'] or subprocess.check_output(['git','-C',str(repo),'status','--porcelain','--ignored'],text=True).strip():raise ValueError('Immutable source checkout changed')
     else:
         stage=pathlib.Path(tempfile.mkdtemp(prefix='.sources-',dir=target.parent))
         try:
@@ -27,6 +27,7 @@ def install_sources(generation,source_root,clone=clone_public):
                 repo=stage/source['repository'];clone(source['repository'],source['sourceSHA'],repo)
                 actual=subprocess.check_output(['git','-C',str(repo),'rev-parse','HEAD'],text=True).strip()
                 if actual!=source['sourceSHA']:raise ValueError('Source revision mismatch')
+                if subprocess.check_output(['git','-C',str(repo),'status','--porcelain','--ignored'],text=True).strip():raise ValueError('Source checkout is dirty; installation refused')
             shutil.copytree(generation,stage/'graph-generation');stage.rename(target)
         finally:
             if stage.exists():shutil.rmtree(stage)

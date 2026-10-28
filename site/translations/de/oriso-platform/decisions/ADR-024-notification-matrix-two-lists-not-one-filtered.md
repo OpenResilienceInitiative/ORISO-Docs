@@ -68,3 +68,140 @@ Zielgruppen keine Varianten voneinander. Ratsuchende selten und unfreiwillig, of
 - `appointmentNotificationEnabled` hat Zeile und Vorlage `termin`, aber keinen Sender. Sichtbar behalten; Sender in `ORISO-Frontend#874`.
 - In-App-`event_notification` hier **nicht** abgeglichen. `ORISO-Frontend#947` schlägt gemeinsamen Katalog für E-Mail/In-App/Browser-Push vor. E-Mail zuerst, nicht auf alle blockieren.
 - Zwei Zielgruppen, zwei Prüfbereiche. Zusammenlegung als vermeintliche Vereinfachung ist Regression.
+
+## Gewöhnlicher interner Beraterchat — Implementierungsergänzung vom 2026-10-07
+
+Frank hat Benachrichtigungsmails für Nachrichten zwischen Beraterinnen und Beratern in gewöhnlichen
+internen Gruppen angefordert und die vorgeschlagene P1-Implementierung für v2.0.11 freigegeben.
+Das separat prüfbare Arbeitspaket ist [UserService #1375](https://github.com/OpenResilienceInitiative/ORISO-UserService/issues/1375).
+Damit wird ein ausdrücklicher Vertrag für den Auslöser ergänzt. Gewöhnliche Gruppen werden dadurch
+nicht zu geschützten Supervisionsrückmeldungen. Die historischen Implementierungsmessungen oben
+behalten ihr ursprüngliches Datum.
+
+| Anlass | Empfänger | Unabhängige Mail-Einstellung | Darstellung |
+|---|---|---|---|
+| Nachricht in einer gewöhnlichen internen Gruppe | Andere aktive und aktuell berechtigte Beraterinnen und Berater derselben Gruppe und desselben Trägers | `internalChatNotificationEnabled` | Neutrale Vorlage für Beraternachrichten; eigener Abmeldeselektor `interne-nachricht` |
+
+Die Einstellung folgt dem bisherigen Standard für Arbeitsabläufe: Sie ist eingeschaltet, solange der
+Empfänger sie nicht ausschaltet. Die allgemeine Mail-Einstellung des Empfängers und der Schalter des
+Trägers für Benachrichtigungsmails gelten weiterhin. Der Absender, Ratsuchende, ausgeschiedene oder
+unbeteiligte Gruppenmitglieder und andere Träger erhalten diese Mail nicht. Mitgliedschaft und Ursprung
+des Ereignisses müssen bei der Zustellungsprüfung aktuell sein. Wiederholte Ereignisse dürfen keine
+doppelten Benachrichtigungen erzeugen.
+
+Der Auslöser verwendet die bestehende Vorlage `neue-nachricht-beratung`, weil sie nur neutral zur
+Rückkehr in ORISO auffordert. Die gemeinsame Darstellung bedeutet keine gemeinsame Einstellung für
+Nachrichten von Ratsuchenden: Der Link im Mail-Fuß führt zum neuen Schalter für den internen Chat.
+Dies dokumentiert die in Entscheidung 5 verlangte Ausnahme für gemeinsam verwendete Vorlagen.
+Entschlüsselter Nachrichteninhalt wird nicht verwendet.
+
+Browser-Einstellungen bleiben unabhängig. Diese Mail-Ergänzung beinhaltet keinen neuen Auslöser für
+Browser-Ereignisse, keine zugesicherte Web-Push-Zustellung im Hintergrund und keine Änderung am
+Aufbewahren des In-App-Verlaufs. Die offenen Fragen zur Aufbewahrung von Benachrichtigungen bleiben
+im bestehenden Datenschutz-Arbeitspaket.
+
+
+## Erforderliche persönliche Zustimmung zur Fallübergabe — Entscheidung vom 2026-10-08
+
+Eine Bitte um persönliche Zustimmung muss die Person erreichen, die entscheiden soll. Für die
+Bestätigung einer bereits erlaubten Weitergabe braucht es keine zusätzliche E-Mail. Frank hat
+diesen Unterschied am 8. Oktober 2026 bestätigt. Er ist von der optionalen Übergabemail an die
+übernehmende Beratungsperson getrennt.
+
+| Situation | E-Mail an die ratsuchende Person | Sichtbarer Inhalt |
+|---|---|---|
+| Die persönliche Zustimmung ist erforderlich und noch offen; eine nutzbare aktuelle E-Mail-Adresse ist hinterlegt | Neutrale Bitte um Zustimmung unter den bestehenden Versandregeln des Trägers und Zugriffsregeln des Empfängers senden | Hinweis auf die benötigte Zustimmung und geschützter Link zur Entscheidung |
+| Die Weitergabe ist bereits erlaubt, einschließlich der Kenntnisnahme beim Opt-out-Verfahren | Keine zusätzliche E-Mail mit einer Zustimmungsanfrage senden | Die bestehenden Regeln für Kenntnisnahme und Zustimmung gelten weiter |
+| Keine nutzbare aktuelle E-Mail-Adresse oder Zustimmung nicht mehr offen | Keine veraltete Zustimmungsanfrage senden | Der aktuelle Antrag bleibt in der Anwendung prüfbar |
+
+Die Anfrage nennt weder Beratungsperson noch Fall, Nachrichteninhalt oder andere persönliche
+Informationen. Der Link öffnet den geschützten aktuellen Antrag. Beim Versand muss dieselbe
+Person weiterhin zum Antrag gehören und noch entscheiden müssen. Eine wartende Mail darf nicht
+an eine geänderte Adresse umgeleitet werden oder einen erledigten beziehungsweise widerrufenen
+Antrag überleben.
+
+Für diese erforderliche Handlung gibt es keinen zusätzlichen Übergabe-Schalter für Ratsuchende.
+Die Mail darf keinen Abmeldelink zu einer nicht vorhandenen Einstellung anbieten. Im Fuß bleiben
+der normale Hinweis auf eine automatische Nachricht sowie Datenschutz- und Impressumslinks.
+Die optionale Bestätigung an die übernehmende Beratungsperson behält ihre bisherige Einstellung
+und ihren Abmeldelink.
+
+**Für Entwickler — Vertrag für Verfahren und Darstellung:**
+
+```text
+OPT_IN + PENDING_CLIENT_CONSENT: erforderliche persönliche Zustimmungsanfrage.
+OPT_OUT / NONE: keine zusätzliche E-Mail mit Zustimmungsanfrage.
+Kanonischer Anlass: uebergabe-angefragt; Katalogklasse: consent.
+emailIsUnsubscribable(consent): false; keine settingsUrl/unsubscribeUrl im Fuß.
+Diesen Anlass nicht als Sicherheitsmail zum Kontozugriff klassifizieren.
+Versandweg, Benachrichtigungsmail-Konfiguration und OWN-Einrichtung des Trägers
+sowie aktueller Empfängerzugriff werden weiterhin getrennt geprüft.
+Diese Entscheidung erlaubt keine pauschale Umgehung der Trägereinstellungen.
+Optionaler Anlass für die übernehmende Beratungsperson: uebergabe-bestaetigt.
+```
+
+Diese datierte Ergänzung präzisiert die Entscheidungen 1, 3, 5 und 6 für erforderliche persönliche
+Zustimmung. Die historischen Messungen oben behalten ihre ursprünglichen Daten. Die Umsetzung
+wird in [Frontend #1666](https://github.com/OpenResilienceInitiative/ORISO-Frontend/pull/1666) und
+[UserService #1376](https://github.com/OpenResilienceInitiative/ORISO-UserService/pull/1376) geprüft.
+Quellcode-Prüfungen, Deployment und tatsächlicher Mail-Empfang bleiben getrennte Nachweise.
+
+
+## Gewöhnliche eingegangene Beratungsanfrage ablehnen — Entscheidung vom 2026-10-08
+
+Eine Beratungsperson darf eine gewöhnliche eingegangene Anfrage ihrer Beratungsstelle ablehnen,
+bevor jemand sie annimmt. Frank hat diese Umsetzung am 8. Oktober 2026 freigegeben. Sie ist von
+der Ablehnung einer Fallübergabe getrennt. Die ratsuchende Person erhält einen neutralen Eintrag
+in den Aktivitäten und kann den bisherigen Gesprächsverlauf lesen. Das abgelehnte Gespräch bleibt
+für neue Nachrichten und Anrufe geschlossen.
+
+| Situation | Ergebnis |
+|---|---|
+| Eine aktuell berechtigte Beratungsperson der Beratungsstelle bestätigt die Ablehnung | Entscheidung festhalten und Anfrage sowie Team-Besprechung für neue Beiträge schließen |
+| Die ursprüngliche ratsuchende Person öffnet den Aktivitätseintrag | Abgelehnte Anfrage und lesbaren bisherigen Verlauf ohne Nachrichteneditor anzeigen |
+| Dieselbe Beratungsperson wiederholt eine bereits abgeschlossene Anfrage | Abschluss ohne weitere Entscheidung oder weiteren Aktivitätseintrag bestätigen |
+| Die Anfrage wurde inzwischen angenommen oder von jemand anderem abgelehnt | Aktuellen Stand laden und anzeigen, dass diese Aktion nicht abgeschlossen werden kann |
+| Das Schließen des zugrunde liegenden Gesprächs scheitert | Entscheidung behalten, unvollständigen Vorgang melden und Schließen erneut versuchen; keinen Erfolg behaupten |
+
+Die Bestätigung verlangt keine schriftliche Begründung. Weder Aktivitätseintrag noch Vorschau
+nennen Beratungsperson, Fall oder Nachrichteninhalt. Es entsteht keine zusätzliche Ablehnungsmail
+und kein neuer E-Mail-Schalter. Archivieren, Annehmen oder Zuweisen darf eine abgelehnte Anfrage
+nicht stillschweigend wieder öffnen.
+Wenn die ursprüngliche ratsuchende Person keine Benachrichtigungen mehr erhalten darf,
+das verifizierte Schließen ohne Aktivitätseintrag abschließen. Ein unvollständig geschlossenes
+Gespräch bleibt für die Reparatur vorgemerkt und darf nicht als erfolgreicher Abschluss erscheinen.
+
+**Für Entwickler — Vertrag für Status, Zustellung und Protokoll:**
+
+```text
+POST /users/sessions/{sessionId}/rejection; operationId rejectEnquiry; ohne Request-Body.
+Nur eingegangene registrierte NEW/nicht zugewiesene gewöhnliche Beratungsanfragen.
+Aktuelle nicht gelöschte aktive Beratungsperson + aktuelle Träger-/Stellenberechtigung.
+Status REJECTED=5 ergänzen; bestehende numerische Werte0–4 beibehalten.
+TX1: Anfrage sperren, endgültige Entscheidung und unveränderliche offene Audit-Bindung speichern.
+Außerhalb TX: primären und Team-Matrix-Raum als schreibgeschützt verifizieren,
+einschließlich expliziter Nachrichten-/Verschlüsselungs-/Reaktions-/Redaktions-/RTC-/Anrufrechte;
+Mitgliedschaften und Verlauf erhalten.
+TX2: dieselbe Entscheidung atomar mit genau einem request.denied-Eintrag für die aktuell
+berechtigte ursprüngliche ratsuchende Person bestätigen, oder einen bewussten Nichtversand
+speichern, wenn diese Identität nicht mehr berechtigt ist. Nie an einen geänderten Eigentümer
+oder Träger umleiten. Signal nur nach einem gespeicherten Feed-Eintrag und Commit.
+204 erst nach bestätigtem Schließen. Fehler bleiben dauerhaft für begrenzte Reparatur
+vorgemerkt, ohne bestätigenden Feed-Eintrag; Neustart/Instanzwechsel müssen überlebt werden.
+403 unberechtigter aktueller Akteur;404 nicht verfügbare Anfrage;409 geänderter/konfliktärer Status.
+503 solange das verifizierte Schließen unvollständig ist; Wiederholung durch denselben Akteur.
+Spätere Übergabe-/Annehmen-/Archivieren-/Wiederherstellen-Aktionen öffnen Status5 nicht erneut.
+Aktionspfad /sessions/user/session/{sessionId}; kein neuer Mail-Anlass oder Freitextgrund.
+```
+
+Dies ist ein freigegebener Umsetzungsvertrag. Der Quellcode wird in
+[Frontend #1666](https://github.com/OpenResilienceInitiative/ORISO-Frontend/pull/1666) und
+[UserService #1376](https://github.com/OpenResilienceInitiative/ORISO-UserService/pull/1376) umgesetzt.
+Er belegt weder abgeschlossene Umsetzung noch Deployment oder tatsächliche Produktabnahme.
+
+Alle Produktabnahmen für Benachrichtigungstickets erfolgen ausschließlich in der ORISO-Dev-Umgebung,
+wie Frank am 8. Oktober 2026 ausdrücklich bestätigt hat. Pre-Dev ist kein Abnahmeziel.
+Lokale Quellcodeprüfungen und Vorschauen bleiben getrennte Nachweise. Dasselbe Ereignis kann
+in Anfragen, Gesprächen und Timeline erscheinen; Anzeige und eingestellten Ton je zutreffendem
+Kontext prüfen. Eine neue Unterdrückung freiwilliger Mails nach Live-Empfang oder Ton wartet
+auf eine Produktentscheidung; dieser Nachtrag gibt diese Regel nicht frei.

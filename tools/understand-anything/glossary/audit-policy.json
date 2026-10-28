@@ -1,0 +1,511 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-10-06",
+  "scope": {
+    "directories": [
+      "src/",
+      "api/",
+      "services/",
+      "tests/",
+      "contracts/"
+    ],
+    "extensions": [
+      ".java",
+      ".ts",
+      ".tsx",
+      ".js",
+      ".jsx",
+      ".json",
+      ".yml",
+      ".yaml",
+      ".xml",
+      ".sql"
+    ],
+    "exclude": []
+  },
+  "repositoryScopes": {
+    "ORISO-Docs": {
+      "directories": [
+        "tools/understand-anything/enrichments/",
+        "tools/understand-anything/platform/narrative/"
+      ],
+      "extensions": [
+        ".json"
+      ],
+      "exclude": []
+    },
+    "ORISO-Database": {
+      "directories": [
+        "mariadb/agencyservice/",
+        "mariadb/tenantservice/",
+        "mariadb/consultingtypeservice/",
+        "mariadb/userservice/"
+      ],
+      "extensions": [
+        ".sql"
+      ],
+      "exclude": []
+    }
+  },
+  "repositories": {
+    "ORISO-Docs": "7b544fbb0faca5ec941db4369855b4bcfa28207c",
+    "ORISO-AgencyService": "549efae58e1a38530ed23c26f0b8a0bb48ca6012",
+    "ORISO-TenantService": "f812000dd830eaa88704b529e30b7563bc6bada0",
+    "ORISO-ConsultingTypeService": "e7fb7cbc679e4c9390f038d3326fe266c9198356",
+    "ORISO-UserService": "d8283fd0af4c9c5913fafd9526a6557ab96335ff",
+    "ORISO-Admin": "04f5c5d567509ae2305728128e5ad28fe3cd477c",
+    "ORISO-Frontend": "05ac6cde4ac61d83e7b99a450f41eb2bf885fd5f",
+    "ORISO-Database": "c9630a93f84f1d45853ba54b657ebd3bc0ff8acc"
+  },
+  "remoteRepositories": [
+    "ORISO-Database"
+  ],
+  "families": [
+    {
+      "id": "agency",
+      "roots": [
+        "agency"
+      ]
+    },
+    {
+      "id": "tenant",
+      "roots": [
+        "tenant"
+      ]
+    },
+    {
+      "id": "counsellor",
+      "roots": [
+        "consultant",
+        "counsellor",
+        "counselor",
+        "advisor"
+      ]
+    },
+    {
+      "id": "help-seeker",
+      "roots": [
+        "user",
+        "asker",
+        "client",
+        "help_seeker"
+      ]
+    },
+    {
+      "id": "category",
+      "roots": [
+        "topic_group",
+        "category"
+      ]
+    },
+    {
+      "id": "department",
+      "roots": [
+        "agency_topic",
+        "department"
+      ]
+    },
+    {
+      "id": "topic",
+      "roots": [
+        "topic"
+      ]
+    },
+    {
+      "id": "session",
+      "roots": [
+        "session"
+      ]
+    },
+    {
+      "id": "chat-reference",
+      "roots": [
+        "chat_id",
+        "session_id"
+      ]
+    },
+    {
+      "id": "conversation-kind",
+      "roots": [
+        "conversation",
+        "consulting_type"
+      ]
+    },
+    {
+      "id": "enquiry",
+      "roots": [
+        "enquiry",
+        "inquiry",
+        "request"
+      ]
+    },
+    {
+      "id": "dpa",
+      "roots": [
+        "dpa",
+        "avv"
+      ]
+    },
+    {
+      "id": "agreement",
+      "roots": [
+        "agreement",
+        "annex",
+        "signature"
+      ]
+    },
+    {
+      "id": "privacy",
+      "roots": [
+        "dpp",
+        "privacy",
+        "data_protection"
+      ]
+    },
+    {
+      "id": "legal-text",
+      "roots": [
+        "legal_text",
+        "legal_content"
+      ]
+    },
+    {
+      "id": "legal-notice",
+      "roots": [
+        "imprint",
+        "impressum",
+        "legal_notice"
+      ]
+    },
+    {
+      "id": "consent",
+      "roots": [
+        "consent",
+        "confirmation"
+      ]
+    },
+    {
+      "id": "legal-draft",
+      "roots": [
+        "draft",
+        "template",
+        "proposal"
+      ]
+    },
+    {
+      "id": "legal-version",
+      "roots": [
+        "version",
+        "publication"
+      ]
+    },
+    {
+      "id": "terms-of-use",
+      "roots": [
+        "terms_and_conditions"
+      ]
+    },
+    {
+      "id": "roles",
+      "roots": [
+        "role",
+        "admin",
+        "supervis"
+      ]
+    },
+    {
+      "id": "handover",
+      "roots": [
+        "case",
+        "handover",
+        "reassign"
+      ]
+    },
+    {
+      "id": "catchment",
+      "roots": [
+        "catchment",
+        "postcode",
+        "diocese"
+      ]
+    },
+    {
+      "id": "group",
+      "roots": [
+        "group",
+        "series",
+        "occurrence",
+        "participant"
+      ]
+    },
+    {
+      "id": "activity",
+      "roots": [
+        "activity",
+        "event",
+        "notification"
+      ]
+    },
+    {
+      "id": "technical-provider",
+      "roots": [
+        "provider",
+        "context",
+        "filter"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "finding-01",
+      "repository": "ORISO-AgencyService",
+      "path": "src/main/java/de/caritas/cob/agencyservice/api/repository/agency/Agency.java",
+      "line": 42,
+      "sourceHash": "d9edc17bc27c221220a5e0d2190ef147a7b10a6ba95b3349c613b71124e607b7",
+      "family": "agency",
+      "classification": "compatibility-alias",
+      "reason": "Verified named example; classification applies only to the recorded symbol in this reviewed source, not every lexical match."
+    },
+    {
+      "id": "finding-02",
+      "repository": "ORISO-Admin",
+      "path": "src/locales/en/translation.json",
+      "line": 327,
+      "sourceHash": "7fb2ced62081a3dbb5e5da2f61442336b524c333f5aad9660b67d33139265445",
+      "family": "agency",
+      "classification": "copy-correction",
+      "reason": "Verified named example; classification applies only to the recorded symbol in this reviewed source, not every lexical match."
+    },
+    {
+      "id": "finding-03",
+      "repository": "ORISO-Admin",
+      "path": "src/locales/de/translation.json",
+      "line": 341,
+      "sourceHash": "8961815be4ee8273aa9058b0eacd7aea7ea37001cc6ed54b32134e39d0722d36",
+      "family": "agency",
+      "classification": "copy-correction",
+      "reason": "Verified named example; classification applies only to the recorded symbol in this reviewed source, not every lexical match."
+    },
+    {
+      "id": "finding-04",
+      "repository": "ORISO-TenantService",
+      "path": "src/main/java/com/vi/tenantservice/api/model/TenantEntity.java",
+      "line": 18,
+      "sourceHash": "aa472366046154602b837375b49553ab832fc29e837e19d66391203180f93ecc",
+      "family": "tenant",
+      "classification": "compatibility-alias",
+      "reason": "Verified named example; classification applies only to the recorded symbol in this reviewed source, not every lexical match."
+    },
+    {
+      "id": "finding-05",
+      "repository": "ORISO-Admin",
+      "path": "src/locales/en/translation.json",
+      "line": 570,
+      "sourceHash": "7fb2ced62081a3dbb5e5da2f61442336b524c333f5aad9660b67d33139265445",
+      "family": "technical-provider",
+      "classification": "valid-technical-context",
+      "reason": "Verified named example; classification applies only to the recorded symbol in this reviewed source, not every lexical match."
+    },
+    {
+      "id": "finding-06",
+      "repository": "ORISO-Admin",
+      "path": "src/locales/en/translation.json",
+      "line": 54,
+      "sourceHash": "7fb2ced62081a3dbb5e5da2f61442336b524c333f5aad9660b67d33139265445",
+      "family": "tenant",
+      "classification": "compatibility-alias",
+      "reason": "Verified named example; classification applies only to the recorded symbol in this reviewed source, not every lexical match."
+    },
+    {
+      "id": "finding-07",
+      "repository": "ORISO-Admin",
+      "path": "src/locales/en/translation.json",
+      "line": 321,
+      "sourceHash": "7fb2ced62081a3dbb5e5da2f61442336b524c333f5aad9660b67d33139265445",
+      "family": "tenant",
+      "classification": "copy-correction",
+      "reason": "Verified named example; classification applies only to the recorded symbol in this reviewed source, not every lexical match."
+    },
+    {
+      "id": "finding-08",
+      "repository": "ORISO-AgencyService",
+      "path": "src/main/java/de/caritas/cob/agencyservice/api/repository/agencytopic/AgencyTopic.java",
+      "line": 31,
+      "sourceHash": "420c2d30b732906c0138d2dbf976d552cf08fd0a36a0418c6a998efca7a18ff3",
+      "family": "department",
+      "classification": "compatibility-alias",
+      "reason": "Verified named example; classification applies only to the recorded symbol in this reviewed source, not every lexical match."
+    },
+    {
+      "id": "finding-09",
+      "repository": "ORISO-ConsultingTypeService",
+      "path": "src/main/java/de/caritas/cob/consultingtypeservice/api/model/TopicEntity.java",
+      "line": 13,
+      "sourceHash": "2587c7aa67a414682484afbf057e49c197ee4a1330b6c59d2cf2a4fc887e4746",
+      "family": "topic",
+      "classification": "unresolved",
+      "reason": "Verified named example; classification applies only to the recorded symbol in this reviewed source, not every lexical match."
+    },
+    {
+      "id": "finding-10",
+      "repository": "ORISO-ConsultingTypeService",
+      "path": "src/main/java/de/caritas/cob/consultingtypeservice/api/model/TopicGroupEntity.java",
+      "line": 37,
+      "sourceHash": "37e8ae7ba5fe1436f4c3a7a1f4066137f9f7a2fbd6be78be3665b2e07eb4489c",
+      "family": "category",
+      "classification": "compatibility-alias",
+      "reason": "Verified named example; classification applies only to the recorded symbol in this reviewed source, not every lexical match."
+    },
+    {
+      "id": "finding-11",
+      "repository": "ORISO-UserService",
+      "path": "src/main/java/de/caritas/cob/userservice/api/model/Consultant.java",
+      "line": 73,
+      "sourceHash": "35aa2d7359f08be078e2f33165e04b7d58f5faa49e899d2945a9a6952997e590",
+      "family": "counsellor",
+      "classification": "compatibility-alias",
+      "reason": "Verified named example; classification applies only to the recorded symbol in this reviewed source, not every lexical match."
+    },
+    {
+      "id": "finding-12",
+      "repository": "ORISO-Admin",
+      "path": "src/api/counselor/editCounselorData.ts",
+      "line": 24,
+      "sourceHash": "8766eccdf51fddfba3288dae7bea4d6bd29d8669d531bd7b189d17b525901b55",
+      "family": "counsellor",
+      "classification": "compatibility-alias",
+      "reason": "Verified named example; classification applies only to the recorded symbol in this reviewed source, not every lexical match."
+    },
+    {
+      "id": "finding-13",
+      "repository": "ORISO-UserService",
+      "path": "src/main/java/de/caritas/cob/userservice/api/model/User.java",
+      "line": 35,
+      "sourceHash": "8e418da93f95fab7857b5d12909c7c73799bf3c210e2baf84d3c48162663ecf5",
+      "family": "help-seeker",
+      "classification": "unresolved",
+      "reason": "Verified named example; classification applies only to the recorded symbol in this reviewed source, not every lexical match."
+    },
+    {
+      "id": "finding-14",
+      "repository": "ORISO-UserService",
+      "path": "src/main/java/de/caritas/cob/userservice/api/model/Session.java",
+      "line": 43,
+      "sourceHash": "e4d8ab7da6b906953c83cf39c967c7022ec5ddaa1e21571efd59bd74557e76ff",
+      "family": "session",
+      "classification": "unresolved",
+      "reason": "Verified named example; classification applies only to the recorded symbol in this reviewed source, not every lexical match."
+    },
+    {
+      "id": "finding-15",
+      "repository": "ORISO-TenantService",
+      "path": "src/main/java/com/vi/tenantservice/api/model/TenantDpaVersionEntity.java",
+      "line": 24,
+      "sourceHash": "8ecf1d2b67e0df6c8da2bded2be53b32a03c1765f0ecabced1fd5752b048c1ab",
+      "family": "dpa",
+      "classification": "compatibility-alias",
+      "reason": "Verified named example; classification applies only to the recorded symbol in this reviewed source, not every lexical match."
+    },
+    {
+      "id": "finding-16",
+      "repository": "ORISO-TenantService",
+      "path": "src/main/java/com/vi/tenantservice/api/model/TenantDpaSignatureEntity.java",
+      "line": 30,
+      "sourceHash": "6a941a60518f3971676a79438ee9741c96b197908c3c2c76163b14eaff131110",
+      "family": "agreement",
+      "classification": "compatibility-alias",
+      "reason": "Verified named example; classification applies only to the recorded symbol in this reviewed source, not every lexical match."
+    },
+    {
+      "id": "finding-17",
+      "repository": "ORISO-Admin",
+      "path": "src/locales/en/translation.json",
+      "line": 2635,
+      "sourceHash": "7fb2ced62081a3dbb5e5da2f61442336b524c333f5aad9660b67d33139265445",
+      "family": "dpa",
+      "classification": "unresolved",
+      "reason": "Verified named example; classification applies only to the recorded symbol in this reviewed source, not every lexical match."
+    },
+    {
+      "id": "finding-18",
+      "repository": "ORISO-UserService",
+      "path": "src/main/java/de/caritas/cob/userservice/api/model/GroupChatParticipant.java",
+      "line": 51,
+      "sourceHash": "41c3447fcf42f9c81805f2f2f327e9e18ceb2beafc354ea3999358a0f117a30e",
+      "family": "chat-reference",
+      "classification": "migration-candidate",
+      "reason": "This specific identifier references session.id; migrate only through separate compatibility review."
+    }
+  ],
+  "exclusions": [
+    "Other repositories, directories and file extensions",
+    "Untracked build-generated output",
+    "Binary and runtime database contents",
+    "Runtime or deployment acceptance"
+  ],
+  "boundary": "Every family/line match gets a disposition; unresolved means no manual semantic certification. Counts overlap. No application renames.",
+  "catchAllFamilies": [
+    {
+      "id": "legal-name-form",
+      "roots": [
+        "legal_name",
+        "legal_form"
+      ]
+    },
+    {
+      "id": "legal-framework",
+      "roots": [
+        "legal_framework",
+        "gdpr",
+        "dpia",
+        "dsfa"
+      ]
+    },
+    {
+      "id": "legal-link-render-token",
+      "roots": [
+        "legal_link",
+        "legal_renderer",
+        "legal_content_renderer",
+        "legal_token"
+      ]
+    },
+    {
+      "id": "legal-access-guard",
+      "roots": [
+        "legal_authority",
+        "legal_guard",
+        "legal_access"
+      ]
+    },
+    {
+      "id": "legal-resolution",
+      "roots": [
+        "legal_resolution",
+        "legal_resolve",
+        "department_legal"
+      ]
+    },
+    {
+      "id": "unqualified-legal",
+      "roots": [
+        "legal"
+      ]
+    },
+    {
+      "id": "data-responsibility-parties",
+      "roots": [
+        "controller",
+        "processor",
+        "data_protection_officer",
+        "dpo"
+      ]
+    },
+    {
+      "id": "illegal-technical-exception",
+      "roots": [
+        "illegal"
+      ]
+    }
+  ]
+}

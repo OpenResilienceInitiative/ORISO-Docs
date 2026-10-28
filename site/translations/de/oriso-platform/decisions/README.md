@@ -29,3 +29,5 @@ Zwei weitere lokale ADR-Sammlungen wurden bewusst ausgeschlossen, weil sie zuers
 - `0 - Docs M4_Frank/1 Analysis/ADR/ADR-001..011.md` — eine vollständig andere, unabhängige ADR-Reihe, die dieselben Nummern verwendet.
 
 Beide müssen von einem Menschen mit der hier importierten Reihe abgeglichen werden, bevor sie aufgenommen werden können.
+
+- `ADR-027-restricted-task-identities-and-keycloak-commands.md` — vorgeschlagen am 2026-10-07 im Rahmen von ORISO-Helm#367; zusätzlicher begrenzter Provider für Konto- und SMTP-Befehle sowie getrennte Zugangsdaten je technischer Aufgabe. Die technische Freigabe durch einen Menschen steht noch aus. Gemeinsamer Vertrag: `../contracts/technical-task-identities.md`.

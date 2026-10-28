@@ -12,15 +12,24 @@
   function apply(lang, store) {
     root.setAttribute('data-lang', lang);
     root.setAttribute('lang', lang);
-    document.title = lang === 'de' ? 'ORISO Understand — Quellen und Features' : 'ORISO Understand — Sources and features';
+    document.title = root.getAttribute('data-title-' + lang)
+      || (lang === 'de' ? 'ORISO Understand — Quellen und Features' : 'ORISO Understand — Sources and features');
     var meta = document.querySelector('meta[name=description]');
-    if (meta) meta.content = lang === 'de' ? 'Quellgraphen, Produktzusammenfassungen und Dokumentation.' : 'Source graphs, product summaries and documentation.';
+    if (meta) meta.content = meta.getAttribute('data-description-' + lang)
+      || (lang === 'de' ? 'Quellgraphen, Produktzusammenfassungen und Dokumentation.' : 'Source graphs, product summaries and documentation.');
+    document.querySelectorAll('[data-label-de][data-label-en]').forEach(function(element) {
+      element.textContent = element.getAttribute('data-label-' + lang);
+    });
+    document.querySelectorAll('[data-placeholder-de][data-placeholder-en]').forEach(function(element) {
+      element.setAttribute('placeholder', element.getAttribute('data-placeholder-' + lang));
+    });
     document.querySelectorAll('[data-docs-link]').forEach(function(a){ a.href='https://docs.oriso.org/'+lang+'/'; });
     if (store) { try { localStorage.setItem(KEY, lang); } catch (e) {} }
     var buttons = document.querySelectorAll('.langswitch button');
     for (var i = 0; i < buttons.length; i++) {
       buttons[i].setAttribute('aria-pressed', String(buttons[i].getAttribute('data-lang') === lang));
     }
+    document.dispatchEvent(new CustomEvent('oriso:languagechange', {detail: {lang: lang}}));
   }
 
   apply(initial, false);

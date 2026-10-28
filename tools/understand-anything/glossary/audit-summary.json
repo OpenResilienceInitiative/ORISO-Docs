@@ -1,0 +1,788 @@
+{
+  "algorithm": "ascii-token-camel-snake-family-line-v1",
+  "catchAllFamilyIds": [
+    "legal-name-form",
+    "legal-framework",
+    "legal-link-render-token",
+    "legal-access-guard",
+    "legal-resolution",
+    "unqualified-legal",
+    "data-responsibility-parties",
+    "illegal-technical-exception"
+  ],
+  "dispositions": {
+    "compatibility-alias": 7,
+    "copy-correction": 3,
+    "generator-spec": 8055,
+    "historical": 5351,
+    "migration-candidate": 1,
+    "unresolved": 437302,
+    "valid-technical-context": 1
+  },
+  "evidence": "lexical-candidates-not-semantic-certification",
+  "families": {
+    "activity": {
+      "distinctTokens": 1565,
+      "repositories": {
+        "ORISO-Admin": 2876,
+        "ORISO-AgencyService": 88,
+        "ORISO-ConsultingTypeService": 78,
+        "ORISO-Database": 19,
+        "ORISO-Docs": 453,
+        "ORISO-Frontend": 10290,
+        "ORISO-TenantService": 166,
+        "ORISO-UserService": 5256
+      },
+      "roots": [
+        "activity",
+        "event",
+        "notification"
+      ]
+    },
+    "agency": {
+      "distinctTokens": 3261,
+      "repositories": {
+        "ORISO-Admin": 5271,
+        "ORISO-AgencyService": 24556,
+        "ORISO-ConsultingTypeService": 81,
+        "ORISO-Database": 68,
+        "ORISO-Docs": 1059,
+        "ORISO-Frontend": 2892,
+        "ORISO-TenantService": 354,
+        "ORISO-UserService": 13102
+      },
+      "roots": [
+        "agency"
+      ]
+    },
+    "agreement": {
+      "distinctTokens": 229,
+      "repositories": {
+        "ORISO-Admin": 398,
+        "ORISO-AgencyService": 19,
+        "ORISO-ConsultingTypeService": 19,
+        "ORISO-Docs": 66,
+        "ORISO-Frontend": 143,
+        "ORISO-TenantService": 1030,
+        "ORISO-UserService": 365
+      },
+      "roots": [
+        "agreement",
+        "annex",
+        "signature"
+      ]
+    },
+    "catchment": {
+      "distinctTokens": 249,
+      "repositories": {
+        "ORISO-Admin": 145,
+        "ORISO-AgencyService": 15649,
+        "ORISO-ConsultingTypeService": 24,
+        "ORISO-Database": 19,
+        "ORISO-Docs": 95,
+        "ORISO-Frontend": 555,
+        "ORISO-TenantService": 55,
+        "ORISO-UserService": 351
+      },
+      "roots": [
+        "catchment",
+        "postcode",
+        "diocese"
+      ]
+    },
+    "category": {
+      "distinctTokens": 104,
+      "repositories": {
+        "ORISO-Admin": 15,
+        "ORISO-AgencyService": 3,
+        "ORISO-ConsultingTypeService": 158,
+        "ORISO-Database": 12,
+        "ORISO-Docs": 40,
+        "ORISO-Frontend": 373,
+        "ORISO-UserService": 143
+      },
+      "roots": [
+        "topic_group",
+        "category"
+      ]
+    },
+    "chat-reference": {
+      "distinctTokens": 214,
+      "repositories": {
+        "ORISO-Admin": 20,
+        "ORISO-Database": 29,
+        "ORISO-Docs": 22,
+        "ORISO-Frontend": 1110,
+        "ORISO-UserService": 2172
+      },
+      "roots": [
+        "chat_id",
+        "session_id"
+      ]
+    },
+    "consent": {
+      "distinctTokens": 493,
+      "repositories": {
+        "ORISO-Admin": 1554,
+        "ORISO-AgencyService": 328,
+        "ORISO-ConsultingTypeService": 4,
+        "ORISO-Database": 6,
+        "ORISO-Docs": 186,
+        "ORISO-Frontend": 1463,
+        "ORISO-TenantService": 263,
+        "ORISO-UserService": 1007
+      },
+      "roots": [
+        "consent",
+        "confirmation"
+      ]
+    },
+    "conversation-kind": {
+      "distinctTokens": 976,
+      "repositories": {
+        "ORISO-Admin": 344,
+        "ORISO-AgencyService": 1958,
+        "ORISO-ConsultingTypeService": 1431,
+        "ORISO-Database": 4,
+        "ORISO-Docs": 292,
+        "ORISO-Frontend": 1773,
+        "ORISO-TenantService": 404,
+        "ORISO-UserService": 2706
+      },
+      "roots": [
+        "conversation",
+        "consulting_type"
+      ]
+    },
+    "counsellor": {
+      "distinctTokens": 3336,
+      "repositories": {
+        "ORISO-Admin": 3544,
+        "ORISO-AgencyService": 281,
+        "ORISO-ConsultingTypeService": 89,
+        "ORISO-Database": 63,
+        "ORISO-Docs": 734,
+        "ORISO-Frontend": 5073,
+        "ORISO-TenantService": 255,
+        "ORISO-UserService": 24217
+      },
+      "roots": [
+        "consultant",
+        "counsellor",
+        "counselor",
+        "advisor"
+      ]
+    },
+    "data-responsibility-parties": {
+      "distinctTokens": 562,
+      "repositories": {
+        "ORISO-Admin": 1045,
+        "ORISO-AgencyService": 785,
+        "ORISO-ConsultingTypeService": 161,
+        "ORISO-Database": 1,
+        "ORISO-Docs": 607,
+        "ORISO-Frontend": 620,
+        "ORISO-TenantService": 681,
+        "ORISO-UserService": 2703
+      },
+      "roots": [
+        "controller",
+        "processor",
+        "data_protection_officer",
+        "dpo"
+      ]
+    },
+    "department": {
+      "distinctTokens": 357,
+      "repositories": {
+        "ORISO-Admin": 1113,
+        "ORISO-AgencyService": 1750,
+        "ORISO-Database": 7,
+        "ORISO-Docs": 159,
+        "ORISO-Frontend": 476,
+        "ORISO-TenantService": 55,
+        "ORISO-UserService": 363
+      },
+      "roots": [
+        "agency_topic",
+        "department"
+      ]
+    },
+    "dpa": {
+      "distinctTokens": 656,
+      "repositories": {
+        "ORISO-Admin": 2516,
+        "ORISO-AgencyService": 48,
+        "ORISO-ConsultingTypeService": 38,
+        "ORISO-Docs": 284,
+        "ORISO-Frontend": 431,
+        "ORISO-TenantService": 1787,
+        "ORISO-UserService": 1839
+      },
+      "roots": [
+        "dpa",
+        "avv"
+      ]
+    },
+    "enquiry": {
+      "distinctTokens": 1915,
+      "repositories": {
+        "ORISO-Admin": 1330,
+        "ORISO-AgencyService": 1007,
+        "ORISO-ConsultingTypeService": 336,
+        "ORISO-Database": 7,
+        "ORISO-Docs": 403,
+        "ORISO-Frontend": 4426,
+        "ORISO-TenantService": 1094,
+        "ORISO-UserService": 9185
+      },
+      "roots": [
+        "enquiry",
+        "inquiry",
+        "request"
+      ]
+    },
+    "group": {
+      "distinctTokens": 1485,
+      "repositories": {
+        "ORISO-Admin": 592,
+        "ORISO-AgencyService": 326,
+        "ORISO-ConsultingTypeService": 523,
+        "ORISO-Database": 18,
+        "ORISO-Docs": 292,
+        "ORISO-Frontend": 6704,
+        "ORISO-TenantService": 595,
+        "ORISO-UserService": 4621
+      },
+      "roots": [
+        "group",
+        "series",
+        "occurrence",
+        "participant"
+      ]
+    },
+    "handover": {
+      "distinctTokens": 641,
+      "repositories": {
+        "ORISO-Admin": 916,
+        "ORISO-AgencyService": 79,
+        "ORISO-ConsultingTypeService": 14,
+        "ORISO-Database": 21,
+        "ORISO-Docs": 277,
+        "ORISO-Frontend": 2316,
+        "ORISO-TenantService": 313,
+        "ORISO-UserService": 2538
+      },
+      "roots": [
+        "case",
+        "handover",
+        "reassign"
+      ]
+    },
+    "help-seeker": {
+      "distinctTokens": 3848,
+      "repositories": {
+        "ORISO-Admin": 7941,
+        "ORISO-AgencyService": 1565,
+        "ORISO-ConsultingTypeService": 381,
+        "ORISO-Database": 270,
+        "ORISO-Docs": 2145,
+        "ORISO-Frontend": 12751,
+        "ORISO-TenantService": 1298,
+        "ORISO-UserService": 38473
+      },
+      "roots": [
+        "user",
+        "asker",
+        "client",
+        "help_seeker"
+      ]
+    },
+    "illegal-technical-exception": {
+      "distinctTokens": 15,
+      "repositories": {
+        "ORISO-AgencyService": 51,
+        "ORISO-ConsultingTypeService": 21,
+        "ORISO-Docs": 7,
+        "ORISO-Frontend": 1,
+        "ORISO-TenantService": 70,
+        "ORISO-UserService": 601
+      },
+      "roots": [
+        "illegal"
+      ]
+    },
+    "legal-access-guard": {
+      "distinctTokens": 4,
+      "repositories": {
+        "ORISO-AgencyService": 3,
+        "ORISO-Frontend": 4,
+        "ORISO-TenantService": 2,
+        "ORISO-UserService": 2
+      },
+      "roots": [
+        "legal_authority",
+        "legal_guard",
+        "legal_access"
+      ]
+    },
+    "legal-draft": {
+      "distinctTokens": 1370,
+      "repositories": {
+        "ORISO-Admin": 5467,
+        "ORISO-AgencyService": 1395,
+        "ORISO-ConsultingTypeService": 69,
+        "ORISO-Database": 5,
+        "ORISO-Docs": 228,
+        "ORISO-Frontend": 1528,
+        "ORISO-TenantService": 1787,
+        "ORISO-UserService": 3920
+      },
+      "roots": [
+        "draft",
+        "template",
+        "proposal"
+      ]
+    },
+    "legal-framework": {
+      "distinctTokens": 117,
+      "repositories": {
+        "ORISO-Admin": 514,
+        "ORISO-Docs": 107,
+        "ORISO-Frontend": 34,
+        "ORISO-TenantService": 312,
+        "ORISO-UserService": 5
+      },
+      "roots": [
+        "legal_framework",
+        "gdpr",
+        "dpia",
+        "dsfa"
+      ]
+    },
+    "legal-link-render-token": {
+      "distinctTokens": 45,
+      "repositories": {
+        "ORISO-Admin": 117,
+        "ORISO-AgencyService": 70,
+        "ORISO-Docs": 28,
+        "ORISO-Frontend": 616,
+        "ORISO-TenantService": 11
+      },
+      "roots": [
+        "legal_link",
+        "legal_renderer",
+        "legal_content_renderer",
+        "legal_token"
+      ]
+    },
+    "legal-name-form": {
+      "distinctTokens": 38,
+      "repositories": {
+        "ORISO-Admin": 92,
+        "ORISO-AgencyService": 41,
+        "ORISO-Frontend": 10,
+        "ORISO-TenantService": 119,
+        "ORISO-UserService": 33
+      },
+      "roots": [
+        "legal_name",
+        "legal_form"
+      ]
+    },
+    "legal-notice": {
+      "distinctTokens": 113,
+      "repositories": {
+        "ORISO-Admin": 792,
+        "ORISO-AgencyService": 496,
+        "ORISO-ConsultingTypeService": 8,
+        "ORISO-Database": 1,
+        "ORISO-Docs": 49,
+        "ORISO-Frontend": 345,
+        "ORISO-TenantService": 253,
+        "ORISO-UserService": 151
+      },
+      "roots": [
+        "imprint",
+        "impressum",
+        "legal_notice"
+      ]
+    },
+    "legal-resolution": {
+      "distinctTokens": 45,
+      "repositories": {
+        "ORISO-AgencyService": 94,
+        "ORISO-Docs": 31,
+        "ORISO-Frontend": 163,
+        "ORISO-TenantService": 1,
+        "ORISO-UserService": 7
+      },
+      "roots": [
+        "legal_resolution",
+        "legal_resolve",
+        "department_legal"
+      ]
+    },
+    "legal-text": {
+      "distinctTokens": 205,
+      "repositories": {
+        "ORISO-Admin": 514,
+        "ORISO-AgencyService": 1098,
+        "ORISO-ConsultingTypeService": 26,
+        "ORISO-Docs": 120,
+        "ORISO-Frontend": 179,
+        "ORISO-TenantService": 168,
+        "ORISO-UserService": 22
+      },
+      "roots": [
+        "legal_text",
+        "legal_content"
+      ]
+    },
+    "legal-version": {
+      "distinctTokens": 513,
+      "repositories": {
+        "ORISO-Admin": 1615,
+        "ORISO-AgencyService": 905,
+        "ORISO-ConsultingTypeService": 57,
+        "ORISO-Database": 4,
+        "ORISO-Docs": 153,
+        "ORISO-Frontend": 719,
+        "ORISO-TenantService": 1218,
+        "ORISO-UserService": 648
+      },
+      "roots": [
+        "version",
+        "publication"
+      ]
+    },
+    "privacy": {
+      "distinctTokens": 415,
+      "repositories": {
+        "ORISO-Admin": 1064,
+        "ORISO-AgencyService": 1508,
+        "ORISO-ConsultingTypeService": 21,
+        "ORISO-Database": 8,
+        "ORISO-Docs": 76,
+        "ORISO-Frontend": 739,
+        "ORISO-TenantService": 673,
+        "ORISO-UserService": 386
+      },
+      "roots": [
+        "dpp",
+        "privacy",
+        "data_protection"
+      ]
+    },
+    "roles": {
+      "distinctTokens": 3680,
+      "repositories": {
+        "ORISO-Admin": 11154,
+        "ORISO-AgencyService": 3019,
+        "ORISO-ConsultingTypeService": 518,
+        "ORISO-Database": 31,
+        "ORISO-Docs": 1203,
+        "ORISO-Frontend": 5899,
+        "ORISO-TenantService": 3229,
+        "ORISO-UserService": 17299
+      },
+      "roots": [
+        "role",
+        "admin",
+        "supervis"
+      ]
+    },
+    "session": {
+      "distinctTokens": 2545,
+      "repositories": {
+        "ORISO-Admin": 384,
+        "ORISO-AgencyService": 39,
+        "ORISO-ConsultingTypeService": 103,
+        "ORISO-Database": 44,
+        "ORISO-Docs": 726,
+        "ORISO-Frontend": 10227,
+        "ORISO-TenantService": 49,
+        "ORISO-UserService": 14749
+      },
+      "roots": [
+        "session"
+      ]
+    },
+    "technical-provider": {
+      "distinctTokens": 1309,
+      "repositories": {
+        "ORISO-Admin": 2010,
+        "ORISO-AgencyService": 942,
+        "ORISO-ConsultingTypeService": 487,
+        "ORISO-Database": 5,
+        "ORISO-Docs": 459,
+        "ORISO-Frontend": 6117,
+        "ORISO-TenantService": 767,
+        "ORISO-UserService": 5479
+      },
+      "roots": [
+        "provider",
+        "context",
+        "filter"
+      ]
+    },
+    "tenant": {
+      "distinctTokens": 3419,
+      "repositories": {
+        "ORISO-Admin": 8555,
+        "ORISO-AgencyService": 17226,
+        "ORISO-ConsultingTypeService": 979,
+        "ORISO-Database": 28,
+        "ORISO-Docs": 1521,
+        "ORISO-Frontend": 1847,
+        "ORISO-TenantService": 10445,
+        "ORISO-UserService": 12977
+      },
+      "roots": [
+        "tenant"
+      ]
+    },
+    "terms-of-use": {
+      "distinctTokens": 20,
+      "repositories": {
+        "ORISO-Admin": 64,
+        "ORISO-AgencyService": 5,
+        "ORISO-ConsultingTypeService": 4,
+        "ORISO-Database": 2,
+        "ORISO-Docs": 1,
+        "ORISO-Frontend": 42,
+        "ORISO-TenantService": 58,
+        "ORISO-UserService": 71
+      },
+      "roots": [
+        "terms_and_conditions"
+      ]
+    },
+    "topic": {
+      "distinctTokens": 1464,
+      "repositories": {
+        "ORISO-Admin": 2591,
+        "ORISO-AgencyService": 1830,
+        "ORISO-ConsultingTypeService": 1157,
+        "ORISO-Database": 36,
+        "ORISO-Docs": 462,
+        "ORISO-Frontend": 2888,
+        "ORISO-TenantService": 157,
+        "ORISO-UserService": 3149
+      },
+      "roots": [
+        "topic"
+      ]
+    },
+    "unqualified-legal": {
+      "distinctTokens": 747,
+      "repositories": {
+        "ORISO-Admin": 3890,
+        "ORISO-AgencyService": 2097,
+        "ORISO-ConsultingTypeService": 51,
+        "ORISO-Docs": 395,
+        "ORISO-Frontend": 1610,
+        "ORISO-TenantService": 1414,
+        "ORISO-UserService": 803
+      },
+      "roots": [
+        "legal"
+      ]
+    }
+  },
+  "files": 6759,
+  "lines": 1052106,
+  "occurrences": 450720,
+  "occurrencesHash": "b8296b4c4f10cfaf099f4083ac31d89a850c1fc931e389470eb32f6273ea2a1f",
+  "repositories": {
+    "ORISO-Admin": {
+      "files": 1443,
+      "lines": 177067,
+      "occurrences": 68443
+    },
+    "ORISO-AgencyService": {
+      "files": 492,
+      "lines": 67734,
+      "occurrences": 79261
+    },
+    "ORISO-ConsultingTypeService": {
+      "files": 238,
+      "lines": 19940,
+      "occurrences": 6838
+    },
+    "ORISO-Database": {
+      "files": 4,
+      "lines": 1496,
+      "occurrences": 708
+    },
+    "ORISO-Docs": {
+      "files": 33,
+      "lines": 22943,
+      "occurrences": 12680
+    },
+    "ORISO-Frontend": {
+      "files": 2013,
+      "lines": 400524,
+      "occurrences": 84364
+    },
+    "ORISO-TenantService": {
+      "files": 427,
+      "lines": 53072,
+      "occurrences": 29083
+    },
+    "ORISO-UserService": {
+      "files": 2109,
+      "lines": 309330,
+      "occurrences": 169343
+    }
+  },
+  "repositoryScopes": {
+    "ORISO-Database": {
+      "directories": [
+        "mariadb/agencyservice/",
+        "mariadb/tenantservice/",
+        "mariadb/consultingtypeservice/",
+        "mariadb/userservice/"
+      ],
+      "exclude": [],
+      "extensions": [
+        ".sql"
+      ]
+    },
+    "ORISO-Docs": {
+      "directories": [
+        "tools/understand-anything/enrichments/",
+        "tools/understand-anything/platform/narrative/"
+      ],
+      "exclude": [],
+      "extensions": [
+        ".json"
+      ]
+    }
+  },
+  "reviewedFindings": [
+    {
+      "id": "finding-01",
+      "matchedOccurrences": 1,
+      "state": "matched-reviewed-occurrence"
+    },
+    {
+      "id": "finding-02",
+      "matchedOccurrences": 1,
+      "state": "matched-reviewed-occurrence"
+    },
+    {
+      "id": "finding-03",
+      "matchedOccurrences": 1,
+      "state": "matched-reviewed-occurrence"
+    },
+    {
+      "id": "finding-04",
+      "matchedOccurrences": 1,
+      "state": "matched-reviewed-occurrence"
+    },
+    {
+      "id": "finding-05",
+      "matchedOccurrences": 1,
+      "state": "matched-reviewed-occurrence"
+    },
+    {
+      "id": "finding-06",
+      "matchedOccurrences": 1,
+      "state": "matched-reviewed-occurrence"
+    },
+    {
+      "id": "finding-07",
+      "matchedOccurrences": 1,
+      "state": "matched-reviewed-occurrence"
+    },
+    {
+      "id": "finding-08",
+      "matchedOccurrences": 0,
+      "state": "reviewed-context-reference-no-family-token-on-anchor-line"
+    },
+    {
+      "id": "finding-09",
+      "matchedOccurrences": 0,
+      "state": "reviewed-context-reference-no-family-token-on-anchor-line"
+    },
+    {
+      "id": "finding-10",
+      "matchedOccurrences": 0,
+      "state": "reviewed-context-reference-no-family-token-on-anchor-line"
+    },
+    {
+      "id": "finding-11",
+      "matchedOccurrences": 1,
+      "state": "matched-reviewed-occurrence"
+    },
+    {
+      "id": "finding-12",
+      "matchedOccurrences": 1,
+      "state": "matched-reviewed-occurrence"
+    },
+    {
+      "id": "finding-13",
+      "matchedOccurrences": 1,
+      "state": "matched-reviewed-occurrence"
+    },
+    {
+      "id": "finding-14",
+      "matchedOccurrences": 0,
+      "state": "reviewed-context-reference-no-family-token-on-anchor-line"
+    },
+    {
+      "id": "finding-15",
+      "matchedOccurrences": 1,
+      "state": "matched-reviewed-occurrence"
+    },
+    {
+      "id": "finding-16",
+      "matchedOccurrences": 1,
+      "state": "matched-reviewed-occurrence"
+    },
+    {
+      "id": "finding-17",
+      "matchedOccurrences": 1,
+      "state": "matched-reviewed-occurrence"
+    },
+    {
+      "id": "finding-18",
+      "matchedOccurrences": 1,
+      "state": "matched-reviewed-occurrence"
+    }
+  ],
+  "schemaVersion": 1,
+  "scope": {
+    "directories": [
+      "src/",
+      "api/",
+      "services/",
+      "tests/",
+      "contracts/"
+    ],
+    "exclude": [],
+    "extensions": [
+      ".java",
+      ".ts",
+      ".tsx",
+      ".js",
+      ".jsx",
+      ".json",
+      ".yml",
+      ".yaml",
+      ".xml",
+      ".sql"
+    ]
+  },
+  "sourceVector": {
+    "ORISO-Admin": "04f5c5d567509ae2305728128e5ad28fe3cd477c",
+    "ORISO-AgencyService": "549efae58e1a38530ed23c26f0b8a0bb48ca6012",
+    "ORISO-ConsultingTypeService": "e7fb7cbc679e4c9390f038d3326fe266c9198356",
+    "ORISO-Database": "c9630a93f84f1d45853ba54b657ebd3bc0ff8acc",
+    "ORISO-Docs": "7b544fbb0faca5ec941db4369855b4bcfa28207c",
+    "ORISO-Frontend": "05ac6cde4ac61d83e7b99a450f41eb2bf885fd5f",
+    "ORISO-TenantService": "f812000dd830eaa88704b529e30b7563bc6bada0",
+    "ORISO-UserService": "d8283fd0af4c9c5913fafd9526a6557ab96335ff"
+  }
+}
