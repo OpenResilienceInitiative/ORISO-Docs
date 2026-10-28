@@ -73,12 +73,34 @@ Command body4 and authenticated receipt11 keep their existing byte domains.
 All new lifecycle creations pin birth once in original_native_json.
 Never backfill a missing birth or silently adopt a conflicting committed account.
 Combined Administrator removal preserves all Consultant data and native identity.
-Pure Administrator deletion proves no Consultant identity/data is attached.
+Another authorised Administrator performs Administrator removal; no self-removal.
+Consultant-only removal preserves Administrator/native identity and administrative data.
+Original Consultant retention/erasure continues after its identity is removed.
+Pure Administrator deletion otherwise proves no Consultant identity/data is attached.
+Retained Consultant data is allowed only through its authenticated prior removal receipt.
+Subsequent Administrator deletion remains an independently authorised command.
+Scheduled cleanup accepts Administrator absence only through that exact DELETED receipt.
+No arbitrary soft-delete/absence inference, native Administrator cleanup or fake DELETED.
 No remote call runs inside the owning SQL transaction.
 Unsigned403/409 and timeouts preserve UNKNOWN and the original action.
 Only a strict matching authenticated terminal receipt allows terminal headers.
 Current source/target grant withdrawal remains effective during replay.
+Own Consultant role changes may need a fresh same-human token for exact receipt replay.
+Unknown removal retains its original method, target, force option, UUID and owner.
+It never changes to a keyless legacy request after a model change.
 ```
+
+Both removal confirmations explain which other account remains and that its deletion must be arranged separately, using the existing dialog and Storybook design. Administrator self-removal is visibly unavailable. Only active identities contribute to the remaining-account notice; existing retention requests are preserved.
+
+**For developers — current-user command availability is metadata, not permission:**
+```text
+GET /users/data: scopedAccountCommands=false only after validated LEGACY startup;
+true only after full installed-consumer/readiness proof; null/absent means unavailable.
+Unknown availability disables destructive confirmation; it never selects legacy transport.
+Known combined identity removal stays closed on the legacy path before generic effects.
+```
+
+Combined Tenant Administrator+Consultant tenant reassignment is explicitly deferred to [UserService1480](https://github.com/OpenResilienceInitiative/ORISO-UserService/issues/1480). Pure Tenant Administrator reassignment remains in scope. Neither native reassignment alone nor these decisions establish a complete counselling-data migration. The rules in this section remain acceptance requirements, not a claim that current UserService scheduled/sequential integration or full readiness is complete.
 
 OTP keeps the accepted vendored SPI. Its exact actor and permitted-target checks need separate HTTP proof; a native delete-credential test does not establish OTP setup, verification, email behavior or Magic Link session exchange.
 
