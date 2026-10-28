@@ -9,8 +9,10 @@ The selected target has five automatic actors. Existing operation purposes remai
 **For developers — shared naming, capability unions and staged receiver binding:**
 ```text
 SETUP / backend-setup
-  CONFIG_WIZARD, INVITE_RESERVATIONS, CONSULTANT_IMPORT
-  config-wizard, invitation-reservations, consultant-import
+  CONFIG_WIZARD, INVITE_RESERVATIONS, CONSULTANT_IMPORT, SMTP_SYNC
+  config-wizard, invitation-reservations, consultant-import, smtp-sync
+  audiences: tenantservice, agencyservice, consultingtypeservice, userservice,
+             oriso-task-commands
 ACCOUNT_CREATE / backend-account-create
   ACCOUNT_PROVISIONING
   account-provisioning, account-read
@@ -18,8 +20,9 @@ ACCOUNT_ADMIN / backend-account-admin
   ACCOUNT_MAINTENANCE, OTP, SESSION_EXCHANGE
   account-maintenance, account-read, otp-config-admin, session-exchange
 MAIL / backend-mail
-  SMTP_SYNC, SYSTEM_EMAIL_DELIVERY, NOTIFICATION_DISPATCH
-  smtp-sync, system-email-delivery, notification-dispatch, notifications-technical
+  SYSTEM_EMAIL_DELIVERY, NOTIFICATION_DISPATCH
+  system-email-delivery, notification-dispatch, notifications-technical
+  audiences: tenantservice, agencyservice, consultingtypeservice, userservice
 RUNTIME / backend-runtime
   RUNTIME_POLICY, MATRIX_AGENCY, APPOINTMENT_SYNC, APPOINTMENT_CLEANUP
   runtime-policy, matrix-agency, matrix-agency-provision,
@@ -46,9 +49,9 @@ All38 original story IDs and their historical text remain in Parent367. C change
 | Story | Accepted C credential boundary | Retained requirements and current proof |
 | --- | --- | --- |
 | US17 | ACCOUNT_ADMIN combines OTP with authorized maintenance/deletion and session compatibility. An OTP-only credential with no account-administration power is no longer the selected design. | Other actors cannot acquire these powers outside their declared responsibilities. Permitted human/account/target checks remain required. Actual OTP purpose/target enforcement and native maintenance limits are OPEN. |
-| US21 | MAIL combines preference reads, delivery, notifications and bounded SMTP control. Its credential therefore has sending rights; it is not a preference-only credential. | Minimal preference data, tenant/recipient/target checks and separate operation authorities remain required. A read operation cannot be relabelled a send authorization. Coordinated receiver-purpose and caller proof are OPEN. |
+| US21 | MAIL combines preference reads, delivery and notifications. Its credential therefore has sending rights; it is not a preference-only credential. | Minimal preference data, tenant/recipient/target checks and separate operation authorities remain required. A read operation cannot be relabelled a send authorization. Final coordinated application proof remains required. |
 
-The remaining tenant, target, originating-human, invitation, reservation, account-ownership and workflow/recovery guarantees are retained. These amendments do not report any unproved operation boundary as delivered. Under US22, SMTP remains a separate control operation, but its bearer-plus-common-key trust is unresolved: code cohosted with MAIL credentials and the shared context key can authorize the bounded command. Common-process trust requires explicit technical acceptance. C retains five actors and one context key; no additional credential or account provider is implied.
+The remaining tenant, target, originating-human, invitation, reservation, account-ownership and workflow/recovery guarantees are retained. These amendments do not report any unproved operation boundary as delivered. Under US22, SETUP owns SMTP configuration and MAIL owns delivery. MAIL is denied the SMTP command even with a valid common-key proof. UserService holds all five credentials and the common key, so this is credential separation, not process isolation. C retains five actors and one context key.
 
 ## Human role migration
 
@@ -58,9 +61,46 @@ Native policy enablement follows the migration, never happens implicitly inside 
 
 ## Account, OTP and creation recovery
 
-Native ordinary-role membership is the intended replacement for account command role mapping. The old account-provider endpoints below are porting history, not C APIs. Durable creation ownership, journal/execution fencing, disabled-until-valid-commit behavior, mutually exclusive commit/compensation and same-attempt retry guarantees remain required.
+Native groups constrain ordinary and protected account kinds. The composed lifecycle receiving layer binds each complete command to its original creation/adoption, exact native incarnation, tenant, current originating authority and authenticated lineage. The old option D wire endpoints below remain porting history. Durable ownership, disabled-until-valid-commit behavior, mutually exclusive commit/compensation and same-attempt retry guarantees remain required.
 
-The native activation/recovery algorithm and protected-admin invitation route are unresolved. A native user lookup does not equal a recovery tombstone, and an unconditional enable retry can undo an independent disable. Until those contracts are proved, the production adapter is not replaced. Pending cleanup is owned by account administration after ordinary commit; protected creation requires its separately recorded owner/flow.
+The composed provider implements ordinary and protected creation, recovery and bounded maintenance. [The native receiving proof](https://github.com/OpenResilienceInitiative/ORISO-Keycloak/actions/runs/40641486004) includes profile changes, protected-to-ordinary Administrator removal that preserves the Consultant identity, pure Administrator deletion, exact replay, recreated-UUID refusals and stale-source refusals. It does not by itself prove the UserService SQL callbacks or public application journeys. Final production wiring, full HTTP/JPA startup and browser acceptance remain separate requirements.
+
+**For developers — retained account and retry invariants:**
+```text
+HUMAN_ADMIN binds the current native human and the original frozen selector.
+SELF remains SELF/null for ordinary self OTP operations.
+Command body4 and authenticated receipt11 keep their existing byte domains.
+All new lifecycle creations pin birth once in original_native_json.
+Never backfill a missing birth or silently adopt a conflicting committed account.
+Combined Administrator removal preserves all Consultant data and native identity.
+Another authorised Administrator performs Administrator removal; no self-removal.
+Consultant-only removal preserves Administrator/native identity and administrative data.
+Original Consultant retention/erasure continues after its identity is removed.
+Pure Administrator deletion otherwise proves no Consultant identity/data is attached.
+Retained Consultant data is allowed only through its authenticated prior removal receipt.
+Subsequent Administrator deletion remains an independently authorised command.
+Scheduled cleanup accepts Administrator absence only through that exact DELETED receipt.
+No arbitrary soft-delete/absence inference, native Administrator cleanup or fake DELETED.
+No remote call runs inside the owning SQL transaction.
+Unsigned403/409 and timeouts preserve UNKNOWN and the original action.
+Only a strict matching authenticated terminal receipt allows terminal headers.
+Current source/target grant withdrawal remains effective during replay.
+Own Consultant role changes may need a fresh same-human token for exact receipt replay.
+Unknown removal retains its original method, target, force option, UUID and owner.
+It never changes to a keyless legacy request after a model change.
+```
+
+Both removal confirmations explain which other account remains and that its deletion must be arranged separately, using the existing dialog and Storybook design. Administrator self-removal is visibly unavailable. Only active identities contribute to the remaining-account notice; existing retention requests are preserved.
+
+**For developers — current-user command availability is metadata, not permission:**
+```text
+GET /users/data: scopedAccountCommands=false only after validated LEGACY startup;
+true only after full installed-consumer/readiness proof; null/absent means unavailable.
+Unknown availability disables destructive confirmation; it never selects legacy transport.
+Known combined identity removal stays closed on the legacy path before generic effects.
+```
+
+Combined Tenant Administrator+Consultant tenant reassignment is explicitly deferred to [UserService1480](https://github.com/OpenResilienceInitiative/ORISO-UserService/issues/1480). Pure Tenant Administrator reassignment remains in scope. Neither native reassignment alone nor these decisions establish a complete counselling-data migration. The rules in this section remain acceptance requirements, not a claim that current UserService scheduled/sequential integration or full readiness is complete.
 
 OTP keeps the accepted vendored SPI. Its exact actor and permitted-target checks need separate HTTP proof; a native delete-credential test does not establish OTP setup, verification, email behavior or Magic Link session exchange.
 
@@ -68,7 +108,7 @@ OTP keeps the accepted vendored SPI. Its exact actor and permitted-target checks
 
 [Keycloak57](https://github.com/OpenResilienceInitiative/ORISO-Keycloak/issues/57) owns the failed native field limit and receiving-boundary decision. [Helm430](https://github.com/OpenResilienceInitiative/ORISO-Helm/pull/430) records the real-token result. Ordinary grouped mail never receives native realm management.
 
-The standalone SMTP-only alternative is an unactivated proposal, not a restored account provider. Its schema, revision/idempotence and purpose-proof tests must be recorded before packaging or cutover. The current isolated SMTP control credential remains isolated meanwhile; any exception to five actors must be explicit and technically accepted.
+The composed image includes the bounded SMTP module. SETUP must present its exact installed native binding, complete role/audience sets and the existing proof for the SMTP payload and revision. MAIL cannot update SMTP or acknowledge configuration, including with knowledge of the common key. The actual delivery read, SMTP update and acknowledgement use the same saved CTS revision. [The isolated Mail and activation proof](https://github.com/OpenResilienceInitiative/ORISO-Helm/actions/runs/40640537535) records its exact source tuple. Final application proof and human technical approval precede cutover; no live credential retirement is implied.
 
 ## Cross-service context and retained acceptance
 
@@ -84,7 +124,11 @@ Fresh install, existing realm, twice reconcile, unknown consumer/reservation
 retirement, real-token matrix and fail-closed startup remain required.
 ```
 
-Every original38 story ID and its history is retained through the existing parent and seven repo packages, with US17/US21 credential-isolation amendments recorded above. Review source/local proof, actual CI, human approval, merge, installed revision, browser journeys and received-mail evidence separately. Unproved receiver-purpose and common-key trust gates stay OPEN. A partial-source PR closes none of the product acceptance gates by implication.
+Every original38 story ID and its history is retained through the existing parent and delivery packages, with US17/US21 credential-isolation amendments recorded above. Review source/local proof, actual CI, human approval, merge, installed revision, browser journeys and received-mail evidence separately. Final common application proof stays OPEN until its exact source passes. A partial-source PR closes none of the product acceptance gates by implication.
+
+## External consumers and retirement
+
+The existing external mail fallback and appointment dependencies remain visible. Their unknown live owner or authentication contract is not permission to invent an actor role, change the caller or retire a credential. Source preparation keeps those unaffected integrations unchanged. Changing an affected caller or retiring its old grant requires the identified owner, actual receiving revision/authentication contract and deployed consumer readback. This blocks only that affected operational change, not independent source work. [Parent367](https://github.com/OpenResilienceInitiative/ORISO-Helm/issues/367) keeps the inventory and unresolved operational acceptance visible.
 
 ## Historical option D wire contract — retained porting input
 

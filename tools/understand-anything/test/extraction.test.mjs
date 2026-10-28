@@ -91,6 +91,29 @@ async function javaGraph(files) {
 }
 const edgesOf = (graph, type) => graph.edges.filter((e) => e.type === type);
 
+test('Java enum constant bodies retain every override and the abstract base without duplicate graph identities', async () => {
+  const graph = await javaGraph({
+    'Scope.java': `package sample;
+enum Scope {
+  AGENCY { boolean permits(String target) { return target.isEmpty(); } },
+  TENANT { boolean permits(String target) { return false; } },
+  PLATFORM { boolean permits(String target) { return true; } };
+  abstract boolean permits(String target);
+}
+enum Other {
+  AGENCY { boolean permits(String target) { return true; } };
+  abstract boolean permits(String target);
+}`,
+  });
+  const methods = graph.nodes.filter((node) => node.type === 'function' && node.id.endsWith('.permits(String)'));
+  assert.equal(methods.length, 6, 'all four Scope declarations and both Other declarations must survive');
+  assert.equal(new Set(methods.map((node) => node.id)).size, 6);
+  assert.equal(new Set(graph.nodes.map((node) => node.id)).size, graph.nodes.length);
+  assert.equal(methods.filter((node) => node.id === 'function:Scope.java:sample.Scope.permits(String)').length, 1);
+  assert.equal(methods.filter((node) => node.id === 'function:Scope.java:sample.Other.permits(String)').length, 1);
+  assert.equal(new Set(methods.map((node) => node.lineRange.join(':'))).size, 6);
+});
+
 test('unique member of a supertype-free Java class is a confirmed call, with and without a field receiver', async () => {
   const graph = await javaGraph({
     'Manager.java': 'class Manager { void accept(String id) {} void run() { accept("id"); } }',

@@ -1,6 +1,6 @@
 # ADR-027 — Scenario C task identities and native permission boundaries
 
-**Status:** Proposed; technical approval and production cutover remain open. **Updated:** 2026-10-14.
+**Status:** Proposed; technical approval and production cutover remain open. **Updated:** 2026-10-28.
 **Accountable delivery owner:** Frank Gerhardt (Storypapst). **Technical reviewers:** Hassan Saeed and Shazia Kausar.
 **Scope:** Keycloak, UserService, TenantService, AgencyService, ConsultingTypeService and Helm.
 **Delivery:** [Helm367](https://github.com/OpenResilienceInitiative/ORISO-Helm/issues/367), [C coordination423](https://github.com/OpenResilienceInitiative/ORISO-Helm/issues/423), [Docs175](https://github.com/OpenResilienceInitiative/ORISO-Docs/issues/175).
@@ -13,10 +13,10 @@ The Config Wizard still runs through an invitation before the invited person's c
 
 | Automatic identity | Responsibilities |
 | --- | --- |
-| Setup | Config Wizard, invitation reservation allocation/cleanup, controlled consultant import |
+| Setup | Config Wizard, invitation reservation allocation/cleanup, controlled consultant import and bounded SMTP configuration |
 | Account creation | Initial ordinary account provisioning and its own unfinished attempts |
 | Account administration | Authorized existing-account maintenance, second-factor administration, explicitly preserved session compatibility |
-| Mail | Delivery, notification dispatch and a proved bounded SMTP control operation |
+| Mail | Delivery, notification dispatch and minimal notification preference reads |
 | Runtime | Policy reads, Matrix operations, appointment synchronization and participant cleanup |
 
 Five credential bindings do not mean five generic permission checks. The operation purposes remain explicit, with the same originating human, tenant, target, invitation and reservation checks. Effective roles, audiences, client, service-account subject and forbidden inherited grants must be checked at each receiver. Identical credentials are valid only for purposes mapped to the same actor; collisions between actors fail startup.
@@ -30,7 +30,7 @@ The selected grouping changes what a credential can do. A purpose claim and an o
 | US17: the second-factor credential has no general account administration power | OTP shares ACCOUNT_ADMIN with permitted maintenance/deletion and session compatibility. The literal OTP-only credential isolation is superseded; it must not be reported as a passed C guarantee. | SETUP, ACCOUNT_CREATE, MAIL and RUNTIME remain denied OTP/account-administration powers outside their declared responsibilities. Permitted account, human and target checks remain required. Exact OTP receiver-purpose/target proof and native maintenance limits are OPEN. |
 | US21: the preference reader receives no sending rights | Preference reads and delivery share MAIL. The MAIL credential intentionally holds both capabilities; the literal read-only credential isolation is superseded. | Preference projections stay minimal, tenant/recipient/target checks remain, and preference-read authority alone is not a delivery authorization. Operation-purpose enforcement and the coordinated MAIL caller/receiver proof are OPEN. |
 
-All38 IDs remain traceable; these two amended clauses do not waive the other security or workflow outcomes. US22's SMTP/delivery separation is also an unresolved production boundary: the proposal denies a bearer-only control request, but a cohosted process holding MAIL credentials and the common context key can authorize bounded SMTP. Explicit common-process trust acceptance, receiver-purpose proof and source-to-live acceptance remain OPEN. The accepted five-actor choice is not being reopened, and no extra actor, signing key or discarded account provider is introduced.
+All38 IDs remain traceable; these two amended clauses do not waive the other security or workflow outcomes. Under US22, SMTP configuration now belongs to SETUP; MAIL cannot configure SMTP, including with a valid common-key proof. This separates the credentials. UserService currently holds all five credentials and the shared context key, so compromise of that process is not isolated by this split. Final coordinated application proof, technical approval and source-to-live acceptance remain separate gates. No sixth actor or second context key is introduced.
 
 ## Native account policy and human groups
 
@@ -65,9 +65,23 @@ Realms/SMTP fine-grained permission resource types:400.
 These passing characterization tests prove a blocking native capability gap.
 ```
 
-A small standalone SMTP-only receiver is being prepared as an unactivated proposal under57/53. It would validate only the bounded SMTP representation, exact mail actor and purpose-bound context; ordinary mail bearer alone would not authorize the control operation. It adds no account provider. Its positive receiving-boundary tests and explicit technical approval are required before production packaging or credential grouping.
+The composed Keycloak source includes the bounded SMTP receiver. It accepts only the installed SETUP client and native service-account subject, their exact current role/audience sets and the existing purpose-bound proof for the complete SMTP payload and revision. MAIL is denied even when its caller knows the common proof key. No routine actor receives native realm management. The delivery path uses the current saved transport revision; a delivery bearer cannot acknowledge or reconfigure that revision.
 
-Keeping the current isolated SMTP control credential is the safe existing state. It is an explicit temporary exception to exactly five actors, not a hidden accepted sixth actor. The team must choose a proved bounded boundary or record an accepted exception before mail cutover.
+The isolated [Mail and activation proof](https://github.com/OpenResilienceInitiative/ORISO-Helm/actions/runs/40640537535) exercises the real User/CTS/Keycloak seam. It is evidence for its recorded source tuple, not approval to cut over production or a substitute for the final application tuple. Old SMTP credentials remain unchanged until a separately authorized deployment and consumer review establishes that retirement is safe.
+
+## Bounded account receiving layer
+
+The composed image includes the lifecycle, OTP and SMTP modules. Native groups constrain account kinds; the lifecycle receiving layer additionally binds the original human or configured import, complete command, account incarnation, tenant and workflow. It supplies the ownership and retry guarantees that native management permission alone cannot express. This remains the selected five-actor design, rather than a return to fourteen credentials.
+
+Administrator removal from an Administrator+Consultant account removes only the Administrator identity and its local administrative relations. Consultant data, native UUID, credentials, personal profile and enabled state must be preserved. Another authorised Administrator must perform Administrator removal; self-removal is forbidden. Conversely, Consultant removal preserves the Administrator identity and its administrative data, native UUID, credentials, personal profile and enabled state. Existing Consultant retention and erasure rules still apply.
+
+Either remaining identity may be removed separately. During Consultant retention, subsequent pure Administrator deletion requires the authenticated original Consultant-removal receipt and the same account incarnation. The retained Consultant data stays under its original deletion process. Scheduled cleanup may accept Administrator absence only through the exact authenticated subsequent Administrator-deletion receipt; it never deletes or deactivates a remaining native Administrator. Other pure Administrator deletion requires proof that no Consultant identity or data belongs to the target. A soft-deleted row alone supplies no authority. Original creation/adoption and authenticated lineage remain pinned across transitions; a recreated UUID is not the same account.
+
+Both confirmation dialogs name the identity being removed, explain which account remains and say that any further deletion must be arranged separately. They reuse the existing dialog design and have Storybook examples for both directions. The remaining-identity projection counts active identities; a previously requested Consultant erasure continues under its retention rules.
+
+Frank explicitly deferred tenant reassignment of combined Tenant Administrator+Consultant accounts on 28 October 2026 to [the decision/design follow-up1480](https://github.com/OpenResilienceInitiative/ORISO-UserService/issues/1480). Combined moves remain refused until that design is accepted. Pure Tenant Administrator reassignment remains in the current scope; this deferral does not claim a counselling-data migration.
+
+An unknown response retains the original action and exact command. Only an authenticated, matching terminal receipt may retire that action. Local SQL changes use the actual owning transaction manager, entity manager and data source, with no remote request inside their transaction. The current source and hosted evidence are recorded by [Parent367](https://github.com/OpenResilienceInitiative/ORISO-Helm/issues/367); final caller, servlet, database and browser acceptance remains required.
 
 ## Origin context and residual trust
 
@@ -79,11 +93,11 @@ The accepted [ADR-013 OTP decision](ADR-013-2fa-via-vendored-otp-config-spi.md) 
 
 ## Activation gates and migration order
 
-1. Accept the native account conditions and resolve SMTP, protected-admin provisioning and native recovery.
+1. Review the composed receiving layer, five actor bindings and complete account caller/recovery behavior on one recorded source tuple.
 2. Establish and migrate exact human groups on a realm copy; verify fresh/existing/twice behavior.
 3. Load and reconcile the native policy with compatible receivers; prove real-token allowed and denied operations.
 4. Wire the five callers only after their contracts are ready; verify actual deployed revisions and every retained user journey.
-5. Retire old grants/secrets only after external consumer and open-reservation proof; keep source, review, merge, deployment, browser and received-mail evidence separate.
+5. Retire old grants/secrets only after external consumer and open-reservation proof. Keep an unidentified external mail/appointment dependency and its existing caller unchanged; an unknown owner blocks its affected change or retirement. Keep source, review, merge, deployment, browser and received-mail evidence separate.
 
 This ADR remains Proposed until Hassan and Shazia record technical approval. Source preparation and a draft PR neither approve the new conditions nor enable production permissions.
 
