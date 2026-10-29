@@ -34,6 +34,9 @@ not its `_artifacts/` subfolder). The series was re-synchronised on 2026-08-17 f
   product owner 2026-10-27 (epic ORISO-Frontend#974): persistent direct links under the
   AgencyInviteLink model, knock-first admission for calls, temporary accounts always with
   username and password, platform-set lifetimes and message retention. Amends ADR-020 §2, §3, §7.
+  Amended 2026-10-28 (ORISO-Docs#231): the permission "Direkteinladung erlauben" replaces the
+  tenant call policy, and an admission holds per conversation. ADR-020 got a matching amendment the
+  same day: knock first, and a call guest joins the call room only (the guest join path lives there).
 
 - `ADR-030-activity-timeline-read-state-filters-and-preview.md` — proposed 2026-09-05
   (ORISO-Frontend#1200), numbered and updated 2026-10-28: bulk read touches activity events only,

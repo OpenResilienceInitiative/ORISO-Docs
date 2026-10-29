@@ -1,5 +1,9 @@
 # ADR-020: Scheduled calls, secure invitations, and a unified contact calendar
 
+> **Amended by ADR-029** (`ADR-029-direct-links-knock-first-admission-and-temporary-accounts.md`, 2026-10-27): §2 admission and one-time-guest identity, §3 step 3, §7.
+>
+> **Amended 2026-10-28** (see [Amendment 2026-10-28](#amendment-2026-10-28--knock-first-and-the-call-guest-join-path) at the end): a valid link no longer enters directly — every link knocks first; the tenant call policy in §2 is replaced by the permission "Direkteinladung erlauben"; a call guest joins the call room only. Not to be confused with **ADR-020 in ORISO-Frontend**, which is about e-mail templates.
+
 - **Status:** Accepted — 2026-08-12
 - **Date:** 2026-08-12
 - **Deciders:** Frank (product) + architecture refinement session
@@ -42,6 +46,8 @@ A one-time guest passes through a modular pre-call identity screen derived from 
 
 All entry and exit events remain visible to participants. There is no per-person waiting-room approval in this first decision: a valid authenticated or one-time identity enters directly.
 
+> **Superseded 2026-10-28:** a valid identity no longer enters directly. Every link knocks first and the counsellor lets each person in (ADR-029 §2 and its amendment). The two tenant policies above are replaced by the permission "Direkteinladung erlauben" (ADR-029 §6 and its amendment). See the amendment at the end of this record.
+
 ### 3. Use one entry composition for QR, copied links, registered users, and guests
 
 An invitation URL or QR code opens a call-entry route that:
@@ -51,6 +57,8 @@ An invitation URL or QR code opens a call-entry route that:
 3. offers the one-time identity flow only when tenant policy permits it;
 4. shows the existing waiting-area countdown when the scheduled start is in the future;
 5. joins the restricted Element Call room when the session is open.
+
+> **Amended 2026-10-28:** step 3 now reads "offers a temporary account (ADR-029 §3) only when the effective permission 'Direkteinladung erlauben' allows it", and a knock step comes before step 5: the person waits until the counsellor lets them in. See the amendment at the end of this record.
 
 The entry UI is a modular overlay or preceding screen, not a second registration implementation.
 
@@ -99,6 +107,8 @@ ORISO supports three persistent link purposes:
 - **Smart Link** — offers conversation or audio/video appointment according to tenant and counsellor settings.
 
 A persistent link never grants direct access to a live room. Direct live-call invitations are created only for a running Call Session and follow the identity-bound, revocable invitation rules above.
+
+> **Amended 2026-10-28:** persistent call links now exist (ADR-029 §1). The sentence "a persistent link never grants direct access to a live room" still holds, but for a new reason: every link knocks first, and only the counsellor's admission grants a seat in the call room. See the amendment at the end of this record.
 
 ### 8. Use versioned call-timing presets
 
@@ -151,3 +161,39 @@ No frontend-only flag may decide access to a call.
 8. Real-browser acceptance on mobile and desktop, including two-party bidirectional audio/video, registered-only denial, permitted one-time guest entry, room isolation, calendar visibility, timeline navigation, reconnect/revoke, and deadline jobs.
 
 Each slice is independently reviewable and follows red-green tests, repository quality gates, contract/integration coverage, Storybook visual review, and Playwright verification. A green UI test or pre-created room is not media proof; call acceptance requires bidirectional remote audio/video.
+
+## Amendment 2026-10-28 — knock first, and the call guest join path
+
+- **Status:** Accepted by the product owner — Frank, 2026-10-28. Technical backend review (Keycloak/Matrix feasibility) open.
+- **Changes:** §2 (admission, tenant policy), §3 step 3 and the step before step 5, §7, implementation slices 2, 3, 6 and 8. The rest of this record is unchanged.
+- **Issues:** [ORISO-Docs#231](https://github.com/OpenResilienceInitiative/ORISO-Docs/issues/231), [ORISO-UserService#1477](https://github.com/OpenResilienceInitiative/ORISO-UserService/issues/1477), [ORISO-Frontend#1794](https://github.com/OpenResilienceInitiative/ORISO-Frontend/issues/1794), [ORISO-Frontend#1387](https://github.com/OpenResilienceInitiative/ORISO-Frontend/issues/1387), epic [ORISO-Frontend#974](https://github.com/OpenResilienceInitiative/ORISO-Frontend/issues/974)
+- **Name clash:** this is the **platform** ADR-020 (calls). ORISO-Frontend has its own ADR-020 about e-mail templates; it is not affected.
+
+### A. Knock first (decided in ADR-029)
+
+§2, §3 and §7 are read with these changes. The decisions themselves live in [ADR-029](ADR-029-direct-links-knock-first-admission-and-temporary-accounts.md) (§2, §3, §6 and its Amendment 2026-10-28); they are only linked here.
+
+- **§2 admission.** "A valid authenticated or one-time identity enters directly" no longer applies. Every person who arrives through a link knocks and waits until the counsellor lets them in; an admission then holds for that conversation.
+- **§2 policy.** `REGISTERED_ONLY` / `REGISTERED_OR_ONE_TIME_GUEST` are replaced by the permission "Direkteinladung erlauben". A "one-time guest" is a temporary account with username and password.
+- **§3.** Step 3 offers a temporary account only when the effective permission allows it. Between steps 4 and 5 the person knocks and waits until admitted; step 5 joins only after admission.
+- **§7.** A persistent link still never grants direct access to a live room — now because the admission, not the link, grants the seat.
+- **Implementation slices.** Slice 2 "one-time identity issuance" means temporary accounts (ADR-029 §3); slice 3 "tenant policy selection" means the permission "Direkteinladung erlauben"; slice 6 "direct entry" means entry after admission; slice 8 "permitted one-time guest entry" means a temporary account entering after admission.
+
+### B. The call guest joins the call room only (decided here)
+
+This record is the one place for this decision; ADR-029 and the issues link here.
+
+1. **Call room only.** A guest who is let into a call is invited into the dedicated call room of that Call Session, and into nothing else. They never become a member of the counsellor's source chat room, the case, or any other room. This extends the rule §2 already set for registered participants to everyone who arrives through a link.
+2. **The admission is the invitation.** Letting the guest in is what creates their call-room membership. The call room's `restricted` join rule cannot admit them by itself, because its allow-list is the source room and the guest is not a member of it. Option A of [ORISO-Frontend#1387](https://github.com/OpenResilienceInitiative/ORISO-Frontend/issues/1387) (lead the guest into the source room first) is therefore ruled out. The backend checks the permission and the admission; hiding a button is not enforcement.
+3. **Rights end with the call.** When the Call Session ends, the guest loses access to the call room and can neither rejoin nor read it afterwards. A temporary account is then deleted on the schedule in ADR-029 §4.
+4. **A separate guest join path.** Today's join path refuses anyone who is not a member of the source room and hands the call-room seat back (raised on [ORISO-Frontend#1794](https://github.com/OpenResilienceInitiative/ORISO-Frontend/issues/1794)). That protection stays for normal participants. Guests get a second, explicit path.
+
+**Proposed mechanism** — as implemented in [ORISO-UserService#1485](https://github.com/OpenResilienceInitiative/ORISO-UserService/pull/1485) ([ORISO-UserService#1477](https://github.com/OpenResilienceInitiative/ORISO-UserService/issues/1477)), pending the backend review. This is option B of ORISO-Frontend#1387:
+
+- On "let in", UserService invites the guest into the restricted call room only, acting as the admitting counsellor (login-as token). No new service account.
+- Each admission is recorded per call (table `matrix_call_guest`).
+- The call policy and the call-state read treat an unrevoked guest of the running call as authorised without source-room membership. The check is bound to that call, not only to the source room.
+- At call end UserService removes the guest from the call room and clears their power-level entry. A failed removal is retried by a sweep.
+- Guests do not count toward the call's start or end.
+
+**Why here and not in an ADR-018.** Platform ADR-018 is about the Erstantwort and has nothing to do with calls. ORISO-Frontend's ADR-018 is about embedding Element Call as a widget; it says the host joins the call room before mounting the widget, but not who may become a member. Room membership for calls is a Call Session rule, and that is this record.
