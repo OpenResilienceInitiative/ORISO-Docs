@@ -152,3 +152,39 @@ muss direkte Träger- und Beratungsstellenadministratoren, Berater und Ratsuchen
 einbeziehen; der Fernzugriff eines Plattformadministrators allein reicht nicht aus.
 Die Issues enthalten die aktuellen Umsetzungsnachweise, nicht dieser datierte
 Richtlinieneintrag.
+
+---
+
+## Nachtrag — 2026-10-28: Fortsetzung bei wiederkehrenden Gruppenterminen
+
+**Entscheidungsgrundlage:** Frank hat am 28. Oktober 2026 beim Auftrag, das
+[AVV-Verlängerungs-Issue 294](https://github.com/OpenResilienceInitiative/ORISO-TenantService/issues/294)
+fertigzustellen, die offene Regel für Folgetermine ausdrücklich bestätigt. Er hat
+auch den notwendigen Chatserver-Baustein in ORISO-Helm freigegeben. Damit ist die
+im Nachtrag vom 6. Oktober noch offene Einordnung entschieden. Der frühere
+beschlossene Text bleibt als historischer Stand erhalten.
+
+1. **Bisherige Teilnehmer dürfen die Beratung bei späteren Terminen derselben
+   laufenden Gruppe fortsetzen.** Eine tatsächliche frühere Teilnahme begründet
+   die begonnene Beratung. Ein Folgetermin macht daraus keinen neuen
+   Beratungsbeginn. Die normalen Regeln zu Mitgliedschaft, Einladung, Träger und
+   Sperren gelten weiter.
+2. **Für neue Teilnehmer gilt die aktuelle AVV-Regel bei jedem Termin.** Nach
+   Ablauf der Verlängerungsfrist dürfen sie keine Gruppenberatung beginnen, bis
+   die verantwortliche Organisation die maßgebliche AVV bestätigt hat.
+   Registrierung, Einladung und Zuordnung allein belegen keine Teilnahme.
+   Die Teilnahme an einer anderen Gruppe begründet diese Ausnahme nicht.
+3. **Anwendung und normale Matrix-Clients müssen dieselbe Regel durchsetzen.**
+   Vertrauenswürdige Nachweise müssen eine tatsächlich wirksam gewordene
+   Teilnahme in einem Raum derselben Gruppe belegen. Beim Wechsel zum Raum eines
+   neuen Termins muss dessen Gruppenzuordnung erhalten bleiben. Fehlende frühere
+   Nachweise dürfen nicht durch einen geratenen Raum-Alias oder die Annahme
+   ersetzt werden, dass ein zugeordneter Nutzer schon teilgenommen habe.
+
+Diese Entscheidung belegt keine fertige Umsetzung oder Bereitstellung. Bereits
+verlorene Raumzuordnungen, die Durchsetzung am Chatserver und die Dev-Abnahme mit
+direkten Rollen bleiben Prüfaufgaben in
+[Gruppen-Issue 1323](https://github.com/OpenResilienceInitiative/ORISO-UserService/issues/1323).
+Eine nicht verfügbare oder nicht eindeutige Prüfung muss von einer bestätigten
+rechtlichen Ablehnung unterscheidbar bleiben und darf keinen geschützten neuen
+Zugang gewähren.

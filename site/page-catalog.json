@@ -1321,13 +1321,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
-          "sourceHash": "1ca3a10a5e0e35cdfa9811a962e205894dc4037c42c932b133bc31ea2ca22643",
-          "reviewedAt": "2026-10-06"
+          "sourceHash": "abbedd2d5f9703dd9ba8ab57ba5ba08a7ffd26f6aa86bde0ff4cc0fb60cb2cb9",
+          "reviewedAt": "2026-10-28"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
-          "sourceHash": "1ca3a10a5e0e35cdfa9811a962e205894dc4037c42c932b133bc31ea2ca22643",
-          "reviewedAt": "2026-10-06"
+          "sourceHash": "abbedd2d5f9703dd9ba8ab57ba5ba08a7ffd26f6aa86bde0ff4cc0fb60cb2cb9",
+          "reviewedAt": "2026-10-28"
         }
       }
     },
