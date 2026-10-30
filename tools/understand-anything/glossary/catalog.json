@@ -929,12 +929,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
-          "sourceRevision": "7b544fbb0faca5ec941db4369855b4bcfa28207c",
-          "sourceHash": "e17116ebfdd73c6a16d2c267c1c999e6aee91fd12c5a411b9a8eacd9def3da0b",
+          "sourceRevision": "34d5f31d23a6d808b32c5b963a851f39e571079b",
+          "sourceHash": "40fb8b0b0be61ba86b01618cc17481b0b472abde26f4bade50da7a3ea9e5b772",
           "title": "ADR-022: Two consent gates, consent state as a session pointer, and re-consent on change",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-06"
+          "reviewedAt": "2026-10-28"
         },
         {
           "repository": "ORISO-Docs",
@@ -1620,12 +1620,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
-          "sourceRevision": "7b544fbb0faca5ec941db4369855b4bcfa28207c",
-          "sourceHash": "e17116ebfdd73c6a16d2c267c1c999e6aee91fd12c5a411b9a8eacd9def3da0b",
+          "sourceRevision": "34d5f31d23a6d808b32c5b963a851f39e571079b",
+          "sourceHash": "40fb8b0b0be61ba86b01618cc17481b0b472abde26f4bade50da7a3ea9e5b772",
           "title": "ADR-022: Two consent gates, consent state as a session pointer, and re-consent on change",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-06"
+          "reviewedAt": "2026-10-28"
         },
         {
           "repository": "ORISO-Docs",
@@ -1650,6 +1650,104 @@
         "de": "Keine Registrierung, kein doppeltes Konto und keine Zweitmeinung. ADR-022, Entscheidung 6 erlaubt mehrere Beratungsstellen auf einem Konto.",
         "en": "Not registration, a duplicate account or a second opinion; ADR-022 decision 6."
       }
+    },
+    {
+      "id": "further-counselling-recommendation",
+      "category": "counselling-and-conversations",
+      "de": {
+        "term": "Beratungsempfehlung",
+        "definition": "Eine Beraterin oder ein Berater schlägt einer ratsuchenden Person im Gespräch eine Folgeanfrage zu einem bestimmten Thema vor.",
+        "example": "Nach einem Umzug empfiehlt die Beraterin eine Schuldnerberatung; die Person findet über die Karte im Chat eine Stelle in ihrer Nähe."
+      },
+      "en": {
+        "term": "Counselling recommendation",
+        "definition": "A counsellor suggests an additional enquiry on a specific topic to a help-seeker from within the conversation.",
+        "example": "After a move, the counsellor recommends debt counselling; the person uses the card in the chat to find a centre nearby."
+      },
+      "aliases": {
+        "de": [],
+        "en": []
+      },
+      "deprecatedTerms": [],
+      "related": [
+        "additional-enquiry"
+      ],
+      "editorialState": "source-backed",
+      "context": {
+        "de": "Kontextabgrenzung noch nicht als eigener DDD-Kontext bestätigt.",
+        "en": "Context boundary has not been confirmed as a separate DDD context."
+      },
+      "responsibility": {
+        "de": "Fachliche Zuständigkeit noch nicht gesondert bestätigt.",
+        "en": "Business responsibility has not been separately confirmed."
+      },
+      "invariant": {
+        "de": "Keine zusätzliche fachliche Invariante bestätigt.",
+        "en": "No additional business invariant has been confirmed."
+      },
+      "sources": [
+        {
+          "repository": "ORISO-Docs",
+          "path": "oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
+          "sourceRevision": "34d5f31d23a6d808b32c5b963a851f39e571079b",
+          "sourceHash": "40fb8b0b0be61ba86b01618cc17481b0b472abde26f4bade50da7a3ea9e5b772",
+          "title": "ADR-022: Two consent gates, consent state as a session pointer, and re-consent on change",
+          "state": "accepted",
+          "binding": "reviewed",
+          "reviewedAt": "2026-10-28"
+        }
+      ],
+      "codeMappings": [],
+      "graphMappings": []
+    },
+    {
+      "id": "topic-collision",
+      "category": "counselling-and-conversations",
+      "de": {
+        "term": "Themendopplung",
+        "definition": "Eine ratsuchende Person hat zwei angenommene Beratungen mit demselben ausgewählten Thema.",
+        "example": "Eine zweite Anfrage zum Thema Schulden wird angenommen; im älteren Gespräch erscheint ein Hinweis, damit beide klären, welche Beratung weiterläuft."
+      },
+      "en": {
+        "term": "Topic collision",
+        "definition": "A help-seeker has two accepted counselling conversations with the same selected topic.",
+        "example": "A second enquiry about debt is accepted; the older conversation shows a notice so both sides can agree which one continues."
+      },
+      "aliases": {
+        "de": [],
+        "en": []
+      },
+      "deprecatedTerms": [],
+      "related": [
+        "additional-enquiry"
+      ],
+      "editorialState": "source-backed",
+      "context": {
+        "de": "Kontextabgrenzung noch nicht als eigener DDD-Kontext bestätigt.",
+        "en": "Context boundary has not been confirmed as a separate DDD context."
+      },
+      "responsibility": {
+        "de": "Fachliche Zuständigkeit noch nicht gesondert bestätigt.",
+        "en": "Business responsibility has not been separately confirmed."
+      },
+      "invariant": {
+        "de": "Keine zusätzliche fachliche Invariante bestätigt.",
+        "en": "No additional business invariant has been confirmed."
+      },
+      "sources": [
+        {
+          "repository": "ORISO-Docs",
+          "path": "oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
+          "sourceRevision": "34d5f31d23a6d808b32c5b963a851f39e571079b",
+          "sourceHash": "40fb8b0b0be61ba86b01618cc17481b0b472abde26f4bade50da7a3ea9e5b772",
+          "title": "ADR-022: Two consent gates, consent state as a session pointer, and re-consent on change",
+          "state": "accepted",
+          "binding": "reviewed",
+          "reviewedAt": "2026-10-28"
+        }
+      ],
+      "codeMappings": [],
+      "graphMappings": []
     },
     {
       "id": "centre-based-counselling",
@@ -2228,12 +2326,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
-          "sourceRevision": "7b544fbb0faca5ec941db4369855b4bcfa28207c",
-          "sourceHash": "e17116ebfdd73c6a16d2c267c1c999e6aee91fd12c5a411b9a8eacd9def3da0b",
+          "sourceRevision": "34d5f31d23a6d808b32c5b963a851f39e571079b",
+          "sourceHash": "40fb8b0b0be61ba86b01618cc17481b0b472abde26f4bade50da7a3ea9e5b772",
           "title": "ADR-022: Two consent gates, consent state as a session pointer, and re-consent on change",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-06"
+          "reviewedAt": "2026-10-28"
         },
         {
           "repository": "ORISO-Docs",
@@ -2994,12 +3092,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
-          "sourceRevision": "7b544fbb0faca5ec941db4369855b4bcfa28207c",
-          "sourceHash": "e17116ebfdd73c6a16d2c267c1c999e6aee91fd12c5a411b9a8eacd9def3da0b",
+          "sourceRevision": "34d5f31d23a6d808b32c5b963a851f39e571079b",
+          "sourceHash": "40fb8b0b0be61ba86b01618cc17481b0b472abde26f4bade50da7a3ea9e5b772",
           "title": "ADR-022: Two consent gates, consent state as a session pointer, and re-consent on change",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-06"
+          "reviewedAt": "2026-10-28"
         },
         {
           "repository": "ORISO-Docs",
@@ -3083,12 +3181,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
-          "sourceRevision": "7b544fbb0faca5ec941db4369855b4bcfa28207c",
-          "sourceHash": "e17116ebfdd73c6a16d2c267c1c999e6aee91fd12c5a411b9a8eacd9def3da0b",
+          "sourceRevision": "34d5f31d23a6d808b32c5b963a851f39e571079b",
+          "sourceHash": "40fb8b0b0be61ba86b01618cc17481b0b472abde26f4bade50da7a3ea9e5b772",
           "title": "ADR-022: Two consent gates, consent state as a session pointer, and re-consent on change",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-06"
+          "reviewedAt": "2026-10-28"
         },
         {
           "repository": "ORISO-Docs",
@@ -3505,12 +3603,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
-          "sourceRevision": "7b544fbb0faca5ec941db4369855b4bcfa28207c",
-          "sourceHash": "e17116ebfdd73c6a16d2c267c1c999e6aee91fd12c5a411b9a8eacd9def3da0b",
+          "sourceRevision": "34d5f31d23a6d808b32c5b963a851f39e571079b",
+          "sourceHash": "40fb8b0b0be61ba86b01618cc17481b0b472abde26f4bade50da7a3ea9e5b772",
           "title": "ADR-022: Two consent gates, consent state as a session pointer, and re-consent on change",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-06"
+          "reviewedAt": "2026-10-28"
         },
         {
           "repository": "ORISO-Docs",
@@ -3814,12 +3912,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
-          "sourceRevision": "7b544fbb0faca5ec941db4369855b4bcfa28207c",
-          "sourceHash": "e17116ebfdd73c6a16d2c267c1c999e6aee91fd12c5a411b9a8eacd9def3da0b",
+          "sourceRevision": "34d5f31d23a6d808b32c5b963a851f39e571079b",
+          "sourceHash": "40fb8b0b0be61ba86b01618cc17481b0b472abde26f4bade50da7a3ea9e5b772",
           "title": "ADR-022: Two consent gates, consent state as a session pointer, and re-consent on change",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-06"
+          "reviewedAt": "2026-10-28"
         },
         {
           "repository": "ORISO-Docs",
