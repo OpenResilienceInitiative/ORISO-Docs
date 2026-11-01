@@ -1,0 +1,24 @@
+# One-off run (2026-11-01): put issues with open PRs on the ORISO Roadmap as "In review".
+# Lives only on this throwaway branch; the branch is deleted after the run.
+name: board-in-review-once
+on:
+  push:
+    branches: [claude/board-in-review-once]
+permissions:
+  contents: read
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Token present?
+        env:
+          GH_TOKEN: ${{ secrets.ORISO_PROJECT_AUTOMATION_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then echo "ORISO_PROJECT_AUTOMATION_TOKEN is not available in this repository"; exit 1; fi
+          echo "token present"
+      - name: Board run
+        env:
+          GH_TOKEN: ${{ secrets.ORISO_PROJECT_AUTOMATION_TOKEN }}
+          DRY_RUN: "1"
+        run: bash tools/board-once/board-in-review.sh
