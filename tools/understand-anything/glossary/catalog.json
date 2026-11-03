@@ -2298,12 +2298,13 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-018-erstantwort-as-one-persisted-event-rendered-as-carimat-bubbles.md",
-          "sourceRevision": "7b544fbb0faca5ec941db4369855b4bcfa28207c",
-          "sourceHash": "b8338eef066e17f86a42abfca747f36057d9aee477397040df98c93acb345129",
+          "sourceRevision": "4cbd713f9a5c2e6183840e7497b3f52bf178d604",
+          "sourceHash": "e9724228bfe039d54438bf30b6a9e4e37eadfab7a53c8c45e39c05461b28af95",
           "title": "ADR-018: Erstantwort — one persisted event rendered as a Carimat bubble sequence, configured per Träger",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-06"
+          "reviewedAt": "2026-11-03",
+          "reviewedBy": "coding-agent; source compatibility only, no new human or legal approval"
         },
         {
           "repository": "ORISO-Docs",
@@ -2367,12 +2368,13 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-018-erstantwort-as-one-persisted-event-rendered-as-carimat-bubbles.md",
-          "sourceRevision": "7b544fbb0faca5ec941db4369855b4bcfa28207c",
-          "sourceHash": "b8338eef066e17f86a42abfca747f36057d9aee477397040df98c93acb345129",
+          "sourceRevision": "4cbd713f9a5c2e6183840e7497b3f52bf178d604",
+          "sourceHash": "e9724228bfe039d54438bf30b6a9e4e37eadfab7a53c8c45e39c05461b28af95",
           "title": "ADR-018: Erstantwort — one persisted event rendered as a Carimat bubble sequence, configured per Träger",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-06"
+          "reviewedAt": "2026-11-03",
+          "reviewedBy": "coding-agent; source compatibility only, no new human or legal approval"
         },
         {
           "repository": "ORISO-Docs",
