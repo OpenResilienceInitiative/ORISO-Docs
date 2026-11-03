@@ -36,6 +36,14 @@ Einfach editierbaren Text je Stelle anzubieten würde Trägertext auf inaktive M
 10. **Versandbestätigung reduziert:** bestätigt Versand ohne Frist, die nur noch einen Verantwortlichen hat. Schließt bei erster Sprechblase statt nach festen zehn Sekunden.
 11. **Ein Eintrag in Aktivitätszeitleiste** für ganze Erstantwort, Ziel Chat. Bewusste Ausnahme im Filter gegen Systembenachrichtigungen. Ein Eintrag je offener Aktion verworfen: Person mit erster Nachricht zu Suizidgedanken soll nicht drei Aufgaben erhalten.
 
+### Kontoeinstellungen nach Konversationstyp (3. November 2026)
+
+Plattform- und Trägeradmins können für Mail-Beratung, Live-Chat und Selbsthilfe festlegen, ob Ratsuchende einen Namen eingeben dürfen. Einen anpassbaren Wert kann der Träger ändern. Eine Plattformvorgabe bindet den Träger. Für seine Beratungsstellen ist der resultierende Wert schreibgeschützt. Die kontoweite Namensregel gilt als Obergrenze. Ist die Eingabe deaktiviert, bietet die Registrierung einen generierten Login-Namen an. In unterstützten Anzeigename-Feldern steht der Würfel zur Verfügung. Der Dienst prüft die generierten Werte bei der Eingabe. Bestehende Login-Namen bleiben unveränderlich und bestehende Konten gültig.
+
+Für Mail-Beratung und Selbsthilfe lässt sich getrennt einstellen, ob nach einer E-Mail-Adresse gefragt wird. Die kontoweite E-Mail-Einstellung kann die Erfassung vollständig sperren. Hinweise im Chat richten sich nach dem jeweiligen Konversationstyp. Profil und Zwei-Faktor-Einrichtung prüfen die tatsächlich zum Konto gehörenden Konversationen. Live-Chat bleibt anonym. Er fragt keine Adresse ab und versendet keine E-Mails. Die Erstantwort darf nach einer Adresse fragen, wenn für die aktuelle Konversation sowohl die Erfassung als auch der Versand erlaubt sind.
+
+Zugehörige Arbeit: OpenResilienceInitiative/ORISO-Admin#602 und OpenResilienceInitiative/ORISO-Frontend#825.
+
 ## Lieferumfang
 
 Issue #772 wird **umgewidmet, nicht geschlossen**; enthält Beteiligten und laufendes Gespräch. **Erster Teil** unter neuem Epic: Bausteinfolge nur mit Plattformstandards, neutraler Wortlaut, reduzierte Bestätigung, ein Zeitleisteneintrag und Aktionen mit vorhandenem Zustand. **Kein Admin-Formular/Trägertext**, daher unabhängig von Jannas offenen Antworten zu Trägerinhalten.

@@ -1206,13 +1206,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/ADR-018-erstantwort-as-one-persisted-event-rendered-as-carimat-bubbles.md",
-          "sourceHash": "b8338eef066e17f86a42abfca747f36057d9aee477397040df98c93acb345129",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "e9724228bfe039d54438bf30b6a9e4e37eadfab7a53c8c45e39c05461b28af95",
+          "reviewedAt": "2026-11-03"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/ADR-018-erstantwort-as-one-persisted-event-rendered-as-carimat-bubbles.md",
-          "sourceHash": "b8338eef066e17f86a42abfca747f36057d9aee477397040df98c93acb345129",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "e9724228bfe039d54438bf30b6a9e4e37eadfab7a53c8c45e39c05461b28af95",
+          "reviewedAt": "2026-11-03"
         }
       }
     },

@@ -36,6 +36,14 @@ Naively "making the message editable per agency" would therefore paste a Träger
 10. **The send confirmation is hollowed out**: it acknowledges dispatch and no longer names the deadline, which now has exactly one owner. It closes when the first bubble is up rather than after a fixed 10 s.
 11. **One Activity Timeline entry** for the whole Erstantwort, targeting the chat — which requires a deliberate exception to the current filter that discards system notifications. Rejected one entry per open action: a person who has just sent a first message about suicidal thoughts should not receive three to-do items.
 
+### Conversation account controls (3 November 2026)
+
+Platform and Träger administrators can set the name-typing rule for agency counselling, live chat and self-help. An adaptable value can be changed by the Träger. A platform requirement binds the Träger, and the resulting Träger value is read-only for its centres. The account-wide name rule remains the outer limit. With typing off, registration offers a generated login name and supported display-name fields use the dice. The service validates generated values at entry. Existing login names stay immutable and existing accounts stay valid.
+
+Agency counselling and self-help may independently offer to collect an address. The account-wide e-mail control remains the hard stop. In-chat prompts respect their own conversation type, while profile and two-factor setup check eligibility across the account's actual conversations. Live chat stays anonymous, with neither address collection nor e-mail delivery. The Erstantwort may offer an address only when both collection and delivery are allowed for the current conversation.
+
+Related work: OpenResilienceInitiative/ORISO-Admin#602 and OpenResilienceInitiative/ORISO-Frontend#825.
+
 ## Delivery cut
 
 Issue #772 is **repurposed, not closed** (it carries a stakeholder and a live conversation thread) and becomes the **first slice** under a new EPIC: the Baustein sequence with platform defaults only — gender-neutral wording, hollowed-out send confirmation, one Activity Timeline entry, action Bausteine reading existing state. **No Admin UI and no Träger texts in the first slice**, which is what makes it independent of Janna's pending answers: everything still open concerns Träger content.

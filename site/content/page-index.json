@@ -3629,7 +3629,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/decisions/ADR-018-erstantwort-as-one-persisted-event-rendered-as-carimat-bubbles.md",
-      "sourceHash": "b8338eef066e17f86a42abfca747f36057d9aee477397040df98c93acb345129",
+      "sourceHash": "e9724228bfe039d54438bf30b6a9e4e37eadfab7a53c8c45e39c05461b28af95",
       "locales": {
         "de": {
           "available": true,
@@ -3641,6 +3641,8 @@
             "kontext": "context",
             "decision": "decision",
             "entscheidung": "decision",
+            "conversation-account-controls-3-november-2026": "conversation-account-controls-3-november-2026",
+            "kontoeinstellungen-nach-konversationstyp-3-november-2026": "conversation-account-controls-3-november-2026",
             "delivery-cut": "delivery-cut",
             "lieferumfang": "delivery-cut",
             "consequences": "consequences",
@@ -3654,12 +3656,13 @@
             "adr-018-erstantwort--one-persisted-event-rendered-as-a-carimat-bubble-sequence-configured-per-träger": "adr-018-erstantwort--one-persisted-event-rendered-as-a-carimat-bubble-sequence-configured-per-träger",
             "context": "context",
             "decision": "decision",
+            "conversation-account-controls-3-november-2026": "conversation-account-controls-3-november-2026",
             "delivery-cut": "delivery-cut",
             "consequences": "consequences"
           }
         }
       },
-      "sourceRevision": "b02af4254a944f33fb24e11c82ab6b961e4ec01b",
+      "sourceRevision": "4cbd713f9a5c2e6183840e7497b3f52bf178d604",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
