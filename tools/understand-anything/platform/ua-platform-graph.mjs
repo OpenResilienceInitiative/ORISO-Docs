@@ -11,6 +11,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync, readdirSync, statSy
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { decoratePlatform } from './lib/platform-navigation.mjs';
 
 import {
 	normalizePath,
@@ -20,9 +21,11 @@ import {
 	ownEndpointCoversPath,
 	parseEndpointName
 } from './lib/matcher.mjs';
+import { loadUserServiceKeycloakCallers } from './lib/userservice-keycloak.mjs';
 import { parseAuthority, authorityRelations } from './lib/authority.mjs';
 import { bindSourceRevisions, readSource, listSourceFiles } from './lib/source-reader.mjs';
 import { projectSemanticFlows, relationCoverage } from './lib/semantic-projection.mjs';
+import { projectConceptBridges } from './lib/concept-bridges.mjs';
 import { createHash } from 'node:crypto';
 import { classifyFilePath, specBasename } from './lib/classify.mjs';
 import {
@@ -67,7 +70,8 @@ function parseArgs(argv) {
 // Constants
 // ---------------------------------------------------------------------------
 
-// The 17 ORISO repos (ORISO-Kubernetes excluded per spec — deprecated).
+// Retain every supported source in the vector. Kubernetes is retired history,
+// not an active service; its inclusion must not imply current deployment.
 const ALL_REPOS = [
 	'ORISO-Admin',
 	'ORISO-AgencyService',
@@ -81,6 +85,7 @@ const ALL_REPOS = [
 	'ORISO-Helm',
 	'ORISO-Infra',
 	'ORISO-Keycloak',
+	'ORISO-Kubernetes',
 	'ORISO-Livekit',
 	'ORISO-SigNoz',
 	'ORISO-Status',
@@ -1024,6 +1029,9 @@ function main() {
 		resolveMethodAndKeys: (caller) => ({ keys: [caller.urlIdentifier], method: caller.method })
 	});
 
+	console.log('[ua-platform-graph] parsing UserService -> Keycloak otp-config callers');
+	const userKeycloak = loadUserServiceKeycloakCallers({ files: gitLsTree(path.join(args.reposDir, 'ORISO-UserService')), read: (file) => gitShow(path.join(args.reposDir, 'ORISO-UserService'), file), userGraph: graphs['ORISO-UserService'], keycloakEndpoints: callMatchByRepo['ORISO-Keycloak'] });
+
 	console.log('[ua-platform-graph] loading ADRs + fumadocs pages');
 	const { docs: adrDocs, drift } = loadAdrDocuments(args.reposDir);
 	const fumaDocs = loadFumadocsPages(args.reposDir);
@@ -1057,11 +1065,12 @@ function main() {
 	for (const repo of ALL_REPOS) {
 		addNode({
 			id: `service:${repo}`,
-			type: 'service',
+			type: repo === 'ORISO-Kubernetes' ? 'module' : 'service',
 			name: repo,
 			filePath: null,
-			summary: `ORISO platform service: ${repo}`,
-			tags: ['service'],
+			summary: repo === 'ORISO-Kubernetes' ? 'Retired Kubernetes configuration retained as historical source; current deployment is not established.' : `ORISO platform service: ${repo}`,
+			tags: repo === 'ORISO-Kubernetes' ? ['repository', 'retired'] : ['service'],
+			...(repo === 'ORISO-Kubernetes' ? { metadata: { lifecycle: 'retired' } } : {}),
 			sourceRepo: repo
 		});
 	}
@@ -1228,6 +1237,19 @@ function main() {
 	}
 	addCallsFor(feResult.matches, feCallers);
 	addCallsFor(adminResult.matches, adminCallers);
+	addCallsFor(userKeycloak.matches, userKeycloak.callers);
+
+	// concept bridges: a concept in one repo -> the concept that owns the implementation in
+	// another repo, only when confirmed calls between the two repos exist (Docs#168).
+	const conceptBridges = projectConceptBridges({
+		graphs,
+		bridges: readJson(path.join(__dirname, 'narrative', 'concept-bridges.json')).bridges,
+		confirmedMatches,
+		callerNodeIds: nodes.filter((n) => n.tags?.includes('api-caller')).map((n) => n.id),
+		addNode,
+		addEdge
+	});
+	for (const s of conceptBridges.skipped) console.warn(`[warn] concept bridge ${s.bridge} skipped: ${s.reason}`);
 
 	// depends_on: service -> service, aggregated from calls edges AND from
 	// internal `consumes` references (a repo that bundles another service's
@@ -1304,6 +1326,8 @@ function main() {
 		{ id: 'api-endpoints', name: 'API Endpoints', description: 'Backend REST endpoints across UserService, AgencyService, TenantService, ConsultingTypeService, Keycloak.', nodeIds: nodes.filter((n) => n.type === 'endpoint').map((n) => n.id) },
 		{ id: 'frontend-callers', name: 'Frontend Callers', description: 'ORISO-Frontend functions/files (anywhere in src/**) that call backend endpoints.', nodeIds: nodes.filter((n) => (n.type === 'function' || n.type === 'file') && n.tags?.includes('api-caller') && n.sourceRepo === 'ORISO-Frontend').map((n) => n.id) },
 		{ id: 'admin-callers', name: 'Admin Callers', description: 'ORISO-Admin functions/files (anywhere in src/**) that call backend endpoints.', nodeIds: nodes.filter((n) => (n.type === 'function' || n.type === 'file') && n.tags?.includes('api-caller') && n.sourceRepo === 'ORISO-Admin').map((n) => n.id) },
+		...(userKeycloak.callers.length ? [{ id: 'userservice-callers', name: 'UserService Callers', description: 'ORISO-UserService methods that call the Keycloak otp-config SPI (ADR-013).', nodeIds: nodes.filter((n) => n.tags?.includes('api-caller') && n.sourceRepo === 'ORISO-UserService').map((n) => n.id) }] : []),
+		...(conceptBridges.emitted.length ? [{ id: 'concept-bridges', name: 'Concept Bridges', description: 'Concepts linked across repos to the concept that owns the implementation, backed by confirmed calls (e.g. UserService 2FA -> Keycloak otp-config SPI, ADR-013).', nodeIds: [...new Set(conceptBridges.emitted.flatMap((b) => b.nodeIds))] }] : []),
 		{ id: 'data', name: 'Data', description: 'Database tables owned by each backend service.', nodeIds: nodes.filter((n) => n.type === 'table').map((n) => n.id) },
 		{ id: 'decisions-docs', name: 'Decisions & Docs', description: 'ADRs and Fumadocs developer-documentation pages.', nodeIds: nodes.filter((n) => n.type === 'document').map((n) => n.id) }
 	];
@@ -1423,6 +1447,8 @@ function main() {
 			stats
 		}
 	};
+
+	decoratePlatform(graph, { repositoryGraphs: graphs, expectedRepositories: ALL_REPOS });
 
 	// -------------------------------------------------------------------
 	// Size cap: truncate progressively until under MAX_BYTES

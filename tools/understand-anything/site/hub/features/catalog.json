@@ -36,8 +36,8 @@
       "id": "product/features/group-chats",
       "source": "product/features/group-chats.mdx",
       "route": "produkt/core-features/group-chats",
-      "sourceHash": "873c5c15d4d1fe8bc49514af11e236ff11f19b37436d54a1a6388be5a8d1fbd5",
-      "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
+      "sourceHash": "3296648a4cc97bf9152273444b2d8f7a803072f25852206e54c4bfa31623fcb9",
+      "sourceRevision": "72bc00b04b1bc5d84f6ea39ed85a58ff4c644433",
       "de": {
         "title": "4.5 Gruppenchats und Versand an mehrere Empfänger",
         "summary": "Gruppengespräche (Selbsthilfe, Teamberatung, Familie, interne Runden), Versand an mehrere Empfänger, Antworten im Thread und Regeln für ausschließlich Beratenden vorbehaltene Werkzeuge."
@@ -66,8 +66,8 @@
       "id": "product/features/index",
       "source": "product/features/index.mdx",
       "route": "produkt/core-features",
-      "sourceHash": "5d61551d859eeae8947aece8c094a049d0e829be240a292535bb7a08cc832cad",
-      "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
+      "sourceHash": "ed58a1f1af3ca258e06cd0159449a7a1dd185d6c45e02d3d29ffdcd4aa48f6eb",
+      "sourceRevision": "72bc00b04b1bc5d84f6ea39ed85a58ff4c644433",
       "de": {
         "title": "Kernfunktionen",
         "summary": "Die acht Funktionssäulen von ORISO — Live-Chat, Gruppengespräche, KI-Werkzeuge, Übergabe, Benachrichtigungen, Sitzungen, Pincode-Zugang und Transkripte."

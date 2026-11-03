@@ -122,6 +122,12 @@ claim. Structural age, semantic review state and delivery time are different fac
   in the migration map rather than collapsed into one method.
 - TypeScript dependencies use project resolution and symbol binding. Unresolved, external or
   unsupported imports/calls remain visible in coverage, not fabricated as confirmed calls.
+- Java calls are `calls` only when no other member could be applicable: the owner is a plain
+  class or interface without `extends`/`implements` (no inherited overloads), the name is not an
+  `Object` member, the receiver is a field, parameter, typed local or type name that no for-each,
+  catch, lambda, resource or pattern variable shadows, and exactly one method matches the argument
+  count. `this.x` binds fields only. Everything else that still has a unique match stays
+  `calls_unconfirmed`. Constructors are not resolved this way.
 - `calls_unconfirmed` is a hint. `mentions` and `proposes_for` convey discovery/proposal.
   These relationships stay separately typed; individual detailed edges are dashed.
   Overview connections summarize multiple relations and must be expanded before interpreting them.
@@ -155,3 +161,11 @@ while a reader may still be using it.
 
 See `provenance/imported-sources.json` for the preserved PreDev input hashes, and
 `provenance/remediation-matrix.md` for the acceptance and verification record.
+
+## Bilingual summaries ("Was ist das?")
+
+`summaries-i18n-<key>.json` (next to `enrich-<key>.json`) holds `{schemaVersion, meta.generatedBy, summaries: {"folder:<dir>"|"<fileNodeId>": {de, en, commit, generatedAt}}}`.
+`ua-enrich-merge.mjs` validates it, stores it in `graph.metadata.summariesI18n` and logs coverage plus every missing folder/top file.
+Produce missing entries: `ua-summary-coverage.mjs report --graph G --requests req.json`, answer the list with the production model, then
+`UA_SUMMARY_MODEL=<model> ua-summary-coverage.mjs ingest --responses ans.json --commit <sha> --out enrichments/summaries-i18n-<key>.json`.
+The tooling never calls a model itself.

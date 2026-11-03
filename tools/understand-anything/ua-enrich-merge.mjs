@@ -9,6 +9,13 @@ import {
   applyNodeSummary,
 } from "./lib/semantic-claims.mjs";
 import { addOrderedFlows } from "./lib/semantic-flows.mjs";
+import {
+  selectTargets,
+  coverageReport,
+  formatReport,
+  validateSummaryFile,
+} from "./lib/summary-coverage.mjs";
+import { existsSync } from "node:fs";
 
 const CORE =
   process.env.UA_CORE ??
@@ -225,6 +232,24 @@ if (Array.isArray(graph.layers))
       `nodeSummaries: currentApplied=${applied} datedRetained=${retained} unresolved=${missing}`,
     );
   }
+}
+
+// bilingual "Was ist das?" summaries: sibling summaries-i18n-<key>.json (optional).
+// Always logs coverage so missing DE/EN summaries show up in the run log.
+{
+  const i18nPath = enrPath.replace(/enrich-([^/]+)\.json$/, "summaries-i18n-$1.json");
+  let summaries = {};
+  if (i18nPath !== enrPath && existsSync(i18nPath)) {
+    const file = JSON.parse(readFileSync(i18nPath, "utf8"));
+    const errs = validateSummaryFile(file);
+    if (errs.length)
+      throw new Error(`${i18nPath} invalid: ${errs.slice(0, 5).join("; ")}`);
+    summaries = file.summaries;
+    graph.metadata ??= {};
+    graph.metadata.summariesI18n = { meta: file.meta, summaries };
+  }
+  const report = coverageReport(selectTargets(graph), summaries);
+  for (const line of formatReport(report)) console.error(line);
 }
 
 const orderedPath = enrPath.replace(/enrich-([^/]+)\.json$/, "flows-$1.json");

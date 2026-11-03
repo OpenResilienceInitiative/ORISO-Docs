@@ -8,6 +8,12 @@ The complete source corpus contains Chapters 1–10, the Annex 1 extract and the
 
 ## Inputs and outputs
 
+### Historical Chapter 6 source
+
+`historical-source/kap-06-verfahren-und-technik.md` preserves the exact 58,638 bytes of `oriso-platform/dsfa-text/kap-06-verfahren-und-technik.md` at commit `ae32ab5462488b6b21a92f868563792c3df3902a`, with SHA-256 `a210a0a255203ad54052ff1226166f1872576bebf82d848b3ab68692059be728`. Only its `historicalSnapshotHashes` path binding moved to this draft-owned immutable copy. The original upstream provenance and expected hash are retained. The maintained authoring chapter remains separate and may continue to change; its later additions do not rewrite the captured historical source.
+
+This archival binding does not change the paired DE/EN draft chapters or confer technical, operator, legal or publication approval. Artifact metadata binds the updated source manifest while the existing public HTML/input/PDF bytes and hashes remain intact. The actual renderer verifies deterministic outputs and identical PDF page content in a temporary directory; regenerated PDF timestamps are not a reason to replace the retained artifacts.
+
 `manifest.json` binds every locale chapter to its byte hash and each translation to its German-source hash. Both locales share `v5-draft`, date and pending approval state. Chapter anchors `kap1` through `kap10`, `kapA1` and `kapA` are retained in HTML. All 69 headings, inline code identifiers and public Markdown link targets are paired across locales.
 
 `artifacts/` contains DE/EN HTML, PDF and exact render-input JSON plus `artifact-manifest.json` recording input hashes, artifact hashes and byte sizes. HTML and PDF consume the same sanitised DOM derived from the validated locale input. Internal-note containers, scripts, styles, HTML comments and hidden-note containers are removed before either render; they are not merely CSS-hidden. The minimal public HTML has no scripts and is marked `noindex,nofollow`.

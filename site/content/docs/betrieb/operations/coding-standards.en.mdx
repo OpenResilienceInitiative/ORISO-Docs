@@ -130,6 +130,11 @@ unreviewed code and an environment nobody can trust.
 - **Frontend**: Cypress
 - **Backend**: JUnit + MockMvc
 - **Always test in a real browser**
+- **Component props come from Storybook**, never from guessing. The Storybook MCP servers
+  for ORISO-Frontend and ORISO-Admin answer `docs-list`, `docs-show`, `docs-show-story`,
+  `stories-find-by-component`, `stories-changed` and `stories-preview`. A property that is
+  not documented there does not exist. Put the `stories-preview` URL in the PR for any UI
+  change.
 
 ## Deployment
 

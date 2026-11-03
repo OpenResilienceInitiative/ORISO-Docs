@@ -227,3 +227,48 @@ tenant policy flag — not an implementation detail, and it presupposes the `tea
 "Fallzugriff" is the umbrella; **Einsichtnahme** = co-access (read-only, time-boxed, owner keeps
 the case); **Übernahme** = takeover (ownership moves, previous counsellor keeps membership and can
 reclaim); **Fall holen** = pull; **Fall abgeben** = push.
+
+## Addendum 2026-10-14 — optional explanations with a per-reason policy
+
+- **Status:** Accepted product decision — Frank, 2026-10-14. Technical review and implementation
+  remain pending; accepting this decision does not certify code delivery or technical approval.
+- **Scope:** the existing Case Handover flow, including individual requests, batch requests and
+  recipient offers. Ownership, client consent and silent room membership keep their existing rules.
+- **Delivery records:** [UserService #200](https://github.com/OpenResilienceInitiative/ORISO-UserService/issues/200),
+  [TenantService #192](https://github.com/OpenResilienceInitiative/ORISO-TenantService/issues/192) and
+  [Admin #771](https://github.com/OpenResilienceInitiative/ORISO-Admin/issues/771). Extend these existing
+  packages rather than creating a separate handover settings feature.
+
+A counsellor must choose a categorical reason for requesting access or offering a case. An additional
+free-form explanation is optional by default: choosing the reason must not force the counsellor to
+write the same information again. The explanation is already stored as part of the staff audit
+record, so the input remains available and is labelled **“Begründung (optional)”** when optional.
+A tenant may require an explanation for a particular reason through the existing Case Handover
+settings. A required explanation must be labelled and validated as required.
+
+**For developers — the policy and validation contract:**
+
+```text
+Per-reason explanationRequired: BooleanPermissionPolicy; default value false.
+false = an additional explanation is optional; true = a nonblank explanation is required.
+TenantService owns and resolves it through the existing platform-default / tenant-override cascade.
+UserService projects the effective policy and enforces it; the existing Admin CaseHandoverCard edits it.
+The categorical reason remains required in both cases.
+Optional missing or blank explanation normalizes to the empty string.
+Required missing or blank explanation is rejected before Matrix permission/membership side effects,
+across individual requests, batch requests and recipient offers.
+Persist supplied text in the existing case_handover_request.explanation field for staff audit only.
+Never copy that free text into advice-seeker chat messages or notification payloads.
+The existing TEXT NOT NULL column accepts the empty string; no explanation-column migration is needed.
+```
+
+The audit must continue recording the reason, actor and time even when there is no additional text.
+Making the explanation optional changes neither access eligibility nor the consent policy. Existing
+staff-audit audience restrictions and the privacy boundary established by
+[UserService PR #1013](https://github.com/OpenResilienceInitiative/ORISO-UserService/pull/1013) and
+[PR #1053](https://github.com/OpenResilienceInitiative/ORISO-UserService/pull/1053) remain in force.
+
+**Current implementation, checked on 2026-10-14:** individual and batch pull requests still require
+nonblank text, while recipient offers already accept an omitted explanation. The per-reason
+explanation policy is not implemented. A UI label change alone cannot fulfil this decision: policy
+save/reload, server enforcement and the corresponding form behavior must be delivered together.

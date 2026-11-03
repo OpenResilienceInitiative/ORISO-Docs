@@ -1,0 +1,371 @@
+{
+  "schemaVersion": 1,
+  "syncedAt": "2026-10-22T12:00:00Z",
+  "source": {
+    "owner": "OpenResilienceInitiative",
+    "projectNumber": 1,
+    "title": "ORISO Roadmap"
+  },
+  "totals": {
+    "items": 12,
+    "public": 11,
+    "private": 1
+  },
+  "fieldOptions": {
+    "status": [
+      "Backlog",
+      "Ready",
+      "On hold",
+      "In progress",
+      "In review",
+      "QA internal",
+      "QA external",
+      "Done"
+    ],
+    "priority": [
+      "Urgent",
+      "High",
+      "Medium",
+      "Low"
+    ],
+    "effort": [
+      "S",
+      "M",
+      "L"
+    ],
+    "platformRelease": [
+      "v2.0.12",
+      "v2.0.13"
+    ]
+  },
+  "statusCounts": {
+    "Backlog": 2,
+    "Ready": 1,
+    "On hold": 1,
+    "In progress": 2,
+    "In review": 1,
+    "QA internal": 1,
+    "QA external": 1,
+    "Done": 2
+  },
+  "releases": [
+    {
+      "name": "v2.0.12",
+      "count": 3
+    }
+  ],
+  "privateCounts": [
+    {
+      "repository": "OpenResilienceInitiative/ORISO-E2E",
+      "count": 1,
+      "byStatus": {
+        "Done": 1
+      }
+    }
+  ],
+  "items": [
+    {
+      "id": "I1",
+      "contentType": "Issue",
+      "repository": "OpenResilienceInitiative/ORISO-Frontend",
+      "number": 1734,
+      "title": "Epic",
+      "url": "https://github.com/OpenResilienceInitiative/ORISO-Frontend/issues/1734",
+      "state": "OPEN",
+      "updatedAt": "2026-10-20T10:00:00Z",
+      "status": "In progress",
+      "readiness": 8,
+      "issueType": "Epic",
+      "parent": null,
+      "priority": "High",
+      "effort": "L",
+      "platformRelease": "v2.0.12",
+      "assignees": [
+        "frank"
+      ],
+      "findings": []
+    },
+    {
+      "id": "I2",
+      "contentType": "Issue",
+      "repository": "OpenResilienceInitiative/ORISO-Frontend",
+      "number": 1801,
+      "title": "Child a",
+      "url": null,
+      "state": "OPEN",
+      "updatedAt": null,
+      "status": "Backlog",
+      "readiness": null,
+      "issueType": "Task",
+      "parent": {
+        "repository": "OpenResilienceInitiative/ORISO-Frontend",
+        "number": 1734
+      },
+      "priority": "Urgent",
+      "effort": "S",
+      "platformRelease": "v2.0.12",
+      "assignees": [
+        "frank"
+      ],
+      "findings": []
+    },
+    {
+      "id": "I3",
+      "contentType": "Issue",
+      "repository": "OpenResilienceInitiative/ORISO-Frontend",
+      "number": 1802,
+      "title": "Child b",
+      "url": null,
+      "state": "OPEN",
+      "updatedAt": null,
+      "status": "Ready",
+      "readiness": 4,
+      "issueType": "Task",
+      "parent": {
+        "repository": "OpenResilienceInitiative/ORISO-Frontend",
+        "number": 1734
+      },
+      "priority": "Medium",
+      "effort": "S",
+      "platformRelease": null,
+      "assignees": [
+        "frank"
+      ],
+      "findings": []
+    },
+    {
+      "id": "I4",
+      "contentType": "Issue",
+      "repository": "OpenResilienceInitiative/ORISO-Frontend",
+      "number": 1803,
+      "title": "Child c",
+      "url": null,
+      "state": "OPEN",
+      "updatedAt": null,
+      "status": "On hold",
+      "readiness": 0,
+      "issueType": "Task",
+      "parent": {
+        "repository": "OpenResilienceInitiative/ORISO-Frontend",
+        "number": 1734
+      },
+      "priority": null,
+      "effort": null,
+      "platformRelease": null,
+      "assignees": [
+        "frank"
+      ],
+      "findings": []
+    },
+    {
+      "id": "I5",
+      "contentType": "Issue",
+      "repository": "OpenResilienceInitiative/ORISO-Frontend",
+      "number": 1804,
+      "title": "Child d",
+      "url": null,
+      "state": "OPEN",
+      "updatedAt": null,
+      "status": "In review",
+      "readiness": 12,
+      "issueType": "Task",
+      "parent": {
+        "repository": "OpenResilienceInitiative/ORISO-Frontend",
+        "number": 1734
+      },
+      "priority": "High",
+      "effort": "M",
+      "platformRelease": "v2.0.12",
+      "assignees": [
+        "frank"
+      ],
+      "findings": []
+    },
+    {
+      "id": "I6",
+      "contentType": "Issue",
+      "repository": "OpenResilienceInitiative/ORISO-Frontend",
+      "number": 1805,
+      "title": "Child e",
+      "url": "https://github.com/OpenResilienceInitiative/ORISO-Frontend/issues/1805",
+      "state": "OPEN",
+      "updatedAt": null,
+      "status": "QA internal",
+      "readiness": null,
+      "issueType": "Task",
+      "parent": {
+        "repository": "OpenResilienceInitiative/ORISO-Frontend",
+        "number": 1734
+      },
+      "priority": "Low",
+      "effort": "S",
+      "platformRelease": null,
+      "assignees": [
+        "frank"
+      ],
+      "findings": [
+        {
+          "rule": "stalled",
+          "severity": "warn",
+          "detail": {
+            "status": "QA internal",
+            "days": 30,
+            "threshold": 7
+          }
+        }
+      ]
+    },
+    {
+      "id": "I7",
+      "contentType": "Issue",
+      "repository": "OpenResilienceInitiative/ORISO-Frontend",
+      "number": 1806,
+      "title": "Child f",
+      "url": "https://github.com/OpenResilienceInitiative/ORISO-Frontend/issues/1806",
+      "state": "OPEN",
+      "updatedAt": null,
+      "status": "QA external",
+      "readiness": 6,
+      "issueType": "Task",
+      "parent": {
+        "repository": "OpenResilienceInitiative/ORISO-Frontend",
+        "number": 1734
+      },
+      "priority": "Urgent",
+      "effort": "S",
+      "platformRelease": "v2.0.13",
+      "assignees": [
+        "someone"
+      ],
+      "findings": [
+        {
+          "rule": "qa-external-no-bjoern",
+          "severity": "warn",
+          "detail": {
+            "expected": "BjoernLudwig"
+          }
+        }
+      ]
+    },
+    {
+      "id": "I8",
+      "contentType": "Issue",
+      "repository": "OpenResilienceInitiative/ORISO-Frontend",
+      "number": 1807,
+      "title": "Child g",
+      "url": null,
+      "state": "CLOSED",
+      "updatedAt": null,
+      "status": "Done",
+      "readiness": 10,
+      "issueType": "Task",
+      "parent": {
+        "repository": "OpenResilienceInitiative/ORISO-Frontend",
+        "number": 1734
+      },
+      "priority": "Medium",
+      "effort": "S",
+      "platformRelease": null,
+      "assignees": [
+        "frank"
+      ],
+      "findings": []
+    },
+    {
+      "id": "I9",
+      "contentType": "Issue",
+      "repository": "OpenResilienceInitiative/ORISO-Frontend",
+      "number": 1808,
+      "title": "Child h",
+      "url": null,
+      "state": "CLOSED",
+      "updatedAt": null,
+      "status": "Done",
+      "readiness": 19,
+      "issueType": "Task",
+      "parent": {
+        "repository": "OpenResilienceInitiative/ORISO-Frontend",
+        "number": 1734
+      },
+      "priority": null,
+      "effort": null,
+      "platformRelease": null,
+      "assignees": [
+        "frank"
+      ],
+      "findings": []
+    },
+    {
+      "id": "I10",
+      "contentType": "Issue",
+      "repository": "OpenResilienceInitiative/ORISO-Admin",
+      "number": 900,
+      "title": "Mapped through the epic sub-issue list",
+      "url": null,
+      "state": "OPEN",
+      "updatedAt": null,
+      "status": "In progress",
+      "readiness": 2,
+      "issueType": "Task",
+      "parent": null,
+      "priority": "Urgent",
+      "effort": "S",
+      "platformRelease": null,
+      "assignees": [
+        "frank"
+      ],
+      "findings": []
+    },
+    {
+      "id": "I11",
+      "contentType": "Issue",
+      "repository": "OpenResilienceInitiative/ORISO-Docs",
+      "number": 5,
+      "title": "Belongs to no epic",
+      "url": null,
+      "state": "OPEN",
+      "updatedAt": null,
+      "status": "Backlog",
+      "readiness": 3,
+      "issueType": "Task",
+      "parent": null,
+      "priority": "High",
+      "effort": "S",
+      "platformRelease": null,
+      "assignees": [
+        "frank"
+      ],
+      "findings": []
+    },
+    {
+      "id": "I12",
+      "contentType": "PullRequest",
+      "repository": "OpenResilienceInitiative/ORISO-Frontend",
+      "number": 1900,
+      "title": "A pull request is not an issue",
+      "url": null,
+      "state": "MERGED",
+      "updatedAt": null,
+      "status": "Done",
+      "readiness": null,
+      "issueType": null,
+      "parent": null,
+      "priority": "Urgent",
+      "effort": null,
+      "platformRelease": null,
+      "assignees": [
+        "frank"
+      ],
+      "findings": []
+    }
+  ],
+  "warnings": [],
+  "readinessRange": {
+    "min": 0,
+    "max": 19
+  },
+  "findingCounts": {
+    "stalled": 1,
+    "qa-external-no-bjoern": 1
+  }
+}

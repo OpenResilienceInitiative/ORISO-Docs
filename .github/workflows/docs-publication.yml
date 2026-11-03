@@ -34,7 +34,9 @@ jobs:
       - uses: pnpm/action-setup@v4
         with: {version: '10.6.2'}
       - run: pnpm --dir site install --frozen-lockfile
-      - run: node --test site/tests/*.test.mjs site/scripts/page-catalog.test.mjs site/scripts/catalog/*.test.mjs tools/truth-chain/test/*.test.mjs tools/docs-publication/test/*.test.mjs tools/understand-anything/site/hub/test/*.test.mjs tools/understand-anything/hosted-viewer/*.test.mjs
+      - run: npm ci
+        working-directory: tools/understand-anything
+      - run: node --test site/tests/*.test.mjs site/scripts/page-catalog.test.mjs site/scripts/catalog/*.test.mjs tools/truth-chain/test/*.test.mjs tools/docs-publication/test/*.test.mjs tools/planning-map/test/*.test.mjs tools/understand-anything/site/hub/test/*.test.mjs tools/understand-anything/hosted-viewer/*.test.mjs
       - uses: actions/setup-python@v5
         with: {python-version: '3.13'}
       - run: python -m pip install PyYAML==6.0.3
@@ -107,8 +109,8 @@ jobs:
         # No private graph token is made available to this public pipeline.
         run: |
           RELEASE_ARGS=()
-          if [ -f "$RUNNER_TEMP/platform-release.json" ]; then RELEASE_ARGS=(--release-manifest "$RUNNER_TEMP/platform-release.json" --require-release --documentation-revision "$(git rev-parse HEAD)"); fi
-          python3 .github/scripts/ua_sources.py --tooling "$UA_TOOLING" --base "$RUNNER_TEMP/docs-ua-base" --inventory "$RUNNER_TEMP/docs-ua-inventory.json" --repo-args "$RUNNER_TEMP/docs-ua-args.txt" "${RELEASE_ARGS[@]}"
+          if [ -f "$RUNNER_TEMP/platform-release.json" ]; then RELEASE_ARGS=(--release-manifest "$RUNNER_TEMP/platform-release.json" --require-release); fi
+          python3 .github/scripts/ua_sources.py --tooling "$UA_TOOLING" --base "$RUNNER_TEMP/docs-ua-base" --inventory "$RUNNER_TEMP/docs-ua-inventory.json" --repo-args "$RUNNER_TEMP/docs-ua-args.txt" --documentation-revision "$(git rev-parse HEAD)" "${RELEASE_ARGS[@]}"
       - name: Produce and verify a complete source-bound generation
         env:
           UA_MOUNT_ROOT: ${{ runner.temp }}

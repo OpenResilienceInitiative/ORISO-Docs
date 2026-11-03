@@ -17,7 +17,15 @@ class NativeNarrativeTests(unittest.TestCase):
     (directory/'meta.json').write_text(json.dumps(dict(gitCommitHash=sha)))
    subprocess.run(['node',str(TOOLS/'platform/ua-platform-graph.mjs'),'--graphs-dir',str(root/'graphs'),'--repos-dir',str(root/'sources'),'--out',str(root/'out')],check=True,capture_output=True,text=True)
    graph_path=root/'out/knowledge-graph.json';before=json.loads(graph_path.read_text());coverage=exclude_unbound_platform_narrative(graph_path,baseline);after=json.loads(graph_path.read_text())
-   expected=json.loads(json.dumps(before));expected['metadata']['narrativeCoverage']=coverage;self.assertEqual(after,expected);self.assertEqual(after['tour'],[]);self.assertFalse(any(n['id'].startswith('concept:') for n in after['nodes']))
+   expected=json.loads(json.dumps(before));expected['metadata']['narrativeCoverage']=coverage;self.assertEqual(after,expected)
+   self.assertEqual(len(after['tour']),6)
+   nodes={node['id']:node for node in after['nodes']}
+   for step in after['tour']:
+    self.assertLessEqual(len(step['nodeIds']),6)
+    for node_id in step['nodeIds']:
+     self.assertIn(node_id,nodes)
+     self.assertIn(nodes[node_id]['sourceRepo'],after['project']['sourceCommits'])
+   self.assertFalse(any(n['id'].startswith('concept:') for n in after['nodes']))
    self.assertEqual(coverage['input']['sha256'],hashlib.sha256(original).hexdigest());self.assertEqual(coverage['input']['generatedAt'],'2026-09-04T00:00:00.000Z');self.assertEqual(coverage['appliedReviewedClaims'],0);self.assertFalse(coverage['runtimeVerified']);self.assertEqual(baseline.read_bytes(),original);graph_check(after)
    if os.environ.get('UA_CORE'):
     subprocess.run(['node','--input-type=module','-e',"import {readFileSync} from 'node:fs';import {pathToFileURL} from 'node:url';const {verifyConsumer}=await import(pathToFileURL(process.argv[2]));const {validateGraph}=await import(pathToFileURL(process.env.UA_CORE));verifyConsumer(JSON.parse(readFileSync(process.argv[1])),validateGraph);",str(graph_path),str(TOOLS/'ua-validate-consumer.mjs')],cwd=TOOLS,check=True,capture_output=True,text=True)

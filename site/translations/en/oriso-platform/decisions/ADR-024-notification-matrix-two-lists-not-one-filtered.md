@@ -106,3 +106,128 @@ person can read. A counsellor works in it daily and needs the operational stream
   browser push. This ADR deliberately settles e-mail first rather than blocking on all three.
 - Two audiences means two review surfaces. A change that "simplifies" them back into one list is a
   regression, and reviewers should treat it as one.
+
+## Ordinary internal counsellor chat — implementation addendum, 2026-10-07
+
+Frank requested notification mail when one counsellor writes to another in an ordinary internal
+group, then authorized the proposed P1 implementation for v2.0.11. The independently reviewable
+delivery is [UserService #1375](https://github.com/OpenResilienceInitiative/ORISO-UserService/issues/1375).
+This adds an explicit producer contract; it does not reclassify ordinary groups as protected
+supervision feedback. The historical implementation measurements above retain their original date.
+
+| Occasion | Recipient | Independent mail preference | Rendering |
+|---|---|---|---|
+| Ordinary internal-group message | Other active, currently authorized counsellor participants in the same group and tenant | `internalChatNotificationEnabled` | Neutral counsellor message template; dedicated unsubscribe selector `interne-nachricht` |
+
+The preference follows the existing operational default: enabled unless the recipient switches it
+off. The recipient's general mail preference and the tenant's notification-mail switch still gate
+delivery. The sender, advice seekers, departed or unrelated group members and other tenants never
+receive this mail. Membership and event origin must be current when delivery is resolved, and
+replayed events must not duplicate the notification.
+
+The producer shares the existing `neue-nachricht-beratung` template because it contains only a neutral
+return-to-ORISO prompt. Sharing its rendering does not share the existing advice-seeker-message
+preference: the footer resolves to the new internal-chat switch. This is the recorded shared-template
+exception required by decision5. No decrypted message content is used.
+
+Browser choices remain independent. This mail addition does not imply a new browser-event producer,
+guaranteed background web push, or a change to retained in-app history. The notification-retention
+governance questions remain in their existing privacy workstream.
+
+
+## Required personal consent for case handover — decision addendum, 2026-10-08
+
+A request for personal consent must reach the person who needs to decide. An acknowledgement of
+an already permitted transfer does not need another email. Frank confirmed this distinction on
+8 October 2026; it is separate from the counsellor's optional handover notification.
+
+| Situation | Advice-seeker email | What the person sees |
+|---|---|---|
+| Personal consent is required and still pending; a usable current email address exists | Send a neutral consent request, subject to the existing tenant delivery and recipient access gates | A statement that consent is needed and a protected link to decide |
+| Sharing is already permitted, including the opt-out acknowledgement mode | Do not send an additional consent-request email | The existing acknowledgement and consent rules continue to apply |
+| No usable current email address, or consent is no longer pending | Do not send a stale consent request | The application remains the place to check the current request |
+
+The request names no counsellor, case, message content or other personal information. The link
+opens the protected current request. Delivery must check that the same person still owns the
+request and still needs to decide; a queued message must not redirect to a changed address or
+outlive a completed or revoked request.
+
+This required-action email has no separate advice-seeker handover switch. It must not offer an
+unsubscribe link leading to a control that does not exist. Its footer retains the ordinary
+automated-message note and privacy/imprint links. Optional confirmation email to the receiving
+counsellor keeps its existing preference and unsubscribe link.
+
+**For developers — the mode and rendering contract:**
+
+```text
+OPT_IN + PENDING_CLIENT_CONSENT: required personal-consent request.
+OPT_OUT / NONE: no additional consent-request email.
+Canonical occasion: uebergabe-angefragt; catalogue class: consent.
+emailIsUnsubscribable(consent): false; no settingsUrl/unsubscribeUrl in its footer.
+Do not reclassify this occasion as an account-access security message.
+Tenant route, notification-mail configuration, OWN setup and current recipient access
+remain separately validated. This decision does not authorize tenant-wide bypasses.
+Optional receiving-counsellor occasion: uebergabe-bestaetigt.
+```
+
+This dated addendum qualifies decisions 1, 3, 5 and 6 for required personal consent. The historical
+measurements above keep their original dates. The implementation is being reviewed in
+[Frontend #1666](https://github.com/OpenResilienceInitiative/ORISO-Frontend/pull/1666) and
+[UserService #1376](https://github.com/OpenResilienceInitiative/ORISO-UserService/pull/1376).
+Source checks, deployment and actual mail receipt remain separate evidence gates.
+
+
+## Rejecting an ordinary incoming enquiry — decision addendum, 2026-10-08
+
+A counsellor may reject an ordinary submitted agency enquiry before anyone accepts it. Frank
+approved implementing this action on 8 October 2026. It is separate from refusing a case handover.
+The advice seeker receives a neutral activity entry and can open the existing conversation to
+read its history. The rejected conversation stays closed for new messages and calls.
+
+| Situation | Result |
+|---|---|
+| A currently authorized counsellor of the enquiry's agency confirms rejection | Record the decision and close the enquiry and its team discussion for writing |
+| The original advice seeker opens the activity entry | Show the rejected enquiry and existing readable history without a message composer |
+| The same counsellor repeats a completed request | Confirm completion without another decision or activity entry |
+| Someone already accepted the enquiry, or another counsellor rejected it | Refresh the current state and show that the requested action cannot be completed |
+| Closing the underlying conversation fails | Keep the recorded decision, report the incomplete operation and retry closure; do not claim success |
+
+The confirmation asks for no written reason. Neither the activity entry nor its preview names a
+counsellor, case or message content. This decision adds no rejection email or new email switch.
+Archiving, accepting or assigning the case must not silently reopen a rejected enquiry.
+If the original advice seeker is no longer eligible for notifications, finish the verified
+closure without an activity entry. An incomplete underlying closure must remain retryable.
+
+**For developers — state, delivery and protocol contract:**
+
+```text
+POST /users/sessions/{sessionId}/rejection; operationId rejectEnquiry; no request body.
+Scope: submitted registered NEW/unassigned ordinary agency counselling enquiries.
+Current nondeleted active agency counsellor + current tenant/agency authority required.
+Append status REJECTED=5; preserve the existing numeric values0–4.
+TX1: lock session and commit terminal decision plus immutable pending audit/bindings.
+Outside TX: verify primary and team Matrix rooms are read-only, including explicit
+message/encrypted/reaction/redaction/RTC/call overrides; retain memberships/readable history.
+TX2: confirm the same immutable decision atomically with one request.denied feed entry
+for the currently eligible original advice seeker, or a deliberate no-recipient outcome
+if that identity is now ineligible. Never redirect delivery to a changed owner or tenant.
+Send a content-free nudge after a committed feed entry.
+204 only after confirmed closure; failures remain durable pending repair without an
+affirmative feed entry. Bounded reconciliation must survive process/instance failure.
+403 unauthorized current actor;404 unavailable case;409 conflicting or changed state.
+503 while verified dependency closure is incomplete; same-actor retry/reconciliation.
+Later handover, accept, archive or dearchive commands cannot reopen status5.
+Action path /sessions/user/session/{sessionId}; no new email occasion or free-text reason.
+```
+
+This is an approved implementation contract. Its source is being implemented in
+[Frontend #1666](https://github.com/OpenResilienceInitiative/ORISO-Frontend/pull/1666) and
+[UserService #1376](https://github.com/OpenResilienceInitiative/ORISO-UserService/pull/1376).
+It does not establish completed implementation, deployment or actual product acceptance.
+
+Product acceptance target for all notification tickets is the ORISO Dev environment,
+as explicitly confirmed by Frank on 8 October 2026. Pre-Dev is not the acceptance target.
+Local source checks and previews remain separate evidence. The same event may appear in
+Requests, Conversations and Timeline; qualify its actual display and configured sound in
+each applicable context. A new rule suppressing optional mail after live receipt or sound
+is awaiting a product decision; this addendum does not authorize that policy.

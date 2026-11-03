@@ -10,7 +10,7 @@ import {loadGeneratedCatalog} from '../lib/generated-catalog.mjs';
 import {buildManifest} from '../../docs-publication/publication.mjs';
 const root=fileURLToPath(new URL('../../../',import.meta.url));
 const tooling=join(root,'tools/understand-anything');
-function fixture(t,pathValue='/changed',repoName='ORISO-UserService',sourceSHA='a'.repeat(40)) {
+function fixture(t,pathValue='/changed',repoName='ORISO-UserService',sourceSHA='a'.repeat(40),sourceRef='refs/heads/dev') {
  const temp=mkdtempSync(join(tmpdir(),'docs-pipeline-'));t.after(()=>rmSync(temp,{recursive:true,force:true}));
  const stage=join(temp,'generation');
  execFileSync('python3',['-c',`
@@ -23,11 +23,11 @@ sources=fixture(root,now)
 for p in list(root.rglob('*.json')):
  text=p.read_text().replace('ORISO-Test',sys.argv[3]).replace('a'*40,sys.argv[4]);p.write_text(text)
 (root/'ORISO-Test').rename(root/sys.argv[3])
-for item in sources:item['repository']=sys.argv[3];item['sourceSHA']=sys.argv[4]
+for item in sources:item['repository']=sys.argv[3];item['sourceSHA']=sys.argv[4];item['ref']=sys.argv[5]
 p=root/sys.argv[3]/'.understand-anything'/'knowledge-graph.json';g=json.loads(p.read_text())
 g['nodes'].append({'id':'endpoint:changed','type':'endpoint','name':'GET '+sys.argv[2],'summary':'','tags':[],'complexity':'simple'})
 p.write_text(json.dumps(g));seal(root,sources,now=now)
-`,stage,pathValue,repoName,sourceSHA],{env:{...process.env,PYTHONDONTWRITEBYTECODE:'1'},stdio:'pipe'});
+`,stage,pathValue,repoName,sourceSHA,sourceRef],{env:{...process.env,PYTHONDONTWRITEBYTECODE:'1'},stdio:'pipe'});
  const repo=join(temp,'repo');mkdirSync(join(repo,'docs/platform'),{recursive:true});
  writeFileSync(join(repo,'docs/platform/backend-services.md'),'# Human editorial source\n');
  const map=join(temp,'evidence.yaml');writeFileSync(map,'entries:\n  - slug: missing-check\n    claim: source check\n    evidence:\n      - repo: ORISO-UserService\n        path: src/Missing.java\n        expect: [missing]\n');
@@ -134,4 +134,27 @@ test('actual generated catalog ingestion rejects edited source, private metadata
  writeFileSync(path,original);const source=join(f.repo,registry.pages[0].source),before=readFileSync(source,'utf8');writeFileSync(source,before+'\nmodified');
  assert.throws(()=>loadGeneratedCatalog(f.repo),/binding/);
  writeFileSync(source,'# Editorial\n');assert.throws(()=>loadGeneratedCatalog(f.repo),/unmarked source/);
+});
+
+
+test('generated Docs preview SHA and released tag provenance pass the full-current translation boundary', async t=>{
+ for(const [repository,sha,ref] of [['ORISO-Docs','b'.repeat(40),'b'.repeat(40)],['ORISO-UserService','c'.repeat(40),'refs/tags/v2.0.7']]) {
+  const f=fixture(t,'/selected',repository,sha,ref);
+  prepareDocumentation({generationDir:f.stage,repoRoot:f.repo,toolingRoot:tooling,evidenceMap:f.map,reposRoot:join(f.temp,'no-clones')});
+  const ingested=loadGeneratedCatalog(f.repo),site=await siteCatalogFixture(f.temp);
+  const policy=join(f.repo,'tools/truth-chain/public-repositories.json');mkdirSync(dirname(policy),{recursive:true});copyFileSync(join(root,'tools/truth-chain/public-repositories.json'),policy);
+  const read=path=>existsSync(join(f.repo,path))?readFileSync(join(f.repo,path),'utf8'):undefined;
+  const index=site.buildPageIndex(site.mergeCatalog({pages:[]},ingested),read);
+  assert.equal(site.validateFullCurrent(index),true);
+  assert.ok(index.pages.some(page=>page.id==='docs/generated/architecture-tiers'));
+  assert.deepEqual(index.pages[0].graphSource.sources,[{repository,ref,sourceSHA:sha}]);
+  const stale=structuredClone(ingested);stale[0].translations.en.sourceHash='old';
+  assert.throws(()=>site.validateFullCurrent(site.buildPageIndex({pages:stale},read)),/incomplete/);
+  const missingPath=ingested[0].translations.de.path;
+  assert.throws(()=>site.validateFullCurrent(site.buildPageIndex({pages:ingested},p=>p===missingPath?undefined:read(p))),/incomplete/);
+  for(const bad of [{repository:'ORISO-Infra',ref,sourceSHA:sha},{repository,ref:'refs/heads/../private',sourceSHA:sha},{repository,ref:'dev',sourceSHA:sha},{repository,ref:'d'.repeat(40),sourceSHA:sha}]) {
+   const forged=structuredClone(ingested[0]);forged.graphSource.sources=[bad];
+   assert.throws(()=>site.buildPageIndex({pages:[forged]},read),/public source/);
+  }
+ }
 });

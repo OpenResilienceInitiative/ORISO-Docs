@@ -32,3 +32,34 @@ test('old release remains bound when exact vector matches; changed SHA is visibl
   await new Promise(resolve=>setImmediate(resolve));assert.match(state.className,mismatch?/warn/:/ok/);
  }
 });
+
+test('repository cards show call coverage with unresolved calls in both languages',async()=>{
+ const script=readFileSync(new URL('../assets/status.js',import.meta.url),'utf8');
+ const appended=[];const card={querySelector:()=>null,appendChild:line=>appended.push(line)};
+ const el=()=>{const node={attrs:{},children:[],setAttribute(k,v){this.attrs[k]=v;},appendChild(c){this.children.push(c);}};return node;};
+ const nodes={closest:()=>card};
+ const source={name:'ORISO-UserService',repository:'ORISO-UserService',ref:'refs/heads/dev',sourceSHA:'a'.repeat(40),nodes:10,calls:{confirmed:20648,possible:6023,unresolved:147611,status:'partial'}};
+ vm.runInNewContext(script,{document:{querySelectorAll:selector=>selector.includes('ORISO-UserService')?[nodes]:[],querySelector:()=>null,createElement:el},Intl,Date,Number,String,Boolean,Set,fetch:async()=>({ok:true,json:async()=>({generatedAt:'2020-01-01T00:00:00Z',branch:'dev',sources:[source,{...source,name:'ORISO-Empty',calls:{confirmed:0,possible:0,unresolved:0}}]})})});
+ await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(appended.length,1);
+ const [deText,enText]=appended[0].children.map(c=>c.textContent);
+ assert.equal(deText,'Aufrufe: 20.648 quellseitig aufgelöst · 6.023 möglich · 147.611 nicht aufgelöst. Enge statische Quellregeln; keine Bestätigung durch Compiler, Typprüfung oder Laufzeit.');
+ assert.equal(enText,'Calls: 20,648 source-resolved · 6,023 possible · 147,611 unresolved. Narrow static source rules; no compiler, type-checker or runtime verification.');
+ assert.deepEqual(appended[0].children.map(c=>c.attrs.lang),['de','en']);
+});
+test('reader sees exact repository revision and generation time while a failed later refresh stays separate',async()=>{
+ const script=readFileSync(new URL('../assets/status.js',import.meta.url),'utf8'),rows=[],attempt={appendChild(child){this.textContent += child.textContent;}};
+ const createElement=()=>({children:[],attrs:{},setAttribute(k,v){this.attrs[k]=v;},appendChild(v){this.children.push(v);}});
+ const source={name:'ORISO-Docs',repository:'ORISO-Docs',ref:'refs/tags/v2.0.7',sourceSHA:'a'.repeat(40),fetchedAt:'2026-10-01T08:00:00Z',nodes:10};
+ const status={generatedAt:'2026-10-01T09:00:00Z',generationId:'installed-one',branch:source.ref,releaseVersion:'v2.0.7',releasedAt:'2026-10-01T07:00:00Z',releaseSources:[source],sources:[source]};
+ vm.runInNewContext(script,{document:{createElement,querySelectorAll:()=>[],querySelector:s=>s==='[data-ua="source-list"]'?{appendChild:r=>rows.push(r)}:s==='[data-ua="attempt"]'?attempt:null},Intl,Date,Number,String,Boolean,Set,fetch:async url=>({ok:true,json:async()=>url==='/status.json'?status:{schemaVersion:'oriso.refresh-attempt/v1',state:'failed',attemptId:'123-1',attemptedAt:'2026-10-02T10:00:00Z',releaseVersion:'v2.0.8',documentationRevision:'b'.repeat(40),phase:'generation',errorCode:'GENERATION_FAILED',installed:{generationId:'installed-one',releaseVersion:'v2.0.7'}}})});
+ await new Promise(r=>setImmediate(r));await new Promise(r=>setImmediate(r));
+ assert.equal(rows.length,1);const row=rows[0];assert.equal(row.children[0].children[0].textContent,'ORISO-Docs');assert.equal(row.children[1].children[0].textContent,'a'.repeat(40));assert.equal(row.children[2].textContent,'refs/tags/v2.0.7');assert.equal(row.children[3].textContent,'2026-10-01T09:00:00Z');
+ assert.match(attempt.textContent,/v2.0.8/);assert.match(attempt.textContent,/GENERATION_FAILED/);assert.match(attempt.textContent,/v2.0.7/);
+});
+
+test('the hub home page has no inline style attributes (strict CSP)', () => {
+ const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+ assert.doesNotMatch(html, /<a class="fcard" href="\/map\/"[^>]*style=/);
+ assert.match(html, /<a class="fcard[^"]*" href="\/map\/"/);
+});

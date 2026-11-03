@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'tools/understand-anything/**'
+      - 'tools/planning-map/**'
       - '.github/workflows/ua-tooling.yml'
       - '.github/scripts/ua_public_policy_test.py'
       - 'tools/truth-chain/public-repositories.json'
@@ -10,6 +11,7 @@ on:
     branches: [dev, pre-dev]
     paths:
       - 'tools/understand-anything/**'
+      - 'tools/planning-map/**'
       - '.github/workflows/ua-tooling.yml'
       - '.github/scripts/ua_public_policy_test.py'
       - 'tools/truth-chain/public-repositories.json'
@@ -24,6 +26,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+          fetch-depth: 0
+      - name: Trust the checked-out workspace in the ephemeral container
+        run: git config --global --add safe.directory "${GITHUB_WORKSPACE:?missing GITHUB_WORKSPACE}"
       - name: Verify supported repositories against canonical public visibility
         run: python3 .github/scripts/ua_public_policy_test.py -v
       - name: Install the pinned producer and consumer in a clean profile
@@ -32,15 +37,33 @@ jobs:
       - name: Test graph extraction, semantics, platform and consumer
         run: |
           export UA_CORE=/tmp/oriso-ua-runtime/current/upstream/understand-anything-plugin/packages/core/dist/index.js
-          cd /tmp/oriso-ua-runtime/current/tooling
+          cd tools/understand-anything
+          npm ci
           npm test
       - name: Test patched viewer evidence, relation categories and container connections
         run: |
           cd /tmp/oriso-ua-runtime/current/upstream
           npm exec --yes --package=pnpm@10.6.2 -- pnpm --filter @understand-anything/core exec vitest run src/__tests__/search.test.ts src/__tests__/embedding-search.test.ts
-          npm exec --yes --package=pnpm@10.6.2 -- pnpm --filter @understand-anything/dashboard exec vitest run src/__tests__/edgeCategories.test.ts src/__tests__/oriso-status-config.test.ts src/components/__tests__/ContainerNodeHandles.test.ts src/components/__tests__/OrisoNodeEvidence.test.ts
+          npm exec --yes --package=pnpm@10.6.2 -- pnpm --filter @understand-anything/dashboard exec vitest run src/__tests__/edgeCategories.test.ts src/__tests__/oriso-status-config.test.ts src/components/__tests__/ContainerNodeHandles.test.ts src/components/__tests__/OrisoNodeEvidence.test.ts src/components/__tests__/OrisoCallRelations.test.ts src/components/__tests__/OrisoPlatformTour.test.ts
+      - name: Test selected function source actions in the actual browser
+        run: |
+          npm install --prefix /tmp/ua-browser --no-save --no-package-lock --ignore-scripts playwright@1.61.1
+          /tmp/ua-browser/node_modules/.bin/playwright install --with-deps chromium
+          export UA_PLAYWRIGHT=/tmp/ua-browser/node_modules/playwright/index.mjs
+          cd /tmp/oriso-ua-runtime/current/upstream/understand-anything-plugin/packages/dashboard
+          node --test src/components/__tests__/NodeInfo.browser.mjs
+          cd "$GITHUB_WORKSPACE/tools/understand-anything"
+          node hosted-viewer/platform-tour-browser-test.mjs --upstream /tmp/oriso-ua-runtime/current/upstream --playwright /tmp/ua-browser/node_modules/playwright/index.mjs --output /tmp/oriso-platform-browser
+      - name: Test guarded source, static serving and hub status
+        run: |
+          export UNDERSTAND_TEST_UPSTREAM=/tmp/oriso-ua-runtime/current/upstream
+          export UA_PLAYWRIGHT=/tmp/ua-browser/node_modules/playwright/index.mjs
+          export UA_PLAYWRIGHT_REQUIRED=1
+          cd tools/understand-anything
+          node --test hosted-viewer/*.test.mjs site/hub/test/*.test.mjs
+          node hosted-viewer/runtime-test.mjs --upstream /tmp/oriso-ua-runtime/current/upstream
       - name: Test publication, failed transfers and real Git worktrees
         run: |
           export UA_CORE=/tmp/oriso-ua-runtime/current/upstream/understand-anything-plugin/packages/core/dist/index.js
-          cd /tmp/oriso-ua-runtime/current/tooling
+          cd tools/understand-anything
           python3 -m unittest discover -s test -p '*_test.py' -v

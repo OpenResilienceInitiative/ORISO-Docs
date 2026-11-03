@@ -109,3 +109,48 @@ Die erinnerte harte Entfernung ist ein anderer vorhandener Mechanismus: **ADR-01
 
 **5. Begriffe für Oberfläche und öffentliche Dokumentation.**
 „Fallzugriff“ ist der Oberbegriff. **Einsichtnahme** = lesender, zeitlich begrenzter Zugriff, Verantwortung bleibt. **Übernahme** = Verantwortung wechselt, vorheriger Berater bleibt Mitglied und kann zurücknehmen. **Fall holen** = Pull; **Fall abgeben** = Push.
+
+## Nachtrag 2026-10-14 — optionale Erläuterungen mit einer Richtlinie je Grund
+
+- **Status:** Akzeptierte Produktentscheidung — Frank, 2026-10-14. Technische Prüfung und Umsetzung
+  stehen noch aus; die Annahme dieser Entscheidung bestätigt weder die Auslieferung des Codes noch eine technische Freigabe.
+- **Umfang:** der bestehende Fallübergabeablauf, einschließlich einzelner Anforderungen, Sammelanforderungen und
+  Angebote an Empfänger. Verantwortung, Klienteneinwilligung und stille Raummitgliedschaft behalten ihre bisherigen Regeln.
+- **Umsetzungsnachweise:** [UserService #200](https://github.com/OpenResilienceInitiative/ORISO-UserService/issues/200),
+  [TenantService #192](https://github.com/OpenResilienceInitiative/ORISO-TenantService/issues/192) und
+  [Admin #771](https://github.com/OpenResilienceInitiative/ORISO-Admin/issues/771). Diese bestehenden
+  Pakete erweitern, statt eine getrennte Funktion für Übergabeeinstellungen zu schaffen.
+
+Ein Berater muss einen kategorisierten Grund wählen, wenn er Zugriff anfordert oder einen Fall anbietet. Eine zusätzliche
+Freitexterläuterung ist standardmäßig optional: Die Auswahl eines Grundes darf den Berater nicht dazu zwingen,
+dieselbe Information erneut einzugeben. Die Erläuterung wird bereits im internen Auditnachweis für Mitarbeitende
+festgehalten; deshalb bleibt das Eingabefeld verfügbar und trägt bei optionaler Eingabe die Bezeichnung
+**„Begründung (optional)“**. Ein Mandant kann über die bestehenden Fallübergabeeinstellungen für einen bestimmten Grund
+eine Erläuterung verlangen. Eine verpflichtende Erläuterung muss als erforderlich gekennzeichnet und entsprechend validiert werden.
+
+**Für Entwickler — Richtlinien- und Validierungsvertrag:**
+
+```text
+explanationRequired je Grund: BooleanPermissionPolicy; Standardwert false.
+false = zusätzliche Erläuterung optional; true = nichtleere Erläuterung erforderlich.
+TenantService besitzt und ermittelt die Richtlinie über die bestehende Kaskade aus Plattformstandard und Mandantenüberschreibung.
+UserService gibt die wirksame Richtlinie aus und erzwingt sie; die bestehende CaseHandoverCard in Admin bearbeitet sie.
+Der kategorisierte Grund bleibt in beiden Fällen erforderlich.
+Eine optionale fehlende oder leere Erläuterung wird zum leeren String normalisiert.
+Eine erforderliche fehlende oder leere Erläuterung wird vor Seiteneffekten auf Matrix-Berechtigungen oder Mitgliedschaften abgelehnt,
+und zwar bei einzelnen Anforderungen, Sammelanforderungen und Angeboten an Empfänger.
+Eingegebenen Text ausschließlich für das Mitarbeitenden-Audit im bestehenden Feld case_handover_request.explanation speichern.
+Diesen Freitext niemals in Chatnachrichten für Ratsuchende oder Benachrichtigungsdaten kopieren.
+Die bestehende Spalte TEXT NOT NULL akzeptiert den leeren String; keine Migration der Erläuterungsspalte erforderlich.
+```
+
+Das Audit muss Grund, handelnde Person und Zeitpunkt weiterhin erfassen, auch ohne zusätzliche Erläuterung.
+Die optionale Erläuterung verändert weder die Zugriffsberechtigung noch die Einwilligungsrichtlinie. Die bestehenden
+Zielgruppenbeschränkungen des Mitarbeitenden-Audits und die Datenschutzgrenze aus
+[UserService PR #1013](https://github.com/OpenResilienceInitiative/ORISO-UserService/pull/1013) und
+[PR #1053](https://github.com/OpenResilienceInitiative/ORISO-UserService/pull/1053) bleiben bestehen.
+
+**Aktueller Umsetzungsstand, geprüft am 2026-10-14:** Einzel- und Sammelanforderungen zum Holen verlangen weiterhin
+nichtleeren Text, während Angebote an Empfänger bereits eine fehlende Erläuterung akzeptieren. Die Richtlinie für
+Erläuterungen je Grund ist nicht implementiert. Eine Änderung der Oberflächenbeschriftung allein erfüllt diese Entscheidung nicht:
+Speichern und erneutes Laden der Richtlinie, serverseitige Durchsetzung und das entsprechende Formularverhalten müssen gemeinsam geliefert werden.

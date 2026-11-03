@@ -33,6 +33,7 @@
               "product/features/index",
               "product/features/live-chat",
               "product/features/group-chats",
+              "product/features/self-help-groups",
               "product/features/ai-tools",
               "product/features/case-handover",
               "product/features/handover",
@@ -40,6 +41,12 @@
               "product/features/pincode-chat",
               "product/features/session-management",
               "product/features/transcription"
+            ]
+          },
+          {
+            "group": "Ideas",
+            "pages": [
+              "product/ideas/idea-template"
             ]
           },
           {
@@ -118,9 +125,7 @@
               "docs/platform/repo-graphs/ORISO-Database",
               "docs/platform/repo-graphs/ORISO-Keycloak",
               "docs/platform/repo-graphs/ORISO-Kubernetes",
-              "docs/platform/repo-graphs/ORISO-Helm",
-              "docs/platform/repo-graphs/ORISO-E2E",
-              "docs/platform/repo-graphs/ORISO-Infra"
+              "docs/platform/repo-graphs/ORISO-Helm"
             ]
           }
         ]

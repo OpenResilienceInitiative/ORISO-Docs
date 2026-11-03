@@ -291,6 +291,13 @@ def refresh(base, tools, publish_root, specs=None, release_evidence=None, intern
                     f'ANALYZED {name} {next(s["sourceSHA"]for s in sources if s["repository"]==name)}',
                     flush=True,
                 )
+            require("ORISO-Docs" in {s["repository"] for s in sources}, "pinned Docs source required for glossary projection")
+            # Authored vocabulary comes from the selected Docs checkout, never a moving tooling branch.
+            run([
+                str(runner), str(tools / "ua-glossary-project.mjs"),
+                "--generation", str(stage), "--sources", str(source_root),
+                "--authored-root", str(source_root / "ORISO-Docs"),
+            ], cwd=tools, env=env)
             env.update(
                 UA_BASE=str(stage),
                 UA_REPOSITORIES=",".join(name for name, _, _ in specs),

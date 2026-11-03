@@ -447,10 +447,10 @@ index 0000000..b3f71d1
 +}
 diff --git a/understand-anything-plugin/packages/dashboard/src/components/OrisoNodeEvidence.tsx b/understand-anything-plugin/packages/dashboard/src/components/OrisoNodeEvidence.tsx
 new file mode 100644
-index 0000000..d3ef12c
+index 0000000..2394750
 --- /dev/null
 +++ b/understand-anything-plugin/packages/dashboard/src/components/OrisoNodeEvidence.tsx
-@@ -0,0 +1,181 @@
+@@ -0,0 +1,186 @@
 +import type {
 +  GraphNode,
 +  KnowledgeGraph,
@@ -464,6 +464,7 @@ index 0000000..d3ef12c
 +  sourceAtRevision,
 +  text,
 +} from "./orisoEvidenceModel";
++import { useI18n } from "../contexts/I18nContext";
 +export default function OrisoNodeEvidence({
 +  node,
 +  graph,
@@ -473,10 +474,12 @@ index 0000000..d3ef12c
 +  graph: KnowledgeGraph;
 +  onSelect: (id: string) => void;
 +}) {
++  const labels = useI18n().t.oriso;
 +  if (!isOriso(graph)) return null;
 +  const meta = metadata(node),
 +    claim = object(meta.semanticClaim),
-+    authority = object(meta.authority);
++    authority = object(meta.authority),
++    reviewer = object(claim.reviewedBy);
 +  const source = sourceAtRevision(node, graph),
 +    evidence = evidenceRows(node, graph),
 +    steps = orderedFlowSteps(node, graph);
@@ -488,31 +491,35 @@ index 0000000..d3ef12c
 +  const hasClaim = Object.keys(claim).length > 0;
 +  return (
 +    <section
-+      aria-label="Node source and claim evidence"
++      aria-label={labels.evidenceAria}
 +      className="mb-4 rounded-lg border border-border-subtle bg-elevated/60 p-3 text-xs text-text-secondary space-y-2 break-words"
 +    >
-+      <h3 className="font-semibold text-accent">Source and claim evidence</h3>
++      <h3 className="font-semibold text-accent">{labels.evidenceTitle}</h3>
 +      {hasClaim ? (
 +        <dl className="space-y-1">
 +          <div>
-+            <dt className="inline font-medium">Claim status: </dt>
-+            <dd className="inline">{text(claim.status) ?? "unbound"}</dd>
++            <dt className="inline font-medium">{labels.claimStatus}: </dt>
++            <dd className="inline">{text(claim.status) ?? labels.unbound}</dd>
 +          </div>
 +          <div>
-+            <dt className="inline font-medium">Confidence: </dt>
++            <dt className="inline font-medium">{labels.confidence}: </dt>
 +            <dd className="inline">
-+              {text(claim.confidence) ?? "not reviewed"}
++              {text(claim.confidence) ?? labels.notReviewed}
 +            </dd>
 +          </div>
 +          <div>
-+            <dt className="inline font-medium">Reviewed: </dt>
++            <dt className="inline font-medium">{labels.reviewed}: </dt>
 +            <dd className="inline">
-+              {text(claim.reviewedAt) ?? "No review date recorded"}
++              {text(claim.reviewedAt) ?? labels.noReviewDate}
 +            </dd>
 +          </div>
++          {(text(reviewer.kind) || text(reviewer.name)) && <div>
++            <dt className="inline font-medium">{labels.reviewer}: </dt>
++            <dd className="inline">{[text(reviewer.kind), text(reviewer.name)].filter(Boolean).join(" · ")}</dd>
++          </div>}
 +          {text(claim.sourceCommit) && (
 +            <div>
-+              <dt>Claim source revision</dt>
++              <dt>{labels.claimRevision}</dt>
 +              <dd className="font-mono break-all">
 +                {text(claim.sourceCommit)}
 +              </dd>
@@ -520,35 +527,33 @@ index 0000000..d3ef12c
 +          )}
 +          {text(claim.reason) && (
 +            <div>
-+              <dt className="sr-only">Assessment</dt>
++              <dt className="sr-only">{labels.assessment}</dt>
 +              <dd>{text(claim.reason)}</dd>
 +            </div>
 +          )}
 +        </dl>
 +      ) : (
-+        <p>No source-bound semantic review recorded for this node.</p>
++        <p>{labels.noReview}</p>
 +      )}
 +      {source && (
 +        <p className="font-mono break-all">
 +          {source.repository} · {source.commit}
 +        </p>
 +      )}
-+      {text(meta.source) && <p>Extraction source: {text(meta.source)}</p>}
++      {text(meta.source) && <p>{labels.extractionSource}: {text(meta.source)}</p>}
 +      {Object.keys(authority).length > 0 && (
 +        <p>
-+          Document status: {text(authority.status) ?? "unknown"} · Owner:{" "}
-+          {text(authority.owner) ?? "not declared"}. Authority depends on
-+          explicit scope and supersession.
++          {labels.documentStatus}: {text(authority.status) ?? labels.unknown} · {labels.owner}:{" "}
++          {text(authority.owner) ?? labels.notDeclared}. {labels.authorityCaveat}
 +        </p>
 +      )}
 +      <p>
-+        Source evidence only. Test links identify test definitions; they do not
-+        establish a passing execution or runtime acceptance.
++        {labels.sourceOnly}
 +      </p>
 +      {evidence.length > 0 && (
 +        <details open>
 +          <summary className="cursor-pointer">
-+            Claim evidence ({evidence.length})
++            {labels.claimEvidence} ({evidence.length})
 +          </summary>
 +          <ul className="mt-2 space-y-2 max-h-64 overflow-y-auto">
 +            {evidence.map((e, i) => (
@@ -572,7 +577,7 @@ index 0000000..d3ef12c
 +                  </>
 +                ) : (
 +                  <span>
-+                    {e.kind}: {e.id} · source link unavailable
++                    {e.kind}: {e.id} · {labels.sourceUnavailable}
 +                  </span>
 +                )}
 +              </li>
@@ -582,7 +587,7 @@ index 0000000..d3ef12c
 +      )}
 +      {steps.length > 0 && (
 +        <div>
-+          <h4 className="font-medium">Ordered source steps</h4>
++          <h4 className="font-medium">{labels.orderedSteps}</h4>
 +          <ol className="mt-1 space-y-1">
 +            {steps.map((s) => (
 +              <li key={s.node.id}>
@@ -610,18 +615,18 @@ index 0000000..d3ef12c
 +                  onClick={() => onSelect(edge.target)}
 +                >
 +                  {edge.type === "tested_by"
-+                    ? "Test source"
++                    ? labels.testSource
 +                    : edge.type === "on_error"
-+                      ? "On error"
-+                      : "Compensation"}
++                      ? labels.onError
++                      : labels.compensates}
 +                  : {target?.name ?? edge.target}
 +                </button>
 +                {edge.type !== "tested_by" && target && <p>{target.summary}</p>}
 +                <p className="text-[10px]">
 +                  {text(metadata(edge).evidenceKind) ??
-+                    "Unspecified confidence"}
++                    labels.unspecifiedConfidence}
 +                  {edge.type === "tested_by"
-+                    ? ` · Execution: ${text(metadata(edge).testExecution) ?? "not recorded"}`
++                    ? ` · ${labels.execution}: ${text(metadata(edge).testExecution) ?? labels.notRecorded}`
 +                    : ""}
 +                </p>
 +              </div>
@@ -716,14 +721,16 @@ index 0000000..27cd0f5
 +});
 diff --git a/understand-anything-plugin/packages/dashboard/src/components/__tests__/OrisoNodeEvidence.test.ts b/understand-anything-plugin/packages/dashboard/src/components/__tests__/OrisoNodeEvidence.test.ts
 new file mode 100644
-index 0000000..16fc9a1
+index 0000000..0d29160
 --- /dev/null
 +++ b/understand-anything-plugin/packages/dashboard/src/components/__tests__/OrisoNodeEvidence.test.ts
-@@ -0,0 +1,238 @@
+@@ -0,0 +1,255 @@
 +import { readFileSync } from "node:fs";
 +import { createElement } from "react";
 +import { renderToStaticMarkup } from "react-dom/server";
-+import OrisoNodeEvidence from "../OrisoNodeEvidence";
++import EvidencePanel from "../OrisoNodeEvidence";
++import { I18nProvider } from "../../contexts/I18nContext";
++const OrisoNodeEvidence = (props: Parameters<typeof EvidencePanel>[0] & {language?: string}) => createElement(I18nProvider, {language: props.language ?? "en", children: createElement(EvidencePanel, props)});
 +import { describe, expect, it } from "vitest";
 +import type {
 +  KnowledgeGraph,
@@ -958,6 +965,21 @@ index 0000000..16fc9a1
 +    }
 +  },
 +);
++
++
++it("German readers see source evidence qualifications and controls in German", () => {
++  const g = graph();
++  const n = file({id: "concept:localized", type: "concept", metadata: {semanticClaim: {status: "source-current", confidence: "source-reviewed", reviewedBy: {kind: "agent", name: "Fixture reviewer"}}}});
++  const html = renderToStaticMarkup(createElement(OrisoNodeEvidence, {node: n, graph: g, language: "de", onSelect: () => {}}));
++  expect(html).toContain("Quellen und Aussage-Evidenz");
++  expect(html).toContain("Status der Aussage");
++  expect(html).toContain("Vertrauen");
++  expect(html).toContain("Geprüft von");
++  expect(html).toContain("agent · Fixture reviewer");
++  expect(html).toContain("Nur Quellen-Evidenz");
++  expect(html).toContain("keinen erfolgreichen Testlauf oder Laufzeit-Abnahme");
++  expect(html).not.toContain("Source evidence only");
++});
 diff --git a/understand-anything-plugin/packages/dashboard/src/components/orisoEvidenceModel.ts b/understand-anything-plugin/packages/dashboard/src/components/orisoEvidenceModel.ts
 new file mode 100644
 index 0000000..d3f6144
@@ -1107,6 +1129,183 @@ index 0000000..d3f6144
 +    .map((r) => ({ order: Number(r.order), node: r.node! }))
 +    .sort((a, b) => a.order - b.order);
 +}
+diff --git a/understand-anything-plugin/packages/dashboard/src/contexts/I18nContext.tsx b/understand-anything-plugin/packages/dashboard/src/contexts/I18nContext.tsx
+index 08adb7b..28fc2dd 100644
+--- a/understand-anything-plugin/packages/dashboard/src/contexts/I18nContext.tsx
++++ b/understand-anything-plugin/packages/dashboard/src/contexts/I18nContext.tsx
+@@ -1,10 +1,12 @@
+ import { createContext, useContext, useMemo, type ReactNode } from "react";
+ import { getLocale, resolveLocaleKey, type Locale, type LocaleKey } from "../locales";
+ 
++import { orisoLocales, germanTourLabels, type OrisoLocale } from "../locales/oriso";
++
+ interface I18nContextValue {
+   locale: Locale;
+   localeKey: LocaleKey;
+-  t: Locale;
++  t: Locale & { oriso: OrisoLocale };
+ }
+ 
+ const I18nContext = createContext<I18nContextValue | null>(null);
+@@ -25,7 +27,11 @@ export function I18nProvider({
+   children: ReactNode;
+ }) {
+   const localeKey = useMemo(() => resolveLocaleKey(language), [language]);
+-  const locale = useMemo(() => getLocale(localeKey), [localeKey]);
++  const locale = useMemo(() => {
++    const base = getLocale(localeKey);
++    return {...base, oriso: orisoLocales[localeKey === "de" ? "de" : "en"],
++      learnPanel: localeKey === "de" ? {...base.learnPanel, ...germanTourLabels} : base.learnPanel};
++  }, [localeKey]);
+ 
+   const value = useMemo(
+     () => ({
+diff --git a/understand-anything-plugin/packages/dashboard/src/locales/index.ts b/understand-anything-plugin/packages/dashboard/src/locales/index.ts
+index 27f022c..ec8b429 100644
+--- a/understand-anything-plugin/packages/dashboard/src/locales/index.ts
++++ b/understand-anything-plugin/packages/dashboard/src/locales/index.ts
+@@ -5,11 +5,13 @@ import ja from "./ja";
+ import ko from "./ko";
+ import ru from "./ru";
+ 
+-export type LocaleKey = "en" | "zh" | "zh-TW" | "ja" | "ko" | "ru";
++export type LocaleKey = "en" | "de" | "zh" | "zh-TW" | "ja" | "ko" | "ru";
+ export type Locale = typeof en;
+ 
+ export const locales: Record<LocaleKey, Locale> = {
+   en,
++  de: { ...en, common: { ...en.common, openCode: "Code öffnen", connections: "Verbindungen" },
++    edgeLabels: { ...en.edgeLabels, related: { forward: "verknüpft mit", backward: "verknüpft mit" } } },
+   zh,
+   "zh-TW": zhTW,
+   ja,
+@@ -24,6 +26,7 @@ export function getLocale(key: LocaleKey): Locale {
+ export function resolveLocaleKey(lang: string | undefined): LocaleKey {
+   if (!lang) return "en";
+   const normalized = lang.toLowerCase().replace(/[_\s]/g, "-");
++  if (["de", "de-de", "german", "deutsch"].includes(normalized)) return "de";
+   if (normalized === "zh" || normalized === "chinese" || normalized === "zh-cn") return "zh";
+   if (normalized === "zh-tw" || normalized === "traditional-chinese") return "zh-TW";
+   if (normalized === "ja" || normalized === "japanese") return "ja";
+diff --git a/understand-anything-plugin/packages/dashboard/src/locales/oriso.ts b/understand-anything-plugin/packages/dashboard/src/locales/oriso.ts
+new file mode 100644
+index 0000000..127dceb
+--- /dev/null
++++ b/understand-anything-plugin/packages/dashboard/src/locales/oriso.ts
+@@ -0,0 +1,113 @@
++// One typed ORISO extension; the provider supplies English fallback for other languages.
++const calls = {
++  en: { calls: "Calls", callers: "Called by", possible: "possible", include: "Include possible calls",
++    emptyCaller: "No caller found in the extracted source.", emptyCallee: "No callee found in the extracted source.",
++    onlyPossible: "Only possible calls; shown when included.", notChecked: "not type-checked",
++    explanation: "Source-resolved calls use narrow static source rules. Neither source-resolved nor possible calls are verified by a compiler, type checker or runtime.",
++    emptyWarning: "An empty list is not proof of no calls.",
++    unresolved: (count: number) => `${count.toLocaleString("en")} calls in this graph could not be resolved, so an empty list is not proof of no calls.`,
++    more: (next: number, remaining: number) => `Show ${next} more (${remaining} remaining)`,
++  },
++  de: { calls: "Ruft auf", callers: "Aufgerufen von", possible: "möglich", include: "Mögliche Aufrufe einbeziehen",
++    emptyCaller: "In dieser Quellgeneration wurde kein Aufrufer gefunden.", emptyCallee: "In dieser Quellgeneration wurde kein Aufrufziel gefunden.",
++    onlyPossible: "Nur mögliche Aufrufe; sichtbar, wenn einbezogen.", notChecked: "nicht typgeprüft",
++    explanation: "Quellseitig aufgelöste Aufrufe nutzen enge statische Quellregeln. Weder sie noch mögliche Aufrufe sind durch Compiler, Typprüfung oder Laufzeit bestätigt.",
++    emptyWarning: "Eine leere Liste beweist nicht, dass keine Aufrufe existieren.",
++    unresolved: (count: number) => `${count.toLocaleString("de")} Aufrufe in diesem Graphen konnten nicht aufgelöst werden. Eine leere Liste beweist nicht, dass keine Aufrufe existieren.`,
++    more: (next: number, remaining: number) => `${next} weitere anzeigen (${remaining} verbleibend)`,
++  },
++};
++
++const en = {
++  "sourceAtRevision": "Source at revision",
++  "sourceUnavailable": "Source link unavailable",
++  "evidenceAria": "Node source and claim evidence",
++  "evidenceTitle": "Source and claim evidence",
++  "claimStatus": "Claim status",
++  "confidence": "Confidence",
++  "reviewed": "Reviewed",
++  "reviewer": "Reviewer",
++  "unbound": "unbound",
++  "notReviewed": "not reviewed",
++  "noReviewDate": "No review date recorded",
++  "claimRevision": "Claim source revision",
++  "assessment": "Assessment",
++  "noReview": "No source-bound semantic review recorded for this node.",
++  "extractionSource": "Extraction source",
++  "documentStatus": "Document status",
++  "unknown": "unknown",
++  "owner": "Owner",
++  "notDeclared": "not declared",
++  "authorityCaveat": "Authority depends on explicit scope and supersession.",
++  "sourceOnly": "Source evidence only. Test links identify test definitions; they do not establish a passing execution or runtime acceptance.",
++  "claimEvidence": "Claim evidence",
++  "orderedSteps": "Ordered source steps",
++  "testSource": "Test source",
++  "onError": "On error",
++  "compensates": "Compensates",
++  "unspecifiedConfidence": "Unspecified confidence",
++  "execution": "Execution",
++  "notRecorded": "not recorded",
++  "coverage": "Repository coverage",
++  "coverageCaveat": "Included source does not establish deployment or runtime verification.",
++  "included": "Included",
++  "unavailable": "Unavailable",
++  "retired": "Historical source (retired)",
++  "openRepository": "Open repository graph",
++  "semanticEntries": "Semantic entries",
++  "semanticCaveat": "Matching source is not runtime proof. Historical explanations still need review.",
++  "sourceCurrent": "Source current",
++  "stale": "Stale — re-review required",
++  "awaitingReview": "Awaiting review",
++  "languageLesson": "Language Lesson",
++  "referencedComponents": "Referenced Components",
++  "goToStep": "Go to step"
++};
++const de: typeof en = {
++  "sourceAtRevision": "Quelle dieser Revision",
++  "sourceUnavailable": "Quelllink nicht verfügbar",
++  "evidenceAria": "Quellen und Aussage-Evidenz",
++  "evidenceTitle": "Quellen und Aussage-Evidenz",
++  "claimStatus": "Status der Aussage",
++  "confidence": "Vertrauen",
++  "reviewed": "Geprüft",
++  "reviewer": "Geprüft von",
++  "unbound": "ungebunden",
++  "notReviewed": "nicht geprüft",
++  "noReviewDate": "Kein Prüfdatum erfasst",
++  "claimRevision": "Quellrevision der Aussage",
++  "assessment": "Bewertung",
++  "noReview": "Für diesen Knoten ist keine quellengebundene semantische Prüfung erfasst.",
++  "extractionSource": "Extraktionsquelle",
++  "documentStatus": "Dokumentstatus",
++  "unknown": "unbekannt",
++  "owner": "Verantwortlich",
++  "notDeclared": "nicht angegeben",
++  "authorityCaveat": "Autorität hängt von explizitem Geltungsbereich und Ablösung ab.",
++  "sourceOnly": "Nur Quellen-Evidenz. Testverknüpfungen zeigen Testdefinitionen; sie belegen keinen erfolgreichen Testlauf oder Laufzeit-Abnahme.",
++  "claimEvidence": "Aussage-Evidenz",
++  "orderedSteps": "Geordnete Quellschritte",
++  "testSource": "Testquelle",
++  "onError": "Bei Fehler",
++  "compensates": "Kompensation",
++  "unspecifiedConfidence": "Vertrauen nicht angegeben",
++  "execution": "Ausführung",
++  "notRecorded": "nicht erfasst",
++  "coverage": "Repository-Abdeckung",
++  "coverageCaveat": "Enthaltene Quellen belegen keine aktive Bereitstellung oder Laufzeitprüfung.",
++  "included": "Enthalten",
++  "unavailable": "Nicht verfügbar",
++  "retired": "Historische Quelle (stillgelegt)",
++  "openRepository": "Detailgraph öffnen",
++  "semanticEntries": "Semantische Einträge",
++  "semanticCaveat": "Ein Quellenabgleich ist kein Laufzeitnachweis. Historische Erklärungen bleiben prüfpflichtig.",
++  "sourceCurrent": "Quellenstand geprüft",
++  "stale": "Erneute Prüfung nötig",
++  "awaitingReview": "Prüfung ausstehend",
++  "languageLesson": "Sprachhinweis",
++  "referencedComponents": "Referenzierte Komponenten",
++  "goToStep": "Zu Schritt"
++};
++export const orisoLocales = {en: {...en, calls: calls.en}, de: {...de, calls: calls.de}};
++export type OrisoLocale = typeof orisoLocales.en;
++export const germanTourLabels = {noTour: "Keine Tour verfügbar", noTourHint: "Für diese Generation wurde keine Tour erstellt.", projectTour: "Projekt-Tour", steps: "Schritte", guidedWalkthrough: "Geführter Überblick", startTour: "Tour starten", tour: "Tour", exitTour: "Tour beenden", prev: "Zurück", next: "Weiter", finish: "Abschließen"};
 diff --git a/understand-anything-plugin/packages/dashboard/src/store.ts b/understand-anything-plugin/packages/dashboard/src/store.ts
 index 884f428..7224ea6 100644
 --- a/understand-anything-plugin/packages/dashboard/src/store.ts

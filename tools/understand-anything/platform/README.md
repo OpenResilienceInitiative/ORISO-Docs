@@ -2,6 +2,34 @@
 
 > Historical implementation notes and build snapshots retained from the imported September 4 work. Counts, self-loops and deployment descriptions below are not current acceptance evidence. Use the current generation manifest, metadata.stats, typed relations and the remediation matrix; differing older counts refer to different intermediate runs.
 
+## Current platform navigation contract
+
+The slim platform and the merged supergraph share six deliberately small tour
+steps: entry points, core domain, authentication, messaging, operations, and
+evidence. Each selects at most six existing nodes; absent sections are explicitly
+unavailable. The authentication step reuses reviewed concept routes, while
+uncertain relationships remain qualified. Tour text is source orientation and
+never establishes runtime acceptance.
+
+`metadata.platformNavigation` lists represented and unavailable repositories,
+exact source revisions, and approved repository detail routes. The Docs graph
+remains separate. Retired Kubernetes configuration stays in the complete source
+vector with an explicit historical label and is not an active service.
+
+`metadata.platformTour` supplies equivalent German and English descriptions.
+`metadata.semanticDispositions` records every one of the original 27 UserService
+concept/flow identities. Existing claims are re-assessed against the original
+source graph and the aggregate vector; missing evidence awaits review, changed
+evidence is stale, and reviewed matching source never implies runtime proof.
+The older platform narrative remains excluded from release generation until it
+has its own source review.
+
+The pinned viewer shows coverage, exact revisions, repository detail links and
+the individual semantic dispositions in its overview and tour panels. The
+isolated `hosted-viewer/platform-tour-browser-test.mjs` exercises all six steps,
+keyboard selection of the owning SPI class, both languages, and narrow/desktop
+layouts. This fixture is not public-delivery evidence.
+
 
 A slim, high-signal knowledge graph layered on top of the per-repo
 Understand-Anything graphs. Where the existing 36 MB super-graph only glues
@@ -216,6 +244,20 @@ per the matcher tests.
 
 ## Known limits
 
+- **One service-to-service client is parsed: UserService -> Keycloak otp-config SPI** (ADR-013,
+  `lib/userservice-keycloak.mjs`). `KeycloakService` builds each URL from an `ENDPOINT_OTP_*`
+  constant under `identity.otp-url` and takes the verb from the `keycloakClient` helper; each
+  method is matched by exact verb + path to the SPI's own endpoint nodes and to exactly one
+  function node, otherwise it is skipped. These `calls` edges appear in the "UserService
+  Callers" layer and count as callers for the uncalled-endpoint stats. No other Java client
+  (Agency/Tenant/ConsultingType REST clients, Matrix) is traced.
+- **Concept bridges are declared in `narrative/concept-bridges.json`** (`lib/concept-bridges.mjs`,
+  Docs#168). Today one bridge: UserService `concept:identity-authentication-2fa` -> Keycloak
+  `concept:otp-config-rest-api` and `concept:email-otp-second-factor` (ADR-013). Both concepts are
+  projected with their own `related` targets, so the SPI classes are one step past the bridge,
+  and the 2FA concept also points at the UserService caller methods. A bridge is emitted only
+  when confirmed `calls` exist between the two repos; otherwise it is skipped with a warning and
+  no text-only link is drawn. Shown in the "Concept Bridges" layer.
 - **The caller scan is now `src/**/*.ts`+`.tsx` repo-wide** (previously
   `src/api/**/*.ts` only) for both Frontend and Admin, which closed most of
   the "real caller lives outside the scanned directory" gap described in

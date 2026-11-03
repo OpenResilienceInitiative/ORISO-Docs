@@ -56,9 +56,11 @@ viewer baseline. These scripts were not executed against any server.
 
 ## Pinned source-preview integration
 
-The current installer uses `patches/oriso-public-source-preview-v1.patch` after
-`oriso-schema-viewer-v1.patch` on the exact locked upstream commit. It verifies
-both patch checksums and the resolver/type-module checksums, copies those modules,
+The current installer applies `oriso-schema-viewer-v1.patch`,
+`patches/oriso-public-source-preview-v1.patch` and `oriso-call-relations-v1.patch`
+(node panel "Called by" / "Calls" lists with labelled possible calls and an include toggle,
+Docs#167) in that order on the exact locked upstream commit. It verifies
+the patch checksums and the resolver/type-module checksums, copies those modules,
 and builds core and dashboard before activating its immutable runtime release.
 The older `apply.py`/`viewer.patch`/manifest are historical compatibility tooling
 for their recorded baseline; do not apply them blindly to the current pinned tree.
@@ -83,3 +85,15 @@ The host operator still must supply the actual approved viewer list, tokens,
 Compose path/container targets, runner registration and nginx hub current-link
 migration. The actual Understand root is a directory, so no existing current-link
 is inferred. Missing bindings fail; these tools were not run on the host.
+
+## Deep links (Docs#199)
+
+`oriso-deep-link-v1.patch` (with `deep-link.mjs`, copied next to the dashboard by
+the installer) makes every viewer accept `?node=<id>`: the node is selected and
+centred, the sidebar shows it, and an id the graph does not contain shows a
+"Knoten nicht gefunden / Node not found" notice instead of failing silently.
+A repository-prefixed id (`ORISO-X::file:p`) also matches a single-repository
+graph that stores `file:p`. Each node panel gets "Auf der Karte zeigen / Show on
+map", linking to `/map/#node=<id>`. Ids: `capability:<slug>`,
+`<repo>::folder:<dir>`, `<repo>::file:<path>`. `deep-link-browser-test.mjs
+--upstream DIR --playwright PATH` runs the real dashboard against a synthetic graph.
