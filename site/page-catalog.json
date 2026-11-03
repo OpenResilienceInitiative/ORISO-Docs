@@ -1206,13 +1206,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/ADR-018-erstantwort-as-one-persisted-event-rendered-as-carimat-bubbles.md",
-          "sourceHash": "b8338eef066e17f86a42abfca747f36057d9aee477397040df98c93acb345129",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "e9724228bfe039d54438bf30b6a9e4e37eadfab7a53c8c45e39c05461b28af95",
+          "reviewedAt": "2026-11-03"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/ADR-018-erstantwort-as-one-persisted-event-rendered-as-carimat-bubbles.md",
-          "sourceHash": "b8338eef066e17f86a42abfca747f36057d9aee477397040df98c93acb345129",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "e9724228bfe039d54438bf30b6a9e4e37eadfab7a53c8c45e39c05461b28af95",
+          "reviewedAt": "2026-11-03"
         }
       }
     },
@@ -1252,12 +1252,12 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/ADR-020-scheduled-calls-secure-invitations-and-unified-contact-calendar.md",
-          "sourceHash": "0fb1b4cd27f8247cef1fd4b104a86eaa0f1062f4c644c3c5e5606bbfca55edf7",
+          "sourceHash": "4069bc7e91c834ebf2b5a3c16dc447a1b029cf23633458c878302c2a418505e1",
           "reviewedAt": "2026-10-28"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/ADR-020-scheduled-calls-secure-invitations-and-unified-contact-calendar.md",
-          "sourceHash": "0fb1b4cd27f8247cef1fd4b104a86eaa0f1062f4c644c3c5e5606bbfca55edf7",
+          "sourceHash": "4069bc7e91c834ebf2b5a3c16dc447a1b029cf23633458c878302c2a418505e1",
           "reviewedAt": "2026-10-28"
         }
       }
@@ -1321,13 +1321,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
-          "sourceHash": "1ca3a10a5e0e35cdfa9811a962e205894dc4037c42c932b133bc31ea2ca22643",
-          "reviewedAt": "2026-10-06"
+          "sourceHash": "abbedd2d5f9703dd9ba8ab57ba5ba08a7ffd26f6aa86bde0ff4cc0fb60cb2cb9",
+          "reviewedAt": "2026-10-28"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
-          "sourceHash": "1ca3a10a5e0e35cdfa9811a962e205894dc4037c42c932b133bc31ea2ca22643",
-          "reviewedAt": "2026-10-06"
+          "sourceHash": "abbedd2d5f9703dd9ba8ab57ba5ba08a7ffd26f6aa86bde0ff4cc0fb60cb2cb9",
+          "reviewedAt": "2026-10-28"
         }
       }
     },
@@ -1413,12 +1413,12 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/README.md",
-          "sourceHash": "a2d027b919312245e57c54e16ba0394ae33dcfcf78782b37fbc60d6590fdbd8f",
+          "sourceHash": "625e97f2c462da5c8a702fa79244b574e0d394ef565abcda85debe866f6794cc",
           "reviewedAt": "2026-10-28"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/README.md",
-          "sourceHash": "a2d027b919312245e57c54e16ba0394ae33dcfcf78782b37fbc60d6590fdbd8f",
+          "sourceHash": "625e97f2c462da5c8a702fa79244b574e0d394ef565abcda85debe866f6794cc",
           "reviewedAt": "2026-10-28"
         }
       }

@@ -185,3 +185,34 @@ Source, local tests, CI, human review, merge, deployment and direct-role Dev acc
 remain separate evidence. Dev acceptance must exercise direct Träger and Beratungsstelle
 administrators, counsellors and help-seekers; platform remote access alone is insufficient.
 The issues hold the current delivery evidence rather than this dated policy record.
+
+---
+
+## Addendum — 2026-10-28: Continuation at recurring group appointments
+
+**Decision provenance:** Frank explicitly confirmed the remaining recurrence policy
+while asking to finish [AVV renewal issue 294](https://github.com/OpenResilienceInitiative/ORISO-TenantService/issues/294)
+on 28 October 2026. He also authorized the necessary ORISO-Helm chat-server companion.
+This supersedes the undecided recurrence classification in the 6 October addendum;
+the earlier accepted text remains the historical record.
+
+1. **An existing participant may continue at later appointments of the same
+   ongoing counselling group.** Actual earlier participation establishes begun
+   counselling. A later appointment does not turn that participant into a new
+   help-seeker. Normal membership, invitation, tenant and ban rules still apply.
+2. **A new participant remains subject to the current AVV rule at every
+   appointment.** After the renewal deadline, that participant cannot begin group
+   counselling until the serving organisation confirms the governing AVV.
+   Registration, invitation and assignment alone do not establish participation.
+   Participation in another group does not grant this exception.
+3. **The application and ordinary Matrix clients must enforce the same policy.**
+   Trusted evidence must identify actual applied participation in a room belonging
+   to that same group. The system must retain room lineage when an appointment
+   rotates to a new room. Missing historical evidence cannot be replaced with a
+   guessed room alias or an assumption that an assigned user previously joined.
+
+This decision does not certify implementation or deployment. Previously lost room
+lineage, native chat-server enforcement and direct-role Dev acceptance remain
+verification work in [group issue 1323](https://github.com/OpenResilienceInitiative/ORISO-UserService/issues/1323).
+An unavailable or inconclusive verification must remain distinguishable from a
+confirmed legal refusal; it must not grant protected new access.
