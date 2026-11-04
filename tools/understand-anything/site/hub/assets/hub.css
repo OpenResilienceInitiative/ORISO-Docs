@@ -350,3 +350,33 @@ html[data-lang="en"] [lang="de"]{display:none !important}
 .ua-sw[data-token="health-weak"]{background:var(--ua-health-weak);color:var(--ua-health-weak-on);border-color:var(--ua-health-weak-edge)}
 .ua-sw[data-token="health-fair"]{background:var(--ua-health-fair);color:var(--ua-health-fair-on);border-color:var(--ua-health-fair-edge)}
 .ua-sw[data-token="health-good"]{background:var(--ua-health-good);color:var(--ua-health-good-on);border-color:var(--ua-health-good-edge)}
+
+/* Context links from a feature step to the underlying Understand graph. */
+.feature-graph {
+  margin-top: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-inline-start: 2px solid var(--brand-line);
+  background: var(--sunken);
+  border-radius: 4px;
+  font-size: 0.875rem;
+  overflow-wrap: anywhere;
+}
+.feature-graph summary {
+  color: var(--brand);
+  cursor: pointer;
+  font-weight: 600;
+}
+.feature-graph p {
+  margin: 0.5rem 0;
+}
+.feature-graph ul {
+  margin: 0.5rem 0;
+  padding-inline-start: 1.25rem;
+}
+.feature-graph li + li {
+  margin-top: 0.4rem;
+}
+.feature-graph a {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
