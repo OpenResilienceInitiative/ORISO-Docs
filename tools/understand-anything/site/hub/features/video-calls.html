@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="de" data-lang="de" data-title-de="Videocalls starten und freigeben — ORISO Understand" data-title-en="Start and enable video calls — ORISO Understand">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Videocalls starten und freigeben — ORISO Understand</title>
+<meta name="description" content="Ein Videocall beginnt im erlaubten Gespräch oder über einen passenden Anruflink. Ob die Schaltfläche verfügbar ist, hängt von den Funktionsregeln und der Gesprächsart ab." data-description-de="Ein Videocall beginnt im erlaubten Gespräch oder über einen passenden Anruflink. Ob die Schaltfläche verfügbar ist, hängt von den Funktionsregeln und der Gesprächsart ab." data-description-en="A video call starts from an eligible conversation or a call link. Whether its control is available depends on feature rules and conversation type.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/hub.css">
+<script src="/assets/lang.js"></script>
+</head>
+<body>
+
+<div class="appbar">
+  <div class="appbar-in">
+    <span class="brandname"><a href="/">ORISO Understand</a></span>
+    <span class="sub">/features/video-calls</span>
+    <span class="sp"></span>
+    <span class="badge solid"><span lang="de">Feature</span><span lang="en">Feature</span></span>
+    <span class="badge">Ablauf / Flow</span>
+    <span class="badge warn"><span lang="de">teilweise gebaut</span><span lang="en">partly built</span></span>
+    <span class="badge"><span lang="de">Graph 07.09.2026</span><span lang="en">Graph 7 Sept 2026</span></span>
+    <span class="langswitch" role="group" aria-label="Sprache / Language">
+      <button type="button" data-lang="de" aria-pressed="true">DE</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </span>
+  </div>
+</div>
+
+
+<header class="band">
+  <div class="band-in"><div class="headcard">
+    <div class="eyebrow">ORISO Understand · Features</div>
+    <h1><span lang="de">Videocalls starten und freigeben</span><span lang="en">Start and enable video calls</span></h1>
+    <p class="lead"><span lang="de">Ein Videocall beginnt im erlaubten Gespräch oder über einen passenden Anruflink. Ob die Schaltfläche verfügbar ist, hängt von den Funktionsregeln und der Gesprächsart ab.</span><span lang="en">A video call starts from an eligible conversation or a call link. Whether its control is available depends on feature rules and conversation type.</span></p>
+    <div class="chips"><span class="chip"><span class="dot"></span><span lang="de">Freigabe → Geräte → Gespräch</span><span lang="en">Permission → devices → call</span></span></div>
+  </div></div>
+</header>
+<nav class="chipnav" aria-label="Kapitel / Chapters"><div class="chipnav-in">
+  <a href="#k1"><span class="no">1</span><span lang="de">Vom Schalter zum Anruf</span><span lang="en">From the setting to the call</span></a>
+  <a href="#k2"><span class="no">2</span><span lang="de">Video ausschalten</span><span lang="en">Turn video off</span></a>
+  <a href="#k3"><span class="no">3</span><span lang="de">Stand und Quellen</span><span lang="en">Status and sources</span></a>
+</div></nav>
+<main class="wrap">
+<div class="meta"><div><div class="vlabel"><span lang="de">Seite</span><span lang="en">Page</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Online-Graph</span><span lang="en">Online graph</span></div><div class="vvalue">21.09.2026</div></div><div><div class="vlabel"><span lang="de">Quellenabgleich</span><span lang="en">Source check</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Stand der Funktion</span><span lang="en">Feature status</span></div><div class="vvalue"><span class="status warn"><span lang="de">Im Code belegt</span><span lang="en">Verified in source</span></span></div></div></div>
+<section id="k1">
+<div class="ch"><span class="chapter-no">1</span><h2><span lang="de">Vom Schalter zum Anruf</span><span lang="en">From the setting to the call</span></h2></div>
+<ol class="steps">
+  <li class="step">
+    <div class="step-no">1</div>
+    <div class="step-body">
+      <div class="step-head"><span class="step-title"><span lang="de">Video für die Gesprächsart freigeben</span><span lang="en">Allow video for the conversation type</span></span><span class="who b"><span lang="de">Administration</span><span lang="en">Administration</span></span></div>
+      <div class="step-text"><span lang="de">Unter Admin → Funktionszugriff müssen der gemeinsame Anrufschalter, Video und die jeweilige Gesprächsart Video erlauben. Eine geerbte Vorgabe kann die Auswahl sperren. Audio hat eigene Werte.</span><span lang="en">Under Admin → Feature access, the master calls switch, video switch and the conversation type must allow video. An inherited requirement can lock the value. Audio has its own values.</span></div>
+      <details class="feature-graph"><summary><span lang="de">Im Graphen · Video für die Gesprächsart freigeben</span><span lang="en">In the graph · Allow video for the conversation type</span></summary>
+<ul>
+<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fcomponents%2Fcall%2FcallFeatureGates.ts%3AresolveCallFeatureGates"><span lang="de">Anrufregeln im Frontend auflösen</span><span lang="en">Resolve call permissions in the frontend</span></a></li>
+<li><a href="https://understand.oriso.org/admin-service/?token=oriso-admin-dashboard&amp;node=function%3Asrc%2Fcomponents%2FTenants%2FAppSettings%2FPermissionsSettings%2FPermissionsSettingsView.tsx%3APermissionsSettingsView"><span lang="de">Funktionszugriff anzeigen</span><span lang="en">Show feature access</span></a></li>
+</ul>
+</details>
+    </div>
+  </li>
+  <li class="step">
+    <div class="step-no">2</div>
+    <div class="step-body">
+      <div class="step-head"><span class="step-title"><span lang="de">Im Gespräch starten</span><span lang="en">Start from the conversation</span></span><span class="who b"><span lang="de">Beratende</span><span lang="en">Counsellor</span></span></div>
+      <div class="step-text"><span lang="de">Öffne das Gespräch und wähle den Videoanruf, wenn er angeboten wird. Die Anwendung startet den Anruf im Raumkontext. Bei einem Anruflink kann vor dem Gespräch ein eigener Einstieg erscheinen.</span><span lang="en">Open the conversation and choose video call when available. The app starts the call in the room context. A call link can show a separate entry before the call.</span></div>
+      <details class="feature-graph"><summary><span lang="de">Im Graphen · Im Gespräch starten</span><span lang="en">In the graph · Start from the conversation</span></summary>
+<ul>
+<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fcomponents%2Fcall%2FstartRoomCall.ts%3AstartRoomCall"><span lang="de">Raumanruf starten</span><span lang="en">Start a room call</span></a></li>
+<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fcomponents%2Fcall%2Fwidget%2FuseElementCallWidget.ts%3AuseElementCallWidget"><span lang="de">Element Call einbinden</span><span lang="en">Connect the Element Call widget</span></a></li>
+</ul>
+</details>
+    </div>
+  </li>
+  <li class="step">
+    <div class="step-no">3</div>
+    <div class="step-body">
+      <div class="step-head"><span class="step-title"><span lang="de">Geräte prüfen und teilnehmen</span><span lang="en">Check devices and join</span></span><span class="who b"><span lang="de">Ratsuchende</span><span lang="en">Advice seeker</span></span></div>
+      <div class="step-text"><span lang="de">Je nach Einstieg kannst du Mikrofon, Kamera und Ausgabe prüfen. Die Browserfreigabe entscheidet, ob Mikrofon und Kamera tatsächlich verfügbar sind. Ein Anruflink kann zusätzlich einen Einlass durch die Beratungsperson verlangen.</span><span lang="en">Depending on the entry, you can check microphone, camera and output. Browser permissions determine whether microphone and camera are available. A call link can also require admission by the counsellor.</span></div>
+      <details class="feature-graph"><summary><span lang="de">Im Graphen · Geräte prüfen und teilnehmen</span><span lang="en">In the graph · Check devices and join</span></summary>
+<ul>
+<li><a href="https://understand.oriso.org/user-service/?token=oriso-userservice-dashboard&amp;node=file%3Asrc%2Fmain%2Fjava%2Fde%2Fcaritas%2Fcob%2Fuserservice%2Fapi%2Fservice%2Fmatrixrtc%2FMatrixRtcPolicyContextResolver.java"><span lang="de">Anrufkontext im Dienst prüfen</span><span lang="en">Resolve call context in the service</span></a></li>
+</ul>
+</details>
+    </div>
+  </li>
+</ol>
+</section>
+<section id="k2">
+<div class="ch"><span class="chapter-no">2</span><h2><span lang="de">Video ausschalten</span><span lang="en">Turn video off</span></h2></div>
+<div class="kurz"><p><span lang="de">Schalte Video im Funktionszugriff für den passenden Geltungsbereich aus. Ein erlaubter Audioanruf kann weiter angeboten werden. Der gemeinsame Anrufschalter betrifft beide Arten.</span><span lang="en">Switch off video under Feature access for the intended scope. Audio can remain available. The master calls switch affects both.</span></p><p><span lang="de">Die Gerätefreigabe im Browser, die Freigabe durch die Organisation und der Einlass in einen konkreten Anruf sind unterschiedliche Entscheidungen.</span><span lang="en">Browser device permission, organisational feature permission and admission to an individual call are separate decisions.</span></p></div>
+</section>
+<section id="k3">
+<div class="ch"><span class="chapter-no">3</span><h2><span lang="de">Stand und Quellen</span><span lang="en">Status and sources</span></h2></div>
+<p><span lang="de">Der Quellenabgleich vom 4. November beschreibt den Stand auf dev. Der öffentliche Understand-Graph stammt vom 21. September. Die Graph-Sprünge öffnen Knoten, die in diesem Stand vorhanden sind.</span><span lang="en">The source check on 4 November describes dev. The public Understand graph is dated 21 September. The graph links open nodes present in that snapshot.</span></p><p><a href="/features/waiting-room.html"><span lang="de">Gerätecheck und Warteraum</span><span lang="en">Device check and waiting room</span></a></p><p><a href="/features/feature-permissions.html"><span lang="de">Regeln für Plattform, Träger und Beratungsstelle</span><span lang="en">Rules for platform, provider and centre</span></a></p>
+</section>
+</main>
+<footer><a href="/features/">ORISO Understand · Features</a> · <a href="/"><span lang="de">Startseite</span><span lang="en">Home</span></a></footer>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="de" data-lang="de" data-title-de="Config Wizard — ORISO Understand" data-title-en="Config Wizard — ORISO Understand">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Config Wizard — ORISO Understand</title>
+<meta name="description" content="Die Einladung bestimmt, welchen Weg der Config Wizard anbietet. Ein neuer Träger, der Beitritt zu einem vorhandenen Träger und die anschließende Einrichtung einer Beratungsstelle brauchen unterschiedliche Angaben." data-description-de="Die Einladung bestimmt, welchen Weg der Config Wizard anbietet. Ein neuer Träger, der Beitritt zu einem vorhandenen Träger und die anschließende Einrichtung einer Beratungsstelle brauchen unterschiedliche Angaben." data-description-en="The invitation determines the path in the Config Wizard. A new provider, joining an existing provider and setting up a centre require different information.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/hub.css">
+<script src="/assets/lang.js"></script>
+</head>
+<body>
+
+<div class="appbar">
+  <div class="appbar-in">
+    <span class="brandname"><a href="/">ORISO Understand</a></span>
+    <span class="sub">/features/config-wizard</span>
+    <span class="sp"></span>
+    <span class="badge solid"><span lang="de">Feature</span><span lang="en">Feature</span></span>
+    <span class="badge">Ablauf / Flow</span>
+    <span class="badge warn"><span lang="de">teilweise gebaut</span><span lang="en">partly built</span></span>
+    <span class="badge"><span lang="de">Graph 07.09.2026</span><span lang="en">Graph 7 Sept 2026</span></span>
+    <span class="langswitch" role="group" aria-label="Sprache / Language">
+      <button type="button" data-lang="de" aria-pressed="true">DE</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </span>
+  </div>
+</div>
+
+
+<header class="band">
+  <div class="band-in"><div class="headcard">
+    <div class="eyebrow">ORISO Understand · Features</div>
+    <h1><span lang="de">Config Wizard</span><span lang="en">Config Wizard</span></h1>
+    <p class="lead"><span lang="de">Die Einladung bestimmt, welchen Weg der Config Wizard anbietet. Ein neuer Träger, der Beitritt zu einem vorhandenen Träger und die anschließende Einrichtung einer Beratungsstelle brauchen unterschiedliche Angaben.</span><span lang="en">The invitation determines the path in the Config Wizard. A new provider, joining an existing provider and setting up a centre require different information.</span></p>
+    <div class="chips"><span class="chip"><span class="dot"></span><span lang="de">Einladen, einrichten, zuordnen</span><span lang="en">Invite, set up and assign</span></span></div>
+  </div></div>
+</header>
+<nav class="chipnav" aria-label="Kapitel / Chapters"><div class="chipnav-in">
+  <a href="#k1"><span class="no">1</span><span lang="de">Einrichtung Schritt für Schritt</span><span lang="en">Setup step by step</span></a>
+  <a href="#k2"><span class="no">2</span><span lang="de">Worauf es bei Beratungsstellen ankommt</span><span lang="en">What matters for counselling centres</span></a>
+  <a href="#k3"><span class="no">3</span><span lang="de">Stand und Quellen</span><span lang="en">Status and sources</span></a>
+</div></nav>
+<main class="wrap">
+<div class="meta"><div><div class="vlabel"><span lang="de">Seite</span><span lang="en">Page</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Online-Graph</span><span lang="en">Online graph</span></div><div class="vvalue">21.09.2026</div></div><div><div class="vlabel"><span lang="de">Quellenabgleich</span><span lang="en">Source check</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Stand der Funktion</span><span lang="en">Feature status</span></div><div class="vvalue"><span class="status warn"><span lang="de">Im Code belegt</span><span lang="en">Verified in source</span></span></div></div></div>
+<section id="k1">
+<div class="ch"><span class="chapter-no">1</span><h2><span lang="de">Einrichtung Schritt für Schritt</span><span lang="en">Setup step by step</span></h2></div>
+<ol class="steps">
+  <li class="step">
+    <div class="step-no">1</div>
+    <div class="step-body">
+      <div class="step-head"><span class="step-title"><span lang="de">Link öffnen und Einladungsart erkennen</span><span lang="en">Open the link and resolve the invite type</span></span><span class="who b"><span lang="de">Eingeladene Person</span><span lang="en">Invitee</span></span></div>
+      <div class="step-text"><span lang="de">Ein Einladungslink bestimmt Rolle und Organisation. Bei einem bestehenden Träger überspringt der Assistent die Neuanlage mit Organisations- und AVV-Schritt. Ein nicht mehr gültiger Link zeigt einen Hinweis.</span><span lang="en">An invite link determines the role and organisation. Joining an existing provider skips creation, organisation details and the agreement step. An invalid link shows an explanatory notice.</span></div>
+      <details class="feature-graph"><summary><span lang="de">Im Graphen · Link öffnen und Einladungsart erkennen</span><span lang="en">In the graph · Open the link and resolve the invite type</span></summary>
+<ul>
+<li><a href="https://understand.oriso.org/admin-service/?token=oriso-admin-dashboard&amp;node=file%3Asrc%2Fpages%2FTenantOnboarding%2FuseTenantAdminOnboardingFlow.ts"><span lang="de">Einladung und Schritte steuern</span><span lang="en">Control invite and wizard steps</span></a></li>
+</ul>
+</details>
+    </div>
+  </li>
+  <li class="step">
+    <div class="step-no">2</div>
+    <div class="step-body">
+      <div class="step-head"><span class="step-title"><span lang="de">Organisation und Vertragsweg klären</span><span lang="en">Complete organisation and agreement details</span></span><span class="who b"><span lang="de">Eingeladene Person</span><span lang="en">Invitee</span></span></div>
+      <div class="step-text"><span lang="de">Bei einer Neuanlage fragt der Wizard die Organisationsdaten ab. Der AVV-Schritt berücksichtigt, ob die eingeladene Person selbst unterschreibt, die zuständige Person den AVV erhalten soll oder die Unterschrift bereits vorliegt.</span><span lang="en">For a new provider the wizard collects organisation details. The agreement step reflects whether the invitee signs, forwards it to an authorised person, or a signature is already recorded.</span></div>
+      <details class="feature-graph"><summary><span lang="de">Im Graphen · Organisation und Vertragsweg klären</span><span lang="en">In the graph · Complete organisation and agreement details</span></summary>
+<ul>
+<li><a href="https://understand.oriso.org/admin-service/?token=oriso-admin-dashboard&amp;node=function%3Asrc%2Fpages%2FTenantOnboarding%2FTenantAdminOnboarding.tsx%3ATenantAdminOnboarding"><span lang="de">Wizard anzeigen</span><span lang="en">Show the wizard</span></a></li>
+<li><a href="https://understand.oriso.org/user-service/?token=oriso-userservice-dashboard&amp;node=file%3Asrc%2Fmain%2Fjava%2Fde%2Fcaritas%2Fcob%2Fuserservice%2Fapi%2Fadapters%2Fweb%2Fcontroller%2FTenantAdminOnboardingController.java"><span lang="de">Einrichtung im Dienst verarbeiten</span><span lang="en">Process onboarding in the service</span></a></li>
+</ul>
+</details>
+    </div>
+  </li>
+  <li class="step">
+    <div class="step-no">3</div>
+    <div class="step-body">
+      <div class="step-head"><span class="step-title"><span lang="de">Konto und Beratungsstelle einrichten</span><span lang="en">Set up the account and centre</span></span><span class="who b"><span lang="de">Eingeladene Person</span><span lang="en">Invitee</span></span></div>
+      <div class="step-text"><span lang="de">Für ein neues Admin-Konto gehören Passwort und der vorgesehene zweite Faktor zum Einrichtungsweg. Eine Einladung für ein bestehendes Konto folgt einem eigenen Weg. Für die Beratungsstelle zählen der Träger, der richtige Anlageweg und die zugeordneten Themen.</span><span lang="en">A new admin account follows its password and second-factor setup. An invitation for an existing account follows its own path. Centre setup depends on the provider, the creation route and assigned topics.</span></div>
+      <details class="feature-graph"><summary><span lang="de">Im Graphen · Konto und Beratungsstelle einrichten</span><span lang="en">In the graph · Set up the account and centre</span></summary>
+<ul>
+<li><a href="https://understand.oriso.org/user-service/?token=oriso-userservice-dashboard&amp;node=file%3Asrc%2Fmain%2Fjava%2Fde%2Fcaritas%2Fcob%2Fuserservice%2Fapi%2Fservice%2Faccountinvite%2Fonboarding%2FTenantAdminOnboardingService.java"><span lang="de">Einrichtung des Träger-Admins</span><span lang="en">Set up the provider admin</span></a></li>
+<li><a href="https://understand.oriso.org/admin-service/?token=oriso-admin-dashboard&amp;node=function%3Asrc%2Fcomponents%2FCreateAgencyModal%2Findex.tsx%3ACreateAgencyModal"><span lang="de">Beratungsstelle einem Träger zuordnen</span><span lang="en">Assign a centre to a provider</span></a></li>
+</ul>
+</details>
+    </div>
+  </li>
+</ol>
+</section>
+<section id="k2">
+<div class="ch"><span class="chapter-no">2</span><h2><span lang="de">Worauf es bei Beratungsstellen ankommt</span><span lang="en">What matters for counselling centres</span></h2></div>
+<div class="kurz"><p><span lang="de">Eine neue Beratungsstelle gehört immer zu einem bestimmten Träger. Ist der Träger schon vorgegeben, arbeitet die Verwaltung in diesem Bereich. Wo die Plattform-Auswahl nötig ist, wird der Träger vor der Anlage gewählt.</span><span lang="en">A new centre belongs to a specific provider. If the provider is preselected, admins work within that scope. Where a platform-level choice is needed, select the provider before creating the centre.</span></p><p><span lang="de">Anlage, Themenzuordnung und öffentliche Sichtbarkeit sind eigene Schritte. Ein neuer Eintrag bedeutet noch kein fertiges, öffentlich auffindbares Beratungsangebot.</span><span lang="en">Creation, topic assignment and public visibility are separate steps. A new entry is not yet a complete, discoverable counselling offer.</span></p></div>
+</section>
+<section id="k3">
+<div class="ch"><span class="chapter-no">3</span><h2><span lang="de">Stand und Quellen</span><span lang="en">Status and sources</span></h2></div>
+<p><span lang="de">Der Quellenabgleich vom 4. November beschreibt den Stand auf dev. Der öffentliche Understand-Graph stammt vom 21. September. Die Graph-Sprünge öffnen Knoten, die in diesem Stand vorhanden sind.</span><span lang="en">The source check on 4 November describes dev. The public Understand graph is dated 21 September. The graph links open nodes present in that snapshot.</span></p><p><a href="/features/counselling-centres.html"><span lang="de">Beratungsstellen und Themen im Detail</span><span lang="en">Counselling centres and topics</span></a></p><p><a href="https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/dev/oriso-platform/decisions/ADR-027-restricted-task-identities-and-keycloak-commands.md"><span lang="de">ADR-027 · Einrichtung per Einladung</span><span lang="en">ADR-027 · invitation setup</span></a></p>
+</section>
+</main>
+<footer><a href="/features/">ORISO Understand · Features</a> · <a href="/"><span lang="de">Startseite</span><span lang="en">Home</span></a></footer>
+</body>
+</html>
