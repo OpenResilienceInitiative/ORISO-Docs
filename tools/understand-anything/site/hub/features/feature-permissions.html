@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="de" data-lang="de" data-title-de="Wer darf welche Funktionen nutzen? — ORISO Understand" data-title-en="Who can use which features? — ORISO Understand">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wer darf welche Funktionen nutzen? — ORISO Understand</title>
+<meta name="description" content="Im Admin-Bereich unter Funktionszugriff legen Plattform, Träger und Beratungsstelle fest, welche Funktionen verfügbar sind. Im Gespräch zählen zusätzlich der Konversationstyp und die Rechte der beteiligten Person." data-description-de="Im Admin-Bereich unter Funktionszugriff legen Plattform, Träger und Beratungsstelle fest, welche Funktionen verfügbar sind. Im Gespräch zählen zusätzlich der Konversationstyp und die Rechte der beteiligten Person." data-description-en="In Admin under Feature access, the platform, provider and counselling centre decide which features are available. Conversation type and participant permissions also affect what a person can do.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/hub.css">
+<script src="/assets/lang.js"></script>
+</head>
+<body>
+
+<div class="appbar">
+  <div class="appbar-in">
+    <span class="brandname"><a href="/">ORISO Understand</a></span>
+    <span class="sub">/features/feature-permissions</span>
+    <span class="sp"></span>
+    <span class="badge solid"><span lang="de">Feature</span><span lang="en">Feature</span></span>
+    <span class="badge">Ablauf / Flow</span>
+    <span class="badge warn"><span lang="de">teilweise gebaut</span><span lang="en">partly built</span></span>
+    <span class="badge"><span lang="de">Graph 07.09.2026</span><span lang="en">Graph 7 Sept 2026</span></span>
+    <span class="langswitch" role="group" aria-label="Sprache / Language">
+      <button type="button" data-lang="de" aria-pressed="true">DE</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </span>
+  </div>
+</div>
+
+
+<header class="band">
+  <div class="band-in"><div class="headcard">
+    <div class="eyebrow">ORISO Understand · Features</div>
+    <h1><span lang="de">Wer darf welche Funktionen nutzen?</span><span lang="en">Who can use which features?</span></h1>
+    <p class="lead"><span lang="de">Im Admin-Bereich unter Funktionszugriff legen Plattform, Träger und Beratungsstelle fest, welche Funktionen verfügbar sind. Im Gespräch zählen zusätzlich der Konversationstyp und die Rechte der beteiligten Person.</span><span lang="en">In Admin under Feature access, the platform, provider and counselling centre decide which features are available. Conversation type and participant permissions also affect what a person can do.</span></p>
+    <div class="chips"><span class="chip"><span class="dot"></span><span lang="de">Admin → Funktionszugriff</span><span lang="en">Admin → Feature access</span></span><span class="chip"><span class="dot"></span><span lang="de">Vorgabe oder anpassbar</span><span lang="en">Required or adjustable</span></span><span class="chip"><span class="dot"></span><span lang="de">Freigabe pro Gespräch</span><span lang="en">Access per conversation</span></span></div>
+  </div></div>
+</header>
+<nav class="chipnav" aria-label="Kapitel / Chapters"><div class="chipnav-in">
+  <a href="#k1"><span class="no">1</span><span lang="de">Wer stellt was ein?</span><span lang="en">Who sets what?</span></a>
+  <a href="#k2"><span class="no">2</span><span lang="de">Vorgabe und anpassbarer Wert</span><span lang="en">Required and adjustable values</span></a>
+  <a href="#k3"><span class="no">3</span><span lang="de">Was gilt im Gespräch?</span><span lang="en">What applies in a conversation?</span></a>
+  <a href="#k4"><span class="no">4</span><span lang="de">Zwei Beispiele</span><span lang="en">Two examples</span></a>
+  <a href="#k5"><span class="no">5</span><span lang="de">Stand und Quellen</span><span lang="en">Status and sources</span></a>
+</div></nav>
+<main class="wrap">
+<div class="meta"><div><div class="vlabel"><span lang="de">Seite</span><span lang="en">Page</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Online-Graph</span><span lang="en">Online graph</span></div><div class="vvalue">21.09.2026</div></div><div><div class="vlabel"><span lang="de">Quellenabgleich</span><span lang="en">Source check</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Stand der Funktion</span><span lang="en">Feature status</span></div><div class="vvalue"><span class="status warn"><span lang="de">Im Code belegt</span><span lang="en">Verified in source</span></span></div></div></div>
+<section id="k1">
+<div class="ch"><span class="chapter-no">1</span><h2><span lang="de">Wer stellt was ein?</span><span lang="en">Who sets what?</span></h2></div>
+<ol class="steps">
+  <li class="step">
+    <div class="step-no">1</div>
+    <div class="step-body">
+      <div class="step-head"><span class="step-title"><span lang="de">Plattform gibt den Rahmen vor</span><span lang="en">The platform sets the baseline</span></span><span class="who b"><span lang="de">Administration</span><span lang="en">Administration</span></span></div>
+      <div class="step-text"><span lang="de">Plattform-Admins öffnen Funktionszugriff. Für unterstützte Funktionen legen sie fest, ob ein Wert verbindlich vorgegeben oder von der nächsten Ebene angepasst werden darf.</span><span lang="en">Platform admins open Feature access. For supported features, they decide whether a value is binding or adjustable by the next level.</span></div>
+      <details class="feature-graph"><summary><span lang="de">Im Graphen · Plattformansicht</span><span lang="en">In the graph · platform view</span></summary>
+<ul>
+<li><a href="https://understand.oriso.org/admin-service/?token=oriso-admin-dashboard&amp;node=function%3Asrc%2Fcomponents%2FTenants%2FAppSettings%2FPermissionsSettings%2FSuperAdminPermissionsSettings.tsx%3ASuperAdminPermissionsSettings"><span lang="de">Funktionszugriff der Plattform</span><span lang="en">Platform feature access</span></a></li>
+</ul>
+</details>
+    </div>
+  </li>
+  <li class="step">
+    <div class="step-no">2</div>
+    <div class="step-body">
+      <div class="step-head"><span class="step-title"><span lang="de">Träger legt die Regel für seine Stellen fest</span><span lang="en">The provider sets the rule for its centres</span></span><span class="who b"><span lang="de">Administration</span><span lang="en">Administration</span></span></div>
+      <div class="step-text"><span lang="de">Träger-Admins sehen geerbte Vorgaben. Wo die Plattform eine Wahl lässt, können sie eine Einstellung für ihren Träger setzen und bei unterstützten Funktionen die Wahl der Beratungsstellen einschränken.</span><span lang="en">Provider admins see inherited requirements. Where the platform leaves a choice, they can set a value for their provider and restrict centre choices for supported features.</span></div>
+      <details class="feature-graph"><summary><span lang="de">Im Graphen · Träger und Vererbung</span><span lang="en">In the graph · provider and inheritance</span></summary>
+<ul>
+<li><a href="https://understand.oriso.org/admin-service/?token=oriso-admin-dashboard&amp;node=function%3Asrc%2Fcomponents%2FTenants%2FAppSettings%2FPermissionsSettings%2FTenantPermissionsSettings.tsx%3ATenantPermissionsSettings"><span lang="de">Funktionszugriff des Trägers</span><span lang="en">Provider feature access</span></a></li>
+<li><a href="https://understand.oriso.org/tenant-service/?token=oriso-tenant-dashboard&amp;node=file%3Asrc%2Fmain%2Fjava%2Fcom%2Fvi%2Ftenantservice%2Fapi%2Fpolicy%2FPermissionPolicyResolver.java"><span lang="de">Vorgabe und lokale Wahl auflösen</span><span lang="en">Resolve inherited and local policy</span></a></li>
+</ul>
+</details>
+    </div>
+  </li>
+  <li class="step">
+    <div class="step-no">3</div>
+    <div class="step-body">
+      <div class="step-head"><span class="step-title"><span lang="de">Beratungsstelle prüft den wirksamen Wert</span><span lang="en">The centre checks the effective value</span></span><span class="who b"><span lang="de">Administration</span><span lang="en">Administration</span></span></div>
+      <div class="step-text"><span lang="de">Beratungsstellen-Admins sehen, was für ihre Stelle gilt. Eine gesperrte Einstellung können sie lesen. Anpassbare Werte ändern sie, soweit ihre Rolle und die jeweilige Kachel das erlauben.</span><span lang="en">Centre admins see the effective settings for their centre. Locked values are visible. They can change adjustable values where their role and the tile allow it.</span></div>
+      <details class="feature-graph"><summary><span lang="de">Im Graphen · Beratungsstelle</span><span lang="en">In the graph · counselling centre</span></summary>
+<ul>
+<li><a href="https://understand.oriso.org/admin-service/?token=oriso-admin-dashboard&amp;node=function%3Asrc%2Fcomponents%2FTenants%2FAppSettings%2FPermissionsSettings%2FAgencyPermissionsSettings.tsx%3AAgencyPermissionsSettings"><span lang="de">Ansicht für Beratungsstellen</span><span lang="en">Centre settings view</span></a></li>
+<li><a href="https://understand.oriso.org/agency-service/?token=oriso-agency-dashboard&amp;node=file%3Asrc%2Fmain%2Fjava%2Fde%2Fcaritas%2Fcob%2Fagencyservice%2Fapi%2Fconverter%2FAgencyEffectivePermissionSettingsApplier.java"><span lang="de">Wirksame Einstellungen der Stelle berechnen</span><span lang="en">Compute effective centre settings</span></a></li>
+</ul>
+</details>
+    </div>
+  </li>
+</ol>
+</section>
+<section id="k2">
+<div class="ch"><span class="chapter-no">2</span><h2><span lang="de">Vorgabe und anpassbarer Wert</span><span lang="en">Required and adjustable values</span></h2></div>
+<div class="table-scroll"><table>
+<thead><tr><th scope="col"><span lang="de">Obere Ebene</span><span lang="en">Upper level</span></th><th scope="col"><span lang="de">Was die nächste Ebene tun kann</span><span lang="en">What the next level can do</span></th></tr></thead>
+<tbody>
+<tr><td><span lang="de">An als Vorgabe</span><span lang="en">Required on</span></td><td><span lang="de">Die Einstellung wird als aktiviert übernommen. Die nächste Ebene kann den vorgegebenen Schalter nicht ausschalten.</span><span lang="en">The setting is inherited as on. The next level cannot turn off that required switch.</span></td></tr>
+<tr><td><span lang="de">Aus als Vorgabe</span><span lang="en">Required off</span></td><td><span lang="de">Die Einstellung ist deaktiviert. Die nächste Ebene kann sie nicht einschalten.</span><span lang="en">The setting is off. The next level cannot enable it.</span></td></tr>
+<tr><td><span lang="de">Anpassbar</span><span lang="en">Adjustable</span></td><td><span lang="de">Ohne lokale Wahl gilt der geerbte Wert. Eine erlaubte lokale Wahl geht vor.</span><span lang="en">Without a local choice, the inherited value applies. An allowed local choice takes precedence.</span></td></tr>
+</tbody>
+</table></div>
+</section>
+<section id="k3">
+<div class="ch"><span class="chapter-no">3</span><h2><span lang="de">Was gilt im Gespräch?</span><span lang="en">What applies in a conversation?</span></h2></div>
+<ol class="steps">
+  <li class="step">
+    <div class="step-no">1</div>
+    <div class="step-body">
+      <div class="step-head"><span class="step-title"><span lang="de">Die Anwendung prüft Funktion und Gesprächsart</span><span lang="en">The app checks feature and conversation type</span></span><span class="who b"><span lang="de">System</span><span lang="en">System</span></span></div>
+      <div class="step-text"><span lang="de">Bei Audio und Video zählt zuerst der gemeinsame Anrufschalter. Dann müssen der Schalter für Audio oder Video und der Wert für die jeweilige Gesprächsart den Anruf zulassen. Ein gesperrtes Video kann deshalb neben erlaubtem Audio stehen.</span><span lang="en">Audio and video first check the master call switch. The audio or video switch and the value for the conversation type must also permit the call. Video can therefore be unavailable while audio remains allowed.</span></div>
+      <details class="feature-graph"><summary><span lang="de">Im Graphen · Audio und Video</span><span lang="en">In the graph · audio and video</span></summary>
+<ul>
+<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fcomponents%2Fcall%2FcallFeatureGates.ts%3AresolveCallFeatureGates"><span lang="de">Anruf-Freigaben je Gesprächsart berechnen</span><span lang="en">Resolve call permissions by conversation type</span></a></li>
+</ul>
+</details>
+    </div>
+  </li>
+  <li class="step">
+    <div class="step-no">2</div>
+    <div class="step-body">
+      <div class="step-head"><span class="step-title"><span lang="de">Der Dienst prüft beim Ausführen</span><span lang="en">The service checks when the action runs</span></span><span class="who b"><span lang="de">System</span><span lang="en">System</span></span></div>
+      <div class="step-text"><span lang="de">Bei den im UserService abgesicherten Aktionen, etwa Sprachnachrichten und Medien-Uploads, müssen Träger und Beratungsstelle die Funktion für den Kontext erlauben. Für eine Gruppenaktion prüft der Dienst die zugeordneten Stellen. Die Person braucht zusätzlich die Zugriffsrechte für das Gespräch.</span><span lang="en">For actions enforced by UserService, such as voice messages and media uploads, the provider and centre must allow the feature in context. For group actions, the service checks the associated centres. The person also needs access to the conversation.</span></div>
+      <!-- No graph link for this step. -->
+    </div>
+  </li>
+</ol><p><span lang="de">Die aktuelle serverseitige Prüfung für Sprachnachrichten, Medien und Supervision ist jünger als der öffentliche Graph. Der genaue Quelltext steht hier.</span><span lang="en">The current server-side check for voice messages, media and supervision is newer than the public graph. See its exact source here.</span></p><p><a href="https://github.com/OpenResilienceInitiative/ORISO-UserService/blob/dev/src/main/java/de/caritas/cob/userservice/api/service/conversationfeature/ConversationFeatureGate.java"><span lang="de">Serverseitige Prüfung im UserService</span><span lang="en">Server-side enforcement in UserService</span></a></p>
+</section>
+<section id="k4">
+<div class="ch"><span class="chapter-no">4</span><h2><span lang="de">Zwei Beispiele</span><span lang="en">Two examples</span></h2></div>
+<div class="table-scroll"><table>
+<thead><tr><th scope="col"><span lang="de">Situation</span><span lang="en">Situation</span></th><th scope="col"><span lang="de">Ergebnis</span><span lang="en">Result</span></th></tr></thead>
+<tbody>
+<tr><td><span lang="de">Der Träger sperrt Video. Die Beratungsstelle öffnet die Einstellung.</span><span lang="en">The provider locks video off. A centre opens the setting.</span></td><td><span lang="de">Die Beratungsstelle sieht die Vorgabe. Der Wert bleibt gesperrt.</span><span lang="en">The centre sees the requirement. The setting stays locked.</span></td></tr>
+<tr><td><span lang="de">Fallübergabe ist aktiviert. Eine Kollegin möchte einen konkreten Fall übernehmen.</span><span lang="en">Handover is enabled. A colleague wants to take a specific case.</span></td><td><span lang="de">Zusätzlich gelten die Zugriffsregel für den Fall, der Übergabegrund und gegebenenfalls die Zustimmung der ratsuchenden Person.</span><span lang="en">Case access, the handover reason and any required consent from the advice seeker still apply.</span></td></tr>
+</tbody>
+</table></div><details class="feature-graph"><summary><span lang="de">Im Graphen · Fallübergabe</span><span lang="en">In the graph · case handover</span></summary>
+<ul>
+<li><a href="https://understand.oriso.org/admin-service/?token=oriso-admin-dashboard&amp;node=function%3Asrc%2Fcomponents%2FTenants%2FAppSettings%2FPermissionsSettings%2FCaseHandoverCard%2FCaseHandoverCardView.tsx%3ACaseHandoverCardView"><span lang="de">Regeln für Fallübergabe im Admin</span><span lang="en">Handover rules in Admin</span></a></li>
+</ul>
+</details><p><a href="/features/case-handover.html"><span lang="de">Ablauf der Fallübergabe</span><span lang="en">How handover works</span></a></p>
+</section>
+<section id="k5">
+<div class="ch"><span class="chapter-no">5</span><h2><span lang="de">Stand und Quellen</span><span lang="en">Status and sources</span></h2></div>
+<p><span lang="de">Der Quellenabgleich vom 4. November beschreibt den Stand auf dev. Der öffentliche Understand-Graph stammt vom 21. September. Die Graph-Sprünge öffnen Knoten, die in diesem Stand vorhanden sind.</span><span lang="en">The source check on 4 November describes dev. The public Understand graph is dated 21 September. The graph links open nodes present in that snapshot.</span></p><p><a href="https://github.com/OpenResilienceInitiative/ORISO-Admin/issues/771"><span lang="de">Lieferstand der Regeln und Funktionskacheln</span><span lang="en">Delivery status of feature rules and tiles</span></a></p>
+</section>
+</main>
+<footer><a href="/features/">ORISO Understand · Features</a> · <a href="/"><span lang="de">Startseite</span><span lang="en">Home</span></a></footer>
+</body>
+</html>
