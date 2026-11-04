@@ -1,0 +1,108 @@
+---
+title: "4.7 Fallübergabe"
+description: "Übertragung eines aktiven Falls von einer Beratungsperson auf eine andere — Systematik der Gründe, Einwilligungsmatrix, Systemnachrichten und Zusammenspiel mit E2EE."
+source: "product/features/handover.mdx"
+---
+
+<Callout type="warn">
+**Diese Seite dokumentiert den Figma-Vorschlag vom Mai 2026, nicht die gebaute Funktion.** Sie bleibt
+als Entwurfshistorie erhalten. Was die Plattform tatsächlich tut — einen Fall holen und abgeben,
+die aktuelle Systematik der Gründe und die erforderliche Zustimmung — steht unter
+[Fallübergabe — einen Fall holen und abgeben](/de/produkt/core-features/case-handover).
+Zwei Punkte unten wurden inzwischen anders entschieden: Die vorherige Beratungsperson wird **nicht**
+aus dem Gespräch entfernt, und Gründe nennen keine Krankheit oder andere Gesundheitsinformationen mehr.
+</Callout>
+
+<Callout>
+Die Figma-Ausgabe vom Mai 2026 führt einen ausdrücklichen **Übergabeablauf** mit festen Gründen und grundabhängigen Einwilligungsregeln ein. Beispieltext: *„Deine Beratung wurde an Gudrun übergeben: Grund sie ist leider krank.“*
+</Callout>
+
+## 4.7.1 Was Übergabe bedeutet
+
+Manchmal kann die zugewiesene Beratungsperson nicht weitermachen: Urlaub, Krankheit, Notfall, Ausscheiden aus der Beratungsstelle oder ein zwingender rechtlicher bzw. organisatorischer Anlass. Übergabe ist der geregelte Ablauf, der **einen einzelnen Fall** an eine neue Beratungsperson **derselben Beratungsstelle** überträgt — ohne E2EE, DSGVO-Einwilligung oder Prüfpfade zu verletzen.
+
+<Mermaid chart={"flowchart LR\n  Co1[Counselor A<br/>going off]:::a --> M[Handover modal]:::m\n  M --> R[Pick reason]:::m\n  R --> P[Pick replacement]:::m\n  P --> C{Consent rule<br/>for this reason}:::c\n  C -->|client consent needed| Cl[Ask client]:::cl\n  C -->|counselor consent needed| Co2[Ask Counselor B]:::a\n  C -->|supervisor approval needed| Sv[Ask Supervisor]:::a\n  C -->|automatic| Auto[Proceed]:::ok\n  Cl --> Auto\n  Co2 --> Auto\n  Sv --> Auto\n  Auto --> Done[Room rotated<br/>system msg posted<br/>audit row written]:::ok\n\n  classDef a fill:#e3f2fd,stroke:#1565c0\n  classDef m fill:#fff3e0,stroke:#ef6c00\n  classDef c fill:#fce4ec,stroke:#ad1457\n  classDef cl fill:#f3e5f5,stroke:#6a1b9a\n  classDef ok fill:#e8f5e8,stroke:#2e7d32"} />
+
+## 4.7.2 Systematik der Gründe
+
+In Figma bestätigt:
+
+| Grundschlüssel | Bezeichnung (DE) | Standard-Einwilligungsregel | Standard-Sichtbarkeit im Prüfprotokoll |
+|---|---|---|---|
+| `holiday` | Urlaub | Zustimmung von Beratenden und Ratsuchenden | Standard |
+| `sickness` | Krankheit | Nur Zustimmung von Beratenden (Ratsuchende informiert) | Standard |
+| `emergency` | Notfall | Automatisch (Ratsuchende nachträglich informiert) | Erhöht |
+| `law_violation` | Rechtsverstoß | Supervision und Vertretung der Strafverfolgung | Gesperrt, eingeschränkte Sicht |
+| `colleague_fired` | Mitarbeitende entlassen | Freigabe durch Supervision | Erhöht |
+| `custom` | Eigene Erklärung | Zustimmung von Beratenden und Ratsuchenden | Standard |
+
+<Callout>
+Jeder Träger kann die Standard-Einwilligungsregeln in der Matrix **Berechtigungen** überschreiben (siehe [Rollen und Berechtigungen §3.7](/de/produkt/architecture-und-roles/roles-permissions#37-per-chat-type-permissions-matrix)).
+</Callout>
+
+## 4.7.3 Einwilligungsmatrix
+
+| Grund | Zustimmung Ratsuchende | Zustimmung Beratungsperson B | Freigabe Supervision | Für Ratsuchende sichtbarer Grundtext |
+|---|:-:|:-:|:-:|---|
+| Urlaub | ✅ | ✅ | ❌ | *„Deine vorherige Beraterin ist im Urlaub …“* |
+| Krankheit | nur informiert | ✅ | ❌ | *„Deine vorherige Beraterin ist leider krank …“* |
+| Notfall | nur informiert (nachträglich möglich) | ✅ (nach Möglichkeit) | optional | *„Aus dringenden Gründen wurde dein Fall übertragen …“* |
+| Rechtsverstoß | eingeschränkte Benachrichtigung | ✅ | ✅ und Strafverfolgungsvertretung | gesperrter Text vom Rechtsteam |
+| Mitarbeitende entlassen | nur informiert | ✅ | ✅ | *„Aus organisatorischen Gründen wurde dein Fall übertragen …“* |
+| Eigener Grund | ✅ | ✅ | ❌ | durch Beratende eingegebener Grundtext |
+
+Das System setzt diese Regeln **auf dem Server** durch, bevor die Raum-Mitgliedschaft geändert wird.
+
+## 4.7.4 Detaillierte Abfolge
+
+<Mermaid chart={"sequenceDiagram\n  autonumber\n  participant Co1 as Counselor A\n  participant Co2 as Counselor B\n  participant FE as ORISO-Admin\n  participant US as UserService\n  participant MX as Matrix\n  participant Cl as Client\n\n  Co1->>FE: Chatraum Einstellungen → Handover Case\n  FE->>Co1: Modal with reason + replacement picker\n  Co1->>FE: Pick reason (e.g. \"Sickness\") + Counselor B\n  FE->>US: POST /handover { sessionId, from, to, reason, customText? }\n  US->>US: load consent rule for reason\n\n  alt requires Counselor B consent\n    US->>Co2: Notification \"Übernahme angefragt\"\n    Co2-->>US: accept\n  end\n  alt requires Supervisor approval\n    US->>SU: Notification with locked context\n    SU-->>US: approve\n  end\n  alt requires Client consent\n    US->>Cl: Push consent prompt in chat\n    Cl-->>US: accept\n  end\n\n  US->>MX: invite Co2; remove Co1\n  US->>Cl: System message (\"Deine Beratung wurde an Gudrun übergeben: Grund …\")\n  US->>US: write audit row { from, to, reason, consents, started_at, completed_at }\n  US-->>FE: 200 OK"} />
+
+## 4.7.5 Was mit dem Raum geschieht
+
+- **Derselbe Matrix-Raum** bleibt erhalten — der Gesprächsverlauf bleibt für Ratsuchende bestehen.
+- **Beratungsperson A wird entfernt** aus der Mitgliederliste (empfängt keine Nachrichten mehr).
+- **Beratungsperson B wird eingeladen** und tritt über Element/ORISO-Element bei.
+- **Megolm-Schlüssel**: B erhält früheren Verlauf abhängig von `m.room.history_visibility` des Raums. ORISO-Standard ist `shared` (Mitglieder sehen Verlauf ab ihrer Einladung). Bei sensiblen Sitzungen kann der Träger zu `joined` wechseln (kein früherer Verlauf), damit neue Beratende ohne Vorgeschichte beginnen.
+- **Identität der Ratsuchenden** bleibt unverändert — dasselbe Pseudonym, dasselbe Cookie. Ratsuchende werden nicht neu zugeordnet; nur der Platz der Beratungsperson wechselt.
+
+## 4.7.6 Einschränkungen
+
+- **Beratungsstellenübergreifende Übergabe ist verboten** — Vertretungen müssen derselben Beratungsstelle angehören. Gibt es dort keine weitere Beratungsperson, ist ein Eskalationsweg auf Trägerebene erforderlich (geplant, siehe [Figma-Analyse §4.6](/de/produkt/design-und-quality/figma-analysis-2026-05#46-handover-reasons--consent)).
+- **Trägerübergreifende Übergabe ist verboten** — ohne Ausnahme.
+- **Übergabe während aktivem Videoanruf** — der Anruf wird kontrolliert beendet, dann erfolgt die Übergabe.
+- **Übergabe bei ausstehender DSGVO-Einwilligung Nr. 2** — wird verweigert; das Ticket geht stattdessen in die Warteschlange zurück.
+- **Keine automatische Neuzuordnung anonymer Ratsuchender**: Wer die Übergabe ablehnt, erhält eine verständliche Rückfallmeldung und die Sitzung wird gelöscht.
+
+## 4.7.7 Erleben der Ratsuchenden
+
+Ratsuchende sehen immer eine **Systemnachricht** des Typs `Handover` im Chat mit einem Vorlagentext:
+
+> Deine vorherige Beraterin ist leider krank. Deshalb wurde dein Fall an **&#123;Beraterin&#125;** übergeben von der **&#123;Beratungsstelle&#125;**.
+
+Schaltflächen (abhängig von der Einwilligungsregel):
+
+- **Akzeptieren** — neue Beratungsperson akzeptieren, Gespräch geht weiter.
+- **Ablehnen** — ablehnen; Fall wird geschlossen; ratsuchende Person gelöscht.
+- **Mehr erfahren** — öffnet einen Dialog mit vollständigem Grundtext und Kontakt zur Beratungsstelle.
+
+## 4.7.8 Prüfprotokoll und Regelkonformität
+
+- Jede Übergabe schreibt eine `audit_log`-Zeile mit: `session_id` (nicht aussagekräftig), `from_counselor_id`, `to_counselor_id`, `reason`, `consents_collected`, `started_at`, `completed_at`.
+- Bei `law_violation` wird zusätzlich ein Eintrag im Protokoll privilegierter Zugriffe erstellt, lesbar nur für Plattform-Admins und die bestellte Vertretung der Strafverfolgung.
+- **Nachrichteninhalte werden niemals ins Prüfprotokoll geschrieben** (E2EE-Regel gewahrt).
+
+## 4.7.9 Sonderfälle
+
+Die vollständige Liste steht unter [Sonderfälle §9.10](/de/produkt/design-und-quality/edge-cases). Wichtigste Fälle:
+
+- **Beratungsperson B lehnt ab** → Ticket kehrt mit Kennzeichnung „Übergabe erforderlich“ in den Pool der Beratungsstelle zurück.
+- **Ratsuchende lehnen ab** → Sitzung endet mit „keine Übergabe möglich“; ratsuchende Person gelöscht.
+- **Grund `law_violation` versehentlich gewählt** → Für Beratende unumkehrbar; nur Plattform-Admins können zurückrufen (mit Protokolleintrag).
+- **Aktiver Gruppenchat mit mehreren Beteiligten** → Übergabe ersetzt nur den Platz von A; andere Beratende und Ratsuchende bleiben.
+
+## 4.7.10 Verwandte Seiten
+
+- [Rollen und Berechtigungen](/de/produkt/architecture-und-roles/roles-permissions) — Übergaberechte je Rolle.
+- [Datenmodell](/de/produkt/flows-und-internals/data-model) — Entität `HandoverEvent`.
+- [Sonderfälle](/de/produkt/design-und-quality/edge-cases#910-handover-edge-cases).
+- [Figma-Analyse](/de/produkt/design-und-quality/figma-analysis-2026-05).

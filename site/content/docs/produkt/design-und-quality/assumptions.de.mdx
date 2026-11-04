@@ -1,0 +1,160 @@
+---
+title: "Annahmen und Klarstellungen"
+description: "Alles, was beim Schreiben dieser Dokumentation abgeleitet wurde: ausdrückliche Annahmen, offene Fragen, durch Code bestätigte Punkte und Aspekte, die Frank, Shazia oder das Produktteam prüfen müssen."
+source: "product/assumptions.mdx"
+---
+
+<Callout>
+Diese Seite ist das **ehrliche Protokoll** der vorliegenden Eingaben, unserer Ableitungen und dessen, was vor einer Behandlung als maßgebliche Quelle an der Wirklichkeit geprüft werden sollte. Lesen Sie sie, bevor Sie konkrete Zahlen oder Regeln aus der übrigen Produktdokumentation zitieren.
+</Callout>
+
+## 10.1 Verwendete Eingaben
+
+| Eingabe | Typ | Erkenntnis |
+|---|---|---|
+| **Gespräch Frank ↔ Nikunj**, 2026-05-05 (`Docs/transcriptions/5 may nikunj frnak huddle.md`, etwa zweistündiges Transkript) | Sprachtranskript mit während des Gesprächs entstandenen Figma-Zeichnungen | Vierstufige Rollenhierarchie; Vererbung von Impressum/Datenrichtlinie/DSGVO; Live-Chat-Einwilligung; Löschung bei Verbindungsabbruch; UX-Regel „deaktiviert, nicht versteckt“; überkomplizierte Links; Zusage der automatischen Löschung nach 48 Stunden. |
+| **Figma-Diagrammauszug** (Bild im Gespräch) | Statisches Bild | Visuelle Bestätigung des Rollenbaums, der zwei Smartphone-Entwürfe (Warteraumzustände) und Vererbungspfeile. |
+| **`ORISO-Keycloak/realm.json`** | JSON-Realm-Export | Die 14 tatsächlichen Realm-Rollen (gegenüber der vierstufigen fachlichen Sicht) und ihre jeweiligen Geltungsbereiche. |
+| **Java-Code von `ORISO-UserService`** (`UserRole.java`, `Authority.java`) | Quellcode | Zuordnung Realm-Rollen → Spring-Security-Berechtigungen; aktueller Stand der Berechtigungsmatrix. |
+| **Vorhandenes `ORISO-Docs/oriso-platform/architecture/*`** | mdx | Dienstports, Infrastrukturaufbau, Bereitstellungsphasen, Helm-/k3s-Einrichtung. |
+| **`graphify-out/GRAPH_REPORT.md`** | Wissensgraphbericht | Übergreifende Bestandsstatistiken; Gruppenstruktur für Navigation. |
+
+## 10.2 Unsere Ableitungen (klar gekennzeichnet)
+
+Dies sind ausdrückliche **Annahmen** in den Dokumenten — meist mit `<Callout>`/`<Callout type="warn">` oder inline „(inferred)“ / „(planned)“ gekennzeichnet.
+
+### 10.2.1 Abgeleitet — vermutlich richtig
+
+- **Pseudonymformat** (Tier-Adjektiv-Name-Kombination, etwa 300 Millionen eindeutige Grundnamen) — aus dem Figma-Beispiel *„geschmeidiges Kanninchen Kim“* abgeleitet. Spring-Code setzt dies wahrscheinlich bereits um; Bestätigung im `UserService`-Quellcode nötig.
+- **Automatische Löschung nach 48 Stunden** — im Figma-Warteraumtext bestätigt („alle Nachrichten Ende-zu-Ende verschlüsselt und werden noch nach 48 Stunden automatisch gelöscht“). Umsetzungsdetail (Synapse-Aufbewahrungsrichtlinie) benötigt Shazias Bestätigung.
+- **Heartbeat-Grenzwerte** (30 Sekunden Heartbeat, 90 Sekunden bis Aufgabe, fünf Minuten von Pause bis Ende) — aus Franks Aussage „30 Sekunden, egal, so schnell wie möglich ohne dem Server zu schaden“ abgeleitet. Entwicklung soll die tatsächlichen Werte festlegen.
+- **24-Stunden-Ablauf des Magic Links** — Branchenkonvention; im Gespräch nicht ausdrücklich genannt; bitte gegen `UserService`-Konfiguration prüfen.
+- **Redis Pub/Sub für Warteschlangenereignisse** — naheliegend angesichts vorhandener Redis-Abhängigkeit; konkrete Umsetzung kann abweichen.
+- **Trägerisolation auf Speicherungsebene** — Franks „ein Krankenhaus sieht kein anderes“ auf tenant-id-JWT-Claim und Filter `WHERE tenant_id = ?` abgebildet. Aktueller Code setzt dies vielerorts durch; vollständige Prüfung empfohlen.
+
+### 10.2.2 Abgeleitet — spekulativ / geplant
+
+- **KI-Notizpipeline** ([Abschnitt 4.1](/de/produkt/core-features/transcription)) ist **heute nicht gebaut**. Beschriebener Ablauf ist ein künftiger Entwurf unter Beachtung bestehender Datenschutzgarantien. Als Planung behandeln, nicht als Dokumentation funktionierenden Codes.
+- **Browsersprache als Standard mit englischem Rückfall** — Frank verlangte dies im Gespräch ausdrücklich; ob das aktuelle Frontend es tatsächlich umsetzt, ist noch ungeprüft.
+- **Funktion „Ausbildung“** — Frank nannte sie als künftige Rollenkennzeichnung; kein Code vorhanden.
+- **Speicherung von Fallnotizen** — UserService besitzt derzeit keine Tabelle `case_note`; Entwurf in [Abschnitt 4.1](/de/produkt/core-features/transcription) und [Abschnitt 7.2.9](/de/produkt/flows-und-internals/data-model#729-casenote-planned) ist ein Vorschlag.
+
+### 10.2.3 Abgeleitet — für vollständige Dokumentation
+
+- **Träger-Kennzahlen im Admin-Dashboard** ([Abschnitt 8.2.5](/de/produkt/design-und-quality/ui-ux#825-admin-dashboard--tenant-view-tenant-admin)) — als logisch passend zur Träger-Admin-Sicht beschrieben; tatsächliche Bildschirme können abweichen.
+- **Die zwei DSGVO-Abfragen müssen visuell unterscheidbar sein** — Gestaltungshinweis, im sichtbaren Figma-Auszug noch nicht durchgesetzt.
+
+## 10.3 Zu prüfende Punkte
+
+Offene Fragen an Frank / Shazia / das Team.
+
+### 10.3.1 Codewirklichkeit gegenüber dokumentiertem Entwurf
+
+1. **Löschung bei Verbindungsabbruch** — läuft sie heute tatsächlich? Frank im Gespräch: *„In der letzten Version, die ich gesehen habe, änderte sich nichts in meiner Warteschlange, als derjenige ging.“* Vermutlich **noch nicht umgesetzt** oder fehlerhaft. → @Nikunj (seine Aufgabe aus dem Gespräch).
+2. **DSGVO-Einwilligung Nr. 2** — ist die zweite Abfrage der Beratungsstelle tatsächlich produktiv umgesetzt? Frank: *„Ich bin ziemlich sicher, dass sie schon drin ist […] aber wie gesagt, das war der Moment, als wir nicht mehr vorankamen.“* → In der Einwilligungskomponente von `ORISO-Frontend` prüfen.
+3. **Deaktivierter Zustand bei Live-Chat AUS** — derzeit verschwindet der Bereich vollständig (bekanntes Problem). Muss deaktiviert, aber sichtbar sein. → Neues Ticket gemäß Gespräch.
+4. **Live-Chat-Linkerstellung** — aktuelle Admin-Oberfläche überkompliziert; gewünschter „globaler Link“ fehlt. → Franks ausdrücklicher Backlog-Eintrag.
+5. **Zweisprachige Oberfläche / Browsersprachenstandard** — derzeit Deutsch als Standard. → Backlog-Eintrag.
+6. **Verschlüsselungsabdeckung** — Ali implementierte IP-Spuren im Entwicklungsmodus; gibt es eine CI-Prüfung, die sie aus dem Produktivbetrieb heraushält? → Externe Prüfung erforderlich.
+
+### 10.3.2 Produktregeln
+
+7. **Aufbewahrung von Prüfeinträgen** — wir dokumentierten „ein Jahr“; dafür ist rechtliche Freigabe in Deutschland nötig.
+8. **48 Stunden sind eine öffentliche Zusage** — längere Aufbewahrung von Chat-Inhalten irgendwo im System verletzt Datenschutz. Konfiguration der Synapse-Aufbewahrung bestätigen.
+9. **MFA für Beratungsstellen-Admins** — derzeit „empfohlen“; sollte sie wie bei Träger-/Plattform-Admins verpflichtend sein?
+10. **Themenverwaltung** — wird heute eine eigene Rolle `topic-admin` aktiv genutzt oder verwalten ausschließlich Plattform-Admins die Themen?
+
+### 10.3.3 Architektur und Integration
+
+11. **LiveKit-Aufzeichnung** — bestätigt *nicht* verwendet; bitte prüfen, dass kein Aufzeichnungsbucket eingerichtet ist.
+12. **Matrix-Föderation** — produktiv standardmäßig deaktiviert? Bestätigen.
+13. **Element gegenüber ORISO-Element** — welcher Fork ist tatsächlich bereitgestellt und wie umfangreich angepasst?
+14. **CertManager / Let's-Encrypt-Ratenlimits** — bestätigen, dass Produktivbetrieb den produktiven ACME-Dienst nutzt, nicht Staging.
+
+## 10.4 Anpassungen gegenüber dem ursprünglichen Auftrag
+
+Der Benutzerauftrag beschrieb ORISO als *„KI-basierte Notiz- und Transkriptionsplattform (ähnlich Huddled AI)“*. Nach allen vorliegenden Eingaben ist diese Einordnung unzutreffend — ORISO ist eine **Online-Beratungsplattform** („Online Beratung“). Konkrete Anpassungen:
+
+| Auftrag sagte | Wirklichkeit (laut Code, Transkript, Figma) | Unsere Umsetzung |
+|---|---|---|
+| „KI-Notizplattform“ | Beratungschat mit E2EE-Matrix-Räumen; kein STT; keine produktiven KI-Notizen | Tatsächliches Produkt dokumentiert. KI-Notizen als **geplant** in [Abschnitt 4.1](/de/produkt/core-features/transcription), klar als künftige Arbeit gekennzeichnet. |
+| „Audioaufnahme“ | Keine Audioaufzeichnung; LiveKit verarbeitet WebRTC-Video ohne Aufzeichnung | „Heute keine Audioaufnahme“ und Datenschutzgründe für künftige Umsetzung dokumentiert. |
+| „Supervisor“ als übergeordnete Rolle | „Supervision“ ist in ORISO eine **Funktion** der Beratenden (`supervisor-consultant`) | In [Abschnitt 5.2](/de/produkt/flows-und-internals/user-flows#52-tenant-admin-setup-aka-supervisor-setup-in-the-brief) „Supervisor Setup“ als **Träger-Admin-Einrichtung** interpretiert — ähnlichste organisatorische Rolle. Supervisionsfunktion in [Abschnitt 3.3.4](/de/produkt/architecture-und-roles/roles-permissions#334-counselor) dokumentiert. |
+| „Pincode-basierter Chat“ | Zwei verwandte Konzepte: (a) deutsche PLZ-Weiterleitung und (b) themengebundener Live-Chat-Link | Beide in [Abschnitt 4.3](/de/produkt/core-features/pincode-chat) beschrieben und ausdrücklich unterschieden. |
+
+## 10.4b Durch Figma bestätigt (Mai 2026)
+
+Die Figma-Ausgabe vom Mai 2026 **bestätigt** früher abgeleitete Punkte und **ergänzt** neue. Vollständige Begründung in der [Figma-Analyse](/de/produkt/design-und-quality/figma-analysis-2026-05).
+
+### Bestätigt (keine Annahmen mehr)
+
+- **KI-Notizen sind real**, nicht nur geplant. Eigene Schaltfläche **Chat Zusammenfassen** (`⇧Ü`) mit Text *„Spare Zeit, mit Hilfe unseres vollends Datenschutzkonformen KI Workflows.“*
+- **PII-Unkenntlichmachung existiert** mit konkreter Vorgabe: `fff 80% Overlay Blur (uniform) 4`.
+- **Gruppenchats sind vollwertig** (Teamberatung, Familienberatung, Supportgruppe, Kreis usw.).
+- **Versand an mehrere Empfänger** existiert in der Oberfläche mit ausdrücklichen Ein-/Ausblendregeln je Chat-Größe.
+- **Antwort im Thread** ist eine tatsächliche Interaktion.
+- **Nachrichten weiterleiten / löschen** vorhanden.
+- **Übergabe mit Grundsystematik** entworfen (Urlaub / Krankheit / Notfall / Rechtsverstoß / Mitarbeitende entlassen / eigener Grund).
+- **Benachrichtigungsseite** mit typisierter Systematik vorhanden.
+- **Hilfsanfragen / interne Eskalation** als Ablauf entworfen.
+- **Berechtigungsmatrix je Chat-Typ** im Adminbereich vorhanden (Anonyme / 1-zu-1 / Gruppen / Supervision).
+- **Optionale E-Mail Ratsuchender**, **2FA für Ratsuchende**, **Kontolöschung** vorhanden.
+- **Phasenmodell** im Eingang: `Anfragephase`, `Vermittlungsphase`, `Aktiv`.
+- **Tags** für Chats / Nachrichten.
+- **Datei-Upload** mit ausdrücklichen Grenzen: `.jpg, .png, .pdf, .docx, .xlsx`, ≤ 10 MB.
+- **Mehrsprachigkeit** für DE / EN / TR / FR bestätigt.
+- **Animationsregel**: einmal je Klick, ≤ 0,7×, niemals in Schleife.
+
+### Neue Annahmen (Mai 2026)
+
+- **A18 — Mehrfachversand über serverseitiges Relay** (Dienstkonto „Carimat-relay“) oder Megolm-Sitzungen je Empfänger. **Entscheidung offen** — siehe [Figma-Analyse §4.3](/de/produkt/design-und-quality/figma-analysis-2026-05#43-multi-recipient-send--server-side-enforcement).
+- **A19 — Markierung / Unkenntlichmachung sind verschlüsselte Matrix-Annotationsereignisse** vom Typ `de.oriso.annotation.mark` / `de.oriso.annotation.blur`, getrennt von Nachrichteninhalten.
+- **A20 — Übergabe erhält denselben Matrix-Raum** mit geänderter Mitgliedschaft (keine neue Raum-ID); Verlaufssichtbarkeit standardmäßig `shared`, bei sensiblen Sitzungen auf `joined` umstellbar.
+- **A21 — „E-Mail für Beratende nicht sichtbar“** bedeutet ausdrücklich **nur für Plattform-Admins** für Recht / Authentifizierung sichtbar. Als privilegiertes Authentifizierungsfeld behandeln.
+- **A22 — Carimat ist ein regelbasierter Skriptbot, kein LLM.** Sendet vorgegebene Systemnachrichten (E2EE-Banner, DSGVO-Text, mehrstufiger Einstieg) — liest niemals Nachrichteninhalte.
+- **A23 — Phase `Vermittlungsphase`** umfasst ausstehende DSGVO-Einwilligung Nr. 2 **und** ausstehende Übergabe. Aktiv erst nach beiden Einwilligungen.
+- **A24 — Datei-Upload auf dem Server abgewiesen** für MIME-Typen außerhalb der Positivliste oder Größe > 10 MB.
+- **A25 — Sprachnachrichten** sind Megolm-verschlüsselte Opus-Blöcke im Matrix-Medienspeicher mit derselben 48-Stunden-Aufbewahrung wie Text — Dauergrenze noch festzulegen.
+- **A26 — Tags sind beratungsstellenbezogene Vokabulare**; ein Aufruf „Keinen passenden Tag gefunden?“ öffnet eine Anfrage an die Beratungsstellen-Administration.
+- **A27 — Admin-Schalter `Optional Icons`** steuert Sichtbarkeit von Symbolen für Sprachnachricht, Audioanruf, Videoanruf, Datei-Upload und Tag-Auswahl im Eingabebereich.
+
+### Weiterhin offene Fragen
+
+- **Q1 — Selbstlöschung im Videoanruf** (Figma-Frage): Vorschlag in [Sonderfälle §9.1.7](/de/produkt/design-und-quality/edge-cases#917-client-deletes-self-during-active-video-call), Franks Freigabe nötig.
+- **Q2 — Selbstlöschung im Gruppenchat** (Figma-Frage): Vorschlag in [Sonderfälle §9.1.8](/de/produkt/design-und-quality/edge-cases#918-client-deletes-self-from-group-chat), Franks Freigabe nötig.
+- **Q3 — Push-Benachrichtigungskanal**: Matrix-Push-Gateway oder eigener; Entscheidung nötig.
+- **Q4 — Haltbarkeit von Markierung/Unkenntlichmachung bei Schlüsselwechsel**: Vorgehen bestätigt (getrennte Annotationsereignisse), aber ORISO-Element-Fork muss angepasst werden.
+- **Q5 — Mehrfachversandstrategie**: Relay-Bot oder Megolm je Empfänger.
+- **Q6 — Rechtlicher Ablauf `law_violation`**: aktueller Entwurf wahrt E2EE; Rechtsteam muss die Zulässigkeit für das Regelungsumfeld prüfen.
+- **Q7 — Automatische Gruppenarchivierung nach letzter ratsuchender Person**: Annahme in [Sonderfälle §9.11](/de/produkt/design-und-quality/edge-cases#911-group-chat-edge-cases); bestätigen.
+
+## 10.5 Durch Code bestätigte Punkte
+
+Dies sind *keine* Annahmen — sie sind unmittelbar geprüft.
+
+- **14 Keycloak-Realm-Rollen** vorhanden (`realm.json` und `UserRole.java`).
+- **Vier Backend-Dienste** (TenantService 8081, UserService 8082, ConsultingTypeService 8083, AgencyService 8084), Spring Boot 2.7.14 und Java 17.
+- **Matrix Synapse** ist das Chat-Fundament; **PostgreSQL** dessen Datenbank.
+- **MariaDB** hält die maßgeblichen relationalen Daten; **MongoDB** die umfangreiche Themenkonfiguration.
+- **Helm-Dachchart** namens `oriso-platform` stellt alle 21 Dienste bereit.
+- **Liquibase deaktiviert** — Schemata zentral in `ORISO-Database` verwaltet.
+- **Authority.java** ordnet Rollen gewährten Berechtigungen zu (zeilenweise Berechtigungsspezifikation in [Abschnitt 6.4.2](/de/produkt/flows-und-internals/internal-functionality#642-authz--spring-security)).
+
+## 10.6 Dokumentkonventionen
+
+- **`(inferred)`** kennzeichnet einzelne logisch ergänzte, aber nicht im Code geprüfte Fakten.
+- **`(planned)`** kennzeichnet ausdrücklich geplante Funktionen, keinen Produktivbetrieb.
+- **`<Callout type="warn">`-Blöcke** markieren rechtlich oder datenschutzbedingt notwendige Abweichungen vom einfachen/erwarteten Verhalten.
+- **Mermaid-Diagramme** ersetzen aktuelle Systemdiagramme — auf konzeptioneller Ebene zutreffend; Ports / Pfade gegen `ORISO-Docs/oriso-platform/architecture/*` geprüft.
+
+## 10.7 Künftige maßgebliche Quelle
+
+Nach Verbindlichkeit geordnet:
+
+1. **Produktivcode** im betreffenden Repository (`ORISO-UserService`, `ORISO-AgencyService` usw.).
+2. **`ORISO-Docs/oriso-platform/*`** für Infrastruktur, Bereitstellung und Betrieb.
+3. **Diese `product/*`-Sammlung** für Produkt-/UX-/Rollen-/Datenmodellüberlegungen.
+4. **Figma-Dateien** für visuelle Wahrheit jedes Bildschirms.
+5. **Gesprächstranskripte** als historische Aufzeichnung von Entwurfsentscheidungen.
+
+Widersprechen sich zwei Quellen, **die Quelle mit niedrigerer Nummer korrigieren** und diese Dokumentation folgen lassen.

@@ -1,0 +1,455 @@
+---
+title: "Datenmodell (konzeptionell)"
+description: "Das Datenmodell auf Produktebene: Person, Träger, Beratungsstelle, Thema, Sitzung, Chat, Transkript, Rolle, Live-Chat-Link, Magic Link — ihre Attribute und Beziehungen."
+source: "product/data-model.mdx"
+---
+
+<Callout>
+Dies ist das **konzeptionelle** Datenmodell — Produkteinheiten und ihre Beziehungen. Das genaue relationale Schema liegt in `ORISO-Database`; diese Seite ordnet jede Einheit ihrem verantwortlichen Dienst zu, damit der Code leicht auffindbar ist.
+</Callout>
+
+## 7.1 Entitäten-Beziehungsübersicht
+
+<Mermaid chart={"erDiagram\n  TENANT ||--o{ AGENCY : owns\n  TENANT ||--|| LEGAL_TEMPLATE : has\n  AGENCY ||--o{ AGENCY_LIVE_CHAT_LINK : \"publishes via\"\n  AGENCY ||--o{ AGENCY_POSTCODE_RANGE : covers\n  AGENCY ||--o{ CONSULTANT_AGENCY : binds\n  AGENCY ||--o{ AGENCY_TOPIC : offers\n  AGENCY ||--|| LEGAL_TEMPLATE : \"may override\"\n  TOPIC ||--o{ AGENCY_TOPIC : \"is offered as\"\n  TOPIC ||--o{ AGENCY_LIVE_CHAT_LINK : \"scopes\"\n  USER ||--o{ CONSULTANT_AGENCY : \"is consultant in\"\n  USER ||--o{ SESSION : \"as consultant\"\n  USER ||--o{ MAGIC_LINK : \"issued\"\n  USER ||--o{ ROLE_ASSIGNMENT : has\n  ROLE ||--o{ ROLE_ASSIGNMENT : grants\n  TICKET ||--|| SESSION : \"promoted to\"\n  CLIENT_PSEUDONYM ||--|| TICKET : \"owns\"\n  CLIENT_PSEUDONYM ||--o| SESSION : \"joins\"\n  SESSION ||--|| MATRIX_ROOM : \"anchored by\"\n  SESSION ||--o{ CASE_NOTE : \"has (counselor-owned)\"\n  SESSION ||--o{ AUDIT_LOG : produces"} />
+
+## 7.2 Entitäten
+
+### 7.2.1 Tenant
+
+Verantwortlich: **TenantService**.
+
+| Attribut | Typ | Hinweise |
+|---|---|---|
+| id | UUID | PK |
+| name | string | Anzeigename (z. B. „Caritas Berlin“) |
+| region | string | Regionale Kennung |
+| data_policy_signed_at | timestamp | Vor Erstellung einer Beratungsstelle erforderlich |
+| live_chat_enabled | boolean | Trägerweiter Live-Chat-Hauptschalter |
+| created_at | timestamp | |
+| disabled_at | timestamp | Deaktivierung für Kontosperre ohne Löschung |
+
+**Beziehungen**: 1 → N **Agency**, 1 → 1 **LegalTemplate** auf Trägerebene.
+
+### 7.2.2 Agency (Beratungsstelle)
+
+Verantwortlich: **AgencyService**.
+
+| Attribut | Typ | Hinweise |
+|---|---|---|
+| id | UUID | PK |
+| tenant_id | UUID | Fremdschlüssel auf Tenant; **unveränderlich** |
+| slug | string | URL-tauglich; innerhalb des Trägers eindeutig |
+| name | string | Anzeigename |
+| description | text | Öffentliche Beschreibung |
+| live_chat_enabled | boolean | Schalter je Beratungsstelle (UND-verknüpft mit Trägerschalter) |
+| imprint_overrides | jsonb \| null | Bei null geerbt |
+| data_policy_overrides | jsonb \| null | Bei null geerbt |
+| gdpr_overrides | jsonb \| null | Bei null geerbt |
+| created_at | timestamp | |
+
+**Beziehungen**: N → 1 Tenant, 1 → N **AgencyLiveChatLink**, 1 → N **AgencyPostcodeRange**, M ↔ N **User** über **ConsultantAgency**, M ↔ N **Topic** über **AgencyTopic**.
+
+### 7.2.3 Topic (Beratungsart)
+
+Verantwortlich: **ConsultingTypeService** (relational und MongoDB).
+
+| Attribut | Typ | Hinweise |
+|---|---|---|
+| id | UUID | PK |
+| slug | string | URL-Kennung (z. B. `debt`) |
+| title_i18n | jsonb | Lokalisierte Titel |
+| description_i18n | jsonb | Lokalisierte Beschreibungen |
+| default_gdpr_snippet_i18n | jsonb | Optionaler Rückfall |
+| ui_metadata | jsonb (Mongo) | Umfangreiche Oberflächenhinweise (Symbole, Farben, Reihenfolge) |
+
+### 7.2.4 User
+
+Verantwortlich: **UserService** und Keycloak.
+
+| Attribut | Typ | Hinweise |
+|---|---|---|
+| id | UUID | Primärschlüssel; identisch zur Keycloak-Benutzer-ID |
+| email | string \| null | Für Mitarbeitende erforderlich, **null für anonyme Ratsuchende** |
+| display_name | string | Pseudonym für Anonyme; echter Name für Mitarbeitende |
+| language | string | ISO 639-1 |
+| created_at | timestamp | |
+| disabled_at | timestamp | |
+| mfa_enrolled_at | timestamp | Verpflichtend für Träger-/Plattform-Admins |
+
+**Untertyp: Consultant-Attribute** (bei Rolle mit `consultant`):
+
+| Attribut | Typ | Hinweise |
+|---|---|---|
+| supervisor_function | boolean | Zuordnung zur Rolle `supervisor-consultant` |
+| live_chat_enabled | boolean | Live-Chat-Schalter je Beratungsperson |
+| group_chat_enabled | boolean | Zuordnung zur Rolle `group-chat-consultant` |
+
+**Untertyp: anonyme Ratsuchende** (bei Rolle = `anonymous`):
+
+| Attribut | Typ | Hinweise |
+|---|---|---|
+| pseudonym | string | Automatisch erzeugt, nie wiederverwendet |
+| cookie_session_id | string | An Browsercookie gebunden |
+| topic | string \| null | Bei Beitritt über themengebundenen Link |
+| zip_code | string \| null | Falls Ratsuchende eine eingegeben haben |
+| last_seen_at | timestamp | Heartbeat-Markierung |
+| **expected_lifespan** | Sekunden–Minuten | Bei Verbindungsabbruch gelöscht |
+
+### 7.2.5 Role & RoleAssignment
+
+Maßgebliche Quelle: **Keycloak-Realm**. Für schnelle Prüfung nur lesend in UserService gespiegelt.
+
+| Rolle | Gewährte Möglichkeiten |
+|---|---|
+| `user-admin` | Plattform-Admin |
+| `tenant-admin` | Träger-Admin |
+| `single-tenant-admin` | Eingeschränkter Träger-Admin |
+| `agency-admin` / `restricted-agency-admin` | Beratungsstellen-Admin |
+| `restricted-consultant-admin` | Teilmenge der Rechte zur Beratendenverwaltung |
+| `consultant` | Beratende |
+| `supervisor-consultant` | Supervisionsfunktion (Kennzeichnung) |
+| `group-chat-consultant` | Beratende mit Gruppenchatfähigkeit (Kennzeichnung) |
+| `topic-admin` | Verwaltet globale Themen |
+| `anonymous` | Ratsuchende im Warteraum |
+| `user` | Für künftige registrierte Ratsuchende reserviert |
+| `technical` / `notifications-technical` | Dienstkonten |
+
+**RoleAssignment** besitzt `(user_id, role, scope)`; `scope` ist optional (z. B. agency_id für `agency-admin`).
+
+### 7.2.6 Ticket (Live-Chat-Ticket)
+
+Verantwortlich: **UserService**.
+
+| Attribut | Typ | Hinweise |
+|---|---|---|
+| id | UUID | PK |
+| agency_id | UUID | Beratungsstelle, zu der Link / PLZ geführt hat |
+| topic_id | UUID \| null | Aus Link oder Auswahl Ratsuchender |
+| client_user_id | UUID | Anonyme Person |
+| state | enum | `Waiting`, `Accepted`, `Consented`, `Active`, `Paused`, `Ended`, `Abandoned`, `Purged` |
+| accepted_by | UUID \| null | Beratungsperson, die angenommen hat |
+| created_at | timestamp | |
+| updated_at | timestamp | |
+
+Wenn `state` den Wert `Consented` erreicht, erzeugt das Ticket eine **Session**.
+
+### 7.2.7 Session
+
+Verantwortlich: **UserService**.
+
+| Attribut | Typ | Hinweise |
+|---|---|---|
+| id | UUID | Primärschlüssel; **nicht aussagekräftige** Sitzungs-ID |
+| ticket_id | UUID | FK |
+| agency_id | UUID | Für schnelle Abfragen denormalisiert |
+| consultant_id | UUID | Beratungsperson |
+| client_pseudonym | string | Bei `Purged` gelöscht |
+| topic_id | UUID \| null | |
+| matrix_room_id | string | `!abc:matrix.oriso-dev.site` |
+| started_at | timestamp | |
+| ended_at | timestamp \| null | |
+| purged_at | timestamp \| null | |
+| state | enum | Spiegelt Ticket-Zustandsautomat |
+
+### 7.2.8 MatrixRoom
+
+Verantwortlich: **Matrix Synapse** (PostgreSQL). Kein von Backend-Diensten verwalteter Datensatz; unsere `Session` hält nur die Raum-ID.
+
+### 7.2.9 CaseNote (geplant)
+
+Verantwortlich: **UserService**.
+
+| Attribut | Typ | Hinweise |
+|---|---|---|
+| id | UUID | PK |
+| consultant_id | UUID | Fremdschlüssel; **Eigentümer** der Notiz |
+| session_id | UUID | Nicht aussagekräftiger Verweis; identifiziert **keine** Person |
+| body_encrypted | bytes | Bei Speicherung verschlüsselt |
+| ai_assisted | boolean | True bei KI-Zusammenfassung |
+| created_at | timestamp | |
+| updated_at | timestamp | |
+
+### 7.2.10 AgencyLiveChatLink
+
+Verantwortlich: **AgencyService**.
+
+| Attribut | Typ | Hinweise |
+|---|---|---|
+| id | UUID | PK |
+| agency_id | UUID | FK |
+| topic_id | UUID \| null | Null = beliebiges Thema |
+| slug | string | In URL verwendet |
+| enabled | boolean | Deaktivierung ohne Löschung |
+| created_by | UUID | Fremdschlüssel auf Person |
+| created_at | timestamp | |
+
+### 7.2.11 AgencyPostcodeRange
+
+Verantwortlich: **AgencyService**.
+
+| Attribut | Typ | Hinweise |
+|---|---|---|
+| id | UUID | |
+| agency_id | UUID | |
+| postcode_from | string | Deutsche PLZ für Zeichenkettenvergleich geeignet |
+| postcode_to | string | |
+| topic_id | UUID \| null | |
+
+### 7.2.12 ConsultantAgency
+
+Viele-zu-viele-Zuordnung von Beratenden zu Beratungsstellen.
+
+| Attribut | Typ | Hinweise |
+|---|---|---|
+| consultant_id | UUID | |
+| agency_id | UUID | |
+| role | enum | `consultant`, `agency-admin`, `restricted-agency-admin` |
+| topics | UUID[] | Themen, die diese Person an dieser Stelle bearbeitet |
+| supervisor_function | boolean | |
+| created_at | timestamp | |
+
+### 7.2.13 LegalTemplate
+
+Verantwortlich ist die bereitstellende Einheit (Plattform / Träger / Beratungsstelle).
+
+| Attribut | Typ | Hinweise |
+|---|---|---|
+| id | UUID | |
+| owner_type | enum | `platform`, `tenant`, `agency` |
+| owner_id | UUID \| null | Null für Plattform (einzige Instanz) |
+| imprint_text_i18n | jsonb | |
+| data_policy_text_i18n | jsonb | |
+| gdpr_text_i18n | jsonb | |
+| version | int | Bei jedem Speichern erhöht |
+| stamped_at | timestamp | Zeitpunkt der Aktivierung |
+
+Vererbung erfolgt **beim Lesen**: Resolver durchläuft `agency → tenant → platform` und liefert die spezifischste Version ungleich null.
+
+### 7.2.14 MagicLink
+
+Verantwortlich: **UserService**.
+
+| Attribut | Typ | Hinweise |
+|---|---|---|
+| jti | UUID | PK |
+| issued_to_email | string | |
+| role | string | Zuzuweisende Realm-Rolle |
+| agency_id | UUID \| null | Falls anwendbar |
+| issued_at | timestamp | |
+| expires_at | timestamp | 24 Stunden |
+| consumed_at | timestamp \| null | Schutz vor Mehrfachverwendung |
+
+### 7.2.15 AuditLog
+
+Verantwortlich: **UserService**.
+
+| Attribut | Typ | Hinweise |
+|---|---|---|
+| id | UUID | |
+| timestamp | timestamp | |
+| actor_id | UUID \| null | Handelnde Person (oder null für System) |
+| action | string | z. B. `session.accept`, `session.purge`, `magic_link.consumed`, `legal_template.update` |
+| target_type | string | |
+| target_id | UUID | |
+| metadata | jsonb | Nicht aussagekräftige Daten — niemals personenbezogene Informationen |
+
+## 7.3 Anzahlen und Lebensdauer im Vergleich
+
+| Entität | Anzahl | Lebensdauer |
+|---|---|---|
+| Plattform-Admin | 1–2 | Dauerhaft |
+| Träger | 1–N | Dauerhaft |
+| Träger-Admin | Mindestens eine je Träger | Dauerhaft |
+| Beratungsstelle | Mindestens eine je Träger | Dauerhaft |
+| Beratungsstellen-Admin | Mindestens eine je Beratungsstelle | Dauerhaft |
+| Beratende | Mindestens eine je Beratungsstelle | Dauerhaft |
+| Thema | Global, endliche Liste | Dauerhaft |
+| Live-Chat-Link | Mindestens eine je Beratungsstelle | Dauerhaft (bis Deaktivierung) |
+| Magic Link | Viele | 24 Stunden |
+| Anonyme Ratsuchende | Viele, kurzlebig | Sekunden bis Stunden, danach **gelöscht** |
+| Ticket | Viele, kurzlebig | Bis Sitzungsende |
+| Sitzung | Viele, kurzlebig | Bis Löschung (≤ 48 Stunden nach Ende) |
+| Matrix-Raum | Einer je Sitzung | Bis Löschung (≤ 48 Stunden nach Ende) |
+| Fallnotiz | Mindestens eine je Sitzung | Dauerhaft (gehört Beratenden) |
+| Prüfeintrag | Viele | Ein Jahr |
+
+## 7.4 Datenschutzsensible Felder (Kurzübersicht)
+
+| Feld | Ort | Behandlung |
+|---|---|---|
+| `pseudonym` | UserService | Bei Verbindungsabbruch gelöscht |
+| `cookie_session_id` | UserService | Mit Pseudonym gelöscht |
+| `client.email` | Nicht anwendbar | **Nie gespeichert** |
+| `client.ip` | Nicht anwendbar | **Nie gespeichert**, nur im Arbeitsspeicher am Ingress genutzt |
+| `consultant.email` | UserService + Keycloak | Verschlüsselte Spalte |
+| `matrix message body` | Synapse | Nur Megolm-verschlüsselter Text |
+| `case_note.body_encrypted` | UserService | Bei Speicherung verschlüsselt |
+| `magic_link.token` | Nicht gespeichert | Nur dessen `jti` und Metadaten |
+
+## 7.5 Ergänzungen vom Mai 2026 (aus Figma)
+
+Figma-Auswertung zeigt mehrere im ursprünglichen Modell fehlende Einheiten. Jede gehört einem bestehenden Dienst, um den Aufbau stabil zu halten.
+
+### 7.5.1 ChatType
+
+Verantwortlich: **AgencyService** und Frontend-Konstanten.
+
+| Attribut | Typ | Hinweise |
+|---|---|---|
+| key | enum | `anonymous`, `one_to_one`, `group`, `supervision` |
+| label_i18n | jsonb | Oberflächenbezeichnungen |
+| feature_permissions | jsonb | Verweise auf `FeaturePermission`-Zeilen |
+
+### 7.5.2 GroupChat (Untertyp von Session)
+
+Verantwortlich: **UserService**.
+
+| Attribut | Typ | Hinweise |
+|---|---|---|
+| id | UUID | Primärschlüssel; gegebenenfalls identisch mit `Session.id` |
+| chat_type | enum | Einer von `team`, `peer_support`, `family`, `internal_round`, `supervision` |
+| label_subtype | string | "Lokal 1:1", "Live 1:1", "Kreis", "Intern", "Fachblick", "Trauerhilfe", … (Oberflächenbezeichnung) |
+| supervision_enabled | boolean | Spiegelt Raumschalter |
+| schedule_at | timestamp \| null | Für geplante Live-Runden |
+| created_by | UUID | Fremdschlüssel auf User |
+
+### 7.5.3 MessageAddressing
+
+Verantwortlich: **UserService** (protokolliert) und **Matrix** (zugestellt).
+
+| Attribut | Typ | Hinweise |
+|---|---|---|
+| event_id | string | Matrix-Ereignis-ID des Originals |
+| recipient_set | UUID[] | Die N Empfänger (Teilmenge der Raum-Mitglieder) |
+| visibility_label | string | Angezeigte Kennzeichnung („3 Moderierende“ usw.) |
+| restricted_send_strategy | enum | `relay_bot`, `per_recipient_megolm` |
+
+Dies ist die Datenebene für [Versand an mehrere Empfänger](/de/produkt/core-features/group-chats#454-multi-recipient-send-wähle-wer-diese-nachricht-sehen-soll).
+
+### 7.5.4 MarkAnnotation / BlurAnnotation
+
+Als **verschlüsselte Matrix-Ereignisse** vom Typ `de.oriso.annotation.mark` oder `de.oriso.annotation.blur` gespeichert. Logischer Aufbau:
+
+| Attribut | Typ | Hinweise |
+|---|---|---|
+| event_id | string | Annotations-Ereignis-ID |
+| target_event_id | string | Annotierte Nachricht |
+| range | &#123; start, end &#125; | Zeichenpositionen |
+| color | string | Markierungsfarbe |
+| label | string \| null | „Gute Aspekte“, „Gefährliches Verhalten“, … |
+| blur | boolean | Bei true weiße Überlagerung mit 80 % Deckkraft |
+| visibility | enum | `private_to_author`, `shared_in_thread` |
+
+### 7.5.5 HandoverEvent
+
+Verantwortlich: **UserService**.
+
+| Attribut | Typ | Hinweise |
+|---|---|---|
+| id | UUID | PK |
+| session_id | UUID | Betroffene nicht aussagekräftige Sitzung |
+| from_counselor_id | UUID | |
+| to_counselor_id | UUID | |
+| reason | enum | `holiday`, `sickness`, `emergency`, `law_violation`, `colleague_fired`, `custom` |
+| custom_reason_text | text \| null | Nur bei `reason = custom` |
+| consents | jsonb | &#123; client: bool, counselor_b: bool, supervisor: bool &#125; |
+| started_at | timestamp | |
+| completed_at | timestamp \| null | |
+
+### 7.5.6 EscalationRequest
+
+Verantwortlich: **UserService**.
+
+| Attribut | Typ | Hinweise |
+|---|---|---|
+| id | UUID | PK |
+| session_id | UUID | |
+| requester_id | UUID | Beratungsperson die ausgelöst hat |
+| recipient_id | UUID \| null | Internes Eskalationsziel (Beratende / Supervision) |
+| mode | enum | `internal`, `external` |
+| note | text | Kontextnotiz der Beratenden (bei Speicherung verschlüsselt) |
+| status | enum | `requested`, `accepted`, `resolved`, `cancelled`, `expired` |
+| created_at | timestamp | |
+| resolved_at | timestamp \| null | |
+
+### 7.5.7 Notification
+
+Verantwortlich: **UserService**.
+
+| Attribut | Typ | Hinweise |
+|---|---|---|
+| id | UUID | PK |
+| recipient_id | UUID | Zielperson |
+| type | string | `inquiry.accepted`, `handover.completed`, `appointment.reminder`, … |
+| title_i18n | jsonb | |
+| body_i18n | jsonb | |
+| linked_session_id | UUID \| null | Für Direktlink |
+| read_at | timestamp \| null | |
+| email_sent | boolean | true bei E-Mail-Kopie |
+| created_at | timestamp | |
+
+### 7.5.8 ClientEmail
+
+Verantwortlich: **UserService** (privilegierte Spalte).
+
+| Attribut | Typ | Hinweise |
+|---|---|---|
+| user_id | UUID | PK |
+| email_encrypted | bytes | Spaltenverschlüsselt |
+| verified_at | timestamp \| null | Nach Anklicken |
+| visible_to_roles | enum[] | Nur `platform_admin` — niemals Beratende |
+
+### 7.5.9 MFAFactor
+
+Verantwortlich: **Keycloak** (für schnelle Abfragen in UserService gespiegelt).
+
+| Attribut | Typ | Hinweise |
+|---|---|---|
+| user_id | UUID | |
+| type | enum | `app_totp`, `email_magic`, `webauthn` |
+| enrolled_at | timestamp | |
+
+### 7.5.10 FeaturePermission
+
+Verantwortlich: **TenantService** (Plattformstandard und Trägerüberschreibung) sowie **AgencyService** (Beratungsstellenüberschreibung).
+
+| Attribut | Typ | Hinweise |
+|---|---|---|
+| id | UUID | PK |
+| owner_type | enum | `platform`, `tenant`, `agency` |
+| owner_id | UUID \| null | Null für Plattform |
+| chat_type | enum | `anonymous`, `one_to_one`, `group`, `supervision` |
+| feature_key | string | z. B. `audio_calls`, `voice_messages`, `multi_recipient_send` |
+| enabled | boolean | |
+| updated_at | timestamp | |
+
+Resolver liefert UND-Verknüpfung aller Ebenen: `effective = platform.enabled AND tenant.enabled AND agency.enabled`.
+
+### 7.5.11 ChatTag
+
+Verantwortlich: **AgencyService**.
+
+| Attribut | Typ | Hinweise |
+|---|---|---|
+| id | UUID | |
+| agency_id | UUID | |
+| name_i18n | jsonb | |
+| color | string | |
+| created_at | timestamp | |
+
+### 7.5.12 SystemMessage
+
+Bei Darstellung berechnet; als **synthetisches Matrix-Ereignis** mit `type=de.oriso.system_message` gespeichert. Logisch:
+
+| Attribut | Typ | Hinweise |
+|---|---|---|
+| key | string | `inquiry.accepted`, `e2ee.enabled`, `supervision.added`, `handover.completed`, `live_call.active`, `chat.archived`, `holiday`, `sickness`, `emergency`, … |
+| body_i18n | jsonb | Vorlagentext |
+| level | enum | `info`, `important`, `warning`, `legal` |
+
+## 7.7 Warum dieses Schema so aufgebaut ist
+
+- **Trennung Tenant / Agency / Topic** — historisch und bewusst. Träger tragen rechtliche Verantwortung; Stellen die tägliche Arbeit; Themen sind global, damit Ratsuchende zum Thema „Schulden“ auch bei einer anderen Stelle passende Beratende finden.
+- **Anonyme Person ≠ dauerhafte Person** — pragmatisch in derselben Tabelle, aber mit völlig unterschiedlichem Lebenszyklus, durch Zustand und geplante Bereinigung durchgesetzt.
+- **CaseNote gehört Beratenden, nicht Sitzung** — bei Sitzungsbereinigung bleibt die Notiz nützlich und keiner Person zuordenbar.
+- **LegalTemplate mit polymorpher Verantwortung** — ein Resolver, einfache Vererbung, eine maßgebliche Quelle für „Was sieht diese ratsuchende Person?“

@@ -4,10 +4,6 @@ description: Enriched tenant lifecycle across Admin, TenantService, Keycloak, da
 ---
 
 # Tenant Lifecycle
-
-## Platform Navigation
-
-- [Overview](./overview.md)
 - [Repository map](./repository-map.md)
 - [Architecture](./architecture.md)
 - [Authentication and Keycloak](./authentication-and-keycloak.md)

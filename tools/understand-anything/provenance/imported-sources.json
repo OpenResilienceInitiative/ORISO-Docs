@@ -1,0 +1,217 @@
+{
+  "capturedAt": "2026-09-06T22:33:43.957517+00:00",
+  "baseline": "origin/dev 6b8d69995205f78053831075e093e061e0eb0b53",
+  "integration": "9f748ba567011905b2287dfac2bbb49198d8ba9c",
+  "sources": [
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/enrich-agencyservice.json",
+      "destination": "enrichments/enrich-agencyservice.json",
+      "sha256": "83e0f8f48434b6f62b97e649f90a5c1cbfce2319c46fc7e208d5a2edf8ab3ba5"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/enrich-docs.json",
+      "destination": "enrichments/enrich-docs.json",
+      "sha256": "fe8211d9eeb2d0f0c21ed4a5aff907110d056f8754ba78caae94962b543c3749"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/enrich-database.json",
+      "destination": "enrichments/enrich-database.json",
+      "sha256": "530279c647b2c585f85247c3e6984b614aeb30937898ecc10835094904f00170"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/ua-probe.mjs",
+      "destination": "ua-probe.mjs",
+      "sha256": "63e687e7ecb447dc36513f9b028e298d3e7b3bf4f26dc361d6ea9d89fadfdd98"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/enrich-kubernetes.json",
+      "destination": "enrichments/enrich-kubernetes.json",
+      "sha256": "13bc9849093b8f7ce3011f6db18f40eec1ab7cb3fc83fedecab5ecfcb93a0148"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/summaries-agencyservice.json",
+      "destination": "enrichments/summaries-agencyservice.json",
+      "sha256": "b8d363aad37346761ef211644a237d6b2427a4881db653fd5ddad7cca8a40e0c"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/enrich-cts.json",
+      "destination": "enrichments/enrich-cts.json",
+      "sha256": "4c5dedb7539481c9d8613bd8fdf92d7076958dcf6d5a3a371800cb11e5738eef"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/enrich-signoz.json",
+      "destination": "enrichments/enrich-signoz.json",
+      "sha256": "dcacd2d5682ddf6bb1a5406c24bcfd947ec7ec77825491a2bfa52df5e8b7a7d9"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/ua-generate.mjs",
+      "destination": "ua-generate.mjs",
+      "sha256": "165eea1cbf433aebcf1329c2dfc1968df1d595421c68a21a9ae77081af1f96aa"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/ua-nightly-full.sh",
+      "destination": "ua-nightly-full.sh",
+      "sha256": "79ee70ae6fc8c5c8656165d7b06e19325f3e411922776624b85ff27965548288"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/ua-node",
+      "destination": "ua-node",
+      "sha256": "7aff23beb25f07ea08e3a6feb8d8fd9d70e023fcc0b926eaed75e29e75a2177a"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/enrich-infra.json",
+      "destination": "enrichments/enrich-infra.json",
+      "sha256": "eeb18702c52ac5c748e9b10548694fc21eb0953c87fa70b507b5175ed5f43e3e"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/enrich-elementcall.json",
+      "destination": "enrichments/enrich-elementcall.json",
+      "sha256": "2c96c5a51a436385afe7e50a3c1a1e16a2caa8dfe9f08ee095b46a17b858aacd"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/enrich-helm.json",
+      "destination": "enrichments/enrich-helm.json",
+      "sha256": "c4d225d7b62008a54599140ba6b3e6d9f2694b2e6a7f20ec876fde3ba8d87432"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/ua-enrich-merge.mjs",
+      "destination": "ua-enrich-merge.mjs",
+      "sha256": "8a19b5d3880011c8aef68053767680b000200410232dc661d3ddce1ade4fb51d"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/summaries-tenantservice.json",
+      "destination": "enrichments/summaries-tenantservice.json",
+      "sha256": "c4ac8aa6e755743a844daf0ceb15137d8de841fe554b440ccf59a2c92d720ada"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/summaries-frontend.json",
+      "destination": "enrichments/summaries-frontend.json",
+      "sha256": "e652824c8b1c957a859dd7f9dc3e24b9a25bcefa843cb6d8bc51f2aa814be71b"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/enrich-healthdashboard.json",
+      "destination": "enrichments/enrich-healthdashboard.json",
+      "sha256": "7612e6b6999f08ae31e86f68e89325662c90c350314b5df1d269f7296e5828c8"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/enrich-keycloak.json",
+      "destination": "enrichments/enrich-keycloak.json",
+      "sha256": "7dc9db833277bb1b28efe7872c69b2678916ac3baf7ef3171e93d5946e946adb"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/ua-platform-graph.mjs",
+      "destination": "platform/ua-platform-graph.mjs",
+      "sha256": "9869a794b94b8a657c473d06f04d377e3742d51818d85ea549def706fff72bad"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/enrich-admin.json",
+      "destination": "enrichments/enrich-admin.json",
+      "sha256": "2fb46777306d0a1dd595f38538c44f433a471c9a7061e5b88ad8b2043b16bf4c"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/enrich-userservice.json",
+      "destination": "enrichments/enrich-userservice.json",
+      "sha256": "6659c7bf29faf05b3d8061daf18e9bdff9bfada9f88d70fcd854f7948bdc79b4"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/enrich-livekit.json",
+      "destination": "enrichments/enrich-livekit.json",
+      "sha256": "84e413c998a8ca5a8b60f443bc656e9c8d520281464bc7ab96252fe62cc8bae3"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/enrich-tenantservice.json",
+      "destination": "enrichments/enrich-tenantservice.json",
+      "sha256": "a5376e0504f8f151d8b3385b5668749383365c6b80d8152c7cb4738e8c4bc63f"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/enrich-status.json",
+      "destination": "enrichments/enrich-status.json",
+      "sha256": "629a6b4bd28ac03f6c33c39d97c131cc5152f24322471bec3e84fe3ab27dcc8a"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/ua-probe2.mjs",
+      "destination": "ua-probe2.mjs",
+      "sha256": "27e3da4a5ddb0b43bde017446d8d11bdf015849374492684f3d6fdcffd403a80"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/ua-refresh.sh",
+      "destination": "ua-refresh.sh",
+      "sha256": "6546b9392fc008e28ca2f1c3549a9c460419a0e92ad755599d8e0ce1cf19aba1"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/ua-build-supergraph.mjs",
+      "destination": "ua-build-supergraph.mjs",
+      "sha256": "cd9668d904b3ee9e3edd142e2c4bb72b31b6b375dac339c385fbfa2b185dad28"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/summaries-admin.json",
+      "destination": "enrichments/summaries-admin.json",
+      "sha256": "12d813e93a02b992ebf979e89135a927b8763124c96f5e1e36bc13116de7f219"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/ua-verify.py",
+      "destination": "ua-verify.py",
+      "sha256": "362defb52e23ffe72119a0357625a8d54616f02c5754e4626afba63831948c6c"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/enrich-frontend.json",
+      "destination": "enrichments/enrich-frontend.json",
+      "sha256": "adfcd0feea668d860519de17cb557e94dac69eb6b192d72e0fc1dd17ec5e36e1"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/summaries-cts.json",
+      "destination": "enrichments/summaries-cts.json",
+      "sha256": "271fca0446b3a9328251af7b3c685d8bb85d407875fe0d0589e61a16bba78ef0"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/summaries-userservice.json",
+      "destination": "enrichments/summaries-userservice.json",
+      "sha256": "1b0e699dd30a79bb7bbd0ab3627dc9a7413843b4f149037521262811a316c23c"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/enrich-e2e.json",
+      "destination": "enrichments/enrich-e2e.json",
+      "sha256": "0a53afc143a774b9cecb2b959a8c50a2aa0d9f655e2c8783ea1a0c616c59c58e"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/tour-admin.json",
+      "destination": "enrichments/tour-admin.json",
+      "sha256": "2bddef962c033f433f0f6eefcb17b90b72a0531c5c7f509eae5e793e28485aff"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/tour-docs.json",
+      "destination": "enrichments/tour-docs.json",
+      "sha256": "f627a439ccd329ddef6445f9321821227418c504e34b72085997f76002944417"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/tour-agencyservice.json",
+      "destination": "enrichments/tour-agencyservice.json",
+      "sha256": "6d1d32452b5ada6d217e582f773d5147747ca9ab3c5dde6a854f7270bbbbd3d6"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/tour-frontend.json",
+      "destination": "enrichments/tour-frontend.json",
+      "sha256": "6267c042f109cfa44bad4137f86714b3043a1c630f5078d837a017c0e2e62648"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/tour-userservice.json",
+      "destination": "enrichments/tour-userservice.json",
+      "sha256": "28d204717802c8382e69e2f9fdcb13228bbb02b085306e40dfee50bae9cf86cd"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/tour-tenantservice.json",
+      "destination": "enrichments/tour-tenantservice.json",
+      "sha256": "d02c31add03a904abd0f3a80f5695e57ac0eb7278fb086ce0f2f7ada9abb566c"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/_rebuild/tour-cts.json",
+      "destination": "enrichments/tour-cts.json",
+      "sha256": "11cd1337e8dfd96cd9eec79508deb188eecd299007ba41162eef436cba826888"
+    },
+    {
+      "source": "predev:/opt/oriso-understand/ORISO-Docs/.understandignore",
+      "destination": "analysis-config/ORISO-Docs.understandignore",
+      "sha256": "c903e9faefa23e8fbab30a07669ee36500e44c82d0875a8ceaf981a43cdfe971"
+    }
+  ]
+}

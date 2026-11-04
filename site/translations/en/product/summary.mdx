@@ -1,0 +1,89 @@
+---
+title: "Summary (TL;DR)"
+description: "One-page compressed understanding of the entire ORISO platform."
+---
+
+<Info>
+If you only read **one** page of this product documentation, read this one. Everything else expands the bullet points below.
+</Info>
+
+## What ORISO Is, in One Paragraph
+
+ORISO is a **multi-tenant, anonymous online counseling platform** built on Kubernetes (k3s + Helm). Clients in distress reach a counselor via a public **live-chat link** or a German-postal-zip-code lookup, enter an **anonymous waiting room** where they get a server-generated pseudonym, sign **two GDPR consents** (platform-default at entry, counseling-center-specific when a counselor accepts their ticket), and chat in an **end-to-end encrypted Matrix room** that is **auto-purged after 48 h**. The **client identity is wiped** the moment they disconnect.
+
+## The Hierarchy in One Sentence
+
+**Platform Admin** owns the platform → creates **Tenants**; each Tenant Admin signs a Data Policy Agreement and creates **Counseling Centers**; each Counseling Center has a **Counselor Admin** who manages **Counselors**; **Clients** are anonymous and ephemeral.
+
+## The Five Things You Must Remember
+
+1. **Anonymity is sacred.** No real names, no IPs persisted, pseudonyms only.
+2. **GDPR is taken twice** — once at the waiting-room entry (platform default), once at counselor pickup (center-specific).
+3. **Inheritance for legal text** — every counseling center inherits Imprint/Data-Policy/GDPR from its tenant; every tenant inherits from the platform; overrides are local-only.
+4. **Wipe-on-disconnect, not archive.** A client who leaves disappears from every store within seconds-to-minutes.
+5. **End-to-end encryption** in chat (Megolm) means even the server cannot read message bodies.
+
+## The Tech Stack in One Bullet List
+
+- **Frontend** — React 18 + Vite 4 (`ORISO-Frontend` for clients, `ORISO-Admin` for staff, `ORISO-Element` for chat UI).
+- **Identity** — Keycloak OIDC, 14 realm roles, MFA mandatory for Tenant/Platform admins.
+- **Backend** — 4 Spring Boot 2.7 services (`TenantService`, `UserService`, `ConsultingTypeService`, `AgencyService`), Java 17, Maven.
+- **Communication** — Matrix Synapse (E2EE chat), LiveKit (WebRTC video, no recording).
+- **Data** — MariaDB (relational truth), MongoDB (topic configs), PostgreSQL (Synapse), Redis (caches/queue), RabbitMQ (async cleanup).
+- **Infra** — k3s + Helm umbrella chart `oriso-platform`, Nginx Ingress + Cert-Manager TLS, SignOZ observability.
+
+## The Core Flow in 6 Steps
+
+1. **Client opens a live-chat link** — `https://app.oriso-dev.site/live-chat/{agency}?topic=debt`.
+2. **System creates an anonymous user**, issues a **pseudonym** (e.g. *geschmeidiges Kanninchen Kim*), shows the platform-default GDPR popup.
+3. **Client enters the waiting room** — sees queue position ("23 Noch vor Ihnen"), a breathing-game distraction, the "messages auto-deleted in 48 h" promise.
+4. **A counselor picks the ticket** — oldest-first, intentionally not auto-assigned. Pickup creates an encrypted Matrix room.
+5. **Client signs the counseling-center GDPR**. Without this, the chat **does not open**.
+6. **Chat happens, then ends**, room is tombstoned and purged within 48 h. Client pseudonym is wiped on disconnect.
+
+## What Is Not Built Yet (Roadmap)
+
+- **AI-assisted case notes** — designed (browser-side decryption + PII scrubbing + self-hosted summarizer); not implemented.
+- **Trainee function** on counselors.
+- **Merged zip-code + topic** in a single live-chat link.
+- **Simplified link-generation UI** (current is overengineered).
+- **Counseling-center deactivated state** instead of hiding live-chat off.
+- **Browser-language default with English fallback** (current defaults to German).
+
+## Hard Rules (Non-Negotiable)
+
+- ❌ No `dev` mode in production.
+- ❌ No client IPs persisted.
+- ❌ No message bodies in any backend log.
+- ❌ No archive of an anonymous client's pseudonym.
+- ❌ No AI service that receives raw ciphertext server-side.
+- ✅ MFA mandatory for Platform Admin and Tenant Admin.
+- ✅ Yearly external security audit.
+- ✅ E2EE for all chat content.
+- ✅ Tenant isolation enforced at persistence layer.
+
+## Where to Read Next
+
+<CardGroup cols={2}>
+<Card title="Product Overview" icon="rocket" href="/product/overview">Section 1</Card>
+<Card title="System Architecture" icon="diagram-project" href="/product/architecture">Section 2</Card>
+<Card title="Roles & Permissions" icon="users-gear" href="/product/roles-permissions">Section 3</Card>
+<Card title="Core Features" icon="bolt" href="/product/features">Section 4</Card>
+<Card title="User Flows" icon="route" href="/product/user-flows">Section 5</Card>
+<Card title="Internal Functionality" icon="microchip" href="/product/internal-functionality">Section 6</Card>
+<Card title="Data Model" icon="database" href="/product/data-model">Section 7</Card>
+<Card title="UI / UX (Figma)" icon="figma" href="/product/ui-ux">Section 8</Card>
+<Card title="Edge Cases" icon="triangle-exclamation" href="/product/edge-cases">Section 9</Card>
+<Card title="Assumptions & Open Questions" icon="circle-question" href="/product/assumptions">Section 10</Card>
+</CardGroup>
+
+## Goal of This Documentation
+
+After reading the full set:
+
+- A **developer** can build (or extend) any sub-system of ORISO.
+- A **product manager** can pitch the platform, defend its design choices, and prioritize the roadmap.
+- A **designer** can improve any flow without breaking the privacy or legal constraints.
+- An **AI / LLM** can reason about the system end-to-end and answer specific questions correctly without re-reading the source code.
+
+If any reader cannot do these four things after the read, [open an issue](mailto:product@oriso-dev.site) and tell us what's missing.

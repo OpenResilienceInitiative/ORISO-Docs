@@ -1,0 +1,26 @@
+{
+  "concepts": [
+    {
+      "id": "concept:service-health-checks",
+      "name": "Service Health Checks",
+      "summary": "Node service (server.js + health.js) that probes the ORISO services listed in config.json and renders their status on a single dashboard page (public/index.html).",
+      "tags": ["domain", "observability"],
+      "related": ["server.js", "health.js", "config.json", "test/health.test.js"]
+    },
+    {
+      "id": "concept:cluster-deployment",
+      "name": "Cluster Deployment",
+      "summary": "Kubernetes wiring for the dashboard itself: ingress definitions, RBAC for in-cluster probing, and a Let's Encrypt cluster issuer.",
+      "tags": ["infrastructure"],
+      "related": ["ingress.yaml", "ingress-health.yaml", "kubernetes-rbac.yaml", "letsencrypt-clusterissuer.yaml", "DEPLOYMENT.md"]
+    }
+  ],
+  "flows": [
+    {
+      "id": "flow:health-probe",
+      "name": "Health Probe Cycle",
+      "summary": "server.js periodically calls health.js probes against each configured service → aggregates up/down state → the dashboard page displays the result.",
+      "related": ["server.js", "health.js", "config.json"]
+    }
+  ]
+}

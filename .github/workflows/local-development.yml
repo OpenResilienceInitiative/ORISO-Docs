@@ -1,0 +1,34 @@
+name: Local development contracts
+on:
+  pull_request:
+    paths:
+      - services-local-setup/**
+      - .github/workflows/local-development.yml
+  push:
+    branches: [dev]
+    paths:
+      - services-local-setup/**
+      - .github/workflows/local-development.yml
+permissions:
+  contents: read
+jobs:
+  readonly-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install shell test runner
+        run: sudo apt-get update -qq && sudo apt-get install -y bats
+      - name: Check Compose parser availability (no daemon mutation)
+        run: docker compose version --short
+      - name: Verify process and source contracts
+        run: python3 -m unittest discover -s services-local-setup/tests -v
+      - name: Verify public shell interface
+        run: bats services-local-setup/tests/local-development.bats
+      - name: Check shell syntax
+        run: bash -n services-local-setup/run-oriso-local.sh

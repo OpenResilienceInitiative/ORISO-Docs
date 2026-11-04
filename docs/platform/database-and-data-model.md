@@ -1,72 +1,94 @@
 ---
-title: Database and Data Model
-description: Enriched persistence architecture, schema ownership and data risks.
+title: Database and data model
+description: Which store holds what, which service is allowed to write it, and the traps that follow from having no foreign keys across service boundaries.
 ---
 
-# Database and Data Model
+# Database and data model
 
-## Platform Navigation
+Five stores, one ownership rule. The rule is the important part: **a table belongs to
+exactly one service, and only that service writes it.**
 
-- [Overview](./overview.md)
-- [Repository map](./repository-map.md)
-- [Architecture](./architecture.md)
-- [Authentication and Keycloak](./authentication-and-keycloak.md)
-- [Database and data model](./database-and-data-model.md)
-- [Kubernetes deployment](./kubernetes-deployment.md)
-- [Frontend/Admin overview](./frontend-admin-overview.md)
-- [Backend services](./backend-services.md)
+## Ownership
+
+```mermaid
+flowchart TB
+  subgraph MARIA["MariaDB — one schema per service"]
+    S1["userservice · 54 tables"]
+    S2["agencyservice · 7 tables"]
+    S3["tenantservice · 12 tables"]
+    S4["consultingtypeservice · 5 tables"]
+    S5["uploadservice, videoservice, caritas<br/>legacy schemas"]
+  end
+  MGO[("MongoDB<br/>consulting types,<br/>application settings")]
+  PG[("PostgreSQL<br/>Matrix Synapse state")]
+  RD[("Redis<br/>sessions, cache, tokens")]
+  MQ[("RabbitMQ<br/>async messaging")]
+
+  US["UserService"] --> S1
+  AG["AgencyService"] --> S2
+  TS["TenantService"] --> S3
+  CT["ConsultingTypeService"] --> S4
+  CT --> MGO
+  MX["Matrix Synapse"] --> PG
+  US --> RD
+  US --> MQ
+
+  S1 -. "agency_id, tenant_id, consulting_type<br/>no foreign key" .-> S2
+  S1 -. "no foreign key" .-> S3
+```
+
+| Schema | Owner | Notable tables |
+| --- | --- | --- |
+| `userservice` | UserService | `user`, `consultant`, `session`, `session_data`, `session_topic`, `session_supervisor`, `chat`, `group_chat_participant`, `appointment`, `draft_message`, `event_notification`, `agency_invite_link`, `identity_tombstone` |
+| `agencyservice` | AgencyService | `agency`, `agency_postcode_range`, `agency_topic`, `diocese` |
+| `tenantservice` | TenantService | `tenant` |
+| `consultingtypeservice` | ConsultingTypeService | `topic`, `topic_group`, `topic_group_x_topic` |
+| `uploadservice`, `videoservice`, `caritas` | — | legacy schemas; the owning repositories are not part of this platform |
+
+The schemas that ship with the deployment live in the chart, for example
+[`charts/mariadb/sql-schemas/userservice-schema.sql`](https://github.com/OpenResilienceInitiative/ORISO-Helm/blob/dev/charts/mariadb/sql-schemas/userservice-schema.sql).
+[ORISO-Database](https://github.com/OpenResilienceInitiative/ORISO-Database) additionally
+holds schema exports, MongoDB dumps and the operational documentation for Redis,
+RabbitMQ and Matrix PostgreSQL.
+
+Every schema carries `DATABASECHANGELOG` and `DATABASECHANGELOGLOCK` tables from
+Liquibase. Whether Liquibase actually runs is a per-service, per-environment setting —
+verify it against the running environment rather than assuming from the presence of the
+tables.
+
+## The trap: identifiers without foreign keys
+
+`agency_id`, `user_id`, `session_id`, `consulting_type` and `tenant_id` appear in several
+schemas, but they cross service and database boundaries, so **MariaDB does not enforce
+them**. Three consequences you will meet in practice:
+
+1. **Deleting through the API is not the same as deleting a row.** A row can reference an
+   agency that no longer exists, and the database will not object.
+2. **A join you would like to write does not exist.** Combining data across two services
+   means two API calls, not one query.
+3. **Test fixtures lie.** A fixture that inserts rows directly can create a state the
+   real API would refuse.
+
+## Where do I intervene?
+
+| I want to… | Do this |
+| --- | --- |
+| Add a column | change it in the owning service's entity and migration; never patch another service's schema |
+| Read another service's data | call its API; if there is no endpoint, that is the change to make |
+| Understand a table | find the entity class in the owning service, then the repository that queries it |
+| Check what production actually has | inspect the live schema — the exported files are snapshots, not a migration history |
+
+## Risks worth checking before you scale
+
+- Index coverage is thin outside `userservice`; check it before tenant-heavy or
+  session-heavy load tests.
+- Dump and backup files can contain personal data. Treat them accordingly.
+- Cross-service identifiers make cascading cleanup an application concern, not a database
+  one.
+
+## Related
+
+- [Backend services](./backend-services.md) — the owners
+- [Architecture](./architecture.md) — why the boundary is where it is
 - [Tenant lifecycle](./tenant-lifecycle.md)
-- [User management flow](./user-management-flow.md)
-- [Local development](./local-development.md)
-- [Onboarding guide](./onboarding-guide.md)
-- [Troubleshooting](./troubleshooting.md)
-- [Graph validation report](./graph-validation-report.md)
-- [Diagrams](./diagrams.md)
-
-Diagram: [data-ownership.mmd](./diagrams/data-ownership.mmd)
-
-## Data Stores
-
-| Schema | File | Table count | Main tables | Index count |
-| --- | --- | --- | --- | --- |
-| agencyservice | mariadb/agencyservice/schema.sql | 6 | DATABASECHANGELOG, DATABASECHANGELOGLOCK, agency, agency_postcode_range, agency_topic, diocese | 2 |
-| caritas | mariadb/caritas/schema.sql | 0 |  | 0 |
-| consultingtypeservice | mariadb/consultingtypeservice/schema.sql | 5 | DATABASECHANGELOG, DATABASECHANGELOGLOCK, topic, topic_group, topic_group_x_topic | 3 |
-| tenantservice | mariadb/tenantservice/schema.sql | 3 | DATABASECHANGELOG, DATABASECHANGELOGLOCK, tenant | 0 |
-| uploadservice | mariadb/uploadservice/schema.sql | 3 | DATABASECHANGELOG, DATABASECHANGELOGLOCK, uploadbyuser | 0 |
-| userservice | mariadb/userservice/schema.sql | 26 | DATABASECHANGELOG, DATABASECHANGELOGLOCK, admin, admin_agency, agency_invite_link, appointment, chat, chat_agency, consultant, consultant_agency, consultant_mobile_token, counselor_rename_audit_log, draft_message, event_notification, group_chat_participant, identity_tombstone, inactive_account_notification_audit_log, language, session, session_data, session_supervisor, session_topic, user, user_agency, user_chat, user_mobile_token | 40 |
-| videoservice | mariadb/videoservice/schema.sql | 3 | DATABASECHANGELOG, DATABASECHANGELOGLOCK, videoroom | 1 |
-
-## Ownership Rules
-
-- TenantService owns tenantservice.tenant.
-- UserService owns userservice user/session/chat/appointment/notification tables.
-- AgencyService owns agencyservice agency/postcode/topic/diocese tables.
-- ConsultingTypeService owns consultingtypeservice topic tables and MongoDB consulting/application documents.
-- Matrix owns Matrix PostgreSQL state.
-- UploadService and VideoService schemas exist but their repos were not included.
-
-## Initialization and Migration References
-
-- README.md
-- k8s/mariadb-client/README.md
-- mariadb/README.md
-- mongodb/README.md
-- postgresql/README.md
-- rabbitmq/README.md
-- redis/README.md
-- scripts/README.md
-- scripts/database-initialize.yaml
-- scripts/system-users-job.yaml
-- k8s/mariadb-client/configmap.yaml
-- k8s/mariadb-client/deployment.yaml
-- k8s/mariadb-client/ingress.yaml
-- k8s/mariadb-client/kustomization.yaml
-- k8s/mariadb-client/service.yaml
-
-## Risks
-
-- Cross-service IDs are not always protected by database-level foreign keys.
-- Index coverage should be checked before tenant-heavy or user/session-heavy scale testing.
-- Dump/backup files may contain sensitive data.
-- Liquibase tables exist in schema exports, but the actual migration ownership model needs environment verification.
+- [Kubernetes deployment](./kubernetes-deployment.md) — where the schemas are applied

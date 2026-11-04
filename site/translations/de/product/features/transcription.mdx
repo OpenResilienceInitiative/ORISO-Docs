@@ -1,0 +1,131 @@
+---
+title: "4.1 KI-Notizen und Transkripte"
+description: "Wie ORISO heute mit Chat-Inhalten umgeht, die geplante KI-gestützte Notizebene und die Datenschutzgarantien, die ihr Grenzen setzen."
+---
+
+<Warning>
+**Realitätsprüfung**. ORISO ist heute eine Chat-Plattform für Beratung, keine Notiz-App. Es gibt **keine Pipeline zur Audiotranskription** und **keine KI-Zusammenfassung** im Produktivbetrieb. Chat-Inhalte liegen in **Ende-zu-Ende-verschlüsselten Matrix-Räumen**. Diese Seite beschreibt (a) den heutigen Umgang mit Chat-Inhalten und (b) wie die KI-Notizfunktion aussehen *würde*, ausdrücklich als Planung gekennzeichnet.
+</Warning>
+
+<Info>
+Seit Mai 2026 **durch [KI-Werkzeuge (4.6)](/product/features/ai-tools) abgelöst**. Die Figma-Ausgabe bestätigte einen aktiven Entwurf für Chat-Zusammenfassung (`⇧Ü`), Textmarkierung und Unkenntlichmachung personenbezogener Informationen. Diese Seite liefert den historischen Kontext; danach geht es bei [KI-Werkzeuge](/product/features/ai-tools) weiter.
+</Info>
+
+## 4.1.1 Zweck
+
+Warum dieses Produkt überhaupt eine Funktion für „Transkription / Notizen“ vorsieht:
+
+- **Produktivität der Beratenden** — zwischen Sitzungen schreiben Beratende oft eine kurze Fallnotiz („Ratsuchender brauchte Hilfe wegen Überziehung und erwähnte Mietrückstände“) für Qualitätssicherung / Übergabe.
+- **Supervisionsprüfung** — ein `supervisor-consultant` muss eventuell eine Sitzung für Ausbildungsfeedback überfliegen.
+- **Begrenzter Prüfpfad** — für bestimmte rechtliche Prüfungen ist ein manipulationsnachweisender Beleg erforderlich, *dass eine Sitzung stattgefunden hat* (nicht für deren Inhalt).
+
+Diese Bedürfnisse müssen mit zwei unverhandelbaren Garantien vereinbar sein:
+
+1. **Ende-zu-Ende-Verschlüsselung** — der Server kann Nachrichteninhalte nicht lesen.
+2. **Löschung bei Verbindungsabbruch** — die Identität anonymer Ratsuchender wird innerhalb von Sekunden bis Minuten vernichtet.
+
+## 4.1.2 Was heute existiert (Produktivbetrieb)
+
+### Audioaufnahme
+
+❌ **Nicht umgesetzt.** LiveKit verwaltet WebRTC-Räume für Video und Sprache, zeichnet aber **nicht** auf. Die Plattform besitzt keine STT-Pipeline (Sprache zu Text).
+
+### Texterfassung
+
+✅ **Über Matrix umgesetzt.** Jede Chat-Sitzung ist ein Matrix-Raum. Jede Nachricht wird Megolm-verschlüsselt in der PostgreSQL-Datenbank von Synapse gespeichert. Der Server sieht ausschließlich verschlüsselten Text.
+
+### Speicherung
+
+| Ebene | Gespeicherte Daten | Verschlüsselung | Aufbewahrung |
+|---|---|---|---|
+| **Matrix Synapse (PostgreSQL)** | Verschlüsselte Nachrichtenblöcke, Raum-Metadaten | Megolm E2EE | Automatische Löschung 48 Stunden nach Sitzungsende (der Text im Warteraum teilt dies den Ratsuchenden ausdrücklich mit). |
+| **UserService (MariaDB)** | Sitzungsdatensatz (ID, Beratungsstelle, Thema, Erstellungs-/Endzeitpunkt, Pseudonym) | TLS bei Übertragung, Verschlüsselung persönlicher Felder auf Spaltenebene | Pseudonyme werden Sekunden bis Minuten nach Verbindungsabbruch gelöscht; Sitzungsdatensatz bleibt für ein kurzes Prüffenster erhalten und wird anschließend anonymisiert. |
+| **Element / ORISO-Element** | Lokaler IndexedDB-Schlüsselcache für die Sitzung der nutzenden Person | Im Browser verschlüsselt | Beim Schließen des Tabs geleert. |
+
+### Abruf
+
+- Beratende können eine aktive Sitzung in Element/ORISO-Element erneut öffnen und den Verlauf lesen, *solange der Raum existiert* (höchstens 48 Stunden).
+- Personen mit Supervisionsfunktion können zur Qualitätssicherung als Mitglieder mit Leserechten in bestimmte Räume eingeladen werden — dafür benötigen sie jedoch die Megolm-Schlüssel; deshalb ist dies **ausdrücklich und nachvollziehbar**.
+- Plattform-Admins **können keine** Chat-Inhalte lesen. Sie sehen, *dass* eine Sitzung stattgefunden hat (Zeitpunkte, Beratungsstelle, Ticket-ID), aber nicht den Wortlaut.
+
+## 4.1.3 Was geplant ist (KI-Notizen)
+
+Die Produktplanung erwähnt KI-gestützte **Fallnotizen der Beratenden**. Nach aktuellem Verständnis sieht die Funktion so aus:
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant Co as Counselor (browser)
+  participant FE as Element / ORISO-Element
+  participant AI as AI Notes Service (planned)
+  participant US as UserService
+
+  Co->>FE: Click "Generate case note"
+  Note over FE: Decryption keys live only in the browser
+  FE->>FE: Decrypt last N messages locally
+  FE->>AI: POST /summarize { ciphertext: false, scrubbed_text }
+  Note over FE,AI: Personally-identifying tokens scrubbed in-browser before send
+  AI-->>FE: Bullet-point summary
+  FE->>Co: Show summary; let counselor edit & save
+  Co->>FE: Save note
+  FE->>US: PUT /sessions/{id}/case-note  (encrypted at rest)
+```
+
+Entwurfsbedingungen (direkt aus Franks ausdrücklich genannten Grundsätzen übernommen):
+
+- Die KI darf **niemals** direkt verschlüsselte Texte aus Synapse sehen. Die Entschlüsselung erfolgt im Browser der beratenden Person.
+- Der an die KI gesendete Text wird im Browser **von personenbezogenen Informationen bereinigt** (Namen, E-Mail-Adressen und Kontonummern entfernt/geschwärzt).
+- Der KI-Anbieter wird **innerhalb des Clusters** betrieben (selbst gehostet) oder ist vertraglich DSGVO-konform.
+- Die entstehende Notiz **gehört der beratenden Person** — sie wird dieser zugeordnet, nicht der ratsuchenden Person.
+- Nach dem Löschen der Sitzung wird die Notiz **niemals** mit dem Pseudonym der ratsuchenden Person verknüpft; es bleibt nur eine nicht aussagekräftige Sitzungs-ID.
+
+Status: nicht gebaut; `Plan only`. Diese Seite ist der Ausgangspunkt für den Entwurf.
+
+## 4.1.4 Funktionsweise (heute, Schritt für Schritt)
+
+### Chat erfassen
+
+1. Eine beratende Person nimmt ein Ticket an (siehe [Live-Chat](/product/features/live-chat)).
+2. UserService bittet Matrix Synapse, einen neuen verschlüsselten Raum zu erstellen und beide Mitglieder einzuladen.
+3. Element/ORISO-Element handelt Megolm-Schlüssel direkt zwischen den Beteiligten aus.
+4. Jede weitere Nachricht wird auf Client-Seite verschlüsselt und als verschlüsselter Text in Synapse gespeichert.
+
+### Verarbeitung
+
+1. Der Server **verarbeitet keine** Nachrichteninhalte. Alle semantischen Operationen erfolgen auf Client-Seite.
+2. UserService speichert nur Metadaten: `session_id`, `agency_id`, `consultant_id`, `client_pseudonym`, `topic`, `started_at`, `ended_at`.
+
+### Aufbewahrung
+
+| Zustand | Was bestehen bleibt |
+|---|---|
+| Aktive Sitzung | Verschlüsselter Text in Synapse und Metadaten in MariaDB |
+| Sitzung beendet (Beratende schließen sie) | Verschlüsselter Text für ≤ 48 Stunden, dann Löschung; Metadaten für ein kurzes Prüffenster |
+| Ratsuchende brechen im Warteraum die Verbindung ab | Pseudonym innerhalb von Sekunden bis Minuten gelöscht; es wurde niemals verschlüsselter Text ausgetauscht |
+| Ratsuchende schließen den Chat | Beratende können ihre Notizen fertigstellen; die Schlüssel der Ratsuchenden sind weg, der Raum wird bei Sitzungsende mit einem Tombstone geschlossen |
+
+### Abruf
+
+- **Abruf während der Sitzung**: Element/ORISO-Element ruft die letzten N Ereignisse von Synapse ab und entschlüsselt sie auf Client-Seite.
+- **Abruf nach der Sitzung**: Nur Metadaten sind abrufbar; nach 48 Stunden keine Nachrichteninhalte mehr.
+
+## 4.1.5 Sonderfälle
+
+- **Beratende schließen während der Sitzung den Laptop** → Der Sitzungsdatensatz bleibt „aktiv“, bis das Heartbeat-Zeitlimit abläuft. UserService plant die Bereinigung.
+- **Verlust des Megolm-Schlüssels** (z. B. durch geleerten Browsercache) → Ältere Nachrichten werden auch für Beratende unlesbar. Dies ist **erwartet** und entspricht dem Datenschutzmodell.
+- **Prüfanfrage** („Hat Sitzung X stattgefunden?“) → Plattform-Admins können Metadaten bestätigen, aber keine Inhalte offenlegen.
+- **Löschanfrage** (DSGVO Art. 17) → Einfach erfüllt: Es gibt keine zu löschende Identität der ratsuchenden Person. Sitzungsmetadaten können auf Anfrage weiter anonymisiert werden.
+
+## 4.1.6 Verbindliche Regeln
+
+- Der Server **darf den Chat nicht** entschlüsseln können. Jede Änderung, die dies verletzt, wird zurückgewiesen.
+- IP-Adressen **dürfen im Produktivbetrieb nicht** dauerhaft gespeichert werden.
+- KI-Verarbeitung **darf nicht** auf dem Server erfolgen, ohne dass zuvor für die jeweilige Sitzung im Browser bereinigt wurde.
+- Protokollierung im Entwicklungsmodus (vollständige Inhalte, IP-Adressen) ist im Produktivbetrieb **niemals** erlaubt — eine nach dem Vorfall von 2026 wieder bekräftigte verbindliche Regel.
+
+## 4.1.7 Verwandte Links
+
+- [Live-Chat-Funktion](/product/features/live-chat)
+- [Sitzungsverwaltung](/product/features/session-management)
+- [Sonderfälle](/product/edge-cases)
+- [Interne Funktionsweise / Verschlüsselung](/product/internal-functionality)

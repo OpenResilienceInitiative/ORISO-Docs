@@ -1,0 +1,116 @@
+{
+  "tour": [
+    {
+      "order": 1,
+      "title": "Start here: the Spring Boot entry point",
+      "description": "ConsultingTypeServiceApplication is the whole bootstrap of the service. Everything else is wired by Spring around it. Read it first to see how small the shell is compared with the configuration and API layers.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/consultingtypeservice/ConsultingTypeServiceApplication.java",
+        "config:Dockerfile"
+      ]
+    },
+    {
+      "order": 2,
+      "title": "The contracts that define the REST surface",
+      "description": "Routes are not declared in the controllers. Four OpenAPI specs describe the consulting type, topic, admin and settings APIs, and a fifth describes the tenant service this repo consumes. Skim them to get the complete endpoint inventory before reading any Java.",
+      "nodeIds": [
+        "config:api/consultingtypeservice.yml",
+        "config:api/topicservice.yml",
+        "config:api/applicationsettingsservice.yml",
+        "config:api/consultingtypeadminservice.yml",
+        "config:services/tenantservice.yaml"
+      ]
+    },
+    {
+      "order": 3,
+      "title": "Consulting types: entity, service, Mongo repository",
+      "description": "A consulting type is the configuration bundle behind a counselling offering. ConsultingTypeEntity is the model, ConsultingTypeService holds the read and patch logic, and ConsultingTypeMongoRepositoryService is the MongoDB persistence with slug and id uniqueness checks. Note how the service exposes basic, extended and full variants of the same entity.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/consultingtypeservice/api/model/ConsultingTypeEntity.java",
+        "file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/ConsultingTypeService.java",
+        "file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeMongoRepositoryService.java",
+        "file:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ConsultingTypeController.java"
+      ]
+    },
+    {
+      "order": 4,
+      "title": "How consulting types get into the database at startup",
+      "description": "Besides POST /consultingtypes, consulting types arrive from JSON files. ConsultingTypeLoader.init reads consulting-type-settings, validates each file against the JSON schema through ConsultingTypeValidator, and writes it under a technical tenant context. A broken file fails the boot instead of silently skipping.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeLoader.java",
+        "file:src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeValidator.java",
+        "config:src/main/resources/schemas/consulting-type.json",
+        "config:consulting-type-settings/consulting-type-0.json"
+      ]
+    },
+    {
+      "order": 5,
+      "title": "Topics and topic groups live in a relational schema",
+      "description": "In contrast to consulting types, topics use JPA entities and Liquibase changesets. TopicEntity, TopicGroupEntity and TopicStatus define the model; the changesets show how topic names moved from plain columns to i18n-aware structures. This split between MongoDB and the relational store is the single most surprising thing about the repo.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/consultingtypeservice/api/model/TopicEntity.java",
+        "file:src/main/java/de/caritas/cob/consultingtypeservice/api/model/TopicGroupEntity.java",
+        "file:src/main/java/de/caritas/cob/consultingtypeservice/api/model/TopicStatus.java",
+        "schema:src/main/resources/db/changelog/changeset/0001_initsql/initTables.sql",
+        "schema:src/main/resources/db/changelog/changeset/0010_change_topic_and_topic_groups_to_be_i18n_aware/0010_change_topic_and_topic_groups_to_be_i18n_aware.sql"
+      ]
+    },
+    {
+      "order": 6,
+      "title": "The topic write path: controller, facade, service",
+      "description": "Follow a topic creation from TopicAdminController through TopicServiceFacade into TopicService and TopicRepository. The facade owns DTO conversion, the service owns persistence and validation. This is the template every other write path in the repo follows.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicAdminController.java",
+        "file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicServiceFacade.java",
+        "file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicService.java",
+        "file:src/main/java/de/caritas/cob/consultingtypeservice/api/repository/TopicRepository.java"
+      ]
+    },
+    {
+      "order": 7,
+      "title": "Guards on topic input: sanitising, validation, feature toggle",
+      "description": "Admin payloads are cleaned by TopicInputSanitizer and checked by TopicValidationService for status and translation keys. Independently, TopicFeatureAuthorisationService and TopicFeatureAssertionAspect decide whether the topic feature is enabled at all for the current multitenancy mode.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/consultingtypeservice/api/validation/TopicInputSanitizer.java",
+        "file:src/main/java/de/caritas/cob/consultingtypeservice/api/validation/TopicValidationService.java",
+        "file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicFeatureAuthorisationService.java",
+        "file:src/main/java/de/caritas/cob/consultingtypeservice/api/admin/controller/TopicFeatureAssertionAspect.java"
+      ]
+    },
+    {
+      "order": 8,
+      "title": "Multitenancy: how the tenant is resolved per request",
+      "description": "HttpTenantFilter and SubdomainExtractor feed TenantResolver, which reconciles the subdomain, the tenant header and the access token and denies the request when they contradict. TenantContext carries the result; TenantHibernateInterceptor keeps relational queries inside that tenant.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/consultingtypeservice/filter/HttpTenantFilter.java",
+        "file:src/main/java/de/caritas/cob/consultingtypeservice/filter/SubdomainExtractor.java",
+        "file:src/main/java/de/caritas/cob/consultingtypeservice/api/tenant/TenantResolver.java",
+        "file:src/main/java/de/caritas/cob/consultingtypeservice/api/tenant/TenantContext.java",
+        "file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/TenantHibernateInterceptor.java"
+      ]
+    },
+    {
+      "order": 9,
+      "title": "Application settings and the SMTP secret",
+      "description": "ApplicationSettingsServiceFacade merges PATCH payloads into the single settings document, preserving stored credentials when the patch sends blank or masked values, and encrypts a real new SMTP password with SmtpPasswordEncryptionService. The public settings endpoint must never return those fields.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ApplicationSettingsController.java",
+        "file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/ApplicationSettingsServiceFacade.java",
+        "file:src/main/java/de/caritas/cob/consultingtypeservice/api/service/SmtpPasswordEncryptionService.java",
+        "file:src/main/java/de/caritas/cob/consultingtypeservice/api/model/ApplicationSettingsEntity.java"
+      ]
+    },
+    {
+      "order": 10,
+      "title": "Security wiring and the CI gates you must satisfy",
+      "description": "SecurityConfig, KeycloakConfig and RoleAuthorizationAuthorityMapper define who may call what. Before opening a pull request, look at the CI scripts that assert required test reports and verify the OpenAPI contract stays compatible.",
+      "nodeIds": [
+        "file:src/main/java/de/caritas/cob/consultingtypeservice/config/SecurityConfig.java",
+        "file:src/main/java/de/caritas/cob/consultingtypeservice/config/KeycloakConfig.java",
+        "file:src/main/java/de/caritas/cob/consultingtypeservice/api/auth/RoleAuthorizationAuthorityMapper.java",
+        "file:scripts/ci/assert-required-test-reports.py",
+        "file:scripts/contracts/verify-provider-compatibility.sh"
+      ]
+    }
+  ]
+}

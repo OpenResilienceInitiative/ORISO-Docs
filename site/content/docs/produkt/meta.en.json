@@ -1,0 +1,11 @@
+{
+  "title": "Product",
+  "pages": [
+    "architecture-und-roles",
+    "core-features",
+    "design-und-quality",
+    "flows-und-internals",
+    "ideas",
+    "overview"
+  ]
+}

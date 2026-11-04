@@ -1,0 +1,29 @@
+{
+  "technical": {
+    "state": "pending",
+    "draftVersion": "v5-draft",
+    "sourceManifestHash": null,
+    "approver": null,
+    "timestamp": null,
+    "evidence": null,
+    "releaseVersion": null
+  },
+  "operator": {
+    "state": "pending",
+    "draftVersion": "v5-draft",
+    "sourceManifestHash": null,
+    "approver": null,
+    "timestamp": null,
+    "evidence": null,
+    "releaseVersion": null
+  },
+  "legal": {
+    "state": "pending",
+    "draftVersion": "v5-draft",
+    "sourceManifestHash": null,
+    "approver": null,
+    "timestamp": null,
+    "evidence": null,
+    "releaseVersion": null
+  }
+}

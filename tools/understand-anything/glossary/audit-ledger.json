@@ -1,0 +1,194 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-10-06",
+  "scopePolicy": "audit-policy.json",
+  "summary": "audit-summary.json",
+  "primaryFamilies": [
+    {
+      "id": "agency",
+      "disposition": "Prefer Counselling Centre in human copy; agency IDs/routes remain compatibility names.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "tenant",
+      "disposition": "Prefer Provider in business copy; preserve tenancy/filter implementation vocabulary.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "counsellor",
+      "disposition": "Prefer Counsellor; consultant/counselor/advisor identifiers require context.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "help-seeker",
+      "disposition": "Prefer Help-seeker; Advice seeker is an alias; generic user/client need context.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "category",
+      "disposition": "Category is distinct from Department and Topic; TopicGroup is a compatibility alias.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "department",
+      "disposition": "Department is the unique centre × topic pairing; AgencyTopic is a compatibility alias.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "topic",
+      "disposition": "Topic is domain terminology; accepted global ownership intent differs from inspected tenant filtering.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "session",
+      "disposition": "Session persistence is broader than Enquiry/Case/Conversation and must retain lifecycle context.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "chat-reference",
+      "disposition": "Participant chatId specifically references session.id; other chat IDs need separate review.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "conversation-kind",
+      "disposition": "Conversation kind is the modality axis; configuration and lifecycle remain distinct.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "enquiry",
+      "disposition": "Enquiry is the counselling business term; generic HTTP requests are legitimate technical vocabulary.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "dpa",
+      "disposition": "DPA is Annex1; old whole-contract module naming does not prove full agreement delivery or annex-only scope.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "agreement",
+      "disposition": "Platform Services Agreement, annex, conclusion and signature remain distinct concepts.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "privacy",
+      "disposition": "Privacy notice wording with DPP/privacy aliases; do not collapse distinct legal functions.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "legal-text",
+      "disposition": "Legal text/content objects need explicit governing context and source lifecycle.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "legal-notice",
+      "disposition": "Legal notice is preferred English for Impressum; preserve existing IMPRINT fields.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "consent",
+      "disposition": "Qualify account/session/document/handover consent; generic confirmation and signature are distinct.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "legal-draft",
+      "disposition": "Template, proposal and draft are distinct; unqualified generic tokens remain unresolved.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "legal-version",
+      "disposition": "Legal publication/version lifecycle; generic version/publication tokens need context.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "terms-of-use",
+      "disposition": "Terms of use are distinct from privacy notice, DPA and platform agreement.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "roles",
+      "disposition": "Assigned permissions, professional supervision and administration remain distinct.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "handover",
+      "disposition": "Counselling case/Case handover; preserve reassign alias and generic programming case vocabulary.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "catchment",
+      "disposition": "Catchment area versus postcode storage; diocese grouping does not establish a counselling access boundary.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "group",
+      "disposition": "Group, series, occurrence and participant remain distinct; Chat/Session names require group-kind context.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "activity",
+      "disposition": "Separate Activity event/Timeline, Toast, email and Matrix timeline; event_notification compatibility name retained.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "technical-provider",
+      "disposition": "React/auth/dependency/data providers, contexts and query filters are legitimate technical terms.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    }
+  ],
+  "catchAllFamilies": [
+    {
+      "id": "legal-name-form",
+      "disposition": "Context must distinguish legal-party/form/framework/link/guard/resolution vocabulary from technical exceptions; no global rename.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "legal-framework",
+      "disposition": "Context must distinguish legal-party/form/framework/link/guard/resolution vocabulary from technical exceptions; no global rename.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "legal-link-render-token",
+      "disposition": "Context must distinguish legal-party/form/framework/link/guard/resolution vocabulary from technical exceptions; no global rename.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "legal-access-guard",
+      "disposition": "Context must distinguish legal-party/form/framework/link/guard/resolution vocabulary from technical exceptions; no global rename.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "legal-resolution",
+      "disposition": "Context must distinguish legal-party/form/framework/link/guard/resolution vocabulary from technical exceptions; no global rename.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "unqualified-legal",
+      "disposition": "Context must distinguish legal-party/form/framework/link/guard/resolution vocabulary from technical exceptions; no global rename.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "data-responsibility-parties",
+      "disposition": "Context must distinguish legal-party/form/framework/link/guard/resolution vocabulary from technical exceptions; no global rename.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    },
+    {
+      "id": "illegal-technical-exception",
+      "disposition": "Context must distinguish legal-party/form/framework/link/guard/resolution vocabulary from technical exceptions; no global rename.",
+      "candidateState": "unresolved-unless-exact-reviewed-finding"
+    }
+  ],
+  "compatibilityPolicy": "Preserve wire/table/enum/role identifiers and generated-contract ownership; migration and copy fixes require separate reviewed application changes.",
+  "oldInvestigation": {
+    "path": "sources/naming-audit.md",
+    "files": 6725,
+    "lines": 1029128,
+    "state": "historical-investigation-different-declared-gate"
+  },
+  "exclusions": [
+    "Other repositories, directories and file extensions",
+    "Untracked build-generated output",
+    "Binary and runtime database contents",
+    "Runtime or deployment acceptance"
+  ],
+  "runtimeEvidence": "None; DDL exports and service migrations are not a running-schema inventory."
+}

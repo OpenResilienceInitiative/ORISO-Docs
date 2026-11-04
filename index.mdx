@@ -1,88 +1,37 @@
 ---
-title: "ORISO Platform Documentation"
-description: "Complete setup and deployment guide for ORISO Platform"
+title: "Installation and operations"
+description: "Choose local development or an operator deployment, then verify the target environment."
 ---
 
-# Welcome to ORISO Platform Documentation
+# Installation and operations
 
-Welcome to the ORISO (Online Beratung) Platform documentation. ORISO is a multi-tenant, anonymous online counseling platform. This documentation covers both the **product** (what it does and why) and the **operations** (how to deploy and run it).
+ORISO supports online counselling across multiple tenants. This technical documentation explains how its services are developed, configured and operated. [Understand](https://understand.oriso.org/) explains roles, functional flows and the published graph. The canonical [data protection impact assessment](https://understand.oriso.org/legal/dsfa/) stays on Understand.
 
-## Where to Start
+## Choose the supported starting point
 
 <CardGroup cols={2}>
-<Card title="Product Overview" icon="rocket" href="/product/overview">
-Understand what ORISO is, its roles, features and flows
+<Card title="Local development" icon="rocket" href="/docs/platform/install-and-run-locally">
+Use the current repository-based local setup and its documented checks.
 </Card>
-
-<Card title="Summary (TL;DR)" icon="bolt" href="/product/summary">
-One-page compressed view of the entire system
+<Card title="Platform architecture" icon="sitemap" href="/docs/platform/overview">
+Find service ownership, authentication, data flows and repository references.
 </Card>
-
-<Card title="Platform Architecture Hub" icon="sitemap" href="/docs/platform/overview">
-Enriched cross-repository graph, repo summaries, auth, data, backend and deployment docs
+<Card title="Operator setup" icon="gear" href="/oriso-platform/overview">
+Review requirements and deployment instructions for the actual target environment.
 </Card>
-
-<Card title="Platform Setup" icon="gear" href="/oriso-platform/overview">
-Server requirements and deployment
-</Card>
-
-<Card title="Quick Reference" icon="book" href="/oriso-platform/quick-reference">
-Essential commands and troubleshooting tips
+<Card title="Troubleshooting" icon="book" href="/docs/platform/troubleshooting">
+Compare symptoms with the documented source paths and checks.
 </Card>
 </CardGroup>
 
-## Three Documentation Tracks
+## Development and deployment are different checks
 
-The docs are split into three top-level tabs:
+Start local development with [Install and run locally](/docs/platform/install-and-run-locally) and the active [Local Development](/docs/platform/local-development) entry. Review the [development flow](/oriso-platform/coding-standards) before opening changes: feature branches and pull requests target `dev`; human reviewers decide what gets merged. Verify the deployed revision on Dev after the merge.
 
-- **Product** — for product managers, developers, designers and AI systems reasoning about ORISO. Covers user roles, the live-chat flow, GDPR inheritance, the data model, edge cases and the Figma-derived UI/UX.
-- **ORISO Platform Architecture** — for developers, backend engineers, frontend engineers and DevOps. Covers the cross-repository knowledge graph, service ownership, authentication, data model, backend services, tenant lifecycle and local development.
-- **ORISO Platform Setup** — for operators and SREs. Covers server requirements, Kubernetes (k3s + Helm), database setup, monitoring, security hardening and troubleshooting.
+The operator pages cover server prerequisites, Kubernetes and Helm, databases, authentication, monitoring, backup and security. Match their configuration to the selected environment before running commands. An example configuration or successful documentation build is not evidence that a service is installed or healthy. Record the actual configuration, deployed version and observed result when verifying an installation.
 
-## What is ORISO Platform?
+## Source and publication status
 
-ORISO Platform v3.0.0 is a comprehensive online consultation platform deployed on Kubernetes using Helm charts:
+Each article records its source owner and revision. Technical documentation may describe newer `dev` source than the published Understand graph, which identifies its own released revision. Compare those revisions before treating a difference as a fault. Translation checks bind German and English text to the same source; runtime checks and legal approvals remain separate.
 
-- **21 Services** - Deployed via single Helm umbrella chart
-- **Kubernetes/Helm** - k3s with Helm 3.x for deployment
-- **Microservices** - Spring Boot 2.7.14 backend services (Java 17)
-- **Authentication** - Keycloak OIDC/OAuth2
-- **Communication** - Matrix Synapse + LiveKit for chat and video
-- **Databases** - MariaDB (7 DBs), MongoDB, PostgreSQL (Matrix)
-- **Frontend** - React 18 + Vite 4 applications
-- **Monitoring** - SignOZ observability + Health Dashboard
-
-## Documentation Structure
-
-The setup documentation is organized into four main sections, and the architecture hub adds cross-repository system documentation generated from the existing Understand-Anything graphs:
-
-1. **Getting Started** - Server requirements, initial setup, and software installation
-2. **Deployment** - Step-by-step deployment of all services
-3. **Configuration & Testing** - Post-deployment configuration and verification
-4. **Operations** - Backup, security, troubleshooting, and reference guides
-
-## Prerequisites
-
-Before you begin, ensure you have:
-
-- ✅ Kubernetes cluster (k3s recommended, 1.24+)
-- ✅ Helm 3.x installed
-- ✅ kubectl configured
-- ✅ Nginx Ingress Controller installed
-- ✅ Cert-Manager installed (for TLS)
-- ✅ DNS records configured (for HTTPS)
-- ✅ Minimum 4 CPU cores and 8GB RAM (16GB+ recommended)
-- ✅ 50GB+ disk space (100GB+ recommended)
-
-## Next Steps
-
-Ready to get started? Begin with the [Overview and Requirements](/oriso-platform/overview) page to understand server requirements and then proceed through the setup guide step by step.
-
-If you're looking for specific information:
-
-- **Architecture Hub** - See [Platform Architecture Overview](/docs/platform/overview)
-- **Troubleshooting** - See [Troubleshooting Guide](/oriso-platform/troubleshooting)
-- **Commands** - See [Quick Reference](/oriso-platform/quick-reference)
-- **Security** - See [Security Hardening](/oriso-platform/security-hardening)
-
-    
+Use [Overview and requirements](/oriso-platform/overview) for an operator installation, [Verification and testing](/oriso-platform/verification-testing) for deployment checks, and [Quick reference](/oriso-platform/quick-reference) for commands. Full publication requires complete current translations and an artifact whose public bytes can be verified after deployment.

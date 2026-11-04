@@ -1,0 +1,218 @@
+# ADR-023: The Platform Services Agreement, living templates, and proportionate escalation
+
+- **Status:** Accepted — Frank, 2026-08-16 (grill-with-docs session)
+- **Date:** 2026-08-16
+- **Deciders:** Frank (product) + AI (engineering)
+- **Related:** `ADR-021` (legal-text hierarchy and versioning); `ADR-022` (help-seeker consent);
+  EPIC AVV / DPA work (`ADR-003` era, `tenant_dpa_version`, `DpaLegalForm`);
+  `PLAN-dsfa-living-document-2026-08-13.md` section 7.6 (proportionality of compliance
+  escalations); `CONTEXT-legal-documents.md`
+- **Scope:** the relationship between the **platform operator** and a **Träger**. The help-seeker
+  does not appear in this ADR.
+
+---
+
+## Context
+
+The admin module presents the Auftragsverarbeitungsvertrag (AVV) as if it were the whole agreement
+between platform operator and Träger. It is not — it is one annex. Alongside it sit the service
+terms, the technical and organisational measures, the subprocessor list, and references to further
+documents such as the DPIA. A Träger signing "the AVV" is in fact concluding a contract of which the
+AVV is one part, and the module both mis-names and under-shows what is being signed.
+
+Separately, ADR-021 introduces a platform template that pre-fills a Träger's consent text. A
+template without a maintained connection to its origin is a copy: legal corrections made centrally
+never reach the Träger who copied it a year earlier.
+
+And once the platform can require a Träger to adopt something, the question of what happens on
+refusal becomes a product decision with safety consequences. ORISO carries U25 suicide prevention;
+an enforcement mechanism that terminates counselling would endanger the very people the
+data-protection rule exists to protect.
+
+## Decision
+
+1. **The agreement is named as a contract, and the AVV is an annex to it.**
+
+   | | German (UI, Träger-facing) | English (code, ADRs, GitHub) |
+   |---|---|---|
+   | The whole | **Plattformvertrag** | **Platform Services Agreement** |
+   | Annex 1 | Auftragsverarbeitungsvertrag (AVV), Art. 28 GDPR | Data Processing Agreement (DPA) |
+   | Annex 2 | Technische und organisatorische Maßnahmen (TOM), Art. 32 | Technical and Organisational Measures |
+   | Annex 3 | Unterauftragsverarbeiter | Subprocessor list |
+   | Annex 4 | Leistungsbeschreibung / Nutzungsbedingungen | Service description / terms of use |
+   | Alongside | Verweise (DSFA, Datenschutzerklärung der Plattform) | References — linked, not co-signed |
+
+   The act is **Vertragsabschluss**; the record is an **Unterzeichnung** carrying signing date,
+   signing person, and their role. "Vereinbarung" is not used: a Träger concludes a binding contract
+   by clicking, and the wording should say so. In English, "Agreement" is the standard binding term
+   and is kept. Entities read `platform_agreement`, `agreement_annex`, `agreement_signature`.
+
+   This renames and re-frames an existing module; it does not change who signs what. Existing AVV
+   tickets are **renamed**, not replaced.
+
+2. **The platform template keeps a living connection to its origin.**
+   - A Träger text records **which template version** it was derived from. This costs nothing extra,
+     because ADR-021 decision 3 gives the template versions anyway.
+   - When the platform operator publishes a new template version, every Träger text with an older
+     reference is automatically "outdated" — a number comparison, not a notification system.
+   - The Admin shows a hint with a **side-by-side comparison**. Adopting means the Träger publishes
+     their own new version containing the changes; declining clears the hint.
+   - The existing "new from template" split button in the PlaceholderTemplate module is exactly this
+     mechanism.
+
+3. **The template and the platform's own governing document are separate objects.** A template is a
+   pattern with no legal force; the main tenant's own DPP governs whenever no Träger is resolved.
+   Editing a suggestion must never set law for unassigned visitors. (Also recorded as ADR-021
+   decision 8, because it constrains the data model there.)
+
+4. **Every template change is marked recommended or mandatory.** Only "mandatory" carries a
+   deadline. Cosmetic changes may be ignored without consequence; a change forced by law may not.
+
+5. **Escalation is staged and has a hard limit.** If a Träger does not adopt a mandatory change by
+   the deadline: hint → warning banner → **suspension of new registrations** for that Träger.
+
+   **Non-negotiable:** running counselling sessions, logins of existing help-seekers, and access to
+   existing histories are **always** preserved. Data-protection enforcement must never endanger the
+   protected interest it exists to serve. The model is the existing AVV gate, which hard-blocks only
+   the creation of new Beratungsstellen and otherwise warns. This principle applies platform-wide and
+   answers GDPR Art. 35(7)(d) (remedies including safeguards for data subjects); it is recorded as
+   section 7.6 of the DPIA plan.
+
+## Consequences
+
+**Positive:** a Träger sees what they are actually signing; central legal corrections reach every
+Träger without a push channel; the platform can enforce what the law requires without acquiring the
+power to cut off counselling; the naming stops implying that the AVV is the entire relationship.
+
+**Negative / cost:** the admin module grows from one document to a contract with annexes; a
+derivation reference plus outdated detection plus a comparison view have to be built; the deadline
+and escalation logic is new; UI wording, ADR titles, entity names, and existing tickets have to be
+renamed consistently in one pass.
+
+## Alternatives considered
+
+- **Keep calling it "Vereinbarung".** Rejected — too weak for something concluded by clicking, and
+  it obscures that the AVV is only one part.
+- **Plain copy of the template with no connection.** Rejected — legal corrections would never reach
+  the Träger.
+- **Template stays authoritative, the Träger only appends.** Rejected — contradicts ADR-021
+  decision 2 (one sentence, one checkbox).
+- **Warning only, no consequence.** Rejected — a Träger could indefinitely sit out something legally
+  required.
+- **Automatic adoption after the deadline.** Rejected — the Träger would have published a text they
+  never read.
+- **Suspending logins or terminating sessions on non-compliance.** Rejected outright; see decision 5.
+
+---
+
+## Addendum — 2026-10-06: AVV renewal and new counselling
+
+**Decision provenance:** the confirmed product decisions in
+[the AVV renewal specification](https://github.com/OpenResilienceInitiative/ORISO-TenantService/issues/294),
+especially its **Further Notes**, refine the AVV renewal consequence in decision 5.
+The accepted decisions above remain the historical record. This addendum records the
+confirmed policy; it is not evidence of completed implementation, deployment or legal approval.
+
+An existing Träger needs time to review a newly published governing AVV. Its earlier
+signature is retained and shown as outdated. After the review deadline, it cannot begin
+new counselling until it confirms the current governing version. Counselling that has
+already begun continues.
+
+### Confirmed refinement
+
+1. **The publisher chooses a future date and time for each governing publication.**
+   The dialog has no preselected duration and shows the deadline before confirmation.
+   Cancellation or invalid input must leave the publication unchanged. Publication and
+   deadline are stored together and apply to every recipient governed by that version.
+   The deadline is selected for both first publication and renewal. The lifetime of an
+   external signing link is a separate matter. A future deadline does not grant a
+   first-time unsigned organisation permission to bypass its existing onboarding policy.
+
+2. **Renewal grace preserves permitted work; expiry prevents new counselling.**
+   An existing Träger affected by an AVV renewal can continue its otherwise permitted
+   work during grace. When the deadline is reached without current confirmation, new
+   individual counselling, first enquiries, acceptance and new group participation
+   must apply the same restriction. Being registered before the publication, or merely
+   having a stored session or assignment, does not establish begun counselling.
+   Commencement and continuation must be established from the counselling domain state
+   or participation evidence.
+
+   This is the AVV renewal refinement of decision 5's older **new-registration**
+   escalation. It does not replace the separate mandatory-template adoption policy
+   with an automatically adopted AVV or an editable draft-comparison workflow.
+
+3. **Begun counselling, existing login and history remain available.**
+   Existing participants retain reading, messaging and return to their begun
+   counselling under normal authentication, tenant and membership permissions.
+   Continuation does not grant first access or waive those permissions. Internal
+   colleague chats are exempt from this AVV counselling gate. The recurrence and
+   exceptional return boundaries below are not resolved by that exemption.
+
+4. **Recovery confirms the exact governing version for the affected Träger.**
+   TenantService remains the authority for the governing version and signature
+   validity. Preserve established own/legacy-AVV precedence and historical signatures;
+   an unrelated operator publication must not replace a correctly governing own AVV.
+   Keep the existing confirmation and authorised forwarding/signing paths reachable.
+   Confirmation of the current version restores permission to begin new counselling
+   without account repair or a service restart. An old signing page, a concurrent newer
+   publication or another Träger's signature/deadline cannot satisfy that requirement.
+
+5. **An unavailable verifier is a service failure, not a confirmed legal refusal.**
+   Protected new work is rejected safely when verification cannot be completed, with
+   the established dependency-failure response and sanitized diagnostics. A confirmed
+   policy denial uses the established permission response. These
+   failures must not be confused in the user-facing explanation.
+
+### Unresolved boundaries and acceptance
+
+Participation in an earlier occurrence of a recurring group has **not** been decided
+to grant or deny continuation at a later occurrence after expiry. The classification
+of that next occurrence remains **undecided**. Return after a participant explicitly
+left, and direct Matrix invitation acceptance, remain unverified boundaries; this
+addendum does not claim that either is implemented or accepted.
+
+Delivery uses the following existing issues:
+
+| Issue | Scope |
+| --- | --- |
+| [TenantService 294](https://github.com/OpenResilienceInitiative/ORISO-TenantService/issues/294) | Renewal policy and cross-repository acceptance |
+| [TenantService 295](https://github.com/OpenResilienceInitiative/ORISO-TenantService/issues/295) | Publication, deadline and recipient confirmation |
+| [UserService 1322](https://github.com/OpenResilienceInitiative/ORISO-UserService/issues/1322) | New individual counselling and preserved continuation |
+| [UserService 1323](https://github.com/OpenResilienceInitiative/ORISO-UserService/issues/1323) | New group participation, return and unresolved recurrence |
+
+Public AVV/counselling API and component tests are confirmed acceptance boundaries.
+Source, local tests, CI, human review, merge, deployment and direct-role Dev acceptance
+remain separate evidence. Dev acceptance must exercise direct Träger and Beratungsstelle
+administrators, counsellors and help-seekers; platform remote access alone is insufficient.
+The issues hold the current delivery evidence rather than this dated policy record.
+
+---
+
+## Addendum — 2026-10-28: Continuation at recurring group appointments
+
+**Decision provenance:** Frank explicitly confirmed the remaining recurrence policy
+while asking to finish [AVV renewal issue 294](https://github.com/OpenResilienceInitiative/ORISO-TenantService/issues/294)
+on 28 October 2026. He also authorized the necessary ORISO-Helm chat-server companion.
+This supersedes the undecided recurrence classification in the 6 October addendum;
+the earlier accepted text remains the historical record.
+
+1. **An existing participant may continue at later appointments of the same
+   ongoing counselling group.** Actual earlier participation establishes begun
+   counselling. A later appointment does not turn that participant into a new
+   help-seeker. Normal membership, invitation, tenant and ban rules still apply.
+2. **A new participant remains subject to the current AVV rule at every
+   appointment.** After the renewal deadline, that participant cannot begin group
+   counselling until the serving organisation confirms the governing AVV.
+   Registration, invitation and assignment alone do not establish participation.
+   Participation in another group does not grant this exception.
+3. **The application and ordinary Matrix clients must enforce the same policy.**
+   Trusted evidence must identify actual applied participation in a room belonging
+   to that same group. The system must retain room lineage when an appointment
+   rotates to a new room. Missing historical evidence cannot be replaced with a
+   guessed room alias or an assumption that an assigned user previously joined.
+
+This decision does not certify implementation or deployment. Previously lost room
+lineage, native chat-server enforcement and direct-role Dev acceptance remain
+verification work in [group issue 1323](https://github.com/OpenResilienceInitiative/ORISO-UserService/issues/1323).
+An unavailable or inconclusive verification must remain distinguishable from a
+confirmed legal refusal; it must not grant protected new access.

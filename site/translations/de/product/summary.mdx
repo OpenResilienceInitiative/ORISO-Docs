@@ -1,0 +1,89 @@
+---
+title: "Zusammenfassung (TL;DR)"
+description: "Das gesamte ORISO-System auf einer Seite kurz erklärt."
+---
+
+<Info>
+Wenn Sie nur **eine** Seite dieser Produktdokumentation lesen, dann diese. Alle anderen erläutern die folgenden Stichpunkte genauer.
+</Info>
+
+## Was ORISO ist, in einem Absatz
+
+ORISO ist eine **mandantenfähige, anonyme Online-Beratungsplattform** auf Kubernetes (k3s und Helm). Ratsuchende in Not erreichen Beratende über einen öffentlichen **Live-Chat-Link** oder eine deutsche Postleitzahl-Suche, betreten einen **anonymen Warteraum** mit serverseitig erzeugtem Pseudonym, erteilen **zwei DSGVO-Einwilligungen** (allgemeine Plattformbedingungen beim Eintritt, Beratungsstellenbedingungen bei Ticketannahme) und chatten in einem **Ende-zu-Ende-verschlüsselten Matrix-Raum**, der **nach 48 Stunden automatisch gelöscht** wird. Die **Identität der Ratsuchenden wird gelöscht**, sobald sie die Verbindung trennen.
+
+## Die Hierarchie in einem Satz
+
+**Plattform-Admins** verantworten die Plattform → erstellen **Träger**; Träger-Admins unterzeichnen eine Datenrichtlinienvereinbarung und erstellen **Beratungsstellen**; jede Beratungsstelle besitzt eine **Administration**, die **Beratende** verwaltet; **Ratsuchende** sind anonym und kurzlebig.
+
+## Die fünf wichtigsten Punkte
+
+1. **Anonymität ist unverhandelbar.** Keine echten Namen, keine dauerhaft gespeicherten IP-Adressen, nur Pseudonyme.
+2. **DSGVO-Einwilligung erfolgt zweimal** — beim Warteraumeintritt (Plattformstandard) und bei Übernahme durch Beratende (beratungsstellenspezifisch).
+3. **Rechtstexte werden vererbt** — jede Beratungsstelle übernimmt Impressum/Datenrichtlinie/DSGVO vom Träger; jeder Träger von der Plattform; Überschreibungen wirken nur lokal.
+4. **Bei Verbindungsabbruch löschen, nicht archivieren.** Ratsuchende verschwinden nach Verlassen innerhalb von Sekunden bis Minuten aus jedem Speicher.
+5. **Ende-zu-Ende-Verschlüsselung** im Chat (Megolm) bedeutet, dass selbst der Server Nachrichteninhalte nicht lesen kann.
+
+## Der Technikstapel als Liste
+
+- **Frontend** — React 18 und Vite 4 (`ORISO-Frontend` für Ratsuchende, `ORISO-Admin` für Mitarbeitende, `ORISO-Element` für die Chat-Oberfläche).
+- **Identität** — Keycloak OIDC, 14 Realm-Rollen, MFA verpflichtend für Träger-/Plattform-Admins.
+- **Backend** — vier Spring-Boot-2.7-Dienste (`TenantService`, `UserService`, `ConsultingTypeService`, `AgencyService`), Java 17, Maven.
+- **Kommunikation** — Matrix Synapse (E2EE-Chat), LiveKit (WebRTC-Video, keine Aufzeichnung).
+- **Daten** — MariaDB (maßgebliche relationale Daten), MongoDB (Themenkonfiguration), PostgreSQL (Synapse), Redis (Caches/Warteschlange), RabbitMQ (asynchrone Bereinigung).
+- **Infrastruktur** — k3s und Helm-Dachchart `oriso-platform`, Nginx Ingress und Cert-Manager TLS, SignOZ-Beobachtbarkeit.
+
+## Der Kernablauf in sechs Schritten
+
+1. **Ratsuchende öffnen einen Live-Chat-Link** — `https://app.oriso-dev.site/live-chat/{agency}?topic=debt`.
+2. **System erzeugt eine anonyme Person**, vergibt ein **Pseudonym** (z. B. *geschmeidiges Kanninchen Kim*) und zeigt die DSGVO-Abfrage der Plattform.
+3. **Ratsuchende betreten den Warteraum** — sehen Warteschlangenposition („23 Noch vor Ihnen“), ein Atemspiel zur Ablenkung und die Zusage „Nachrichten nach 48 Stunden automatisch gelöscht“.
+4. **Beratende wählen das Ticket** — älteste zuerst, bewusst keine automatische Zuweisung. Übernahme erzeugt einen verschlüsselten Matrix-Raum.
+5. **Ratsuchende erteilen die DSGVO-Einwilligung der Beratungsstelle**. Ohne sie öffnet sich der Chat **nicht**.
+6. **Chat findet statt und endet**; Raum wird mit Tombstone geschlossen und innerhalb von 48 Stunden gelöscht. Pseudonym bei Verbindungsabbruch gelöscht.
+
+## Was noch nicht gebaut ist (Planung)
+
+- **KI-gestützte Fallnotizen** — entworfen (Entschlüsselung im Browser, PII-Bereinigung, selbst betriebene Zusammenfassung); nicht umgesetzt.
+- **Ausbildungsfunktion** für Beratende.
+- **Zusammenführung von PLZ und Thema** in einem Live-Chat-Link.
+- **Vereinfachte Oberfläche zur Linkerstellung** (derzeit überkompliziert).
+- **Deaktivierter Zustand der Beratungsstelle**, statt ausgeschalteten Live-Chat auszublenden.
+- **Browsersprache als Standard mit englischem Rückfall** (derzeit Deutsch als Standard).
+
+## Verbindliche Regeln (unverhandelbar)
+
+- ❌ Kein `dev`-Modus im Produktivbetrieb.
+- ❌ Keine dauerhaft gespeicherten IP-Adressen Ratsuchender.
+- ❌ Keine Nachrichteninhalte in Backend-Protokollen.
+- ❌ Keine Archivierung des Pseudonyms anonymer Ratsuchender.
+- ❌ Kein KI-Dienst, der rohe verschlüsselte Texte auf dem Server erhält.
+- ✅ MFA verpflichtend für Plattform- und Träger-Admins.
+- ✅ Jährliche externe Sicherheitsprüfung.
+- ✅ E2EE für alle Chat-Inhalte.
+- ✅ Trägerisolation auf Speicherungsebene durchgesetzt.
+
+## Weiterführende Seiten
+
+<CardGroup cols={2}>
+<Card title="Produktübersicht" icon="rocket" href="/product/overview">Abschnitt 1</Card>
+<Card title="Systemarchitektur" icon="diagram-project" href="/product/architecture">Abschnitt 2</Card>
+<Card title="Rollen und Berechtigungen" icon="users-gear" href="/product/roles-permissions">Abschnitt 3</Card>
+<Card title="Kernfunktionen" icon="bolt" href="/product/features">Abschnitt 4</Card>
+<Card title="Nutzungsabläufe" icon="route" href="/product/user-flows">Abschnitt 5</Card>
+<Card title="Interne Funktionsweise" icon="microchip" href="/product/internal-functionality">Abschnitt 6</Card>
+<Card title="Datenmodell" icon="database" href="/product/data-model">Abschnitt 7</Card>
+<Card title="UI / UX (Figma)" icon="figma" href="/product/ui-ux">Abschnitt 8</Card>
+<Card title="Sonderfälle" icon="triangle-exclamation" href="/product/edge-cases">Abschnitt 9</Card>
+<Card title="Annahmen und offene Fragen" icon="circle-question" href="/product/assumptions">Abschnitt 10</Card>
+</CardGroup>
+
+## Ziel dieser Dokumentation
+
+Nach Lesen aller Seiten:
+
+- Können **Entwickelnde** jedes Teilsystem von ORISO bauen oder erweitern.
+- Können **Produktverantwortliche** die Plattform vorstellen, Entwurfsentscheidungen begründen und die Planung priorisieren.
+- Können **Gestaltende** jeden Ablauf verbessern, ohne Datenschutz- oder rechtliche Vorgaben zu verletzen.
+- Kann eine **KI / ein LLM** das gesamte System nachvollziehen und konkrete Fragen richtig beantworten, ohne den Quellcode erneut zu lesen.
+
+Wenn dies nach dem Lesen nicht möglich ist, [melden Sie ein Problem](mailto:product@oriso-dev.site) und beschreiben Sie, was fehlt.

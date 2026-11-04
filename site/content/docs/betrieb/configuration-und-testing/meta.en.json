@@ -1,0 +1,8 @@
+{
+  "title": "Configuration and testing",
+  "pages": [
+    "dns-ssl",
+    "post-deployment",
+    "verification-testing"
+  ]
+}

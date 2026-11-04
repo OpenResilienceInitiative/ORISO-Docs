@@ -1,0 +1,212 @@
+---
+title: "Backend-Dienste bereitstellen"
+description: "Backend-Dienste werden über Helm bereitgestellt. Diese Anleitung behandelt Überprüfung und Konfiguration."
+---
+
+# Backend-Dienste bereitstellen
+
+Backend-Dienste werden automatisch über das übergeordnete Helm-Chart `oriso-platform` bereitgestellt. Diese Anleitung behandelt die Überprüfung und Konfiguration nach der Bereitstellung.
+
+<Info>
+Alle Backend-Dienste werden mit einem einzigen Befehl über Helm bereitgestellt:
+```bash
+helm install oriso-platform ./oriso-platform --namespace caritas -f values.yaml
+```
+
+Diese Anleitung setzt voraus, dass Dienste bereits bereitgestellt sind. Falls nicht, lesen Sie [Infrastruktur bereitstellen](/oriso-platform/deploy-infrastructure).
+</Info>
+
+<Steps>
+<Step title="Bereitstellung der Backend-Dienste prüfen">
+
+Prüfen Sie, ob alle Backend-Dienste bereitgestellt wurden und laufen.
+
+```bash
+# Check all backend service pods
+kubectl get pods -n caritas | grep -E "tenant|user|consulting|agency"
+
+# Should see:
+# oriso-platform-tenantservice-xxx      1/1     Running
+# oriso-platform-userservice-xxx        1/1     Running
+# oriso-platform-consultingtypeservice-xxx  1/1     Running
+# oriso-platform-agencyservice-xxx      1/1     Running
+```
+
+<Check>
+Alle Dienste sollten den Status `Running` und `1/1` bereit anzeigen. Wenn ein Dienst nicht läuft, prüfen Sie die Protokolle:
+```bash
+kubectl logs -n caritas deployment/oriso-platform-userservice --tail=100
+```
+</Check>
+
+</Step>
+
+<Step title="Dienstzustand prüfen">
+
+Prüfen Sie die Zustandsendpunkte aller Backend-Dienste.
+
+```bash
+# Check TenantService (port 8081)
+kubectl exec -n caritas deployment/oriso-platform-tenantservice -- \
+  curl -s http://localhost:8081/actuator/health
+
+# Check UserService (port 8082)
+kubectl exec -n caritas deployment/oriso-platform-userservice -- \
+  curl -s http://localhost:8082/actuator/health
+
+# Check ConsultingTypeService (port 8083)
+kubectl exec -n caritas deployment/oriso-platform-consultingtypeservice -- \
+  curl -s http://localhost:8083/actuator/health
+
+# Check AgencyService (port 8084)
+kubectl exec -n caritas deployment/oriso-platform-agencyservice -- \
+  curl -s http://localhost:8084/actuator/health
+
+# Or check via Ingress (after Ingress is deployed)
+curl -s https://api.example.org/actuator/health
+```
+
+<Check>
+Alle Dienste sollten `{"status":"UP"}` oder ausführliche Zustandsinformationen zurückgeben.
+</Check>
+
+</Step>
+
+<Step title="Dienstkommunikation prüfen">
+
+Prüfen Sie, ob Dienste über Kubernetes-DNS miteinander kommunizieren können.
+
+```bash
+# Test UserService can reach TenantService
+kubectl exec -n caritas deployment/oriso-platform-userservice -- \
+  curl -s http://oriso-platform-tenantservice.caritas.svc.cluster.local:8081/actuator/health
+
+# Test AgencyService can reach UserService
+kubectl exec -n caritas deployment/oriso-platform-agencyservice -- \
+  curl -s http://oriso-platform-userservice.caritas.svc.cluster.local:8082/actuator/health
+```
+
+<Check>
+Dienste sollten sich gegenseitig erreichen können. Falls nicht, prüfen Sie:
+- Sind die DNS-Namen der Dienste korrekt?
+- Befinden sich die Dienste im selben Namespace?
+- Erlauben die Netzwerkrichtlinien (falls vorhanden) die Kommunikation?
+</Check>
+
+</Step>
+
+<Step title="Datenbankverbindungen prüfen">
+
+Prüfen Sie, ob alle Dienste ihre Datenbanken erreichen können.
+
+```bash
+# Check service environment variables
+kubectl get deployment oriso-platform-userservice -n caritas -o yaml | \
+  grep -A 3 DATASOURCE
+
+# Test database connection from service
+kubectl exec -n caritas deployment/oriso-platform-userservice -- \
+  env | grep DATASOURCE
+```
+
+<Check>
+Die Datenbank-Verbindungszeichenfolgen der Dienste sollten auf folgende Ziele verweisen:
+- `oriso-platform-mariadb.caritas.svc.cluster.local:3306`
+- `oriso-platform-mongodb.caritas.svc.cluster.local:27017` (für ConsultingTypeService)
+</Check>
+
+</Step>
+</Steps>
+
+## Überblick über Backend-Dienste
+
+### TenantService
+- **Port:** 8081
+- **Dienst:** `oriso-platform-tenantservice.caritas.svc.cluster.local:8081`
+- **Datenbank:** MariaDB (tenantservice)
+- **Zustand:** `/actuator/health`
+
+### UserService
+- **Port:** 8082
+- **Dienst:** `oriso-platform-userservice.caritas.svc.cluster.local:8082`
+- **Datenbank:** MariaDB (userservice)
+- **Zustand:** `/actuator/health`
+- **Besonderheit:** Matrix-Integration
+
+### ConsultingTypeService
+- **Port:** 8083
+- **Dienst:** `oriso-platform-consultingtypeservice.caritas.svc.cluster.local:8083`
+- **Datenbanken:** MariaDB (consultingtypeservice) + MongoDB (consulting_types)
+- **Zustand:** `/actuator/health`
+
+### AgencyService
+- **Port:** 8084
+- **Dienst:** `oriso-platform-agencyservice.caritas.svc.cluster.local:8084`
+- **Datenbank:** MariaDB (agencyservice)
+- **Zustand:** `/actuator/health`
+
+## Dienstkonfiguration
+
+### Umgebungsvariablen
+Dienste werden über Helm-Werte konfiguriert. Prüfen Sie die Konfiguration:
+
+```bash
+# View service configuration
+helm get values oriso-platform -n caritas
+
+# View specific service deployment
+kubectl get deployment oriso-platform-userservice -n caritas -o yaml
+```
+
+### Datenbankverbindungen
+Alle Dienste verbinden sich über Kubernetes-DNS:
+```
+jdbc:mariadb://oriso-platform-mariadb.caritas.svc.cluster.local:3306/<database-name>
+```
+
+### Liquibase-Status
+**Liquibase ist in allen Diensten DEAKTIVIERT.** Schemata werden im Repository ORISO-Database verwaltet.
+
+## Fehlerbehebung
+
+### Dienst startet nicht
+```bash
+# Check pod status
+kubectl describe pod -n caritas <pod-name>
+
+# Check logs
+kubectl logs -n caritas deployment/oriso-platform-userservice --tail=100
+
+# Check events
+kubectl get events -n caritas --sort-by='.lastTimestamp' | grep userservice
+```
+
+### Datenbankverbindungen schlagen fehl
+```bash
+# Verify database is accessible
+kubectl exec -n caritas deployment/oriso-platform-mariadb -- \
+  mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "SELECT 1;"
+
+# Check service database credentials
+kubectl get secret mariadb-secrets -n caritas -o yaml
+
+# Test connection from service pod
+kubectl exec -n caritas deployment/oriso-platform-userservice -- \
+  curl http://oriso-platform-mariadb.caritas.svc.cluster.local:3306
+```
+
+### Zustandsprüfungen schlagen fehl
+```bash
+# Check health endpoint directly
+kubectl exec -n caritas deployment/oriso-platform-userservice -- \
+  curl -v http://localhost:8082/actuator/health
+
+# Check service logs for errors
+kubectl logs -n caritas deployment/oriso-platform-userservice | grep -i error
+```
+
+## Nächste Schritte
+
+- [Frontend bereitstellen](/oriso-platform/deploy-frontend) – Frontend-Anwendungen bereitstellen
+- [Nach der Bereitstellung](/oriso-platform/post-deployment) – Abschließende Schritte nach der Bereitstellung ausführen
+- [Überprüfung und Tests](/oriso-platform/verification-testing) – Alle Dienste testen

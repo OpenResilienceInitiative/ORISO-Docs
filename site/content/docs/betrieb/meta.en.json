@@ -1,0 +1,10 @@
+{
+  "title": "Setup and operations",
+  "pages": [
+    "architecture",
+    "configuration-und-testing",
+    "deployment",
+    "getting-started",
+    "operations"
+  ]
+}

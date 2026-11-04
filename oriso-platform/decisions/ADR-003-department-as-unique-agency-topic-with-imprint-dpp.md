@@ -1,5 +1,17 @@
 # ADR-003: Department = unique (Agency × Topic) carrying its own imprint + DPP
 
+> **⚠️ Partially superseded by ADR-014 (2026-07-16).** Decision #3 (admin single-select
+> topic picker) is REVERSED: one Beratungsstelle hosts several Fachbereiche, the admin
+> topic picker is multi-select again, and legal texts are shareable `legal_text` objects
+> (`dpp_id`/`imprint_id`). The UNIQUE(agency_id, topic_id) constraint and per-department
+> imprint/DPP from this ADR remain in force. Read ADR-014 before acting on this document.
+>
+> **Also extended by `ADR-021` (2026-08-16).** The level ladder described here stops at the Träger;
+> there is a platform level above it (main tenant, gated by
+> `legalContentChangesBySingleTenantAdminsAllowed`). Legal texts also have no version history yet —
+> `ADR-021` decides to build one generically. `ADR-022` covers when these documents are shown and
+> how a help-seeker's agreement is recorded.
+
 - **Status:** Accepted — Frank, 2026-06-25 (team ratification pending)
 - **Date:** 2026-06-25
 - **Deciders:** Frank + backend/admin leads

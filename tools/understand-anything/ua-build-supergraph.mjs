@@ -3,25 +3,56 @@
 // per-repo Understand-Anything graphs. Replaces the lost one-off June builder;
 // deterministic and committed so it cannot get lost again.
 //
-// Usage: node ua-build-supergraph.mjs [--install]
-//   default: writes to /opt/oriso-understand/_rebuild/supergraph/knowledge-graph.json
-//   --install: additionally backs up + installs into ORISO-Docs/.understand-anything/
+// v3 (2026-08-27): explicit microservice architecture — repos carry curated
+// role descriptions, are grouped into architecture tiers (own layers), the
+// per-repo layers are ordered architecture-first, and the tour walks the
+// platform tier by tier before diving into per-repo domain concepts.
+//
+// Usage: UA_BASE=<staged inputs> node ua-build-supergraph.mjs --out <staged output>
+// Output is explicit (--out or UA_SUPERGRAPH_OUT); publication belongs to bundle/.
 
-import { readFileSync, writeFileSync, mkdirSync, copyFileSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
+import { decoratePlatform } from './platform/lib/platform-navigation.mjs';
 
-const CORE = "/opt/oriso-understand/understand-anything-plugin/understand-anything-plugin/packages/core/dist/index.js";
+import {projectConceptBridges} from './platform/lib/concept-bridges.mjs';
+import {loadRules as loadCapabilityRules} from './platform/lib/capabilities.mjs';
+import {emitCapabilityNodes} from './platform/lib/capability-nodes.mjs';
+
+const CORE = process.env.UA_CORE ?? "/opt/oriso-understand/understand-anything-plugin/understand-anything-plugin/packages/core/dist/index.js";
 const c = await import(CORE);
 
-const BASE = "/opt/oriso-understand";
-const OUT = `${BASE}/_rebuild/supergraph`;
+const BASE = process.env.UA_BASE ?? "/opt/oriso-understand";
+const outIndex = process.argv.indexOf("--out");
+const OUT = outIndex >= 0 ? process.argv[outIndex + 1] : process.env.UA_SUPERGRAPH_OUT;
+if (!OUT || process.argv.includes("--install")) throw new Error("Use --out <staged-directory>; publication belongs to ua-refresh");
 mkdirSync(OUT, { recursive: true });
-const INSTALL = process.argv.includes("--install");
 
-const REPOS = [
-  "ORISO-Frontend", "ORISO-Admin", "ORISO-UserService", "ORISO-AgencyService",
-  "ORISO-ConsultingTypeService", "ORISO-TenantService", "ORISO-Database",
-  "ORISO-Keycloak", "ORISO-Kubernetes", "ORISO-Helm", "ORISO-E2E", "ORISO-Infra",
+// The microservice map: repo -> architecture tier + curated one-line role.
+// Order here IS the presentation order (tiers, then repos within a tier).
+const REPO_INFO = [
+  ["ORISO-Frontend", "User Interfaces", "User-facing counselling web app (React): registration, enquiries, sessions, chat, calls."],
+  ["ORISO-Admin", "User Interfaces", "Admin panel (React/MUI): tenants, agencies, consultants, legal texts, statistics."],
+  ["ORISO-UserService", "Backend Microservices", "Core backend (Java/Spring Boot): users, consultants, sessions, enquiries, messaging integration."],
+  ["ORISO-AgencyService", "Backend Microservices", "Backend microservice (Java/Spring Boot): agencies, postcode ranges, agency admin."],
+  ["ORISO-ConsultingTypeService", "Backend Microservices", "Backend microservice (Java/Spring Boot): consulting types, topics, application settings."],
+  ["ORISO-TenantService", "Backend Microservices", "Backend microservice (Java/Spring Boot): tenants, theming, legal/privacy settings, feature flags."],
+  ["ORISO-Keycloak", "Identity & Data", "Identity provider (Keycloak): realms, OIDC clients, 2FA, custom theme and realm config."],
+  ["ORISO-Database", "Identity & Data", "Database schemas and baseline seed data (MariaDB/MongoDB)."],
+  ["ORISO-ElementCall", "Communication & Media", "Video calls (Element Call fork) on the Matrix stack; widget and standalone modes."],
+  ["ORISO-Livekit", "Communication & Media", "Media SFU backend (LiveKit) configuration serving the call stack."],
+  ["ORISO-Helm", "Operations & Deployment", "Canonical Helm charts: deploys every service — ingress, Matrix stack, seeds, config."],
+  ["ORISO-Kubernetes", "Operations & Deployment", "Legacy Kubernetes manifests (archived upstream; kept for analysis only)."],
+  ["ORISO-Infra", "Operations & Deployment", "Infrastructure automation (Hetzner, k3s provisioning)."],
+  ["ORISO-E2E", "Observability & Quality", "End-to-end Playwright quality gate across app and admin."],
+  ["ORISO-HealthDashboard", "Observability & Quality", "Service health dashboard."],
+  ["ORISO-SigNoz", "Observability & Quality", "Observability stack (SigNoz) configuration."],
+  ["ORISO-Status", "Observability & Quality", "Public status page (repository archived on GitHub; graph is server-side only)."],
+  ["ORISO-Docs", "Operations & Deployment", "Developer documentation site (Next.js) and Architecture Decision Records for the ORISO platform."],
 ];
+const REPOS = process.env.UA_REPOSITORIES?.split(",") ?? REPO_INFO.map(([r]) => r);
+if (REPOS.some(repo => !REPO_INFO.some(([name]) => name === repo))) throw new Error("Unknown source repository");
+const TIERS = [...new Set(REPO_INFO.map(([, t]) => t))];
+const infoOf = Object.fromEntries(REPO_INFO.map(([r, tier, desc]) => [r, { tier, desc }]));
 
 // keyword -> owning repo, for deterministic cross-repo dependency inference
 const SERVICE_KEYWORDS = [
@@ -34,39 +65,64 @@ const SERVICE_KEYWORDS = [
   [/\bhelm\b/i, "ORISO-Helm"],
   [/playwright/i, "ORISO-E2E"],
   [/hetzner|\bk3s\b/i, "ORISO-Infra"],
+  [/element.?call/i, "ORISO-ElementCall"],
+  [/livekit/i, "ORISO-Livekit"],
+  [/signoz/i, "ORISO-SigNoz"],
 ];
 
-const nodes = [], edges = [], layers = [];
-const mergeSources = [];
+// architecture-first per-repo layer order (matches ua-generate.mjs / ua-enrich-merge.mjs)
+const LAYER_ORDER = [
+  "Domain Concepts", "API Endpoints", "API Layer", "Service Layer", "Data Layer",
+  "Middleware Layer", "External Services", "Background Tasks", "UI Layer",
+  "Core", "Utility Layer", "Configuration Layer", "Test Layer",
+];
+const layerRank = n => { const i = LAYER_ORDER.indexOf(n); return i === -1 ? LAYER_ORDER.length : i; };
 
-// Repositories layer + repo nodes
-const repoLayer = {
-  id: "layer:repositories", name: "Repositories",
-  description: "Top-level repository nodes included in this ORISO graph explorer.",
+const nodes = [], edges = [];
+const mergeSources = [];
+const sourceGraphs = {};
+
+// Architecture layers: platform overview + one layer per tier
+const archLayer = {
+  id: "layer:microservice-architecture", name: "Microservice Architecture",
+  description: "All ORISO repositories as one map: user interfaces, backend microservices, identity & data, communication, operations, observability. Edges between repositories are deterministic dependency inference.",
   nodeIds: [],
 };
+const tierLayers = TIERS.map((t, i) => ({
+  id: `layer:tier-${i}`, name: `Architecture · ${t}`,
+  description: `${t} — repositories of this tier and everything they contain.`,
+  nodeIds: [],
+}));
+const tierLayerOf = Object.fromEntries(TIERS.map((t, i) => [t, tierLayers[i]]));
 
 // evidence[srcRepo][dstRepo] = count of nodes referencing dst's service
 const evidence = {};
+const perRepoLayers = [];
 
 for (const r of REPOS) {
   const gPath = `${BASE}/${r}/.understand-anything/knowledge-graph.json`;
-  if (!existsSync(gPath)) { console.error(`SKIP ${r}: no graph`); continue; }
+  if (!existsSync(gPath)) throw new Error(`Missing required graph: ${r}`);
   const g = JSON.parse(readFileSync(gPath, "utf8"));
-  let meta = {};
-  try { meta = JSON.parse(readFileSync(`${BASE}/${r}/.understand-anything/meta.json`, "utf8")); } catch { }
+  const meta = JSON.parse(readFileSync(`${BASE}/${r}/.understand-anything/meta.json`, "utf8"));
+  if (!/^[a-f0-9]{40}$/.test(meta.gitCommitHash ?? "") || meta.gitCommitHash !== g.project.gitCommitHash)
+    throw new Error(`Inconsistent full source SHA: ${r}`);
 
+  sourceGraphs[r] = {graph:g,meta};
+  const info = infoOf[r];
   const repoNodeId = `repo:${r}`;
   const conceptCount = g.nodes.filter(n => n.type === "concept" || n.type === "flow").length;
+  const endpointCount = g.nodes.filter(n => n.type === "endpoint").length;
   nodes.push({
     id: repoNodeId, type: "module", name: r,
-    summary: `Repository ${r} — ${g.nodes.length} nodes, ${g.edges.length} edges` +
-      (meta.gitCommitHash ? `, built from ${meta.gitCommitHash.slice(0, 8)}` : "") +
-      (conceptCount ? `, ${conceptCount} domain concepts/flows` : "") + ".",
-    tags: ["repository"], complexity: "complex",
-    metadata: { kind: "repo-root", gitCommitHash: meta.gitCommitHash ?? null, generator: meta.generator ?? null },
+    summary: `${info.desc} ${g.nodes.length} nodes, ${g.edges.length} edges` +
+      (endpointCount ? `, ${endpointCount} API endpoints` : "") +
+      (conceptCount ? `, ${conceptCount} domain concepts/flows` : "") +
+      (meta.gitCommitHash ? `. Built from ${meta.gitCommitHash.slice(0, 8)}.` : "."),
+    tags: ["repository", info.tier], complexity: "complex",
+    metadata: { kind: "repo-root", tier: info.tier, gitCommitHash: meta.gitCommitHash ?? null, generator: meta.generator ?? null },
   });
-  repoLayer.nodeIds.push(repoNodeId);
+  archLayer.nodeIds.push(repoNodeId);
+  tierLayerOf[info.tier].nodeIds.push(repoNodeId);
   mergeSources.push({ repo: r, gitCommitHash: meta.gitCommitHash ?? null, nodes: g.nodes.length, edges: g.edges.length });
 
   for (const n of g.nodes) {
@@ -80,7 +136,7 @@ for (const r of REPOS) {
     // cross-repo evidence scan (skip generic self-matches)
     const hay = `${n.filePath ?? ""} ${n.name ?? ""}`;
     for (const [re, target] of SERVICE_KEYWORDS) {
-      if (target !== r && re.test(hay)) {
+      if (target !== r && REPOS.includes(target) && re.test(hay)) {
         evidence[r] ??= {}; evidence[r][target] = (evidence[r][target] ?? 0) + 1;
       }
     }
@@ -88,11 +144,39 @@ for (const r of REPOS) {
   for (const e of g.edges) {
     edges.push({ ...e, id: e.id ? `${r}::${e.id}` : undefined, source: `${r}::${e.source}`, target: `${r}::${e.target}`, sourceRepo: r });
   }
-  for (const l of g.layers ?? []) {
-    layers.push({ id: `${r}::${l.id ?? l.name}`, name: `${r} · ${l.name}`, description: l.description, nodeIds: (l.nodeIds ?? []).map(id => `${r}::${id}`) });
+  // per-repo layers, sorted architecture-first within the repo
+  const sorted = [...(g.layers ?? [])].sort((a, b) => layerRank(a.name) - layerRank(b.name));
+  for (const l of sorted) {
+    perRepoLayers.push({ id: `${r}::${l.id ?? l.name}`, name: `${r} · ${l.name}`, description: l.description, nodeIds: (l.nodeIds ?? []).map(id => `${r}::${id}`) });
   }
 }
-layers.unshift(repoLayer);
+
+// Reuse the same reviewed concept route as the slim platform. These relations
+// are semantic source evidence, never keyword-inferred calls.
+projectConceptBridges({graphs:sourceGraphs,
+  bridges:JSON.parse(readFileSync(new URL('./platform/narrative/concept-bridges.json',import.meta.url),'utf8')).bridges,
+  addNode(node){if(!nodes.some(n=>n.id===node.id))nodes.push({...node,metadata:{...node.metadata,sourceRepo:node.sourceRepo}});},
+  addEdge(edge){if(!edges.some(e=>e.source===edge.source&&e.target===edge.target&&e.type===edge.type))edges.push(edge);}
+});
+
+// Capability concept nodes (Docs#198): one concept per feature-page slug (+ "shared"),
+// `contains` edges to the folders the reviewed rules assign to it. Membership comes from
+// platform/capabilities/capability-rules.json, never from keyword guessing. Unmatched
+// production files are logged here and fail the contract test in CI.
+const capabilityLayer = {
+  id: "layer:capabilities", name: "Capabilities",
+  description: "Product capabilities (feature-page slugs) and the folders each one contains, from the reviewed capability rules.",
+  nodeIds: [],
+};
+{
+  const cap = emitCapabilityNodes({nodes}, loadCapabilityRules());
+  for (const n of cap.nodes) { if (!nodes.some(x => x.id === n.id)) { nodes.push(n); capabilityLayer.nodeIds.push(n.id); } }
+  for (const e of cap.edges) edges.push(e);
+  if (cap.unmatched.length) console.error(`capabilities: ${cap.unmatched.length} production files match no rule (first: ${cap.unmatched[0]})`);
+}
+
+// final layer order: platform map, tiers, capabilities, then per-repo (repo order = REPO_INFO order)
+const layers = [archLayer, ...tierLayers.filter(t => t.nodeIds.length), capabilityLayer, ...perRepoLayers];
 
 // aggregated deterministic cross-repo dependency edges
 let crossEdges = 0;
@@ -109,13 +193,17 @@ for (const [src, targets] of Object.entries(evidence)) {
   }
 }
 
-// simple overview tour: repositories first, then each repo's domain concepts
+// tour: platform map -> each tier -> each repo's domain concepts
 const tour = [{
-  order: 1, title: "ORISO Platform Overview",
-  description: "The nine ORISO repositories and how they depend on each other (aggregated deterministic inference).",
-  nodeIds: repoLayer.nodeIds,
+  order: 1, title: "ORISO Microservice Architecture",
+  description: "The ORISO platform as a map of repositories. Dependency edges are aggregated deterministic inference (evidence count >= 2).",
+  nodeIds: archLayer.nodeIds,
 }];
 let order = 2;
+for (const t of tierLayers) {
+  if (!t.nodeIds.length) continue;
+  tour.push({ order: order++, title: t.name.replace("Architecture · ", ""), description: t.description, nodeIds: t.nodeIds });
+}
 for (const r of REPOS) {
   const concepts = nodes.filter(n => n.metadata?.sourceRepo === r && (n.type === "concept" || n.type === "flow")).map(n => n.id);
   if (concepts.length) tour.push({ order: order++, title: `${r} — Domain Concepts`, description: `High-level concepts and flows of ${r}.`, nodeIds: concepts });
@@ -131,53 +219,89 @@ for (const r of REPOS) {
 }
 
 let graph = {
-  version: "1.0.0", kind: "oriso-super-graph",
+  version: "1.0.0", kind: "oriso-super-graph", schemaVersion: "oriso.ua.graph/v1",
   project: {
     name: "ORISO",
     languages: [...allLanguages].sort(),
     frameworks: [],
-    description: "Cross-repo super-graph merging the per-repo Understand-Anything graphs of the ORISO platform.",
+    description: "Cross-repo super-graph merging the per-repo Understand-Anything graphs of the ORISO platform, organized as a microservice architecture map.",
     analyzedAt: new Date().toISOString(),
-    gitCommitHash: mergeSources.map(s => `${s.repo}@${(s.gitCommitHash ?? "?").slice(0, 8)}`).join(","),
+    gitCommitHash: null,
+    sourceCommits: Object.fromEntries(mergeSources.map(s => [s.repo, s.gitCommitHash])),
   },
   nodes, edges, layers, tour,
   mergeMetadata: {
     mergedAt: new Date().toISOString(),
-    generatedBy: "ua-build-supergraph.mjs (deterministic, 2026-07)",
+    generatedBy: "ua-build-supergraph.mjs v3 (deterministic, architecture tiers)",
     sourceRepos: mergeSources, crossRepoEdges: crossEdges,
   },
 };
 
+// Coverage belongs to the native producer as well as release orchestration.
+// Re-count emitted aggregate edges; preserve every input's measured gaps.
+const emittedCounts = new Map();
+for (const edge of graph.edges) emittedCounts.set(edge.type, (emittedCounts.get(edge.type) ?? 0) + 1);
+const inputTotals = new Map();
+const coverageInputs = [];
+const samples = { unresolvedImports: [], unresolvedCalls: [] };
+const unsupportedByRelation = { imports: 0, calls: 0 };
+const supportedRelations = new Set(c.KnowledgeGraphSchema.shape.edges.element.shape.type.options);
+for (const [repository, { graph: source }] of Object.entries(sourceGraphs)) {
+  const coverage = source.relationCoverage;
+  if (!coverage || typeof coverage !== 'object' || Array.isArray(coverage) || !coverage.imports || !coverage.calls)
+    throw new Error(`Missing required source relation coverage: ${repository}`);
+  const sourceCounts = new Map();
+  for (const edge of source.edges) sourceCounts.set(edge.type, (sourceCounts.get(edge.type) ?? 0) + 1);
+  for (const relation of sourceCounts.keys()) if (!coverage[relation]) throw new Error(`Missing emitted source relation coverage: ${repository}:${relation}`);
+  for (const [relation, item] of Object.entries(coverage)) {
+    if (!supportedRelations.has(relation) || !item || !['emitted', 'unresolved', 'unsupported'].every(key => Number.isSafeInteger(item[key]) && item[key] >= 0) || item.emitted !== (sourceCounts.get(relation) ?? 0) || !['complete', 'partial', 'unsupported'].includes(item.status) || item.status === 'complete' && (item.unresolved || item.unsupported) || item.status === 'unsupported' && (item.emitted || !item.unsupported) || item.unresolved > 0 && item.status !== 'partial')
+      throw new Error(`Malformed source relation coverage: ${repository}:${relation}`);
+    const sum = inputTotals.get(relation) ?? { unresolved: 0, unsupported: 0 };
+    sum.unresolved += item.unresolved; sum.unsupported += item.unsupported;
+    inputTotals.set(relation, sum);
+  }
+  const extraction = source.metadata?.extraction ?? {};
+  for (const [relation, key] of [['imports', 'unresolvedImports'], ['calls', 'unresolvedCalls']]) {
+    const inputSamples = extraction[key] ?? [];
+    const total = coverage[relation].unresolved;
+    if (!Array.isArray(inputSamples) || inputSamples.length > total || extraction.diagnostics?.[key] && extraction.diagnostics[key].total !== total)
+      throw new Error(`Source coverage/diagnostic mismatch: ${repository}:${relation}`);
+    samples[key].push(...inputSamples.slice(0, Math.max(0, 250 - samples[key].length)).map(sample => ({ ...sample, sourceRepo: repository, sourceCommit: source.project.gitCommitHash })));
+    const unsupported = coverage[relation].unsupported - (relation === 'calls' ? sourceCounts.get('calls_unconfirmed') ?? 0 : 0);
+    if (unsupported < 0) throw new Error(`Source coverage understates possible calls: ${repository}`);
+    unsupportedByRelation[relation] += unsupported;
+  }
+  const unsupportedDiagnostic = extraction.diagnostics?.unsupportedInputs;
+  if (unsupportedDiagnostic && (unsupportedDiagnostic.total !== coverage.imports.unsupported + coverage.calls.unsupported - (sourceCounts.get('calls_unconfirmed') ?? 0) || ['imports', 'calls'].some(relation => (unsupportedDiagnostic.byRelation?.[relation] ?? 0) !== coverage[relation].unsupported - (relation === 'calls' ? sourceCounts.get('calls_unconfirmed') ?? 0 : 0))))
+    throw new Error(`Source coverage/unsupported diagnostic mismatch: ${repository}`);
+  coverageInputs.push({ repository, sourceCommit: source.project.gitCommitHash, relationCoverage: coverage, measurementScope: source.metadata?.extraction?.measurementScope ?? null, diagnostics: extraction.diagnostics ?? null });
+}
+graph.relationCoverage = Object.fromEntries([...new Set([...emittedCounts.keys(), ...inputTotals.keys()])].map(relation => {
+  const emitted = emittedCounts.get(relation) ?? 0;
+  const { unresolved, unsupported } = inputTotals.get(relation) ?? { unresolved: 0, unsupported: 0 };
+  return [relation, { emitted, unresolved, unsupported, status: unresolved || unsupported && emitted ? 'partial' : unsupported ? 'unsupported' : 'complete' }];
+}));
+graph.metadata = { extraction: {
+  measurementScope: 'aggregate of represented repository extraction; added containment and concept links are not compiler or runtime proof',
+  ...samples,
+  diagnostics: Object.fromEntries([['imports', 'unresolvedImports'], ['calls', 'unresolvedCalls']].map(([relation, key]) => [key, { total: graph.relationCoverage[relation].unresolved, retained: samples[key].length, omitted: graph.relationCoverage[relation].unresolved - samples[key].length, sampleLimit: 250 }])),
+}, coverageProvenance: { method: 'actual emitted edges plus summed input unresolved/unsupported counters', inputs: coverageInputs, runtimeVerified: false } };
+graph.metadata.extraction.diagnostics.unsupportedInputs = { total: unsupportedByRelation.imports + unsupportedByRelation.calls, byRelation: unsupportedByRelation };
+
+decoratePlatform(graph, { repositoryGraphs: sourceGraphs, expectedRepositories: REPO_INFO.map(([repo]) => repo) });
 const v = c.validateGraph(graph);
 console.error(`validate: success=${v.success} issues=${(v.issues ?? []).length}${v.fatal ? " FATAL " + v.fatal : ""}`);
-if (v.graph) { v.graph.mergeMetadata = graph.mergeMetadata; graph = v.graph; }
+if (!v.success || v.issues?.length) throw new Error(`Supergraph validation failed: ${JSON.stringify(v.issues)} ${v.fatal ?? ""}`);
 
 writeFileSync(`${OUT}/knowledge-graph.json`, JSON.stringify(graph) + "\n");
 console.log(JSON.stringify({
   nodes: graph.nodes.length, edges: graph.edges.length, layers: graph.layers.length,
-  tourSteps: tour.length, crossRepoEdges: crossEdges,
+  tourSteps: graph.tour.length, crossRepoEdges: crossEdges,
   evidence,
   sizeMB: (Buffer.byteLength(JSON.stringify(graph)) / 1e6).toFixed(1),
 }, null, 2));
 
-if (INSTALL) {
-  const live = `${BASE}/ORISO-Docs/.understand-anything`;
-  const ts = new Date().toISOString().replace(/[:.]/g, "-");
-  if (existsSync(`${live}/knowledge-graph.json`))
-    copyFileSync(`${live}/knowledge-graph.json`, `${live}/knowledge-graph.json.bak-${ts}`);
-  copyFileSync(`${OUT}/knowledge-graph.json`, `${live}/knowledge-graph.json`);
-  copyFileSync(`${OUT}/knowledge-graph.json`, `${live}/oriso-super-graph.json`);
-  writeFileSync(`${live}/oriso-super-graph-summary.md`,
-    `# ORISO Super-Graph\n\nRebuilt ${new Date().toISOString()} by ua-build-supergraph.mjs (deterministic).\n\n` +
-    mergeSources.map(s => `- ${s.repo}: ${s.nodes} nodes / ${s.edges} edges @ ${(s.gitCommitHash ?? "?").slice(0, 8)}`).join("\n") +
-    `\n\nCross-repo dependency edges: ${crossEdges} (keyword inference, evidence-count >= 2).\n`);
-  writeFileSync(`${live}/meta.json`, JSON.stringify({
-    lastAnalyzedAt: new Date().toISOString(),
-    gitCommitHash: "supergraph",
-    version: "1.0.0",
-    analyzedFiles: graph.nodes.length,
-    generator: "ua-build-supergraph.mjs (deterministic cross-repo merge)",
-    repos: Object.fromEntries(mergeSources.map(s => [s.repo, (s.gitCommitHash ?? "?").slice(0, 9)])),
-  }, null, 2) + "\n");
-  console.log("INSTALLED into ORISO-Docs/.understand-anything/");
-}
+writeFileSync(`${OUT}/meta.json`, JSON.stringify({
+  lastAnalyzedAt: graph.project.analyzedAt, gitCommitHash: null, version: graph.version,
+  sourceCommits: graph.project.sourceCommits, generator: "ua-build-supergraph.mjs",
+}, null, 2) + "\n");

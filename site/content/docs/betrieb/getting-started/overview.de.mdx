@@ -1,0 +1,166 @@
+---
+title: "Überblick und Voraussetzungen"
+description: "Vollständiger Überblick über Serveranforderungen, Hardware, Software und Netzwerkkonfiguration der ORISO-Plattform"
+source: "oriso-platform/overview.mdx"
+---
+
+# ORISO-Plattform – Überblick zur Einrichtungsanleitung
+
+**Die umfassende Schritt-für-Schritt-Anleitung für KI-Agenten und Entwickler**
+
+<Callout>
+**Version**: 3.0.0  
+**Zuletzt aktualisiert**: Januar 2026  
+**Plattform**: ORISO (Online Beratung)  
+**Bereitstellung**: Kubernetes (k3s) mit Helm-Charts  
+**Status**: Produktionsbereit
+</Callout>
+
+Diese Anleitung beschreibt ausführlich die Bereitstellung der ORISO-Plattform v3.0.0 auf Kubernetes mit Helm-Charts. Die Plattform besteht aus 21 Diensten, die über ein gemeinsames übergeordnetes Helm-Chart bereitgestellt werden. Folgen Sie der Dokumentation in der angegebenen Reihenfolge, beginnend mit der [Ersten Servereinrichtung](/de/betrieb/getting-started/initial-setup).
+
+<Cards>
+<Card title="Erste Einrichtung" href="/de/betrieb/getting-started/initial-setup">
+Mit dem Server verbinden, System aktualisieren, Hostnamen und Zeitzone konfigurieren
+</Card>
+
+<Card title="Netzwerk und Firewall" href="/de/betrieb/getting-started/network-firewall">
+Netzwerk, UFW-Firewall und Systemgrenzen konfigurieren
+</Card>
+
+<Card title="Software installieren" href="/de/betrieb/getting-started/install-software">
+Docker, k3s Kubernetes, kubectl und weitere Werkzeuge installieren
+</Card>
+
+<Card title="Repositories klonen" href="/de/betrieb/getting-started/clone-repositories">
+ORISO-Repositories auf den Server übertragen und klonen
+</Card>
+
+<Card title="Kubernetes einrichten" href="/de/betrieb/getting-started/setup-kubernetes">
+k3s-Installation prüfen und Namespace erstellen
+</Card>
+
+<Card title="Infrastruktur bereitstellen" href="/de/betrieb/deployment/deploy-infrastructure">
+Die gesamte Plattform über das übergeordnete Helm-Chart bereitstellen (21 Dienste)
+</Card>
+</Cards>
+
+## Serveranforderungen
+
+### Hardwareanforderungen
+
+#### Mindestanforderungen (Tests/Entwicklung)
+
+- **CPU**: 4 Kerne (Intel/AMD x64)
+- **RAM**: 8GB
+- **Datenträger**: 50GB SSD
+- **Netzwerk**: 1 Gbps
+
+#### Empfohlen (Produktion)
+
+- **CPU**: 8+ Kerne (Intel/AMD x64)
+- **RAM**: 16GB+
+- **Datenträger**: 100GB+ SSD (vorzugsweise NVMe)
+- **Netzwerk**: 1 Gbps+
+- **Backup-Speicher**: Externe Sicherungslösung
+
+<Callout>
+Für produktive Bereitstellungen empfehlen wir ausdrücklich die empfohlenen Spezifikationen, um optimale Leistung und Zuverlässigkeit sicherzustellen.
+</Callout>
+
+### Softwareanforderungen
+
+#### Betriebssystem
+
+- **Bevorzugt**: Ubuntu Server 22.04 LTS (empfohlen)
+- **Alternative**: Ubuntu Server 20.04 LTS
+- **Architektur**: x86_64 (amd64)
+- **Neuinstallation**: Frische Installation (keine bestehenden Dienste)
+
+#### Zugriffsvoraussetzungen
+
+- **SSH-Zugriff**: Root- oder sudo-Benutzer
+- **Internetzugang**: Für die Paketinstallation erforderlich
+- **Öffentliche IP**: Für externen Zugriff erforderlich
+- **Domainname**: Optional (für SSL/DNS)
+
+### Netzwerkanforderungen
+
+#### Erforderliche Ports (externer Zugriff)
+
+| Port | Dienst | Beschreibung |
+|------|---------|-------------|
+| `22` | SSH | Zugriff über Secure Shell |
+| `80` | HTTP | Ingress Controller (Weiterleitung auf HTTPS) |
+| `443` | HTTPS | Ingress Controller (TLS-Terminierung) |
+| `6443` | Kubernetes API | Optional für kubectl-Zugriff |
+
+#### Dienstports (intern – ClusterIP)
+
+Alle Dienste sind intern über Kubernetes-DNS erreichbar. Externer Zugriff erfolgt über Ingress (Ports 80/443).
+
+| Dienst | Port | Muster der internen URL |
+|---------|------|---------------------|
+| MariaDB | 3306 | `oriso-platform-mariadb.caritas.svc.cluster.local:3306` |
+| MongoDB | 27017 | `oriso-platform-mongodb.caritas.svc.cluster.local:27017` |
+| PostgreSQL | 5432 | `oriso-platform-postgresql.caritas.svc.cluster.local:5432` |
+| Redis | 6379 | `oriso-platform-redis.caritas.svc.cluster.local:6379` |
+| RabbitMQ | 5672 | `oriso-platform-rabbitmq.caritas.svc.cluster.local:5672` |
+| Keycloak | 8080 | `oriso-platform-keycloak.caritas.svc.cluster.local:8080` |
+| TenantService | 8081 | `oriso-platform-tenantservice.caritas.svc.cluster.local:8081` |
+| UserService | 8082 | `oriso-platform-userservice.caritas.svc.cluster.local:8082` |
+| ConsultingTypeService | 8083 | `oriso-platform-consultingtypeservice.caritas.svc.cluster.local:8083` |
+| AgencyService | 8084 | `oriso-platform-agencyservice.caritas.svc.cluster.local:8084` |
+| Matrix Synapse | 8008 | `oriso-platform-matrix-synapse.caritas.svc.cluster.local:8008` |
+| Health Dashboard | 9001 | `oriso-platform-health-dashboard.caritas.svc.cluster.local:9001` |
+| SignOZ | 3001 | `signoz-frontend.platform.svc.cluster.local:3301` |
+
+<Callout type="warn">
+Stellen Sie sicher, dass alle erforderlichen Ports in der Firewall-Konfiguration geöffnet sind. Einzelheiten finden Sie unter [Netzwerk- und Firewall-Konfiguration](/de/betrieb/getting-started/network-firewall).
+</Callout>
+
+## Schnellstart
+
+Wenn Sie beginnen möchten, führen Sie zuerst diese wichtigen Schritte aus:
+
+1. **Voraussetzungen prüfen** – Stellen Sie sicher, dass Ihr Server die Mindestanforderungen an Hardware und Software erfüllt.
+2. **Mit dem Server verbinden** – Melden Sie sich per SSH mit Root- oder sudo-Zugriff an Ihrem Ubuntu-Server an.
+3. **Einrichtungsanleitung befolgen** – Fahren Sie mit der [Ersten Servereinrichtung](/de/betrieb/getting-started/initial-setup) fort.
+
+<Callout type="success">
+Nach Abschluss aller Einrichtungsschritte verfügen Sie über eine vollständig funktionsfähige ORISO-Plattform mit:
+- Allen Diensten auf Kubernetes
+- Konfigurierten und befüllten Datenbanken
+- Funktionierender Authentifizierung (Keycloak)
+- Erreichbarem Frontend und Admin
+- Betriebsbereitem Matrix-Chat
+- Konfigurierter Überwachung
+</Callout>
+
+## Unterstützung und Ressourcen
+
+### ORISO-Dokumentation
+- **ORISO-Kubernetes**: Siehe `~/caritas-workspace/ORISO-Kubernetes/README.md`
+- **ORISO-Database**: Siehe `~/caritas-workspace/ORISO-Database/README.md`
+- **ORISO-Keycloak**: Siehe `~/caritas-workspace/ORISO-Keycloak/README.md`
+- **Einzelne Dienste**: Siehe die jeweiligen ORISO-*/README.md-Dateien
+
+### Nützliche Links
+- [Kubernetes-Dokumentation](https://kubernetes.io/docs/)
+- [k3s-Dokumentation](https://docs.k3s.io/)
+- [Keycloak-Dokumentation](https://www.keycloak.org/documentation)
+- [Spring-Boot-Dokumentation](https://spring.io/projects/spring-boot)
+- [Matrix-Dokumentation](https://matrix.org/docs/)
+
+### Hilfe erhalten
+Wenn Probleme auftreten:
+1. Prüfen Sie die [Anleitung zur Fehlerbehebung](/de/betrieb/operations/troubleshooting).
+2. Lesen Sie die [Kurzreferenz](/de/betrieb/operations/quick-reference).
+3. Prüfen Sie die Dienstprotokolle: `kubectl logs <pod> -n caritas`
+4. Prüfen Sie Ereignisse: `kubectl get events -n caritas`
+5. Lesen Sie die README-Dateien der einzelnen Dienste.
+
+## Nächste Schritte
+
+- [Erste Servereinrichtung](/de/betrieb/getting-started/initial-setup) – Mit der Serverkonfiguration beginnen
+- [Erforderliche Software installieren](/de/betrieb/getting-started/install-software) – Docker und Kubernetes einrichten
+- [Kurzreferenz](/de/betrieb/operations/quick-reference) – Übersicht wichtiger Befehle

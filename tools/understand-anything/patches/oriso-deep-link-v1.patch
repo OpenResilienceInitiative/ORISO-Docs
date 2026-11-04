@@ -1,0 +1,122 @@
+diff --git a/understand-anything-plugin/packages/dashboard/src/App.tsx b/understand-anything-plugin/packages/dashboard/src/App.tsx
+index a190a7e..0f4433f 100644
+--- a/understand-anything-plugin/packages/dashboard/src/App.tsx
++++ b/understand-anything-plugin/packages/dashboard/src/App.tsx
+@@ -1,5 +1,7 @@
+ import OrisoEvidenceStatus from "./components/OrisoEvidenceStatus";
+-import { useEffect, useState, useMemo, useCallback, lazy, Suspense } from "react";
++import { useEffect, useRef, useState, useMemo, useCallback, lazy, Suspense } from "react";
++import { parseNodeParam, resolveDeepLink } from "../deep-link.mjs";
++import { OrisoDeepLinkNotFound } from "./components/OrisoDeepLink";
+ import { validateGraph } from "@understand-anything/core/schema";
+ import type { GraphIssue } from "@understand-anything/core/schema";
+ import { useDashboardStore } from "./store";
+@@ -51,6 +53,7 @@ function shouldShowOnboarding(): boolean {
+   if (typeof window === "undefined") return false;
+   const params = new URLSearchParams(window.location.search);
+   if (params.get("onboard") === "force") return true;
++  if (parseNodeParam(window.location.search)) return false;
+   return window.localStorage.getItem(ONBOARDING_DISMISSED_KEY) !== "1";
+ }
+ 
+@@ -121,6 +124,9 @@ function Dashboard({ accessToken }: { accessToken: string }) {
+   const setGraph = useDashboardStore((s) => s.setGraph);
+   const setDomainGraph = useDashboardStore((s) => s.setDomainGraph);
+   const setDiffOverlay = useDashboardStore((s) => s.setDiffOverlay);
++  const graph = useDashboardStore((s) => s.graph);
++  const deepLinkGraph = useRef<unknown>(null);
++  const [deepLinkMissing, setDeepLinkMissing] = useState<string | null>(null);
+   const [loadError, setLoadError] = useState<string | null>(null);
+   const [graphIssues, setGraphIssues] = useState<GraphIssue[]>([]);
+   const [graphFreshness, setGraphFreshness] =
+@@ -259,9 +265,23 @@ function Dashboard({ accessToken }: { accessToken: string }) {
+       .catch(() => {});
+   }, [setDomainGraph]);
+ 
++  // "?node=<id>": focus and highlight that node once the graph is loaded; unknown ids say so.
++  useEffect(() => {
++    if (!graph || deepLinkGraph.current === graph) return;
++    deepLinkGraph.current = graph; // a reloaded graph resets the selection, so apply the link again
++    const id = parseNodeParam(window.location.search);
++    if (!id) return;
++    const result = resolveDeepLink(graph.nodes, id);
++    if (result.status === "found") useDashboardStore.getState().navigateToNode(result.nodeId);
++    else setDeepLinkMissing(result.id);
++  }, [graph]);
++
+   return (
+     <I18nProvider language={outputLanguage ?? "en"}>
+       <ThemeProvider metaTheme={metaTheme}>
++        {deepLinkMissing !== null && (
++          <OrisoDeepLinkNotFound id={deepLinkMissing} onDismiss={() => setDeepLinkMissing(null)} />
++        )}
+         <DashboardContent
+           accessToken={accessToken}
+           loadError={loadError}
+diff --git a/understand-anything-plugin/packages/dashboard/src/components/NodeInfo.tsx b/understand-anything-plugin/packages/dashboard/src/components/NodeInfo.tsx
+index cb6a5e4..8dfca56 100644
+--- a/understand-anything-plugin/packages/dashboard/src/components/NodeInfo.tsx
++++ b/understand-anything-plugin/packages/dashboard/src/components/NodeInfo.tsx
+@@ -1,6 +1,7 @@
+ import { useState } from "react";
+ import OrisoNodeEvidence from "./OrisoNodeEvidence";
+ import OrisoCallRelations from "./OrisoCallRelations";
++import { OrisoShowOnMap } from "./OrisoDeepLink";
+ import { callRelations, hasCallRole, isCallEdge } from "./orisoCallModel";
+ import { isOriso, sourceAtRevision } from "./orisoEvidenceModel";
+ import { useDashboardStore } from "../store";
+@@ -411,6 +412,10 @@ export default function NodeInfo() {
+         </button>
+       </div>
+ 
++      <div className="mb-3 flex flex-wrap gap-2">
++        <OrisoShowOnMap nodeId={node.id} />
++      </div>
++
+       <FigmaThumbnail node={node} />
+ 
+       <p className="text-sm text-text-secondary mb-4 leading-relaxed">
+diff --git a/understand-anything-plugin/packages/dashboard/src/components/OrisoDeepLink.tsx b/understand-anything-plugin/packages/dashboard/src/components/OrisoDeepLink.tsx
+new file mode 100644
+index 0000000..8485904
+--- /dev/null
++++ b/understand-anything-plugin/packages/dashboard/src/components/OrisoDeepLink.tsx
+@@ -0,0 +1,38 @@
++import { mapUrlForNode } from "../../deep-link.mjs";
++
++// Deep links (ORISO-Docs#199): "?node=<id>" opens this viewer on a node; these two
++// pieces are the visible parts. Plain classes only, so the page needs no inline style.
++
++export function OrisoShowOnMap({ nodeId }: { nodeId: string }) {
++  return (
++    <a
++      href={mapUrlForNode(nodeId)}
++      className="shrink-0 text-[10px] font-semibold px-2.5 py-1 rounded border border-accent/30 text-accent hover:text-accent-bright hover:border-accent/60 transition-colors"
++    >
++      Auf der Karte zeigen / Show on map
++    </a>
++  );
++}
++
++export function OrisoDeepLinkNotFound({ id, onDismiss }: { id: string; onDismiss: () => void }) {
++  return (
++    <div
++      role="status"
++      data-testid="deep-link-not-found"
++      className="px-3 sm:px-5 py-3 bg-elevated border-b border-border-subtle text-sm text-text-secondary flex flex-wrap items-center gap-x-3 gap-y-1"
++    >
++      <span className="font-medium text-text-primary">Knoten nicht gefunden / Node not found</span>
++      <code className="font-mono text-xs min-w-0 break-all">{id}</code>
++      <span className="min-w-0">
++        Dieser Graph enthält keinen Knoten mit dieser ID. / This graph has no node with this ID.
++      </span>
++      <button
++        type="button"
++        onClick={onDismiss}
++        className="shrink-0 text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded border border-border-subtle text-text-muted hover:text-gold hover:border-gold/30"
++      >
++        OK
++      </button>
++    </div>
++  );
++}

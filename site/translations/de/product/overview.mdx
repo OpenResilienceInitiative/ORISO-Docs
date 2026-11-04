@@ -1,0 +1,106 @@
+---
+title: "Produktübersicht"
+description: "Was ORISO ist, wem es dient und welche Probleme es als datenschutzorientierte Online-Beratungsplattform löst."
+---
+
+<Info>
+**Produkt**: ORISO (Online Beratung)
+**Kategorie**: Anonyme Online-Beratungs- und Live-Chat-Plattform
+**Status**: Produktivbetrieb (mandantenfähig, auf Kubernetes bereitgestellt, an DSGVO ausgerichtet)
+**Maßgebliche Quelle**: Gespräch Frank und Nikunj (2026-05-05), Figma-Abläufe, Keycloak-Realm, Spring-Boot-Dienste.
+</Info>
+
+## 1.1 Was ORISO ist
+
+ORISO ist eine **mandantenfähige Online-Beratungsplattform**, mit der anerkannte Beratungsorganisationen textbasierte und Live-Chat-Beratung für Ratsuchende **anonym, DSGVO-gerecht und mit Datenschutz auf Krankenhausniveau** anbieten können.
+
+Es ist *keine* allgemeine Notiz-App. Es ist ein reguliertes, datenschutzorientiertes Beratungsprodukt, in dem:
+
+- **Ratsuchende** um Hilfe bitten können, ohne ihren echten Namen anzugeben.
+- **Beratende** einer registrierten Beratungsstelle die Anfrage übernehmen und in einem sicheren verschlüsselten Raum chatten können.
+- **Plattformbetreiber**, **Träger** (regionaler Verbund von Organisationen) und **Beratungsstellen-Admins** eine klare, isolierte Hierarchie bilden, sodass eine Organisation niemals Daten einer anderen sehen kann.
+
+Als Bild: **„Eine Beratungs-Triage im Internet wie im Krankenhaus — nur müssen Patienten ihren Namen nie nennen, und das System soll sie vergessen, sobald sie gehen.“**
+
+## 1.2 Kernzweck
+
+| Ziel | Bedeutung im Produkt |
+|---|---|
+| **Anonyme Hilfe** | Ratsuchende treten mit erzeugtem Pseudonym ein. Eine echte Identität ist niemals erforderlich. |
+| **Reguliertes Vertrauen** | Jede Ebene (Plattform → Träger → Beratungsstelle) besitzt verbindliches Impressum, Datenrichtlinienvereinbarung und DSGVO-Vereinbarung. |
+| **Echtzeitgespräch** | Live-Chat-Warteschlange (Warteraum → Übernahme → Chat nach Einwilligung), getragen von Matrix Synapse. |
+| **Hierarchische Isolation** | Ein Träger kann keine Daten eines anderen sehen. Eine Beratungsstelle kann keine Ratsuchenden einer anderen sehen. |
+| **Vergängliche Daten** | Verlassen Ratsuchende Warteraum oder Chat, werden ihr Konto und ihre Spuren innerhalb von Sekunden bis Minuten auf dem Server gelöscht. |
+
+## 1.3 Zielgruppen
+
+### Primäre Nutzende (Personen in der App)
+
+| Rolle | Person in der Praxis | Zweck von ORISO |
+|---|---|---|
+| **Ratsuchende** | Menschen in Not (Schulden, Familie, Sucht, Gesundheit usw.) | Wünschen schnelle anonyme Beratung ohne Registrierung |
+| **Beratende** | Ausgebildete Beratungsperson einer Beratungsstelle (z. B. Caritas Berlin) | Übernehmen Tickets aus dem Live-Chat-Warteraum und führen Sitzungen |
+| **Beratungsstellen-Admins** | Leitung einer einzelnen Beratungsstelle | Verwalten Beratende, konfigurieren Impressum/DSGVO-Text, aktivieren/deaktivieren Live-Chat |
+| **Träger-Admins** | Regionaler Dachverband (z. B. „Caritas Deutschland“) | Erstellen Beratungsstellen unter ihrem Träger und unterzeichnen Plattform-Träger-Datenrichtlinienvereinbarung |
+| **Plattform-Admins** | Betreiber der ORISO-Plattform | Nehmen Träger auf, verantworten zentrale Vorlagen für Impressum/DSGVO/Datenrichtlinie, führen MFA-geschützte Tätigkeiten aus |
+
+### Sekundäre Nutzende (Personen, die das System beurteilen)
+
+- **Entwickelnde** (Frontend / Backend), die ORISO bauen und Keycloak, Matrix, LiveKit integrieren.
+- **Gestaltende**, die Live-Chat-Einstieg, Warteraum und Einwilligungsbildschirme bearbeiten (siehe [UI/UX](/product/ui-ux)).
+- **Produktverantwortliche / wirtschaftliche Beteiligte**, die Plattform bewerten, vorstellen oder prüfen.
+- **Sicherheitsprüfende**, die jährlich extern prüfen (erklärte Anforderung nach dem Vorfall von 2026).
+
+## 1.4 Zentrale gelöste Probleme
+
+<CardGroup cols={2}>
+<Card title="Das Problem „Ich will mich nicht registrieren“" icon="user-secret">
+Die meisten Beratungswerkzeuge verlangen Registrierung. ORISO lässt Ratsuchende mit erzeugtem Pseudonym (z. B. *„geschmeidiges Kanninchen Kim“*) und einem serverseitigen Cookie in den Warteraum — ohne E-Mail, Telefon oder echten Namen.
+</Card>
+
+<Card title="Das Problem der DSGVO-Vererbung" icon="scale-balanced">
+Unterschiedliche Organisationen benötigen unterschiedliche Rechtstexte. ORISO nutzt **Vererbung**: Jede Beratungsstelle übernimmt Impressum, Datenrichtlinie und DSGVO-Vereinbarung vom Träger (letztlich von der Plattform), kann sie aber lokal überschreiben.
+</Card>
+
+<Card title="Das Problem der Trägerisolation" icon="shield-halved">
+Krankenhäuser teilen keine Patientenlisten. Träger und Beratungsstellen dürfen sich nicht gegenseitig einsehen. ORISO setzt dies durch Keycloak-Rollen, trägergebundene APIs und Matrix-Räume je Beratungsstelle durch.
+</Card>
+
+<Card title="Das Problem „Vergiss mich“" icon="trash-can">
+Geben Ratsuchende im Warteraum auf, muss ihre pseudonyme Person **gelöscht**, nicht archiviert werden. ORISOs Entwurfsregel lautet „schnell löschen, niemals archivieren“ — automatische Löschung bei Verbindungsabbruch, ausschließlich verschlüsselte Nachrichtenspeicherung, geplante Löschung veralteter Räume.
+</Card>
+
+<Card title="Das Problem der PIN-/PLZ-Weiterleitung" icon="map-pin">
+Beratende bedienen unterschiedliche deutsche Postleitzahlengebiete und Themen. ORISO leitet Anfragen nach PLZ (langfristig) und themengebundenen Live-Chat-Links (kurzfristig), damit Ratsuchende für Berliner Schuldnerberatung bei passenden Berliner Beratenden landen.
+</Card>
+
+<Card title="Das UX-Problem „Live-Chat aus“" icon="toggle-on">
+Ausgeblendete inaktive Funktionen verwirren Beratende. ORISO zeigt den Live-Chat-Bereich stattdessen **deaktiviert** mit Aktivierungshinweis (damit 95 % ohne Live-Chat nicht orientierungslos sind, wenn die anderen 5 % ihn einschalten).
+</Card>
+</CardGroup>
+
+## 1.5 Was ORISO nicht ist
+
+Zur Klarstellung gilt: Das Produkt tut Folgendes **nicht**:
+
+- Audio/Video von Beratungssitzungen aufzeichnen, um durchsuchbare Transkripte zu erzeugen (keine KI-Notizen; LiveKit verarbeitet WebRTC-Video, Aufzeichnungen sind außerhalb des Umfangs).
+- Identität Ratsuchender über die Sitzung hinaus speichern (kein „Benutzerverlauf“ für Ratsuchende).
+- Trägerübergreifende Suche, Auswertung oder Berichte erlauben (Isolation wird durchgesetzt).
+- Dienste im `dev`-Modus im Produktivbetrieb betreiben (verbindliche Regel nach dem Keycloak-Vorfall von 2026).
+
+## 1.6 Weiterführende Seiten
+
+<CardGroup cols={2}>
+<Card title="Systemarchitektur" icon="diagram-project" href="/product/architecture">
+Überblick über Ablauf, Dienste und Integrationspunkte
+</Card>
+<Card title="Rollen und Berechtigungen" icon="users-gear" href="/product/roles-permissions">
+Vierstufige Hierarchie (Plattform → Träger → Beratungsstellen-Administration → Beratende) plus Ratsuchende
+</Card>
+<Card title="Kernfunktionen" icon="bolt" href="/product/features">
+Live-Chat, Pincode-Weiterleitung, Sitzungen, Umgang mit Transkripten
+</Card>
+<Card title="Nutzungsabläufe" icon="route" href="/product/user-flows">
+Schritt für Schritt: Admin-Einstieg, Einrichtung für Beratende, Beitritt Ratsuchender
+</Card>
+</CardGroup>

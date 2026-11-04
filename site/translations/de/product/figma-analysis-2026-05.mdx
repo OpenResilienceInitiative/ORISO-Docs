@@ -1,0 +1,478 @@
+---
+title: "Figma-Analyse und Dokumentationsänderungen (Mai 2026)"
+description: "Strukturierte Analyse des Figma-Auszuges vom Mai 2026 — Bildschirme zu Funktionen zugeordnet, Funktionen als NEU / ÄNDERUNG / UNVERÄNDERT markiert, mit rekonstruierten Abläufen, Rollenerkenntnissen, fehlender Logik und Annahmen."
+---
+
+<Info>
+Diese Seite ist die **maßgebliche Quelle** für Produktänderungen nach der Figma-Ausgabe vom Mai 2026. Sie liefert die Grundlage für neue Seiten unter [Kernfunktionen](/product/features) und gezielte Änderungen an [Rollen und Berechtigungen](/product/roles-permissions), [Datenmodell](/product/data-model), [UI/UX](/product/ui-ux) und [Sonderfälle](/product/edge-cases).
+</Info>
+
+## 1. Zusammenfassung der Bildanalyse
+
+Die Figma-Datei enthält etwa zwölf verschiedene Bildschirmfamilien. Nachfolgend gruppiert; jeder Eintrag folgt der gewünschten Vorlage.
+
+### 1.1 Gruppenchatraum (Beratendensicht)
+
+| Aspekt | Detail |
+|---|---|
+| **Bildschirm** | Gruppen-/Team-/Familien-/Suchtchatraum — Beratendenseite |
+| **Beispiele** | „Teamberatung“, „Familienberatung“, „Suchtprobleme“, „Teamgruppe 17“, „Supportgruppe Alkohol“ |
+| **Zweck** | Verschlüsselter Mehrparteienchat für Gruppen (Selbsthilfe, Teamberatung, Familie, Supervisionspool). |
+| **Oberfläche** | Kopf mit Gruppenname und „Supervision an/aus“; E2EE-Banner *„Ihre Nachrichten sind Ende-zu-Ende verschlüsselt … niemand außerhalb dieses Chats kann die Nachrichten lesen. Nicht einmal die Online-Beratungs-Plattform.“*; Initialen; Eingabebereich; Werkzeuge (direkt / im Thread antworten / markieren / weiterleiten / löschen / hinzufügen). |
+| **Aktionen** | Senden, im Thread antworten, markieren, PII unkenntlich machen, weiterleiten, löschen, einladen, archivieren, stummschalten, Hilfe, zusammenfassen, Supervision umschalten. |
+| **Systemverhalten (abgeleitet)** | Jede Gruppe ist E2EE-Matrix-Raum; Werkzeuge durch Chat-Typ-Berechtigungen (anonym / Einzelgespräch / Gruppe / Supervision) begrenzt; Supervisionsschalter löst Systemnachricht und Prüfpfad aus. |
+
+### 1.2 Gruppenchatraum (Ratsuchendensicht)
+
+| Aspekt | Detail |
+|---|---|
+| **Bildschirm** | Derselbe Gruppenchat aus Sicht Ratsuchender |
+| **Zweck** | Gruppenfunktionen behalten, aber **Beratendenwerkzeuge ausblenden** (Mehrfachversand, Unkenntlichmachung, Zusammenfassung, Supervision). |
+| **Oberfläche** | E2EE-Banner; nur Nachrichteneingabe; Thread-Antwort für Ratsuchende *nur wenn Administration erlaubt*. |
+| **Aktionen** | Senden/empfangen; optional Thread-Antwort; Gruppe verlassen → Pseudonym gelöscht. |
+| **Systemverhalten** | Berechtigungslogik liefert anhand `role=client` andere Werkzeuge. |
+
+### 1.3 Aktiver Videoanruf (im Chat)
+
+| Aspekt | Detail |
+|---|---|
+| **Bildschirm** | Hinweis: *„Derzeit aktiver Anruf → Videoanruf beitreten“* |
+| **Zweck** | LiveKit-Anruf im bestehenden Thread einbetten; alle Raummitglieder können beitreten. |
+| **Oberfläche** | Kennzeichnung „Derzeit aktiver Anruf“, Aufruf „Videoanruf beitreten“. |
+| **Systemverhalten** | UserService stellt je Person kurzlebigen LiveKit-JWT aus; WebRTC-Aufbau direkt zu LiveKit. |
+| **Offene Produktfrage** | *„Was passiert bei Selbstlöschung während Videoanruf, wenn die Person ihn gestartet hat? Was bei Selbstlöschung Ratsuchender aus Gruppenchat?“* — vorgeschlagene Lösung unter [Sonderfälle](/product/edge-cases#9-1-7-client-deletes-self-during-active-video-call). |
+
+### 1.4 Anfragebestätigung / „So geht es weiter“
+
+| Aspekt | Detail |
+|---|---|
+| **Bildschirm** | Wartebildschirm nach Anfrage (asynchroner Einzelgesprächsweg) |
+| **Zweck** | Eingang bestätigen, Erwartungen klären, optionale E-Mail erfassen. |
+| **Oberfläche** | *„Wir haben Ihre Nachricht erhalten.“* / *„Ihr_e Berater_in antwortet innerhalb von 2 Werktagen“*; optionale E-Mail; *„Konto schützen“* für 2FA; *„Konto löschen“*. |
+| **Aktionen** | Optional E-Mail angeben, 2FA aktivieren, Konto löschen. |
+| **Systemverhalten** | E-Mail auf Server **für Beratende unsichtbar** gespeichert, nur Passwortzurücksetzung und Benachrichtigung. 2FA per App oder E-Mail-Link. Kontolöschung = vollständige Löschung. |
+| **Status** | **[NEUE FUNKTION]** — optionale E-Mail und 2FA für Ratsuchende. |
+
+### 1.5 Benachrichtigungsseite
+
+| Aspekt | Detail |
+|---|---|
+| **Bildschirm** | Eigener Benachrichtigungseingang |
+| **Zweck** | Asynchrone Nachrichten an eine Person (z. B. *„Ihre Anfrage wurde von einer Beratungsperson angenommen“*). |
+| **Oberfläche** | Typ, Titel, Inhalt, Datum, „Antworten“; „Chats ansehen“. |
+| **Systemverhalten** | Backend übermittelt Benachrichtigungseinträge; mobile Push-/E-Mail-Kopie optional, nur bei erfasster E-Mail. |
+| **Status** | **[NEUE FUNKTION]**. |
+
+### 1.6 Chat-Liste mit Filtern und Phasen
+
+| Aspekt | Detail |
+|---|---|
+| **Bildschirm** | Eingang / Chat-Liste Beratender |
+| **Tabs** | „Ungelesen“, „1-1 Beratung“, „Live-Chat“, „Gruppen“, „Aktiv“, „Termine“, „Archiv“, „Anfragen“. |
+| **Filter** | Personen / Type / Beratungsstelle / Archived; „Verfeinere deine Suche durch Filter weiter“. |
+| **Phase je Zeile** | „Anfragephase“, „Vermittlungsphase“, danach aktiv. |
+| **Seitenleiste** | Anfragen, Gespräche, Reports, Mein Profil, Logs. |
+| **Leerzustand** | *„Bitte wählen Sie eine Nachricht aus dem linken Panel“* / *„Zurzeit gibt es keine unbeantworteten Anfragen“*. |
+| **Status** | **[ÄNDERUNG ERFORDERLICH]** — erweitert Liste; neues Phasenmodell und Filter. |
+
+### 1.7 Werkzeug für Versand an mehrere Empfänger
+
+| Aspekt | Detail |
+|---|---|
+| **Bildschirm** | Eingabe mit „Wähle wer diese Nachricht sehen soll“ / „Adressaten wählen“ |
+| **Zweck** | Beratende senden an **Teilmenge** der Mitglieder (z. B. „nur Moderierende“). |
+| **Oberfläche** | „Senden an“; auswählbare Mitglieder; „Alle Beratenden“ / „Alle Moderierenden“ / „Alle“; Kennzeichnung *„nur sichtbar für: Ich“* / *„3 Moderierende“* / *„+23“*; direkt oder im Thread antworten. |
+| **Schaltflächenzustände** | A) im Einzelchat vollständig verbergen; B) grau ab zwei Personen; B2) AAA-Berührungsflächen; C) Chat-Typ-Symbol; D) letzte Auswahl je Chat merken; E) **für Ratsuchende immer verborgen**. |
+| **Systemverhalten** | Matrix `m.room.message` mit eigener Beziehung/Beschränkung; Empfängerliste auf Server **und** Client durchgesetzt (mehrschichtiger Schutz). |
+| **Status** | **[NEUE FUNKTION]**. |
+
+### 1.8 Textmarkierung und PII-Unkenntlichmachung
+
+| Aspekt | Detail |
+|---|---|
+| **Bildschirm** | Tiptap-Textmarker über einer Nachricht |
+| **Zweck** | Beratende markieren / annotieren / **verschleiern** sensible Nachrichtenteile; Notizen an Thread oder privaten Editor (Fallnotizentwurf) senden. |
+| **Oberfläche** | Farbpalette, „Farbe auswählen, Werkzeug arbeitet wie Tiptap-Textmarker“; Augenschalter; Auszüge nach Beschriftungen (Gute Aspekte, Gefährliches Verhalten, …); „an Thread senden“ / „an Editor senden“ / „alles an Editor“ / „alles an Thread“. |
+| **Systemverhalten** | Markierungen sind clientseitige Überlagerungsmetadaten (E2EE-synchronisiert); gleichmäßige weiße 80-%-Überlagerung (`fff 80% Overlay Blur (uniform) 4`); Empfänger sehen *„Beratungsperson hat persönliche Angaben unkenntlich gemacht; bitte künftig beachten“*. |
+| **Status** | **[NEUE FUNKTION]**. |
+
+### 1.9 Chatraum-Einstellungen
+
+| Aspekt | Detail |
+|---|---|
+| **Bildschirm** | Raummenü (Rechtsklick / Dreipunktmenü) |
+| **Einträge** | Archivieren (⇧A), Stummschalten (⇧Ö), Hilfe (⇧Ä), weitere Personen (⇧I), Supervision an/aus, zusammenfassen (⇧Ü). |
+| **Text** | „Archivierte Benachrichtigungen sind inaktiv. Der Chat wird in 12 Monaten gelöscht.“ |
+| **Systemverhalten** | Meist Matrix-Zustandsereignisse auf Raumebene; Zusammenfassen ruft KI-Ablauf (1.10), Hilfe öffnet Eskalation. |
+| **Status** | **[NEUE FUNKTION]** für Menühülle; Einträge erweitern vorhandene Konzepte. |
+
+### 1.10 KI-Chat-Zusammenfassung
+
+| Aspekt | Detail |
+|---|---|
+| **Bildschirm** | „Chat Zusammenfassen“ und Seitenbereich |
+| **Text** | *„Spare Zeit, mit Hilfe unseres vollends Datenschutzkonformen KI Workflows.“* |
+| **Zweck** | Automatische Zusammenfassung eines bestehenden Chats als Fallnotiz für Beratende. |
+| **Systemverhalten** | Entschlüsselung und Bereinigung im Browser gemäß Datenschutzregeln; Ergebnis bearbeiten, speichern. |
+| **Status** | **[NEUE FUNKTION]** — bestätigt bisher geplante KI-Werkzeuge ([4.1 Transkripte](/product/features/transcription) → jetzt [KI-Werkzeuge](/product/features/ai-tools)). |
+
+### 1.11 Hilfsanfragen / interne Eskalation
+
+| Aspekt | Detail |
+|---|---|
+| **Bildschirm** | Dialog: *„Eskaliere den Fall intern oder extern ohne den Datenschutz zu vernachlässigen.“* |
+| **Auswahl** | „Wähle intern von einer Person ohne den Datenschutz zu vernachlässigen“ — andere Beratende / Supervision derselben Stelle. |
+| **Status** | **[NEUE FUNKTION]**. |
+
+### 1.12 Fallübergabe
+
+| Aspekt | Detail |
+|---|---|
+| **Bildschirm** | Übergabedialog für Beratende und Systemnachricht für Ratsuchende |
+| **Beratendentext** | „Fall übergeben“ mit Urlaub, Krankheit, Notfall, Rechtsverstoß, Entlassung, **eigenem Grund**. |
+| **Ratsuchendentext** | *„Deine vorherige Beratin ist leider krank. Deshalb wurde dein Fall an {Beraterin} übergeben von der {Beratungstelle}.“* |
+| **Berechtigungen** | Je Grund andere Einwilligung: „Ratsuchende“, „Beratende“, „beide“, „Supervision“, „Vertretung Strafverfolgung“. |
+| **Status** | **[NEUE FUNKTION]**. |
+
+### 1.13 Admin-Einstellungen — „Berechtigungen“
+
+| Aspekt | Detail |
+|---|---|
+| **Bildschirm** | Träger-/Beratungsstellen-Adminbereich |
+| **Tabs** | Profil, Erscheinungsbild, Rechtliches, Berechtigungen, Mandanten, Logs. |
+| **Spalten** | Anonyme Chats / 1-zu-1 Chats / Gruppenchats / Supervision. |
+| **Zeilen** | Anonyme Beratung, Anrufe, Audio-Anrufe, Video-Anrufe, Threads, Sprachnachrichten, Supervision erlauben. |
+| **Systemverhalten** | Zentrale Funktionsmatrix zur Laufzeit; Client und Server fragen sie ab. |
+| **Status** | **[NEUE FUNKTION]**. |
+
+### 1.14 Anzeige Beratungsstelle / Träger („Beratungsstelle Caritas Mainz“)
+
+| Aspekt | Detail |
+|---|---|
+| **Bildschirm** | Avatar mit Stellenkontext: *„Beratende Person Kim G. — Kim Gerlander — 54222 Caritas Mainz“* |
+| **Zweck** | Ratsuchenden die Stelle / den Träger Beratender zeigen. *„Die Beratungsstelle der Beratungsperson sollte angezeigt werden können.“* |
+| **Status** | **[ÄNDERUNG ERFORDERLICH]** — Benutzer-/Anzeigenamensmodell um Stellenkontext erweitern. |
+
+### 1.15 Datei-Ablegebereich
+
+| Aspekt | Detail |
+|---|---|
+| **Text** | *„Ziehen Sie die Datei in das Feld, um sie hochzuladen. .jpg, .png, .pdf, .docx, .xlsx bis maximal 10 MB“* |
+| **Status** | **[NEUE FUNKTION]**. |
+
+### 1.16 Tags / Themenkennzeichnungen
+
+| Aspekt | Detail |
+|---|---|
+| **Bildschirm** | Tag-Auswahl: Suche, Liste, *„Keinen passenden Tag gefunden?“* |
+| **Status** | **[NEUE FUNKTION]**. |
+
+### 1.17 Begrüßung / leere Eingänge
+
+| Aspekt | Detail |
+|---|---|
+| **Zustände** | „Alle aktiven Chats werden hier angezeigt“, „Bitte zuerst Nachricht im Bereich auswählen“, „Noch keine Gespräche archiviert“, „Derzeit keine Anfragen“, „Wählen Sie zuerst bitte eine Nachricht aus der Liste aus.“ |
+| **Animationsregel** | *„Animationen nur einmal je Abschnittsklick, nicht in Schleife, höchstens 0,7× Geschwindigkeit.“* |
+| **Status** | **[ÄNDERUNG ERFORDERLICH]** — als Standardtexte übernehmen. |
+
+## 2. Funktionszuordnung
+
+| # | Funktion | Bildschirme (§1) | Status |
+|---|---|---|---|
+| F1 | **Gruppenchats** (Team / Familie / Sucht / Selbsthilfe / intern) | 1.1, 1.2, 1.6 | **[NEUE FUNKTION]** |
+| F2 | **Mehrfachversand** (`Wähle wer diese Nachricht sehen soll`) | 1.7 | **[NEUE FUNKTION]** |
+| F3 | **Textmarkierung und PII-Unkenntlichmachung** | 1.8 | **[NEUE FUNKTION]** |
+| F4 | **KI-Chat-Zusammenfassung** | 1.10 | **[NEUE FUNKTION]** (ersetzt ausschließlich geplanten Status von [4.1](/product/features/transcription)) |
+| F5 | **Im Thread / direkt antworten / weiterleiten / löschen** | 1.1, 1.7 | **[NEUE FUNKTION]** |
+| F6 | **Hilfsanfragen / interne Eskalation** | 1.11 | **[NEUE FUNKTION]** |
+| F7 | **Fallübergabe** mit Grundsystematik | 1.12 | **[NEUE FUNKTION]** |
+| F8 | **Berechtigungsmatrix je Chat-Typ** | 1.13 | **[NEUE FUNKTION]** |
+| F9 | **Benachrichtigungseingang** und Push-/E-Mail-Kopie | 1.5 | **[NEUE FUNKTION]** |
+| F10 | **Optionale E-Mail Ratsuchender** für Passwort und Hinweise | 1.4 | **[NEUE FUNKTION]** |
+| F11 | **Zwei-Faktor-Authentifizierung Ratsuchender** (App / E-Mail) | 1.4 | **[NEUE FUNKTION]** |
+| F12 | **Kontolöschung durch Ratsuchende** | 1.4 | **[NEUE FUNKTION]** |
+| F13 | **Videoanruf im Chat** und Busereignisse | 1.3 | **[ÄNDERUNG ERFORDERLICH]** (bisher nur implizit) |
+| F14 | **Phasenmodell** (`Anfragephase` / `Vermittlungsphase` / Aktiv) | 1.6 | **[NEUE FUNKTION]** |
+| F15 | **Chat-Listenfilter und Tabs** | 1.6 | **[ÄNDERUNG ERFORDERLICH]** |
+| F16 | **Aktivität / Zeitstrahl / Entwürfe / angeheftet / geplant** | 1.6 | **[NEUE FUNKTION]** |
+| F17 | **Tags an Chats und Nachrichten** | 1.16 | **[NEUE FUNKTION]** |
+| F18 | **Stellenkontext an Beratendenidentität** | 1.14 | **[ÄNDERUNG ERFORDERLICH]** |
+| F19 | **Datei-Upload (10 MB)** | 1.15 | **[NEUE FUNKTION]** |
+| F20 | **Leer-/Lade-/Animationsregeln** | 1.17 | **[ÄNDERUNG ERFORDERLICH]** |
+| F21 | **Chatraum-Einstellungsmenü** (Archiv / stumm / Hilfe / einladen / Supervision / Zusammenfassung) | 1.9 | **[NEUE FUNKTION]** |
+| F22 | **Sprachnachrichten** (je Chat-Typ erlauben/verbieten) | 1.13 | **[NEUE FUNKTION]** |
+| F23 | **Mehrsprachige Oberfläche** (DE / EN / TR / FR) | 1.6 usw. | **[ÄNDERUNG ERFORDERLICH]** — bisher EN/DE; FR und TR jetzt gleichwertig bestätigt. |
+
+## 3. Dokumentationsänderungen
+
+Folgende Seiten geändert oder erstellt, um §2 abzubilden:
+
+| Abschnitt | Datei | Änderung |
+|---|---|---|
+| Live-Chat | `product/features/live-chat.mdx` | Hinweis „nicht nur Einzelgespräch“, Gruppenlink, Mehrfachversand ergänzt. |
+| Kernfunktionenübersicht | `product/features/index.mdx` | Karten für Gruppen, KI, Übergabe, Benachrichtigungen, Hilfe ergänzt. |
+| KI-Werkzeuge (umbenannt) | `product/features/ai-tools.mdx` | **NEU** — ersetzt „nur Transkripte“ durch Zusammenfassung, PII-Unkenntlichmachung, Markierung, intelligente Weiterleitung. |
+| Gruppenchats | `product/features/group-chats.mdx` | **NEU** — Typen, Mehrfachversand, Supervision, Mitgliederlebenszyklus, Löschung bei Verlassen. |
+| Fallübergabe | `product/features/handover.mdx` | **NEU** — Gründe, Einwilligungsmatrix, Systemnachrichten für beide Rollen. |
+| Benachrichtigung / Eskalation | `product/features/notifications.mdx` | **NEU** — Eingang und Hilfe. |
+| Rollen / Berechtigungen | `product/roles-permissions.mdx` | Matrix je Chat-Typ (F8). |
+| Datenmodell | `product/data-model.mdx` | Ergänzt: `GroupChat`, `ChatType`, `Notification`, `MessageAddressing`, `MarkAnnotation`, `BlurAnnotation`, `HandoverEvent`, `EscalationRequest`, `ChatTag`, `ClientEmail`, `MFAFactor`, `FeaturePermission`. |
+| UI / UX | `product/ui-ux.mdx` | Tabellen für Gruppen, Benachrichtigungen, Übergabe, Berechtigungen, Empfänger, Markierung/Unkenntlichmachung. |
+| Sonderfälle | `product/edge-cases.mdx` | Figma-Fragen und neue Fälle zu Übergabe, Mehrfachversand, Unkenntlichmachung, Gruppenverlassen. |
+| Annahmen | `product/assumptions.mdx` | „Durch Figma Mai 2026 bestätigt“ und offene Punkte. |
+| `docs.json` | Navigation | Neue Seiten unter „Kernfunktionen“ und Gruppe „Zusammenarbeit und Werkzeuge“. |
+
+## 4. Fehlende oder unvollständige Logik
+
+Figma zeigt Lücken mit noch nicht festgelegtem Backend- oder Produktverhalten.
+
+### 4.1 Selbstlöschung im Videoanruf (Figma-Frage)
+
+> *„Was passiert bei Selbstlöschung während Videoanruf, wenn die Person ihn gestartet hat?“*
+
+- **[FEHLENDER ABLAUF]** — keine Oberfläche zur Entscheidung „Startrolle weitergeben“ / „beim Weggang beenden“.
+- **Vorgeschlagen**: [Sonderfälle §9.1.7](/product/edge-cases#9-1-7-client-deletes-self-during-active-video-call). LiveKit-Raum bleibt für übrige Beratende; Startrolle an nächste Person nach `joined_at` ASC; ohne Beratende Ende.
+
+### 4.2 Selbstlöschung im Gruppenchat (Figma-Frage)
+
+> *„Was passiert, wenn sich Ratsuchende aus einem Gruppenchat löschen?“*
+
+- **[FEHLENDER ABLAUF]** — bisher Gruppen nur unter Beratenden angenommen.
+- **Vorgeschlagen**: [Sonderfälle §9.1.8](/product/edge-cases#9-1-8-client-deletes-self-from-group-chat). Pseudonym sofort löschen; Nachrichten bleiben (E2EE-Inhalte keine personenbezogenen Daten), Autor *„Ehemaliger Teilnehmer“*. Letzte ratsuchende Person → automatisch archivieren.
+
+### 4.3 Mehrfachversand — serverseitige Durchsetzung
+
+- **[UNKLARES VERHALTEN]** — Matrix kennt keine nachrichtenbezogene Beschränkung „nur sichtbar für“.
+- **Vorgeschlagene Umsetzung**: Server-Bot „Carimat-relay“ als einziger Absender beschränkter Nachrichten — jede Kopie als Einzel-Neben-Thread ODER Matrix `m.room.encrypted` mit Megolm-Sitzungen je Empfänger. Entscheidung nötig.
+
+### 4.4 PII-Unkenntlichmachung — Haltbarkeit der Markierungen
+
+- **[UNKLARES VERHALTEN]** — wo liegen bei E2EE-Inhalten die Bereiche? Optionen:
+  - (a) strukturiertes Feld im selben verschlüsselten Ereignis;
+  - (b) getrenntes Annotationsereignis über `event_id`. (b) überlebt Schlüsselwechsel besser, verlangt aber Abruf im Empfänger-Client.
+
+### 4.5 Phasenmodell
+
+- **[FEHLENDER ABLAUF]** — `Anfragephase` und `Vermittlungsphase` sichtbar, Übergänge unspezifiziert. Vermutlich:
+  - Anfragephase: Ticket erstellt, niemand zugewiesen.
+  - Vermittlungsphase: Beratende angenommen, Einwilligung Nr. 2 fehlt **oder** Übergabeannahme ausstehend.
+  - Aktiv: beide Einwilligungen, Raum fertiggestellt.
+
+### 4.6 Übergabegründe und Einwilligung
+
+- **[UNKLARES VERHALTEN]** — Figma nennt bei „Rechtsverstoß“ eine Strafverfolgungsvertretung; möglicherweise Behördenzugriff. Rechtsablauf (Anordnung, Offenlegungsumfang, Schlüsselzugriff) außerhalb Oberfläche, aber vor Freischaltung **zwingend** festzulegen. Heute keine E2EE-Schlüsselhinterlegung; selbst mit Anordnung bleiben Inhalte unlesbar.
+
+### 4.7 Benachrichtigungskanäle
+
+- **[UNKLARES VERHALTEN]** — E-Mail-Kopie bei Adresse möglich. Push? Matrix besitzt Push-Gateways; nutzen wir sie ohne E-Mail? Entscheidung nötig.
+
+### 4.8 Optionale E-Mail — Datenschutz
+
+- **[UNKLARES VERHALTEN]** — „Für Beratende unsichtbar“ — sehen *Beratungsstellen-Admins* sie? Standard **nein** (privilegiertes Authentifizierungsfeld, nur Plattform-Admins für Recht/Authentifizierung).
+
+### 4.9 Sprachnachrichten
+
+- **[NEUE FUNKTION]** — Berechtigungszeile, noch keine Details: Format, Dauergrenze, Transkription? Sprach-E2EE in Matrix nicht trivial.
+
+## 5. Rekonstruktion der Nutzungsabläufe
+
+### 5.1 Beitritt über Link → optionale E-Mail und 2FA
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant Cl as Client
+  participant FE as ORISO-Frontend
+  participant US as UserService
+  participant KC as Keycloak
+  Cl->>FE: Open live-chat link
+  FE->>US: POST /live-chat/anonymous
+  US->>KC: create anonymous user
+  KC-->>FE: cookie + pseudonym
+  FE-->>Cl: Waiting Room + GDPR popup #1
+  Cl->>FE: Confirm consent
+  Note over Cl,FE: After session ends, before final wipe:
+  FE-->>Cl: "So geht es weiter" — capture optional email?
+  alt opted-in
+    Cl->>FE: Provide email
+    FE->>US: PUT /me/email (privileged-only field)
+    Cl->>FE: Enrol 2FA (App or email-magic)
+    FE->>KC: required-action: configure TOTP / Magic
+  end
+  alt account deletion
+    Cl->>FE: Click "Konto löschen"
+    FE->>US: DELETE /me
+    US->>KC: full wipe
+  end
+```
+
+### 5.2 Ticketübernahme → optionale Erweiterung zur Gruppe
+
+```mermaid
+sequenceDiagram
+  participant Co as Counselor
+  participant FE as ORISO-Admin
+  participant US as UserService
+  participant MX as Matrix
+  Co->>FE: Pick ticket from Inbox (Anfragephase)
+  FE->>US: POST /live-chat/accept
+  US->>MX: create encrypted room
+  Note over Co,FE: Active 1-1 chat ongoing
+  Co->>FE: "Invite more people" (⇧I)
+  FE->>US: POST /rooms/{id}/invite
+  US->>MX: invite peers → room becomes group
+  Note over Co,FE: Client sees "Counsellor invited X" system msg + may consent again
+```
+
+### 5.3 Beschränkte Nachricht („nur sichtbar für Moderierende“)
+
+```mermaid
+sequenceDiagram
+  participant Co as Counselor
+  participant FE as ORISO-Element
+  participant Bot as Carimat-Relay (server)
+  participant MX as Matrix
+  Co->>FE: Compose msg → Adressaten wählen
+  FE->>FE: Lock send unless ≥1 recipient selected
+  Co->>FE: Pick "3 Moderators" + send
+  FE->>Bot: encrypted_payload + recipient_set
+  Bot->>MX: For each recipient, send 1-to-1 sub-thread (or per-recipient Megolm)
+  Bot-->>FE: ack with sub-event-ids
+  FE-->>Co: chip "visible only to: 3 Moderators"
+```
+
+### 5.4 PII markieren und unkenntlich machen, dann an Editor senden
+
+```mermaid
+sequenceDiagram
+  participant Co as Counselor
+  participant FE as ORISO-Element
+  participant US as UserService
+  Co->>FE: Highlight client text
+  FE->>FE: Apply color (Tiptap mark)
+  Co->>FE: Toggle "blur" eye → 80% white overlay
+  Co->>FE: Click "send all marked → editor"
+  FE->>FE: Decrypt locally, scrub, package as case-note draft
+  FE->>US: POST /case-notes (encrypted at rest)
+  US-->>FE: 201 Created
+```
+
+### 5.5 Fallübergabe
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant Co1 as Counselor A (going off)
+  participant Co2 as Counselor B (taking over)
+  participant FE as ORISO-Admin
+  participant US as UserService
+  participant Cl as Client
+  Co1->>FE: Open Handover modal
+  Co1->>FE: Pick reason (Sickness)
+  Co1->>FE: Select Co2 from same agency
+  FE->>US: POST /handover { from, to, reason }
+  US->>US: check consent rules for reason
+  US->>Co2: invite to room
+  US->>Cl: System msg "Deine vorherige Beraterin ist leider krank…"
+  alt reason needs client consent
+    US->>Cl: ask consent
+    Cl-->>US: accept / reject
+  end
+  Co2->>FE: accept
+  US->>MX: rotate room ownership; remove Co1
+```
+
+### 5.6 Hilfsanfrage / interne Eskalation
+
+```mermaid
+sequenceDiagram
+  participant Co as Counselor
+  participant FE as ORISO-Admin
+  participant US as UserService
+  participant Sup as Supervisor
+  Co->>FE: Chatraum Einstellungen → Help requests (⇧Ä)
+  FE->>US: POST /escalation { chatId, recipient, mode: internal|external }
+  US->>Sup: notification + read-only Matrix invite
+  Sup-->>FE: review and respond (in-thread)
+```
+
+### 5.7 KI-Zusammenfassung
+
+```mermaid
+sequenceDiagram
+  participant Co as Counselor
+  participant FE as ORISO-Element
+  participant AI as AI Workflow (self-hosted)
+  participant US as UserService
+  Co->>FE: Click "Chat Zusammenfassen" (⇧Ü)
+  FE->>FE: Decrypt last N events locally
+  FE->>FE: Strip PII tokens
+  FE->>AI: POST /summarize (scrubbed text)
+  AI-->>FE: bullet-summary
+  FE->>Co: editable summary panel
+  Co->>FE: Save
+  FE->>US: PUT /case-notes/{id}
+```
+
+## 6. Rollenbezogene Erkenntnisse
+
+### 6.1 Plattform-Admin
+
+- Ergänzt: **Berechtigungsmatrix je Chat-Typ** (F8) als Plattformstandard bearbeiten.
+- Ergänzt: weltweit verfügbare **Übergabegründe** und erforderliche Einwilligungen festlegen.
+- Ergänzt: KI-Zusammenfassung, Unkenntlichmachung, Mehrfachversand plattformweit umschalten.
+- Einschränkung: Inhalte weiterhin nicht lesbar.
+
+### 6.2 Träger-Admin
+
+- Ergänzt: Matrix für ganzen Träger überschreiben, soweit Plattform erlaubt.
+- Ergänzt: Sprachnachrichten, Threads, Anrufe je Chat-Typ schalten.
+- Ergänzt: Stellenkontext an Avataren Beratender pflegen.
+
+### 6.3 Beratungsstellen-Admin
+
+- Ergänzt: Matrix je Stelle überschreiben.
+- Ergänzt: Einladungen für **Gruppenchats** (Runden, Selbsthilfe).
+- Ergänzt: Beratende mit **Supervisionsfunktion** je Gruppe auswählen.
+
+### 6.4 Beratende
+
+- Ergänzt: Alle Werkzeuge in Einzel-/Gruppen-/Supervisionschats — Mehrfachversand, Markierung/Unkenntlichmachung, KI, Übergabe, Hilfe, Upload.
+- Einschränkung: Jedes Werkzeug durch Matrix des aktuellen Chat-Typs begrenzt.
+
+### 6.5 Ratsuchende (anonym oder mit optionaler E-Mail)
+
+- Ergänzt: Optionale E-Mail, 2FA, Kontolöschung.
+- Ergänzt: Eigener Benachrichtigungseingang.
+- Ergänzt: Teilnahme an Gruppen (Selbsthilfe), aber **Mehrfachversand, Markierung/Unkenntlichmachung, KI, Übergabe, Hilfe verborgen**.
+- Ergänzt: Jederzeit Gruppe verlassen → Pseudonym gelöscht; Nachrichten im Verlauf anderer als „Ehemaliger Teilnehmer“.
+
+### 6.6 Supervision (Funktion Beratender)
+
+- Ergänzt: Hilfseinladungen empfangen.
+- Ergänzt: Nur lesend oder vollständig je Einstellung teilnehmen.
+- Ergänzt: Sichtbar mit Systemnachricht *„Supervision aktiviert!“*.
+
+## 7. Annahmen
+
+Diese sind **ausdrücklich** und noch gegen Code / Frank zu prüfen.
+
+- **A1 — Gruppenchat = verallgemeinerter Matrix-Raum.** Kein neues Protokoll; gleicher Synapse mit mehreren Beratenden/Ratsuchenden und Chat-Typ-Metadaten.
+- **A2 — Mehrfachversand über Server-Relay-Bot oder Megolm je Empfänger.** Nicht Matrix-nativ; Entscheidung nötig.
+- **A3 — Markierung/Unkenntlichmachung als Überlagerungsannotation**, getrennt vom Inhalt, verschlüsselt synchronisiert.
+- **A4 — KI-Zusammenfassung im Browser (entschlüsseln/bereinigen) → selbst betriebener Dienst.** Server sieht niemals verschlüsselten Text oder personenbezogene Informationen.
+- **A5 — Drei Phasen**: `Anfragephase`, `Vermittlungsphase`, `Aktiv`. Vermittlungsphase umfasst ausstehende DSGVO Nr. 2 und Übergabe. Prüfung nötig.
+- **A6 — „E-Mail für Beratende unsichtbar“ bedeutet nur Plattform-Admin** für Recht/Authentifizierung; nie Beratungsstellen-Admin oder Beratende.
+- **A7 — 2FA per App oder E-Mail** für Ratsuchende optional, nur bei erfasster E-Mail.
+- **A8 — Kontolöschung** nutzt Löschpipeline des Raumverlassens plus E-Mail und Benachrichtigungen.
+- **A9 — Berechtigungen kaskadieren**: Plattform → Träger → Stelle → Chat-Typ. Effektiv UND aller Ebenen (Abschalten oben gewinnt gegen Anschalten unten).
+- **A10 — Sprachnachrichten**: Megolm-verschlüsselte Opus-Blöcke im Matrix-Medienspeicher, ≤ 48 Stunden wie Text.
+- **A11 — Tags** je Beratungsstelle; „Keinen passenden Tag gefunden?“ öffnet „Administration fragen“.
+- **A12 — Animationsregel**: einmal je Klick, ≤ 0,7×, keine Schleife. Globale UX-Konstante.
+- **A13 — Sprachen**: DE / EN / TR / FR gleichwertig bestätigt. Standard Browsersprache mit englischem Rückfall, nicht Deutsch.
+- **A14 — Uploadgrenze** zehn MB je Datei; MIME-Positivliste `jpg, png, pdf, docx, xlsx`. Andere serverseitig abgewiesen.
+- **A15 — Einladungsregel**: Weitere Person im aktiven Einzelchat macht Gruppe; Ratsuchende sehen Systemnachricht und je Trägerrichtlinie neue Einwilligung.
+- **A16 — Übergabegründe mit externer Behörde** („Rechtsverstoß“) dürfen E2EE nicht brechen; nur Metadatenzugriff. Rechtliche Eskalation dokumentiert, in v3 nicht umgesetzt.
+- **A17 — Carimat / skriptgesteuerter Einstieg** geplanter Name des vorgegebenen Erstnachrichtenbots für Thema/Sprache; noch nicht umgesetzt.
+
+Ist A1–A17 falsch, bitte zuerst diese Seite korrigieren und übrige Dokumentation folgen lassen.

@@ -1,0 +1,22 @@
+{
+  "title": "Archive",
+  "pages": [
+    "graph-validation-report",
+    "onboarding-guide",
+    "ORISO-Admin",
+    "ORISO-AgencyService",
+    "ORISO-ConsultingTypeService",
+    "ORISO-Database",
+    "ORISO-Frontend",
+    "ORISO-Helm",
+    "ORISO-Keycloak",
+    "ORISO-Kubernetes",
+    "ORISO-TenantService",
+    "ORISO-UserService",
+    "super-graph-detailed",
+    "super-graph-explorer",
+    "super-graph-index",
+    "understand-anything-inventory",
+    "user-management-flow"
+  ]
+}

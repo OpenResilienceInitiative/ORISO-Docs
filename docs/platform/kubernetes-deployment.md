@@ -1,98 +1,135 @@
 ---
-title: Kubernetes Deployment
-description: Enriched Kubernetes deployment, ingress, chart and operations summary.
+title: Kubernetes deployment
+description: From a merged pull request to a running pod — the CI path, the umbrella chart, and the single-domain ingress that replaced the per-service subdomains.
 ---
 
-# Kubernetes Deployment
+# Kubernetes deployment
 
-## Platform Navigation
+ORISO is deployed by **one Helm umbrella chart**. Everything else — raw manifests, the
+older per-service subdomain scheme — is historical. If you are changing routing,
+hostnames, resources, probes or secrets, [ORISO-Helm](https://github.com/OpenResilienceInitiative/ORISO-Helm)
+is the file you edit.
 
-- [Overview](./overview.md)
-- [Repository map](./repository-map.md)
-- [Architecture](./architecture.md)
-- [Authentication and Keycloak](./authentication-and-keycloak.md)
-- [Database and data model](./database-and-data-model.md)
-- [Kubernetes deployment](./kubernetes-deployment.md)
-- [Frontend/Admin overview](./frontend-admin-overview.md)
-- [Backend services](./backend-services.md)
-- [Tenant lifecycle](./tenant-lifecycle.md)
-- [User management flow](./user-management-flow.md)
-- [Local development](./local-development.md)
-- [Onboarding guide](./onboarding-guide.md)
-- [Troubleshooting](./troubleshooting.md)
-- [Graph validation report](./graph-validation-report.md)
-- [Diagrams](./diagrams.md)
+## The deploy path
 
-Diagram: [deployment-flow.mmd](./diagrams/deployment-flow.mmd)
+```mermaid
+flowchart LR
+  PR["pull request"] -->|"PR validation workflow"| CI["build, lint, unit and<br/>Storybook component tests"]
+  CI --> M["merge to dev / pre-dev / main"]
+  M -->|"ci-main.yml"| IMG["container image<br/>ghcr.io/openresilienceinitiative/…"]
+  REL["release/&lt;service&gt;-* branch"] -->|"release-image.yml"| TAG["tagged release image<br/>+ git tag + GitHub release"]
+  IMG --> V["chart values<br/>image repository and tag"]
+  TAG --> V
+  V --> H["helm upgrade --install<br/>umbrella chart online-counseling"]
+  H --> K["cluster: Deployments, Services,<br/>ConfigMaps, Secrets, Ingress"]
+  K --> ING["main-ingress<br/>one host, path rules"]
+```
 
-## Charts
+Concretely:
 
-- admin
-- agencyservice
-- clickhouse
-- consultingtypeservice
-- element
-- element-call
-- frontend
-- health-dashboard
-- keycloak
-- livekit
-- mariadb
-- matrix-synapse
-- mongodb
-- otel-collector
-- rabbitmq
-- redis
-- redis-commander
-- redis-exporter
-- service-health-exporter
-- signoz
-- status-page
-- storybook
-- tenantservice
-- userservice
+| Step | Where it is defined |
+| --- | --- |
+| PR validation | [`ORISO-Frontend/.github/workflows/ci-pull-request.yml`](https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/dev/.github/workflows/ci-pull-request.yml) and its equivalents per repository |
+| Image build on `main`, `dev`, `pre-dev` | [`ORISO-Frontend/.github/workflows/ci-main.yml`](https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/dev/.github/workflows/ci-main.yml), [`ORISO-Admin/.github/workflows/ci-main.yml`](https://github.com/OpenResilienceInitiative/ORISO-Admin/blob/dev/.github/workflows/ci-main.yml) |
+| Release image from a `release/*` branch | [`ORISO-UserService/.github/workflows/release-image.yml`](https://github.com/OpenResilienceInitiative/ORISO-UserService/blob/dev/.github/workflows/release-image.yml), [`ORISO-Frontend/.github/workflows/release-image.yml`](https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/dev/.github/workflows/release-image.yml) |
+| Chart release | [`ORISO-Helm/.github/workflows/release-helm-chart.yml`](https://github.com/OpenResilienceInitiative/ORISO-Helm/blob/dev/.github/workflows/release-helm-chart.yml), triggered manually with a version |
 
-## Ingress Routing
+The registry is `ghcr.io`, organisation `openresilienceinitiative`. Backend release
+builds run on JDK 21, matching the `pom.xml` of every service.
 
-| File | Hosts | Services |
-| --- | --- | --- |
-| ingress/00-keycloak-auth-domain-ingress.yaml | auth.oriso-dev.site | oriso-platform-keycloak |
-| ingress/01-keycloak-ingress.yaml | api.oriso-dev.site | oriso-platform-keycloak |
-| ingress/02-userservice-ingress.yaml | api.oriso-dev.site | oriso-platform-userservice |
-| ingress/03-agencyservice-ingress.yaml | api.oriso-dev.site | oriso-platform-agencyservice |
-| ingress/04-consultingtypeservice-ingress.yaml | api.oriso-dev.site | oriso-platform-consultingtypeservice |
-| ingress/05-tenantservice-ingress.yaml | api.oriso-dev.site | oriso-platform-tenantservice |
-| ingress/06-matrix-ingress.yaml | api.oriso-dev.site | oriso-platform-matrix-synapse |
-| ingress/08-uploadservice-ingress.yaml | api.oriso-dev.site | oriso-platform-uploadservice |
-| ingress/10-health-ingress.yaml | api.oriso-dev.site | oriso-platform-health-dashboard |
-| ingress/11-rocketchat-ingress.yaml | api.oriso-dev.site | rocketchat |
-| ingress/12-matrix-domain-ingress.yaml | matrix.oriso-dev.site | oriso-platform-matrix-synapse |
-| ingress/13-frontend-ingress.yaml | app.oriso-dev.site | oriso-platform-frontend |
-| ingress/14-admin-ingress.yaml | admin.oriso-dev.site | oriso-platform-admin |
-| ingress/15-health-dashboard-ingress.yaml | health.oriso-dev.site | oriso-platform-health-dashboard |
-| ingress/16-element-ingress.yaml | element.oriso-dev.site | oriso-platform-element |
-| ingress/17-element-call-ingress.yaml | call.oriso-dev.site | oriso-platform-element-call |
-| ingress/18-livekit-ingress.yaml | livekit.oriso-dev.site | oriso-platform-livekit-token-service, oriso-platform-livekit |
-| ingress/19-redis-commander-ingress.yaml | redis.oriso-dev.site | oriso-platform-redis-commander |
-| ingress/20-signoz-ingress.yaml | signoz.oriso-dev.site | oriso-platform-signoz |
-| ingress/21-status-page-ingress.yaml | status.oriso-dev.site | oriso-platform-status-page |
-| ingress/22-storybook-ingress.yaml | storybook.oriso-dev.site | oriso-platform-storybook |
-| ingress/ingress-values.yaml | - | - |
+## The chart
 
-## Operations Findings
+[`ORISO-Helm`](https://github.com/OpenResilienceInitiative/ORISO-Helm) is an umbrella
+chart named `online-counseling`
+([`Chart.yaml`](https://github.com/OpenResilienceInitiative/ORISO-Helm/blob/dev/Chart.yaml)).
+The infrastructure subcharts are vendored under `charts/` and referenced through
+`file://` repositories, so `helm dependency update` rebuilds the lock file from the
+repository itself:
 
-- HPA manifests found: no.
-- NetworkPolicy manifests found: no.
-- PDB manifests found: no.
-- Charts with pullPolicy Never: agencyservice, consultingtypeservice, element, element-call, frontend, health-dashboard, livekit, status-page, storybook, tenantservice, userservice.
-- Charts with latest tag: admin, agencyservice, consultingtypeservice, element, element-call, frontend, health-dashboard, livekit, matrix-synapse, redis-commander, redis-exporter, storybook, tenantservice, userservice.
-- Charts with empty resources/probes: consultingtypeservice, element, health-dashboard, keycloak, livekit, status-page, tenantservice, userservice.
+| Subchart | Purpose |
+| --- | --- |
+| `charts/keycloak` | Keycloak plus the realm export and the custom login/email theme |
+| `charts/mariadb` | MariaDB and the per-service SQL schemas |
+| `charts/mongodb` | consulting types and application settings |
+| `charts/rabbitmq`, `charts/redis` | messaging and cache |
+| `charts/signoz` | observability (upstream chart, pinned) |
 
-## Deployment Order
+The application workloads live in `templates/` — one folder per surface: `frontend/`,
+`admin/`, `userservice/`, `agencyservice/`, `consultingtypeservice/`, `matrix/`,
+`livekit/`, `element-call/`, `media-scanner/`, `health-dashboard/`, `nginx/`.
 
-1. Database/cache/queue: MariaDB, MongoDB, Redis, RabbitMQ, Matrix PostgreSQL where needed.
-2. Keycloak realm and auth ingress.
-3. Matrix/Element/Element Call/LiveKit communication stack.
+### Configuration
+
+Two files, both git-ignored, both created from a template before you can deploy:
+
+```bash
+cp values.yaml.default values.yaml
+cp secrets.yaml.default secrets.yaml
+```
+
+- [`values.yaml.default`](https://github.com/OpenResilienceInitiative/ORISO-Helm/blob/dev/values.yaml.default)
+  — `global.domainName`, the derived URLs, `global.keycloak.realm`, the Matrix server
+  name.
+- [`secrets.yaml.default`](https://github.com/OpenResilienceInitiative/ORISO-Helm/blob/dev/secrets.yaml.default)
+  — every credential. The chart refuses to render when
+  `agencyService.serviceEncryptionAppkey` is blank, because an empty key breaks agency
+  creation silently rather than loudly.
+- Per-environment overlays: [`values-dev.yaml`](https://github.com/OpenResilienceInitiative/ORISO-Helm/blob/dev/values-dev.yaml),
+  `values-pre-dev.yaml`, `values-prod.yaml`.
+
+The full option list is in the chart's
+[README](https://github.com/OpenResilienceInitiative/ORISO-Helm/blob/dev/README.md).
+
+## Ingress: one host, path prefixes
+
+Since [ADR-011](/decisions/adr-011) everything is served from a single host with path
+rules, defined in
+[`templates/nginx/main-ingress.yaml`](https://github.com/OpenResilienceInitiative/ORISO-Helm/blob/dev/templates/nginx/main-ingress.yaml):
+
+| Path prefix | Backend |
+| --- | --- |
+| `/` , `/static`, `/public` | frontend |
+| `/admin` | admin |
+| `/auth` | keycloak |
+| `/service/users`, `/service/useradmin`, `/service/conversations`, `/service/appointments`, `/service/liveproxy` | userservice |
+| `/service/agencies`, `/service/agencyadmin` | agencyservice |
+| `/service/consultingtypes`, `/service/consultingtypeadmin`, `/service/topic`, `/service/topicadmin`, `/service/topic-groups`, `/service/settings`, `/service/settingsadmin` | consultingtypeservice |
+| `/room` | element-call |
+
+Matrix keeps its own subdomain — the one deliberate exception, for homeserver and
+federation reasons ([ADR-005](/decisions/adr-005)). Additional ingresses under
+`templates/nginx/` handle TenantService's public paths, LiveKit, the media scanner and
+ACME challenges.
+
+Because there is only one origin, there are no cross-origin requests between app, admin
+and services, and one certificate covers the platform. That is the main reason the
+decision is hard to reverse: CORS allowlists, cookie domains and embedded links all
+assume it.
+
+## Historical: ORISO-Kubernetes
+
+[ORISO-Kubernetes](https://github.com/OpenResilienceInitiative/ORISO-Kubernetes) contains
+the earlier deployment: raw `kubectl` manifests plus Helm subcharts, with one subdomain
+per surface (`app.`, `admin.`, `api.`, `auth.`, `matrix.`) defined in
+[`ingress/`](https://github.com/OpenResilienceInitiative/ORISO-Kubernetes/blob/dev/ingress/README.md).
+Treat its routing documentation as history, not as the current shape — and do not open
+pull requests against its charts.
+
+The repository is nonetheless not dead: parts of the image build pipeline still live
+there. [ADR-011](/decisions/adr-011) records both the decision and that caveat.
+
+## Deployment order
+
+1. Data and messaging: MariaDB, MongoDB, Redis, RabbitMQ, Matrix PostgreSQL.
+2. Keycloak, with the realm imported.
+3. Matrix Synapse, Element Call and LiveKit.
 4. TenantService, ConsultingTypeService, AgencyService, UserService.
-5. Frontend/Admin.
-6. Ingress, DNS/TLS and observability.
+5. Frontend and Admin.
+6. Ingress, DNS and TLS, observability.
+
+## Related
+
+- [Architecture](./architecture.md)
+- [Database and data model](./database-and-data-model.md)
+- [Install and run locally](./install-and-run-locally.md)
+- [ADR-011 — Helm-only deployment, single-domain path routing](/decisions/adr-011)

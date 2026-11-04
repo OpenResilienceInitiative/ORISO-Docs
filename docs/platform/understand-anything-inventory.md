@@ -5,6 +5,8 @@ description: Inventory of every .understand-anything artifact found in all targe
 
 # Understand-Anything Artifact Inventory
 
+> **Outdated — archived.** A file-by-file inventory of build artifacts from May 2026, of no use to a reader of this site. See [How we keep the docs honest](./understand-anything.md).
+
 ## ORISO-Frontend
 
 - path: ../ORISO-Frontend/.understand-anything

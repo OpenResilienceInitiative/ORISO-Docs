@@ -5,9 +5,7 @@ description: Practical local startup order based on inspected repository depende
 
 # Local Development
 
-## Platform Navigation
-
-- [Overview](./overview.md)
+> **Active local development entry.** Start with [Install and run locally](./install-and-run-locally.md) for supported tooling and the local runner, then use this page for repository dependencies and startup order. These are source-derived instructions; check the supported runner before applying a manual setup.
 - [Repository map](./repository-map.md)
 - [Architecture](./architecture.md)
 - [Authentication and Keycloak](./authentication-and-keycloak.md)
@@ -80,7 +78,7 @@ description: Practical local startup order based on inspected repository depende
 
 ### ORISO-Kubernetes
 
-- Use helm/oriso-platform/values-local-macos.example.yaml for local overrides.
+- The previously referenced `helm/oriso-platform/values-local-macos.example.yaml` is absent from the inspected `dev` tree. Do not use that path. Choose the supported Docker/manual tracks in the local installation guide; a Kubernetes local override needs a separately reviewed configuration.
 - Deploy dependencies before backend and UI charts.
 
 ## Rule

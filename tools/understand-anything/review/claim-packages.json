@@ -1,0 +1,33 @@
+[
+  {
+    "id": "dsfa:legal-text-translation-third-country",
+    "repository": "ORISO-Admin",
+    "authoredPath": "oriso-platform/dsfa-text/evidence-map.yaml",
+    "references": ["translateLegalTexts"],
+    "qualification": "Admin sends legal text to TenantService translation. This source association does not verify the provider, destination country, consent or production transfer. Historical flow: enrich-admin.json flow:publish-legal-text. TenantService/provider evidence and human semantic review remain required.",
+    "authoredAnchor": "slug: legal-text-translation-third-country"
+  },
+  {
+    "id": "dsfa:case-handover-consent-policy",
+    "repository": "ORISO-Frontend",
+    "authoredPath": "oriso-platform/dsfa-text/evidence-map.yaml",
+    "references": [
+      "apiDecideCaseHandoverClientConsent",
+      "getVisibleCaseHandoverInternalDetailsForViewer"
+    ],
+    "qualification": "Frontend submits the client's decision to UserService and filters staff-only legacy details. This is not complete policy enforcement or runtime acceptance. Historical flow: enrich-frontend.json flow:case-handover. UserService reason policy and enforcement require separate evidence and human review.",
+    "authoredAnchor": "slug: case-handover-consent-policy"
+  },
+  {
+    "id": "feature:operator-master-data",
+    "repository": "ORISO-Admin",
+    "authoredPath": "tools/understand-anything/enrichments/enrich-admin.json",
+    "references": [
+      "getDpiaMasterData",
+      "updateDpiaMasterData",
+      "src/components/Tenants/DpiaSettings/api/dpiaTextGateway.ts"
+    ],
+    "qualification": "Authenticated master-data read/write is distinct from chapter text. dpiaTextGateway currently uses the mock when no adapter is registered; its presence does not prove persisted or approved chapter content. Historical flow: flow:edit-dpia-master-data. Actual operator identity and exact-version technical/operator/legal approvals remain open.",
+    "authoredAnchor": "\"id\": \"flow:edit-dpia-master-data\""
+  }
+]

@@ -135,7 +135,7 @@ All services expose Spring Boot Actuator health endpoints:
 curl http://oriso-platform-userservice.caritas.svc.cluster.local:8082/actuator/health
 
 # From outside cluster (via Ingress)
-curl https://api.oriso.org/actuator/health
+curl https://api.example.org/actuator/health
 ```
 
 ### Health Check Response
@@ -205,7 +205,7 @@ All service URLs use Kubernetes DNS:
 
 ### Health Dashboard
 All services are monitored by the Health Dashboard:
-- **URL:** http://91.99.219.182:9001
+- **URL:** http://YOUR_SERVER_IP:9001
 - **Checks:** Every 60 seconds
 - **Endpoints:** `/actuator/health`
 

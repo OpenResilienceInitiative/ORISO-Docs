@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-10-01T00:14:32.390452+00:00",
+  "environment": "isolated local M4",
+  "sourceVector": [
+    {
+      "repository": "ORISO-UserService",
+      "sourceSHA": "05ec3eb146fc53b2ccedb21165ed99bf6201e14e"
+    },
+    {
+      "repository": "ORISO-TenantService",
+      "sourceSHA": "eea5db184ebaddf80dab16e8f045af8c359c10e1"
+    },
+    {
+      "repository": "ORISO-AgencyService",
+      "sourceSHA": "33f8cfd61b75be2e1f7bcd45ba97f543ce7604af"
+    },
+    {
+      "repository": "ORISO-ConsultingTypeService",
+      "sourceSHA": "5a53d39be7ae8f58d287a01f27729dba9a208586"
+    },
+    {
+      "repository": "ORISO-Admin",
+      "sourceSHA": "0a6e747c5c65c75601695f14fb42d45c2ef892d3"
+    },
+    {
+      "repository": "ORISO-Frontend",
+      "sourceSHA": "1240b23a0f4fe5e25f017109d7289cc3a9a1d395"
+    }
+  ],
+  "runnerSourceSha256": "891a103deab3ddb3ebdf19d1ed0f72185536aa16e6072c30ab91866c97fa1fa8",
+  "checks": {
+    "userservice": {
+      "httpStatus": 200,
+      "health": "UP"
+    },
+    "tenantservice": {
+      "httpStatus": 200,
+      "health": "UP"
+    },
+    "agencyservice": {
+      "httpStatus": 200,
+      "health": "UP"
+    },
+    "consultingtypeservice": {
+      "httpStatus": 200,
+      "health": "UP"
+    },
+    "admin": {
+      "httpStatus": 200
+    },
+    "gateway": {
+      "httpStatus": 200
+    },
+    "httpsEdge": {
+      "httpStatus": 200,
+      "certificateVerified": true
+    },
+    "localOidc": {
+      "issuer": "http://localhost:8080/realms/online-beratung",
+      "technicalSubjectMatchesFixture": true,
+      "technicalRolePresent": true
+    },
+    "smtpCapture": {
+      "accepted": true,
+      "inboxReadback": true,
+      "externalDeliveryTested": false
+    }
+  },
+  "excluded": [
+    "platform mail journey",
+    "external delivery",
+    "custom Keycloak SPI",
+    "chat/call",
+    "DPA journey",
+    "Dev deployment",
+    "release publication"
+  ],
+  "browser": {
+    "url": "http://localhost:9000/admin/login",
+    "visibleResult": "Admin login; Username, Password and Sign in present",
+    "loginSubmitted": false
+  },
+  "teardown": {
+    "ownedProcessesAndContainersStopped": true,
+    "portsFreed": [
+      8081,
+      8082,
+      8083,
+      8084,
+      8088,
+      9443,
+      9000,
+      8080,
+      3306,
+      27017,
+      6379,
+      5672,
+      1025,
+      8025
+    ],
+    "namedVolumesPreserved": 5,
+    "preexistingElementCallContainersUnchanged": true
+  },
+  "runtimeInputHashes": {
+    "run-oriso-local.sh": "997c71890f956e9a3a61d4b27cbbb413f22810e6b0bfd666ce509476514a0c91",
+    "local_development.py": "891a103deab3ddb3ebdf19d1ed0f72185536aa16e6072c30ab91866c97fa1fa8",
+    "local_gateway.py": "39160ad053a0226806f116b940afb42302f864ef9aac903cad8d776a31a79705",
+    "compose.local.yml": "0c311a55f762ce9b361a691d62e69155dad552be075713467bd69593d0e9b8ae",
+    "fixtures/databases.sql": "4f9db2f06c38da778c3526ca4f9fe92488f3427a0c7023c21ad5d5817107e46d",
+    "fixtures/local-realm.json": "d39124039f8a53b86a84f3ac67743797033ea4efbe9c56defc614268f7e1df52"
+  }
+}

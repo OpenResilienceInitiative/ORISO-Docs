@@ -1,0 +1,131 @@
+---
+title: "4.1 AI Note-Taking & Transcripts"
+description: "What ORISO does with chat content today, the planned AI-assisted note-taking layer, and the privacy guarantees that constrain it."
+---
+
+<Warning>
+**Reality check**. Today, ORISO is a counseling chat platform, not a note-taking app. There is **no audio transcription pipeline**, and **no AI summarization** in production. Chat content lives in **end-to-end encrypted Matrix rooms**. This page documents (a) how chat content is handled today and (b) what the AI note-taking feature *would* look like, clearly labelled as planned.
+</Warning>
+
+<Info>
+**Superseded by [AI Tools (4.6)](/product/features/ai-tools)** as of May 2026. The Figma drop confirmed an active design for Chat Summary (`⇧Ü`), Mark Text, and PII Blur. Read this page for the historical context, then continue at [AI Tools](/product/features/ai-tools).
+</Info>
+
+## 4.1.1 Purpose
+
+Why a "transcription / note-taking" feature exists at all in this product:
+
+- **Counselor productivity** — between sessions, a counselor often writes a brief case note ("client wanted help with overdraft, cited rent arrears") for QA / handover.
+- **Supervisor review** — a `supervisor-consultant` may need to skim a session for training feedback.
+- **Audit trail (limited)** — a tamper-evident proof that *a session happened* (not its contents) is required for some legal reviews.
+
+These needs must coexist with two non-negotiable guarantees:
+
+1. **End-to-end encryption** — message bodies are unreadable by the server.
+2. **Wipe-on-disconnect** — anonymous client identity is destroyed within seconds-to-minutes.
+
+## 4.1.2 What Exists Today (Production)
+
+### Audio capture
+
+❌ **Not implemented.** LiveKit handles WebRTC video/voice rooms but does **not** record. There is no STT (speech-to-text) pipeline in the platform.
+
+### Text capture
+
+✅ **Implemented via Matrix.** Every chat session is a Matrix room. Each message is stored Megolm-encrypted in the Synapse PostgreSQL database. The server only ever sees ciphertext.
+
+### Storage
+
+| Layer | What is stored | Encryption | Retention |
+|---|---|---|---|
+| **Matrix Synapse (PostgreSQL)** | Encrypted message blobs, room metadata | Megolm E2EE | Auto-purged 48 h after session ends (the waiting-room copy explicitly tells the client this). |
+| **UserService (MariaDB)** | Session record (id, agency, topic, created/ended timestamps, pseudonym) | TLS in transit, column-level encryption for personal fields | Pseudonyms wiped seconds-to-minutes after disconnect; session record kept for short audit window then anonymized. |
+| **Element / ORISO-Element** | Local IndexedDB key cache for the user's session | Browser-encrypted | Cleared on tab close. |
+
+### Retrieval
+
+- Counselor: can re-open an active session in Element/ORISO-Element and read history *for as long as the room exists* (max 48 h).
+- Supervisor (function): can be invited as a read-only member into specific rooms for QA — but this requires them to hold the Megolm keys and is therefore **explicit and audited**.
+- Platform Admin: **cannot read** any chat content. They can see *that* a session occurred (timestamps, agency, ticket id) but not the words.
+
+## 4.1.3 What is Planned (AI Note-Taking)
+
+The product roadmap mentions AI-assisted **counselor case notes**. The shape of the feature, as currently understood:
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant Co as Counselor (browser)
+  participant FE as Element / ORISO-Element
+  participant AI as AI Notes Service (planned)
+  participant US as UserService
+
+  Co->>FE: Click "Generate case note"
+  Note over FE: Decryption keys live only in the browser
+  FE->>FE: Decrypt last N messages locally
+  FE->>AI: POST /summarize { ciphertext: false, scrubbed_text }
+  Note over FE,AI: Personally-identifying tokens scrubbed in-browser before send
+  AI-->>FE: Bullet-point summary
+  FE->>Co: Show summary; let counselor edit & save
+  Co->>FE: Save note
+  FE->>US: PUT /sessions/{id}/case-note  (encrypted at rest)
+```
+
+Design constraints (lifted directly from Frank's stated principles):
+
+- The AI must **never** see ciphertext from Synapse directly. Decryption happens in the counselor's browser.
+- The text sent to the AI is **PII-scrubbed** in the browser (names, emails, account numbers stripped/redacted).
+- The AI provider is run **inside the cluster** (self-hosted) or contractually GDPR-compliant.
+- The resulting note is **counselor-owned** — saved against the *counselor*, not the client.
+- The note is **never** linked back to the client's pseudonym after the session is wiped; only an opaque session id remains.
+
+Status: not built; `Plan only`. Use this page as the design starting point.
+
+## 4.1.4 How It Works (Today, Step-by-Step)
+
+### Capturing chat
+
+1. Counselor accepts a ticket (see [Live Chat](/product/features/live-chat)).
+2. UserService asks Matrix Synapse to create a fresh, encrypted room and invites both members.
+3. Element/ORISO-Element negotiates Megolm keys peer-to-peer.
+4. Every message thereafter is encrypted client-side and stored as ciphertext on Synapse.
+
+### Processing
+
+1. The server **does not process** message content. All semantic operations happen client-side.
+2. UserService stores only metadata: `session_id`, `agency_id`, `consultant_id`, `client_pseudonym`, `topic`, `started_at`, `ended_at`.
+
+### Retention
+
+| State | What persists |
+|---|---|
+| Active session | Ciphertext in Synapse + metadata in MariaDB |
+| Session ended (counselor closes) | Ciphertext for ≤ 48 h, then purged; metadata for short audit window |
+| Client disconnects mid-waiting-room | Pseudonym wiped within seconds-to-minutes; no ciphertext was ever exchanged |
+| Client closes mid-chat | Counselor can finish writing notes; client's keys are gone, room tombstones at session end |
+
+### Retrieval
+
+- **In-session retrieval**: Element/ORISO-Element fetches the last N events from Synapse, decrypts client-side.
+- **Post-session retrieval**: only metadata is retrievable; no message bodies after 48 h.
+
+## 4.1.5 Edge Cases
+
+- **Counselor closes laptop mid-session** → Session record stays "active" until heartbeat times out. UserService schedules cleanup.
+- **Megolm key loss** (e.g., browser cache cleared) → Older messages become unreadable even to the counselor. This is **expected** and consistent with the privacy model.
+- **Audit request** ("did session X happen?") → Platform Admin can confirm metadata. Cannot reveal content.
+- **Right-to-erasure request** (GDPR Art. 17) → Trivially satisfied: there is no client identity to erase. The session metadata can be anonymized further on request.
+
+## 4.1.6 Hard Rules
+
+- The server **must not** be able to decrypt chat. Any change that breaks this is rejected.
+- IPs **must not** be persisted in production.
+- AI processing **must not** happen on the server side without per-session, in-browser scrubbing.
+- Dev-mode logging (full bodies, IPs) is **never** allowed in production — a hard rule reinstated after the 2026 incident.
+
+## 4.1.7 Related Links
+
+- [Live Chat feature](/product/features/live-chat)
+- [Session Management](/product/features/session-management)
+- [Edge Cases](/product/edge-cases)
+- [Internal Functionality / Encryption](/product/internal-functionality)

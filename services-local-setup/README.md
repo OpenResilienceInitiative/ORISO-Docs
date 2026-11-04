@@ -1,187 +1,53 @@
-# Services Local Setup
+# ORISO local development
 
-This folder contains local-development runbooks and scripts for ORISO service work.
+[Deutsch](README.de.md) · [Detailed runbook](ORISO-local-development-runbook.md)
 
-## Status
+Use this runner for the local API/Admin development baseline. It starts four Java services, Admin, a loopback gateway, local Keycloak, MariaDB, MongoDB, Redis, RabbitMQ and a local Mailpit SMTP catcher. Service schemas and development seeds come from each service's Liquibase master, not copied SQL schemas. Chat, calls, outbound mail, DPA signing and custom Keycloak registration flows are outside this baseline.
 
-This local runner is **work in progress**. It is useful for local development, but it is not finished or fully validated for every developer machine yet.
+## Prepare the workspace
 
-Current expectation for peers:
+Use sibling Git repositories: ORISO-Docs, ORISO-UserService, ORISO-TenantService, ORISO-AgencyService, ORISO-ConsultingTypeService and ORISO-Admin. ORISO-Frontend is required only when selected. Git worktrees are supported. No Deployment or ORISO-Database checkout is required.
 
-- Use it as the shared starting point for local setup.
-- Run the script from the ORISO workspace root.
-- Keep fixes in this folder when a missing env var, tool, port, schema patch, or service dependency is discovered.
-- Do not treat the script as final production documentation yet.
+Install Python 3.10+, Git, OpenSSL, Docker with Compose v2, Java 21 and Node 22.12.0 with npm. Select Java in both JAVA_HOME and PATH. The runner reads the selected repositories' pom.xml and package.json; a later source requirement takes precedence over this summary. It rejects mismatches rather than choosing another installed runtime.
 
-## Documents
+Use an explicit workspace path, especially when ORISO-Docs itself is a managed worktree. Replace the example paths below with your sibling-repository directory and the runner in the selected Docs checkout/worktree. These paths can differ.
 
-- [ORISO Local Development Runbook](./ORISO-local-development-runbook.md)
-
-## Copied Reference Guides
-
-These guides were copied from `Deployment/guides` because they are directly relevant to local setup and troubleshooting:
-
-- [Keycloak Setup and Operations Guide](./guides/keycloak/KEYCLOAK_SETUP_AND_OPERATIONS_GUIDE.md)
-- [Tenant and Multitenancy Guide](./guides/tenant/TENANT_AND_MULTITENANCY_GUIDE.md)
-
-## Workspace Layout
-
-Create one parent workspace folder and clone the ORISO repos inside it as sibling folders:
-
-```text
-ORISO/
-  ORISO-Docs/
-  ORISO-Admin/
-  ORISO-Frontend/
-  ORISO-UserService/
-  ORISO-TenantService/
-  ORISO-AgencyService/
-  ORISO-ConsultingTypeService/
-  ORISO-Database/
-  ORISO-Keycloak/
-  Deployment/
-```
-
-The script expects this sibling-folder layout.
-
-## Required Tools
-
-Install before running:
-
-- Git
-- Docker Desktop with Docker Compose
-- Node.js and npm
-- Java 11
-- Java 17
-- SDKMAN, recommended for switching Java versions
-- curl
-
-Recommended Java installs:
-
+<!-- oriso-command: {"id": "readme-en-doctor", "environment": "local", "verification": "ready is true, required source revisions and runtime versions are listed; exit 1 means resolve errors before start", "risk": "read-only"} -->
 ```bash
-sdk install java 11.0.24-tem
-sdk install java 17.0.12-tem
+export ORISO_WORKSPACE_ROOT="/path/to/ORISO"
+export ORISO_LOCAL_RUNNER="/path/to/selected/ORISO-Docs/services-local-setup/run-oriso-local.sh"
+"$ORISO_LOCAL_RUNNER" doctor --json
 ```
 
-First run also needs internet access for Docker images, Maven dependencies, and npm packages.
+Doctor is read-only. It reports source commits, branches, tools, selected ports and supported capabilities; it does not print credentials, install dependencies or stop port listeners. Default selection is four backends plus Admin. Use --ui frontend, --ui both or --ui none to change it. Select a backend subset with --services "userservice tenantservice".
 
-## Clone Order
+## Start and stop
 
-Start with docs, then infrastructure/schema repos, then backend services, then UI repos:
+The bundled infrastructure uses local-only fixture credentials and binds published ports to loopback. Use disposable checkouts and data for the first validation. Starting installs missing UI dependencies and may build services; it creates owned runtime files and local database volumes.
 
+<!-- oriso-command: {"id": "readme-en-start", "environment": "local", "verification": "runner exits 0 only after selected application health and local OIDC metadata are ready; inspect owned logs on failure", "risk": "disposable-only"} -->
 ```bash
-mkdir ORISO
-cd ORISO
-
-git clone https://github.com/OpenResilienceInitiative/ORISO-Docs.git
-git clone https://github.com/OpenResilienceInitiative/ORISO-Database.git
-git clone https://github.com/OpenResilienceInitiative/ORISO-Keycloak.git
-
-git clone https://github.com/OpenResilienceInitiative/ORISO-UserService.git
-git clone https://github.com/OpenResilienceInitiative/ORISO-TenantService.git
-git clone https://github.com/OpenResilienceInitiative/ORISO-AgencyService.git
-git clone https://github.com/OpenResilienceInitiative/ORISO-ConsultingTypeService.git
-
-git clone https://github.com/OpenResilienceInitiative/ORISO-Admin.git
-git clone https://github.com/OpenResilienceInitiative/ORISO-Frontend.git
+"$ORISO_LOCAL_RUNNER" start all
 ```
 
-The local runner also expects:
+Captured test mail is available at http://localhost:8025; Mailpit has no outbound relay configured. Actual platform mail and external delivery remain unverified.
 
-```text
-Deployment/local/docker-compose.local.generated.yml
-```
+Admin is at http://localhost:9000, gateway at http://localhost:8088 and local auth at http://localhost:8080. The synthetic realm supports local development authentication; its users are not real operator identities. A successful start is a development baseline, not proof that every platform journey works.
 
-If `Deployment` is not available from the organization yet, copy or create the local deployment folder used by the team before running the script.
+Service callback origins use the real local HTTPS app edge at https://localhost:9443. Its owned certificate stays in the runtime directory; readiness trusts that certificate explicitly without changing your system or browser certificate store. With no Frontend selected, app routes return 503. Admin remains available over local HTTP. The optional HTTPS Frontend proxy does not establish a tested browser/auth/DPA journey; never bypass browser certificate warnings to claim one.
 
-## Important Repos
-
-Required for the current local runner:
-
-- `ORISO-Docs`: this runbook and script
-- `Deployment`: local Docker Compose and local gateway config target
-- `ORISO-Database`: MariaDB schema imports
-- `ORISO-Keycloak`: local realm import source
-- `ORISO-UserService`: user/admin APIs
-- `ORISO-TenantService`: tenant/unit APIs
-- `ORISO-AgencyService`: agency/place APIs
-- `ORISO-ConsultingTypeService`: settings and consulting type APIs
-- `ORISO-Admin`: Admin Panel UI
-- `ORISO-Frontend`: public/client frontend UI
-
-Optional for deeper chat/call/runtime work:
-
-- `ORISO-Matrix`
-- `ORISO-Livekit`
-- `ORISO-Element`
-- `ORISO-ElementCall`
-- `ORISO-Redis`
-- `ORISO-Status`
-- `ORISO-HealthDashboard`
-- `ORISO-SignOZ`
-
-## Local Script
-
-- [run-oriso-local.sh](./run-oriso-local.sh)
-
-### Hybrid mode (recommended for Admin/backend work)
-
-Run **ORISO services locally** but use **dev Keycloak** — no local realm import, no local Keycloak container:
-
+<!-- oriso-command: {"id": "readme-en-status", "environment": "local", "verification": "selected applications, owned gateway/auth routing and certificate-verified HTTPS edge report ready; infrastructure status is shown", "risk": "read-only"} -->
 ```bash
-./ORISO-Docs/services-local-setup/run-oriso-local.sh start --hybrid --ui admin
+"$ORISO_LOCAL_RUNNER" status
 ```
 
-This starts MariaDB, MongoDB, Redis, RabbitMQ, all four backend services, the local API gateway (`localhost:8088`), and Admin UI. Auth uses `https://auth.oriso.org` by default (`ORISO_DEV_KEYCLOAK_URL`).
-
-Open Admin: `http://localhost:9000/admin` — log in with your **dev Keycloak account**.
-
-Equivalent env form:
-
+<!-- oriso-command: {"id": "readme-en-stop", "environment": "local", "verification": "only this runtime's processes and containers stop; unrelated listeners remain and named volumes are preserved", "risk": "disposable-only"} -->
 ```bash
-ORISO_MODE=hybrid ./ORISO-Docs/services-local-setup/run-oriso-local.sh start --ui admin
+"$ORISO_LOCAL_RUNNER" stop all
 ```
 
-The script writes `ORISO-Admin/.env.local` with local API + dev Keycloak settings. Set `ORISO_FORCE_ENV=1` to rewrite an existing file.
+Never delete volumes to repair an unexplained migration error. Keep the failing log and source revision first. Use the runbook for isolated ports, troubleshooting, hybrid auth and verification evidence.
 
-### Full local mode (includes Keycloak)
+## Source and evidence
 
-```bash
-./ORISO-Docs/services-local-setup/run-oriso-local.sh start --ui admin
-```
-
-Quick commands:
-
-```bash
-./ORISO-Docs/services-local-setup/run-oriso-local.sh check
-./ORISO-Docs/services-local-setup/run-oriso-local.sh branches
-./ORISO-Docs/services-local-setup/run-oriso-local.sh start --ui admin
-./ORISO-Docs/services-local-setup/run-oriso-local.sh status
-./ORISO-Docs/services-local-setup/run-oriso-local.sh logs userservice
-./ORISO-Docs/services-local-setup/run-oriso-local.sh logs -f userservice
-./ORISO-Docs/services-local-setup/run-oriso-local.sh stop
-```
-
-Run ORISO-Frontend locally:
-
-```bash
-./ORISO-Docs/services-local-setup/run-oriso-local.sh start --ui frontend
-```
-
-Open:
-
-```text
-http://localhost:9002
-```
-
-Run both Admin and ORISO-Frontend:
-
-```bash
-./ORISO-Docs/services-local-setup/run-oriso-local.sh start --ui both
-```
-
-The script starts Docker infra, initializes local DBs when missing, applies required local schema patches, runs a local API gateway, and starts selected ORISO services in the background. Logs and PID files are written under `ORISO-Docs/services-local-setup/.local-runtime/`.
-
-## Scope
-
-Use the ORISO runbook for general local development. The runner always uses whichever branch is currently checked out in each local repo.
+Maintained with ORISO-Docs issue [48](https://github.com/OpenResilienceInitiative/ORISO-Docs/issues/48). English and German instructions share the runner contract. Current source requirements were checked on 2026-10-01 against origin/dev. Executable command annotations describe intended environment and expected results; they do not grant approval or prove execution. CI checks their extraction without executing them. The detailed runbook records the distinction between source checks, a local stack and public release verification.

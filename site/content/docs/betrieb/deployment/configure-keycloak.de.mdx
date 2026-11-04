@@ -1,0 +1,213 @@
+---
+title: "Keycloak konfigurieren"
+description: "HTTP-Zugriff auf Keycloak konfigurieren (verpflichtend) und den ORISO-Realm zur Authentifizierung importieren"
+source: "oriso-platform/configure-keycloak.mdx"
+---
+
+Konfigurieren Sie Keycloak für HTTP-Zugriff und importieren Sie den ORISO-Realm. Dieser Schritt ist **entscheidend**, damit die Authentifizierung korrekt funktioniert. Keycloak wird über Helm als Teil des übergeordneten Charts `oriso-platform` bereitgestellt.
+
+<Callout type="warn">
+**Dieser Schritt ist VERPFLICHTEND, damit die Authentifizierung funktioniert!** Wird er ausgelassen, schlägt die Authentifizierung in allen Diensten fehl.
+</Callout>
+
+<Callout>
+Keycloak wird als Dienst `oriso-platform-keycloak` im Namespace `caritas` bereitgestellt. Greifen Sie darauf zu über:
+- **Intern:** `http://oriso-platform-keycloak.caritas.svc.cluster.local:8080`
+- **Extern:** `https://auth.example.org` (über Ingress)
+</Callout>
+
+<Steps>
+<Step title="HTTP-Zugriff konfigurieren">
+
+Deaktivieren Sie die SSL-Anforderungen der Keycloak-Realms, um HTTP-Zugriff zu ermöglichen. Dies ist für den Authentifizierungsablauf erforderlich.
+
+<Callout>
+Warten Sie, bis der Keycloak-Pod vollständig bereit ist (etwa 60 Sekunden nachdem der Pod als Running angezeigt wird), bevor Sie diese Befehle ausführen.
+</Callout>
+
+**Option A: Skript verwenden (empfohlen)**
+
+```bash
+# Wait for Keycloak to be fully ready
+kubectl wait --for=condition=ready pod -l app=keycloak -n caritas --timeout=300s
+sleep 60  # Additional wait for Keycloak to fully initialize
+
+# Run HTTP configuration script
+cd ~/online-beratung/caritas-workspace/ORISO-Keycloak
+chmod +x configure-http-access.sh
+./configure-http-access.sh
+```
+
+<Callout>
+Falls das Skript nicht vorhanden ist, verwenden Sie unten Option B (manuelle Konfiguration).
+</Callout>
+
+**Option B: Manuelle Konfiguration**
+
+```bash
+# Get Keycloak pod name
+KEYCLOAK_POD=$(kubectl get pods -n caritas -l app=keycloak -o jsonpath="{.items[0].metadata.name}")
+
+# Configure kcadm credentials
+kubectl exec -n caritas $KEYCLOAK_POD -- \
+  /opt/keycloak/bin/kcadm.sh config credentials \
+  --server http://localhost:8080 \
+  --realm master \
+  --user admin \
+  --password admin
+
+# Disable SSL for master realm
+kubectl exec -n caritas $KEYCLOAK_POD -- \
+  /opt/keycloak/bin/kcadm.sh update realms/master -s sslRequired=NONE
+
+# Disable SSL for all realms
+kubectl exec -n caritas $KEYCLOAK_POD -- bash -c '
+/opt/keycloak/bin/kcadm.sh config credentials --server http://localhost:8080 --realm master --user admin --password admin
+for r in $(/opt/keycloak/bin/kcadm.sh get realms --fields realm --format csv | tail -n +2); do
+  echo "Processing realm: $r"
+  /opt/keycloak/bin/kcadm.sh update realms/"$r" -s sslRequired=NONE
+done'
+```
+
+**Konfiguration prüfen**
+
+```bash
+# Verify SSL requirement is disabled
+kubectl exec -n caritas $KEYCLOAK_POD -- \
+  /opt/keycloak/bin/kcadm.sh get realms/master --fields sslRequired
+```
+
+<Callout type="success">
+Die Ausgabe sollte `sslRequired` für den master-Realm als `NONE` anzeigen.
+</Callout>
+
+</Step>
+
+<Step title="Keycloak-Realm importieren">
+
+Importieren Sie die ORISO-Realm-Konfiguration in Keycloak. Dies ist über die Administrationskonsole oder die Kommandozeile möglich.
+
+**Server-IP ermitteln**
+
+```bash
+# Get server IP
+SERVER_IP=$(hostname -I | awk '{print $1}')
+echo "Server IP: $SERVER_IP"
+```
+
+**Option A: Administrationskonsole verwenden (für die visuelle Prüfung empfohlen)**
+
+1. Öffnen Sie den Browser und navigieren Sie zu: `https://auth.example.org/admin/` (oder `http://YOUR_SERVER_IP:8080/admin/`, falls Ingress nicht konfiguriert ist).
+2. Melden Sie sich mit den Zugangsdaten `admin` / `admin` an (Standardwerte, in Produktion ändern).
+3. Öffnen Sie die Realm-Auswahl "Master" → Klicken Sie auf "Add realm".
+4. Klicken Sie auf "Select file".
+5. Navigieren Sie zu: `~/online-beratung/caritas-workspace/ORISO-Keycloak/realm.json`
+6. Laden Sie die Datei hoch und klicken Sie auf "Create".
+7. Prüfen Sie, ob der Realm "online-beratung" erstellt wurde.
+
+<Callout type="success">
+Der Realm "online-beratung" sollte im Realm-Auswahlmenü erscheinen.
+</Callout>
+
+**Option B: Kommandozeile verwenden**
+
+```bash
+# Copy realm to Keycloak pod
+KEYCLOAK_POD=$(kubectl get pods -n caritas -l app=keycloak -o jsonpath="{.items[0].metadata.name}")
+
+kubectl cp ~/online-beratung/caritas-workspace/ORISO-Keycloak/realm.json \
+  caritas/$KEYCLOAK_POD:/tmp/realm.json
+
+# Import realm
+kubectl exec -n caritas $KEYCLOAK_POD -- \
+  /opt/keycloak/bin/kc.sh import --file /tmp/realm.json
+
+# Restart Keycloak
+kubectl rollout restart deployment/keycloak -n caritas
+```
+
+<Callout>
+Der Neustart des Keycloak-Pods kann 1–2 Minuten dauern. Warten Sie, bis der Pod bereit ist, bevor Sie fortfahren.
+</Callout>
+
+</Step>
+</Steps>
+
+## Überprüfung
+
+Prüfen Sie nach Abschluss beider Schritte, ob Keycloak korrekt konfiguriert ist:
+
+```bash
+# Check Keycloak pod is running
+kubectl get pods -n caritas | grep keycloak
+
+# Check Keycloak is accessible (internal)
+kubectl exec -n caritas deployment/oriso-platform-keycloak -- \
+  curl -I http://localhost:8080
+
+# Check realm is accessible (via Ingress)
+curl -s https://auth.example.org/realms/online-beratung/.well-known/openid-configuration | jq .realm
+
+# Or check internally
+kubectl exec -n caritas deployment/oriso-platform-keycloak -- \
+  curl -s http://localhost:8080/realms/online-beratung/.well-known/openid-configuration | jq .realm
+```
+
+<Callout type="success">
+Die erwartete Ausgabe sollte den Realm-Namen "online-beratung" in der JSON-Antwort zeigen.
+</Callout>
+
+## Fehlerbehebung
+
+### Fehler „HTTPS Required“
+
+Wenn Fehler mit "HTTPS Required" auftreten:
+
+<Callout type="warn">
+Dies bedeutet, dass HTTP-Zugriff nicht konfiguriert wurde. Führen Sie den Schritt zur HTTP-Konfiguration erneut aus.
+</Callout>
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes
+./scripts/configure-keycloak-http.sh
+```
+
+### Anmeldung bei Keycloak nicht möglich
+
+Prüfen Sie die Keycloak-Protokolle auf Fehler:
+
+```bash
+kubectl logs deployment/keycloak -n caritas --tail=100
+```
+
+Prüfen Sie, ob Keycloak erreichbar ist:
+
+```bash
+curl -I http://127.0.0.1:8080
+```
+
+### Realm nicht gefunden
+
+Prüfen Sie, ob der Realm existiert:
+
+```bash
+KEYCLOAK_POD=$(kubectl get pods -n caritas -l app=keycloak -o jsonpath="{.items[0].metadata.name}")
+
+kubectl exec -n caritas $KEYCLOAK_POD -- \
+  /opt/keycloak/bin/kcadm.sh config credentials \
+  --server http://localhost:8080 \
+  --realm master \
+  --user admin \
+  --password admin
+
+kubectl exec -n caritas $KEYCLOAK_POD -- \
+  /opt/keycloak/bin/kcadm.sh get realms --fields realm
+```
+
+Wenn der Realm fehlt, importieren Sie ihn mit den oben beschriebenen Schritten erneut.
+
+## Nächste Schritte
+
+- [Datenbanken einrichten](/de/betrieb/deployment/setup-databases) – MariaDB und MongoDB konfigurieren
+- [Backend-Dienste bereitstellen](/de/betrieb/deployment/deploy-backend-services) – Microservices bereitstellen
+

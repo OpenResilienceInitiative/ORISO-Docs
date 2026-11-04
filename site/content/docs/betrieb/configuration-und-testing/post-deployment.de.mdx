@@ -1,0 +1,235 @@
+---
+title: "Konfiguration nach der Bereitstellung"
+description: "Schritte nach der Bereitstellung abschließen: Datenbanken initialisieren, Systembenutzer erstellen, Keycloak-Realm importieren und Bereitstellung prüfen"
+source: "oriso-platform/post-deployment.mdx"
+---
+
+Führen Sie die Schritte nach der Bereitstellung aus, um die Einrichtung Ihrer ORISO-Plattform abzuschließen. Diese Schritte sind nach der Bereitstellung über Helm erforderlich.
+
+<Steps>
+<Step title="Datenbanken initialisieren">
+
+Initialisieren Sie alle Datenbankschemata mit dem zentralen Einrichtungsskript von ORISO-Database.
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Database
+
+# Make script executable
+chmod +x scripts/setup/00-master-setup.sh
+
+# Run master setup
+./scripts/setup/00-master-setup.sh
+```
+
+<Callout>
+Dieses Skript:
+- Erstellt alle MariaDB-Datenbanken (7 Datenbanken)
+- Importiert alle Schemata aus `mariadb/*/schema.sql`
+- Initialisiert MongoDB-Collections
+- Erstellt Systembenutzer
+</Callout>
+
+<Callout type="success">
+Das Skript sollte ohne Fehler abgeschlossen werden. Prüfen Sie die Datenbanken:
+```bash
+kubectl exec -n caritas deployment/oriso-platform-mariadb -- \
+  mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "SHOW DATABASES;"
+```
+</Callout>
+
+</Step>
+
+<Step title="Systembenutzer erstellen">
+
+Erstellen Sie die für Matrix und andere Dienste erforderlichen Systembenutzer.
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Database/scripts
+
+# Apply system users job
+kubectl apply -f system-users-job.yaml
+
+# Wait for job to complete
+kubectl wait --for=condition=complete job/system-users -n caritas --timeout=300s
+
+# Check job logs
+kubectl logs job/system-users -n caritas
+```
+
+<Callout>
+Erstellte Systembenutzer:
+- `caritas_admin` – Admin-Benutzer für Caritas-Vorgänge
+- `oriso_call_admin` – Admin für die Anrufverwaltung
+- `group-chat-system` – Systembenutzer für Gruppenchats
+</Callout>
+
+</Step>
+
+<Step title="Keycloak-Realm importieren">
+
+Importieren Sie die ORISO-Keycloak-Realm-Konfiguration.
+
+**Option A: Über die Administrationskonsole (empfohlen)**
+
+1. Öffnen Sie die Keycloak-Administration: `https://auth.example.org/admin/`
+2. Anmeldung: `admin` / `admin` (Standardwerte, in Produktion ändern)
+3. Wählen Sie den Realm "Master" → "Add realm".
+4. Laden Sie hoch: `~/online-beratung/caritas-workspace/ORISO-Keycloak/realm.json`
+5. Klicken Sie auf "Create".
+
+**Option B: Über die Kommandozeile**
+
+```bash
+# Get Keycloak pod
+KEYCLOAK_POD=$(kubectl get pods -n caritas -l app=keycloak -o jsonpath="{.items[0].metadata.name}")
+
+# Copy realm file
+kubectl cp ~/online-beratung/caritas-workspace/ORISO-Keycloak/realm.json \
+  caritas/$KEYCLOAK_POD:/tmp/realm.json
+
+# Import realm
+kubectl exec -n caritas $KEYCLOAK_POD -- \
+  /opt/keycloak/bin/kc.sh import --file /tmp/realm.json
+```
+
+</Step>
+
+<Step title="Keycloak-HTTPS-Zugriff prüfen">
+
+Lasse den HTTPS-Schutz für bereitgestellte Keycloak-Realms aktiviert. Prüfe die im Browser verwendete Issuer-URL, weitergeleitete Header und Ingress-TLS-Konfiguration anhand der aktuellen Deployment-Quellen. Die Meldung „HTTPS Required“ erfordert eine Prüfung der TLS- und Proxy-Konfiguration; sie rechtfertigt keine Abschaltung des SSL-Schutzes im Realm. Reines HTTP gehört ausschließlich in eine ausdrücklich isolierte lokale Entwicklungsumgebung.
+
+</Step>
+
+<Step title="Bereitstellung prüfen">
+
+Prüfen Sie, ob alle Dienste laufen und einen gesunden Zustand melden.
+
+```bash
+# Check all pods
+kubectl get pods -n caritas
+
+# Check Helm release
+helm status oriso-platform -n caritas
+
+# Check services
+kubectl get svc -n caritas
+
+# Check Ingress
+kubectl get ingress -n caritas
+
+# Check TLS certificates
+kubectl get certificate -n caritas
+```
+
+<Callout type="success">
+- Alle Pods sollten `Running` sein.
+- Die Helm-Release sollte den Status `deployed` anzeigen.
+- Dienste sollten erstellt sein.
+- Ingress-Ressourcen sollten erstellt sein.
+- Zertifikate sollten `Ready=True` sein.
+</Callout>
+
+</Step>
+
+<Step title="Dienstzustand testen">
+
+Testen Sie die Zustandsendpunkte aller Dienste.
+
+```bash
+# Backend services (via Ingress)
+curl -s https://api.example.org/actuator/health | jq .
+
+# Or test internally
+kubectl exec -n caritas deployment/oriso-platform-userservice -- \
+  curl -s http://localhost:8082/actuator/health
+
+# Frontend
+curl -I https://app.example.org
+curl -I https://admin.example.org
+
+# Keycloak
+curl -s https://auth.example.org/realms/online-beratung/.well-known/openid-configuration | jq .realm
+
+# Matrix
+curl -s https://matrix.example.org/_matrix/client/versions | jq .
+```
+
+<Callout type="success">
+Alle Dienste sollten einen gesunden Status oder HTTP 200 OK zurückgeben.
+</Callout>
+
+</Step>
+</Steps>
+
+## Zugriffs-URLs
+
+Nach Abschluss aller Schritte erreichen Sie die Dienste unter:
+
+| Dienst | URL | Beschreibung |
+|---------|-----|-------------|
+| Frontend | https://app.example.org | Benutzerportal |
+| Admin | https://admin.example.org | Administrationsoberfläche |
+| API | https://api.example.org | Backend API |
+| Authentifizierung | https://auth.example.org | Keycloak |
+| Matrix | https://matrix.example.org | Matrix Synapse |
+| Health Dashboard | http://YOUR_SERVER_IP:9001 | Zustandsüberwachung |
+| SignOZ | http://YOUR_SERVER_IP:3001 | Observability |
+
+## Prüfliste zur Überprüfung
+
+- [ ] Alle Pods laufen (`kubectl get pods -n caritas`).
+- [ ] Helm-Release ist bereitgestellt (`helm status oriso-platform -n caritas`).
+- [ ] Datenbanken sind initialisiert (`kubectl exec ... mysql -e "SHOW DATABASES;"`).
+- [ ] Systembenutzer sind erstellt (`kubectl logs job/system-users -n caritas`).
+- [ ] Keycloak-Realm ist importiert (Administrationskonsole prüfen).
+- [ ] Keycloak-HTTP-Zugriff ist konfiguriert (keine SSL-Fehler).
+- [ ] Ingress-Ressourcen sind erstellt (`kubectl get ingress -n caritas`).
+- [ ] TLS-Zertifikate sind ausgestellt (`kubectl get certificate -n caritas`).
+- [ ] Dienste sind über HTTPS erreichbar.
+- [ ] Zustandsendpunkte geben UP zurück.
+
+## Fehlerbehebung
+
+### Pods laufen nicht
+```bash
+# Check pod status
+kubectl get pods -n caritas
+
+# Check pod logs
+kubectl logs -n caritas <pod-name>
+
+# Check pod events
+kubectl describe pod -n caritas <pod-name>
+```
+
+### Datenbankinitialisierung fehlgeschlagen
+```bash
+# Check database pod
+kubectl get pods -n caritas | grep mariadb
+
+# Check database logs
+kubectl logs -n caritas deployment/oriso-platform-mariadb
+
+# Re-run setup script
+cd ~/online-beratung/caritas-workspace/ORISO-Database
+./scripts/setup/00-master-setup.sh
+```
+
+### Keycloak-Probleme
+```bash
+# Check Keycloak pod
+kubectl get pods -n caritas | grep keycloak
+
+# Check Keycloak logs
+kubectl logs -n caritas deployment/oriso-platform-keycloak
+
+# Verify HTTP access is configured
+kubectl exec -n caritas deployment/oriso-platform-keycloak -- \
+  /opt/keycloak/bin/kcadm.sh get realms/master --fields sslRequired
+```
+
+## Nächste Schritte
+
+- [Überprüfung und Tests](/de/betrieb/configuration-und-testing/verification-testing) – Umfassende Tests
+- [Fehlerbehebung](/de/betrieb/operations/troubleshooting) – Häufige Probleme und Lösungen
+- [Kurzreferenz](/de/betrieb/operations/quick-reference) – Wichtige Befehle

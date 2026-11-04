@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "oriso.ua.supported-public-repositories/v1",
+  "repositories": [
+    "ORISO-Admin",
+    "ORISO-AgencyService",
+    "ORISO-ConsultingTypeService",
+    "ORISO-Database",
+    "ORISO-Docs",
+    "ORISO-ElementCall",
+    "ORISO-Frontend",
+    "ORISO-HealthDashboard",
+    "ORISO-Helm",
+    "ORISO-Keycloak",
+    "ORISO-Kubernetes",
+    "ORISO-Livekit",
+    "ORISO-SigNoz",
+    "ORISO-Status",
+    "ORISO-TenantService",
+    "ORISO-UserService"
+  ]
+}

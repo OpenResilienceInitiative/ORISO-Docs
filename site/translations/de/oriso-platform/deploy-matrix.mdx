@@ -1,0 +1,202 @@
+---
+title: "Matrix-Kommunikation bereitstellen"
+description: "Matrix-Synapse-Server, Element.io-Webclient und Discovery-Dienst für Chatfunktionen bereitstellen"
+---
+
+# Matrix-Kommunikation bereitstellen
+
+Stellen Sie den Matrix-Synapse-Server, den Element.io-Webclient und den Discovery-Dienst für Echtzeit-Chat und Videoanrufe bereit. Matrix wird über Helm als Teil des übergeordneten Charts `oriso-platform` bereitgestellt.
+
+<Info>
+Matrix-Komponenten werden automatisch bereitgestellt, wenn Sie `helm install oriso-platform` ausführen. Diese Anleitung behandelt Konfiguration und Überprüfung nach der Bereitstellung.
+</Info>
+
+<Steps>
+<Step title="Matrix-Bereitstellung prüfen">
+
+Matrix sollte bereits über Helm bereitgestellt sein. Prüfen Sie, ob alle Komponenten laufen.
+
+```bash
+# Check Matrix pods
+kubectl get pods -n caritas | grep -E "matrix|element"
+
+# Should see:
+# oriso-platform-matrix-synapse-xxx    1/1     Running
+# oriso-platform-matrix-discovery-xxx  1/1     Running
+# oriso-platform-element-xxx            1/1     Running (if deployed)
+```
+
+<Check>
+Alle Matrix-Pods sollten den Status `Running` und `1/1` bereit anzeigen.
+</Check>
+
+<Note>
+Wenn Matrix-Pods nicht laufen, prüfen Sie die Helm-Bereitstellung:
+```bash
+helm status oriso-platform -n caritas
+kubectl logs -n caritas -l app=matrix-synapse --tail=50
+```
+</Note>
+
+</Step>
+
+<Step title="Matrix-Datenbank initialisieren">
+
+Bei einer neuen Bereitstellung initialisieren Sie die Matrix-PostgreSQL-Datenbank.
+
+```bash
+# Check PostgreSQL pod
+kubectl get pods -n caritas | grep postgres
+
+# Get Matrix PostgreSQL pod
+MATRIX_PG_POD=$(kubectl get pods -n caritas -l app=matrix-postgres -o jsonpath="{.items[0].metadata.name}")
+
+# Import schema (if not already done)
+cd ~/online-beratung/caritas-workspace/ORISO-Matrix
+kubectl exec -i -n caritas $MATRIX_PG_POD -- \
+  psql -U synapse_user synapse < database/matrix-schema-current.sql
+
+# Verify tables
+kubectl exec -it -n caritas $MATRIX_PG_POD -- \
+  psql -U synapse_user synapse -c "\dt" | head -20
+```
+
+<Check>
+Matrix-Tabellen sollten erstellt werden (users, rooms, events, devices usw.).
+</Check>
+
+</Step>
+
+<Step title="Matrix-Dienste prüfen">
+
+Prüfen Sie, ob die Matrix-Dienste betriebsbereit sind.
+
+```bash
+# Check Matrix Synapse API (internal)
+kubectl exec -n caritas deployment/oriso-platform-matrix-synapse -- \
+  curl -s http://localhost:8008/_matrix/client/versions
+
+# Check Matrix Synapse API (via Ingress)
+curl -s https://matrix.example.org/_matrix/client/versions
+
+# Check Discovery service
+curl -s http://YOUR_SERVER_IP/.well-known/matrix/server
+
+# Check Element.io (if deployed)
+curl -I https://element.example.org
+```
+
+<Check>
+- Matrix Synapse sollte JSON mit Versionsinformationen zurückgeben.
+- Der Discovery-Dienst sollte die Serverkonfiguration zurückgeben.
+- Element.io sollte HTTP 200 OK zurückgeben.
+</Check>
+
+</Step>
+
+<Step title="Matrix-Integration konfigurieren">
+
+Konfigurieren Sie Backend und Frontend für die Verwendung von Matrix.
+
+**Backend-Konfiguration (UserService):**
+
+Die Matrix-Integration wird im UserService konfiguriert. Prüfen Sie die Konfiguration:
+
+```bash
+# Check UserService environment variables
+kubectl get deployment oriso-platform-userservice -n caritas -o yaml | \
+  grep -A 5 MATRIX
+
+# Expected:
+# - name: MATRIX_SYNAPSE_URL
+#   value: http://oriso-platform-matrix-synapse.caritas.svc.cluster.local:8008
+# - name: MATRIX_SERVER_NAME
+#   value: caritas.local
+```
+
+**Frontend-Konfiguration:**
+
+Die Matrix-Konfiguration des Frontends wird zur Build-Zeit in das Docker-Image integriert. Prüfen Sie sie in `.env`:
+
+```bash
+cd ~/online-beratung/caritas-workspace/ORISO-Frontend
+cat .env | grep MATRIX
+```
+
+</Step>
+</Steps>
+
+## Matrix-Komponenten
+
+### Matrix Synapse
+- **Dienst:** `oriso-platform-matrix-synapse.caritas.svc.cluster.local:8008`
+- **Extern:** `https://matrix.example.org`
+- **Datenbank:** PostgreSQL (Datenbank synapse)
+- **Zweck:** Matrix-Homeserver für Chat
+
+### Matrix Discovery Service
+- **Dienst:** `oriso-platform-matrix-discovery`
+- **Extern:** `http://YOUR_SERVER_IP/.well-known/matrix/server`
+- **Zweck:** Erkennung für Föderation
+
+### Element.io (optional)
+- **Dienst:** `oriso-platform-element`
+- **Extern:** `https://element.example.org` oder `http://YOUR_SERVER_IP:8087`
+- **Zweck:** Webclient für Matrix
+
+## Integrationsdetails
+
+### Backend-Integration
+UserService erstellt Matrix-Benutzer und -Räume:
+- Benutzerregistrierung → Erstellung eines Matrix-Kontos
+- Zuweisung von Beratenden → Erstellung eines Matrix-Raums
+- Zugangsdaten werden in der MariaDB-Tabelle `user` gespeichert.
+
+### Frontend-Integration
+Das Frontend verwendet Matrix JS SDK:
+- Echtzeitnachrichten
+- WebRTC-Anrufe über LiveKit
+- Ereignissynchronisierung
+
+## Fehlerbehebung
+
+### Matrix Synapse startet nicht
+```bash
+# Check logs
+kubectl logs -n caritas -l app=matrix-synapse --tail=100
+
+# Check database connection
+kubectl exec -n caritas deployment/oriso-platform-matrix-synapse -- \
+  env | grep DATABASE
+
+# Verify PostgreSQL is accessible
+kubectl exec -n caritas deployment/oriso-platform-matrix-synapse -- \
+  curl http://oriso-platform-postgresql.caritas.svc.cluster.local:5432
+```
+
+### Probleme mit Datenbankverbindungen
+```bash
+# Check PostgreSQL pod
+kubectl get pods -n caritas | grep postgres
+
+# Test connection
+kubectl exec -it -n caritas deployment/oriso-platform-postgresql -- \
+  psql -U synapse_user synapse -c "SELECT 1;"
+```
+
+### Föderation funktioniert nicht
+```bash
+# Check discovery service
+kubectl logs -n caritas -l app=matrix-discovery
+
+# Test well-known endpoint
+curl http://YOUR_SERVER_IP/.well-known/matrix/server
+
+# Check federation API
+curl http://YOUR_SERVER_IP:8009/_matrix/federation/v1/version
+```
+
+## Nächste Schritte
+
+- [Nach der Bereitstellung](/oriso-platform/post-deployment) – Abschließende Schritte nach der Bereitstellung ausführen
+- [Überprüfung und Tests](/oriso-platform/verification-testing) – Matrix-Funktionen testen

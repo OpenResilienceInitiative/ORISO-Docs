@@ -1,0 +1,14 @@
+{
+  "packages/dashboard/vite.config.ts": {
+    "before": "d008deb577cd52fa76d7ee8effd77dead03009d9d1cf379503ae70d8d6ac068c",
+    "after": "7008448e1e59d2dc85302f5aa52b1366870cbf6fd7d6a6bf0457d82c2304170d"
+  },
+  "packages/dashboard/src/App.tsx": {
+    "before": "ec3d3bbdebd3f3ee7ff99c8318009af78083641cc8628085fef3d1be275708d9",
+    "after": "5eac4d7c961605f9e35735f121bfca70959bc43c825f186c523b6caac5db6a90"
+  },
+  "packages/dashboard/src/components/CodeViewer.tsx": {
+    "before": "f27039cfd89b0a381af2754f95fdd37610ef8aec85f8edeb385f8df92cad63fe",
+    "after": "8eb352cce83d0394b39f6976d5fb175966aa02ecb0bb76759f86f231c0d45950"
+  }
+}

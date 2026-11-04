@@ -1,0 +1,300 @@
+{
+ "meta": {
+  "generatedAt": "2026-09-04T00:00:00Z",
+  "generatedBy": "claude-opus-deep-run-2026-09",
+  "repo": "ORISO-Docs"
+ },
+ "concepts": [
+  {
+   "id": "concept:adr-001-006-counselling-modalities-as-modules",
+   "name": "ADR-001 / ADR-006 — Counselling modalities as modules and conversation_type as a persisted field",
+   "summary": "ADR-001 splits the overloaded consulting_type into three orthogonal axes — modality (channel), topic (subject) and agency — so a modality can be enabled or disabled per Traeger without silently filtering agencies out of registration. ADR-006 makes the modality explicit as a persisted conversation_type enum with four values (Agency Counselling, Live Chat, Internal Group Chat, Self-Help Group), rolled out selector-first via a getModality() helper instead of re-deriving the kind from scattered booleans. It binds AgencyService (agency search and agency_topic), ConsultingTypeService (topics), UserService (the enum, Liquibase changeset and DTO projection) and the Frontend registration and session components.",
+   "tags": ["adr", "domain-model", "modality", "registration"],
+   "related": [
+    "oriso-platform/decisions/ADR-001-counselling-modalities-as-modules.md",
+    "oriso-platform/decisions/ADR-006-conversation-type-as-persisted-modality.md",
+    "site/content/docs/produkt/architecture-und-roles/architecture.mdx",
+    "site/content/docs/produkt/core-features/session-management.mdx",
+    "site/content/docs/produkt/flows-und-internals/data-model.mdx"
+   ]
+  },
+  {
+   "id": "concept:adr-002-silent-room-membership-access-curtain",
+   "name": "ADR-002 — Silent room membership with an access-control confidentiality curtain (not E2EE)",
+   "summary": "For one-to-one (nearby) counselling, every counsellor of the department is a real Matrix member from room creation, so nobody has to join late to cover a sick colleague, and the confidentiality boundary is an access-control curtain in the application rather than a cryptographic one. This replaces the Rocket.Chat-era invite-the-whole-agency-then-kick model implemented by UnauthorizedMembersProvider, AgencyPreAssignmentRoomService and AssignEnquiryFacade in UserService, and it deliberately accepts that Megolm does not give in-room confidentiality because every room member decrypts every event. Numbering drift: the platform ADR-002 is unrelated to the ADR-002-numbered stubs mirrored in the older Obsidian analysis folders, which only forward to this canonical record.",
+   "tags": ["adr", "matrix", "confidentiality", "access-control"],
+   "related": [
+    "oriso-platform/decisions/ADR-002-silent-room-membership-and-access-control-curtain.md",
+    "site/content/docs/produkt/core-features/handover.mdx",
+    "site/content/docs/plattform/core-systems/backend-services.md",
+    "site/content/docs/produkt/architecture-und-roles/roles-permissions.mdx"
+   ]
+  },
+  {
+   "id": "concept:adr-003-014-department-agency-topic",
+   "name": "ADR-003 / ADR-014 — Department = unique (Agency x Topic) carrying its own imprint and DPP",
+   "summary": "A Fachbereich is the unique pairing of an agency and a topic, enforced by UNIQUE(agency_id, topic_id) on agency_topic, and it carries its own individualised imprint and data-protection policy instead of inheriting a single per-tenant text. ADR-014 partially supersedes ADR-003: the admin topic picker returns to multi-select because one Beratungsstelle hosts several Fachbereiche, legal texts become shareable legal_text objects referenced by dpp_id/imprint_id, and topic selection must happen before consent so a department document can be resolved at all. It binds AgencyService (Agency, agency_topic), ConsultingTypeService (topics), TenantService (content_impressum / content_privacy) and the Admin panel forms.",
+   "tags": ["adr", "domain-model", "legal", "multitenancy"],
+   "related": [
+    "oriso-platform/decisions/ADR-003-department-as-unique-agency-topic-with-imprint-dpp.md",
+    "oriso-platform/decisions/ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent.md",
+    "site/content/docs/plattform/core-systems/database-and-data-model.md",
+    "site/content/docs/plattform/platform-flows/tenant-lifecycle.md"
+   ]
+  },
+  {
+   "id": "concept:adr-004-matrix-sdk-megolm-under-custom-ui",
+   "name": "ADR-004 — Keep the custom chat UI, adopt matrix-js-sdk Megolm under it",
+   "summary": "ORISO keeps its own chat interface and does not embed Element Web; instead matrix-js-sdk with Rust crypto and Megolm group encryption is adopted underneath it, so encryption becomes real rather than a labelled-encrypted flag inherited from the Rocket.Chat scheme. Since the 2026-07-19 amendment initRustCrypto is called unconditionally on every client init, making crypto the durable runtime state rather than a disposable pre-dev proof. It binds the Frontend matrixClientService, the Synapse homeserver deployed by ORISO-Helm, and UserService room creation paths.",
+   "tags": ["adr", "matrix", "encryption", "frontend"],
+   "related": [
+    "oriso-platform/decisions/ADR-004-chat-keep-custom-ui-adopt-matrix-sdk-megolm.md",
+    "site/content/docs/betrieb/deployment/deploy-matrix.mdx",
+    "site/content/docs/plattform/core-systems/frontend-admin-overview.md",
+    "site/content/docs/produkt/core-features/index.mdx"
+   ]
+  },
+  {
+   "id": "concept:adr-005-matrix-federation-off",
+   "name": "ADR-005 — Matrix federation deliberately off, real DNS server_name via a clean homeserver rebuild",
+   "summary": "Synapse must run with federation explicitly disabled and a real DNS server_name instead of a bare IP, because the IP was baked into every MXID and would orphan all users and rooms on any address change, and because accept_keys_insecurely weakened the deployment further. The clean matrix.oriso-dev.site rebuild is a hard prerequisite for the durable SDK crypto identity of ADR-004, and Matrix keeps its own subdomain as the single deliberate exception to the single-domain routing of ADR-011. It binds ORISO-Helm (Synapse chart, ingress, well-known delegation) and every service that resolves MXIDs.",
+   "tags": ["adr", "matrix", "infrastructure", "identity"],
+   "related": [
+    "oriso-platform/decisions/ADR-005-matrix-federation-off-dns-server-name.md",
+    "site/content/docs/betrieb/deployment/deploy-matrix.mdx",
+    "site/content/docs/betrieb/configuration-und-testing/dns-ssl.mdx",
+    "site/content/docs/betrieb/architecture/infra.mdx"
+   ]
+  },
+  {
+   "id": "concept:adr-007-live-chat-liveness",
+   "name": "ADR-007 — Live-chat liveness reads backend availability, never mirrors or infers it",
+   "summary": "The backend availability model in UserService (ConsultantActivityRegistry with a 120s TTL, heartbeat interceptor, availability cleared on logout) is authoritative, and every visible liveness indicator must read it rather than mirror it. The recurring \"shows people as live when nobody is\" complaint came from three wrong sources — a write-only localStorage flag behind the nav pill, a per-session badge derived from chat type, and a Session.status never reset on abandonment — none of which consulted the real registry. It binds UserService availability endpoints and the Frontend navigation bar and session header.",
+   "tags": ["adr", "live-chat", "availability", "frontend"],
+   "related": [
+    "oriso-platform/decisions/ADR-007-live-chat-availability-and-liveness.md",
+    "site/content/docs/produkt/core-features/live-chat.mdx",
+    "site/content/docs/produkt/core-features/session-management.mdx",
+    "site/content/docs/plattform/core-systems/backend-services.md"
+   ]
+  },
+  {
+   "id": "concept:adr-008-016-side-rooms-supervision-team-besprechung",
+   "name": "ADR-008 / ADR-016 — Supervision reach and side-channel coordination live in separate rooms",
+   "summary": "Supervision keeps its per-session, agency-scoped reach (a SessionSupervisor entity plus real read-only Matrix membership), but every counsellor-to-counsellor side channel moves out of the help-seeker's room, because Matrix delivers every event to every member and in-room hiding was the U25 safeguarding leak. ADR-016 generalises that side-room primitive to the pre-assignment phase: a Team-Besprechung is a separate room attached to one open enquiry, hard-closed and archived read-only the moment the enquiry is accepted, after which coordination uses supervision or case handover instead. It binds UserService (SessionSupervisorFacade, side-room creation and the leak-abort send path) and the Frontend session UI.",
+   "tags": ["adr", "supervision", "matrix", "safeguarding"],
+   "related": [
+    "oriso-platform/decisions/ADR-008-supervision-role-and-side-channel-confidentiality.md",
+    "oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md",
+    "site/content/docs/produkt/architecture-und-roles/roles-permissions.mdx",
+    "site/content/docs/produkt/core-features/handover.mdx"
+   ]
+  },
+  {
+   "id": "concept:adr-009-010-platform-governed-configuration",
+   "name": "ADR-009 / ADR-010 — Global topic ownership and platform-controlled per-Traeger allowlists",
+   "summary": "Topics and categories are global platform-level objects (the TECHNICAL_TENANT_ID convention), not tenant-partitioned data; per-agency variation lives in the legal text of the Department, not in the topic identity, and translation gets an admin-facing workflow with completeness checks instead of hand-written SQL migrations. ADR-010 applies the same platform-governs-tenant shape to the Erscheinungsbild theme builder: a SuperAdmin multi-select of Traeger decides which tenants may edit appearance, replacing the single platform-global allowedPermissionToggles row that today applies identically to every tenant. Together they bind ConsultingTypeService (TopicEntity, TopicGroupEntity), TenantService (TenantAdminControlsService) and the Admin panel GlobalSettings and tenant edit pages.",
+   "tags": ["adr", "admin", "multitenancy", "i18n", "theming"],
+   "related": [
+    "oriso-platform/decisions/ADR-009-global-topic-category-ownership-and-ai-assisted-translation.md",
+    "oriso-platform/decisions/ADR-010-platform-controlled-per-tenant-appearance-allowlist.md",
+    "site/content/docs/plattform/core-systems/frontend-admin-overview.md",
+    "site/content/docs/plattform/platform-flows/tenant-lifecycle.md"
+   ]
+  },
+  {
+   "id": "concept:adr-011-helm-only-single-domain-routing",
+   "name": "ADR-011 — Helm-only deployment with single-domain path-based routing",
+   "summary": "ORISO-Helm, not ORISO-Kubernetes, is the single canonical definition of the deployment topology, and every environment converges on one public domain with path rules (/ frontend, /admin, /service/* backend APIs, /auth Keycloak, /room Element Call) instead of one subdomain per service. This buys one TLS certificate and removes cross-origin and cookie-domain complexity between app, admin and services; Matrix keeps its own subdomain as the sole deliberate exception per ADR-005. It binds ORISO-Helm charts and main-ingress, the nginx and cert-manager setup, and every service base URL in Frontend and Admin.",
+   "tags": ["adr", "deployment", "kubernetes", "infrastructure"],
+   "related": [
+    "oriso-platform/decisions/ADR-011-helm-only-deployment-single-domain-path-routing.md",
+    "site/content/docs/plattform/core-systems/kubernetes-deployment.md",
+    "site/content/docs/betrieb/deployment/deploy-nginx.mdx",
+    "site/content/docs/betrieb/architecture/infra.mdx",
+    "site/content/docs/plattform/repository-graphs/ORISO-Helm.md"
+   ]
+  },
+  {
+   "id": "concept:adr-012-017-group-chat-and-native-threads",
+   "name": "ADR-012 / ADR-017 — Extend the existing group chat, and rebuild threads on native Matrix relations",
+   "summary": "Self-Help Group Chat extends the existing group chat rather than being rebuilt, is Megolm-encrypted from the start, and replaces the Lobby concept with a future timeline of planned occurrences including finite weekly rollover and planned close. ADR-017 makes a hard cut on threads: the custom [THREAD:<eventId>] body-prefix convention and its client-side parser are deleted and replaced by native m.thread relations with room.getThreads(), thread pagination and threaded receipts, with no dual-read fallback because there are no production users to migrate. Both bind the Frontend chat components and UserService group-chat and session endpoints.",
+   "tags": ["adr", "group-chat", "matrix", "threads"],
+   "related": [
+    "oriso-platform/decisions/ADR-012-self-help-group-chat-extend-not-rebuild-future-timeline.md",
+    "oriso-platform/decisions/ADR-017-native-matrix-threads-hard-cut.md",
+    "site/content/docs/produkt/core-features/group-chats.mdx",
+    "site/content/docs/produkt/flows-und-internals/internal-functionality.mdx"
+   ]
+  },
+  {
+   "id": "concept:adr-013-2fa-vendored-otp-spi",
+   "name": "ADR-013 — 2FA via a vendored otp-config Keycloak SPI, not stock-Keycloak AIA",
+   "summary": "The full 2FA feature (TOTP QR wizard, email OTP, login OTP field, four UserService /users/2fa endpoints) was already built against the onlineBeratung otp-config Keycloak SPI, which was never deployed, so UserService swallowed the failure and reported twoFactorAuth.isEnabled = false. The decision is to vendor and port that AGPL SPI to Keycloak 26.6.3 as a thin image layer, because Keycloak's Admin REST API can read and delete but never create OTP credentials, so keeping QR setup inside the ORISO UI requires the SPI. It binds ORISO-Keycloak (the custom image), ORISO-Helm (the deployment) and UserService's OTP adapter.",
+   "tags": ["adr", "authentication", "keycloak", "2fa"],
+   "related": [
+    "oriso-platform/decisions/ADR-013-2fa-via-vendored-otp-config-spi.md",
+    "site/content/docs/plattform/core-systems/authentication-and-keycloak.md",
+    "site/content/docs/betrieb/deployment/configure-keycloak.mdx",
+    "site/content/docs/plattform/repository-graphs/ORISO-Keycloak.md"
+   ]
+  },
+  {
+   "id": "concept:adr-015-019-media-flags-and-scanning",
+   "name": "ADR-015 / ADR-019 — Per-chat-type media flag families and fail-closed media scanning",
+   "summary": "ADR-015 replaces the single inverted featureAttachmentUploadDisabled switch with three orthogonal flag families (featureMediaUpload, featureMediaInlineDisplay, featureMediaAiScan), each with a master flag plus four chat-type variants on tenant and agency level, following the featureVideoCalls pattern verbatim and capped platform-side by allowedPermissionToggles. ADR-019 enforces the scan with matrix-content-scanner as a fail-closed download proxy chaining ClamAV and a pluggable vision check, so an unchecked file is server-side inaccessible regardless of client behaviour and the UI can blur until a queryable status says safe. Numbering drift: ADR-019 was renumbered from ADR-014 on 2026-08-08 (ORISO-Docs#73) because two accepted ADRs carried 014, and ORISO-Frontend has its own unrelated adr-019 on silent key backup setup.",
+   "tags": ["adr", "media", "security", "settings-cascade"],
+   "related": [
+    "oriso-platform/decisions/ADR-015-per-chat-type-media-flag-families-replace-attachment-toggle.md",
+    "oriso-platform/decisions/ADR-019-media-scanning-via-matrix-content-scanner-fail-closed.md",
+    "site/content/docs/betrieb/operations/security-hardening.mdx",
+    "site/content/docs/produkt/core-features/index.mdx"
+   ]
+  },
+  {
+   "id": "concept:adr-018-erstantwort-carimat",
+   "name": "ADR-018 — Erstantwort as one persisted event rendered as a Carimat bubble sequence",
+   "summary": "Retiring the Rocket.Chat transport removed the automatic first response while leaving its configuration (welcomeMessage, sendFurtherStepsMessage) and its renderer (FurtherSteps) behind as dead scaffolding, so the Erstantwort is rebuilt as exactly one persisted Matrix event that the client renders as a sequence of Carimat bubbles, configured per Traeger. The trigger was U25's first-response text, which deviates drastically from the platform default and therefore proved the message must be configurable rather than hardcoded. Numbering drift: platform ADR-018 is Erstantwort, ORISO-Frontend's adr-018 is the Element Call Matryoshka integration, and a UserService worktree carries a third ADR-018 on the global-support live handshake — always qualify the repository when citing 018.",
+   "tags": ["adr", "messaging", "erstantwort", "numbering-drift"],
+   "related": [
+    "oriso-platform/decisions/ADR-018-erstantwort-as-one-persisted-event-rendered-as-carimat-bubbles.md",
+    "site/content/docs/produkt/core-features/notifications.mdx",
+    "site/content/docs/produkt/flows-und-internals/user-flows.mdx",
+    "site/content/docs/plattform/core-systems/backend-services.md"
+   ]
+  },
+  {
+   "id": "concept:adr-020-scheduled-calls-and-contact-calendar",
+   "name": "ADR-020 — Scheduled calls, secure invitations, and a unified contact calendar",
+   "summary": "Appointment, Call Session and Call Invitation are separated: the appointment is the scheduled contact and its lifecycle, the call session is the runtime audio/video room materialised when a counsellor starts a call, and an invitation grants exactly one identity access to exactly one call session. Scheduling never pre-creates a long-lived Matrix room and a call participant never gains access to the source counselling conversation, which is why the in-call share action cannot be a plain room URL — call rooms are restricted and guest access is forbidden. It binds UserService appointments, the Element Call and LiveKit deployment, and the Frontend calendar, waiting-area and call-entry components.",
+   "tags": ["adr", "calls", "appointments", "matrix"],
+   "related": [
+    "oriso-platform/decisions/ADR-020-scheduled-calls-secure-invitations-and-unified-contact-calendar.md",
+    "site/content/docs/produkt/core-features/index.mdx",
+    "site/content/docs/produkt/flows-und-internals/user-flows.mdx",
+    "site/content/docs/betrieb/deployment/deploy-matrix.mdx"
+   ]
+  },
+  {
+   "id": "concept:adr-021-022-023-legal-hierarchy-consent-and-governance",
+   "name": "ADR-021 / ADR-022 / ADR-023 — Legal text hierarchy, consent gates, and Traeger governance",
+   "summary": "ADR-021 names four levels of legal text (platform operator, Traeger, Beratungsstelle, Fachbereich), adds a generic version history where today only the AVV has one, and makes the consent sentence a field of the data-protection policy. ADR-022 defines exactly two consent gates for sessions that have a help-seeker — the platform-level policy accepted on entering the waiting room, and the Beratungsstelle document accepted once a counsellor accepts and a department can be resolved — stores consent state as a session pointer to the agreed version, and re-prompts on change; anonymity is a property of the read-only display name, never inferred from the name itself. ADR-023 renames the platform-to-Traeger relationship the Platform Services Agreement with the AVV as one annex, keeps templates linked to their origin so central legal corrections propagate, and requires proportionate escalation that never terminates U25 counselling. They bind TenantService, AgencyService, UserService consent endpoints and the Admin legal editors.",
+   "tags": ["adr", "legal", "consent", "governance"],
+   "related": [
+    "oriso-platform/decisions/ADR-021-legal-text-hierarchy-versioning-and-consent-text.md",
+    "oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
+    "oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md",
+    "site/content/docs/plattform/platform-flows/tenant-lifecycle.md",
+    "site/content/docs/produkt/flows-und-internals/user-flows.mdx"
+   ]
+  }
+ ],
+ "flows": [
+  {
+   "id": "flow:read-the-docs-repository",
+   "name": "Finding your way through the ORISO documentation repository",
+   "summary": "Start at the repository README and site/content/docs/index.mdx, which split the material into three shelves: plattform (how the system is built), produkt (what it does for users) and betrieb (how it is run). From there the plattform architecture hub gives the overview and repository map, the core-systems pages describe each subsystem, and the decisions README indexes the ADR set that explains why those subsystems look the way they do. Everything under site/content/docs is generated from the source folders by site/scripts/sync-content.mjs, so edits belong in the sources, not in the site tree.",
+   "tags": ["navigation", "docs"],
+   "related": [
+    "README.md",
+    "site/content/docs/index.mdx",
+    "site/content/docs/plattform/architecture-hub/overview.md",
+    "oriso-platform/decisions/README.md",
+    "site/scripts/sync-content.mjs"
+   ]
+  },
+  {
+   "id": "flow:onboarding-a-traeger",
+   "name": "Onboarding a Traeger (tenant), its agencies and departments",
+   "summary": "The tenant lifecycle page walks the creation of a Traeger in TenantService, its Keycloak realm roles and admin accounts, and the branding and settings that hang off it, while the user-management flow covers how agency admins and counsellors are then created. Departments follow ADR-003 and ADR-014: agencies are linked to several topics, each (agency, topic) pair unique and carrying its own imprint and DPP, and ADR-023 governs the Platform Services Agreement the Traeger signs before any of this goes live. Appearance editing rights are granted per Traeger by the platform admin per ADR-010.",
+   "tags": ["tenant", "onboarding", "admin"],
+   "related": [
+    "site/content/docs/plattform/platform-flows/tenant-lifecycle.md",
+    "site/content/docs/plattform/platform-flows/user-management-flow.md",
+    "oriso-platform/decisions/ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent.md",
+    "oriso-platform/decisions/ADR-023-platform-services-agreement-and-traeger-governance.md"
+   ]
+  },
+  {
+   "id": "flow:deploy-an-environment",
+   "name": "Standing up an ORISO environment from scratch",
+   "summary": "The betrieb getting-started chapter takes you from host preparation and software installation through network and firewall rules to a working Kubernetes cluster, then the deployment chapter applies the Helm charts in order: databases, infrastructure, backend services, Keycloak, Matrix, the frontend, nginx and monitoring. ADR-011 fixes the shape of the result — one domain with path-based routing, Matrix on its own subdomain — and the configuration chapter closes with DNS and TLS, post-deployment configuration and verification testing before the environment is considered usable.",
+   "tags": ["deployment", "operations", "helm"],
+   "related": [
+    "site/content/docs/betrieb/getting-started/overview.mdx",
+    "site/content/docs/betrieb/deployment/deploy-backend-services.mdx",
+    "site/content/docs/betrieb/configuration-und-testing/verification-testing.mdx",
+    "oriso-platform/decisions/ADR-011-helm-only-deployment-single-domain-path-routing.md"
+   ]
+  },
+  {
+   "id": "flow:local-development-loop",
+   "name": "Running ORISO locally and working on a service",
+   "summary": "The local-development page and the services-local-setup runbook describe bringing the databases, Keycloak and the backend services up on a developer machine, with dedicated guides for Keycloak realm setup and for multitenancy. Once the stack runs, the coding-standards page states the conventions a change must follow and the troubleshooting pages collect the failure modes that recur — stale realms, missing alias services, Liquibase state and certificate problems.",
+   "tags": ["development", "local", "runbook"],
+   "related": [
+    "site/content/docs/plattform/platform-flows/local-development.md",
+    "services-local-setup/ORISO-local-development-runbook.md",
+    "services-local-setup/guides/keycloak/KEYCLOAK_SETUP_AND_OPERATIONS_GUIDE.md",
+    "site/content/docs/betrieb/operations/coding-standards.mdx",
+    "site/content/docs/plattform/operations/troubleshooting.md"
+   ]
+  },
+  {
+   "id": "flow:enquiry-to-accepted-case",
+   "name": "From an enquiry to an accepted counselling case",
+   "summary": "A help-seeker registers or enters a live chat, picks a topic before any consent is asked (ADR-014), and lands in a waiting room or as an open enquiry; counsellors may coordinate about it in a separate Team-Besprechung room that the help-seeker never sees. On acceptance the Besprechung is hard-closed and archived read-only (ADR-016), the department document becomes resolvable and its consent gate fires (ADR-022), and the configured Erstantwort is posted as one persisted event rendered as Carimat bubbles (ADR-018). The session then runs as the modality recorded in conversation_type.",
+   "tags": ["counselling", "session", "consent"],
+   "related": [
+    "site/content/docs/produkt/flows-und-internals/user-flows.mdx",
+    "site/content/docs/produkt/core-features/session-management.mdx",
+    "oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md",
+    "oriso-platform/decisions/ADR-018-erstantwort-as-one-persisted-event-rendered-as-carimat-bubbles.md",
+    "oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md"
+   ]
+  },
+  {
+   "id": "flow:consent-and-re-consent",
+   "name": "Consent and re-consent across a counselling session",
+   "summary": "Gate 1 is the platform-level policy, agreed by joining the waiting room, because processing starts the moment the page opens and no Beratungsstelle is assigned yet. Gate 2 is the department document of the accepting Beratungsstelle, resolved through the level ladder of ADR-021 and agreed before the conversation starts; the agreed version is stored as a pointer on the session so that publishing a new version re-prompts the help-seeker rather than silently changing the terms. Internal rooms with no help-seeker — supervision and Team-Besprechung — have no gate at all.",
+   "tags": ["consent", "legal", "session"],
+   "related": [
+    "oriso-platform/decisions/ADR-021-legal-text-hierarchy-versioning-and-consent-text.md",
+    "oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
+    "site/content/docs/produkt/core-features/live-chat.mdx",
+    "site/content/docs/produkt/design-und-quality/edge-cases.mdx"
+   ]
+  },
+  {
+   "id": "flow:handover-and-supervision-of-a-case",
+   "name": "Handing over a case and accompanying it under supervision",
+   "summary": "Case handover moves or shares an active conversation between counsellors with a reason, a consent step and an audit trail, which is only possible because every department counsellor is already a real room member from creation rather than a late joiner (ADR-002). Supervision is the other, read-only path: a supervisor is added per session, agency-scoped, joining the Matrix room with observer power level, and any counsellor-to-counsellor talk about the case happens in a separate side room, never hidden inside the help-seeker's room (ADR-008).",
+   "tags": ["handover", "supervision", "roles"],
+   "related": [
+    "site/content/docs/produkt/core-features/handover.mdx",
+    "oriso-platform/decisions/ADR-002-silent-room-membership-and-access-control-curtain.md",
+    "oriso-platform/decisions/ADR-008-supervision-role-and-side-channel-confidentiality.md",
+    "site/content/docs/produkt/architecture-und-roles/roles-permissions.mdx"
+   ]
+  },
+  {
+   "id": "flow:refresh-the-knowledge-graphs",
+   "name": "Refreshing the Understand-Anything graphs and their enrichments",
+   "summary": "The tools/understand-anything toolchain generates one knowledge graph per repository, merges the hand-written enrichment files that add concepts, flows and layer descriptions, and builds the cross-repository super-graph. The generated results are published as the repository-graphs and graphs-und-diagrams pages of the plattform shelf, and the inventory and validation-report pages record which graphs exist and whether the last run was sound.",
+   "tags": ["tooling", "knowledge-graph", "docs"],
+   "related": [
+    "tools/understand-anything/README.md",
+    "tools/understand-anything/ua-generate.mjs",
+    "tools/understand-anything/ua-enrich-merge.mjs",
+    "tools/understand-anything/ua-build-supergraph.mjs",
+    "site/content/docs/plattform/graphs-und-diagrams/understand-anything-inventory.md"
+   ]
+  }
+ ],
+ "layerDescriptions": {
+  "API Layer": "The Fumadocs site's route handlers, which serve documentation search and the llms.txt machine-readable exports of the same content.",
+  "UI Layer": "The Next.js layouts and React components that render the documentation site's pages, navigation and search dialog.",
+  "Core": "The documentation content itself — platform ADRs, plattform/produkt/betrieb MDX pages, repository graph reports and local-setup runbooks — plus the site configuration that binds them into one navigable tree.",
+  "Utility Layer": "Shared helpers and build-time scripts: the site's source loader and class-name utilities, and the content sync script that copies the source folders into site/content/docs."
+ }
+}

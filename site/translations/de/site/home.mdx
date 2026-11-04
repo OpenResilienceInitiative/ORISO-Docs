@@ -1,0 +1,36 @@
+---
+title: "ORISO-Dokumentation"
+description: "Technische Dokumentation der ORISO-Plattform: Entwicklung, Architektur, Einrichtung, Betrieb und Architekturentscheidungen."
+---
+
+<Cards>
+  <Card title="Produkt" href="/produkt/overview/overview">
+    Was die Plattform bietet: Beratungsformen, Rollen, Abläufe, Datenmodell und Sonderfälle.
+  </Card>
+  <Card title="Lokal starten" href="/plattform/start-here/install-and-run-locally">
+    Der Einstieg für Entwickler: Voraussetzungen, Repositories und der erste laufende Service.
+  </Card>
+  <Card title="Plattformarchitektur" href="/plattform/start-here/overview">
+    Wie ORISO aufgebaut ist: Services, Anmeldung, Datenspeicherung, Deployment und Repository-Zuständigkeiten.
+  </Card>
+  <Card title="Einrichtung und Betrieb" href="/betrieb/getting-started/clone-repositories">
+    Wie du ORISO installierst und betreibst: Runbooks von der Servereinrichtung bis zur Abnahme.
+  </Card>
+  <Card title="Architekturentscheidungen" href="/decisions">
+    Architekturentscheidungen erklären die Gründe für den Aufbau von ORISO und die verworfenen Alternativen.
+  </Card>
+</Cards>
+
+## Docs und Understand ergänzen sich
+
+| Quelle | Inhalt | Entstehung |
+|---|---|---|
+| **Docs — diese Website** | Technische Anleitungen, Produktreferenz, Architektur, Betrieb und Entscheidungen | Von Menschen geschrieben und in `ORISO-Docs` versioniert |
+| [Understand](https://understand.oriso.org/) | Überblick und Codestruktur: Dateien, Funktionen und Aufrufpfade je Repository | Codegraphen werden deterministisch aus dem Quellcode erzeugt; Überblickstexte werden separat gepflegt |
+| [Maßgebliche rechtliche Dokumentation](https://understand.oriso.org/legal/dsfa/) | Die DSFA mit Belegen aus dem Code | Auf Understand gepflegt; Docs verlinkt darauf und dupliziert nicht den vollständigen Rechtstext |
+
+Beginne auf Understand für den Überblick. Folge dann den Links zu Docs für technische Details.
+Die Links oben führen von Docs zurück zu Understand und zur maßgeblichen rechtlichen Dokumentation.
+
+Wenn Dokumentation und Graph voneinander abweichen, vergleiche ihre Quellbranches und prüfe den
+verlinkten Code. Ein Graph aus `main` belegt nicht, was auf `dev` implementiert oder bereitgestellt ist.

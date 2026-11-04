@@ -1,0 +1,45 @@
+"$schema": internal/dsfa-versions/v1
+
+# Zweck
+#   Aenderungshistorie der DSFA-Seite. tools/build-dsfa-page.py speist daraus den
+#   Versionsblock (Version/Stand im Kopf) sowie die Tabelle im Dialog
+#   "Aenderungshistorie". Die Vorlage (dsfa-page-v2.html) traegt dazu selbst keine
+#   Werte mehr; sie kommen ausschliesslich aus dieser Datei.
+#
+# Konventionen
+#   Reihenfolge  aeltest zuerst, neueste Version am Ende der Liste (= aktueller Stand).
+#   version      Anzeigewert im Versionsblock, ohne "v"-Praefix (die Seite ergaenzt es
+#                dort, wo ein "v" gebraucht wird, z. B. "latest -> v4").
+#   date         ISO-Datum (YYYY-MM-DD); wird als DD.MM.YYYY dargestellt.
+#   change       Kurzfassung der Aenderung fuer die Historientabelle.
+#   editor       Wer die Version verantwortet.
+
+versions:
+  - version: "0.1-draft"
+    date: "2026-08-14"
+    change: >-
+      Erstfassung aus Code-Inventaren und Tiefenbohrungen; Statistik-Kapitel neu;
+      Evidenz-Verweise ergänzt.
+    editor: "ORISO Docs"
+
+  - version: "2"
+    date: "2026-08-17"
+    change: >-
+      Kapiteltexte als Quelldateien mit Generator; Belegkarte (evidence-map) und
+      Kapitelindex; vorausgefüllte Entwürfe für die Betreiber-Abschnitte.
+    editor: "ORISO Docs"
+
+  - version: "3"
+    date: "2026-08-17"
+    change: >-
+      Betreiber-Stammdaten und Auftragsverarbeiter aus dem Administrationsbereich;
+      Branding-Assets; vier Belegpfade gegen die Checkouts korrigiert. Live seit 17.08.2026.
+    editor: "ORISO Docs"
+
+  - version: "4"
+    date: "2026-09-05"
+    change: >-
+      Kapitel technisch/organisatorisch gekennzeichnet; Belegkette Case Handover;
+      Aufbewahrungsfristen als geplant ausgewiesen (noch nicht implementiert);
+      Normzitate geprüft.
+    editor: "ORISO Docs"

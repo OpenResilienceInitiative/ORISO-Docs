@@ -20,7 +20,13 @@
         "database"
       ],
       "related": [
-        "schema.sql"
+        "mariadb/agencyservice/schema.sql",
+        "mariadb/caritas/schema.sql",
+        "mariadb/consultingtypeservice/schema.sql",
+        "mariadb/tenantservice/schema.sql",
+        "mariadb/uploadservice/schema.sql",
+        "mariadb/userservice/schema.sql",
+        "mariadb/videoservice/schema.sql"
       ]
     },
     {
@@ -72,7 +78,13 @@
       "related": [
         "database-initialize.yaml",
         "system-users-job.yaml",
-        "schema.sql"
+        "mariadb/agencyservice/schema.sql",
+        "mariadb/caritas/schema.sql",
+        "mariadb/consultingtypeservice/schema.sql",
+        "mariadb/tenantservice/schema.sql",
+        "mariadb/uploadservice/schema.sql",
+        "mariadb/userservice/schema.sql",
+        "mariadb/videoservice/schema.sql"
       ]
     },
     {

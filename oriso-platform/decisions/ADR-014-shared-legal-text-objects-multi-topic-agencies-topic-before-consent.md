@@ -2,8 +2,25 @@
 
 - **Status:** Accepted — Frank, 2026-07-16 (grill-with-docs session)
 - **Date:** 2026-07-16
+
+> **Number collision resolved 2026-08-08 (ORISO-Docs#73).** A second accepted ADR also carried
+> the number 014 (media scanning via the Matrix content scanner). It was the later decision
+> (2026-07-18) and became **ADR-019**. This record keeps 014, so an unqualified "ADR-014" now
+> means shared legal text objects and topic-before-consent.
+
+> **Extended 2026-08-16 by `ADR-021`.** Nothing here is reversed. ADR-021 adds what this record
+> does not cover: the **platform level above the Träger**, a **generic version history** for legal
+> texts (today only the AVV has one), and the **consent sentence as a field of the DPP**. The
+> topic-before-consent invariant below is unchanged and is the reason Gate 2 in `ADR-022` can
+> resolve a department document at all.
+
+> **Amended 2026-09-25, accepted 2026-09-26 (ORISO-UserService#1264).** A global platform switch
+> can restrict every agency to one topic (Caritas). The data model stays multi-topic; see
+> `ADR-014-amendment-2026-09-25-one-topic-per-agency-policy.md`.
+
 - **Deciders:** Frank + AI
 - **Related:** `ADR-003` (Department = unique Agency × Topic — **partially superseded by this ADR**, see below);
+  `ADR-021` (hierarchy, versioning, consent text — extends this record); `ADR-022` (consent gates);
   `ADR-009` (global Topic ownership); `CONTEXT-topics-categories-departments.md`;
   `CONTEXT-domain-caritas-diakonie-online-counselling.md` (Org → Tenancy Mapping);
   QDL epic ORISO-Frontend#181 (QR code & direct links)

@@ -1,0 +1,36 @@
+---
+title: "Installation und Betrieb"
+description: "Lokale Entwicklung oder Betreiberinstallation auswählen und anschließend die Zielumgebung prüfen."
+source: "index.mdx"
+---
+
+ORISO unterstützt Onlineberatung für mehrere Mandanten. Diese technische Dokumentation erklärt, wie die Dienste entwickelt, konfiguriert und betrieben werden. [Understand](https://understand.oriso.org/) erklärt Rollen, fachliche Abläufe und den veröffentlichten Graphen. Die verbindliche [Datenschutz-Folgenabschätzung](https://understand.oriso.org/legal/dsfa/) bleibt auf Understand.
+
+## Den unterstützten Einstieg auswählen
+
+<Cards>
+<Card title="Lokale Entwicklung" href="/de/plattform/start-here/install-and-run-locally">
+Die aktuelle lokale Einrichtung aus den Repositories und ihre dokumentierten Prüfungen verwenden.
+</Card>
+<Card title="Plattformarchitektur" href="/de/plattform/start-here/overview">
+Dienstzuständigkeiten, Authentifizierung, Datenflüsse und Repository-Verweise finden.
+</Card>
+<Card title="Betreiberinstallation" href="/de/betrieb/getting-started/overview">
+Anforderungen und Installationsanleitungen für die tatsächliche Zielumgebung prüfen.
+</Card>
+<Card title="Fehlersuche" href="/de/plattform/flows-und-reference/troubleshooting">
+Fehlerbilder mit den dokumentierten Quellpfaden und Prüfungen vergleichen.
+</Card>
+</Cards>
+
+## Entwicklung und Bereitstellung brauchen unterschiedliche Prüfungen
+
+Die lokale Entwicklung beginnt mit [Lokal installieren und starten](/de/plattform/start-here/install-and-run-locally) und dem aktiven Einstieg [Lokale Entwicklung](/de/plattform/platform-flows/local-development). Vor Änderungen den [Entwicklungsablauf](/de/betrieb/operations/coding-standards) lesen: Feature-Branches und Pull Requests richten sich an `dev`; menschliche Reviewer entscheiden, was gemergt wird. Nach dem Merge den bereitgestellten Versionsstand auf Dev prüfen.
+
+Die Betreiberseiten behandeln Servervoraussetzungen, Kubernetes und Helm, Datenbanken, Authentifizierung, Monitoring, Sicherung und Sicherheit. Vor dem Ausführen von Befehlen die Konfiguration mit der gewählten Umgebung abgleichen. Eine Beispielkonfiguration oder ein erfolgreicher Dokumentationsbuild belegt weder die Installation noch den gesunden Betrieb eines Dienstes. Bei der Installationsprüfung die tatsächliche Konfiguration, die bereitgestellte Version und das beobachtete Ergebnis festhalten.
+
+## Quellen- und Veröffentlichungsstand
+
+Jeder Artikel nennt den verantwortlichen Quellbereich und seinen Versionsstand. Technische Dokumentation kann neuere `dev`-Quellen beschreiben als der veröffentlichte Understand-Graph, der seinen eigenen Release-Stand ausweist. Diese Versionsstände vergleichen, bevor eine Abweichung als Fehler bewertet wird. Übersetzungsprüfungen binden deutschen und englischen Text an dieselbe Quelle; Laufzeitprüfungen und juristische Freigaben bleiben getrennt.
+
+[Überblick und Anforderungen](/de/betrieb/getting-started/overview) führt zur Betreiberinstallation, [Verifikation und Tests](/de/betrieb/configuration-und-testing/verification-testing) zu Bereitstellungsprüfungen und [Kurzreferenz](/de/betrieb/operations/quick-reference) zu Befehlen. Eine vollständige Veröffentlichung setzt vollständige aktuelle Übersetzungen und ein Artefakt voraus, dessen öffentliche Inhalte nach der Bereitstellung überprüft werden können.

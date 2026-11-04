@@ -5,6 +5,8 @@ description: Detailed merged graph explorer by repository, layer, node type, API
 
 # ORISO Super Graph Detailed View
 
+> **Outdated — archived.** A dump of the May 2026 graph merge, superseded by the live dashboards at [understand.oriso.org](https://understand.oriso.org/). See [How we keep the docs honest](./understand-anything.md).
+
 This page is generated from existing .understand-anything artifacts only. It preserves every source graph node and edge possible by assigning global IDs such as `ORISO-UserService::<original-id>`.
 
 ## Merge Summary

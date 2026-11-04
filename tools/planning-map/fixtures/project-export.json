@@ -1,0 +1,424 @@
+{
+  "_note": "Recorded-shape fixture (hand-written from the documented GraphQL shapes; not a live capture). Page size 2 to exercise pagination.",
+  "meta": {
+    "data": {
+      "organization": {
+        "projectV2": {
+          "title": "ORISO Roadmap",
+          "fields": {
+            "nodes": [
+              {
+                "__typename": "ProjectV2SingleSelectField",
+                "name": "Status",
+                "options": [
+                  {
+                    "name": "Backlog"
+                  },
+                  {
+                    "name": "Ready"
+                  },
+                  {
+                    "name": "On hold"
+                  },
+                  {
+                    "name": "In progress"
+                  },
+                  {
+                    "name": "In review"
+                  },
+                  {
+                    "name": "QA internal"
+                  },
+                  {
+                    "name": "QA external"
+                  },
+                  {
+                    "name": "Done"
+                  }
+                ]
+              },
+              {
+                "__typename": "ProjectV2Field",
+                "name": "Readiness",
+                "dataType": "NUMBER"
+              },
+              {
+                "__typename": "ProjectV2Field",
+                "name": "Title",
+                "dataType": "TITLE"
+              }
+            ]
+          }
+        },
+        "issueFields": {
+          "nodes": [
+            {
+              "__typename": "IssueFieldSingleSelect",
+              "name": "Priority",
+              "options": [
+                {
+                  "name": "Urgent"
+                },
+                {
+                  "name": "High"
+                },
+                {
+                  "name": "Medium"
+                },
+                {
+                  "name": "Low"
+                }
+              ]
+            },
+            {
+              "__typename": "IssueFieldSingleSelect",
+              "name": "Effort",
+              "options": [
+                {
+                  "name": "S"
+                },
+                {
+                  "name": "M"
+                },
+                {
+                  "name": "L"
+                }
+              ]
+            },
+            {
+              "__typename": "IssueFieldMultiSelect",
+              "name": "Platform release",
+              "options": [
+                {
+                  "name": "v2.0.12"
+                },
+                {
+                  "name": "v2.0.13"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "pages": [
+    {
+      "cursorBefore": null,
+      "response": {
+        "data": {
+          "organization": {
+            "projectV2": {
+              "title": "ORISO Roadmap",
+              "items": {
+                "totalCount": 6,
+                "pageInfo": {
+                  "hasNextPage": true,
+                  "endCursor": "CUR1"
+                },
+                "nodes": [
+                  {
+                    "id": "PVTI_1",
+                    "type": "ISSUE",
+                    "status": {
+                      "name": "Ready"
+                    },
+                    "readiness": {
+                      "number": 6
+                    },
+                    "content": {
+                      "__typename": "Issue",
+                      "number": 204,
+                      "title": "Planning map: board.json",
+                      "url": "https://github.com/OpenResilienceInitiative/ORISO-Docs/issues/204",
+                      "state": "OPEN",
+                      "updatedAt": "2026-10-20T10:00:00Z",
+                      "repository": {
+                        "nameWithOwner": "OpenResilienceInitiative/ORISO-Docs",
+                        "isPrivate": false
+                      },
+                      "issueType": {
+                        "name": "Task"
+                      },
+                      "parent": {
+                        "number": 197,
+                        "repository": {
+                          "nameWithOwner": "OpenResilienceInitiative/ORISO-Docs",
+                          "isPrivate": false
+                        }
+                      },
+                      "issueFieldValues": {
+                        "nodes": [
+                          {
+                            "__typename": "IssueFieldSingleSelectValue",
+                            "name": "High",
+                            "field": {
+                              "name": "Priority"
+                            }
+                          },
+                          {
+                            "__typename": "IssueFieldSingleSelectValue",
+                            "name": "M",
+                            "field": {
+                              "name": "Effort"
+                            }
+                          },
+                          {
+                            "__typename": "IssueFieldMultiSelectValue",
+                            "options": [
+                              {
+                                "name": "v2.0.12"
+                              }
+                            ],
+                            "field": {
+                              "name": "Platform release"
+                            }
+                          }
+                        ]
+                      },
+                      "assignees": {
+                        "nodes": [
+                          {
+                            "login": "frank"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "id": "PVTI_2",
+                    "type": "ISSUE",
+                    "status": {
+                      "name": "In progress"
+                    },
+                    "readiness": {
+                      "number": 19
+                    },
+                    "content": {
+                      "__typename": "Issue",
+                      "number": 197,
+                      "title": "Epic: planning map",
+                      "url": "https://github.com/OpenResilienceInitiative/ORISO-Docs/issues/197",
+                      "state": "OPEN",
+                      "updatedAt": "2026-09-01T10:00:00Z",
+                      "repository": {
+                        "nameWithOwner": "OpenResilienceInitiative/ORISO-Docs",
+                        "isPrivate": false
+                      },
+                      "issueType": {
+                        "name": "Epic"
+                      },
+                      "parent": null,
+                      "issueFieldValues": {
+                        "nodes": [
+                          {
+                            "__typename": "IssueFieldSingleSelectValue",
+                            "name": "Urgent",
+                            "field": {
+                              "name": "Priority"
+                            }
+                          },
+                          {
+                            "__typename": "IssueFieldMultiSelectValue",
+                            "options": [
+                              {
+                                "name": "v2.0.12"
+                              },
+                              {
+                                "name": "v2.0.13"
+                              }
+                            ],
+                            "field": {
+                              "name": "Platform release"
+                            }
+                          }
+                        ]
+                      },
+                      "assignees": {
+                        "nodes": [
+                          {
+                            "login": "frank"
+                          },
+                          {
+                            "login": "BjoernLudwig"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "cursorBefore": "CUR1",
+      "response": {
+        "data": {
+          "organization": {
+            "projectV2": {
+              "title": "ORISO Roadmap",
+              "items": {
+                "totalCount": 6,
+                "pageInfo": {
+                  "hasNextPage": true,
+                  "endCursor": "CUR2"
+                },
+                "nodes": [
+                  {
+                    "id": "PVTI_3",
+                    "type": "ISSUE",
+                    "status": {
+                      "name": "QA internal"
+                    },
+                    "readiness": {
+                      "number": 3
+                    },
+                    "content": {
+                      "__typename": "Issue",
+                      "number": 9,
+                      "title": "SECRET private e2e title",
+                      "url": "https://github.com/OpenResilienceInitiative/ORISO-E2E/issues/9",
+                      "state": "OPEN",
+                      "updatedAt": "2026-10-01T00:00:00Z",
+                      "repository": {
+                        "nameWithOwner": "OpenResilienceInitiative/ORISO-E2E",
+                        "isPrivate": true
+                      },
+                      "issueType": {
+                        "name": "Bug"
+                      },
+                      "parent": null,
+                      "issueFieldValues": {
+                        "nodes": [
+                          {
+                            "__typename": "IssueFieldSingleSelectValue",
+                            "name": "Low",
+                            "field": {
+                              "name": "Priority"
+                            }
+                          }
+                        ]
+                      },
+                      "assignees": {
+                        "nodes": []
+                      }
+                    }
+                  },
+                  {
+                    "id": "PVTI_4",
+                    "type": "PULLREQUEST",
+                    "status": {
+                      "name": "Done"
+                    },
+                    "readiness": null,
+                    "content": {
+                      "__typename": "PullRequest",
+                      "number": 130,
+                      "title": "Drop committed graphs",
+                      "url": "https://github.com/OpenResilienceInitiative/ORISO-Docs/pull/130",
+                      "state": "MERGED",
+                      "updatedAt": "2026-10-10T00:00:00Z",
+                      "repository": {
+                        "nameWithOwner": "OpenResilienceInitiative/ORISO-Docs",
+                        "isPrivate": false
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "cursorBefore": "CUR2",
+      "response": {
+        "data": {
+          "organization": {
+            "projectV2": {
+              "title": "ORISO Roadmap",
+              "items": {
+                "totalCount": 6,
+                "pageInfo": {
+                  "hasNextPage": false,
+                  "endCursor": "CUR3"
+                },
+                "nodes": [
+                  {
+                    "id": "PVTI_5",
+                    "type": "DRAFT_ISSUE",
+                    "status": {
+                      "name": "Backlog"
+                    },
+                    "readiness": {
+                      "number": 2
+                    },
+                    "content": {
+                      "__typename": "DraftIssue",
+                      "title": "Idea: board filters",
+                      "updatedAt": "2026-10-12T00:00:00Z"
+                    }
+                  },
+                  {
+                    "id": "PVTI_6",
+                    "type": "ISSUE",
+                    "status": {
+                      "name": "Done"
+                    },
+                    "readiness": {
+                      "number": 8
+                    },
+                    "content": {
+                      "__typename": "Issue",
+                      "number": 55,
+                      "title": "Child of a private parent",
+                      "url": "https://github.com/OpenResilienceInitiative/ORISO-Docs/issues/55",
+                      "state": "CLOSED",
+                      "updatedAt": "2026-10-20T10:00:00Z",
+                      "repository": {
+                        "nameWithOwner": "OpenResilienceInitiative/ORISO-Docs",
+                        "isPrivate": false
+                      },
+                      "issueType": {
+                        "name": "Task"
+                      },
+                      "parent": {
+                        "number": 3,
+                        "repository": {
+                          "nameWithOwner": "OpenResilienceInitiative/ORISO-E2E",
+                          "isPrivate": true
+                        }
+                      },
+                      "issueFieldValues": {
+                        "nodes": [
+                          {
+                            "__typename": "IssueFieldMultiSelectValue",
+                            "options": [
+                              {
+                                "name": "v2.0.13"
+                              }
+                            ],
+                            "field": {
+                              "name": "Platform release"
+                            }
+                          }
+                        ]
+                      },
+                      "assignees": {
+                        "nodes": []
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "concepts": [
+    {
+      "id": "concept:public-status-page",
+      "name": "Public Status Page",
+      "summary": "Two-part status page: a Node backend (backend/server.js) that reports service states, and a React/Vite frontend rendering them as a service grid with a status banner. The GitHub repository is archived; the graph exists server-side only.",
+      "tags": ["domain", "observability"],
+      "related": ["backend/server.js", "frontend/src/App.jsx", "frontend/src/components/ServiceGrid.jsx", "frontend/src/components/StatusBanner.jsx"]
+    }
+  ],
+  "flows": [
+    {
+      "id": "flow:status-render",
+      "name": "Rendering Service Status",
+      "summary": "Frontend fetches states from backend/server.js → ServiceGrid lays out one ServiceCard per service → StatusBanner summarizes overall platform health.",
+      "related": ["backend/server.js", "frontend/src/components/ServiceCard.jsx", "frontend/src/components/ServiceGrid.jsx"]
+    }
+  ]
+}

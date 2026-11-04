@@ -1,0 +1,106 @@
+---
+title: "4.9 Fallübergabe — einen Fall holen und abgeben"
+description: "Wie ein Beratungsfall zwischen Kolleginnen und Kollegen wechselt: einen Fall holen, einen Fall anbieten, die Gründe, die erforderliche Zustimmung und der Unterschied zwischen Einsichtnahme und Übernahme."
+source: "product/features/case-handover.mdx"
+---
+
+Beratung endet nicht, wenn eine Person abwesend ist. Die Fallübergabe ist der geregelte Weg,
+auf dem ein Fall zwischen Beratenden derselben Beratungsstelle wechselt — mit einem genannten Grund,
+mit Zustimmung der ratsuchenden Person, sofern der Grund sie verlangt, und mit einem Nachweis des Ablaufs.
+
+Diese Seite beschreibt, **was** die Funktion tut. Sie richtet sich an Beratende, Verantwortliche
+für Beratungsstellen und Datenschutzbeauftragte.
+
+## 4.9.1 Ein Fallzugriff, zwei Richtungen
+
+Alles beruht auf einem Mechanismus, der von zwei Seiten gestartet wird:
+
+| | **Einen Fall holen (pull)** | **Einen Fall abgeben (push)** |
+|---|---|---|
+| Wer beginnt | die einspringende Kollegin oder der einspringende Kollege | die derzeit fallverantwortliche beratende Person |
+| Typische Situation | eine Person fällt unerwartet aus und ihre Fälle brauchen Vertretung | geplante Abwesenheit oder Bitte um kollegialen Rat |
+| Zusätzlicher Schritt | keiner — der Grund entscheidet über das weitere Vorgehen | die ausgewählte Person muss das Angebot annehmen |
+| Was folgt | in beiden Richtungen gleich: Grund prüfen, Zustimmung der ratsuchenden Person falls erforderlich, Hinweis im Chat, Protokolleintrag | |
+
+<Mermaid chart={"flowchart LR\n  P1[Counsellor steps in<br/>Get a case]:::a --> R[Pick a reason]:::m\n  P2[Counsellor hands over<br/>Give a case]:::a --> S[Pick a colleague<br/>and a reason]:::m\n  S --> O[Colleague accepts<br/>or declines]:::c\n  O -->|accepted| R\n  R --> C{Does the reason<br/>require the client's<br/>agreement?}:::c\n  C -->|yes| CL[Client is asked<br/>in the chat]:::cl\n  C -->|no| G[Access granted]:::ok\n  CL -->|agrees| G\n  CL -->|declines| N[No access<br/>case stays where it is]:::n\n  G --> L[Note in the chat<br/>entry in the log]:::ok\n\n  classDef a fill:#e3f2fd,stroke:#1565c0\n  classDef m fill:#fff3e0,stroke:#ef6c00\n  classDef c fill:#fce4ec,stroke:#ad1457\n  classDef cl fill:#f3e5f5,stroke:#6a1b9a\n  classDef ok fill:#e8f5e8,stroke:#2e7d32\n  classDef n fill:#eceff1,stroke:#546e7a"} />
+
+## 4.9.2 Einsichtnahme oder Übernahme
+
+Es gibt zwei Ergebnisse; der Grund entscheidet, welches gilt:
+
+- **Einsichtnahme.** Eine Kollegin oder ein Kollege liest für begrenzte Zeit mit, um Rat zu geben.
+  Der Fall bleibt bei der ursprünglich beratenden Person, die ihn weiterhin vollständig sieht.
+  Die Einsichtnahme endet von selbst, sobald ihre Zeit abläuft.
+- **Übernahme.** Der Fall wechselt. Die neue beratende Person ist die Ansprechperson der Ratsuchenden;
+  die vorherige Person sieht den Fall nicht mehr in ihrer Liste, bleibt aber Mitglied des Gesprächs.
+  So kann der Fall bei ihrer Rückkehr zurückgegeben werden. Bei einem endgültigen Grund — der Auftrag
+  ist beendet — gibt es nichts zurückzugeben.
+
+<Callout>
+Durch eine Übergabe wird niemand aus einem Gespräch entfernt, und niemand tritt später hinzu.
+Die Beratenden einer Beratungsstelle sind bereits stille Mitglieder der Gespräche ihrer Abteilung;
+eine Übergabe ändert lediglich, wer den Fall sieht und wer verantwortlich ist. Dadurch bleibt
+für die ratsuchende Person bei der Übergabe der vollständige Verlauf erhalten, statt einen leeren Chat zu beginnen.
+</Callout>
+
+## 4.9.3 Gründe
+
+| Grund | Bedeutung | Übliche Folge |
+|---|---|---|
+| **Geplante Abwesenheit** | die beratende Person ist planmäßig abwesend | Übernahme, Rückgabe bei Rückkehr |
+| **Ungeplante Abwesenheit** | die beratende Person ist unerwartet nicht verfügbar | Übernahme, Rückgabe bei Rückkehr |
+| **Auftrag beendet** | die beratende Person bearbeitet diesen Fall nicht mehr | endgültige Übernahme |
+| **Beratung angefragt** | eine Kollegin oder ein Kollege soll den Fall ansehen | zeitlich begrenzte Einsichtnahme |
+
+Gründe benennen bewusst, **dass** jemand nicht verfügbar ist, niemals **warum**. Die Krankheit einer
+beratenden Person ist deren Gesundheitsinformation; sie gehört weder in den Chat der ratsuchenden Person
+noch in eine Benachrichtigung oder ein Verwaltungsprotokoll. Die sichtbare Nachricht nennt daher weder
+Ursache noch Dauer:
+
+> Ihre bisherige Beratungsperson ist derzeit nicht verfügbar. *Name* wird Sie weiter unterstützen.
+
+Jeder Träger kann je Grund entscheiden, ob die ratsuchende Person zustimmen muss und wie lange eine
+Einsichtnahme dauern darf. Die Gründe selbst und ihre Formulierungen gelten für die gesamte Plattform,
+damit keine Beratungsstelle wieder einen Grund einführen kann, der Gesundheitsinformationen offenlegt.
+
+## 4.9.4 Wer was tut
+
+| Rolle | Möglichkeiten |
+|---|---|
+| **Beratende** | mit einem Grund einen kollegialen Fall holen; eigenen Fall einer Person derselben Beratungsstelle anbieten; noch offenes Angebot zurückziehen; an sie gerichtetes Angebot annehmen oder ablehnen |
+| **Ratsuchende** | zustimmen oder ablehnen, wenn der Grund es verlangt; sehen nur die aktuell verantwortliche Beratungsperson |
+| **Supervision** | begleitet einen Fall auch nach der Übergabe weiter — eine Übergabe beendet die Supervision nicht |
+| **Verantwortliche für Beratungsstellen** | stellen je Grund ein, ob Zustimmung erforderlich ist und wie lange eine Einsichtnahme dauert; lesen das Übergabeprotokoll ihres eigenen Trägers |
+
+Ein Fall kann nur innerhalb derselben Beratungsstelle wechseln. Trägerübergreifende Übergaben gibt es nicht.
+
+## 4.9.5 Was Ratsuchende erleben
+
+- Im Chat wird ihnen in ihrer eigenen Sprache mitgeteilt, dass ihre Beratung mit einer namentlich
+  genannten Person weitergeht — niemals, warum die vorherige Person nicht verfügbar ist.
+- Wenn der Grund Zustimmung verlangt, antworten sie im Chat, bevor sich etwas ändert. Bei Ablehnung
+  bleibt alles unverändert: Der Fall bleibt bei der bisher verantwortlichen Person.
+- Das Gespräch geht weiter. Derselbe Chat, derselbe Verlauf, dieselbe anonyme Identität — lediglich
+  eine andere Person berät.
+- Ratsuchende sehen stets genau eine verantwortliche Beratungsperson, niemals die übrigen Mitglieder
+  der Abteilung.
+
+## 4.9.6 Ein unbeantwortetes Angebot
+
+Ein angebotener Fall bleibt bei der anbietenden Person, bis die Kollegin oder der Kollege annimmt.
+Das Angebot kann zurückgezogen, abgelehnt oder unbeantwortet gelassen werden — nach einigen Tagen
+verfällt es. In jedem dieser Fälle bleibt der Fall einfach dort, wo er war; die ratsuchende Person
+sieht überhaupt nichts davon.
+
+## 4.9.7 Was protokolliert wird
+
+Jede Übergabe erzeugt einen Eintrag: welcher Fall, welche Richtung, wer angefragt hat, wer ihn erhalten
+hat, der Grund, ob die ratsuchende Person zugestimmt hat und wann. Der Eintrag ist für die Verantwortlichen
+und die Datenschutzbeauftragten des zugehörigen Trägers sichtbar — nicht für andere Träger und nicht
+für den Plattformbetreiber. Nachrichteninhalte sind niemals Teil davon.
+
+## 4.9.8 Verwandte Seiten
+
+- [Sitzungsverwaltung](/de/produkt/core-features/session-management) — wie Fälle ursprünglich zugewiesen werden.
+- [Rollen und Berechtigungen](/de/produkt/architecture-und-roles/roles-permissions) — was die einzelnen Rollen sehen dürfen.
+- [Benachrichtigungen](/de/produkt/core-features/notifications) — wie Beratende von einem Angebot erfahren.

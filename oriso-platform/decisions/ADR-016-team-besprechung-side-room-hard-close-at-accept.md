@@ -29,3 +29,22 @@ Counsellor teams want to coordinate on an incoming enquiry ("who takes this, wha
 ## Consequences
 
 **Positive:** reuses a shipped, leak-guarded primitive; no new permission model; clean lifecycle boundary matching the existing mechanism taxonomy. **Cost:** room provisioning at enquiry time (pre-assignment operator handling — today's facade assumes an assigned consultant); notification recipient fan-out must be built (current message producers hardcode user+consultant); archived-room re-access UI.
+
+---
+
+## Addendum 2026-09-05: §3 was wrong — there is no archive auto-deletion; a dedicated purge run replaces it
+
+**Correction.** §3 says retention "rides the existing archive auto-deletion — no new TTL mechanism". That claim was never true. Verified against `ORISO-UserService` (`dev`, September 2026): archiving a Team-Besprechung (`TeamDiscussionFacade.archiveDiscussion`) only flips `team_discussion.discussion_status` to `ARCHIVED`, stamps `archive_date` and raises the room's `events_default` power level so nobody can post. Nothing is ever deleted — the repository had no delete operation, and the Matrix room kept everything the team wrote about the advice seeker, in plain text, for as long as the homeserver existed. The DPIA lists the retention period for these rooms as "planned, not yet implemented".
+
+**Decision.** A dedicated, scheduled purge run is the retention mechanism for Team-Besprechung rooms (ORISO-UserService #1116, parent KDG epic #1010):
+
+- **Full purge, not a status change.** After the retention period the Matrix room is purged through the Synapse admin API, then the `team_discussion` row and its `team_discussion_participant` records are deleted in one transaction.
+- **Start of the period:** `archive_date`, and only `ARCHIVED` discussions are eligible. An `OPEN` discussion is never purged by this run: `team_discussion` carries no activity signal, so "open" means "not archived", not "abandoned", and purging by creation date would delete a room still in use (review on UserService #1122). A truly abandoned enquiry is covered from the other side — when its session is deleted, the deletion workflow purges the discussion and its room (UserService #1118). Should an explicit abandonment rule be wanted later, it is an additive `last_activity_date` signal, not a change to this one.
+- **Purge before row delete.** The purge is the Synapse admin Delete Room API, `DELETE /_synapse/admin/v2/rooms/{roomId}` with body `{"purge": true}` and **no** `block` parameter, so an unknown room answers `404` rather than being blocked. Only that documented room-not-found result, or a `2xx`, releases the row. Every other outcome — timeout, authentication failure, `5xx`, any ambiguous error — keeps the row and its participants, and the next run retries. The pointer to a room that may still exist is never lost.
+- **One replica, all tenants, nightly.** The run is leased through the scheduled-task claim (claim key `team-discussion-archive-retention`) and executes under the technical tenant context, offset from the other retention jobs (`0 45 3 * * ?`).
+- **Configurable without a release:** `team-discussion.archive.retention.days` (`TEAM_DISCUSSION_ARCHIVE_RETENTION_DAYS`), wired through ORISO-Helm as `userService.teamDiscussion.archiveRetentionDays`. A value of `0` or less switches the job off.
+- **Rollout gate: off until the data protection officer signs off.** The Helm chart ships the value as `0` and also falls back to `0` when the key is absent, so no ORISO deployment purges anything until an operator sets the approved period in the environment overlay. The application-level default of 90 only applies to a service started outside the chart without the environment variable.
+
+**Effective period, for the DPIA.** Proposed: **90 days after archiving**. There is no statutory figure for team coordination rooms; the Caritas professional position is that process data goes once the client relationship has ended. 90 days is the DPIA proposal and remains **pending the data protection officer's sign-off**; until then the deployed value is `0` (job off). It is deliberately a deployment value so the number can be set, and later corrected, without a code change.
+
+**What this does not change.** Hard close at acceptance (§2), read-only re-access during the retention period (§3, first clause) and the participation rule (§4) stand. Related, independent bug: session deletion left the discussion row and room behind (ORISO-UserService #1118) — fixed separately, not by this run.

@@ -1,0 +1,112 @@
+# Local-only baseline. Database schemas and seeds are owned by each service's Liquibase master.
+x-owned: &owned
+  labels:
+    org.oriso.local.owner: ${ORISO_LOCAL_OWNER:?Use run-oriso-local.sh to provide ownership}
+services:
+  mariadb:
+    <<: *owned
+    image: mariadb:11.4.8
+    environment:
+      MARIADB_ROOT_PASSWORD: local-only-root
+    ports:
+      - "127.0.0.1:${ORISO_MARIADB_PORT:-3306}:3306"
+    volumes:
+      - mariadb-data:/var/lib/mysql
+      - ./fixtures/databases.sql:/docker-entrypoint-initdb.d/01-databases.sql:ro
+    healthcheck:
+      test: [CMD, healthcheck.sh, --connect, --innodb_initialized]
+      interval: 3s
+      timeout: 3s
+      retries: 60
+  mongodb:
+    <<: *owned
+    image: mongo:7.0.24
+    ports:
+      - "127.0.0.1:${ORISO_MONGODB_PORT:-27017}:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: [CMD, mongosh, --quiet, --eval, "quit(db.adminCommand({ping:1}).ok ? 0 : 1)"]
+      interval: 3s
+      timeout: 5s
+      retries: 60
+  redis:
+    <<: *owned
+    image: redis:7.4.6-alpine
+    ports:
+      - "127.0.0.1:${ORISO_REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 3s
+      timeout: 3s
+      retries: 60
+  rabbitmq:
+    <<: *owned
+    image: rabbitmq:4.1.4-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: oriso_local
+      RABBITMQ_DEFAULT_PASS: local-only-rabbit
+    ports:
+      - "127.0.0.1:${ORISO_RABBITMQ_PORT:-5672}:5672"
+    volumes:
+      - rabbit-data:/var/lib/rabbitmq
+    healthcheck:
+      test: [CMD, rabbitmq-diagnostics, -q, ping]
+      interval: 5s
+      timeout: 10s
+      retries: 60
+  mailpit:
+    <<: *owned
+    # Official multiarchitecture v1.31.3 index; captures only, no relay/forwarding configuration.
+    image: ghcr.io/axllent/mailpit:v1.31.3@sha256:ed9b00c609e77e99c79b93f1178255ebc271868920f2c69a8d166bd5634ed10d
+    environment:
+      MP_DATABASE: /tmp/mailpit.db
+      MP_MAX_MESSAGES: "1000"
+    ports:
+      - "127.0.0.1:${ORISO_SMTP_PORT:-1025}:1025"
+      - "127.0.0.1:${ORISO_MAILPIT_UI_PORT:-8025}:8025"
+    healthcheck:
+      test: [CMD, /mailpit, readyz]
+      interval: 3s
+      timeout: 3s
+      retries: 60
+  keycloak:
+    <<: *owned
+    image: quay.io/keycloak/keycloak:26.6.3
+    command: [start-dev, --import-realm]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: local-bootstrap
+      KC_BOOTSTRAP_ADMIN_PASSWORD: local-only-bootstrap
+      KC_HEALTH_ENABLED: "true"
+      KC_HOSTNAME: "http://localhost:${ORISO_KEYCLOAK_PORT:-8080}"
+      KC_HOSTNAME_STRICT: "false"
+    ports:
+      - "127.0.0.1:${ORISO_KEYCLOAK_PORT:-8080}:8080"
+    volumes:
+      - keycloak-data:/opt/keycloak/data
+      - ${ORISO_RUNTIME_DIR}/online-beratung-realm.json:/opt/keycloak/data/import/online-beratung-realm.json:ro
+    healthcheck:
+      test: [CMD-SHELL, "bash -c 'exec 3<>/dev/tcp/127.0.0.1/9000; printf \"GET /health/ready HTTP/1.0\\r\\n\\r\\n\" >&3; head -1 <&3 | grep -q \"200\"'"]
+      interval: 5s
+      timeout: 5s
+      retries: 90
+
+volumes:
+  mariadb-data:
+    labels:
+      org.oriso.local.owner: ${ORISO_LOCAL_OWNER:?Ownership required}
+  mongo-data:
+    labels:
+      org.oriso.local.owner: ${ORISO_LOCAL_OWNER:?Ownership required}
+  redis-data:
+    labels:
+      org.oriso.local.owner: ${ORISO_LOCAL_OWNER:?Ownership required}
+  rabbit-data:
+    labels:
+      org.oriso.local.owner: ${ORISO_LOCAL_OWNER:?Ownership required}
+  keycloak-data:
+    labels:
+      org.oriso.local.owner: ${ORISO_LOCAL_OWNER:?Ownership required}
+      org.oriso.local.realm-contract: ${ORISO_REALM_CONTRACT:-parser-only}

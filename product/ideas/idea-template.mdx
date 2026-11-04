@@ -1,0 +1,96 @@
+---
+title: "Idea Template — Describing an Idea Before It Becomes Tickets"
+description: "The template for an idea page: the problem from the user's view, the flow, the roles, the open questions, and how the front matter places the idea on the capability map."
+status: idea
+capabilities: []
+template: true
+---
+
+An idea page is where a feature is discussed before anyone writes tasks. It is written for
+counsellors, agency administrators, product leads and developers alike, so it describes **what
+people need and what they would see**, not how it is built.
+
+Copy this page, give it a short file name, and replace every section. The page is published in
+German and English like every feature page, and the Plan view of the capability map shows it on
+the capabilities it touches.
+
+## Front matter
+
+The first lines of the page are read by the map. Only these keys are used:
+
+| Key | Meaning |
+|---|---|
+| `status` | `idea`, `discussed`, `specified` or `epic` — how far the idea has come |
+| `capabilities` | the capabilities it would touch, as ids from the capability list, for example `[case-handover, notifications]` |
+| `epic` | optional, `Organisation/Repository#number` of the epic once one exists; public repositories only |
+| `draftItems` | optional, how many draft items wait on the board; a number only, no titles |
+
+An unknown capability id stops the documentation build. This template has `template: true`, so
+the map does not show it.
+
+## The problem, from the user's view
+
+Say who is stuck and what they cannot do today. Use one concrete situation, in the words of the
+person who lives it.
+
+- **Who:** for example a counsellor on a night shift, or an agency administrator.
+- **Situation:** what happens, step by step, today.
+- **Cost:** what it costs them — time, trust, a case that is lost.
+
+<Note>
+Do not describe the solution here. If the problem cannot be told without the solution, the
+problem is not understood yet.
+</Note>
+
+## The flow
+
+Show what the person would do and see with the idea in place. A short diagram helps; keep to
+five to eight steps.
+
+```mermaid
+flowchart LR
+  A[Person starts<br/>the task]:::a --> B[Sees the choice]:::m
+  B --> C{Needs someone<br/>else's agreement?}:::c
+  C -->|yes| D[Other person is asked]:::cl
+  C -->|no| E[Done]:::ok
+  D --> E
+
+  classDef a fill:#e3f2fd,stroke:#1565c0
+  classDef m fill:#fff3e0,stroke:#ef6c00
+  classDef c fill:#fce4ec,stroke:#ad1457
+  classDef cl fill:#f3e5f5,stroke:#6a1b9a
+  classDef ok fill:#e8f5e8,stroke:#2e7d32
+```
+
+## Roles
+
+Who does what, and who must never be able to do it.
+
+| Role | Can | Cannot |
+|---|---|---|
+| Counsellor | … | … |
+| Agency administrator | … | … |
+| Help-seeker | … | … |
+
+## Where it would land
+
+Name the capabilities from the front matter in one sentence each: what would change there, and
+what stays as it is.
+
+## Open questions
+
+Write what is still undecided, one question per line, with the person who can answer it. Move a
+question into the text above once it is answered; when none is left, the status can change to
+`specified`.
+
+- **Question:** … — answer from: …
+- **Question:** … — answer from: …
+
+## From idea to epic
+
+| Status | Means |
+|---|---|
+| `idea` | the problem is written down |
+| `discussed` | the people concerned have read it and commented |
+| `specified` | flow, roles and open questions are settled |
+| `epic` | an epic with the label `idea` exists; set `epic:` in the front matter |

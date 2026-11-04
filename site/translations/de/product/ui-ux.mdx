@@ -1,0 +1,295 @@
+---
+title: "UI / UX-Auslegung (aus Figma)"
+description: "Auslegung des Figma-Diagramms und sichtbarer Produktivbildschirme: Zweck jedes Bildschirms, zentrale Bestandteile, Nutzeraktionen und Backend-Interaktion."
+---
+
+<Info>
+Diese Seite deutet das **Figma-Diagramm für Rollenhierarchie und Live-Chat-Ablauf** (unten abgebildet) und die in derselben Datei erfassten Produktivbildschirme. Sie verbindet Rollen-/Funktionsseiten mit den tatsächlichen Bildpunkten, die Gestaltung oder Frontend-Entwicklung sehen.
+</Info>
+
+## 8.1 Referenzdiagramm
+
+![Rollenhierarchie, DSGVO-Vererbung und Live-Chat-Ablauf](/product/assets/role-hierarchy-and-live-chat-flow.png)
+
+Das Diagramm zeigt drei Dinge gemeinsam:
+
+1. **Oben rechts:** Rollenhierarchie (Plattform-Admin → Träger-Admin → Beratungsstellen-Admin → Beratende) mit **MFA verpflichtend** bei Plattform-/Träger-Admins und Dokumenten **Impressum / Datenrichtlinie / DSGVO-Vereinbarung** an jeder Ebene.
+2. **Mitte:** Vererbung von Rechtstexten entlang des Baums (durchgezogene Pfeile = erstellen, gestrichelte = erben / Rückfall) in **Beratungsstellen** und von dort in den Live-Chat-Ticketablauf.
+3. **Unten links:** Zwei iPhone-Entwürfe mit **Warteraum**, DSGVO-Popup („Bestätigen“) und Positionsanzeige („23 Noch vor Ihnen“).
+
+Die sichtbaren Bildschirme folgen unten in der Reihenfolge, in der Ratsuchende oder Mitarbeitende sie erleben.
+
+## 8.2 Bildschirme
+
+### 8.2.1 Öffentlicher Live-Chat-Einstieg → Warteraum (Ratsuchende, mobil)
+
+> Das Telefon unten links. Deutsche Bezeichnung: *Warteraum*.
+
+| Aspekt | Detail |
+|---|---|
+| **Bildschirmname** | Warteraum — vor Einwilligung |
+| **Zielgruppe** | Anonyme Ratsuchende, vorrangig mobil |
+| **Zweck** | Erste DSGVO-Einwilligung erfassen und Ratsuchende in Warteschlange aufnehmen. |
+| **Bestandteile** | Kopf *Warteraum* mit Zeitmesser; Pseudonymblock (*„DEIN PSEUDONYM — geschmeidiges Kanninchen Kim“*); Erklärung („Hallo, bevor wir fortfahren, bestätigen Sie bitte für diese Sitzung unserer auflagig diagnostizen Benutzerinnen…“); animierter Katzenavatar; unterer Dialog mit „Bestätigen“ sowie Sprach-/App-Rastersymbolen. |
+| **Aktionen** | Einwilligungstext lesen → **Bestätigen** antippen für Plattformstandard. Optional Sprachglobus für Sprachwechsel antippen. |
+| **Backend** | Beim Eintritt: `POST /live-chat/anonymous` liefert Ticket-ID und Cookie. Bei Bestätigung: `POST /live-chat/consent?level=platform` erfasst Einwilligung. Frontend wechselt in Wartestatus. |
+| **Hinweise / Regeln** | Pseudonym deterministisch aus Zufall erzeugt, nie wiederverwendet. Beim ersten Anzeigen **Browsersprache** verwenden (englischer Rückfall, *nicht* Deutsch). |
+
+### 8.2.2 Warteraum — in Warteschlange (Ratsuchende, mobil)
+
+> Rechtes Telefon im Diagramm.
+
+| Aspekt | Detail |
+|---|---|
+| **Bildschirmname** | Warteraum — wartend |
+| **Zielgruppe** | Anonyme Ratsuchende |
+| **Zweck** | Während Wartezeit beruhigen, E2EE-Garantie zeigen, eigenständige Zuordnungsänderungen erlauben. |
+| **Bestandteile** | Datenschutzbanner (*„Vielen Dank, übrigens zum Schutz Ihrer Privatsphäre sind alle Nachrichten Ende-zu-Ende verschlüsselt und werden noch nach 48 Stunden automatisch gelöscht.“*); Emoji-Atemspiel; Zähler **„23 Noch vor Ihnen“**; „Vor Ort Beratungsanfrage absenden“ (stattdessen persönliche Beratung anfragen); Link *Spiel zu warten*. |
+| **Aktionen** | Warten. Optional Atemanimation spielen, zu Anfrage wechseln oder abbrechen (Tab schließen → Löschung). |
+| **Backend** | Regelmäßiger Heartbeat an `POST /sessions/{id}/heartbeat` (oder WS); Position über Redis; Übernahmebenachrichtigung via Redis Pub/Sub. |
+| **Hinweise / Regeln** | Zähler muss **live** sein (Pub/Sub-Ereignisse, kein Polling). Aufbewahrungstext (48 Stunden) muss eingehalten werden — öffentliche Zusage. |
+
+### 8.2.3 DSGVO-Einwilligung Nr. 2 (Ratsuchende, mobil, Vollbild)
+
+> Durch mittleren Knoten *„Ratsuchende müssen DSGVO der Beratungsstelle zustimmen“* angedeutet.
+
+| Aspekt | Detail |
+|---|---|
+| **Bildschirmname** | DSGVO-Einwilligung der Beratungsstelle |
+| **Zielgruppe** | Anonyme Ratsuchende bei Annahme ihres Tickets |
+| **Zweck** | **Beratungsstellenspezifische** Vereinbarung vor Öffnung des Chats einholen. |
+| **Bestandteile** | Vollbildfläche; zentriertes „Einverstanden“ / „Bestätigen“; „Ablehnen“-Link; Stellenname und Impressumsauszug. |
+| **Aktionen** | Lesen; **Bestätigen** (Chat öffnet) oder **Ablehnen** (Sitzung abgebrochen, Pseudonym gelöscht). |
+| **Backend** | `POST /live-chat/consent?level=center`. Annahme: Ticket → `Active`, Matrix-Raum fertiggestellt. Ablehnung: Ticket → `Abandoned`, anonyme Person gelöscht. |
+| **Hinweise / Regeln** | Einwilligung **nicht überspringbar**. Auch nach Plattformeinwilligung im Warteraum ist diese *zusätzliche* Einwilligung erforderlich. |
+
+### 8.2.4 Live-Chat (Ratsuchende, mobil)
+
+> Im Figma-Auszug nicht bildlich dargestellt, aber in der im Gespräch genannten Ablaufdatei definiert.
+
+| Aspekt | Detail |
+|---|---|
+| **Bildschirmname** | Live-Chat — aktive Sitzung |
+| **Zielgruppe** | Ratsuchende und Beratende |
+| **Zweck** | Tatsächliches Gespräch. |
+| **Bestandteile** | Nachrichtenliste mit Threads; Anzeigename und Status Beratender (schreibt); Eingabebereich mit Datei-/Sprachsymbolen; „Chat beenden“ oben rechts ✕; optional „Zu Video wechseln“. |
+| **Aktionen** | Nachricht senden/empfangen, zu Video wechseln, beenden. |
+| **Backend** | Direkte Matrix-Synchronisierung für Inhalte (kein UserService-Relay); UserService erhält nur Sitzungsende über Schließen-Schaltfläche. |
+| **Hinweise / Regeln** | Eingabebereich muss E2EE-Zustand zeigen (Schloss). „Chat beenden“ löst Löschung bei Verbindungsabbruch für Ratsuchende aus. |
+
+### 8.2.5 Admin-Dashboard — Trägersicht (Träger-Admin)
+
+> Aus Knoten *„Admin (Tenant)“* und im Gespräch beschriebenen vorhandenen Adminbildschirmen abgeleitet.
+
+| Aspekt | Detail |
+|---|---|
+| **Bildschirmname** | Admin-Dashboard — Träger-Tab (für Träger-Admin) |
+| **Zielgruppe** | Träger-Admin |
+| **Zweck** | Stellen verwalten, Warteschlangenzustand im Träger sehen, Träger-Rechtstextvorlagen bearbeiten. |
+| **Bestandteile** | Linke Navigation (Stellen, Beratende, Einstellungen, Recht); obere Kennzahlenkarten (Stellen, aktive Beratende, Wartende); Stellentabelle mit Status / Live-Chat / Beratendenzahl; „Stelle erstellen“. |
+| **Aktionen** | Stelle erstellen/bearbeiten, Administration einladen, Träger-Impressum / Datenrichtlinie / DSGVO bearbeiten. |
+| **Backend** | `AgencyService` für Stellen; `TenantService` für Rechtstexte; `UserService` für Einladungen. |
+
+### 8.2.6 Admin-Dashboard — Beratungsstellensicht (Beratungsstellen-Admin)
+
+| Aspekt | Detail |
+|---|---|
+| **Bildschirmname** | Admin-Dashboard — Stellendetail |
+| **Zielgruppe** | Beratungsstellen-Admin |
+| **Zweck** | Betrieb einer Stelle: Beratende, Links, Einstellungen, Warteschlange. |
+| **Bestandteile** | Tabs Beratende / Live-Chat / Themen / Einstellungen / Recht. „Live-Chat aktiviert“. „Live-Chat-Link erzeugen“. Beratendentabelle mit Status. |
+| **Aktionen** | Live-Chat umschalten, Link erzeugen, Beratende einladen, Rechtstext überschreiben. |
+| **Backend** | AgencyService; UserService für Einladungen. |
+| **Hinweise / Regeln** | Linkerstellung derzeit überkompliziert (Backlog aus Gespräch). Ziel: eine Schaltfläche je Thema, deterministische URL. |
+
+### 8.2.7 Admin-Dashboard — Live-Chat-Tab (Beratende)
+
+| Aspekt | Detail |
+|---|---|
+| **Bildschirmname** | Live-Chat — Ticketwarteschlange (Beratende) |
+| **Zielgruppe** | Beratende |
+| **Zweck** | Wartende Ratsuchende auswählen. |
+| **Bestandteile** | „Live-Chat: AN / AUS“ oben rechts; Liste **älteste zuerst**; Ticket zeigt Pseudonym, „vor N Minuten beigetreten“, Thema; Klick → Vorschau und Annehmen. |
+| **Aktionen** | Verfügbarkeit umschalten, Ticket auswählen, optional ablehnen. |
+| **Backend** | `GET /live-chat/tickets` (auf eigene Stelle begrenzt); `POST /live-chat/accept`. |
+| **Hinweise / Regeln** | Bei **AUS** muss Bereich **sichtbar bleiben**, deaktiviert mit Aktivierungshinweis. **Nicht** ausblenden. |
+
+### 8.2.8 Einstellungen — Rechtstextvorlagen (Plattform-Admin)
+
+| Aspekt | Detail |
+|---|---|
+| **Bildschirmname** | Einstellungen → Rechtstextvorlagen |
+| **Zielgruppe** | Plattform-Admin |
+| **Zweck** | Plattformstandard für Impressum, Datenrichtlinie, DSGVO verfassen. |
+| **Bestandteile** | Drei nebeneinanderliegende Editoren mit Versionsverlauf; „Festschreiben“ (veröffentlicht neue Version); Vorschau in gewählter Sprache. |
+| **Aktionen** | Bearbeiten, festschreiben, Vorschau, frühere Version wiederherstellen. |
+| **Backend** | `TenantService` (Plattformvariante). Versionierung bei jedem Speichern. |
+| **Hinweise / Regeln** | Bis alle drei Vorlagen mindestens einmal festgeschrieben sind, bleibt übriger Adminbereich gesperrt. |
+
+### 8.2.9 Profil Beratender — Live-Chat-Einstellungen
+
+| Aspekt | Detail |
+|---|---|
+| **Bildschirmname** | Mein Profil → Live-Chat |
+| **Zielgruppe** | Beratende |
+| **Zweck** | Persönliche Verfügbarkeit und Sprache einstellen. |
+| **Bestandteile** | „Live-Chat ohne Registrierung“ (deutsche Formulierung aus Gespräch); Sprachauswahl; Abwesenheitsschalter. |
+| **Aktionen** | Ein-/ausschalten, Sprache wechseln. |
+| **Backend** | `PATCH /me/availability`. |
+
+## 8.3 Bildschirmübergreifende Interaktionsmuster
+
+### 8.3.1 Zwei unterschiedliche DSGVO-Abfragen
+
+Häufige Verwechslung: Warteraum-Popup ist **Plattformebene**, Popup bei Übernahme **Beratungsstellenebene**. Visuell sollten sie **unterscheidbar** sein (andere Überschriften, andere „bereitgestellt von …“-Fußzeilen).
+
+### 8.3.2 Deaktivierter Zustand muss informieren
+
+Ausgeschalteter Live-Chat zeigt:
+- Ausgegraute Ticketliste.
+- Banner *„Live-Chat ist derzeit ausgeschaltet. Aktivieren Sie ihn, um Anfragen zu erhalten.“* mit Aufruf zum Aktivierungsschalter.
+- Dieselbe Zahl historischer Tickets (nur lesend) als Kontext.
+
+### 8.3.3 Alter Anfragebereich bleibt erhalten
+
+Älterer Anfrage-Chat (PLZ-basiert, registriert) besteht **neben** Live-Chat auf dem Dashboard — gemeinsame Navigation, getrennte Bereiche.
+
+### 8.3.4 Mobil zuerst
+
+Warteraum und Live-Chat für Mobilgeräte entworfen (Figma: iPhone 15 Pro). Adminbereich für Desktop (Datentabellen, mehrere Spalten).
+
+## 8.4 Offene Gestaltungstickets (aus Gespräch)
+
+- **Live-Chat-Einstieg neu gestalten** — Atemspiel-/Warteraumablauf halb fertig; abschließen. *(Ticket: „fix live chat onboarding screen design“.)*
+- **Live-Chat-Linkerstellung** — überkompliziert; auf „eine Schaltfläche je Thema je Stelle“ vereinfachen.
+- **Zweisprachige Oberfläche** — alle Bildschirme parallel EN/DE, Browsersprache mit englischem Rückfall.
+- **Gestaltungssystem angleichen** — sichtbare Abweichungen des Adminbereichs von Figma; Refactoring-Backlog.
+- **Entfernte Bereiche sichtbar deaktivieren, nicht verstecken** — globale Regel.
+
+## 8.5 Empfohlene Bildsprache
+
+(Aus sichtbaren Figma-Diagrammfarben abgeleitet.)
+
+| Konzept | Farbhinweis |
+|---|---|
+| Plattform / System / blockierender Fehler | Rot (z. B. *Impressum, Datenrichtlinie, DSGVO*-Knoten) |
+| Vererbung / passiv | Gestrichelte graue Linien |
+| Standard / Information | Hellblau / Mint (passt zu `#3B82F6` der Dokumentation) |
+| Positive Anonymität | Warmes Rosa (iPhone-Hauptschaltfläche *Bestätigen* im Warteraum) |
+| Live-Chat-Aktion | Rote Kennzeichnung („23 Noch vor Ihnen“) |
+
+## 8.6 Figma-Ergänzungen vom Mai 2026 (Bildschirme)
+
+Die Figma-Ausgabe ergänzt folgende Bildschirme. Alle ausführlich in der [Figma-Analyse](/product/figma-analysis-2026-05).
+
+### 8.6.1 Gruppenchatraum (Varianten für Beratende und Ratsuchende)
+
+| Aspekt | Detail |
+|---|---|
+| Zielgruppe | Beratende, optional Ratsuchende |
+| Bestandteile | Gruppenname und Supervisionskennzeichnung; Initialen; Eingabebereich mit Empfängerauswahl; Werkzeuge (direkt / im Thread antworten, markieren, PII unkenntlich machen, weiterleiten, löschen, hinzufügen) |
+| Backend | E2EE-Matrix-Raum; Werkzeuge je Berechtigungsmatrix; Beratendenwerkzeuge für Ratsuchende abgewiesen |
+| Frontend-Route | `/admin/chats/{roomId}` |
+
+### 8.6.2 Mehrfach-Empfängerauswahl
+
+| Aspekt | Detail |
+|---|---|
+| Zielgruppe | Nur Beratende in Räumen mit mindestens zwei Mitgliedern |
+| Bestandteile | „Wähle wer diese Nachricht sehen soll“; Mitgliederliste mit Kästchen; „Alle Beratenden / Moderierenden / Alle auswählen“; „nur sichtbar für: …“; Direkt-/Thread-Antwortschalter |
+| Backend | `POST /messages/restricted` über Carimat-relay; Megolm je Empfänger |
+| Verbindliche Regeln | A) im Einzelgespräch ausblenden; B) grau bei 2+; C) Chat-Typ-Symbol; D) letzte Auswahl je Chat merken; E) **für Ratsuchende immer verborgen** |
+
+### 8.6.3 Werkzeugleiste Textmarkierung und PII-Unkenntlichmachung
+
+| Aspekt | Detail |
+|---|---|
+| Zielgruppe | Nur Beratende |
+| Bestandteile | Tiptap-Textmarker; Farben; Augenschalter; Beschriftungen („Gute Aspekte“, „Gefährliches Verhalten“, …); „an Thread senden“ / „an Editor senden“ |
+| Backend | Verschlüsselte Matrix-Annotationen; Megolm je Empfänger bei Sichtbarkeit != alle |
+
+### 8.6.4 Menü Chatraum-Einstellungen
+
+| Aspekt | Detail |
+|---|---|
+| Zielgruppe | Beratende / Beratungsstellen-Admin |
+| Bestandteile | Archivieren (⇧A), Stummschalten (⇧Ö), Hilfe (⇧Ä), Einladen (⇧I), Supervision an/aus, Zusammenfassen (⇧Ü) |
+| Backend | Matrix-Zustandsereignisse und UserService-Routen |
+
+### 8.6.5 Seitenbereich KI-Chat-Zusammenfassung
+
+| Aspekt | Detail |
+|---|---|
+| Zielgruppe | Beratende |
+| Bestandteile | „Spare Zeit, mit Hilfe unseres vollends Datenschutzkonformen KI Workflows.“; Stichpunkte, bearbeitbar, als Fallnotiz speichern |
+| Backend | Browser entschlüsselt und bereinigt → selbst betriebene Zusammenfassung |
+
+### 8.6.6 Benachrichtigungseingang
+
+| Aspekt | Detail |
+|---|---|
+| Zielgruppe | Alle angemeldeten Personen |
+| Bestandteile | Typkennzeichnung, Titel, Inhalt, Datum `MM/DD/YYYY`, Antworten, Chats ansehen |
+| Backend | UserService-Benachrichtigungen; optionale E-Mail-Kopie über SMTP |
+
+### 8.6.7 Übergabedialog und Systemnachricht
+
+| Aspekt | Detail |
+|---|---|
+| Zielgruppe | Beratungsperson (sendend), B (empfangend), Ratsuchende |
+| Bestandteile | Grundauswahl (Urlaub/Krankheit/Notfall/Rechtsverstoß/Mitarbeitende entlassen/eigener Grund); Vertretungsauswahl; Einwilligungskennzeichen |
+| Backend | UserService `/handover`; Matrix einladen/entfernen; Prüfprotokolleintrag |
+
+### 8.6.8 Berechtigungsmatrix (Administration)
+
+| Aspekt | Detail |
+|---|---|
+| Zielgruppe | Plattform-/Träger-/Beratungsstellen-Admin |
+| Bestandteile | Vierspaltige Matrix (Anonyme / 1-zu-1 / Gruppen / Supervision) mit Schaltern je Funktion |
+| Backend | TenantService und AgencyService, Entität FeaturePermission |
+
+### 8.6.9 Anfragebestätigung / optionale E-Mail und 2FA
+
+| Aspekt | Detail |
+|---|---|
+| Zielgruppe | Ratsuchende nach erster Nachricht |
+| Bestandteile | „Wir haben Ihre Nachricht erhalten…“; optional E-Mail; „Konto schützen“ (2FA); „Konto löschen“ |
+| Backend | UserService — privilegierte E-Mail-Spalte; Keycloak-Pflichtaktion für MFA |
+
+### 8.6.10 Filter und Phasenleiste im Eingang
+
+| Aspekt | Detail |
+|---|---|
+| Zielgruppe | Beratende |
+| Bestandteile | Tabs (Ungelesen / 1-1 / Live / Gruppen / Aktiv / Termine / Archiv / Anfragen); Filter (Personen / Type / Beratungsstelle / Archived); Phase je Zeile (Anfragephase / Vermittlungsphase / Aktiv) |
+| Backend | UserService-Eingangsendpunkt mit Parametern `phase` und `filter` |
+
+### 8.6.11 Datei-Ablegebereich
+
+| Aspekt | Detail |
+|---|---|
+| Zielgruppe | Alle Mitglieder (berechtigungsabhängig) |
+| Bestandteile | „Ziehen Sie die Datei in das Feld, um sie hochzuladen“; Typen jpg/png/pdf/docx/xlsx; 10-MB-Grenze |
+| Backend | Matrix-Medienspeicher, bei Speicherung verschlüsselt |
+
+## 8.7 Regeln für Animation und Mikrointeraktion (übernommen)
+
+Aus Figma-Anmerkungen übernimmt ORISO global:
+
+- Animationen **einmal** je Klick; niemals Schleife.
+- Wiedergabegeschwindigkeit **≤ 0,7×**.
+- Leere Zustände verwenden appweit dieselben neutralen kleinen Illustrationen.
+- Hover-Zustand immer vorhanden (keine ausschließlich darauf beruhenden Interaktionen, aber immer visueller Hinweis).
+- Schaltflächencontainer merkt sich letzten offenen/geschlossenen Zustand je Person.
+
+## 8.8 Kurzübersicht für Entwicklung
+
+| Bildschirm | Frontend-Route | API |
+|---|---|---|
+| Warteraum (vor Einwilligung) | `/live-chat/{slug}?topic=...` | `POST /live-chat/anonymous` |
+| Warteraum (wartend) | `/live-chat/{slug}/wait/{ticketId}` | Heartbeat und WS |
+| DSGVO-Einwilligung Nr. 2 | Dialog über obigem | `POST /live-chat/consent` |
+| Aktiver Chat | `/live-chat/{slug}/session/{sessionId}` | Matrix-Synchronisierung |
+| Beratendenwarteschlange | `/admin/live-chat` | `GET /live-chat/tickets` |
+| Stellendetail | `/admin/centers/{id}` | AgencyService-Routen |
+| Einstellungen → Recht | `/admin/settings/legal` | TenantService-Routen |

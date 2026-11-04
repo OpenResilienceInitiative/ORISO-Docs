@@ -1,0 +1,79 @@
+name: Planning board sync
+
+# Exports the ORISO Roadmap project to board.json (ORISO-Docs#208, epic #197).
+# Hourly and on demand. Without the ORISO_BOARD_READ_TOKEN secret it runs a dry run on the
+# recorded fixture and publishes nothing. board.json is a workflow artifact, never a commit;
+# the next hub publication picks it up (see tools/understand-anything/site/hub/README.md).
+# The map footer links to this workflow's "Run workflow" page.
+
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+  pull_request:
+    paths: ['tools/planning-map/**', '.github/workflows/planning-board-sync.yml']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: planning-board-sync-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  tests:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24'}
+      - run: npm ci
+        working-directory: tools/understand-anything
+      - run: node --test tools/planning-map/test/*.test.mjs
+  sync:
+    # Only a board exported from a protected branch may reach the public hub. Scheduled runs use the
+    # default branch (main), manual runs may use dev; ua-public-site.yml accepts runs from these two only.
+    if: github.event_name != 'pull_request' && github.repository == 'OpenResilienceInitiative/ORISO-Docs' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24'}
+      - name: Export the board (live with the secret, otherwise dry run on the fixture)
+        id: export
+        env:
+          GH_TOKEN: ${{ secrets.ORISO_BOARD_READ_TOKEN }}
+          OUT_DIR: ${{ runner.temp }}/planning-board
+        run: |
+          set +e
+          if [ -n "$GH_TOKEN" ]; then
+            echo "mode=live" >> "$GITHUB_OUTPUT"
+            node tools/planning-map/export-board.mjs --out "$OUT_DIR/board.json"
+          else
+            echo "mode=dry-run" >> "$GITHUB_OUTPUT"
+            echo "::notice::ORISO_BOARD_READ_TOKEN is not set: dry run on the recorded fixture, nothing is published."
+            node tools/planning-map/export-board.mjs --fixture tools/planning-map/fixtures/project-export.json --out "$OUT_DIR/board.json"
+          fi
+          code=$?
+          if [ "$code" -eq 2 ]; then
+            echo "::error title=Planning board drift::Project fields or options differ from tools/planning-map/board-contract.json. Update the contract (or the board) and re-run."
+          fi
+          [ "$code" -eq 0 ] || exit "$code"
+          # Steering comments (member comments only, ORISO-Docs#221). A failure here must not hold back the board:
+          # the hub then simply publishes no steering.json.
+          if [ -n "$GH_TOKEN" ]; then
+            node tools/planning-map/steering.mjs export --out "$OUT_DIR/steering.json" || echo "::warning title=Steering export failed::steering.json is not published this hour; the board is unaffected."
+          fi
+      - name: Keep board.json (and steering.json) for the next hub publication
+        if: steps.export.outputs.mode == 'live'
+        uses: actions/upload-artifact@v4
+        with:
+          name: planning-board
+          path: ${{ runner.temp }}/planning-board/
+          if-no-files-found: error
+          retention-days: 7

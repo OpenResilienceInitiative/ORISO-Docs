@@ -72,7 +72,7 @@ Import the ORISO Keycloak realm configuration.
 
 **Option A: Via Admin Console (Recommended)**
 
-1. Access Keycloak admin: `https://auth.oriso.org/admin/`
+1. Access Keycloak admin: `https://auth.example.org/admin/`
 2. Login: `admin` / `admin` (default, change in production)
 3. Select "Master" realm → "Add realm"
 4. Upload: `~/online-beratung/caritas-workspace/ORISO-Keycloak/realm.json`
@@ -95,21 +95,9 @@ kubectl exec -n caritas $KEYCLOAK_POD -- \
 
 </Step>
 
-<Step title="Configure Keycloak HTTP Access">
+<Step title="Verify Keycloak HTTPS access">
 
-Disable SSL requirement for Keycloak realms (required for authentication).
-
-```bash
-cd ~/online-beratung/caritas-workspace/ORISO-Keycloak
-
-# Run HTTP access configuration script
-chmod +x configure-http-access.sh
-./configure-http-access.sh
-```
-
-<Warning>
-This step is MANDATORY. Without it, authentication will fail with "HTTPS Required" errors.
-</Warning>
+Keep HTTPS protection enabled on deployed Keycloak realms. Check the browser-facing issuer URL, forwarded headers and ingress TLS configuration against the current deployment sources. A “HTTPS Required” response needs a TLS/proxy configuration check; it is not a reason to disable realm SSL protection. Plain HTTP belongs only to an explicitly isolated local development configuration.
 
 </Step>
 
@@ -150,21 +138,21 @@ Test health endpoints for all services.
 
 ```bash
 # Backend services (via Ingress)
-curl -s https://api.oriso.org/actuator/health | jq .
+curl -s https://api.example.org/actuator/health | jq .
 
 # Or test internally
 kubectl exec -n caritas deployment/oriso-platform-userservice -- \
   curl -s http://localhost:8082/actuator/health
 
 # Frontend
-curl -I https://app.oriso.org
-curl -I https://admin.oriso.org
+curl -I https://app.example.org
+curl -I https://admin.example.org
 
 # Keycloak
-curl -s https://auth.oriso.org/realms/online-beratung/.well-known/openid-configuration | jq .realm
+curl -s https://auth.example.org/realms/online-beratung/.well-known/openid-configuration | jq .realm
 
 # Matrix
-curl -s https://matrix.oriso.org/_matrix/client/versions | jq .
+curl -s https://matrix.example.org/_matrix/client/versions | jq .
 ```
 
 <Check>
@@ -180,13 +168,13 @@ After completing all steps, access services at:
 
 | Service | URL | Description |
 |---------|-----|-------------|
-| Frontend | https://app.oriso.org | User portal |
-| Admin | https://admin.oriso.org | Admin panel |
-| API | https://api.oriso.org | Backend API |
-| Auth | https://auth.oriso.org | Keycloak |
-| Matrix | https://matrix.oriso.org | Matrix Synapse |
-| Health Dashboard | http://91.99.219.182:9001 | Health monitoring |
-| SignOZ | http://91.99.219.182:3001 | Observability |
+| Frontend | https://app.example.org | User portal |
+| Admin | https://admin.example.org | Admin panel |
+| API | https://api.example.org | Backend API |
+| Auth | https://auth.example.org | Keycloak |
+| Matrix | https://matrix.example.org | Matrix Synapse |
+| Health Dashboard | http://YOUR_SERVER_IP:9001 | Health monitoring |
+| SignOZ | http://YOUR_SERVER_IP:3001 | Observability |
 
 ## Verification Checklist
 

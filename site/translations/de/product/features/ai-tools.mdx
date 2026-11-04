@@ -1,0 +1,168 @@
+---
+title: "4.6 KI-Werkzeuge (Zusammenfassung, Markierung, PII-Unkenntlichmachung)"
+description: "KI- und Annotationswerkzeuge für Beratende: Chat-Zusammenfassung, Textmarkierung, PII-Unkenntlichmachung und wie alle die Regel wahren, dass der Server keine Inhalte sieht."
+---
+
+<Info>
+Die Figma-Ausgabe vom Mai 2026 hebt die KI-Linie von „geplant“ auf **aktiven Entwurf**: In den Raumeinstellungen erscheint eine eigene Schaltfläche **Chat Zusammenfassen** (`⇧Ü`), ergänzt durch eine Werkzeugleiste für **Textmarkierung und PII-Unkenntlichmachung** im Nachrichten-Kontextmenü. Diese Seite ersetzt die zuvor ausschließlich geplanten [4.1 Transkripte](/product/features/transcription).
+</Info>
+
+## 4.6.1 Die drei Werkzeuge, jeweils in einem Satz
+
+| Werkzeug | Wirkung |
+|---|---|
+| **Chat-Zusammenfassung** (`⇧Ü`) | Beratende klicken „Chat Zusammenfassen“ → KI liefert eine Zusammenfassung des Gesprächs in Stichpunkten; Beratende bearbeiten sie und speichern sie als Fallnotiz. |
+| **Textmarkierung** | Bereiche beliebiger Nachrichten mit mehreren Farben und Beschriftungen hervorheben (z. B. *„Gute Aspekte“*, *„Gefährliches Verhalten“*); markierte Auszüge an einen Neben-Thread oder einen privaten Fallnotizeditor senden. |
+| **PII-Unkenntlichmachung** | Gleichmäßige weiße Überlagerung mit 80 % Deckkraft auf einen markierten Bereich legen, sodass Empfänger einen unlesbaren Bereich mit der Nachricht sehen: *„Die Beratungsperson hat einige persönliche Angaben unkenntlich gemacht; bitte künftig darauf achten.“* |
+
+Alle drei wahren die **unverhandelbare Datenschutzregel**: Der Server erhält **niemals** unverschlüsselte Nachrichteninhalte oder personenbezogene Informationen.
+
+## 4.6.2 Chat-Zusammenfassung
+
+### Was Nutzende sehen
+
+Eine Schaltfläche im Menü **Chatraum Einstellungen**:
+
+> 🪶 **Chat Zusammenfassen** — *„Spare Zeit, mit Hilfe unseres vollends Datenschutzkonformen KI Workflows.“*
+
+Klick → Seitenbereich mit erzeugter Zusammenfassung, bearbeitbar und als Fallnotiz der Beratungsperson speicherbar.
+
+### Tatsächlicher Ablauf
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant Co as Counselor
+  participant FE as ORISO-Element
+  participant AI as Self-hosted AI Workflow
+  participant US as UserService
+  Co->>FE: Click Chat Zusammenfassen (⇧Ü)
+  FE->>FE: Decrypt last N events locally (Megolm)
+  FE->>FE: PII-scrub (names, emails, account numbers, phone)
+  FE->>AI: POST /summarize { scrubbed_text, language }
+  AI-->>FE: Bullet-point summary
+  FE->>Co: Show in editable side panel
+  Co->>FE: Edit, Save
+  FE->>US: PUT /case-notes/{id} { encrypted_at_rest, owner=counselor }
+  US-->>FE: 200 OK (opaque session_id link only)
+```
+
+### Verbindliche Regeln
+
+- Entschlüsselung erfolgt **nur im Browser**.
+- Der KI-Dienst läuft **innerhalb des Clusters** (selbst betrieben). Keine Aufrufe fremder LLM-Dienste im Produktivbetrieb.
+- Das Ergebnis **gehört den Beratenden**, nicht den Ratsuchenden — es übersteht deren Löschung.
+- Die Notiz speichert nur einen nicht aussagekräftigen Verweis auf `session_id`, nach Löschung **niemals** ein Pseudonym.
+- Beratende können KI für jeden Raum deaktivieren; die Administration kann sie für den gesamten Träger deaktivieren.
+
+### Sonderfälle
+
+- **KI-Dienst ausgefallen** → Schaltfläche ausgegraut; Beratende schreiben manuelle Notiz. Kein Absturz, kein Datenverlust.
+- **Umfang ungelesener Ereignisse** → Beratende wählen, wie viele der letzten N Ereignisse zusammengefasst werden; Standard = gesamte offene Sitzung.
+- **Ausführung während Sitzung** → Zusammenfassung als „vorläufig“ gekennzeichnet, damit Beratende sie später aktualisieren können.
+
+## 4.6.3 Textmarkierung
+
+### Bedeutung
+
+Ein Textmarker nach Tiptap-Art für jede Nachricht. Beratende wählen Text und eine Farbe aus der Palette; der markierte Bereich bleibt als Annotation erhalten — unabhängig vom ursprünglichen verschlüsselten Inhalt.
+
+### Anwendungsfälle
+
+- **Qualitative Kodierung**: Sätze als *„Gute Aspekte“* (grün), *„Gefährliches Verhalten“* (rot), *„Schritt 1 / 2 / 3 …“* usw. kennzeichnen.
+- **Fallnotiz erstellen**: Gesamten markierten Text an den Seiteneditor senden.
+- **Thread erstellen**: Einen einzelnen markierten Auszug zur Teamdiskussion an einen Neben-Thread senden.
+
+### UX-Begriffe (aus Figma)
+
+| Element | Hinweise |
+|---|---|
+| Farbpalette | „Farbe auswählen; Werkzeug arbeitet jetzt wie der Textmarker in Tiptap“ |
+| Augenschalter (👁) | Inhalt des markierten Auszugs in der Ergebnisansicht ein-/ausblenden |
+| Ergebnis bei Auge **an** | Ursprünglicher Nachrichteninhalt neben der Notiz sichtbar |
+| Ergebnis bei Auge **aus** | Notiz als Anführungszeichen mit ausschließlich der Farbe angezeigt |
+| Senden-Schaltflächen | „an Thread senden“ / „an Editor senden“ / „alles an Thread senden“ / „alles an Editor senden“ |
+| Mehrere Beschriftungen je Nachricht | „erste angezeigt“ / „zweite Markierung angezeigt“ / „dritte Markierung angezeigt“ |
+
+### Tatsächlicher Ablauf (vorgeschlagen)
+
+Markierungen sind **Annotationsereignisse** in Matrix, getrennt vom Nachrichtenereignis:
+
+```
+{
+  type: "de.oriso.annotation.mark",
+  content: {
+    target_event_id: "$abc:matrix.oriso-dev.site",
+    range: { start: 12, end: 47 },
+    color: "#FFD54F",
+    label: "Great Aspects",
+    blur: false,
+    visibility: "private_to_author"  // or "shared_in_thread"
+  }
+}
+```
+
+Die Annotation ist selbst verschlüsselt (Megolm). Empfänger laden Annotationen zusammen mit Nachrichten und legen sie auf Client-Seite darüber. Dadurch bleiben Markierungen **bei Schlüsselwechseln übertragbar**, ohne die ursprüngliche Nachricht zu verändern.
+
+### Status
+
+**[NEUE FUNKTION]** — der Annotations-Ereignistyp muss im Element-Fork (`ORISO-Element`) ergänzt werden.
+
+## 4.6.4 PII-Unkenntlichmachung
+
+Derselbe Ablauf wie Textmarkierung, aber mit gesetztem **Unkenntlichmachungsschalter** für den Bereich.
+
+### Darstellungsvorgaben
+
+- Gleichmäßige weiße Überlagerung mit **80 % Alpha**, Unschärferadius **4 px** (laut Figma-Bezeichnung `fff 80% Overlay Blur (uniform) 4`).
+- Überlagerung umfasst genau den ausgewählten Bereich; Empfänger sehen ein undurchsichtiges Rechteck.
+- Eine Systemnachricht begleitet die erste Unkenntlichmachung: *„Die Beratungsperson hat einige persönliche Angaben unkenntlich gemacht; bitte künftig darauf achten.“*
+- Der Augenschalter in der eigenen Ansicht der Beratenden erlaubt einen Blick unter die Überlagerung (weil sie das Original besitzen); Empfänger können dies nicht.
+
+### Wer unkenntlich machen darf
+
+- **Beratende**: ja (Standard).
+- **Supervision**: ja (um beispielhaft anzuleiten).
+- **Ratsuchende**: **nein** (sie sollen Texte ihrer Beratungsperson nicht selbst schwärzen).
+
+### Tatsächlicher Ablauf
+
+Die Metadaten der Unkenntlichmachung gehören zum selben Annotationsereignis wie die Textmarkierung, mit `blur: true`. Empfänger-Clients berücksichtigen den Schalter bei der Darstellung. Inhalte bleiben verschlüsselt; die Unkenntlichmachung ist ausschließlich eine Darstellungsregel.
+
+### Sonderfälle
+
+- **Unkenntlichmachung einer gelöschten Nachricht** → Annotation verwaist; Client bereinigt sie.
+- **Unkenntlichmachung eines archivierten Threads** → Annotation bleibt beim Chat; wird mit ihm gelöscht.
+- **Empfänger mit älterem Client ohne Unterstützung** → Rückfall: Inhalt als Klartext darstellen, aber Banner zeigen: *„Diese Nachricht enthält Inhalte, die die Beratungsperson unkenntlich machen wollte — bitte nicht beachten.“* (Entscheidung erforderlich — siehe [Figma-Analyse §4.4](/product/figma-analysis-2026-05#4-4-pii-blur-durability-of-marks).)
+
+## 4.6.5 Sichtbarkeit je Person — *„Nachricht sichtbar für…“*
+
+Markierung und Unkenntlichmachung lassen sich mit **Versand an mehrere Empfänger** kombinieren (siehe [Gruppenchats §4.5.4](/product/features/group-chats#4-5-4-multi-recipient-send-w%C3%A4hle-wer-diese-nachricht-sehen-soll)), sodass ein markierter, unkenntlich gemachter Auszug nur für Moderierende sichtbar ist, während die Originalnachricht für alle sichtbar bleibt.
+
+## 4.6.6 Berechtigungen
+
+Diese Werkzeuge sind standardmäßig **nur für Beratende** und können durch die Administration global umgeschaltet werden. Die Berechtigungsmatrix (siehe [Rollen und Berechtigungen](/product/roles-permissions#3-7-per-chat-type-permissions-matrix)) steuert sie je Chat-Typ.
+
+| Werkzeug | Anonym | 1-zu-1 | Gruppe | Supervision |
+|---|---|---|---|---|
+| Chat-Zusammenfassung | nur Beratende | nur Beratende | nur Beratende | nur Beratende |
+| Textmarkierung | nur Beratende | nur Beratende | nur Beratende | nur Beratende |
+| PII-Unkenntlichmachung | nur Beratende | nur Beratende | nur Beratende | nur Beratende |
+
+Träger-/Beratungsstellen-Admins können jedes Werkzeug je Chat-Typ deaktivieren, um Anforderungen besonders datenschutzsensibler Kunden zu erfüllen.
+
+## 4.6.7 Verbindliche Regeln (bekräftigt)
+
+- ❌ Server sieht **niemals** Klartext.
+- ❌ KI-Dienst ist im Produktivbetrieb **niemals** ein Fremddienst.
+- ❌ Markierungen / Unkenntlichmachungen geben den zugrunde liegenden Inhalt **niemals** an Empfänger ohne Beratungsrolle weiter.
+- ✅ Beratende können alle KI-erzeugten Inhalte vor dem Speichern bearbeiten.
+- ✅ Nach Löschung der Ratsuchenden bleibt nur der nicht aussagekräftige Verweis auf `session_id`.
+- ✅ Träger-/Beratungsstellen-Admins können jedes Werkzeug mit einem Klick deaktivieren.
+
+## 4.6.8 Verwandte Seiten
+
+- [Gruppenchats (4.5)](/product/features/group-chats) — Versand an mehrere Empfänger arbeitet mit diesen Werkzeugen zusammen.
+- [Rollen und Berechtigungen](/product/roles-permissions) — Matrix je Chat-Typ.
+- [Sonderfälle](/product/edge-cases) — Fehlerfälle für KI, Unkenntlichmachung und Markierungen.
+- [Figma-Analyse](/product/figma-analysis-2026-05) — Quellbildschirme.

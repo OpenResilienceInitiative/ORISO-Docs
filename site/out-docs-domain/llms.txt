@@ -1,0 +1,37 @@
+# Docs
+
+- [ORISO Dokumentation](/): Belegte Compliance und Architekturentscheidungen der ORISO-Plattform — aus dem Quellcode abgeleitet, versioniert im Repository ORISO-Docs.
+- Recht & Compliance
+  - DSFA (Datenschutz-Folgenabschätzung)
+    - [DSFA — Entwicklerteil](/legal/dsfa): Stand: 2026-08-17 · Sprache: Deutsch · Stil: sachlich-juristisches Präsens/Passiv nach der Stilanalyse in `dsfa-analyse-dokument.md`, Abschnitt 3.
+    - [2 Schwellwertanalyse](/legal/dsfa/02-schwellwertanalyse): Vor der Durchführung einer Datenschutz-Folgenabschätzung (nachfolgend „DSFA") ist zu prüfen, ob die Verarbeitungstätigkeit voraussichtlich ein hohes Risiko für die Rechte und …
+    - [6 Verfahren und Technik](/legal/dsfa/06-verfahren-und-technik): Zweck der Verarbeitung ist die Bereitstellung und der technische Betrieb einer Online-Beratungsplattform (nachfolgend „Plattform"), über die Träger und Beratungsstellen ihren …
+    - [7 Rechtsgrundlagen](/legal/dsfa/07-rechtsgrundlagen): Die Verarbeitung stützt sich je Verarbeitungsschritt auf unterschiedliche Erlaubnistatbestände. Die nachstehende Zuordnung nennt jeweils die Norm des Gesetzes über den …
+    - [8 Schutz der Betroffenen — Betroffenenrechte 8.4 bis 8.10](/legal/dsfa/08-betroffenenrechte): Die Betroffenenrechte nach §§ 14 ff. KDG (Art. 12 ff. DSGVO) können bei jedem gemeinsam Verantwortlichen geltend gemacht werden; die interne Zuteilung regelt die Vereinbarung …
+    - [10 Ergebnis der Datenschutz-Folgenabschätzung](/legal/dsfa/10-ergebnis): Die Verarbeitungstätigkeit „Bereitstellung und technischer Betrieb der Online-Beratungsplattform" kann in der in Kapitel 6 beschriebenen Ausgestaltung umgesetzt werden — …
+    - [Vorlagen für den Betreiber](/legal/dsfa/vorlagen-betreiber): Die folgenden Kapitel sind **nicht** aus Code oder Architekturentscheidungen ableitbar; sie beschreiben die Organisation, die Entscheidungswege und die juristische Abwägung des …
+- Entscheidungen (ADR)
+  - [Architekturentscheidungen (ADR)](/decisions): Plattformweite Architecture Decision Records — 23 Entscheidungen, aus dem Repository ORISO-Docs.
+  - [ADR-001: Counselling modalities as toggleable modules](/decisions/adr-001): Status: Proposed — needs a team decision (esp. how registration filters on `consultingtype`) · Datum: 2026-06-23
+  - [ADR-002: Silent room membership with an access-control confidentiality curtain (not E2EE)](/decisions/adr-002): Status: Accepted — Frank, 2026-06-25 (team ratification pending) · Datum: 2026-06-25
+  - [ADR-003: Department = unique (Agency × Topic) carrying its own imprint + DPP](/decisions/adr-003): Status: Accepted — Frank, 2026-06-25 (team ratification pending) · Datum: 2026-06-25
+  - [ADR-004: Keep the custom chat UI; adopt matrix-js-sdk Megolm under it (don't embed Element Web)](/decisions/adr-004): Status: Accepted — 2026-06-26 (grill-with-docs session). June-30 scope and the crypto sequencing are fixed; the SDK-Megolm migration itself is scheduled, not yet built. · Datum: 2026-06-26
+  - [ADR-005: Matrix federation deliberately OFF; real DNS server_name via a clean homeserver rebuild](/decisions/adr-005): Status: Accepted — 2026-06-26 (grill-with-docs session). Timing fixed: the clean rebuild runs early July, before any SDK-crypto work and before real carrier onboarding. · Datum: 2026-06-26
+  - [ADR-006: `conversation_type` as a persisted modality field, rolled out selector-first](/decisions/adr-006): Status: Accepted — 2026-06-28 (grill-with-docs session). Decision made; implementation scheduled. · Datum: 2026-06-28
+  - [ADR-007: Live-chat liveness — the indicator reads backend Availability, never mirrors or infers it](/decisions/adr-007): Status: Accepted — 2026-06-28 (grill-with-docs session). Root causes verified; fix scheduled. · Datum: 2026-06-28
+  - [ADR-008: Supervision — keep per-session agency-scoped reach; move side-channels out of the client's room](/decisions/adr-008): Status: Proposed — 2026-06-28 (grill-with-docs session); U25 cohort + go-live date resolved 2026-06-30 (minors are in U25 scope; go-live 2026-10-01, no 30.06 launch). The separate-room side-channel exclusion is therefore a confirmed pre-go-live blocker (with runway). Still pending: the data-protection officer's exact disclosure wording and the add-supervisor authority/consent details. · Datum: 2026-06-28
+  - [ADR-009: Global Topic/Category ownership and AI-assisted translation infrastructure](/decisions/adr-009): Status: Accepted — Frank, 2026-07-01 (grill-with-docs session). Design decided now ("set the points"); implementation deliberately deferred, see Rollout below. · Datum: 2026-07-01
+  - [ADR-010: Platform-controlled per-Träger allowlist for the Erscheinungsbild (Appearance/Theme) section](/decisions/adr-010): Status: Proposed — 2026-07-06 (this session); pending Frank's confirmation of the data model, then implementation. · Datum: 2026-07-06
+  - [ADR-011: Helm-only deployment; single-domain path-based routing supersedes per-service subdomains](/decisions/adr-011): Status: Accepted — already implemented and live on Pre-Dev. · Datum: 2026-07-07
+  - [ADR-012: Self-Help Group Chat — extend the existing Group Chat (don't rebuild), Megolm-first, future-timeline instead of a Lobby](/decisions/adr-012): Status: Accepted — 2026-07-09; reconciled with live GitHub/code 2026-07-10 · Datum: 2026-07-09
+  - [ADR-013 — 2FA via vendored otp-config SPI (not stock-Keycloak AIA)](/decisions/adr-013): Status: Accepted · Date: 2026-07-11 · Datum: 2026-07-11
+  - [ADR-014: Shared legal-text objects, multi-topic agencies, and topic-before-consent](/decisions/adr-014): Status: Accepted — Frank, 2026-07-16 (grill-with-docs session) · Datum: 2026-07-16
+  - [ADR-015 — Per-chat-type media flag families replace `featureAttachmentUploadDisabled`](/decisions/adr-015): Status: Accepted · Date: 2026-07-18 · Datum: 2026-07-18
+  - [ADR-016: Team-Besprechung — separate side room per open enquiry, hard close at acceptance](/decisions/adr-016): Status: Accepted — Frank, 2026-07-18 (grill-with-docs session) · Datum: 2026-07-18
+  - [ADR-017: Rebuild chat threads on native Matrix `m.thread` relations — hard cut, no dual-read](/decisions/adr-017): Status: Accepted — Frank, 2026-07-18 (grill-with-docs session) · Datum: 2026-07-18
+  - [ADR-018: Erstantwort — one persisted event rendered as a Carimat bubble sequence, configured per Träger](/decisions/adr-018): Status: Accepted — Frank, 2026-07-30 (grill-with-docs session) · Datum: 2026-07-30
+  - [ADR-019 — Media scanning via matrix-content-scanner, fail-closed, pluggable AI check](/decisions/adr-019): Status: Accepted · Date: 2026-07-18 · Datum: 2026-07-18
+  - [ADR-020: Scheduled calls, secure invitations, and a unified contact calendar](/decisions/adr-020): Status: Accepted — 2026-08-12 · Datum: 2026-08-12
+  - [ADR-021: Legal-text hierarchy, generic versioning, and the consent text as a field of the DPP](/decisions/adr-021): Status: Accepted — Frank, 2026-08-16 (grill-with-docs session) · Datum: 2026-08-16
+  - [ADR-022: Two consent gates, consent state as a session pointer, and re-consent on change](/decisions/adr-022): Status: Accepted — Frank, 2026-08-16 (grill-with-docs session) · Datum: 2026-08-16
+  - [ADR-023: The Platform Services Agreement, living templates, and proportionate escalation](/decisions/adr-023): Status: Accepted — Frank, 2026-08-16 (grill-with-docs session) · Datum: 2026-08-16

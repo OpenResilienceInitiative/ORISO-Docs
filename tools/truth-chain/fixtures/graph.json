@@ -1,0 +1,55 @@
+{
+  "kind": "fixture-supergraph",
+  "nodes": [
+    {
+      "id": "repo:ORISO-UserService",
+      "type": "module",
+      "name": "ORISO-UserService",
+      "summary": "Fixture user service",
+      "nodeCount": 4,
+      "edgeCount": 2,
+      "sourceRepo": "ORISO-UserService",
+      "metadata": { "gitCommitHash": "aaa111" }
+    },
+    {
+      "id": "repo:ORISO-AgencyService",
+      "type": "module",
+      "name": "ORISO-AgencyService",
+      "summary": "Fixture agency service",
+      "nodeCount": 2,
+      "edgeCount": 1,
+      "sourceRepo": "ORISO-AgencyService",
+      "metadata": { "gitCommitHash": "bbb222" }
+    },
+    {
+      "id": "ORISO-UserService::endpoint:api.yaml:getAppointment",
+      "type": "endpoint",
+      "name": "GET /appointments/{id}",
+      "sourceRepo": "ORISO-UserService"
+    },
+    {
+      "id": "ORISO-UserService::file:src/Canary.java",
+      "type": "file",
+      "name": "Canary.java",
+      "sourceRepo": "ORISO-UserService"
+    }
+  ],
+  "edges": [
+    {
+      "source": "repo:ORISO-UserService",
+      "target": "repo:ORISO-AgencyService",
+      "type": "depends_on"
+    },
+    {
+      "source": "ORISO-UserService::file:src/Canary.java",
+      "target": "ORISO-AgencyService::file:src/Other.java",
+      "type": "depends_on"
+    },
+    {
+      "source": "ORISO-UserService::file:src/Canary.java",
+      "target": "ORISO-UserService::endpoint:api.yaml:getAppointment",
+      "type": "contains"
+    }
+  ],
+  "layers": []
+}

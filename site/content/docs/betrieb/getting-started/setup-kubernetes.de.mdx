@@ -1,0 +1,256 @@
+---
+title: "Kubernetes (k3s) einrichten"
+description: "k3s-Installation prüfen, Namespace erstellen und Kubernetes für die Bereitstellung der ORISO-Plattform konfigurieren"
+source: "oriso-platform/setup-kubernetes.mdx"
+---
+
+Prüfen Sie, ob k3s korrekt läuft, und bereiten Sie den Kubernetes-Namespace für die ORISO-Plattform vor.
+
+<Steps>
+<Step title="Prüfen, ob k3s läuft">
+
+Prüfen Sie, ob der k3s-Dienst aktiv und der Kubernetes-Cluster betriebsbereit ist.
+
+```bash
+# Check k3s status
+sudo systemctl status k3s
+
+# Check nodes
+kubectl get nodes
+
+# Check all pods
+kubectl get pods --all-namespaces
+
+# Check storage class
+kubectl get storageclass
+```
+
+<Callout type="success">
+Die erwartete Ausgabe sollte Folgendes anzeigen:
+- k3s-Dienst: `active (running)`
+- Knotenstatus: `Ready`
+- Speicherklasse: `local-path (default)` mit Provisioner `rancher.io/local-path`
+</Callout>
+
+</Step>
+
+<Step title="Namespace erstellen">
+
+Erstellen Sie den Namespace `caritas` für die Ressourcen der ORISO-Plattform.
+
+```bash
+# Create caritas namespace
+kubectl create namespace caritas
+
+# Verify
+kubectl get namespaces
+
+# Set default namespace (optional)
+kubectl config set-context --current --namespace=caritas
+```
+
+<Callout type="success">
+Der Namespace `caritas` sollte in der Namespace-Liste erscheinen.
+</Callout>
+
+<Callout>
+Das Festlegen eines Standard-Namespace ist optional, aber praktisch: Sie können dann `-n caritas` in späteren kubectl-Befehlen weglassen.
+</Callout>
+
+</Step>
+
+<Step title="ClusterIssuer für Let's Encrypt erstellen">
+
+Erstellen Sie einen ClusterIssuer zur automatischen Verwaltung von TLS-Zertifikaten mit Let's Encrypt.
+
+```bash
+# Create ClusterIssuer
+cat <<EOF | kubectl apply -f -
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: your-email@example.com  # CHANGE THIS!
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
+EOF
+
+# Verify ClusterIssuer
+kubectl get clusterissuer
+```
+
+<Callout type="success">
+Der ClusterIssuer sollte den Status `Ready` haben: `kubectl get clusterissuer letsencrypt-prod` sollte `READY=True` anzeigen.
+</Callout>
+
+<Callout type="warn">
+Ersetzen Sie `your-email@example.com` durch Ihre tatsächliche E-Mail-Adresse. Let's Encrypt verwendet diese Adresse für Benachrichtigungen zum Zertifikatsablauf.
+</Callout>
+
+</Step>
+
+<Step title="Erforderliche Secrets erstellen">
+
+Erstellen Sie Kubernetes-Secrets für Datenbankzugangsdaten und andere vertrauliche Informationen.
+
+```bash
+# MariaDB secrets
+kubectl create secret generic mariadb-secrets -n caritas \
+  --from-literal=MYSQL_ROOT_PASSWORD=your-secure-password \
+  --from-literal=MYSQL_DATABASE=caritas \
+  --from-literal=MYSQL_USER=caritas_user \
+  --from-literal=MYSQL_PASSWORD=your-secure-password
+
+# Redis secrets
+kubectl create secret generic redis-secret -n caritas \
+  --from-literal=password=your-secure-password
+
+# RabbitMQ secrets
+kubectl create secret generic rabbitmq-secrets -n caritas \
+  --from-literal=RABBITMQ_DEFAULT_USER=admin \
+  --from-literal=RABBITMQ_DEFAULT_PASS=your-secure-password
+
+# Verify secrets
+kubectl get secrets -n caritas
+```
+
+<Callout type="success">
+Alle Secrets sollten aufgeführt sein: `mariadb-secrets`, `redis-secret`, `rabbitmq-secrets`.
+</Callout>
+
+<Callout type="warn">
+Verwenden Sie in der Produktion starke, einzigartige Passwörter. Bewahren Sie diese sicher auf (Passwortmanager, verschlüsselte Datei usw.).
+</Callout>
+
+</Step>
+
+<Step title="k3s für Produktion konfigurieren">
+
+Konfigurieren Sie k3s mit angepassten Einstellungen für den Produktionseinsatz.
+
+<Callout>
+Dieser Schritt ist optional, wird aber für produktive Bereitstellungen empfohlen.
+</Callout>
+
+```bash
+# Edit k3s service
+sudo systemctl edit k3s
+```
+
+Fügen Sie Ressourcenlimits und Konfiguration hinzu:
+
+```ini
+[Service]
+Environment="K3S_KUBECONFIG_MODE=644"
+Environment="K3S_NODE_NAME=oriso-platform"
+```
+
+Wenden Sie die Änderungen an:
+
+```bash
+# Restart k3s
+sudo systemctl daemon-reload
+sudo systemctl restart k3s
+
+# Verify
+sudo systemctl status k3s
+```
+
+<Callout type="success">
+k3s sollte erfolgreich neu starten und den Status `active (running)` anzeigen.
+</Callout>
+
+</Step>
+</Steps>
+
+## Überprüfung
+
+Prüfen Sie nach Abschluss aller Schritte, ob Kubernetes bereit ist:
+
+```bash
+# Check node is ready
+kubectl get nodes
+
+# Check namespace exists
+kubectl get namespaces | grep caritas
+
+# Check storage class
+kubectl get storageclass
+```
+
+## Fehlerbehebung
+
+### k3s läuft nicht
+
+Prüfen Sie die k3s-Protokolle:
+
+```bash
+sudo journalctl -u k3s -f
+```
+
+Prüfen Sie, ob Swap deaktiviert ist (für k3s erforderlich):
+
+```bash
+free -h
+```
+
+### Kein Zugriff auf den Cluster
+
+Prüfen Sie die kubeconfig:
+
+```bash
+cat ~/.kube/config
+```
+
+Prüfen Sie die Dateiberechtigungen:
+
+```bash
+ls -la ~/.kube/config
+# Should be readable by your user
+```
+
+### Speicherklasse fehlt
+
+Wenn die Speicherklasse `local-path` fehlt:
+
+```bash
+# Check if local-path-provisioner is running
+kubectl get pods -n local-path-storage
+```
+
+## Überprüfung
+
+Prüfen Sie nach Abschluss aller Schritte, ob alles konfiguriert ist:
+
+```bash
+# Check node is ready
+kubectl get nodes
+
+# Check namespace exists
+kubectl get namespaces | grep caritas
+
+# Check ClusterIssuer
+kubectl get clusterissuer letsencrypt-prod
+
+# Check secrets
+kubectl get secrets -n caritas
+
+# Check Ingress Controller
+kubectl get pods -n ingress-nginx
+
+# Check cert-manager
+kubectl get pods -n cert-manager
+```
+
+## Nächste Schritte
+
+- [Datenbanken einrichten](/de/betrieb/deployment/setup-databases) – Datenbankschemata initialisieren
+- [Infrastruktur bereitstellen](/de/betrieb/deployment/deploy-infrastructure) – Alle Dienste mit Helm bereitstellen
+

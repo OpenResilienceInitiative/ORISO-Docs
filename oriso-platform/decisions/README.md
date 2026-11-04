@@ -2,15 +2,67 @@
 
 This directory holds the platform-level architecture decision records (ADRs) imported from a
 previously-untracked local folder (`/Users/frankgerhardt/ORISO/0 - Docs/`, `ADR-*.md` files only,
-not its `_artifacts/` subfolder). The 19 files here were copied unchanged (byte-for-byte).
+not its `_artifacts/` subfolder). The series was re-synchronised on 2026-08-17 from the same local folder (23 files, ADR-001 to ADR-023, one per number) so that the published documentation site renders the current text.
+
+## Decisions authored after the import
+
+- `ADR-020-scheduled-calls-secure-invitations-and-unified-contact-calendar.md` — accepted
+  2026-08-12; governs secure call invitations, planned audio/video contacts, availability,
+  the unified Contact Calendar, and the Future Timeline.
+- `ADR-021`, `ADR-022`, `ADR-023` — accepted 2026-08-16 (legal-text hierarchy and versioning,
+  consent gates and re-consent, Platform Services Agreement and Träger governance).
+- `ADR-024`, `ADR-025`, `ADR-026` — accepted 2026-09-15, added to this series 2026-09-22; the
+  transactional e-mail set of EPIC `ORISO-Frontend#828` (notification matrix as two lists,
+  UserService rendering notification mails instead of the upstream MailService, tenant branding
+  contract for e-mail). Each carries an implementation-status table measured on `dev` 2026-09-22;
+  ADR-025 is not implemented on `dev`, ADR-024 and ADR-026 are in part.
+
+  Note for readers of the delivered code: it cites these three decisions as `ADR-019`, `ADR-020`
+  and `ADR-021`. In this series those numbers are media scanning, scheduled calls and the
+  legal-text hierarchy. The e-mail decisions are 024–026; the code references still have to be
+  corrected (listed in each ADR).
+
+- `ADR-014-amendment-2026-09-25-one-topic-per-agency-policy.md` — accepted 2026-09-26 by the
+  product owner (ORISO-UserService#1264): a global, default-off platform switch that limits
+  every agency to one topic; the data model stays multi-topic.
+
+- `ADR-028-capability-map-stays-in-hub-health-in-viewer-node-panel.md` — proposed 2026-10-24
+  (Docs#224): keep the capability map in the hub, add a health section to the viewer node panel
+  through a bounded patch after the run-record schema exists; fork rejected for now.
+
+- `ADR-029-direct-links-knock-first-admission-and-temporary-accounts.md` — accepted by the
+  product owner 2026-10-27 (epic ORISO-Frontend#974): persistent direct links under the
+  AgencyInviteLink model, knock-first admission for calls, temporary accounts always with
+  username and password, platform-set lifetimes and message retention. Amends ADR-020 §2, §3, §7.
+  Amended 2026-10-28 (ORISO-Docs#231): the permission "Direkteinladung erlauben" replaces the
+  tenant call policy, and an admission holds per conversation. ADR-020 got a matching amendment the
+  same day: knock first, and a call guest joins the call room only (the guest join path lives there).
+
+- `ADR-030-activity-timeline-read-state-filters-and-preview.md` — proposed 2026-09-05
+  (ORISO-Frontend#1200), numbered and updated 2026-10-28: bulk read touches activity events only,
+  data-driven family chips without an "Alle" chip, and a working Timeline preview that never
+  registers an active view (product decision 2026-10-21, ORISO-Frontend#1824). Needs product sign-off.
+
+New decisions in this section are repository-owned records and are not part of the unchanged
+19-file import described above.
 
 ## Known issues
 
-- **ADR-014 numbering collision (unresolved):** two files in this very import both use the
-  number 014 — `ADR-014-media-scanning-via-matrix-content-scanner-fail-closed.md` and
-  `ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent.md`. They cover
-  unrelated topics. Renumbering is a human editorial call and was deliberately left untouched by
-  this import; a human should reconcile/renumber before this series is treated as canonical.
+- **ADR-014 numbering collision — resolved 2026-08-08 (ORISO-Docs#73):** the media-scanning
+  decision (accepted 2026-07-18) was renumbered to `ADR-019`; `ADR-014` now unambiguously means
+  shared legal text objects and topic-before-consent. Both files carry a note about the change.
+- **The numbers circulating in conversation are not always these numbers (checked 2026-09-05,
+  not corrected — renumbering would break every existing citation):** the assignment
+  "ADR-003 = AVV/Legal, ADR-014/015 = virus scanner, ADR-019 = silent key backup" that appears in
+  chats and notes does **not** match the files here (014 = legal-text objects, 015 = per-chat-type
+  media flags, 019 = media scanning). When in doubt, the filename and the H1 title of the file in
+  this directory are authoritative; they agree for all 26 records. See also
+  `../dsfa-analysis/dsfa-alt-neu-vergleich.md` §3.
+- **The silent key backup / key recovery decision has no ADR file** — it is referred to as
+  "ADR-019" in project notes, but that number belongs to media scanning. A record still has to be
+  written; it must take the next free number, not 019.
+- **`ADR-SECURITY-02-unified-crypto-boundary.md` lives in `ORISO-UserService/documentation/`** and
+  is outside this numbering. It belongs into the canonical series; not moved here yet.
 
 ## Other local ADR collections NOT imported here
 
@@ -22,3 +74,5 @@ they need manual reconciliation first:
   series that happens to reuse the same numbering.
 
 Both need a human to reconcile against the series imported here before they can be merged in.
+
+- `ADR-027-restricted-task-identities-and-keycloak-commands.md` — proposed 2026-10-07 under ORISO-Helm#367; additional bounded account/SMTP provider and task credential boundaries. Human technical approval remains open. Shared contract: `../contracts/technical-task-identities.md`.

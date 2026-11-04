@@ -1,0 +1,147 @@
+---
+title: "How we keep the docs honest: Understand Anything"
+description: A knowledge graph per repository plus one cross-service platform graph, rebuilt automatically — what it is, what we get out of it, and how a documentation page is derived from it.
+---
+
+# How we keep the docs honest: Understand Anything
+
+Documentation about a system with seventeen moving parts goes stale the moment somebody
+merges. Our answer is not more discipline; it is a machine-built map that is regenerated
+from the code itself, and a rule that pages like the ones in this section are written
+*against that map* rather than from memory.
+
+Public dashboards: **[understand.oriso.org](https://understand.oriso.org/)**
+
+## What it is
+
+Two layers of graph, built by different means and useful for different questions.
+
+```mermaid
+flowchart LR
+  subgraph SRC["Source of truth"]
+    R1["ORISO-Frontend"]
+    R2["ORISO-Admin"]
+    R3["4 Spring services"]
+    R4["Keycloak / Database / Helm"]
+  end
+
+  subgraph REPO["Per-repository graph"]
+    G["files, classes, functions<br/>imports and calls<br/>layers and a guided tour"]
+  end
+
+  subgraph PLAT["Platform graph"]
+    P["services, endpoints, callers<br/>table ownership<br/>ADR and doc governance"]
+  end
+
+  DASH["understand.oriso.org<br/>one dashboard per repository<br/>+ the cross-service view"]
+  DOCS["docs.oriso.org<br/>these pages"]
+
+  R1 --> G
+  R2 --> G
+  R3 --> G
+  R4 --> G
+  G --> P
+  G --> DASH
+  P --> DASH
+  P -. "facts, counts, call directions" .-> DOCS
+```
+
+**The per-repository graph** is a deterministic pass over every tracked file of one
+repository: tree-sitter for code, dedicated parsers for YAML, Markdown, SQL and shell.
+It produces nodes for files, classes and functions, `contains` / `imports` / `calls`
+edges between them, a heuristic layering, and a guided tour through the repository. No
+language model is involved, so the same commit always produces the same graph. A coarse,
+hand-written enrichment file per repository adds the domain concepts and flows that no
+parser can infer.
+
+**The platform graph** sits on top and answers the questions a single repository cannot.
+It is deliberately slim and high-signal: **17 services, 372 endpoint nodes, 126 database
+tables and 74 documents**, connected by `exposes`, `consumes`, `calls`, `owns`, `governs`
+and `deploys` edges. Its six layers are Services, API Endpoints, Frontend Callers, Admin
+Callers, Data, and Decisions & Docs.
+
+## What we get out of it
+
+**A fresh structural picture.** The graphs are rebuilt automatically, not on demand, so
+"the map" is at most a couple of hours behind the branch it tracks. Nobody has to
+remember to regenerate anything before writing a page.
+
+**Cross-service sight lines.** The interesting bugs live between repositories. The
+platform graph makes those edges explicit and, more usefully, makes the *missing* edges
+explicit too:
+
+| Question the graph answers | Current answer |
+| --- | --- |
+| Which backend endpoints does the frontend actually call? | 55 of 80 endpoint-map keys resolve to a real endpoint |
+| …and the admin panel? | 78 of 114 endpoint constants resolve |
+| How many backend endpoints have at least one confirmed caller? | 110 of 297 |
+| Which frontend calls hit nothing at all? | 16 dead calls, listed per file |
+| Which service owns which table? | 126 `owns` edges, from UserService's 54 tables down |
+| Which ADR governs which part of the code? | 61 `governs` edges |
+
+Those numbers are not trivia. "187 of our own endpoints have no caller in the graph" is a
+concrete list to walk when you want to delete code, and "16 frontend calls point at an
+endpoint that does not exist" is a bug list you can hand to a sprint.
+
+**Prose you can read instead of a diagram.** Beyond the structural pass, a deeper run
+writes narrative descriptions of what a component does and how it participates in a
+flow — thousands of described nodes across the repositories. That is what makes the
+dashboards browsable rather than merely correct.
+
+## Where the dashboards are
+
+[understand.oriso.org](https://understand.oriso.org/) hosts one dashboard per repository
+plus the cross-service view. Each dashboard lets you:
+
+- browse the layers of a repository and open any node to see its summary and neighbours;
+- follow `calls` and `imports` edges to see who depends on the code you are about to
+  change;
+- take the guided tour when the repository is new to you;
+- jump from an endpoint to the frontend or admin function that calls it, in the
+  cross-service view.
+
+Use it as the "who else touches this?" tool before a refactor, and as the onboarding
+path for a repository you have never opened.
+
+## How a documentation page is made from it
+
+The pages in this section are not free prose. The working method is:
+
+1. **Ask the graph the structural question** — which services exist, which endpoints they
+   expose, who calls them, which tables they own. This gives the skeleton and the counts.
+2. **Verify every claim against the branch.** The graph says *that* an edge exists; the
+   repository says what the code currently looks like. Anything that ends up on a page as
+   a file path becomes a link into `dev` at a specific path and, where it matters, a line
+   range.
+3. **Check the links mechanically.** Every internal link, anchor, and GitHub code link on
+   this site is resolved offline against the generated page tree and the local
+   repository checkouts by
+   [`tools/audit/docs-link-check.mjs`](https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/dev/tools/audit/docs-link-check.mjs).
+   A path that moved, a line range that ran past the end of a file, or a branch that no
+   longer exists fails the check instead of quietly rotting.
+4. **Keep the decision record separate.** Anything that is a *choice* rather than a fact
+   belongs in an [ADR](/decisions), and the page links to it rather than restating it.
+
+The consequence is a simple rule for contributors: **if you cannot link it, do not claim
+it.** A sentence about how the system works should be one click away from the code that
+makes it true.
+
+## Limits worth knowing
+
+- The graph resolves calls by literal path matching. Calls assembled at runtime, or
+  built from a template with a parameter in the middle, land in the "unconfirmed" bucket
+  rather than becoming a `calls` edge — 44 of them today. Absence of an edge is not
+  proof of absence of a call.
+- Endpoints are extracted from the OpenAPI contracts and from Spring annotations. A route
+  registered by neither will not appear.
+- The per-repository graphs track an integration branch, which may be slightly ahead of
+  or behind the branch you have checked out.
+- The graph describes structure, not behaviour. It will tell you that
+  `AgencyService` calls `TenantService`; it will not tell you whether the call is
+  correct.
+
+## Related
+
+- [Architecture](./architecture.md) — the service landscape the platform graph describes.
+- [Backend services](./backend-services.md) — the endpoint owners.
+- [Architecture decisions](/decisions) — the `governs` edges, in prose.

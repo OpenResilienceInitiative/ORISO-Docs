@@ -1,431 +1,152 @@
 ---
-title: Backend Services
-description: Enriched backend service ownership, APIs, data and dependency map.
+title: Backend services
+description: The four Spring Boot services — what each one owns, its OpenAPI contracts, its security configuration, and the peers it calls.
 ---
 
-# Backend Services
+# Backend services
 
-## Platform Navigation
+Four Spring Boot services, all built the same way: Maven wrapper, JDK 21, an OpenAPI
+contract in `api/` from which the API interfaces are generated, controllers that
+implement those interfaces, and a MariaDB schema the service alone writes to.
 
-- [Overview](./overview.md)
-- [Repository map](./repository-map.md)
-- [Architecture](./architecture.md)
-- [Authentication and Keycloak](./authentication-and-keycloak.md)
-- [Database and data model](./database-and-data-model.md)
-- [Kubernetes deployment](./kubernetes-deployment.md)
-- [Frontend/Admin overview](./frontend-admin-overview.md)
-- [Backend services](./backend-services.md)
-- [Tenant lifecycle](./tenant-lifecycle.md)
-- [User management flow](./user-management-flow.md)
-- [Local development](./local-development.md)
-- [Onboarding guide](./onboarding-guide.md)
-- [Troubleshooting](./troubleshooting.md)
-- [Graph validation report](./graph-validation-report.md)
-- [Diagrams](./diagrams.md)
+## At a glance
 
-## ORISO-UserService
+| Service | Owns | Endpoints it exposes | Tables | Calls |
+| --- | --- | --- | --- | --- |
+| [UserService](#userservice) | users, consultants, sessions, conversations, chats, appointments, notifications | 186 | 54 | Agency, ConsultingType, Tenant, Keycloak |
+| [AgencyService](#agencyservice) | agencies, postcode ranges, agency topics, dioceses | 40 | 7 | Tenant, ConsultingType, User |
+| [TenantService](#tenantservice) | tenants, settings, theming, legal texts | 43 | 12 | ConsultingType, User |
+| [ConsultingTypeService](#consultingtypeservice) | consulting types, topics, topic groups, application settings | 23 | 5 | Tenant |
 
-Core user/session/conversation service: users, askers, consultants, sessions, conversations, appointments, chat metadata, notifications, deletion workflows, Matrix/Rocket.Chat adapters, and admin user APIs.
+Endpoint and table counts come from the cross-service graph — see
+[how we keep the docs honest](./understand-anything.md). "Endpoints it exposes" counts
+only the service's own routes, not the peer contracts it also carries in `api/`.
 
-OpenAPI contracts:
+## How to read a service
 
-- api/appointmentservice.yaml
-- api/conversationservice.yaml
-- api/useradminservice.yaml
-- api/userservice.yaml
-- api/userstatisticsservice.yaml
+The same four steps work for all of them, and doing them in this order saves most of the
+guesswork:
 
-Main paths:
+```mermaid
+flowchart LR
+  A["api/*.yaml<br/>OpenAPI contract"] --> B["…/controller/*Controller.java<br/>implements the generated interface"]
+  B --> C["facade / service classes<br/>the actual behaviour"]
+  C --> D["repository + entity<br/>the owned tables"]
+  B -.-> S["SecurityConfig<br/>who may call this"]
+  B -.-> T["api/tenant/*<br/>which tenant this is"]
+```
 
-- /appointments/booking/{id}
-- /appointments/{id}
-- /appointments
-- /appointments/sessions/{sessionId}/enquiry/new
-- /conversations/consultants/enquiries/registered
-- /conversations/consultants/enquiries/anonymous
-- /conversations/consultants/mymessages/archive
-- /conversations/consultants/teamsessions/archive
-- /conversations/askers/anonymous/new
-- /conversations/askers/anonymous/{sessionId}/accept
-- /conversations/anonymous/{sessionId}/finish
-- /conversations/anonymous/{sessionId}
-- /useradmin
-- /useradmin/sessions
-- /useradmin/consultants
-- /useradmin/consultants/{consultantId}
-- /useradmin/askers/{askerId}
-- /useradmin/report
-- /useradmin/agencies/{agencyId}/consultants
-- /useradmin/consultants/{consultantId}/agencies
-- /useradmin/consultants/{consultantId}/agencies/{agencyId}
-- /useradmin/agency/{agencyId}/changetype
-- /useradmin/agencyadmins
-- /useradmin/agencyadmins/search
-- /useradmin/agencyadmins/{adminId}
-- /useradmin/agencyadmins/{adminId}/agencies
-- /useradmin/agencyadmins/{adminId}/agencies/{agencyId}
-- /useradmin/tenantadmins
-- /useradmin/tenantadmins/search
-- /useradmin/tenantadmins/{adminId}
-- /useradmin/data
-- /users/{username}
-- /users/askers/new
-- /users/askers/session/new
-- /users/askers/consultingType/new
-- /users/sessions/{sessionId}/enquiry/new
-- /users/sessions/{sessionId}/data
-- /users/sessions/new/{sessionId}
-- /users/sessions/askers
-- /users/sessions/room
-- /users/sessions/room/{sessionId}
-- /users/sessions/rocketChatGroupId
-- /users/sessions/{sessionId}/archive
-- /users/sessions/{sessionId}/dearchive
-- /users/consultants/absences
-- /users/consultants/languages
-- /users/data
-- /users/notifications
-- /users/email
-- /users/mobiletoken
-- /users/mobile/app/token
-- /users/sessions/consultants
-- /users/consultants/import
-- /users/askers/import
-- /users/askersWithoutSession/import
-- /users/sessions/teams
-- /users/mails/messages/new
-- /users/mails/reassignment
-- /users/consultants
-- /users/consultants/{consultantId}
+1. **The contract** tells you the shape: path, verb, request and response models.
+2. **The controller** tells you the authorisation annotation and the delegation target.
+3. **The facade or service** is where the behaviour lives, including calls to peers.
+4. **The repository and entity** show what is persisted, and in which schema.
 
-Controllers:
+## UserService
 
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/AgencyInviteLinkController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/AppointmentController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/ConversationController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/DraftMessageController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/EventNotificationController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/GlobalSmtpTestEmailController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/InactiveAccountAuditLogsController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/LiveProxyController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/MatrixMessageController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/MatrixSyncController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/SessionSupervisorController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/SupervisorLogsController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/UserAdminController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/UserController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/UserStatisticsController.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/VersionController.java
+[Repository](https://github.com/OpenResilienceInitiative/ORISO-UserService) · the largest
+service by a wide margin: user and consultant accounts, enquiries, counselling sessions,
+session lists, group chats, appointments, notifications, account deletion, and the
+application-side lifecycle of Matrix rooms.
 
-Data/repository modules:
+**Contracts**
+[`api/userservice.yaml`](https://github.com/OpenResilienceInitiative/ORISO-UserService/blob/dev/api/userservice.yaml) ·
+[`api/useradminservice.yaml`](https://github.com/OpenResilienceInitiative/ORISO-UserService/blob/dev/api/useradminservice.yaml) ·
+[`api/conversationservice.yaml`](https://github.com/OpenResilienceInitiative/ORISO-UserService/blob/dev/api/conversationservice.yaml) ·
+[`api/appointmentservice.yaml`](https://github.com/OpenResilienceInitiative/ORISO-UserService/blob/dev/api/appointmentservice.yaml) ·
+[`api/userstatisticsservice.yaml`](https://github.com/OpenResilienceInitiative/ORISO-UserService/blob/dev/api/userstatisticsservice.yaml)
 
-- src/main/java/de/caritas/cob/userservice/api/port/out/AdminAgencyRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/AdminRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/AgencyInviteLinkRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/AppointmentRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/ChatAgencyRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/ChatRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/ConsultantAgencyRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/ConsultantMobileTokenRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/ConsultantRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/DraftMessageRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/EventNotificationRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/GroupChatParticipantRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/IdentityTombstoneRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/InactiveAccountNotificationAuditLogRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/SessionDataRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/SessionRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/SessionSupervisorRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/UserAgencyRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/UserChatRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/UserMobileTokenRepository.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/UserRepository.java
-- src/main/java/de/caritas/cob/userservice/api/admin/report/model/AgencyDependedViolationReportRule.java
-- src/main/java/de/caritas/cob/userservice/api/admin/report/model/ViolationReportRule.java
-- src/main/java/de/caritas/cob/userservice/api/conversation/model/AnonymousUserCredentials.java
-- src/main/java/de/caritas/cob/userservice/api/conversation/model/ConversationListType.java
-- src/main/java/de/caritas/cob/userservice/api/conversation/model/PageableListRequest.java
-- src/main/java/de/caritas/cob/userservice/api/model/Admin.java
-- src/main/java/de/caritas/cob/userservice/api/model/AdminAgency.java
-- src/main/java/de/caritas/cob/userservice/api/model/AgencyInviteLink.java
-- src/main/java/de/caritas/cob/userservice/api/model/AppintmentEnquiryData.java
-- src/main/java/de/caritas/cob/userservice/api/model/Appointment.java
-- src/main/java/de/caritas/cob/userservice/api/model/Chat.java
-- src/main/java/de/caritas/cob/userservice/api/model/ChatAgency.java
-- src/main/java/de/caritas/cob/userservice/api/model/Consultant.java
-- src/main/java/de/caritas/cob/userservice/api/model/ConsultantAgency.java
-- src/main/java/de/caritas/cob/userservice/api/model/ConsultantAgencyStatus.java
-- src/main/java/de/caritas/cob/userservice/api/model/ConsultantMobileToken.java
-- src/main/java/de/caritas/cob/userservice/api/model/ConsultantStatus.java
-- src/main/java/de/caritas/cob/userservice/api/model/DraftMessage.java
-- src/main/java/de/caritas/cob/userservice/api/model/EnquiryData.java
-- src/main/java/de/caritas/cob/userservice/api/model/EventNotification.java
-- src/main/java/de/caritas/cob/userservice/api/model/GroupChatParticipant.java
-- src/main/java/de/caritas/cob/userservice/api/model/IdentityTombstone.java
-- src/main/java/de/caritas/cob/userservice/api/model/InactiveAccountNotificationAuditLog.java
-- src/main/java/de/caritas/cob/userservice/api/model/Language.java
-- src/main/java/de/caritas/cob/userservice/api/model/LanguageId.java
-- src/main/java/de/caritas/cob/userservice/api/model/Memento.java
-- src/main/java/de/caritas/cob/userservice/api/model/NewSessionValidationConstraint.java
-- src/main/java/de/caritas/cob/userservice/api/model/NotificationSettings.java
-- src/main/java/de/caritas/cob/userservice/api/model/NotificationsAware.java
-- src/main/java/de/caritas/cob/userservice/api/model/Session.java
-- src/main/java/de/caritas/cob/userservice/api/model/SessionData.java
-- src/main/java/de/caritas/cob/userservice/api/model/SessionSupervisor.java
-- src/main/java/de/caritas/cob/userservice/api/model/SessionTopic.java
-- src/main/java/de/caritas/cob/userservice/api/model/TenantAware.java
-- src/main/java/de/caritas/cob/userservice/api/model/User.java
-- src/main/java/de/caritas/cob/userservice/api/model/UserAgency.java
-- src/main/java/de/caritas/cob/userservice/api/model/UserChat.java
-- src/main/java/de/caritas/cob/userservice/api/model/UserMobileToken.java
-- src/main/java/de/caritas/cob/userservice/api/workflow/delete/model/AskerDeletionWorkflowDTO.java
+**Entry points**
+Controllers live under
+[`adapters/web/controller/`](https://github.com/OpenResilienceInitiative/ORISO-UserService/blob/dev/src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/UserController.java);
+the surface is wide, from `UserController` and `ConversationController` through
+`AppointmentController` to `CaseHandoverController` and `EventNotificationController`.
 
-Security/tenant/config:
+**Security**
+[`SecurityConfig#L98-L112`](https://github.com/OpenResilienceInitiative/ORISO-UserService/blob/dev/src/main/java/de/caritas/cob/userservice/api/config/auth/SecurityConfig.java#L98-L112) ·
+[`RoleAuthorizationAuthorityMapper`](https://github.com/OpenResilienceInitiative/ORISO-UserService/blob/dev/src/main/java/de/caritas/cob/userservice/api/config/auth/RoleAuthorizationAuthorityMapper.java) ·
+tenant resolution under
+[`api/tenant/`](https://github.com/OpenResilienceInitiative/ORISO-UserService/blob/dev/src/main/java/de/caritas/cob/userservice/api/tenant/TenantResolverService.java)
 
-- src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/config/KeycloakConfig.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/config/KeycloakCustomConfig.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/matrix/config/MatrixConfig.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/rocketchat/config/RocketChatConfig.java
-- src/main/java/de/caritas/cob/userservice/api/adapters/web/controller/interceptor/HttpTenantFilter.java
-- src/main/java/de/caritas/cob/userservice/api/admin/service/tenant/TenantAdminService.java
-- src/main/java/de/caritas/cob/userservice/api/admin/service/tenant/TenantService.java
-- src/main/java/de/caritas/cob/userservice/api/config/AppConfig.java
-- src/main/java/de/caritas/cob/userservice/api/config/AppointmentConfig.java
-- src/main/java/de/caritas/cob/userservice/api/config/CacheManagerConfig.java
-- src/main/java/de/caritas/cob/userservice/api/config/ConfigurationValidator.java
-- src/main/java/de/caritas/cob/userservice/api/config/CsrfSecurityProperties.java
-- src/main/java/de/caritas/cob/userservice/api/config/CustomWebMvcConfigurer.java
-- src/main/java/de/caritas/cob/userservice/api/config/GlobalMethodSecurityConfig.java
-- src/main/java/de/caritas/cob/userservice/api/config/JpaAuditingConfiguration.java
-- src/main/java/de/caritas/cob/userservice/api/config/LiquibaseConfig.java
-- src/main/java/de/caritas/cob/userservice/api/config/SwaggerConfig.java
-- src/main/java/de/caritas/cob/userservice/api/config/VideoChatConfig.java
-- src/main/java/de/caritas/cob/userservice/api/config/apiclient/AgencyServiceApiClientConfig.java
-- src/main/java/de/caritas/cob/userservice/api/config/auth/Authority.java
-- src/main/java/de/caritas/cob/userservice/api/config/auth/IdentityConfig.java
-- src/main/java/de/caritas/cob/userservice/api/config/auth/RoleAuthorizationAuthorityMapper.java
-- src/main/java/de/caritas/cob/userservice/api/config/auth/SecurityConfig.java
-- src/main/java/de/caritas/cob/userservice/api/config/auth/TechnicalUserConfig.java
-- src/main/java/de/caritas/cob/userservice/api/port/out/IdentityClientConfig.java
-- src/main/java/de/caritas/cob/userservice/api/service/httpheader/SecurityHeaderSupplier.java
-- src/main/java/de/caritas/cob/userservice/api/tenant/AccessTokenTenantResolver.java
-- src/main/java/de/caritas/cob/userservice/api/tenant/CustomHeaderTenantResolver.java
-- src/main/java/de/caritas/cob/userservice/api/tenant/MultitenancyWithSingleDomainTenantResolver.java
-- src/main/java/de/caritas/cob/userservice/api/tenant/SubdomainTenantResolver.java
-- src/main/java/de/caritas/cob/userservice/api/tenant/TechnicalOrSuperAdminUserTenantResolver.java
-- src/main/java/de/caritas/cob/userservice/api/tenant/TenantAspect.java
-- src/main/java/de/caritas/cob/userservice/api/tenant/TenantContext.java
-- src/main/java/de/caritas/cob/userservice/api/tenant/TenantContextProvider.java
-- src/main/java/de/caritas/cob/userservice/api/tenant/TenantData.java
-- src/main/java/de/caritas/cob/userservice/api/tenant/TenantResolver.java
-- src/main/java/de/caritas/cob/userservice/api/tenant/TenantResolverService.java
+**Watch out**: it owns 54 tables and 186 endpoints, of which the graph finds a confirmed
+caller for 70. Before you assume an endpoint is unused, remember that runtime-assembled
+paths do not produce a `calls` edge.
 
-## ORISO-TenantService
+## AgencyService
 
-Tenant registry, tenant settings, legal content, tenant resolution, subdomain/cookie/token tenant discovery, and tenant-dependent peer-service setup.
+[Repository](https://github.com/OpenResilienceInitiative/ORISO-AgencyService) · public
+agency lookup, agency administration, postcode ranges, topic and demographic enrichment,
+and the Matrix service accounts agencies need.
 
-OpenAPI contracts:
+**Contracts**
+[`api/agencyservice.yaml`](https://github.com/OpenResilienceInitiative/ORISO-AgencyService/blob/dev/api/agencyservice.yaml) ·
+[`api/agencyadminservice.yaml`](https://github.com/OpenResilienceInitiative/ORISO-AgencyService/blob/dev/api/agencyadminservice.yaml)
 
-- api/tenantservice.yaml
+**Security**
+[`SecurityConfig`](https://github.com/OpenResilienceInitiative/ORISO-AgencyService/blob/dev/src/main/java/de/caritas/cob/agencyservice/config/SecurityConfig.java) ·
+[`JwtAuthConverter`](https://github.com/OpenResilienceInitiative/ORISO-AgencyService/blob/dev/src/main/java/de/caritas/cob/agencyservice/config/security/JwtAuthConverter.java)
 
-Main paths:
+**Watch out**: agency creation depends on an encryption key supplied through the chart
+(`agencyService.serviceEncryptionAppkey`). An empty key does not fail loudly — see
+[Kubernetes deployment](./kubernetes-deployment.md).
 
-- /tenantadmin
-- /tenantadmin/search
-- /tenantadmin/{id}
-- /tenant
-- /tenant/{id}
-- /tenant/public/{subdomain}
-- /tenant/public/id/{tenantId}
-- /tenant/public/single
-- /tenant/public/
-- /tenant/access
+## TenantService
 
-Controllers:
+[Repository](https://github.com/OpenResilienceInitiative/ORISO-TenantService) · the tenant
+registry: identity, subdomain, licensing limits, theming, feature settings, multilingual
+legal content and content activation dates. It also exposes a restricted public view used
+before a caller has an authenticated tenant context.
 
-- src/main/java/com/vi/tenantservice/api/controller/TenantController.java
-- src/main/java/com/vi/tenantservice/api/controller/VersionController.java
+**Contract**
+[`api/tenantservice.yaml`](https://github.com/OpenResilienceInitiative/ORISO-TenantService/blob/dev/api/tenantservice.yaml)
 
-Data/repository modules:
+**Layering** — the clearest example of the pattern described above:
+`api/tenantservice.yaml` → `TenantController` →
+`TenantServiceFacade` → `TenantService` / `TenantRepository` / `TenantEntity`, with
+[`WebSecurityConfig#L30-L56`](https://github.com/OpenResilienceInitiative/ORISO-TenantService/blob/dev/src/main/java/com/vi/tenantservice/config/security/WebSecurityConfig.java#L30-L56)
+and
+[`JwtAuthConverter#L34-L51`](https://github.com/OpenResilienceInitiative/ORISO-TenantService/blob/dev/src/main/java/com/vi/tenantservice/config/security/JwtAuthConverter.java#L34-L51)
+on the side.
 
-- src/main/java/com/vi/tenantservice/api/repository/TenantRepository.java
-- src/main/java/com/vi/tenantservice/api/model/DataProtectionPlaceHolderType.java
-- src/main/java/com/vi/tenantservice/api/model/TenantAdminAllowedPermissionTogglesSettings.java
-- src/main/java/com/vi/tenantservice/api/model/TenantAdminControlsSettings.java
-- src/main/java/com/vi/tenantservice/api/model/TenantContent.java
-- src/main/java/com/vi/tenantservice/api/model/TenantEntity.java
-- src/main/java/com/vi/tenantservice/api/model/TenantSetting.java
-- src/main/java/com/vi/tenantservice/api/model/TenantSettings.java
-- src/main/java/com/vi/tenantservice/api/model/TenantSmtpSettings.java
+**Tenant resolution** lives here in its canonical form:
+[`TenantResolverService#L23-L49`](https://github.com/OpenResilienceInitiative/ORISO-TenantService/blob/dev/src/main/java/com/vi/tenantservice/api/tenant/TenantResolverService.java#L23-L49).
 
-Security/tenant/config:
+**Watch out**: `/tenant/public/**` is deliberately unauthenticated. Anything you add
+under that prefix is world-readable.
 
-- src/main/java/com/vi/tenantservice/api/authorisation/Authority.java
-- src/main/java/com/vi/tenantservice/api/authorisation/RoleAuthorizationAuthorityMapper.java
-- src/main/java/com/vi/tenantservice/api/config/CacheManagerConfig.java
-- src/main/java/com/vi/tenantservice/api/config/CustomSwaggerPathWebMvcConfigurer.java
-- src/main/java/com/vi/tenantservice/api/config/FreeMarkerConfig.java
-- src/main/java/com/vi/tenantservice/api/config/RestTemplateConfig.java
-- src/main/java/com/vi/tenantservice/api/config/SpringFoxConfig.java
-- src/main/java/com/vi/tenantservice/api/exception/TenantAuthorisationException.java
-- src/main/java/com/vi/tenantservice/api/facade/TenantFacadeAuthorisationService.java
-- src/main/java/com/vi/tenantservice/api/service/ConfigurationFileLoader.java
-- src/main/java/com/vi/tenantservice/api/service/httpheader/SecurityHeaderSupplier.java
-- src/main/java/com/vi/tenantservice/api/tenant/AccessTokenTenantResolver.java
-- src/main/java/com/vi/tenantservice/api/tenant/CookieTenantResolver.java
-- src/main/java/com/vi/tenantservice/api/tenant/HttpUrlUtils.java
-- src/main/java/com/vi/tenantservice/api/tenant/SubdomainExtractor.java
-- src/main/java/com/vi/tenantservice/api/tenant/SubdomainTenantResolver.java
-- src/main/java/com/vi/tenantservice/api/tenant/TenantHeaderSupplier.java
-- src/main/java/com/vi/tenantservice/api/tenant/TenantResolver.java
-- src/main/java/com/vi/tenantservice/api/tenant/TenantResolverService.java
-- src/main/java/com/vi/tenantservice/config/ConfigurationValidator.java
-- src/main/java/com/vi/tenantservice/config/security/AuthorisationService.java
-- src/main/java/com/vi/tenantservice/config/security/JwtAuthConverter.java
-- src/main/java/com/vi/tenantservice/config/security/JwtAuthConverterProperties.java
-- src/main/java/com/vi/tenantservice/config/security/WebSecurityConfig.java
+## ConsultingTypeService
 
-## ORISO-AgencyService
+[Repository](https://github.com/OpenResilienceInitiative/ORISO-ConsultingTypeService) ·
+consulting type settings, topics, topic groups and application settings, with
+tenant-aware access. It is the only service that keeps a substantial part of its data in
+MongoDB rather than MariaDB.
 
-Agency catalog and administration service for public agency lookup, agency admin, postcode ranges, tenant-aware agency data, topic enrichment, and Matrix agency provisioning.
+**Contracts**
+[`api/consultingtypeservice.yml`](https://github.com/OpenResilienceInitiative/ORISO-ConsultingTypeService/blob/dev/api/consultingtypeservice.yml) ·
+[`api/topicservice.yml`](https://github.com/OpenResilienceInitiative/ORISO-ConsultingTypeService/blob/dev/api/topicservice.yml) ·
+[`api/applicationsettingsservice.yml`](https://github.com/OpenResilienceInitiative/ORISO-ConsultingTypeService/blob/dev/api/applicationsettingsservice.yml)
 
-OpenAPI contracts:
+**Security**
+[`SecurityConfig`](https://github.com/OpenResilienceInitiative/ORISO-ConsultingTypeService/blob/dev/src/main/java/de/caritas/cob/consultingtypeservice/config/SecurityConfig.java)
 
-- api/agencyadminservice.yaml
-- api/agencyservice.yaml
+## Cross-service calls
 
-Main paths:
+Each service carries its peers' contracts under `api/` or `services/` and calls them
+through generated clients. That is why the count of endpoints "in" a repository is much
+larger than the count it actually exposes: UserService's checkout contains 109 consumed
+and 58 external endpoints on top of its own 186.
 
-- /agencyadmin
-- /agencyadmin/agencies
-- /agencyadmin/agencies/{agencyId}
-- /agencyadmin/agencies/tenant/{tenantId}
-- /agencyadmin/agencies/{agencyId}/changetype
-- /agencyadmin/postcoderanges/{agencyId}
-- /agencies
-- /agencies/by-tenant
-- /agencies/topics
-- /agencies/{agencyIds}
-- /agencies/consultingtype/{consultingTypeId}
+Consequences for a change:
 
-Controllers:
+- **Changing a response model is a cross-repository change.** Find the consumers in the
+  cross-service graph before you edit the contract.
+- **Peer calls run as a technical user**, not as the end user. Authorisation on the
+  receiving side sees the technical role, so a permission bug can hide behind it.
+- **A service is allowed to fail alone.** Do not add a synchronous peer call to a path
+  that must work when that peer is down.
 
-- src/main/java/de/caritas/cob/agencyservice/api/admin/controller/AgencyAdminController.java
-- src/main/java/de/caritas/cob/agencyservice/api/controller/AgencyController.java
-- src/main/java/de/caritas/cob/agencyservice/api/controller/CustomSwaggerUIController.java
-- src/main/java/de/caritas/cob/agencyservice/api/controller/VersionController.java
+## Related
 
-Data/repository modules:
-
-- src/main/java/de/caritas/cob/agencyservice/api/repository/agency/AgencyRepository.java
-- src/main/java/de/caritas/cob/agencyservice/api/repository/agency/AgencyTenantAwareRepository.java
-- src/main/java/de/caritas/cob/agencyservice/api/repository/agency/AgencyTenantUnawareRepository.java
-- src/main/java/de/caritas/cob/agencyservice/api/repository/agencypostcoderange/AgencyPostcodeRangeRepository.java
-- src/main/java/de/caritas/cob/agencyservice/api/admin/validation/validators/model/ValidateAgencyDTO.java
-- src/main/java/de/caritas/cob/agencyservice/api/model/AgencyMatrixCredentialsDTO.java
-- src/main/java/de/caritas/cob/agencyservice/api/repository/agency/DataProtectionResponsibleEntity.java
-
-Security/tenant/config:
-
-- src/main/java/de/caritas/cob/agencyservice/api/authorization/Authority.java
-- src/main/java/de/caritas/cob/agencyservice/api/authorization/RoleAuthorizationAuthorityMapper.java
-- src/main/java/de/caritas/cob/agencyservice/api/service/matrix/MatrixConfig.java
-- src/main/java/de/caritas/cob/agencyservice/api/service/securityheader/SecurityHeaderSupplier.java
-- src/main/java/de/caritas/cob/agencyservice/api/tenant/AccessTokenTenantResolver.java
-- src/main/java/de/caritas/cob/agencyservice/api/tenant/CustomHeaderTenantResolver.java
-- src/main/java/de/caritas/cob/agencyservice/api/tenant/MultitenancyWithSingleDomainTenantResolver.java
-- src/main/java/de/caritas/cob/agencyservice/api/tenant/SubdomainTenantResolver.java
-- src/main/java/de/caritas/cob/agencyservice/api/tenant/TechnicalUserTenantResolver.java
-- src/main/java/de/caritas/cob/agencyservice/api/tenant/TenantAspect.java
-- src/main/java/de/caritas/cob/agencyservice/api/tenant/TenantContext.java
-- src/main/java/de/caritas/cob/agencyservice/api/tenant/TenantContextProvider.java
-- src/main/java/de/caritas/cob/agencyservice/api/tenant/TenantResolver.java
-- src/main/java/de/caritas/cob/agencyservice/api/tenant/TenantResolverService.java
-- src/main/java/de/caritas/cob/agencyservice/config/AppConfig.java
-- src/main/java/de/caritas/cob/agencyservice/config/AuthenticatedUserConfig.java
-- src/main/java/de/caritas/cob/agencyservice/config/CacheManagerConfig.java
-- src/main/java/de/caritas/cob/agencyservice/config/ConfigurationValidator.java
-- src/main/java/de/caritas/cob/agencyservice/config/CustomSwaggerUIPathWebMvcConfigurer.java
-- src/main/java/de/caritas/cob/agencyservice/config/FreeMarkerConfig.java
-- src/main/java/de/caritas/cob/agencyservice/config/SecurityConfig.java
-- src/main/java/de/caritas/cob/agencyservice/config/SpringFoxConfig.java
-- src/main/java/de/caritas/cob/agencyservice/config/resttemplate/RestTemplateConfig.java
-- src/main/java/de/caritas/cob/agencyservice/config/security/AuthorisationService.java
-- src/main/java/de/caritas/cob/agencyservice/config/security/JwtAuthConverter.java
-- src/main/java/de/caritas/cob/agencyservice/config/security/JwtAuthConverterProperties.java
-- src/main/java/de/caritas/cob/agencyservice/filter/HttpTenantFilter.java
-
-## ORISO-ConsultingTypeService
-
-Consulting type, topic, topic group, application settings, and tenant-aware taxonomy service.
-
-OpenAPI contracts:
-
-- api/applicationsettingsservice.yml
-- api/consultingtypeadminservice.yml
-- api/consultingtypeservice.yml
-- api/topicservice.yml
-
-Main paths:
-
-- /settings
-- /settingsadmin
-- /consultingtypeadmin
-- /consultingtypeadmin/consultingtypes
-- /consultingtypes/basic
-- /consultingtypes/{consultingTypeId}/basic
-- /consultingtypes/{consultingTypeId}/extended
-- /consultingtypes/{consultingTypeId}/full
-- /consultingtypes/byslug/{slug}/full
-- /consultingtypes/bytenant/{tenantId}/full
-- /consultingtypes/groups
-- /consultingtypes
-- /consultingtypes/{id}
-- /topic-groups
-- /topic
-- /topic/{id}
-- /topic/public
-- /topicadmin
-- /topicadmin/{id}
-
-Controllers:
-
-- src/main/java/de/caritas/cob/consultingtypeservice/api/admin/controller/ConsultingTypeAdminController.java
-- src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ApplicationSettingsController.java
-- src/main/java/de/caritas/cob/consultingtypeservice/api/controller/ConsultingTypeController.java
-- src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicAdminController.java
-- src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicController.java
-- src/main/java/de/caritas/cob/consultingtypeservice/api/controller/TopicGroupsController.java
-- src/main/java/de/caritas/cob/consultingtypeservice/api/controller/VersionController.java
-
-Data/repository modules:
-
-- src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeGroupRepository.java
-- src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeRepository.java
-- src/main/java/de/caritas/cob/consultingtypeservice/api/consultingtypes/ConsultingTypeTenantAwareRepository.java
-- src/main/java/de/caritas/cob/consultingtypeservice/api/repository/ApplicationSettingsRepository.java
-- src/main/java/de/caritas/cob/consultingtypeservice/api/repository/TopicGroupRepository.java
-- src/main/java/de/caritas/cob/consultingtypeservice/api/repository/TopicRepository.java
-- src/main/java/de/caritas/cob/consultingtypeservice/api/model/ApplicationSettingsEntity.java
-- src/main/java/de/caritas/cob/consultingtypeservice/api/model/ConsultingTypeEntity.java
-- src/main/java/de/caritas/cob/consultingtypeservice/api/model/TopicEntity.java
-- src/main/java/de/caritas/cob/consultingtypeservice/api/model/TopicGroupEntity.java
-- src/main/java/de/caritas/cob/consultingtypeservice/api/model/TopicStatus.java
-
-Security/tenant/config:
-
-- src/main/java/de/caritas/cob/consultingtypeservice/api/auth/Authority.java
-- src/main/java/de/caritas/cob/consultingtypeservice/api/auth/RoleAuthorizationAuthorityMapper.java
-- src/main/java/de/caritas/cob/consultingtypeservice/api/service/TopicFeatureAuthorisationService.java
-- src/main/java/de/caritas/cob/consultingtypeservice/api/service/securityheader/SecurityHeaderSupplier.java
-- src/main/java/de/caritas/cob/consultingtypeservice/api/tenant/TenantAspect.java
-- src/main/java/de/caritas/cob/consultingtypeservice/api/tenant/TenantContext.java
-- src/main/java/de/caritas/cob/consultingtypeservice/api/tenant/TenantResolver.java
-- src/main/java/de/caritas/cob/consultingtypeservice/config/AppConfig.java
-- src/main/java/de/caritas/cob/consultingtypeservice/config/CacheManagerConfig.java
-- src/main/java/de/caritas/cob/consultingtypeservice/config/ConfigurationValidator.java
-- src/main/java/de/caritas/cob/consultingtypeservice/config/CustomSwaggerUIPathWebMvcConfigurer.java
-- src/main/java/de/caritas/cob/consultingtypeservice/config/KeycloakConfig.java
-- src/main/java/de/caritas/cob/consultingtypeservice/config/SecurityConfig.java
-- src/main/java/de/caritas/cob/consultingtypeservice/config/resttemplate/RestTemplateConfig.java
-- src/main/java/de/caritas/cob/consultingtypeservice/filter/HttpTenantFilter.java
+- [Architecture](./architecture.md) — the call graph
+- [Authentication and Keycloak](./authentication-and-keycloak.md) — the security pieces
+- [Database and data model](./database-and-data-model.md) — the owned schemas
+- [Install and run locally](./install-and-run-locally.md) — how to start one

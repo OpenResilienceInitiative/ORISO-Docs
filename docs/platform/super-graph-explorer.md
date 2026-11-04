@@ -5,6 +5,8 @@ description: Browsable index for inspecting the detailed merged ORISO platform g
 
 # ORISO Super Graph Explorer
 
+> **Outdated — archived.** A dump of the May 2026 graph merge, superseded by the live dashboards at [understand.oriso.org](https://understand.oriso.org/). See [How we keep the docs honest](./understand-anything.md).
+
 ## What to Open
 
 - Full merged graph: `.understand-anything/oriso-super-graph.json`

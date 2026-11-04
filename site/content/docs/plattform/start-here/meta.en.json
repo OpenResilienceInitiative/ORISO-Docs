@@ -1,0 +1,9 @@
+{
+  "title": "Start here",
+  "pages": [
+    "[Local Development](/en/plattform/platform-flows/local-development)",
+    "architecture",
+    "install-and-run-locally",
+    "overview"
+  ]
+}

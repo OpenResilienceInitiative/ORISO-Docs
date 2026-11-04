@@ -1,0 +1,36 @@
+---
+title: "ORISO Documentation"
+description: "Technical documentation for the ORISO platform: development, architecture, setup, operations and architecture decisions."
+---
+
+<Cards>
+  <Card title="Product" href="/produkt/overview/overview">
+    What the platform does: counselling modes, roles, workflows, the data model and edge cases.
+  </Card>
+  <Card title="Run locally" href="/plattform/start-here/install-and-run-locally">
+    The developer entry point: prerequisites, repositories and the first running service.
+  </Card>
+  <Card title="Platform architecture" href="/plattform/start-here/overview">
+    How ORISO is built: services, authentication, storage, deployment and repository ownership.
+  </Card>
+  <Card title="Setup & operations" href="/betrieb/getting-started/clone-repositories">
+    How to install and operate ORISO: runbooks from server setup to acceptance.
+  </Card>
+  <Card title="Architecture decisions" href="/decisions">
+    Architecture decisions explain why ORISO is built this way and which alternatives were rejected.
+  </Card>
+</Cards>
+
+## Docs and Understand work together
+
+| Source | What it contains | How it is produced |
+|---|---|---|
+| **Docs — this site** | Technical instructions, product reference, architecture, operations and decisions | Written by people and versioned in `ORISO-Docs` |
+| [Understand](https://understand.oriso.org/) | The high-level overview and code structure: files, functions and call paths per repository | Code graphs generated deterministically from source; overview content is maintained separately |
+| [Canonical legal documentation](https://understand.oriso.org/legal/dsfa/) | The DPIA with evidence from the code | Maintained on Understand; Docs links to it rather than duplicating the full legal text |
+
+Start on Understand for an overview, then follow its links to Docs for technical detail.
+Use the links above to return from Docs to Understand or to the canonical legal documentation.
+
+When the documentation and a graph disagree, compare their source branches and check the linked
+code. A graph built from `main` does not prove what is implemented or deployed on `dev`.

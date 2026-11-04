@@ -1,0 +1,178 @@
+---
+title: "Erste Servereinrichtung"
+description: "Mit dem Server verbinden, Systempakete aktualisieren, Benutzer ohne Root-Rechte erstellen, Hostnamen und Zeitzone konfigurieren und Swap für Kubernetes deaktivieren"
+---
+
+# Erste Servereinrichtung
+
+Führen Sie die ersten Schritte zur Serverkonfiguration aus, um Ihren Ubuntu-Server auf die Bereitstellung der ORISO-Plattform v3.0.0 auf Kubernetes mit Helm-Charts vorzubereiten.
+
+<Steps>
+<Step title="Mit dem Server verbinden">
+
+Stellen Sie eine SSH-Verbindung zu Ihrem Ubuntu-Server her.
+
+```bash
+# Connect via SSH
+ssh root@YOUR_SERVER_IP
+
+# Or with specific user
+ssh username@YOUR_SERVER_IP
+```
+
+<Check>
+Prüfen Sie, ob Sie sich erfolgreich per SSH am Server anmelden können, bevor Sie fortfahren.
+</Check>
+
+</Step>
+
+<Step title="System aktualisieren">
+
+Aktualisieren Sie die Paketlisten und installieren Sie die für die Bereitstellung erforderlichen Werkzeuge.
+
+```bash
+# Update package lists
+sudo apt update
+
+# Upgrade all packages
+sudo apt upgrade -y
+
+# Install essential tools
+sudo apt install -y \
+    curl \
+    wget \
+    git \
+    vim \
+    nano \
+    htop \
+    net-tools \
+    ca-certificates \
+    gnupg \
+    lsb-release \
+    software-properties-common \
+    apt-transport-https \
+    jq
+
+# Check system info
+uname -a
+lsb_release -a
+```
+
+<Check>
+Prüfen Sie die Installation anhand der Versionen: `curl --version`, `git --version`, `jq --version`
+</Check>
+
+</Step>
+
+<Step title="Benutzer ohne Root-Rechte erstellen">
+
+Erstellen Sie einen Benutzer ohne Root-Rechte mit sudo-Berechtigung, um die Sicherheit zu verbessern.
+
+<Note>
+Führen Sie diesen Schritt nur aus, wenn Sie derzeit als root angemeldet sind.
+</Note>
+
+```bash
+# Create user (if you're root)
+adduser caritas
+
+# Add to sudo group
+usermod -aG sudo caritas
+
+# Switch to user
+su - caritas
+
+# Or logout and login as new user
+```
+
+<Warning>
+Stellen Sie sicher, dass Sie nach dem Benutzerwechsel weiterhin auf den Server zugreifen können, insbesondere wenn die SSH-Anmeldung als root deaktiviert ist.
+</Warning>
+
+</Step>
+
+<Step title="Hostnamen konfigurieren">
+
+Legen Sie einen aussagekräftigen Hostnamen fest, damit sich Ihr Server leichter identifizieren lässt.
+
+```bash
+# Set hostname
+sudo hostnamectl set-hostname oriso-platform
+
+# Verify
+hostnamectl
+```
+
+<Check>
+Der Hostname sollte in der Ausgabe als `oriso-platform` erscheinen.
+</Check>
+
+</Step>
+
+<Step title="Zeitzone konfigurieren">
+
+Legen Sie die passende Zeitzone für den Standort Ihres Servers fest.
+
+```bash
+# Set timezone (example: Europe/Berlin)
+sudo timedatectl set-timezone Europe/Berlin
+
+# Or use interactive selector
+sudo dpkg-reconfigure tzdata
+
+# Verify
+timedatectl
+```
+
+<Note>
+Ersetzen Sie `Europe/Berlin` durch Ihre passende Zeitzone. Mit `timedatectl list-timezones` sehen Sie alle verfügbaren Zeitzonen.
+</Note>
+
+</Step>
+
+<Step title="Swap deaktivieren">
+
+Deaktivieren Sie Swap, da Kubernetes (k3s) deaktivierten Swap voraussetzt.
+
+```bash
+# Disable swap
+sudo swapoff -a
+
+# Remove swap from fstab (permanent)
+sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+
+# Verify
+free -h
+```
+
+<Check>
+Swap sollte `0` in der Ausgabe von `free -h` anzeigen.
+</Check>
+
+<Warning>
+Dadurch wird Swap dauerhaft deaktiviert. Stellen Sie sicher, dass Ihr Server genügend RAM für alle Dienste hat.
+</Warning>
+
+</Step>
+</Steps>
+
+## Überprüfung
+
+Prüfen Sie nach Abschluss aller Schritte, ob Ihr Server bereit ist:
+
+```bash
+# Check system information
+hostnamectl
+timedatectl
+free -h
+
+# Verify swap is disabled
+free -h | grep Swap
+# Should show: Swap:             0           0           0
+```
+
+## Nächste Schritte
+
+- [Netzwerk- und Firewall-Konfiguration](/oriso-platform/network-firewall) – Netzwerk und Firewall konfigurieren
+- [Erforderliche Software installieren](/oriso-platform/install-software) – Docker und Kubernetes installieren
+
