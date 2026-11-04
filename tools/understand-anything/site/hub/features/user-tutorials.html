@@ -20,7 +20,6 @@
     <span class="sp"></span>
     <span class="badge solid"><span lang="de">Feature</span><span lang="en">Feature</span></span>
     <span class="badge">Ablauf / Flow</span>
-    <span class="badge"><span lang="de">Graph 07.09.2026</span><span lang="en">Graph 7 Sept 2026</span></span>
     <span class="langswitch" role="group" aria-label="Sprache / Language">
       <button type="button" data-lang="de" aria-pressed="true">DE</button>
       <button type="button" data-lang="en" aria-pressed="false">EN</button>
@@ -43,7 +42,7 @@
   <a href="#k3"><span class="no">3</span><span lang="de">Stand und Quellen</span><span lang="en">Status and sources</span></a>
 </div></nav>
 <main class="wrap">
-<div class="meta"><div><div class="vlabel"><span lang="de">Seite</span><span lang="en">Page</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Online-Graph</span><span lang="en">Online graph</span></div><div class="vvalue">21.09.2026</div></div><div><div class="vlabel"><span lang="de">Quellenabgleich</span><span lang="en">Source check</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Stand der Funktion</span><span lang="en">Feature status</span></div><div class="vvalue"><span class="status warn"><span lang="de">Im Code belegt</span><span lang="en">Verified in source</span></span></div></div></div>
+<div class="meta"><div><div class="vlabel"><span lang="de">Seite</span><span lang="en">Page</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Online-Graph</span><span lang="en">Online graph</span></div><div class="vvalue">21.09.2026</div></div><div><div class="vlabel"><span lang="de">Quellenabgleich</span><span lang="en">Source check</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Prüfbasis</span><span lang="en">Verification basis</span></div><div class="vvalue"><span lang="de">Quellcode auf dev</span><span lang="en">Source code on dev</span></div></div></div>
 <section id="k1">
 <div class="ch"><span class="chapter-no">1</span><h2><span lang="de">Tour in ORISO öffnen</span><span lang="en">Open a tour in ORISO</span></h2></div>
 <ol class="steps">
@@ -51,11 +50,11 @@
     <div class="step-no">1</div>
     <div class="step-body">
       <div class="step-head"><span class="step-title"><span lang="de">Hilfe öffnen und Tour wählen</span><span lang="en">Open Help and choose a tour</span></span><span class="who b"><span lang="de">Beratende</span><span lang="en">Counsellor</span></span></div>
-      <div class="step-text"><span lang="de">Öffne die Einführung in der Hilfe. Die verfügbaren Touren hängen von Rolle und Konfiguration ab. Die Tour zur schriftlichen Beratung zeigt Anfrage, Annahme und das eigene Gespräch.</span><span lang="en">Open the introduction in Help. Available tours depend on role and configuration. The written counselling tour shows the enquiry, acceptance and your conversation.</span></div>
+      <div class="step-text"><span lang="de">Öffne „Profil → Hilfe → Rundgänge“ und dort „Meine Rundgänge“. Wenn Rundgänge für Beratende freigeschaltet sind, bietet die Übersicht den Einführungsrundgang mit Anfragen, eigenen Gesprächen, Archiv und Profil an.</span><span lang="en">Open Profile → Help → Tours, then My tours. If tours are enabled for counsellors, the overview offers the introduction covering enquiries, your conversations, archive and profile.</span></div>
       <details class="feature-graph"><summary><span lang="de">Im Graphen · Auswahl und Tourdefinition</span><span lang="en">In the graph · selection and tour definition</span></summary>
 <ul>
 <li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=file%3Asrc%2Fcomponents%2FproductTour%2FTourOverviewSection.tsx"><span lang="de">Touren in der Hilfe anzeigen</span><span lang="en">Show tours in Help</span></a></li>
-<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=file%3Asrc%2Fcomponents%2FproductTour%2FtourDefinitions.ts"><span lang="de">Schritte der Beratungstour</span><span lang="en">Counselling tour steps</span></a></li>
+<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=file%3Asrc%2Fcomponents%2FproductTour%2FtourDefinitions.ts"><span lang="de">Schritte des Einführungsrundgangs</span><span lang="en">Introduction tour steps</span></a></li>
 </ul>
 </details>
     </div>
@@ -73,10 +72,12 @@
     </div>
   </li>
 </ol>
+<h3><span lang="de">Mit fiktiven Daten in ORISO üben</span><span lang="en">Practise with fictional data in ORISO</span></h3><p><span lang="de">Im „Übungsbereich“ findest du bei passender Freigabe Übungen zum Annehmen und Beantworten einer Anfrage und zum Hinzufügen einer Supervision. Ist Supervision für den Träger deaktiviert, fehlt diese Übung. Die Übungsdaten sind fiktiv. Eingaben werden dort nicht gespeichert.</span><span lang="en">In Practice area, when enabled, you can practise accepting and answering an enquiry and adding supervision. The supervision exercise is hidden when supervision is disabled for the provider. The exercise data is fictional and inputs are not stored there.</span></p><p><a href="https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/5d48af580d7956b337eb65d366ed105233e0bb2f/src/practice/practiceTours.ts#L24"><span lang="de">Freigaben und Schritte der Übungen</span><span lang="en">Exercise availability and steps</span></a></p>
 </section>
 <section id="k2">
 <div class="ch"><span class="chapter-no">2</span><h2><span lang="de">Übung · eine Anfrage bearbeiten</span><span lang="en">Practice · work through an enquiry</span></h2></div>
 <p><span lang="de">Fiktive Beratungsstelle „Lindenweg“, fiktive ratsuchende Person „Waldkauz“. Öffne die drei Karten nacheinander. Diese Übung läuft auf dieser Seite.</span><span lang="en">Fictional counselling centre “Lindenweg”, fictional advice seeker “Tawny Owl”. Open the three cards in order. This exercise runs on this page.</span></p><details class="feature-graph"><summary><span lang="de">1 · Eingang öffnen</span><span lang="en">1 · Open the inbox</span></summary><p><span lang="de">Neue Anfrage von Waldkauz. „Ich würde gern wissen, wie eine erste Beratung abläuft.“ Öffne als Nächstes die Annahme.</span><span lang="en">New enquiry from Tawny Owl. “I would like to know how a first counselling session works.” Open the acceptance step next.</span></p></details><details class="feature-graph"><summary><span lang="de">2 · Anfrage annehmen</span><span lang="en">2 · Take the enquiry</span></summary><p><span lang="de">Beispiel-Ergebnis: Die Anfrage gehört jetzt zu deinen Gesprächen. Der bisherige Text bleibt sichtbar. Öffne als Nächstes das Gespräch.</span><span lang="en">Example result: the enquiry is now in your conversations. The original text remains visible. Open the conversation next.</span></p></details><details class="feature-graph"><summary><span lang="de">3 · Gespräch öffnen</span><span lang="en">3 · Open the conversation</span></summary><p><span lang="de">Beispiel-Antwort: „Gern erkläre ich Ihnen den Ablauf. Was möchten Sie zuerst wissen?“ Damit hast du den Weg von der Anfrage zur ersten Antwort durchgespielt.</span><span lang="en">Example reply: “I’m happy to explain how it works. What would you like to know first?” You have completed the path from enquiry to first reply.</span></p></details>
+<p><span lang="de">Die Übung hier illustriert die Annahme einer Anfrage. Sie ist unabhängig vom Praxisbereich in der Anwendung, der eigene Freigaben hat.</span><span lang="en">This exercise illustrates taking an enquiry. It is separate from the app’s practice area, which has its own availability settings.</span></p><p><a href="https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/5d48af580d7956b337eb65d366ed105233e0bb2f/src/components/productTour/TourOverviewSection.tsx#L35"><span lang="de">Welche Tour die Hilfe anbietet</span><span lang="en">Which tour Help offers</span></a></p>
 </section>
 <section id="k3">
 <div class="ch"><span class="chapter-no">3</span><h2><span lang="de">Stand und Quellen</span><span lang="en">Status and sources</span></h2></div>

@@ -20,7 +20,6 @@
     <span class="sp"></span>
     <span class="badge solid"><span lang="de">Feature</span><span lang="en">Feature</span></span>
     <span class="badge">Ablauf / Flow</span>
-    <span class="badge"><span lang="de">Graph 07.09.2026</span><span lang="en">Graph 7 Sept 2026</span></span>
     <span class="langswitch" role="group" aria-label="Sprache / Language">
       <button type="button" data-lang="de" aria-pressed="true">DE</button>
       <button type="button" data-lang="en" aria-pressed="false">EN</button>
@@ -43,7 +42,7 @@
   <a href="#k3"><span class="no">3</span><span lang="de">Stand und Quellen</span><span lang="en">Status and sources</span></a>
 </div></nav>
 <main class="wrap">
-<div class="meta"><div><div class="vlabel"><span lang="de">Seite</span><span lang="en">Page</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Online-Graph</span><span lang="en">Online graph</span></div><div class="vvalue">21.09.2026</div></div><div><div class="vlabel"><span lang="de">Quellenabgleich</span><span lang="en">Source check</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Stand der Funktion</span><span lang="en">Feature status</span></div><div class="vvalue"><span class="status warn"><span lang="de">Im Code belegt</span><span lang="en">Verified in source</span></span></div></div></div>
+<div class="meta"><div><div class="vlabel"><span lang="de">Seite</span><span lang="en">Page</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Online-Graph</span><span lang="en">Online graph</span></div><div class="vvalue">21.09.2026</div></div><div><div class="vlabel"><span lang="de">Quellenabgleich</span><span lang="en">Source check</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Prüfbasis</span><span lang="en">Verification basis</span></div><div class="vvalue"><span lang="de">Quellcode auf dev</span><span lang="en">Source code on dev</span></div></div></div>
 <section id="k1">
 <div class="ch"><span class="chapter-no">1</span><h2><span lang="de">Einrichtung Schritt für Schritt</span><span lang="en">Setup step by step</span></h2></div>
 <ol class="steps">
@@ -80,7 +79,7 @@
       <details class="feature-graph"><summary><span lang="de">Im Graphen · Konto und Beratungsstelle einrichten</span><span lang="en">In the graph · Set up the account and centre</span></summary>
 <ul>
 <li><a href="https://understand.oriso.org/user-service/?token=oriso-userservice-dashboard&amp;node=file%3Asrc%2Fmain%2Fjava%2Fde%2Fcaritas%2Fcob%2Fuserservice%2Fapi%2Fservice%2Faccountinvite%2Fonboarding%2FTenantAdminOnboardingService.java"><span lang="de">Einrichtung des Träger-Admins</span><span lang="en">Set up the provider admin</span></a></li>
-<li><a href="https://understand.oriso.org/admin-service/?token=oriso-admin-dashboard&amp;node=function%3Asrc%2Fcomponents%2FCreateAgencyModal%2Findex.tsx%3ACreateAgencyModal"><span lang="de">Beratungsstelle einem Träger zuordnen</span><span lang="en">Assign a centre to a provider</span></a></li>
+<li><a href="https://understand.oriso.org/admin-service/?token=oriso-admin-dashboard&amp;node=function%3Asrc%2Fcomponents%2FCreateAgencyModal%2Findex.tsx%3ACreateAgencyModal"><span lang="de">Schnellanlage im Admin als separater Weg</span><span lang="en">Quick creation in Admin as a separate route</span></a></li>
 </ul>
 </details>
     </div>
@@ -105,6 +104,7 @@
 <li><a href="https://understand.oriso.org/user-service/?token=oriso-userservice-dashboard&amp;node=file%3Asrc%2Fmain%2Fjava%2Fde%2Fcaritas%2Fcob%2Fuserservice%2Fapi%2Fservice%2Faccountinvite%2Fonboarding%2FCounsellorOnboardingService.java"><span lang="de">Onboarding für Beratungsstellen im Dienst</span><span lang="en">Centre onboarding in the service</span></a></li>
 </ul>
 </details><p><span lang="de">Die Weiterleitung nach dem Login in die Einrichtung einer neu gegründeten Beratungsstelle ist jünger als der öffentliche Graph.</span><span lang="en">The post-login continuation into setup for a newly founded centre is newer than the public graph.</span></p><p><a href="https://github.com/OpenResilienceInitiative/ORISO-Admin/blob/dev/src/constants/agencySetupContinuation.ts"><span lang="de">Quelltext zur Weiterleitung nach der Gründung</span><span lang="en">Source for the post-creation continuation</span></a></p>
+<h3><span lang="de">AVV und Wiederaufnahme</span><span lang="en">Agreement and resuming</span></h3><p><span lang="de">Wenn du den AVV zur Unterschrift weiterleitest, kannst du die Einrichtung fortsetzen. Die Unterschrift bleibt ausstehend. Für Träger-Admins bleibt die Anlage einer neuen Beratungsstelle bis dahin gesperrt. Ein Konto, dessen Einrichtung auf die Bestätigung des zweiten Faktors wartet, öffnet beim nächsten Aufruf wieder diesen Schritt.</span><span lang="en">If you forward the data processing agreement for signature, you can continue setting up. The signature stays pending. Provider admins cannot create a new counselling centre until it is recorded. An account pending second-factor verification resumes at that step when the link is reopened.</span></p><p><a href="https://github.com/OpenResilienceInitiative/ORISO-Admin/blob/b00ac2f57a2b44788a16662f516839d9790e384a/src/pages/TenantOnboarding/useTenantAdminOnboardingFlow.ts#L143"><span lang="de">Vorhandenes Konto und Fortsetzen der Einrichtung</span><span lang="en">Existing account and resuming setup</span></a></p>
 </section>
 <section id="k3">
 <div class="ch"><span class="chapter-no">3</span><h2><span lang="de">Stand und Quellen</span><span lang="en">Status and sources</span></h2></div>

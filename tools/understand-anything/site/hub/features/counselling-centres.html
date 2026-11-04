@@ -20,7 +20,6 @@
     <span class="sp"></span>
     <span class="badge solid"><span lang="de">Feature</span><span lang="en">Feature</span></span>
     <span class="badge">Ablauf / Flow</span>
-    <span class="badge"><span lang="de">Graph 07.09.2026</span><span lang="en">Graph 7 Sept 2026</span></span>
     <span class="langswitch" role="group" aria-label="Sprache / Language">
       <button type="button" data-lang="de" aria-pressed="true">DE</button>
       <button type="button" data-lang="en" aria-pressed="false">EN</button>
@@ -43,7 +42,7 @@
   <a href="#k3"><span class="no">3</span><span lang="de">Stand und Quellen</span><span lang="en">Status and sources</span></a>
 </div></nav>
 <main class="wrap">
-<div class="meta"><div><div class="vlabel"><span lang="de">Seite</span><span lang="en">Page</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Online-Graph</span><span lang="en">Online graph</span></div><div class="vvalue">21.09.2026</div></div><div><div class="vlabel"><span lang="de">Quellenabgleich</span><span lang="en">Source check</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Stand der Funktion</span><span lang="en">Feature status</span></div><div class="vvalue"><span class="status warn"><span lang="de">Im Code belegt</span><span lang="en">Verified in source</span></span></div></div></div>
+<div class="meta"><div><div class="vlabel"><span lang="de">Seite</span><span lang="en">Page</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Online-Graph</span><span lang="en">Online graph</span></div><div class="vvalue">21.09.2026</div></div><div><div class="vlabel"><span lang="de">Quellenabgleich</span><span lang="en">Source check</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Prüfbasis</span><span lang="en">Verification basis</span></div><div class="vvalue"><span lang="de">Quellcode auf dev</span><span lang="en">Source code on dev</span></div></div></div>
 <section id="k1">
 <div class="ch"><span class="chapter-no">1</span><h2><span lang="de">Vom Eintrag zum Angebot</span><span lang="en">From a record to an offer</span></h2></div>
 <ol class="steps">
@@ -51,7 +50,7 @@
     <div class="step-no">1</div>
     <div class="step-body">
       <div class="step-head"><span class="step-title"><span lang="de">Beratungsstelle im richtigen Träger anlegen</span><span lang="en">Create the centre under the right provider</span></span><span class="who b"><span lang="de">Administration</span><span lang="en">Administration</span></span></div>
-      <div class="step-text"><span lang="de">Wähle beim Anlegen den zuständigen Träger oder prüfe den vorgegebenen Träger. Bei der Schnellanlage startet die Stelle offline, weil noch keine Fachkraft zugeordnet ist. Ergänze die Angaben im Admin, bevor das Angebot auffindbar sein soll.</span><span lang="en">Select the responsible provider or check the preselected one. A centre created through quick setup starts offline because no counsellor is assigned yet. Complete its details before making the offer discoverable.</span></div>
+      <div class="step-text"><span lang="de">Wähle beim Anlegen den zuständigen Träger oder prüfe den vorgegebenen Träger. Neue Beratungsstellen starten offline. Ergänze die Stammdaten und ordne mindestens eine Fachkraft zu, bevor du die Stelle in der Registrierung sichtbar machst.</span><span lang="en">Select the responsible provider or check the preselected one. New centres start offline. Complete their details and assign at least one counsellor before making the centre visible during registration.</span></div>
       <details class="feature-graph"><summary><span lang="de">Im Graphen · Beratungsstelle im richtigen Träger anlegen</span><span lang="en">In the graph · Create the centre under the right provider</span></summary>
 <ul>
 <li><a href="https://understand.oriso.org/admin-service/?token=oriso-admin-dashboard&amp;node=function%3Asrc%2Fcomponents%2FCreateAgencyModal%2Findex.tsx%3ACreateAgencyModal"><span lang="de">Schnellanlage öffnen</span><span lang="en">Open quick centre creation</span></a></li>
@@ -77,7 +76,7 @@
     <div class="step-no">3</div>
     <div class="step-body">
       <div class="step-head"><span class="step-title"><span lang="de">Fachbereich und Anzeige prüfen</span><span lang="en">Check the department and visibility</span></span><span class="who b"><span lang="de">Administration</span><span lang="en">Administration</span></span></div>
-      <div class="step-text"><span lang="de">Prüfe je Angebot das Thema, die Sichtbarkeit und die zugehörigen rechtlichen Texte. Bei der Beratungsauswahl trägt das gewählte Thema zur Bestimmung des passenden Angebots bei.</span><span lang="en">Check the topic, visibility and relevant legal texts for each offer. The selected topic helps determine the relevant offer when a person enters counselling.</span></div>
+      <div class="step-text"><span lang="de">Prüfe je Angebot das Thema und die zugehörigen rechtlichen Texte. Unter „Stammdaten &amp; Mehr → Sichtbarkeit in der Registrierung“ stellst du die Beratungsstelle nach der Zuordnung einer Fachkraft sichtbar und speicherst.</span><span lang="en">Check the topic and legal texts for each offer. Under Master Data → Visibility in registration, make the centre visible after assigning a counsellor, then save.</span></div>
       <details class="feature-graph"><summary><span lang="de">Im Graphen · Fachbereich und Anzeige prüfen</span><span lang="en">In the graph · Check the department and visibility</span></summary>
 <ul>
 <li><a href="https://understand.oriso.org/agency-service/?token=oriso-agency-dashboard&amp;node=file%3Asrc%2Fmain%2Fjava%2Fde%2Fcaritas%2Fcob%2Fagencyservice%2Fapi%2Fadmin%2Fservice%2Fagency%2FAgencyTopicEnrichmentService.java"><span lang="de">Themen am Stellenangebot ergänzen</span><span lang="en">Enrich the centre offer with topics</span></a></li>
@@ -86,10 +85,16 @@
     </div>
   </li>
 </ol>
+<details class="feature-graph"><summary><span lang="de">Im Graphen · Sichtbarkeit in der Registrierung</span><span lang="en">In the graph · registration visibility</span></summary>
+<ul>
+<li><a href="https://understand.oriso.org/admin-service/?token=oriso-admin-dashboard&amp;node=function%3Asrc%2Fpages%2FAgency%2FEdit%2Fcomponents%2FRegistrationSettings%2Findex.tsx%3ARegistrationSettings"><span lang="de">Sichtbarkeit und Registrierung der Stelle einstellen</span><span lang="en">Set centre registration and visibility</span></a></li>
+</ul>
+</details>
 </section>
 <section id="k2">
 <div class="ch"><span class="chapter-no">2</span><h2><span lang="de">Ein Thema und mehrere Themen</span><span lang="en">One topic and multiple topics</span></h2></div>
 <div class="kurz"><p><span lang="de">Ohne die Plattformbegrenzung kann eine Beratungsstelle mehrere Themen führen. Ist die Begrenzung aktiv, kann eine Stelle mit einem Thema kein weiteres hinzufügen.</span><span lang="en">Without the platform limit, a centre can offer multiple topics. With the limit active, a centre with one topic cannot add another.</span></p><p><span lang="de">Wenn die Plattform die Begrenzung später aktiviert, bleiben vorhandene Mehrthemenstellen bestehen. Ihre Zuordnungen können geprüft und reduziert werden. Die Regel verhindert zusätzliche Themen, statt bestehende Einträge automatisch zu entfernen.</span><span lang="en">If the platform later enables the limit, existing multi-topic centres remain. Admins can review and reduce their assignments. The rule prevents additional topics and preserves existing records.</span></p></div>
+<p><span lang="de">Die Plattformregel steht unter „Globale Einstellungen → Fachbereiche“. Sie begrenzt neue Themenzuordnungen auf höchstens ein Thema je Stelle. Träger und Beratungsstelle können sie nicht überschreiben.</span><span lang="en">The platform rule is under Global settings → Topics. It limits new topic assignments to at most one topic per centre. Providers and centres cannot override it.</span></p>
 </section>
 <section id="k3">
 <div class="ch"><span class="chapter-no">3</span><h2><span lang="de">Stand und Quellen</span><span lang="en">Status and sources</span></h2></div>

@@ -20,7 +20,6 @@
     <span class="sp"></span>
     <span class="badge solid"><span lang="de">Feature</span><span lang="en">Feature</span></span>
     <span class="badge">Ablauf / Flow</span>
-    <span class="badge"><span lang="de">Graph 07.09.2026</span><span lang="en">Graph 7 Sept 2026</span></span>
     <span class="langswitch" role="group" aria-label="Sprache / Language">
       <button type="button" data-lang="de" aria-pressed="true">DE</button>
       <button type="button" data-lang="en" aria-pressed="false">EN</button>
@@ -43,7 +42,7 @@
   <a href="#k3"><span class="no">3</span><span lang="de">Stand und Quellen</span><span lang="en">Status and sources</span></a>
 </div></nav>
 <main class="wrap">
-<div class="meta"><div><div class="vlabel"><span lang="de">Seite</span><span lang="en">Page</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Online-Graph</span><span lang="en">Online graph</span></div><div class="vvalue">21.09.2026</div></div><div><div class="vlabel"><span lang="de">Quellenabgleich</span><span lang="en">Source check</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Stand der Funktion</span><span lang="en">Feature status</span></div><div class="vvalue"><span class="status warn"><span lang="de">Im Code belegt</span><span lang="en">Verified in source</span></span></div></div></div>
+<div class="meta"><div><div class="vlabel"><span lang="de">Seite</span><span lang="en">Page</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Online-Graph</span><span lang="en">Online graph</span></div><div class="vvalue">21.09.2026</div></div><div><div class="vlabel"><span lang="de">Quellenabgleich</span><span lang="en">Source check</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Prüfbasis</span><span lang="en">Verification basis</span></div><div class="vvalue"><span lang="de">Quellcode auf dev</span><span lang="en">Source code on dev</span></div></div></div>
 <section id="k1">
 <div class="ch"><span class="chapter-no">1</span><h2><span lang="de">Sprachnachricht senden</span><span lang="en">Send a voice message</span></h2></div>
 <ol class="steps">
@@ -63,7 +62,7 @@
     <div class="step-no">2</div>
     <div class="step-body">
       <div class="step-head"><span class="step-title"><span lang="de">Aufnahme beenden und senden</span><span lang="en">Finish recording and send</span></span><span class="who b"><span lang="de">Beratende</span><span lang="en">Counsellor</span></span></div>
-      <div class="step-text"><span lang="de">Beende die Aufnahme. Du kannst den Entwurf vor dem Senden prüfen oder verwerfen. Die Aufnahme wird dem Gespräch zugeordnet, in dem sie erstellt wurde.</span><span lang="en">Finish the recording. You can review or discard the draft before sending. The recording is associated with the conversation where it was created.</span></div>
+      <div class="step-text"><span lang="de">Klicke auf Stopp. Spiele die Vorschau ab und wähle Senden oder Verwerfen. Mit „Abbrechen“ verwirfst du die laufende Aufnahme.</span><span lang="en">Choose Stop. Play the preview, then send or discard it. Cancelling during recording discards the audio captured so far.</span></div>
       <details class="feature-graph"><summary><span lang="de">Im Graphen · Aufnahme beenden und senden</span><span lang="en">In the graph · Finish recording and send</span></summary>
 <ul>
 <li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Futils%2FmatrixEncryptedAttachment.ts%3AencryptMatrixAttachment"><span lang="de">Verschlüsseltes Medium vorbereiten</span><span lang="en">Prepare encrypted media</span></a></li>
@@ -87,7 +86,8 @@
 </section>
 <section id="k2">
 <div class="ch"><span class="chapter-no">2</span><h2><span lang="de">Wann ist das Mikrofon verfügbar?</span><span lang="en">When is the microphone available?</span></h2></div>
-<div class="kurz"><p><span lang="de">Die App prüft die Freigabe der Sprachnachricht für die Gesprächsart und ob Medien-Upload möglich ist. Die Berechtigung im Browser kommt zusätzlich dazu.</span><span lang="en">The app checks permission for voice messages for the conversation type and whether media upload is available. Browser permission is a separate requirement.</span></p><p><span lang="de">Der aktuelle UserService prüft die Funktion auch beim Aufruf. Diese serverseitige Prüfung ist jünger als der öffentliche Graph.</span><span lang="en">The current UserService also checks the action when it is requested. This server-side check is newer than the public graph.</span></p></div>
+<div class="kurz"><p><span lang="de">Die App prüft die Freigabe der Sprachnachricht für die Gesprächsart und ob Medien-Upload möglich ist. Die Berechtigung im Browser kommt zusätzlich dazu.</span><span lang="en">The app checks permission for voice messages for the conversation type and whether media upload is available. Browser permission is a separate requirement.</span></p><p><span lang="de">Das Mikrofon steht im Praxisbereich und bei der ersten schriftlichen Anfrage nicht zur Verfügung. Während der Bearbeitung einer Nachricht ist es gesperrt. Der UserService prüft die Freigabe auf seinem eigenen Upload-Pfad. Der verschlüsselte Matrix-Upload ist ein separater Pfad.</span><span lang="en">The microphone is unavailable in the practice area and for the initial written enquiry. It is disabled while editing a message. UserService checks permissions on its own upload path. Encrypted Matrix upload is a separate path.</span></p></div>
+<p><a href="https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/5d48af580d7956b337eb65d366ed105233e0bb2f/src/components/messageSubmitInterface/messageSubmitInterfaceComponent.tsx#L5025"><span lang="de">Aufnahme, Vorschau und Senden im Frontend</span><span lang="en">Recording, preview and sending in the frontend</span></a></p>
 </section>
 <section id="k3">
 <div class="ch"><span class="chapter-no">3</span><h2><span lang="de">Stand und Quellen</span><span lang="en">Status and sources</span></h2></div>

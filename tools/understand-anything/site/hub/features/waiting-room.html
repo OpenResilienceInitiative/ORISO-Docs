@@ -20,7 +20,6 @@
     <span class="sp"></span>
     <span class="badge solid"><span lang="de">Feature</span><span lang="en">Feature</span></span>
     <span class="badge">Ablauf / Flow</span>
-    <span class="badge"><span lang="de">Graph 07.09.2026</span><span lang="en">Graph 7 Sept 2026</span></span>
     <span class="langswitch" role="group" aria-label="Sprache / Language">
       <button type="button" data-lang="de" aria-pressed="true">DE</button>
       <button type="button" data-lang="en" aria-pressed="false">EN</button>
@@ -46,7 +45,7 @@
   <a href="#k6"><span class="no">6</span><span lang="de">Stand und Quellen</span><span lang="en">Status and sources</span></a>
 </div></nav>
 <main class="wrap">
-<div class="meta"><div><div class="vlabel"><span lang="de">Seite</span><span lang="en">Page</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Online-Graph</span><span lang="en">Online graph</span></div><div class="vvalue">21.09.2026</div></div><div><div class="vlabel"><span lang="de">Quellenabgleich</span><span lang="en">Source check</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Stand der Funktion</span><span lang="en">Feature status</span></div><div class="vvalue"><span class="status warn"><span lang="de">Im Code belegt</span><span lang="en">Verified in source</span></span></div></div></div>
+<div class="meta"><div><div class="vlabel"><span lang="de">Seite</span><span lang="en">Page</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Online-Graph</span><span lang="en">Online graph</span></div><div class="vvalue">21.09.2026</div></div><div><div class="vlabel"><span lang="de">Quellenabgleich</span><span lang="en">Source check</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Prüfbasis</span><span lang="en">Verification basis</span></div><div class="vvalue"><span lang="de">Quellcode auf dev</span><span lang="en">Source code on dev</span></div></div></div>
 <section id="k1">
 <div class="ch"><span class="chapter-no">1</span><h2><span lang="de">Kurzfassung</span><span lang="en">Summary</span></h2></div>
 <div class="kurz"><p><span lang="de">Drei Situationen sehen ähnlich aus, haben aber unterschiedliche Regeln. Im Live-Chat wartet eine einzelne Person auf Beratung. Im Gesprächskreis warten Teilnehmende auf denselben Termin. Bei einem Anruf bereitet jede Person ihre Geräte vor und wartet je nach Einladungsweg auf Einlass.</span><span lang="en">Three situations look similar but have different rules. In live chat, one person waits for a counsellor. In a self-help group, participants wait for the same meeting. Before a call, each person prepares their devices and may wait for admission depending on the invitation.</span></p></div>
@@ -58,7 +57,7 @@
     <div class="step-no">1</div>
     <div class="step-body">
       <div class="step-head"><span class="step-title"><span lang="de">Den Status im Wartebereich lesen</span><span lang="en">Read the waiting status</span></span><span class="who b"><span lang="de">Ratsuchende</span><span lang="en">Advice seeker</span></span></div>
-      <div class="step-text"><span lang="de">Die Anzeige zeigt, wie viele Anfragen noch vor dir liegen, sobald ORISO die Zahl kennt. Wenn niemand live ist und du weiter warten möchtest, zeigt die Oberfläche diesen Zustand an.</span><span lang="en">The room shows how many requests are ahead once ORISO has that number. When nobody is live and you choose to keep waiting, the screen shows that state.</span></div>
+      <div class="step-text"><span lang="de">Die Anzeige zeigt, wie viele Personen vor dir warten, sobald ORISO die Zahl kennt. Wenn niemand live ist und du „Ich warte“ wählst, zeigt die Oberfläche diesen Zustand an.</span><span lang="en">The display shows how many people are ahead once ORISO has that count. If nobody is live and you choose I’ll wait, the screen displays that state.</span></div>
       <details class="feature-graph"><summary><span lang="de">Im Graphen · Anzeige und Warteschlange</span><span lang="en">In the graph · display and queue</span></summary>
 <ul>
 <li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fcomponents%2FanonymousChat%2FentryRoom%2FLiveChatWaitingRoom.tsx%3ALiveChatWaitingRoom"><span lang="de">Wartezustände im Frontend</span><span lang="en">Waiting states in the frontend</span></a></li>
@@ -102,7 +101,7 @@
     <div class="step-no">2</div>
     <div class="step-body">
       <div class="step-head"><span class="step-title"><span lang="de">Die Moderation öffnet den Kreis</span><span lang="en">The moderator opens the group</span></span><span class="who b"><span lang="de">Beratende</span><span lang="en">Counsellor</span></span></div>
-      <div class="step-text"><span lang="de">Die Uhr hilft bei der Orientierung. Beitreten wird für Teilnehmende freigegeben, wenn die Gruppe geöffnet ist und die erforderliche Zustimmung vorliegt.</span><span lang="en">The clock provides orientation. Participants can enter once the group is open and the required consent is in place.</span></div>
+      <div class="step-text"><span lang="de">Die Uhr zeigt, wann das Treffen vorgesehen ist. Sie öffnet die Gruppe nicht. Sobald die Moderation den Kreis öffnet, wählst du „Beitreten“ und bestätigst die nötigen Hinweise.</span><span lang="en">The clock shows when the meeting is scheduled. It does not open the group. Once the moderator opens it, choose Join and confirm the required notices.</span></div>
       <details class="feature-graph"><summary><span lang="de">Im Graphen · Öffnen und beitreten</span><span lang="en">In the graph · open and join</span></summary>
 <ul>
 <li><a href="https://understand.oriso.org/user-service/?token=oriso-userservice-dashboard&amp;node=function%3Asrc%2Fmain%2Fjava%2Fde%2Fcaritas%2Fcob%2Fuserservice%2Fapi%2Ffacade%2FStartChatFacade.java%3Ade.caritas.cob.userservice.api.facade.StartChatFacade.startChat%28Chat%2CConsultant%29"><span lang="de">Gruppe im Dienst starten</span><span lang="en">Start the group in the service</span></a></li>
@@ -128,7 +127,7 @@
     <div class="step-no">2</div>
     <div class="step-body">
       <div class="step-head"><span class="step-title"><span lang="de">Auf Einlass warten</span><span lang="en">Wait for admission</span></span><span class="who b"><span lang="de">Ratsuchende</span><span lang="en">Advice seeker</span></span></div>
-      <div class="step-text"><span lang="de">Die Produktentscheidung für Direktlinks und geteilte Anruflinks sieht Anklopfen vor. Die Beratungsperson entscheidet über den Einlass. Dieser Weg hat eigene Regeln und ist getrennt von der Live-Chat-Warteschlange.</span><span lang="en">The product decision for direct links and shared call links uses a knock. The counsellor decides on admission. This path has its own rules and is separate from the live chat queue.</span></div>
+      <div class="step-text"><span lang="de">Bei einem persönlichen Direktlink führt der erste Eintritt im geprüften Quellstand über Anklopfen und Einlass in die eigene Beratungskonversation. Spätere Anrufe in derselben Unterhaltung können nach erteiltem Einlass ohne erneutes Anklopfen zugänglich sein. Ein Link zu einem laufenden Anruf führt in dessen Anrufansicht. Dort kann die Freigabe beim Teilen so eingestellt sein, dass Gäste direkt beitreten oder erst anklopfen.</span><span lang="en">In the checked source, the first entry via a personal direct link uses knock and admission to reach the invitee’s own counselling conversation. Later calls in the same conversation can be available without knocking again after admission. A link to an ongoing call opens that call’s surface. The share setting can allow guests to enter directly or require them to knock first.</span></div>
 
     </div>
   </li>
@@ -141,7 +140,7 @@
 <tbody>
 <tr><td><span lang="de">Live-Chat</span><span lang="en">Live chat</span></td><td><span lang="de">Eine Fachkraft nimmt die Anfrage an.</span><span lang="en">A counsellor takes the request.</span></td><td><span lang="de">Zustimmen und das Einzelgespräch starten.</span><span lang="en">Consent and start the one-to-one chat.</span></td></tr>
 <tr><td><span lang="de">Gesprächskreis</span><span lang="en">Self-help group</span></td><td><span lang="de">Die Moderation öffnet die Gruppe.</span><span lang="en">A moderator opens the group.</span></td><td><span lang="de">Nach der nötigen Zustimmung beitreten.</span><span lang="en">Join after the required consent.</span></td></tr>
-<tr><td><span lang="de">Anruflink</span><span lang="en">Call link</span></td><td><span lang="de">Gerätecheck, Zustimmung und je nach Weg Einlass.</span><span lang="en">Device check, consent and admission where required.</span></td><td><span lang="de">Mit den gewählten Geräten am Anruf teilnehmen.</span><span lang="en">Enter the call with the selected devices.</span></td></tr>
+<tr><td><span lang="de">Anruflink</span><span lang="en">Call link</span></td><td><span lang="de">Gerätecheck, erforderliche Zustimmung und Einlass, wenn der Link Anklopfen verlangt.</span><span lang="en">Device check, required consent and admission when the link requires knocking.</span></td><td><span lang="de">Mit den gewählten Geräten am Anruf teilnehmen.</span><span lang="en">Enter the call with the selected devices.</span></td></tr>
 </tbody>
 </table></div>
 </section>

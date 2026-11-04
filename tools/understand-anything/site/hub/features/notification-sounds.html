@@ -20,7 +20,6 @@
     <span class="sp"></span>
     <span class="badge solid"><span lang="de">Feature</span><span lang="en">Feature</span></span>
     <span class="badge">Ablauf / Flow</span>
-    <span class="badge"><span lang="de">Graph 07.09.2026</span><span lang="en">Graph 7 Sept 2026</span></span>
     <span class="langswitch" role="group" aria-label="Sprache / Language">
       <button type="button" data-lang="de" aria-pressed="true">DE</button>
       <button type="button" data-lang="en" aria-pressed="false">EN</button>
@@ -44,7 +43,7 @@
   <a href="#k4"><span class="no">4</span><span lang="de">Stand und Quellen</span><span lang="en">Status and sources</span></a>
 </div></nav>
 <main class="wrap">
-<div class="meta"><div><div class="vlabel"><span lang="de">Seite</span><span lang="en">Page</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Online-Graph</span><span lang="en">Online graph</span></div><div class="vvalue">21.09.2026</div></div><div><div class="vlabel"><span lang="de">Quellenabgleich</span><span lang="en">Source check</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Stand der Funktion</span><span lang="en">Feature status</span></div><div class="vvalue"><span class="status warn"><span lang="de">Im Code belegt</span><span lang="en">Verified in source</span></span></div></div></div>
+<div class="meta"><div><div class="vlabel"><span lang="de">Seite</span><span lang="en">Page</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Online-Graph</span><span lang="en">Online graph</span></div><div class="vvalue">21.09.2026</div></div><div><div class="vlabel"><span lang="de">Quellenabgleich</span><span lang="en">Source check</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Prüfbasis</span><span lang="en">Verification basis</span></div><div class="vvalue"><span lang="de">Quellcode auf dev</span><span lang="en">Source code on dev</span></div></div></div>
 <section id="k1">
 <div class="ch"><span class="chapter-no">1</span><h2><span lang="de">Töne einstellen</span><span lang="en">Set your sounds</span></h2></div>
 <ol class="steps">
@@ -52,7 +51,7 @@
     <div class="step-no">1</div>
     <div class="step-body">
       <div class="step-head"><span class="step-title"><span lang="de">Benachrichtigungen öffnen</span><span lang="en">Open Notifications</span></span><span class="who b"><span lang="de">Beratende</span><span lang="en">Counsellor</span></span></div>
-      <div class="step-text"><span lang="de">Wechsle in der Beratungsanwendung zu Einstellungen → Benachrichtigungen. Die Tonwahl erscheint dort, wenn die neue Benachrichtigungsansicht für das Konto aktiv ist.</span><span lang="en">In the counselling app, go to Settings → Notifications. The tone controls appear when the new notification view is enabled for the account.</span></div>
+      <div class="step-text"><span lang="de">Wechsle in der Beratungsanwendung zu „Profil → Einstellungen → Benachrichtigungen“. Die Tonwahl erscheint, wenn die neue Benachrichtigungsansicht für die Installation freigeschaltet ist.</span><span lang="en">In the counselling app, go to Profile → Settings → Notifications. Tone selection appears when the new notification interface is enabled for the deployment.</span></div>
       <details class="feature-graph"><summary><span lang="de">Im Graphen · Einstellungsseite</span><span lang="en">In the graph · settings screen</span></summary>
 <ul>
 <li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fcomponents%2Fprofile%2FNotificationSettings%2Findex.tsx%3ANotificationSettingsPanel"><span lang="de">Benachrichtigungseinstellungen öffnen</span><span lang="en">Open notification settings</span></a></li>
@@ -92,7 +91,7 @@
 <div class="table-scroll"><table>
 <thead><tr><th scope="col"><span lang="de">Einstellung</span><span lang="en">Setting</span></th><th scope="col"><span lang="de">Wirkung</span><span lang="en">Effect</span></th></tr></thead>
 <tbody>
-<tr><td><span lang="de">Kein Ton für einen Anlass</span><span lang="en">No sound for an event</span></td><td><span lang="de">Der gewählte Anlass bleibt still. Banner und Browser-Hinweise haben eigene Einstellungen.</span><span lang="en">That event stays quiet. Banners and browser notifications have their own settings.</span></td></tr>
+<tr><td><span lang="de">Kein Ton für einen Anlass</span><span lang="en">No sound for an event</span></td><td><span lang="de">Für diese Zeile ist kein Ton gewählt. Ein eigener Ton im Anzeigefilter einer Gesprächsliste kann die Auswahl übersteuern. Banner und Browser-Hinweise haben eigene Einstellungen.</span><span lang="en">No sound is selected for this row. A tone configured in a conversation list’s display filter can override it. Banners and browser notifications have their own settings.</span></td></tr>
 <tr><td><span lang="de">Nicht stören</span><span lang="en">Do not disturb</span></td><td><span lang="de">ORISO unterdrückt Benachrichtigungen bis zum gewählten Zeitpunkt.</span><span lang="en">ORISO suppresses notifications until the selected time.</span></td></tr>
 <tr><td><span lang="de">Alle Benachrichtigungen stummschalten</span><span lang="en">Mute all notifications</span></td><td><span lang="de">Die Stummschaltung gilt für das Konto.</span><span lang="en">Mute applies to the account.</span></td></tr>
 <tr><td><span lang="de">Dieses Gerät stummschalten</span><span lang="en">Silence this device</span></td><td><span lang="de">Nur der aktuelle Browser bleibt still.</span><span lang="en">Only the current browser stays silent.</span></td></tr>
@@ -102,6 +101,7 @@
 <li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Futils%2FnotificationSettings%2Fmodel.ts%3AisNotificationSuppressed"><span lang="de">Prüfen, ob ein Ereignis unterdrückt wird</span><span lang="en">Check if an event is suppressed</span></a></li>
 </ul>
 </details>
+<p><span lang="de">Wenn trotzdem ein Ton kommt oder unerwartet fehlt, prüfe in der betreffenden Gesprächsliste den Anzeigefilter und dort die Spalte „Ton“. Danach prüfe „Nicht stören“, die Stummschaltung und die Audiofreigabe im Browser.</span><span lang="en">If a sound still plays or is unexpectedly missing, check the Sound column in the affected conversation list’s display filter. Then check Do not disturb, mute and browser audio permissions.</span></p><p><a href="https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/5d48af580d7956b337eb65d366ed105233e0bb2f/src/globalState/provider/NotificationsProvider.tsx#L734"><span lang="de">Anzeigefilter bei der Tonwahl anwenden</span><span lang="en">Apply the display filter when choosing a tone</span></a></p>
 </section>
 <section id="k3">
 <div class="ch"><span class="chapter-no">3</span><h2><span lang="de">Wie ein Ereignis seinen Ton bekommt</span><span lang="en">How an event gets its sound</span></h2></div>

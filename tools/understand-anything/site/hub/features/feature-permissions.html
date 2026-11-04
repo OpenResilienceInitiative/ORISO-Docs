@@ -20,7 +20,6 @@
     <span class="sp"></span>
     <span class="badge solid"><span lang="de">Feature</span><span lang="en">Feature</span></span>
     <span class="badge">Ablauf / Flow</span>
-    <span class="badge"><span lang="de">Graph 07.09.2026</span><span lang="en">Graph 7 Sept 2026</span></span>
     <span class="langswitch" role="group" aria-label="Sprache / Language">
       <button type="button" data-lang="de" aria-pressed="true">DE</button>
       <button type="button" data-lang="en" aria-pressed="false">EN</button>
@@ -45,7 +44,7 @@
   <a href="#k5"><span class="no">5</span><span lang="de">Stand und Quellen</span><span lang="en">Status and sources</span></a>
 </div></nav>
 <main class="wrap">
-<div class="meta"><div><div class="vlabel"><span lang="de">Seite</span><span lang="en">Page</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Online-Graph</span><span lang="en">Online graph</span></div><div class="vvalue">21.09.2026</div></div><div><div class="vlabel"><span lang="de">Quellenabgleich</span><span lang="en">Source check</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Stand der Funktion</span><span lang="en">Feature status</span></div><div class="vvalue"><span class="status warn"><span lang="de">Im Code belegt</span><span lang="en">Verified in source</span></span></div></div></div>
+<div class="meta"><div><div class="vlabel"><span lang="de">Seite</span><span lang="en">Page</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Online-Graph</span><span lang="en">Online graph</span></div><div class="vvalue">21.09.2026</div></div><div><div class="vlabel"><span lang="de">Quellenabgleich</span><span lang="en">Source check</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Prüfbasis</span><span lang="en">Verification basis</span></div><div class="vvalue"><span lang="de">Quellcode auf dev</span><span lang="en">Source code on dev</span></div></div></div>
 <section id="k1">
 <div class="ch"><span class="chapter-no">1</span><h2><span lang="de">Wer stellt was ein?</span><span lang="en">Who sets what?</span></h2></div>
 <ol class="steps">
@@ -53,7 +52,7 @@
     <div class="step-no">1</div>
     <div class="step-body">
       <div class="step-head"><span class="step-title"><span lang="de">Plattform gibt den Rahmen vor</span><span lang="en">The platform sets the baseline</span></span><span class="who b"><span lang="de">Administration</span><span lang="en">Administration</span></span></div>
-      <div class="step-text"><span lang="de">Plattform-Admins öffnen Funktionszugriff. Für unterstützte Funktionen legen sie fest, ob ein Wert verbindlich vorgegeben oder von der nächsten Ebene angepasst werden darf.</span><span lang="en">Platform admins open Feature access. For supported features, they decide whether a value is binding or adjustable by the next level.</span></div>
+      <div class="step-text"><span lang="de">Plattform-Admins öffnen „Einstellungen → Funktionszugriff“. Für unterstützte Funktionen legen sie fest, ob der Wert verbindlich ist oder von der nächsten Ebene angepasst werden darf.</span><span lang="en">Platform admins open Settings → Functionality Access. For supported features they decide whether a value is binding or adjustable at the next level.</span></div>
       <details class="feature-graph"><summary><span lang="de">Im Graphen · Plattformansicht</span><span lang="en">In the graph · platform view</span></summary>
 <ul>
 <li><a href="https://understand.oriso.org/admin-service/?token=oriso-admin-dashboard&amp;node=function%3Asrc%2Fcomponents%2FTenants%2FAppSettings%2FPermissionsSettings%2FSuperAdminPermissionsSettings.tsx%3ASuperAdminPermissionsSettings"><span lang="de">Funktionszugriff der Plattform</span><span lang="en">Platform feature access</span></a></li>
@@ -65,7 +64,7 @@
     <div class="step-no">2</div>
     <div class="step-body">
       <div class="step-head"><span class="step-title"><span lang="de">Träger legt die Regel für seine Stellen fest</span><span lang="en">The provider sets the rule for its centres</span></span><span class="who b"><span lang="de">Administration</span><span lang="en">Administration</span></span></div>
-      <div class="step-text"><span lang="de">Träger-Admins sehen geerbte Vorgaben. Wo die Plattform eine Wahl lässt, können sie eine Einstellung für ihren Träger setzen und bei unterstützten Funktionen die Wahl der Beratungsstellen einschränken.</span><span lang="en">Provider admins see inherited requirements. Where the platform leaves a choice, they can set a value for their provider and restrict centre choices for supported features.</span></div>
+      <div class="step-text"><span lang="de">Träger-Admins öffnen „Einstellungen → Funktionszugriff“. Wo die Plattform eine Wahl lässt, setzen sie einen Wert für den eigenen Träger und können bei unterstützten Funktionen den Spielraum der Beratungsstellen festlegen.</span><span lang="en">Provider admins open Settings → Functionality Access. Where the platform leaves a choice, they set a value for their provider and can constrain centre choices for supported features.</span></div>
       <details class="feature-graph"><summary><span lang="de">Im Graphen · Träger und Vererbung</span><span lang="en">In the graph · provider and inheritance</span></summary>
 <ul>
 <li><a href="https://understand.oriso.org/admin-service/?token=oriso-admin-dashboard&amp;node=function%3Asrc%2Fcomponents%2FTenants%2FAppSettings%2FPermissionsSettings%2FTenantPermissionsSettings.tsx%3ATenantPermissionsSettings"><span lang="de">Funktionszugriff des Trägers</span><span lang="en">Provider feature access</span></a></li>
@@ -78,7 +77,7 @@
     <div class="step-no">3</div>
     <div class="step-body">
       <div class="step-head"><span class="step-title"><span lang="de">Beratungsstelle prüft den wirksamen Wert</span><span lang="en">The centre checks the effective value</span></span><span class="who b"><span lang="de">Administration</span><span lang="en">Administration</span></span></div>
-      <div class="step-text"><span lang="de">Beratungsstellen-Admins sehen, was für ihre Stelle gilt. Eine gesperrte Einstellung können sie lesen. Anpassbare Werte ändern sie, soweit ihre Rolle und die jeweilige Kachel das erlauben.</span><span lang="en">Centre admins see the effective settings for their centre. Locked values are visible. They can change adjustable values where their role and the tile allow it.</span></div>
+      <div class="step-text"><span lang="de">Öffne „Beratungsstellen → [Stelle] → Funktionszugriff“. Die Stelle sieht den wirksamen Wert. Gesperrte Werte und die angezeigten Benachrichtigungskanäle des Trägers sind hier nur lesbar. Änderbare Schalter hängen von deiner Rolle und der jeweiligen Kachel ab.</span><span lang="en">Open Agencies → [Centre] → Functionality Access. The centre sees the effective value. Locked values and the provider notification channels shown here are read-only. Editable switches depend on your role and the tile.</span></div>
       <details class="feature-graph"><summary><span lang="de">Im Graphen · Beratungsstelle</span><span lang="en">In the graph · counselling centre</span></summary>
 <ul>
 <li><a href="https://understand.oriso.org/admin-service/?token=oriso-admin-dashboard&amp;node=function%3Asrc%2Fcomponents%2FTenants%2FAppSettings%2FPermissionsSettings%2FAgencyPermissionsSettings.tsx%3AAgencyPermissionsSettings"><span lang="de">Ansicht für Beratungsstellen</span><span lang="en">Centre settings view</span></a></li>
@@ -99,6 +98,7 @@
 <tr><td><span lang="de">Anpassbar</span><span lang="en">Adjustable</span></td><td><span lang="de">Ohne lokale Wahl gilt der geerbte Wert. Eine erlaubte lokale Wahl geht vor.</span><span lang="en">Without a local choice, the inherited value applies. An allowed local choice takes precedence.</span></td></tr>
 </tbody>
 </table></div>
+<p><span lang="de">Live-Chat hat eine eigene Kachel mit Browser-Benachrichtigungen. Eine E-Mail-Freigabe für die anonyme Registrierung gehört dort nicht zum geprüften Katalog.</span><span lang="en">Live chat has its own tile with browser notifications. The checked catalogue does not include email permission for anonymous registration on that tile.</span></p>
 </section>
 <section id="k3">
 <div class="ch"><span class="chapter-no">3</span><h2><span lang="de">Was gilt im Gespräch?</span><span lang="en">What applies in a conversation?</span></h2></div>
@@ -119,7 +119,7 @@
     <div class="step-no">2</div>
     <div class="step-body">
       <div class="step-head"><span class="step-title"><span lang="de">Der Dienst prüft beim Ausführen</span><span lang="en">The service checks when the action runs</span></span><span class="who b"><span lang="de">System</span><span lang="en">System</span></span></div>
-      <div class="step-text"><span lang="de">Bei den im UserService abgesicherten Aktionen, etwa Sprachnachrichten und Medien-Uploads, müssen Träger und Beratungsstelle die Funktion für den Kontext erlauben. Für eine Gruppenaktion prüft der Dienst die zugeordneten Stellen. Die Person braucht zusätzlich die Zugriffsrechte für das Gespräch.</span><span lang="en">For actions enforced by UserService, such as voice messages and media uploads, the provider and centre must allow the feature in context. For group actions, the service checks the associated centres. The person also needs access to the conversation.</span></div>
+      <div class="step-text"><span lang="de">Der UserService prüft zum Beispiel Sprachnachrichten und Medien auf den Upload-Pfaden, die er selbst entgegennimmt. Dort müssen Träger und Beratungsstelle die Funktion für den Kontext erlauben. Bei Gruppen prüft der Dienst die zugeordneten Stellen. Der Zugang zum Raum bleibt eine eigene Voraussetzung.</span><span lang="en">UserService checks voice messages and media on the upload paths it receives. On those paths the provider and centre must allow the feature in context. For groups the service checks the associated centres. Access to the room is a separate requirement.</span></div>
       <!-- No graph link for this step. -->
     </div>
   </li>

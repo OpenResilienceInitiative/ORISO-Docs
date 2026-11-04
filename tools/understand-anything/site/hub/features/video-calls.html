@@ -20,7 +20,6 @@
     <span class="sp"></span>
     <span class="badge solid"><span lang="de">Feature</span><span lang="en">Feature</span></span>
     <span class="badge">Ablauf / Flow</span>
-    <span class="badge"><span lang="de">Graph 07.09.2026</span><span lang="en">Graph 7 Sept 2026</span></span>
     <span class="langswitch" role="group" aria-label="Sprache / Language">
       <button type="button" data-lang="de" aria-pressed="true">DE</button>
       <button type="button" data-lang="en" aria-pressed="false">EN</button>
@@ -43,7 +42,7 @@
   <a href="#k3"><span class="no">3</span><span lang="de">Stand und Quellen</span><span lang="en">Status and sources</span></a>
 </div></nav>
 <main class="wrap">
-<div class="meta"><div><div class="vlabel"><span lang="de">Seite</span><span lang="en">Page</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Online-Graph</span><span lang="en">Online graph</span></div><div class="vvalue">21.09.2026</div></div><div><div class="vlabel"><span lang="de">Quellenabgleich</span><span lang="en">Source check</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Stand der Funktion</span><span lang="en">Feature status</span></div><div class="vvalue"><span class="status warn"><span lang="de">Im Code belegt</span><span lang="en">Verified in source</span></span></div></div></div>
+<div class="meta"><div><div class="vlabel"><span lang="de">Seite</span><span lang="en">Page</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Online-Graph</span><span lang="en">Online graph</span></div><div class="vvalue">21.09.2026</div></div><div><div class="vlabel"><span lang="de">Quellenabgleich</span><span lang="en">Source check</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Prüfbasis</span><span lang="en">Verification basis</span></div><div class="vvalue"><span lang="de">Quellcode auf dev</span><span lang="en">Source code on dev</span></div></div></div>
 <section id="k1">
 <div class="ch"><span class="chapter-no">1</span><h2><span lang="de">Vom Schalter zum Anruf</span><span lang="en">From the setting to the call</span></h2></div>
 <ol class="steps">
@@ -64,7 +63,7 @@
     <div class="step-no">2</div>
     <div class="step-body">
       <div class="step-head"><span class="step-title"><span lang="de">Im Gespräch starten</span><span lang="en">Start from the conversation</span></span><span class="who b"><span lang="de">Beratende</span><span lang="en">Counsellor</span></span></div>
-      <div class="step-text"><span lang="de">Öffne das Gespräch und wähle den Videoanruf, wenn er angeboten wird. Die Anwendung startet den Anruf im Raumkontext. Bei einem Anruflink kann vor dem Gespräch ein eigener Einstieg erscheinen.</span><span lang="en">Open the conversation and choose video call when available. The app starts the call in the room context. A call link can show a separate entry before the call.</span></div>
+      <div class="step-text"><span lang="de">Öffne als beratende Person ein geeignetes Einzelgespräch und klicke im Kopfbereich auf das Kamerasymbol. Die Beratungsform muss Anrufe zulassen. In der Anfrageliste oder im Praxisbereich steht die Funktion in diesem Ablauf nicht zur Verfügung.</span><span lang="en">As a counsellor, open an eligible one-to-one conversation and choose the camera icon in its header. The counselling format must allow calls. In this flow the control is unavailable in the enquiry list or practice area.</span></div>
       <details class="feature-graph"><summary><span lang="de">Im Graphen · Im Gespräch starten</span><span lang="en">In the graph · Start from the conversation</span></summary>
 <ul>
 <li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fcomponents%2Fcall%2FstartRoomCall.ts%3AstartRoomCall"><span lang="de">Raumanruf starten</span><span lang="en">Start a room call</span></a></li>
@@ -90,6 +89,12 @@
 <section id="k2">
 <div class="ch"><span class="chapter-no">2</span><h2><span lang="de">Video ausschalten</span><span lang="en">Turn video off</span></h2></div>
 <div class="kurz"><p><span lang="de">Schalte Video im Funktionszugriff für den passenden Geltungsbereich aus. Ein erlaubter Audioanruf kann weiter angeboten werden. Der gemeinsame Anrufschalter betrifft beide Arten.</span><span lang="en">Switch off video under Feature access for the intended scope. Audio can remain available. The master calls switch affects both.</span></p><p><span lang="de">Die Gerätefreigabe im Browser, die Freigabe durch die Organisation und der Einlass in einen konkreten Anruf sind unterschiedliche Entscheidungen.</span><span lang="en">Browser device permission, organisational feature permission and admission to an individual call are separate decisions.</span></p></div>
+<p><a href="https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/5d48af580d7956b337eb65d366ed105233e0bb2f/src/components/sessionMenu/SessionMenu.tsx#L574"><span lang="de">Zusätzliche Voraussetzungen im Gesprächskopf</span><span lang="en">Additional conditions in the conversation header</span></a></p>
+<p><span lang="de">In Gruppen gelten eigene Voraussetzungen: Die Beratungsperson muss dem aktiven Raum beigetreten sein, und die Gruppenart muss den Anruf erlauben. Bei einem Link zu einem laufenden Anruf hängt der Einlass von der beim Teilen gewählten Einstellung ab.</span><span lang="en">Groups have separate requirements: the counsellor must have joined the active room, and the group type must allow the call. For a link to an ongoing call, admission depends on the option selected when sharing it.</span></p><details class="feature-graph"><summary><span lang="de">Im Graphen · Video in Gruppen</span><span lang="en">In the graph · group video</span></summary>
+<ul>
+<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fcomponents%2FsessionHeader%2FGroupChatHeader%2Findex.tsx%3AGroupChatHeader"><span lang="de">Anrufaktionen im Gruppenkopf</span><span lang="en">Call actions in the group header</span></a></li>
+</ul>
+</details>
 </section>
 <section id="k3">
 <div class="ch"><span class="chapter-no">3</span><h2><span lang="de">Stand und Quellen</span><span lang="en">Status and sources</span></h2></div>

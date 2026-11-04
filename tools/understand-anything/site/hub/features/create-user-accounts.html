@@ -21,7 +21,6 @@
     <span class="badge solid"><span lang="de">Feature</span><span lang="en">Feature</span></span>
     <span class="badge">Ablauf / Flow</span>
     <span class="badge ok"><span lang="de">Vollständig</span><span lang="en">Complete</span></span>
-    <span class="badge"><span lang="de">Graph 07.09.2026</span><span lang="en">Graph 7 Sept 2026</span></span>
     <span class="langswitch" role="group" aria-label="Sprache / Language">
       <button type="button" data-lang="de" aria-pressed="true">DE</button>
       <button type="button" data-lang="en" aria-pressed="false">EN</button>
@@ -52,7 +51,7 @@
     <div class="step-no">1</div>
     <div class="step-body">
       <div class="step-head"><span class="step-title"><span lang="de">Rolle und Zuständigkeit wählen</span><span lang="en">Choose role and scope</span></span><span class="who b"><span lang="de">Administration</span><span lang="en">Administration</span></span></div>
-      <div class="step-text"><span lang="de">Öffne im Admin die Kontoeinladungen. Wähle, ob du eine Beratungsperson oder einen Admin einlädst. Prüfe den vorgesehenen Träger, die Beratungsstelle und die Themen, soweit die Rolle sie benötigt.</span><span lang="en">Open account invitations in Admin. Choose whether to invite a counsellor or an admin. Check the provider, centre and topics required by that role.</span></div>
+      <div class="step-text"><span lang="de">Öffne im Admin „Links“. Unter „Träger-Invites“ geht es um Träger-Admins. Nur Plattform-Admins können einen neuen Träger gründen. Träger-Admins können weitere Träger-Admins für ihren bestehenden Träger einladen. Unter „Berater-Invites“ hängen die verfügbaren Rollen von deiner Zuständigkeit ab.</span><span lang="en">Open Links in Admin. Tenant invites are for provider admins. Only platform admins can found a new provider. Provider admins can invite another admin into their existing provider. On Counsellor invites, available roles depend on your scope.</span></div>
       <details class="feature-graph"><summary><span lang="de">Im Graphen · Rolle und Zuständigkeit wählen</span><span lang="en">In the graph · Choose role and scope</span></summary>
 <ul>
 <li><a href="https://understand.oriso.org/admin-service/?token=oriso-admin-dashboard&amp;node=function%3Asrc%2Fpages%2FLinks%2FAccountInvitesTab.tsx%3AAccountInvitesTab"><span lang="de">Einladungsverwaltung öffnen</span><span lang="en">Open account invitations</span></a></li>
@@ -64,7 +63,7 @@
     <div class="step-no">2</div>
     <div class="step-body">
       <div class="step-head"><span class="step-title"><span lang="de">Einladung senden</span><span lang="en">Send the invitation</span></span><span class="who b"><span lang="de">Administration</span><span lang="en">Administration</span></span></div>
-      <div class="step-text"><span lang="de">Trage die E-Mail-Adresse ein und sende die Einladung. Der Dienst prüft, ob deine Rolle diese Einladung für den gewählten Bereich anlegen darf. Der Einladungsstand lässt sich danach in der Verwaltung prüfen.</span><span lang="en">Enter the email address and send the invitation. The service checks whether your role may invite someone into the selected scope. You can then check the invitation status in Admin.</span></div>
+      <div class="step-text"><span lang="de">Trage die E-Mail-Adresse ein und wähle, ob du die Einladung per E-Mail senden oder zunächst anlegen willst. Prüfe anschließend in der Liste den Einladungsstand. Wartet der Eintrag noch auf einen Träger oder eine Beratungsstelle, ist die E-Mail noch nicht versendet.</span><span lang="en">Enter the email address and choose whether to send the invitation by email or create it first. Check its status in the list. If it is still waiting for a provider or centre, the email has not yet been sent.</span></div>
       <details class="feature-graph"><summary><span lang="de">Im Graphen · Einladung senden</span><span lang="en">In the graph · Send the invitation</span></summary>
 <ul>
 <li><a href="https://understand.oriso.org/admin-service/?token=oriso-admin-dashboard&amp;node=function%3Asrc%2Fapi%2FaccountInvites%2FaccountInvites.ts%3AcreateAccountInvite"><span lang="de">Einladung aus dem Admin anlegen</span><span lang="en">Create the invitation from Admin</span></a></li>
@@ -87,6 +86,7 @@
     </div>
   </li>
 </ol>
+<h3><span lang="de">Welche Rolle kann wen einladen?</span><span lang="en">Which roles can invite whom?</span></h3><p><span lang="de">Beratungsstellen-Admins laden Beratende für zugeordnete Stellen ein. Träger- und Plattform-Admins können innerhalb ihrer Zuständigkeit auch Beratungsstellen-Admins einladen. Der Dienst prüft den konkreten Träger, die Beratungsstelle und die Rollenfreigabe beim Anlegen und bei der Annahme.</span><span lang="en">Centre admins invite counsellors for assigned centres. Provider and platform admins can also invite centre admins within their scope. The service checks the specific provider, centre and role when creating and accepting invitations.</span></p><p><a href="https://github.com/OpenResilienceInitiative/ORISO-UserService/blob/081800adf8c24e7ce249e101a956e7399c98a6fa/src/main/java/de/caritas/cob/userservice/api/service/accountinvite/AccountInviteAccessPolicy.java#L268"><span lang="de">Einladungsrechte im aktuellen Dienst</span><span lang="en">Invitation rights in the current service</span></a></p>
 </section>
 <section id="k2">
 <div class="ch"><span class="chapter-no">2</span><h2><span lang="de">Andere Einstiege</span><span lang="en">Other entry paths</span></h2></div>

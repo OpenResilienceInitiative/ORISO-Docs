@@ -20,7 +20,6 @@
     <span class="sp"></span>
     <span class="badge solid"><span lang="de">Feature</span><span lang="en">Feature</span></span>
     <span class="badge">Ablauf / Flow</span>
-    <span class="badge"><span lang="de">Graph 07.09.2026</span><span lang="en">Graph 7 Sept 2026</span></span>
     <span class="langswitch" role="group" aria-label="Sprache / Language">
       <button type="button" data-lang="de" aria-pressed="true">DE</button>
       <button type="button" data-lang="en" aria-pressed="false">EN</button>
@@ -46,14 +45,14 @@
   <a href="#k6"><span class="no">6</span><span lang="de">Stand und Quellen</span><span lang="en">Status and sources</span></a>
 </div></nav>
 <main class="wrap">
-<div class="meta"><div><div class="vlabel"><span lang="de">Seite</span><span lang="en">Page</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Online-Graph</span><span lang="en">Online graph</span></div><div class="vvalue">21.09.2026</div></div><div><div class="vlabel"><span lang="de">Quellenabgleich</span><span lang="en">Source check</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Stand der Funktion</span><span lang="en">Feature status</span></div><div class="vvalue"><span class="status warn"><span lang="de">Im Code belegt</span><span lang="en">Verified in source</span></span></div></div></div>
+<div class="meta"><div><div class="vlabel"><span lang="de">Seite</span><span lang="en">Page</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Online-Graph</span><span lang="en">Online graph</span></div><div class="vvalue">21.09.2026</div></div><div><div class="vlabel"><span lang="de">Quellenabgleich</span><span lang="en">Source check</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Prüfbasis</span><span lang="en">Verification basis</span></div><div class="vvalue"><span lang="de">Quellcode auf dev</span><span lang="en">Source code on dev</span></div></div></div>
 <section id="k1">
 <div class="ch"><span class="chapter-no">1</span><h2><span lang="de">Die drei Wege im Vergleich</span><span lang="en">Compare the three paths</span></h2></div>
 <div class="table-scroll"><table>
 <thead><tr><th scope="col"><span lang="de">Weg</span><span lang="en">Path</span></th><th scope="col"><span lang="de">So beginnt er</span><span lang="en">How it starts</span></th><th scope="col"><span lang="de">Was entsteht</span><span lang="en">What it creates</span></th></tr></thead>
 <tbody>
 <tr><td><span lang="de">Beratungsstellenberatung</span><span lang="en">Centre counselling</span></td><td><span lang="de">Angebot wählen, sich anmelden oder registrieren und eine Anfrage schreiben.</span><span lang="en">Choose an offer, sign in or register, and send an enquiry.</span></td><td><span lang="de">Eine schriftliche Beratung, die nach der Zuordnung mit einer Fachkraft weiterläuft.</span><span lang="en">Written counselling that continues with an assigned counsellor.</span></td></tr>
-<tr><td><span lang="de">Live-Chat</span><span lang="en">Live chat</span></td><td><span lang="de">Öffentlichen Live-Chat-Link öffnen und anonym warten.</span><span lang="en">Open a public live chat link and wait anonymously.</span></td><td><span lang="de">Ein direktes Einzelgespräch, sobald jemand die Anfrage annimmt.</span><span lang="en">A one-to-one chat once someone takes the request.</span></td></tr>
+<tr><td><span lang="de">Live-Chat</span><span lang="en">Live chat</span></td><td><span lang="de">Öffentlichen Live-Chat-Link öffnen und anonym warten.</span><span lang="en">Open a public live chat link and wait anonymously.</span></td><td><span lang="de">Ein direktes Einzelgespräch nach Annahme der Anfrage und erforderlicher Zustimmung.</span><span lang="en">A one-to-one chat after the request is accepted and the required consent is given.</span></td></tr>
 <tr><td><span lang="de">Selbsthilfegruppe</span><span lang="en">Self-help group</span></td><td><span lang="de">Gruppeneinladung öffnen und auf das Treffen warten.</span><span lang="en">Open a group invitation and wait for the meeting.</span></td><td><span lang="de">Teilnahme am Gesprächskreis mit mehreren Menschen.</span><span lang="en">Participation in a group conversation with other people.</span></td></tr>
 </tbody>
 </table></div>
@@ -104,6 +103,7 @@
     </div>
   </li>
 </ol>
+<p><a href="/features/live-chat.html"><span lang="de">Ablauf für Live-Chat</span><span lang="en">How live chat works</span></a></p>
 </section>
 <section id="k4">
 <div class="ch"><span class="chapter-no">4</span><h2><span lang="de">Selbsthilfegruppe</span><span lang="en">Self-help group</span></h2></div>
@@ -113,15 +113,20 @@
     <div class="step-body">
       <div class="step-head"><span class="step-title"><span lang="de">Einladung öffnen und beitreten</span><span lang="en">Open the invitation and join</span></span><span class="who b"><span lang="de">Ratsuchende</span><span lang="en">Advice seeker</span></span></div>
       <div class="step-text"><span lang="de">Die Einladung führt zum Gesprächskreis. Je nach Zugang meldet sich die Person an oder nutzt den angebotenen Einstieg für neue Teilnehmende. Der Beitritt gehört zur Gruppe und löst keine zusätzliche Beratungsanfrage aus.</span><span lang="en">The invitation leads to the group. Depending on the entry path, the person signs in or uses the option for new participants. Joining is scoped to the group and creates no additional counselling enquiry.</span></div>
-      <details class="feature-graph"><summary><span lang="de">Im Graphen · Gruppeneinstieg und Anlage</span><span lang="en">In the graph · group entry and creation</span></summary>
+      <details class="feature-graph"><summary><span lang="de">Im Graphen · Einstieg in die Gruppe</span><span lang="en">In the graph · group entry</span></summary>
 <ul>
 <li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fcomponents%2FgroupChat%2FentryRoom%2FGroupEntryRoom.tsx%3AGroupEntryRoom"><span lang="de">Einstiegsfläche der Gruppe</span><span lang="en">Group entry screen</span></a></li>
-<li><a href="https://understand.oriso.org/user-service/?token=oriso-userservice-dashboard&amp;node=file%3Asrc%2Fmain%2Fjava%2Fde%2Fcaritas%2Fcob%2Fuserservice%2Fapi%2Ffacade%2FCreateChatFacade.java"><span lang="de">Gruppenkonversation im Dienst anlegen</span><span lang="en">Create group conversation in the service</span></a></li>
+</ul>
+</details><details class="feature-graph"><summary><span lang="de">Im Graphen · Beitritt verarbeiten</span><span lang="en">In the graph · process joining</span></summary>
+<ul>
+<li><a href="https://understand.oriso.org/user-service/?token=oriso-userservice-dashboard&amp;node=function%3Asrc%2Fmain%2Fjava%2Fde%2Fcaritas%2Fcob%2Fuserservice%2Fapi%2Ffacade%2FJoinAndLeaveChatFacade.java%3Ade.caritas.cob.userservice.api.facade.JoinAndLeaveChatFacade.joinChat%28Long%2CAuthenticatedUser%29"><span lang="de">Gruppenbeitritt im Dienst</span><span lang="en">Group joining in the service</span></a></li>
 </ul>
 </details>
     </div>
   </li>
 </ol>
+<p><a href="/features/self-help-groups.html"><span lang="de">Ablauf für Gesprächskreise</span><span lang="en">How self-help groups work</span></a></p>
+<p><a href="https://github.com/OpenResilienceInitiative/ORISO-UserService/blob/081800adf8c24e7ce249e101a956e7399c98a6fa/src/main/java/de/caritas/cob/userservice/api/facade/GroupInviteRegistration.java#L33"><span lang="de">Einladung für die Registrierung prüfen</span><span lang="en">Check the invitation for registration</span></a></p>
 </section>
 <section id="k5">
 <div class="ch"><span class="chapter-no">5</span><h2><span lang="de">Typ, Status und Medium</span><span lang="en">Type, status and medium</span></h2></div>

@@ -20,7 +20,6 @@
     <span class="sp"></span>
     <span class="badge solid"><span lang="de">Feature</span><span lang="en">Feature</span></span>
     <span class="badge">Ablauf / Flow</span>
-    <span class="badge"><span lang="de">Graph 07.09.2026</span><span lang="en">Graph 7 Sept 2026</span></span>
     <span class="langswitch" role="group" aria-label="Sprache / Language">
       <button type="button" data-lang="de" aria-pressed="true">DE</button>
       <button type="button" data-lang="en" aria-pressed="false">EN</button>
@@ -43,7 +42,7 @@
   <a href="#k3"><span class="no">3</span><span lang="de">Stand und Quellen</span><span lang="en">Status and sources</span></a>
 </div></nav>
 <main class="wrap">
-<div class="meta"><div><div class="vlabel"><span lang="de">Seite</span><span lang="en">Page</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Online-Graph</span><span lang="en">Online graph</span></div><div class="vvalue">21.09.2026</div></div><div><div class="vlabel"><span lang="de">Quellenabgleich</span><span lang="en">Source check</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Stand der Funktion</span><span lang="en">Feature status</span></div><div class="vvalue"><span class="status warn"><span lang="de">Im Code belegt</span><span lang="en">Verified in source</span></span></div></div></div>
+<div class="meta"><div><div class="vlabel"><span lang="de">Seite</span><span lang="en">Page</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Online-Graph</span><span lang="en">Online graph</span></div><div class="vvalue">21.09.2026</div></div><div><div class="vlabel"><span lang="de">Quellenabgleich</span><span lang="en">Source check</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Prüfbasis</span><span lang="en">Verification basis</span></div><div class="vvalue"><span lang="de">Quellcode auf dev</span><span lang="en">Source code on dev</span></div></div></div>
 <section id="k1">
 <div class="ch"><span class="chapter-no">1</span><h2><span lang="de">Träger anlegen und verwalten</span><span lang="en">Create and manage a provider</span></h2></div>
 <ol class="steps">
@@ -51,7 +50,7 @@
     <div class="step-no">1</div>
     <div class="step-body">
       <div class="step-head"><span class="step-title"><span lang="de">Eine Einladung für einen neuen Träger anlegen</span><span lang="en">Create a new-provider invitation</span></span><span class="who b"><span lang="de">Plattform-Admin</span><span lang="en">Platform admin</span></span></div>
-      <div class="step-text"><span lang="de">Ein Plattform-Admin wählt im Admin-Bereich eine Einladung zur Anlage eines Trägers. Für einen weiteren Admin eines bestehenden Trägers wählt er stattdessen den vorhandenen Träger aus.</span><span lang="en">A platform admin creates an invitation to set up a provider. For an additional admin at an existing provider, they select that provider instead.</span></div>
+      <div class="step-text"><span lang="de">Öffne als Plattform-Admin „Links → Träger-Invites“ und wähle die Anlage eines neuen Trägers. Für einen weiteren Admin eines bestehenden Trägers wählst du stattdessen den vorhandenen Träger aus.</span><span lang="en">As a platform admin, open Links → Provider invitations and choose to create a new provider. For an additional admin at an existing provider, select that provider instead.</span></div>
       <details class="feature-graph"><summary><span lang="de">Im Graphen · Eine Einladung für einen neuen Träger anlegen</span><span lang="en">In the graph · Create a new-provider invitation</span></summary>
 <ul>
 <li><a href="https://understand.oriso.org/admin-service/?token=oriso-admin-dashboard&amp;node=function%3Asrc%2Fpages%2FLinks%2FAccountInvitesTab.tsx%3AAccountInvitesTab"><span lang="de">Einladungsverwaltung öffnen</span><span lang="en">Open account invitations</span></a></li>
@@ -89,6 +88,11 @@
 <section id="k2">
 <div class="ch"><span class="chapter-no">2</span><h2><span lang="de">Was zu welchem Bereich gehört</span><span lang="en">Which level owns what</span></h2></div>
 <div class="kurz"><p><span lang="de">Die Plattform setzt den gemeinsamen Rahmen. Der Träger pflegt seine Organisation und die anpassbaren Vorgaben. Die Beratungsstelle ist die Einheit, die ein konkretes Beratungsangebot trägt.</span><span lang="en">The platform sets the common baseline. The provider manages its organisation and adjustable policies. The counselling centre runs the concrete counselling offer.</span></p><p><span lang="de">Ein freigegebener Funktionsschalter und die Zuständigkeit für einen Träger sind getrennte Voraussetzungen. Beide werden im jeweiligen Ablauf geprüft.</span><span lang="en">An enabled feature and authority over a provider are separate prerequisites. Each is checked in the relevant flow.</span></p></div>
+<p><span lang="de">Beispiel: Eine Beratungsstellen-Admin kann die ihr zugewiesene Stelle verwalten. Eine zweite Stelle desselben Trägers gehört erst mit einer eigenen Zuweisung zu ihrem Bereich. Ein Träger-Admin arbeitet in seinem Träger. Der Trägerkontext ordnet die Anfrage ein. Welche Verwaltungshandlung erlaubt ist, prüft der Dienst zusätzlich.</span><span lang="en">Example: A centre admin can manage her assigned centre. Another centre within the same provider requires a separate assignment. A provider admin works within their provider. The provider context identifies the request’s scope. The service checks which administrative action is allowed separately.</span></p><details class="feature-graph"><summary><span lang="de">Im Graphen · sichtbare Einladungsbereiche</span><span lang="en">In the graph · visible invitation areas</span></summary>
+<ul>
+<li><a href="https://understand.oriso.org/admin-service/?token=oriso-admin-dashboard&amp;node=function%3Asrc%2Fconstants%2FlinksAccess.ts%3AresolveVisibleLinksTabs"><span lang="de">Reiter nach Verwaltungsrolle anzeigen</span><span lang="en">Show tabs by administrative role</span></a></li>
+</ul>
+</details>
 </section>
 <section id="k3">
 <div class="ch"><span class="chapter-no">3</span><h2><span lang="de">Stand und Quellen</span><span lang="en">Status and sources</span></h2></div>

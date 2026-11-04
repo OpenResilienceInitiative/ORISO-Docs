@@ -20,7 +20,6 @@
     <span class="sp"></span>
     <span class="badge solid"><span lang="de">Feature</span><span lang="en">Feature</span></span>
     <span class="badge">Ablauf / Flow</span>
-    <span class="badge"><span lang="de">Graph 07.09.2026</span><span lang="en">Graph 7 Sept 2026</span></span>
     <span class="langswitch" role="group" aria-label="Sprache / Language">
       <button type="button" data-lang="de" aria-pressed="true">DE</button>
       <button type="button" data-lang="en" aria-pressed="false">EN</button>
@@ -43,7 +42,7 @@
   <a href="#k3"><span class="no">3</span><span lang="de">Stand und Quellen</span><span lang="en">Status and sources</span></a>
 </div></nav>
 <main class="wrap">
-<div class="meta"><div><div class="vlabel"><span lang="de">Seite</span><span lang="en">Page</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Online-Graph</span><span lang="en">Online graph</span></div><div class="vvalue">21.09.2026</div></div><div><div class="vlabel"><span lang="de">Quellenabgleich</span><span lang="en">Source check</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Stand der Funktion</span><span lang="en">Feature status</span></div><div class="vvalue"><span class="status warn"><span lang="de">Im Code belegt</span><span lang="en">Verified in source</span></span></div></div></div>
+<div class="meta"><div><div class="vlabel"><span lang="de">Seite</span><span lang="en">Page</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Online-Graph</span><span lang="en">Online graph</span></div><div class="vvalue">21.09.2026</div></div><div><div class="vlabel"><span lang="de">Quellenabgleich</span><span lang="en">Source check</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Prüfbasis</span><span lang="en">Verification basis</span></div><div class="vvalue"><span lang="de">Quellcode auf dev</span><span lang="en">Source code on dev</span></div></div></div>
 <section id="k1">
 <div class="ch"><span class="chapter-no">1</span><h2><span lang="de">Einen internen Gruppenchat nutzen</span><span lang="en">Use an internal group chat</span></h2></div>
 <ol class="steps">
@@ -51,11 +50,10 @@
     <div class="step-no">1</div>
     <div class="step-body">
       <div class="step-head"><span class="step-title"><span lang="de">Gruppe mit zugelassenen Kolleginnen und Kollegen anlegen</span><span lang="en">Create a group with eligible colleagues</span></span><span class="who b"><span lang="de">Beratende</span><span lang="en">Counsellor</span></span></div>
-      <div class="step-text"><span lang="de">Wähle beim Anlegen die interne Gruppe und die vorgesehenen Personen, soweit deine Berechtigungen es erlauben. Der Dienst legt den Raum als internen Gruppenchat an.</span><span lang="en">Choose an internal group and the intended colleagues where your permissions allow. The service creates the room as an internal group chat.</span></div>
-      <details class="feature-graph"><summary><span lang="de">Im Graphen · Gruppe mit zugelassenen Kolleginnen und Kollegen anlegen</span><span lang="en">In the graph · Create a group with eligible colleagues</span></summary>
+      <div class="step-text"><span lang="de">Öffne „Neue Unterhaltung starten → Interna besprechen“. Gib einen Namen ein. Füge über „Person hinzufügen“ die gewünschten Kolleginnen und Kollegen hinzu und wähle „Interna erstellen“. Die App bietet nur Personen im zulässigen Bereich an. Der Dienst prüft die Auswahl beim Anlegen erneut.</span><span lang="en">Open Start new conversation → Discuss internal matters. Enter a name. Use Add person to select your colleagues and choose Create internal conversation. The app offers people in the permitted scope. The service checks the selection again at creation.</span></div>
+      <details class="feature-graph"><summary><span lang="de">Im Graphen · Personen für Interna auswählen</span><span lang="en">In the graph · select members for an internal conversation</span></summary>
 <ul>
-<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fapi%2FapiGroupChatSettings.ts%3AapiCreateGroupChat"><span lang="de">Gruppenchat aus der App anlegen</span><span lang="en">Create a group chat from the app</span></a></li>
-<li><a href="https://understand.oriso.org/user-service/?token=oriso-userservice-dashboard&amp;node=file%3Asrc%2Fmain%2Fjava%2Fde%2Fcaritas%2Fcob%2Fuserservice%2Fapi%2Ffacade%2FCreateChatFacade.java"><span lang="de">Gruppe im Dienst anlegen</span><span lang="en">Create the group in the service</span></a></li>
+<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fcomponents%2FconversationCreate%2Finternal%2FInternalChatCreateCard.tsx%3AInternalChatCreateCard"><span lang="de">Name und Mitglieder in der Anlagekarte auswählen</span><span lang="en">Choose the name and members in the creation card</span></a></li>
 </ul>
 </details>
     </div>
@@ -85,6 +83,7 @@
     </div>
   </li>
 </ol>
+<p><span lang="de">Für Interna mit ausgewählten Personen verwendet der aktuelle Quellstand einen eigenen verschlüsselten Raum. ORISO kann einen bestehenden Raum für exakt dieselben Mitglieder wiederverwenden. Der öffentliche Graph zeigt die Auswahl in der Anwendung. Der neuere Dienst zur Anlage mit genau diesen Mitgliedern ist im Graph-Stand noch nicht enthalten.</span><span lang="en">In the checked source, internal conversations with selected people use a dedicated encrypted room. ORISO can reuse a room for exactly the same members. The public graph shows the selection in the app. The newer service that creates the room with exactly those members is absent from the snapshot.</span></p><p><a href="https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/5d48af580d7956b337eb65d366ed105233e0bb2f/src/components/conversationCreate/CreateConversationView.tsx#L750"><span lang="de">Aktuelle Auswahl „Interna besprechen“ in der Anwendung</span><span lang="en">Current “Discuss internal matters” option in the app</span></a></p><p><a href="https://github.com/OpenResilienceInitiative/ORISO-UserService/blob/081800adf8c24e7ce249e101a956e7399c98a6fa/src/main/java/de/caritas/cob/userservice/api/facade/InternalSubsetChatFacade.java#L65"><span lang="de">Ausgewählte Mitglieder im Dienst prüfen</span><span lang="en">Verify selected members in the service</span></a></p>
 </section>
 <section id="k2">
 <div class="ch"><span class="chapter-no">2</span><h2><span lang="de">Interne Gruppe, Supervision und Selbsthilfe</span><span lang="en">Internal groups, supervision and self-help</span></h2></div>
