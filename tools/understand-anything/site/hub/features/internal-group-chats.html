@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="de" data-lang="de" data-title-de="Interne Gruppenchats — ORISO Understand" data-title-en="Internal group chats — ORISO Understand">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interne Gruppenchats — ORISO Understand</title>
+<meta name="description" content="Interne Gruppenchats sind dauerhafte Räume für die Zusammenarbeit von Mitarbeitenden. Welche Personen du hinzufügen kannst, hängt vom Zugriff und von den Regeln des Trägers ab." data-description-de="Interne Gruppenchats sind dauerhafte Räume für die Zusammenarbeit von Mitarbeitenden. Welche Personen du hinzufügen kannst, hängt vom Zugriff und von den Regeln des Trägers ab." data-description-en="Internal group chats are persistent rooms for staff collaboration. Access and provider rules determine whom you can add.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/hub.css">
+<script src="/assets/lang.js"></script>
+</head>
+<body>
+
+<div class="appbar">
+  <div class="appbar-in">
+    <span class="brandname"><a href="/">ORISO Understand</a></span>
+    <span class="sub">/features/internal-group-chats</span>
+    <span class="sp"></span>
+    <span class="badge solid"><span lang="de">Feature</span><span lang="en">Feature</span></span>
+    <span class="badge">Ablauf / Flow</span>
+    <span class="badge warn"><span lang="de">teilweise gebaut</span><span lang="en">partly built</span></span>
+    <span class="badge"><span lang="de">Graph 07.09.2026</span><span lang="en">Graph 7 Sept 2026</span></span>
+    <span class="langswitch" role="group" aria-label="Sprache / Language">
+      <button type="button" data-lang="de" aria-pressed="true">DE</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </span>
+  </div>
+</div>
+
+
+<header class="band">
+  <div class="band-in"><div class="headcard">
+    <div class="eyebrow">ORISO Understand · Features</div>
+    <h1><span lang="de">Interne Gruppenchats</span><span lang="en">Internal group chats</span></h1>
+    <p class="lead"><span lang="de">Interne Gruppenchats sind dauerhafte Räume für die Zusammenarbeit von Mitarbeitenden. Welche Personen du hinzufügen kannst, hängt vom Zugriff und von den Regeln des Trägers ab.</span><span lang="en">Internal group chats are persistent rooms for staff collaboration. Access and provider rules determine whom you can add.</span></p>
+    <div class="chips"><span class="chip"><span class="dot"></span><span lang="de">Kolleginnen und Kollegen im eigenen Raum</span><span lang="en">Colleagues in their own room</span></span></div>
+  </div></div>
+</header>
+<nav class="chipnav" aria-label="Kapitel / Chapters"><div class="chipnav-in">
+  <a href="#k1"><span class="no">1</span><span lang="de">Einen internen Gruppenchat nutzen</span><span lang="en">Use an internal group chat</span></a>
+  <a href="#k2"><span class="no">2</span><span lang="de">Interne Gruppe, Supervision und Selbsthilfe</span><span lang="en">Internal groups, supervision and self-help</span></a>
+  <a href="#k3"><span class="no">3</span><span lang="de">Stand und Quellen</span><span lang="en">Status and sources</span></a>
+</div></nav>
+<main class="wrap">
+<div class="meta"><div><div class="vlabel"><span lang="de">Seite</span><span lang="en">Page</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Online-Graph</span><span lang="en">Online graph</span></div><div class="vvalue">21.09.2026</div></div><div><div class="vlabel"><span lang="de">Quellenabgleich</span><span lang="en">Source check</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Stand der Funktion</span><span lang="en">Feature status</span></div><div class="vvalue"><span class="status warn"><span lang="de">Im Code belegt</span><span lang="en">Verified in source</span></span></div></div></div>
+<section id="k1">
+<div class="ch"><span class="chapter-no">1</span><h2><span lang="de">Einen internen Gruppenchat nutzen</span><span lang="en">Use an internal group chat</span></h2></div>
+<ol class="steps">
+  <li class="step">
+    <div class="step-no">1</div>
+    <div class="step-body">
+      <div class="step-head"><span class="step-title"><span lang="de">Gruppe mit zugelassenen Kolleginnen und Kollegen anlegen</span><span lang="en">Create a group with eligible colleagues</span></span><span class="who b"><span lang="de">Beratende</span><span lang="en">Counsellor</span></span></div>
+      <div class="step-text"><span lang="de">Wähle beim Anlegen die interne Gruppe und die vorgesehenen Personen, soweit deine Berechtigungen es erlauben. Der Dienst legt den Raum als internen Gruppenchat an.</span><span lang="en">Choose an internal group and the intended colleagues where your permissions allow. The service creates the room as an internal group chat.</span></div>
+      <details class="feature-graph"><summary><span lang="de">Im Graphen · Gruppe mit zugelassenen Kolleginnen und Kollegen anlegen</span><span lang="en">In the graph · Create a group with eligible colleagues</span></summary>
+<ul>
+<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fapi%2FapiGroupChatSettings.ts%3AapiCreateGroupChat"><span lang="de">Gruppenchat aus der App anlegen</span><span lang="en">Create a group chat from the app</span></a></li>
+<li><a href="https://understand.oriso.org/user-service/?token=oriso-userservice-dashboard&amp;node=file%3Asrc%2Fmain%2Fjava%2Fde%2Fcaritas%2Fcob%2Fuserservice%2Fapi%2Ffacade%2FCreateChatFacade.java"><span lang="de">Gruppe im Dienst anlegen</span><span lang="en">Create the group in the service</span></a></li>
+</ul>
+</details>
+    </div>
+  </li>
+  <li class="step">
+    <div class="step-no">2</div>
+    <div class="step-body">
+      <div class="step-head"><span class="step-title"><span lang="de">Mitgliedschaft und Funktionen prüfen</span><span lang="en">Check membership and features</span></span><span class="who b"><span lang="de">Beratende</span><span lang="en">Counsellor</span></span></div>
+      <div class="step-text"><span lang="de">Eine Berechtigung für interne Gruppen ersetzt die Teilnahme am konkreten Raum nicht. Für einen ausdrücklich auf ausgewählte Kolleginnen und Kollegen begrenzten Raum ist die Teilnehmerliste maßgeblich.</span><span lang="en">Permission to use internal groups does not replace membership in a particular room. For a room limited to selected colleagues, the member list determines access.</span></div>
+      <details class="feature-graph"><summary><span lang="de">Im Graphen · Mitgliedschaft und Funktionen prüfen</span><span lang="en">In the graph · Check membership and features</span></summary>
+<ul>
+<li><a href="https://understand.oriso.org/user-service/?token=oriso-userservice-dashboard&amp;node=file%3Asrc%2Fmain%2Fjava%2Fde%2Fcaritas%2Fcob%2Fuserservice%2Fapi%2Fservice%2Fchat%2FGroupChatFeatureGate.java"><span lang="de">Freigabe für die Gruppenart prüfen</span><span lang="en">Check permissions for the group type</span></a></li>
+</ul>
+</details>
+    </div>
+  </li>
+  <li class="step">
+    <div class="step-no">3</div>
+    <div class="step-body">
+      <div class="step-head"><span class="step-title"><span lang="de">Ohne gemeinsamen Termin zusammenarbeiten</span><span lang="en">Collaborate without a scheduled meeting</span></span><span class="who b"><span lang="de">Beratende</span><span lang="en">Counsellor</span></span></div>
+      <div class="step-text"><span lang="de">Ein interner Gruppenchat ist für laufende Zusammenarbeit gedacht. Ein Gesprächskreis hat dagegen Termin und Moderationsstart. Die Oberfläche zeigt den dazu passenden Einstieg.</span><span lang="en">An internal group chat is for ongoing collaboration. A self-help group has a meeting time and a moderator start. The interface shows the corresponding entry path.</span></div>
+      <details class="feature-graph"><summary><span lang="de">Im Graphen · Ohne gemeinsamen Termin zusammenarbeiten</span><span lang="en">In the graph · Collaborate without a scheduled meeting</span></summary>
+<ul>
+<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fcomponents%2Fsession%2FgetModality.ts%3AgetModality"><span lang="de">Konversationstyp für die Oberfläche ermitteln</span><span lang="en">Resolve the conversation type for the app</span></a></li>
+</ul>
+</details>
+    </div>
+  </li>
+</ol>
+</section>
+<section id="k2">
+<div class="ch"><span class="chapter-no">2</span><h2><span lang="de">Interne Gruppe, Supervision und Selbsthilfe</span><span lang="en">Internal groups, supervision and self-help</span></h2></div>
+<div class="kurz"><p><span lang="de">Die interne Gruppe ist ein eigener Raum für Mitarbeitende. Die Supervision hat einen privaten Rückmelderaum zu einem konkreten Fall. Die Selbsthilfe nutzt eine Einladung zu einem moderierten Gesprächskreis.</span><span lang="en">An internal group is a staff room. Supervision has a private feedback room tied to a case. Self-help uses an invitation to a moderated group meeting.</span></p></div>
+</section>
+<section id="k3">
+<div class="ch"><span class="chapter-no">3</span><h2><span lang="de">Stand und Quellen</span><span lang="en">Status and sources</span></h2></div>
+<p><span lang="de">Der Quellenabgleich vom 4. November beschreibt den Stand auf dev. Der öffentliche Understand-Graph stammt vom 21. September. Die Graph-Sprünge öffnen Knoten, die in diesem Stand vorhanden sind.</span><span lang="en">The source check on 4 November describes dev. The public Understand graph is dated 21 September. The graph links open nodes present in that snapshot.</span></p><p><a href="https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/dev/src/api/apiCreateInternalSubsetChat.ts"><span lang="de">Aktueller Quelltext für Räume mit ausgewählten Mitgliedern</span><span lang="en">Current source for rooms with selected members</span></a></p><p><a href="/features/self-help-groups.html"><span lang="de">Selbsthilfegruppen</span><span lang="en">Self-help groups</span></a></p><p><a href="/features/supervision-chat.html"><span lang="de">Supervisionschat</span><span lang="en">Supervision chat</span></a></p>
+</section>
+</main>
+<footer><a href="/features/">ORISO Understand · Features</a> · <a href="/"><span lang="de">Startseite</span><span lang="en">Home</span></a></footer>
+</body>
+</html>
