@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="de" data-lang="de" data-title-de="Verschlüsselung in ORISO — ORISO Understand" data-title-en="Encryption in ORISO — ORISO Understand">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verschlüsselung in ORISO — ORISO Understand</title>
+<meta name="description" content="Der Browser schützt Gesprächsinhalte vor dem Versand und entschlüsselt sie für berechtigte Geräte. Für Dateien, Schlüssel, Transport und Verwaltungsdaten gelten eigene Schutzgrenzen." data-description-de="Der Browser schützt Gesprächsinhalte vor dem Versand und entschlüsselt sie für berechtigte Geräte. Für Dateien, Schlüssel, Transport und Verwaltungsdaten gelten eigene Schutzgrenzen." data-description-en="The browser protects conversation content before sending and decrypts it for authorised devices. Files, keys, transport and administrative data have their own boundaries.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/hub.css">
+<script src="/assets/lang.js"></script>
+</head>
+<body>
+
+<div class="appbar">
+  <div class="appbar-in">
+    <span class="brandname"><a href="/">ORISO Understand</a></span>
+    <span class="sub">/features/encryption</span>
+    <span class="sp"></span>
+    <span class="badge solid"><span lang="de">Feature</span><span lang="en">Feature</span></span>
+    <span class="badge">Ablauf / Flow</span>
+    <span class="badge warn"><span lang="de">teilweise gebaut</span><span lang="en">partly built</span></span>
+    <span class="badge"><span lang="de">Graph 07.09.2026</span><span lang="en">Graph 7 Sept 2026</span></span>
+    <span class="langswitch" role="group" aria-label="Sprache / Language">
+      <button type="button" data-lang="de" aria-pressed="true">DE</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </span>
+  </div>
+</div>
+
+
+<header class="band">
+  <div class="band-in"><div class="headcard">
+    <div class="eyebrow">ORISO Understand · Features</div>
+    <h1><span lang="de">Verschlüsselung in ORISO</span><span lang="en">Encryption in ORISO</span></h1>
+    <p class="lead"><span lang="de">Der Browser schützt Gesprächsinhalte vor dem Versand und entschlüsselt sie für berechtigte Geräte. Für Dateien, Schlüssel, Transport und Verwaltungsdaten gelten eigene Schutzgrenzen.</span><span lang="en">The browser protects conversation content before sending and decrypts it for authorised devices. Files, keys, transport and administrative data have their own boundaries.</span></p>
+    <div class="chips"><span class="chip"><span class="dot"></span><span lang="de">Browser und Matrix</span><span lang="en">Browser and Matrix</span></span><span class="chip"><span class="dot"></span><span lang="de">Inhalt und Metadaten</span><span lang="en">Content and metadata</span></span><span class="chip"><span class="dot"></span><span lang="de">Schlüssel und Wiederherstellung</span><span lang="en">Keys and recovery</span></span></div>
+  </div></div>
+</header>
+<nav class="chipnav" aria-label="Kapitel / Chapters"><div class="chipnav-in">
+  <a href="#k1"><span class="no">1</span><span lang="de">Was wird wie geschützt?</span><span lang="en">What is protected, and how?</span></a>
+  <a href="#k2"><span class="no">2</span><span lang="de">Was der Browser beim Senden tut</span><span lang="en">What the browser does when sending</span></a>
+  <a href="#k3"><span class="no">3</span><span lang="de">Gespräch und Aktivitätsliste</span><span lang="en">Conversation and activity list</span></a>
+  <a href="#k4"><span class="no">4</span><span lang="de">Stand und Quellen</span><span lang="en">Status and sources</span></a>
+</div></nav>
+<main class="wrap">
+<div class="meta"><div><div class="vlabel"><span lang="de">Seite</span><span lang="en">Page</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Online-Graph</span><span lang="en">Online graph</span></div><div class="vvalue">21.09.2026</div></div><div><div class="vlabel"><span lang="de">Quellenabgleich</span><span lang="en">Source check</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Stand der Funktion</span><span lang="en">Feature status</span></div><div class="vvalue"><span class="status warn"><span lang="de">Im Code belegt</span><span lang="en">Verified in source</span></span></div></div></div>
+<section id="k1">
+<div class="ch"><span class="chapter-no">1</span><h2><span lang="de">Was wird wie geschützt?</span><span lang="en">What is protected, and how?</span></h2></div>
+<div class="table-scroll"><table>
+<thead><tr><th scope="col"><span lang="de">Daten</span><span lang="en">Data</span></th><th scope="col"><span lang="de">Schutz</span><span lang="en">Protection</span></th></tr></thead>
+<tbody>
+<tr><td><span lang="de">Chattext und erste Beratungsanfrage</span><span lang="en">Chat text and initial enquiry</span></td><td><span lang="de">Im verschlüsselten Matrix-Raum verarbeitet der Browser den Klartext und übergibt das verschlüsselte Ereignis. Bei der ersten Anfrage erhält der UserService die Ereignisreferenz.</span><span lang="en">In an encrypted Matrix room, the browser handles plaintext and sends an encrypted event. For the initial enquiry, UserService receives the event reference.</span></td></tr>
+<tr><td><span lang="de">Anhänge und Sprachnachrichten</span><span lang="en">Attachments and voice messages</span></td><td><span lang="de">Im verschlüsselten Anhangspfad verschlüsselt der Browser die Datei separat. Schlüssel und Dateireferenz reisen im geschützten Nachrichtenereignis.</span><span lang="en">On the encrypted attachment path, the browser encrypts the file separately. The key and file reference travel in the protected message event.</span></td></tr>
+<tr><td><span lang="de">Schlüssel und Verlauf</span><span lang="en">Keys and history</span></td><td><span lang="de">Der Matrix-Client verwaltet Schlüssel auf dem Gerät. Für einen Gerätewechsel oder eine Wiederherstellung zählen die eingerichtete Schlüsselsicherung und die für den Verlauf verfügbaren Schlüssel.</span><span lang="en">The Matrix client manages keys on the device. Device changes and recovery depend on configured key backup and the available keys for that history.</span></td></tr>
+<tr><td><span lang="de">Zuordnung und Zustellung</span><span lang="en">Routing and delivery</span></td><td><span lang="de">Der Dienst verarbeitet etwa Konto- und Raumreferenzen, Zuordnungen, Zeitpunkte und Aktivitätsstatus. Diese Daten liegen außerhalb der Ende-zu-Ende-Verschlüsselung des Nachrichteninhalts.</span><span lang="en">Services process account and room references, assignments, timestamps and activity state. Those records are outside the message content’s end-to-end encryption.</span></td></tr>
+<tr><td><span lang="de">Netzwerk und gespeicherte Verwaltungsdaten</span><span lang="en">Network and stored administrative data</span></td><td><span lang="de">HTTPS schützt den Transport. Die Speicherung von Konten, Einstellungen und Metadaten hat eigene Schutzmaßnahmen. Der Schutz hängt vom Dienst und seiner Konfiguration ab.</span><span lang="en">HTTPS protects transport. Storage for accounts, settings and metadata has its own protections, depending on the service and its configuration.</span></td></tr>
+</tbody>
+</table></div>
+</section>
+<section id="k2">
+<div class="ch"><span class="chapter-no">2</span><h2><span lang="de">Was der Browser beim Senden tut</span><span lang="en">What the browser does when sending</span></h2></div>
+<ol class="steps">
+  <li class="step">
+    <div class="step-no">1</div>
+    <div class="step-body">
+      <div class="step-head"><span class="step-title"><span lang="de">Die erste Anfrage verschlüsseln</span><span lang="en">Encrypt the initial enquiry</span></span><span class="who b"><span lang="de">Ratsuchende</span><span lang="en">Advice seeker</span></span></div>
+      <div class="step-text"><span lang="de">Die erste Nachricht wird über Matrix gesendet. Danach meldet das Frontend die Referenz an den UserService, damit die Anfrage dem richtigen Gespräch zugeordnet wird.</span><span lang="en">The initial message is sent through Matrix. The frontend then reports the reference to UserService so the enquiry can be associated with the correct conversation.</span></div>
+      <details class="feature-graph"><summary><span lang="de">Im Graphen · verschlüsselte Erstanfrage</span><span lang="en">In the graph · encrypted initial enquiry</span></summary>
+<ul>
+<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fcomponents%2FmessageSubmitInterface%2FmessageEncryptionMode.ts%3AsendEncryptedInitialEnquiry"><span lang="de">Erste Anfrage verschlüsselt senden</span><span lang="en">Send the encrypted initial enquiry</span></a></li>
+<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fapi%2FencryptedEnquiryPayload.ts%3AbuildEncryptedEnquiryFinalizationPayload"><span lang="de">Referenz für den Dienst vorbereiten</span><span lang="en">Prepare the reference for the service</span></a></li>
+</ul>
+</details>
+    </div>
+  </li>
+  <li class="step">
+    <div class="step-no">2</div>
+    <div class="step-body">
+      <div class="step-head"><span class="step-title"><span lang="de">Datei verschlüsseln und empfangen</span><span lang="en">Encrypt and receive an attachment</span></span><span class="who b"><span lang="de">System</span><span lang="en">System</span></span></div>
+      <div class="step-text"><span lang="de">Im verschlüsselten Dateipfad erzeugt der Browser einen Dateischlüssel und verschlüsselt die Datei vor dem Upload. Beim Lesen prüft der empfangende Client die Integrität und entschlüsselt die Datei.</span><span lang="en">On the encrypted file path, the browser generates a file key and encrypts the file before upload. The receiving client verifies integrity and decrypts it.</span></div>
+      <details class="feature-graph"><summary><span lang="de">Im Graphen · Anhang im Browser</span><span lang="en">In the graph · browser attachment handling</span></summary>
+<ul>
+<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Futils%2FmatrixEncryptedAttachment.ts%3AencryptMatrixAttachment"><span lang="de">Anhang verschlüsseln</span><span lang="en">Encrypt attachment</span></a></li>
+<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Futils%2FmatrixEncryptedAttachment.ts%3AdecryptMatrixAttachment"><span lang="de">Anhang prüfen und entschlüsseln</span><span lang="en">Verify and decrypt attachment</span></a></li>
+</ul>
+</details>
+    </div>
+  </li>
+  <li class="step">
+    <div class="step-no">3</div>
+    <div class="step-body">
+      <div class="step-head"><span class="step-title"><span lang="de">Schlüssel zum Gerät zuordnen</span><span lang="en">Associate keys with a device</span></span><span class="who b"><span lang="de">System</span><span lang="en">System</span></span></div>
+      <div class="step-text"><span lang="de">Der Matrix-SDK startet seine Kryptografie im Browser. Die App führt den Kryptospeicher im Gerätekontext und bietet eine gesonderte Wiederherstellung an. Ein fehlender Schlüssel kann den Verlauf auf dem neuen Gerät unlesbar lassen.</span><span lang="en">The Matrix SDK starts its cryptography in the browser. The app maintains the cryptographic store in the device context and provides a separate recovery flow. A missing key can make history unreadable on a new device.</span></div>
+      <details class="feature-graph"><summary><span lang="de">Im Graphen · Kryptospeicher</span><span lang="en">In the graph · crypto store</span></summary>
+<ul>
+<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=file%3Asrc%2Fservices%2FmatrixCrypto.ts"><span lang="de">Kryptospeicher im Browser zuordnen</span><span lang="en">Scope the browser crypto store</span></a></li>
+<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=file%3Asrc%2Fservices%2FmatrixClientService.ts"><span lang="de">Matrix-Client starten</span><span lang="en">Start the Matrix client</span></a></li>
+</ul>
+</details>
+    </div>
+  </li>
+</ol>
+</section>
+<section id="k3">
+<div class="ch"><span class="chapter-no">3</span><h2><span lang="de">Gespräch und Aktivitätsliste</span><span lang="en">Conversation and activity list</span></h2></div>
+<div class="kurz"><p><span lang="de">Eine Karte im Activity Feed enthält den Anlass und die Zuordnung. Eine sichtbare Chatvorschau kommt aus dem Matrix-Client im Browser. Die Admin-Datenhaltung, die Anzeige im Chat und die Verschlüsselung des Anruf-Medienstroms sind eigene technische Pfade.</span><span lang="en">An Activity Feed card carries the occasion and its reference. A visible chat preview comes from the browser’s Matrix client. Admin storage, chat rendering and call media encryption use separate technical paths.</span></p></div><details class="feature-graph"><summary><span lang="de">Im Graphen · Vorschau und Ereignis</span><span lang="en">In the graph · preview and activity</span></summary>
+<ul>
+<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fcomponents%2FnotificationsCenter%2FConversationPreview.tsx%3AConversationPreview"><span lang="de">Chatvorschau im Browser</span><span lang="en">Chat preview in the browser</span></a></li>
+<li><a href="https://understand.oriso.org/user-service/?token=oriso-userservice-dashboard&amp;node=file%3Asrc%2Fmain%2Fjava%2Fde%2Fcaritas%2Fcob%2Fuserservice%2Fapi%2Fservice%2Fnotification%2FEventNotificationService.java"><span lang="de">Aktivitätsereignis im Dienst</span><span lang="en">Activity event in the service</span></a></li>
+</ul>
+</details>
+</section>
+<section id="k4">
+<div class="ch"><span class="chapter-no">4</span><h2><span lang="de">Stand und Quellen</span><span lang="en">Status and sources</span></h2></div>
+<p><span lang="de">Der Quellenabgleich vom 4. November beschreibt den Stand auf dev. Der öffentliche Understand-Graph stammt vom 21. September. Die Graph-Sprünge öffnen Knoten, die in diesem Stand vorhanden sind.</span><span lang="en">The source check on 4 November describes dev. The public Understand graph is dated 21 September. The graph links open nodes present in that snapshot.</span></p><p><a href="https://github.com/OpenResilienceInitiative/ORISO-Docs/blob/dev/oriso-platform/decisions/ADR-004-chat-keep-custom-ui-adopt-matrix-sdk-megolm.md"><span lang="de">ADR-004 · Matrix SDK und Megolm</span><span lang="en">ADR-004 · Matrix SDK and Megolm</span></a></p><p><a href="https://github.com/OpenResilienceInitiative/ORISO-UserService/blob/dev/documentation/ADR-SECURITY-02-unified-crypto-boundary.md"><span lang="de">Schutzgrenzen bei Übergangs- und Bestandsabläufen</span><span lang="en">Protection boundaries during migration and for legacy paths</span></a></p>
+</section>
+</main>
+<footer><a href="/features/">ORISO Understand · Features</a> · <a href="/"><span lang="de">Startseite</span><span lang="en">Home</span></a></footer>
+</body>
+</html>

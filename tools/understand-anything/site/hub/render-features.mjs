@@ -18,6 +18,10 @@ export function renderFeatures(data,locale){
   ['config-wizard', 'Config Wizard', 'Config Wizard'],
   ['counselling-centres', 'Beratungsstellen und Themen', 'Counselling centres and topics'],
   ['video-calls', 'Videocalls starten und freigeben', 'Start and enable video calls'],
+  ['user-tutorials', 'User-Tutorials', 'User tutorials'],
+  ['admin-help', 'Admin Panel und Hilfen', 'Admin panel and help'],
+  ['voice-messages', 'Sprachnachrichten', 'Voice messages'],
+  ['encryption', 'Verschlüsselung', 'Encryption'],
  ].map(([slug, german, english]) => `<li><a href="/features/${slug}.html">${de ? german : english}</a></li>`).join('');
  const cards=data.features.map(f=>`<article id="${escape(f.id.split('/').pop())}"><h2>${escape(f[locale].title)}</h2><p>${escape(f[locale].summary)}</p><a href="https://docs.oriso.org/${locale}/${escape(f.route)}">${de?'Vollständige Dokumentation':'Full documentation'}</a><details><summary>${de?'Quellenbeleg':'Source evidence'}</summary><code>${escape(f.source)}</code><p>SHA-256: ${escape(f.sourceHash)}</p><p>${de?'Quellrevision':'Source revision'}: ${escape(f.sourceRevision)}</p></details></article>`).join('\n');
  return `<!doctype html><html lang="${locale}" data-lang="${locale}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title} — ORISO Understand</title><meta name="description" content="${escape(note)}"><link rel="stylesheet" href="/assets/hub.css"></head><body><main class="wrap"><a href="/">ORISO Understand</a><nav><a href="/features/de.html" data-feature-locale="de">DE</a> · <a href="/features/en.html" data-feature-locale="en">EN</a></nav><h1>${title}</h1><p>${note}</p><section aria-labelledby="walkthroughs"><h2 id="walkthroughs">${de ? 'So funktionieren die Features' : 'How the features work'}</h2><ul>${walkthroughs}</ul></section>${cards}<p><a href="https://docs.oriso.org/${locale}/">${de?'Dokumentation':'Documentation'}</a></p></main><script>document.querySelectorAll('[data-feature-locale]').forEach(a=>a.href+=location.hash)</script></body></html>\n`;

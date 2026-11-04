@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="de" data-lang="de" data-title-de="User-Tutorials mit Beispieldaten — ORISO Understand" data-title-en="User tutorials with sample data — ORISO Understand">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>User-Tutorials mit Beispieldaten — ORISO Understand</title>
+<meta name="description" content="In der Hilfe führen Touren Schritt für Schritt durch die Oberfläche. Auf dieser Seite kannst du den Einstieg in eine Beratungsanfrage mit fiktiven Daten durchspielen." data-description-de="In der Hilfe führen Touren Schritt für Schritt durch die Oberfläche. Auf dieser Seite kannst du den Einstieg in eine Beratungsanfrage mit fiktiven Daten durchspielen." data-description-en="Tours in Help guide you through the interface. On this page you can practise the start of a counselling enquiry with fictional data.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/hub.css">
+<script src="/assets/lang.js"></script>
+</head>
+<body>
+
+<div class="appbar">
+  <div class="appbar-in">
+    <span class="brandname"><a href="/">ORISO Understand</a></span>
+    <span class="sub">/features/user-tutorials</span>
+    <span class="sp"></span>
+    <span class="badge solid"><span lang="de">Feature</span><span lang="en">Feature</span></span>
+    <span class="badge">Ablauf / Flow</span>
+    <span class="badge warn"><span lang="de">teilweise gebaut</span><span lang="en">partly built</span></span>
+    <span class="badge"><span lang="de">Graph 07.09.2026</span><span lang="en">Graph 7 Sept 2026</span></span>
+    <span class="langswitch" role="group" aria-label="Sprache / Language">
+      <button type="button" data-lang="de" aria-pressed="true">DE</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </span>
+  </div>
+</div>
+
+
+<header class="band">
+  <div class="band-in"><div class="headcard">
+    <div class="eyebrow">ORISO Understand · Features</div>
+    <h1><span lang="de">User-Tutorials mit Beispieldaten</span><span lang="en">User tutorials with sample data</span></h1>
+    <p class="lead"><span lang="de">In der Hilfe führen Touren Schritt für Schritt durch die Oberfläche. Auf dieser Seite kannst du den Einstieg in eine Beratungsanfrage mit fiktiven Daten durchspielen.</span><span lang="en">Tours in Help guide you through the interface. On this page you can practise the start of a counselling enquiry with fictional data.</span></p>
+    <div class="chips"><span class="chip"><span class="dot"></span><span lang="de">Übung zum Durchklicken</span><span lang="en">Click-through practice</span></span><span class="chip"><span class="dot"></span><span lang="de">Fortschritt pro Konto</span><span lang="en">Progress per account</span></span></div>
+  </div></div>
+</header>
+<nav class="chipnav" aria-label="Kapitel / Chapters"><div class="chipnav-in">
+  <a href="#k1"><span class="no">1</span><span lang="de">Tour in ORISO öffnen</span><span lang="en">Open a tour in ORISO</span></a>
+  <a href="#k2"><span class="no">2</span><span lang="de">Übung · eine Anfrage bearbeiten</span><span lang="en">Practice · work through an enquiry</span></a>
+  <a href="#k3"><span class="no">3</span><span lang="de">Stand und Quellen</span><span lang="en">Status and sources</span></a>
+</div></nav>
+<main class="wrap">
+<div class="meta"><div><div class="vlabel"><span lang="de">Seite</span><span lang="en">Page</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Online-Graph</span><span lang="en">Online graph</span></div><div class="vvalue">21.09.2026</div></div><div><div class="vlabel"><span lang="de">Quellenabgleich</span><span lang="en">Source check</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Stand der Funktion</span><span lang="en">Feature status</span></div><div class="vvalue"><span class="status warn"><span lang="de">Im Code belegt</span><span lang="en">Verified in source</span></span></div></div></div>
+<section id="k1">
+<div class="ch"><span class="chapter-no">1</span><h2><span lang="de">Tour in ORISO öffnen</span><span lang="en">Open a tour in ORISO</span></h2></div>
+<ol class="steps">
+  <li class="step">
+    <div class="step-no">1</div>
+    <div class="step-body">
+      <div class="step-head"><span class="step-title"><span lang="de">Hilfe öffnen und Tour wählen</span><span lang="en">Open Help and choose a tour</span></span><span class="who b"><span lang="de">Beratende</span><span lang="en">Counsellor</span></span></div>
+      <div class="step-text"><span lang="de">Öffne die Einführung in der Hilfe. Die verfügbaren Touren hängen von Rolle und Konfiguration ab. Die Tour zur schriftlichen Beratung zeigt Anfrage, Annahme und das eigene Gespräch.</span><span lang="en">Open the introduction in Help. Available tours depend on role and configuration. The written counselling tour shows the enquiry, acceptance and your conversation.</span></div>
+      <details class="feature-graph"><summary><span lang="de">Im Graphen · Auswahl und Tourdefinition</span><span lang="en">In the graph · selection and tour definition</span></summary>
+<ul>
+<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=file%3Asrc%2Fcomponents%2FproductTour%2FTourOverviewSection.tsx"><span lang="de">Touren in der Hilfe anzeigen</span><span lang="en">Show tours in Help</span></a></li>
+<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=file%3Asrc%2Fcomponents%2FproductTour%2FtourDefinitions.ts"><span lang="de">Schritte der Beratungstour</span><span lang="en">Counselling tour steps</span></a></li>
+</ul>
+</details>
+    </div>
+  </li>
+  <li class="step">
+    <div class="step-no">2</div>
+    <div class="step-body">
+      <div class="step-head"><span class="step-title"><span lang="de">Fortsetzen oder neu beginnen</span><span lang="en">Resume or start again</span></span><span class="who b"><span lang="de">Beratende</span><span lang="en">Counsellor</span></span></div>
+      <div class="step-text"><span lang="de">Die Tourübersicht zeigt den gespeicherten Fortschritt. Je nach Stand kannst du fortsetzen oder die Tour erneut starten.</span><span lang="en">The tour overview shows saved progress. Depending on your progress, you can resume or restart.</span></div>
+      <details class="feature-graph"><summary><span lang="de">Im Graphen · Fortschritt</span><span lang="en">In the graph · progress</span></summary>
+<ul>
+<li><a href="https://understand.oriso.org/user-service/?token=oriso-userservice-dashboard&amp;node=file%3Asrc%2Fmain%2Fjava%2Fde%2Fcaritas%2Fcob%2Fuserservice%2Fapi%2Fservice%2Ftutorial%2FTutorialProgressService.java"><span lang="de">Fortschritt im UserService speichern</span><span lang="en">Store progress in UserService</span></a></li>
+</ul>
+</details>
+    </div>
+  </li>
+</ol>
+</section>
+<section id="k2">
+<div class="ch"><span class="chapter-no">2</span><h2><span lang="de">Übung · eine Anfrage bearbeiten</span><span lang="en">Practice · work through an enquiry</span></h2></div>
+<p><span lang="de">Fiktive Beratungsstelle „Lindenweg“, fiktive ratsuchende Person „Waldkauz“. Öffne die drei Karten nacheinander. Diese Übung läuft auf dieser Seite.</span><span lang="en">Fictional counselling centre “Lindenweg”, fictional advice seeker “Tawny Owl”. Open the three cards in order. This exercise runs on this page.</span></p><details class="feature-graph"><summary><span lang="de">1 · Eingang öffnen</span><span lang="en">1 · Open the inbox</span></summary><p><span lang="de">Neue Anfrage von Waldkauz. „Ich würde gern wissen, wie eine erste Beratung abläuft.“ Öffne als Nächstes die Annahme.</span><span lang="en">New enquiry from Tawny Owl. “I would like to know how a first counselling session works.” Open the acceptance step next.</span></p></details><details class="feature-graph"><summary><span lang="de">2 · Anfrage annehmen</span><span lang="en">2 · Take the enquiry</span></summary><p><span lang="de">Beispiel-Ergebnis: Die Anfrage gehört jetzt zu deinen Gesprächen. Der bisherige Text bleibt sichtbar. Öffne als Nächstes das Gespräch.</span><span lang="en">Example result: the enquiry is now in your conversations. The original text remains visible. Open the conversation next.</span></p></details><details class="feature-graph"><summary><span lang="de">3 · Gespräch öffnen</span><span lang="en">3 · Open the conversation</span></summary><p><span lang="de">Beispiel-Antwort: „Gern erkläre ich Ihnen den Ablauf. Was möchten Sie zuerst wissen?“ Damit hast du den Weg von der Anfrage zur ersten Antwort durchgespielt.</span><span lang="en">Example reply: “I’m happy to explain how it works. What would you like to know first?” You have completed the path from enquiry to first reply.</span></p></details>
+</section>
+<section id="k3">
+<div class="ch"><span class="chapter-no">3</span><h2><span lang="de">Stand und Quellen</span><span lang="en">Status and sources</span></h2></div>
+<p><span lang="de">Der Quellenabgleich vom 4. November beschreibt den Stand auf dev. Der öffentliche Understand-Graph stammt vom 21. September. Die Graph-Sprünge öffnen Knoten, die in diesem Stand vorhanden sind.</span><span lang="en">The source check on 4 November describes dev. The public Understand graph is dated 21 September. The graph links open nodes present in that snapshot.</span></p><p><span lang="de">Die Übungen auf dieser Seite verwenden statische Beispieldaten. In ORISO lassen sich die eingebauten Touren bei passender Rolle und Einstellung starten.</span><span lang="en">The exercises on this page use static sample data. The built-in ORISO tours are available with the applicable role and settings.</span></p><p><a href="/features/conversation-types.html"><span lang="de">Beratungsstellenberatung im Überblick</span><span lang="en">Overview of centre counselling</span></a></p>
+</section>
+</main>
+<footer><a href="/features/">ORISO Understand · Features</a> · <a href="/"><span lang="de">Startseite</span><span lang="en">Home</span></a></footer>
+</body>
+</html>

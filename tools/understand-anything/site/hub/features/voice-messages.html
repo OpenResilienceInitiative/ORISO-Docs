@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="de" data-lang="de" data-title-de="Sprachnachrichten — ORISO Understand" data-title-en="Voice messages — ORISO Understand">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sprachnachrichten — ORISO Understand</title>
+<meta name="description" content="Eine Sprachnachricht ist eine Aufnahme im Chat. Das Mikrofon erscheint, wenn die Funktion und der Upload im aktuellen Gespräch erlaubt sind." data-description-de="Eine Sprachnachricht ist eine Aufnahme im Chat. Das Mikrofon erscheint, wenn die Funktion und der Upload im aktuellen Gespräch erlaubt sind." data-description-en="A voice message is an audio recording in chat. The microphone is available when recording and upload are permitted in the current conversation.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/hub.css">
+<script src="/assets/lang.js"></script>
+</head>
+<body>
+
+<div class="appbar">
+  <div class="appbar-in">
+    <span class="brandname"><a href="/">ORISO Understand</a></span>
+    <span class="sub">/features/voice-messages</span>
+    <span class="sp"></span>
+    <span class="badge solid"><span lang="de">Feature</span><span lang="en">Feature</span></span>
+    <span class="badge">Ablauf / Flow</span>
+    <span class="badge warn"><span lang="de">teilweise gebaut</span><span lang="en">partly built</span></span>
+    <span class="badge"><span lang="de">Graph 07.09.2026</span><span lang="en">Graph 7 Sept 2026</span></span>
+    <span class="langswitch" role="group" aria-label="Sprache / Language">
+      <button type="button" data-lang="de" aria-pressed="true">DE</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </span>
+  </div>
+</div>
+
+
+<header class="band">
+  <div class="band-in"><div class="headcard">
+    <div class="eyebrow">ORISO Understand · Features</div>
+    <h1><span lang="de">Sprachnachrichten</span><span lang="en">Voice messages</span></h1>
+    <p class="lead"><span lang="de">Eine Sprachnachricht ist eine Aufnahme im Chat. Das Mikrofon erscheint, wenn die Funktion und der Upload im aktuellen Gespräch erlaubt sind.</span><span lang="en">A voice message is an audio recording in chat. The microphone is available when recording and upload are permitted in the current conversation.</span></p>
+    <div class="chips"><span class="chip"><span class="dot"></span><span lang="de">Aufnehmen → prüfen → senden</span><span lang="en">Record → review → send</span></span></div>
+  </div></div>
+</header>
+<nav class="chipnav" aria-label="Kapitel / Chapters"><div class="chipnav-in">
+  <a href="#k1"><span class="no">1</span><span lang="de">Sprachnachricht senden</span><span lang="en">Send a voice message</span></a>
+  <a href="#k2"><span class="no">2</span><span lang="de">Wann ist das Mikrofon verfügbar?</span><span lang="en">When is the microphone available?</span></a>
+  <a href="#k3"><span class="no">3</span><span lang="de">Stand und Quellen</span><span lang="en">Status and sources</span></a>
+</div></nav>
+<main class="wrap">
+<div class="meta"><div><div class="vlabel"><span lang="de">Seite</span><span lang="en">Page</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Online-Graph</span><span lang="en">Online graph</span></div><div class="vvalue">21.09.2026</div></div><div><div class="vlabel"><span lang="de">Quellenabgleich</span><span lang="en">Source check</span></div><div class="vvalue">04.11.2026</div></div><div><div class="vlabel"><span lang="de">Stand der Funktion</span><span lang="en">Feature status</span></div><div class="vvalue"><span class="status warn"><span lang="de">Im Code belegt</span><span lang="en">Verified in source</span></span></div></div></div>
+<section id="k1">
+<div class="ch"><span class="chapter-no">1</span><h2><span lang="de">Sprachnachricht senden</span><span lang="en">Send a voice message</span></h2></div>
+<ol class="steps">
+  <li class="step">
+    <div class="step-no">1</div>
+    <div class="step-body">
+      <div class="step-head"><span class="step-title"><span lang="de">Mikrofon wählen und freigeben</span><span lang="en">Open the microphone and grant access</span></span><span class="who b"><span lang="de">Beratende</span><span lang="en">Counsellor</span></span></div>
+      <div class="step-text"><span lang="de">Öffne die Nachrichteneingabe und starte die Aufnahme. Der Browser kann um Zugriff auf das Mikrofon bitten. Wenn die Freigabe fehlt oder das Gerät nicht verfügbar ist, kann ORISO nicht aufnehmen.</span><span lang="en">Open the composer and start recording. The browser may request microphone access. Without permission or an available device, ORISO cannot record.</span></div>
+      <details class="feature-graph"><summary><span lang="de">Im Graphen · Mikrofon wählen und freigeben</span><span lang="en">In the graph · Open the microphone and grant access</span></summary>
+<ul>
+<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fcomponents%2FmessageSubmitInterface%2FmessageSubmitInterfaceComponent.tsx%3AMessageSubmitInterfaceComponent"><span lang="de">Aufnahme und Berechtigung in der Nachrichteneingabe</span><span lang="en">Recording and feature gate in the composer</span></a></li>
+</ul>
+</details>
+    </div>
+  </li>
+  <li class="step">
+    <div class="step-no">2</div>
+    <div class="step-body">
+      <div class="step-head"><span class="step-title"><span lang="de">Aufnahme beenden und senden</span><span lang="en">Finish recording and send</span></span><span class="who b"><span lang="de">Beratende</span><span lang="en">Counsellor</span></span></div>
+      <div class="step-text"><span lang="de">Beende die Aufnahme. Du kannst den Entwurf vor dem Senden prüfen oder verwerfen. Die Aufnahme wird dem Gespräch zugeordnet, in dem sie erstellt wurde.</span><span lang="en">Finish the recording. You can review or discard the draft before sending. The recording is associated with the conversation where it was created.</span></div>
+      <details class="feature-graph"><summary><span lang="de">Im Graphen · Aufnahme beenden und senden</span><span lang="en">In the graph · Finish recording and send</span></summary>
+<ul>
+<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Futils%2FmatrixEncryptedAttachment.ts%3AencryptMatrixAttachment"><span lang="de">Verschlüsseltes Medium vorbereiten</span><span lang="en">Prepare encrypted media</span></a></li>
+</ul>
+</details>
+    </div>
+  </li>
+  <li class="step">
+    <div class="step-no">3</div>
+    <div class="step-body">
+      <div class="step-head"><span class="step-title"><span lang="de">Nachricht im Gespräch anhören</span><span lang="en">Listen to the message in the conversation</span></span><span class="who b"><span lang="de">Ratsuchende</span><span lang="en">Advice seeker</span></span></div>
+      <div class="step-text"><span lang="de">Die empfangende Person startet die Wiedergabe im Chat. Der Audioplayer zeigt den Fortschritt der Aufnahme.</span><span lang="en">The recipient starts playback in the chat. The audio player shows progress through the recording.</span></div>
+      <details class="feature-graph"><summary><span lang="de">Im Graphen · Nachricht im Gespräch anhören</span><span lang="en">In the graph · Listen to the message in the conversation</span></summary>
+<ul>
+<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fcomponents%2FvoicePlayer%2FVoicePlayer.tsx%3AVoicePlayer"><span lang="de">Audioplayer für Sprachnachrichten</span><span lang="en">Audio player for voice messages</span></a></li>
+</ul>
+</details>
+    </div>
+  </li>
+</ol>
+</section>
+<section id="k2">
+<div class="ch"><span class="chapter-no">2</span><h2><span lang="de">Wann ist das Mikrofon verfügbar?</span><span lang="en">When is the microphone available?</span></h2></div>
+<div class="kurz"><p><span lang="de">Die App prüft die Freigabe der Sprachnachricht für die Gesprächsart und ob Medien-Upload möglich ist. Die Berechtigung im Browser kommt zusätzlich dazu.</span><span lang="en">The app checks permission for voice messages for the conversation type and whether media upload is available. Browser permission is a separate requirement.</span></p><p><span lang="de">Der aktuelle UserService prüft die Funktion auch beim Aufruf. Diese serverseitige Prüfung ist jünger als der öffentliche Graph.</span><span lang="en">The current UserService also checks the action when it is requested. This server-side check is newer than the public graph.</span></p></div>
+</section>
+<section id="k3">
+<div class="ch"><span class="chapter-no">3</span><h2><span lang="de">Stand und Quellen</span><span lang="en">Status and sources</span></h2></div>
+<p><span lang="de">Der Quellenabgleich vom 4. November beschreibt den Stand auf dev. Der öffentliche Understand-Graph stammt vom 21. September. Die Graph-Sprünge öffnen Knoten, die in diesem Stand vorhanden sind.</span><span lang="en">The source check on 4 November describes dev. The public Understand graph is dated 21 September. The graph links open nodes present in that snapshot.</span></p><p><a href="/features/feature-permissions.html"><span lang="de">Freigabe je Gesprächsart</span><span lang="en">Permission by conversation type</span></a></p><p><a href="/features/encryption.html"><span lang="de">Wie der Browser Anhänge schützt</span><span lang="en">How the browser protects attachments</span></a></p>
+</section>
+</main>
+<footer><a href="/features/">ORISO Understand · Features</a> · <a href="/"><span lang="de">Startseite</span><span lang="en">Home</span></a></footer>
+</body>
+</html>
