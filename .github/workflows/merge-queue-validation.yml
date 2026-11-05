@@ -2,7 +2,6 @@ name: Docs merge queue validation
 
 on:
   pull_request:
-    paths: ['.github/workflows/merge-queue-validation.yml']
   merge_group:
     types: [checks_requested]
 
@@ -172,3 +171,15 @@ jobs:
         with: {python-version: '3.13'}
       - run: python -m pip install PyYAML==6.0.3
       - run: PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -s tools/understand-anything/hosted-viewer -p '*_test.py' -q
+  health-planning:
+    name: Queue Health and planning contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: '${{ github.sha }}', persist-credentials: false}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24'}
+      - run: npm ci
+        working-directory: tools/understand-anything
+      - run: node --test tools/understand-anything/platform/test/*.test.mjs tools/planning-map/test/*.test.mjs
