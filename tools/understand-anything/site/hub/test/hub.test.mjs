@@ -117,7 +117,7 @@ test('the chat-recovery page distinguishes new and existing accounts', () => {
 });
 
 test('tutorial, postcode, translation and document-data pages appear in both feature lists', () => {
- for(const slug of ['admin-counsellor-tutorials','admin-further-postcode','admin-translation-keys','admin-document-master-data','admin-brand-images','admin-assistant-identity','admin-available-languages','admin-theme-colours','admin-statistics-settings','admin-first-response','admin-temporary-accounts','admin-temporary-messages','admin-appearance-editing-rights','admin-provider-information','admin-service-notices','admin-legal-management','admin-legal-agreement','admin-legal-imprint','admin-legal-privacy']) {
+ for(const slug of ['admin-counsellor-tutorials','admin-further-postcode','admin-translation-keys','admin-document-master-data','admin-brand-images','admin-assistant-identity','admin-available-languages','admin-theme-colours','admin-statistics-settings','admin-first-response','admin-temporary-accounts','admin-temporary-messages','admin-appearance-editing-rights','admin-provider-information','admin-service-notices','admin-account-absence','admin-function-smtp','admin-function-communication','admin-function-other','admin-function-topics','admin-legal-management','admin-legal-agreement','admin-legal-imprint','admin-legal-privacy']) {
   for(const locale of ['de','en']) assert.ok(renderFeatures(data,locale).includes(`/features/${slug}.html`));
   const page=readFileSync(new URL(`../features/${slug}.html`,import.meta.url),'utf8');
   assert.ok(page.includes('data-lang="de"'));assert.ok(page.includes('data-lang="en"'));
@@ -138,8 +138,12 @@ test('legal settings pages appear in both localized feature lists', () => {
  for(const slug of ['management','agreement','imprint','privacy']) for(const locale of ['de','en']) assert.ok(renderFeatures(data,locale).includes(`/features/admin-legal-${slug}.html`));
 });
 
+test('functionality pages appear in both localized feature lists', () => {
+ for(const slug of ['smtp','communication','other','topics']) for(const locale of ['de','en']) assert.ok(renderFeatures(data,locale).includes(`/features/admin-function-${slug}.html`));
+});
+
 test('Admin feature pages return to the feature list in the selected language', () => {
- for(const slug of ['admin-support-email','admin-name-slogan','admin-account-inactivity','admin-form-of-address','admin-same-topic','admin-one-department','admin-chat-recovery','admin-counsellor-tutorials','admin-further-postcode','admin-translation-keys','admin-document-master-data','admin-brand-images','admin-assistant-identity','admin-available-languages','admin-theme-colours','admin-statistics-settings','admin-first-response','admin-temporary-accounts','admin-temporary-messages','admin-appearance-editing-rights','admin-provider-information','admin-service-notices','admin-legal-management','admin-legal-agreement','admin-legal-imprint','admin-legal-privacy']) {
+ for(const slug of ['admin-support-email','admin-name-slogan','admin-account-inactivity','admin-form-of-address','admin-same-topic','admin-one-department','admin-chat-recovery','admin-counsellor-tutorials','admin-further-postcode','admin-translation-keys','admin-document-master-data','admin-brand-images','admin-assistant-identity','admin-available-languages','admin-theme-colours','admin-statistics-settings','admin-first-response','admin-temporary-accounts','admin-temporary-messages','admin-appearance-editing-rights','admin-provider-information','admin-service-notices','admin-account-absence','admin-function-smtp','admin-function-communication','admin-function-other','admin-function-topics','admin-legal-management','admin-legal-agreement','admin-legal-imprint','admin-legal-privacy']) {
   const page=readFileSync(new URL(`../features/${slug}.html`,import.meta.url),'utf8');
   assert.ok(page.includes('href="/features/de.html" lang="de"'));
   assert.ok(page.includes('href="/features/en.html" lang="en"'));
