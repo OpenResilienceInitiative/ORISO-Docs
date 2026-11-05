@@ -117,7 +117,7 @@ test('the chat-recovery page distinguishes new and existing accounts', () => {
 });
 
 test('tutorial, postcode, translation and document-data pages appear in both feature lists', () => {
- for(const slug of ['admin-counsellor-tutorials','admin-further-postcode','admin-translation-keys','admin-document-master-data']) {
+ for(const slug of ['admin-counsellor-tutorials','admin-further-postcode','admin-translation-keys','admin-document-master-data','admin-brand-images','admin-assistant-identity','admin-available-languages','admin-theme-colours','admin-statistics-settings']) {
   for(const locale of ['de','en']) assert.ok(renderFeatures(data,locale).includes(`/features/${slug}.html`));
   const page=readFileSync(new URL(`../features/${slug}.html`,import.meta.url),'utf8');
   assert.ok(page.includes('data-lang="de"'));assert.ok(page.includes('data-lang="en"'));
@@ -125,7 +125,7 @@ test('tutorial, postcode, translation and document-data pages appear in both fea
 });
 
 test('Admin feature pages return to the feature list in the selected language', () => {
- for(const slug of ['admin-support-email','admin-name-slogan','admin-account-inactivity','admin-form-of-address','admin-same-topic','admin-one-department','admin-chat-recovery','admin-counsellor-tutorials','admin-further-postcode','admin-translation-keys','admin-document-master-data']) {
+ for(const slug of ['admin-support-email','admin-name-slogan','admin-account-inactivity','admin-form-of-address','admin-same-topic','admin-one-department','admin-chat-recovery','admin-counsellor-tutorials','admin-further-postcode','admin-translation-keys','admin-document-master-data','admin-brand-images','admin-assistant-identity','admin-available-languages','admin-theme-colours','admin-statistics-settings']) {
   const page=readFileSync(new URL(`../features/${slug}.html`,import.meta.url),'utf8');
   assert.ok(page.includes('href="/features/de.html" lang="de"'));
   assert.ok(page.includes('href="/features/en.html" lang="en"'));
