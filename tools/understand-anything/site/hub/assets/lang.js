@@ -26,7 +26,12 @@
       element.setAttribute('placeholder', element.getAttribute('data-placeholder-' + lang));
     });
     document.querySelectorAll('[data-docs-link]').forEach(function(a){ a.href='https://docs.oriso.org/'+lang+'/'; });
-    if (store) { try { localStorage.setItem(KEY, lang); } catch (e) {} }
+    if (store) {
+      try { localStorage.setItem(KEY, lang); } catch (e) {}
+      if (linked === 'de' || linked === 'en') {
+        try { var url = new URL(location.href); url.searchParams.set('lang', lang); history.replaceState(null, '', url.href); } catch (e) {}
+      }
+    }
     var buttons = document.querySelectorAll('.langswitch button');
     for (var i = 0; i < buttons.length; i++) {
       buttons[i].setAttribute('aria-pressed', String(buttons[i].getAttribute('data-lang') === lang));
