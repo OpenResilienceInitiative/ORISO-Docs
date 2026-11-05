@@ -63,3 +63,12 @@ test('the hub home page has no inline style attributes (strict CSP)', () => {
  assert.doesNotMatch(html, /<a class="fcard" href="\/map\/"[^>]*style=/);
  assert.match(html, /<a class="fcard[^"]*" href="\/map\/"/);
 });
+
+test('the support address page is linked in both languages and describes the same feature', () => {
+ for(const locale of ['de','en']) assert.ok(renderFeatures(data,locale).includes('/features/admin-support-email.html'));
+ const page=readFileSync(new URL('../features/admin-support-email.html',import.meta.url),'utf8');
+ assert.ok(page.includes('data-lang="de"'));
+ assert.ok(page.includes('data-lang="en"'));
+ assert.ok(page.includes('AgencyAdminContact.tsx'));
+ assert.ok(page.includes('SupportEmailSettingsCard'));
+});
