@@ -72,3 +72,10 @@ test('the support address page is linked in both languages and describes the sam
  assert.ok(page.includes('AgencyAdminContact.tsx'));
  assert.ok(page.includes('SupportEmailSettingsCard'));
 });
+
+test('the name and slogan page is listed and has bilingual source-bound content', () => {
+ for(const locale of ['de','en']) assert.ok(renderFeatures(data,locale).includes('/features/admin-name-slogan.html'));
+ const page=readFileSync(new URL('../features/admin-name-slogan.html',import.meta.url),'utf8');
+ assert.ok(page.includes('data-lang="de"'));assert.ok(page.includes('data-lang="en"'));
+ assert.ok(page.includes('NameAndSlogan'));assert.ok(page.includes('useTenantTheming.ts'));
+});
