@@ -124,6 +124,16 @@ test('tutorial, postcode, translation and document-data pages appear in both fea
  }
 });
 
+test('all twelve list pages appear in both indexes with both languages and back links', () => {
+ const slugs=['counselling-centres','providers','users','topics','invitations','email-templates','csv-preview','tutorial-statistics','case-handovers','deletion-audit','inactivity-audit','supervision-log'];
+ for(const slug of slugs) {
+  for(const locale of ['de','en']) assert.ok(renderFeatures(data,locale).includes(`/features/admin-list-${slug}.html`));
+  const page=readFileSync(new URL(`../features/admin-list-${slug}.html`,import.meta.url),'utf8');
+  assert.ok(page.includes('data-lang="de"'));assert.ok(page.includes('data-lang="en"'));
+  assert.ok(page.includes('href="/features/de.html" lang="de"'));assert.ok(page.includes('href="/features/en.html" lang="en"'));
+ }
+});
+
 test('Admin feature pages return to the feature list in the selected language', () => {
  for(const slug of ['admin-support-email','admin-name-slogan','admin-account-inactivity','admin-form-of-address','admin-same-topic','admin-one-department','admin-chat-recovery','admin-counsellor-tutorials','admin-further-postcode','admin-translation-keys','admin-document-master-data','admin-brand-images','admin-assistant-identity','admin-available-languages','admin-theme-colours','admin-statistics-settings','admin-first-response','admin-temporary-accounts','admin-temporary-messages']) {
   const page=readFileSync(new URL(`../features/${slug}.html`,import.meta.url),'utf8');
