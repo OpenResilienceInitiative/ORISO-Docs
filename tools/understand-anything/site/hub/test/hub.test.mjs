@@ -95,8 +95,15 @@ test('the form-of-address page distinguishes new accounts from existing preferen
  assert.ok(page.includes('CreateUserFacade.java'));assert.ok(page.includes('AuthenticatedApp.tsx'));
 });
 
+test('the same-topic page explains the implemented mode and unavailable alternatives', () => {
+ for(const locale of ['de','en']) assert.ok(renderFeatures(data,locale).includes('/features/admin-same-topic.html'));
+ const page=readFileSync(new URL('../features/admin-same-topic.html',import.meta.url),'utf8');
+ assert.ok(page.includes('data-lang="de"'));assert.ok(page.includes('data-lang="en"'));
+ assert.ok(page.includes('TopicDuplicateService.java'));assert.ok(page.includes('not yet available'));
+});
+
 test('Admin feature pages return to the feature list in the selected language', () => {
- for(const slug of ['admin-support-email','admin-name-slogan','admin-account-inactivity','admin-form-of-address']) {
+ for(const slug of ['admin-support-email','admin-name-slogan','admin-account-inactivity','admin-form-of-address','admin-same-topic']) {
   const page=readFileSync(new URL(`../features/${slug}.html`,import.meta.url),'utf8');
   assert.ok(page.includes('href="/features/de.html" lang="de"'));
   assert.ok(page.includes('href="/features/en.html" lang="en"'));
