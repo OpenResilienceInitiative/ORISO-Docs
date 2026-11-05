@@ -87,3 +87,10 @@ test('the inactivity page covers processing and dry-run in both languages', () =
  assert.ok(page.includes('Prüfmodus'));assert.ok(page.includes('dry-run'));
  assert.ok(page.includes('AccountInactivityScheduler.java'));
 });
+
+test('the form-of-address page distinguishes new accounts from existing preferences', () => {
+ for(const locale of ['de','en']) assert.ok(renderFeatures(data,locale).includes('/features/admin-form-of-address.html'));
+ const page=readFileSync(new URL('../features/admin-form-of-address.html',import.meta.url),'utf8');
+ assert.ok(page.includes('data-lang="de"'));assert.ok(page.includes('data-lang="en"'));
+ assert.ok(page.includes('CreateUserFacade.java'));assert.ok(page.includes('AuthenticatedApp.tsx'));
+});
