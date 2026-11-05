@@ -79,3 +79,11 @@ test('the name and slogan page is listed and has bilingual source-bound content'
  assert.ok(page.includes('data-lang="de"'));assert.ok(page.includes('data-lang="en"'));
  assert.ok(page.includes('NameAndSlogan'));assert.ok(page.includes('useTenantTheming.ts'));
 });
+
+test('the inactivity page covers processing and dry-run in both languages', () => {
+ for(const locale of ['de','en']) assert.ok(renderFeatures(data,locale).includes('/features/admin-account-inactivity.html'));
+ const page=readFileSync(new URL('../features/admin-account-inactivity.html',import.meta.url),'utf8');
+ assert.ok(page.includes('data-lang="de"'));assert.ok(page.includes('data-lang="en"'));
+ assert.ok(page.includes('Prüfmodus'));assert.ok(page.includes('dry-run'));
+ assert.ok(page.includes('AccountInactivityScheduler.java'));
+});
