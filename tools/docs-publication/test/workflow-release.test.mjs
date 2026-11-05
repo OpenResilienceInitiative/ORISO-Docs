@@ -29,3 +29,8 @@ test('the containerized graph refresh uses Bash for pipeline checks and arrays',
   assert.equal(step.shell ?? job.defaults?.run?.shell, 'bash', step.name);
  }
 });
+
+test('the public Understand artifact retains the hidden graph and metadata directories', () => {
+ const upload = workflow('ua-public-site').jobs.produce.steps.find(step => step.uses?.startsWith('actions/upload-artifact@'));
+ assert.equal(upload?.with?.['include-hidden-files'], true);
+});
