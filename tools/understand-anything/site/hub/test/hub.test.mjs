@@ -116,8 +116,16 @@ test('the chat-recovery page distinguishes new and existing accounts', () => {
  assert.ok(page.includes('ChatRecoveryEnrollmentPolicyService'));assert.ok(page.includes('Existing accounts keep'));
 });
 
+test('tutorial, postcode and translation pages appear in both feature lists', () => {
+ for(const slug of ['admin-counsellor-tutorials','admin-further-postcode','admin-translation-keys']) {
+  for(const locale of ['de','en']) assert.ok(renderFeatures(data,locale).includes(`/features/${slug}.html`));
+  const page=readFileSync(new URL(`../features/${slug}.html`,import.meta.url),'utf8');
+  assert.ok(page.includes('data-lang="de"'));assert.ok(page.includes('data-lang="en"'));
+ }
+});
+
 test('Admin feature pages return to the feature list in the selected language', () => {
- for(const slug of ['admin-support-email','admin-name-slogan','admin-account-inactivity','admin-form-of-address','admin-same-topic','admin-one-department','admin-chat-recovery']) {
+ for(const slug of ['admin-support-email','admin-name-slogan','admin-account-inactivity','admin-form-of-address','admin-same-topic','admin-one-department','admin-chat-recovery','admin-counsellor-tutorials','admin-further-postcode','admin-translation-keys']) {
   const page=readFileSync(new URL(`../features/${slug}.html`,import.meta.url),'utf8');
   assert.ok(page.includes('href="/features/de.html" lang="de"'));
   assert.ok(page.includes('href="/features/en.html" lang="en"'));
