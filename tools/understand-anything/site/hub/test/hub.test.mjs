@@ -151,6 +151,14 @@ test('centre settings pages appear in both lists and have both language links', 
  }
 });
 
+test('permission pages name their verification limits in both languages', () => {
+ for(const slug of ['mail','live','circle','internal-group','seeker-account']) {
+  for(const locale of ['de','en']) assert.ok(renderFeatures(data,locale).includes(`/features/admin-permission-${slug}.html`));
+  const page=readFileSync(new URL(`../features/admin-permission-${slug}.html`,import.meta.url),'utf8');
+  assert.ok(page.includes('noch nicht vollständig geprüft'));assert.ok(page.includes('not yet been fully verified'));
+ }
+});
+
 test('Admin feature pages return to the feature list in the selected language', () => {
  for(const slug of ['admin-support-email','admin-name-slogan','admin-account-inactivity','admin-form-of-address','admin-same-topic','admin-one-department','admin-chat-recovery','admin-counsellor-tutorials','admin-further-postcode','admin-translation-keys','admin-document-master-data','admin-brand-images','admin-assistant-identity','admin-available-languages','admin-theme-colours','admin-statistics-settings','admin-first-response','admin-temporary-accounts','admin-temporary-messages','admin-appearance-editing-rights','admin-provider-information','admin-service-notices','admin-account-absence','admin-account-personal-data','admin-account-roles','admin-function-smtp','admin-function-communication','admin-function-other','admin-function-topics','admin-legal-management','admin-legal-agreement','admin-legal-imprint','admin-legal-privacy']) {
   const page=readFileSync(new URL(`../features/${slug}.html`,import.meta.url),'utf8');
