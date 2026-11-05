@@ -166,3 +166,8 @@ test('Admin feature pages return to the feature list in the selected language', 
   assert.ok(page.includes('href="/features/en.html" lang="en"'));
  }
 });
+
+test('admin feature links carry the selected index language',()=>{
+ const data=JSON.parse(readFileSync(new URL('../features/catalog.json',import.meta.url)));
+ for(const locale of ['de','en']) { const html=renderFeatures(data,locale); const links=[...html.matchAll(/href="(\/features\/admin-[^"]+)"/g)]; assert.ok(links.length>=64); for(const [,link] of links) assert.ok(link.endsWith(`?lang=${locale}`),link); }
+});

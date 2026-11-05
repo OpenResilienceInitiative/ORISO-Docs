@@ -6,7 +6,9 @@
   var root = document.documentElement;
   var saved = null;
   try { saved = localStorage.getItem(KEY); } catch (e) { /* privater Modus */ }
-  var initial = (saved === 'de' || saved === 'en') ? saved
+  var linked = new URLSearchParams(location.search).get('lang');
+  var initial = (linked === 'de' || linked === 'en') ? linked
+    : (saved === 'de' || saved === 'en') ? saved
     : ((navigator.language || 'de').toLowerCase().indexOf('de') === 0 ? 'de' : 'en');
 
   function apply(lang, store) {

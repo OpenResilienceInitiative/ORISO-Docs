@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 
-function page(attributes = {}) {
+function page(attributes = {}, search = '', saved = 'de') {
   const listeners = new Map();
   const events = [];
   const element = values => ({attributes: {...values}, getAttribute(name) { return this.attributes[name] ?? null; }, setAttribute(name, value) { this.attributes[name] = value; }});
@@ -18,7 +18,7 @@ function page(attributes = {}) {
     querySelectorAll: selector => ({'[data-docs-link]': [docs], '.langswitch button': [de, en], '[data-label-de][data-label-en]': [category], '[data-placeholder-de][data-placeholder-en]': [input]}[selector] || []),
     addEventListener(type, callback) { listeners.set(type, callback); }, dispatchEvent(event) { events.push(event); }};
   const script = readFileSync(new URL('../assets/lang.js', import.meta.url), 'utf8');
-  vm.runInNewContext(script, {document, navigator: {language: 'de'}, localStorage: {getItem: () => 'de', setItem() {}}, CustomEvent});
+  vm.runInNewContext(script, {document, navigator: {language: 'de'}, location: {search}, URLSearchParams, localStorage: {getItem: () => saved, setItem() {}}, CustomEvent});
   listeners.get('DOMContentLoaded')();
   return {document, root, description, category, input, de, en, docs, events,
     switchToEnglish() { listeners.get('click')({target: {closest: () => en}}); }};
@@ -44,4 +44,10 @@ test('existing home keeps its localized title without page overrides', () => {
   const view = page();
   view.switchToEnglish();
   assert.equal(view.document.title, 'ORISO Understand — Sources and features');
+});
+
+test('explicit link language overrides browser and stored preferences', () => {
+  assert.equal(page({}, '?lang=en', 'de').root.getAttribute('lang'), 'en');
+  assert.equal(page({}, '?lang=de', 'en').root.getAttribute('lang'), 'de');
+  assert.equal(page({}, '?lang=invalid', 'en').root.getAttribute('lang'), 'en');
 });
