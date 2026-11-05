@@ -14,7 +14,7 @@
 <p>Plattform-Admins können die Einstellung bearbeiten. Für Träger-Admins hängt die Bearbeitung von den freigegebenen Rechten für Stammdaten und Erscheinungsbild ab. Beim Bearbeiten einer Beratungsstelle gibt es diese Kachel nicht.</p>
 <h2>Was passiert beim Speichern?</h2>
 <p>Die Auswahl wird als Einstellung des Beratungsangebots gespeichert. Beim Anlegen eines Ratsuchenden-Kontos wird daraus dessen Ansprache vorbelegt. Die Anwendung verwendet später die im Konto gespeicherte Einstellung. Eine Änderung an dieser Kachel schreibt die Ansprache bestehender Konten nicht um.</p>
-<h2>Stand und Quellen</h2><p>Die beschriebenen Schritte sind im Quellcode vorhanden. Diese Seite bestätigt keine laufende Bereitstellung. Stand: 5. November 2026.</p>
+<h2>Rollen und Freigabe</h2><p>Plattform-Admins können die Bearbeitungsfreigabe festlegen; für Organisations-Admins ist die Kachel schreibgeschützt, solange diese Freigabe nicht vorliegt. Die Kachel wird nur mit dem Recht angezeigt, Spracheinstellungen zu ändern.</p><h2>Stand und Quellen</h2><p>Die beschriebenen Schritte sind im Quellcode vorhanden. Diese Seite bestätigt keine laufende Bereitstellung. Stand: 5. November 2026.</p>
 </section>
 <section lang="en">
 <h1>Form of address</h1>
@@ -23,13 +23,13 @@
 <p>Platform admins can edit it. For provider admins, editing depends on the granted rights for master data and appearance. The counselling-centre edit view does not have this tile.</p>
 <h2>What happens when you save?</h2>
 <p>The choice is saved in the counselling offer settings. When an advice-seeker account is created, its form of address is initialised from that setting. The application later uses the preference stored on the account. Changing this tile does not rewrite existing accounts’ preferences.</p>
-<h2>Status and sources</h2><p>The steps described are present in source code. This page does not verify a running deployment. As of 5 November 2026.</p>
+<h2>Roles and editing permission</h2><p>Platform admins can set the editing permission; the card is read-only for organisation admins unless that permission is available. The card is shown only with permission to update language settings.</p><h2>Status and sources</h2><p>The steps described are present in source code. This page does not verify a running deployment. As of 5 November 2026.</p>
 </section>
 <ul>
 <li><a href="https://github.com/OpenResilienceInitiative/ORISO-Admin/blob/3896212d3285ca7f0af02b50282fc40987857382/src/components/Tenants/GeneralSettings/components/TypeOfLanguage/index.tsx">Admin: TypeOfLanguage</a></li>
 <li><a href="https://github.com/OpenResilienceInitiative/ORISO-TenantService/blob/d8cbd0ae9db14018a6948888f29fb8790d35f3b9/src/main/java/com/vi/tenantservice/api/facade/TenantServiceFacade.java">TenantService: TenantServiceFacade.java</a></li>
 <li><a href="https://github.com/OpenResilienceInitiative/ORISO-UserService/blob/280585226f2c7308fcf35e1c4135bc2d4e43d051/src/main/java/de/caritas/cob/userservice/api/facade/CreateUserFacade.java">UserService: CreateUserFacade.java</a></li>
 <li><a href="https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/8c5be36347f2a44e241892cafd0daed315e3119f/src/components/app/AuthenticatedApp.tsx">Frontend: AuthenticatedApp.tsx</a></li>
-<li><a href="/admin-service/?token=oriso-admin-dashboard">Admin code graph</a></li>
+<li><a href="https://github.com/OpenResilienceInitiative/ORISO-Admin/blob/3896212d3285ca7f0af02b50282fc40987857382/src/components/Tenants/GeneralSettings/index.tsx">Admin: card access</a></li><li><a href="/admin-service/?token=oriso-admin-dashboard">Admin code graph</a></li>
 </ul>
 </main></body></html>

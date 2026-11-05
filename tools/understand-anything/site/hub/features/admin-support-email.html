@@ -15,7 +15,7 @@
 <h2>Was passiert beim Ändern?</h2>
 <p>Die Adresse wird ohne Leerzeichen am Rand gespeichert. Ein leeres Feld entfernt sie. Ist keine gültige Adresse hinterlegt, erscheint der Hinweis ohne E-Mail-Link. Können die Admin-Kontakte nicht geladen werden, erscheint ein eigener Fehlerhinweis; daraus wird nicht geschlossen, dass keine Admin-Person existiert.</p>
 <p>Die Adresse ist Teil der öffentlich ausgelieferten Anwendungseinstellungen. Verwenden Sie deshalb ein gemeinsames Postfach und keine vertrauliche persönliche Adresse.</p>
-<h2>Stand und Quellen</h2><p>Das beschriebene Verhalten ist im Quellcode vorhanden. Eine Prüfung der aktuell bereitgestellten Umgebung ist damit nicht verbunden. Stand: 5. November 2026.</p>
+<h2>Wer sieht die Einstellung?</h2><p>Die Kachel liegt in den globalen Einstellungen. Diese Ansicht ist für Plattform-Admins mit Änderungsrecht für Träger erreichbar; Wer ausschließlich Träger- oder Beratungsstellen-Admin ist, sieht diese globale Ansicht nicht.</p><h2>Stand und Quellen</h2><p>Das beschriebene Verhalten ist im Quellcode vorhanden. Eine Prüfung der aktuell bereitgestellten Umgebung ist damit nicht verbunden. Stand: 5. November 2026.</p>
 </section>
 <section lang="en">
 <h1>Support address</h1>
@@ -25,11 +25,11 @@
 <h2>What happens when it changes?</h2>
 <p>Leading and trailing spaces are removed before saving. An empty field clears the address. If no valid address is configured, the notice appears without an email link. If the admin contacts cannot be loaded, a separate error is shown; the app does not assume that no administrator exists.</p>
 <p>The address is part of the publicly served application settings. Use a shared mailbox rather than a confidential personal address.</p>
-<h2>Status and sources</h2><p>The behaviour described is present in source code. This does not verify the currently deployed environment. As of 5 November 2026.</p>
+<h2>Who sees the setting?</h2><p>The card is in global settings. This view is available to platform admins with permission to update providers; people with only provider- or counselling-centre-admin roles do not see this global view.</p><h2>Status and sources</h2><p>The behaviour described is present in source code. This does not verify the currently deployed environment. As of 5 November 2026.</p>
 </section>
 <ul>
 <li><a href="https://github.com/OpenResilienceInitiative/ORISO-Admin/blob/3896212d3285ca7f0af02b50282fc40987857382/src/components/GlobalSettings/SupportEmailSettingsCard/index.tsx">Admin: SupportEmailSettingsCard</a></li>
 <li><a href="https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/8c5be36347f2a44e241892cafd0daed315e3119f/src/components/profile/AgencyAdminContact.tsx">Frontend: AgencyAdminContact.tsx</a></li>
-<li><a href="/admin-service/?token=oriso-admin-dashboard">Admin code graph</a></li>
+<li><a href="https://github.com/OpenResilienceInitiative/ORISO-Admin/blob/3896212d3285ca7f0af02b50282fc40987857382/src/App.tsx">Admin: settings access</a></li><li><a href="/admin-service/?token=oriso-admin-dashboard">Admin code graph</a></li>
 </ul>
 </main></body></html>
