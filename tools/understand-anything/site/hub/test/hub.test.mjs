@@ -102,8 +102,15 @@ test('the same-topic page explains the implemented mode and unavailable alternat
  assert.ok(page.includes('TopicDuplicateService.java'));assert.ok(page.includes('not yet available'));
 });
 
+test('the department page describes existing and newly assigned topics', () => {
+ for(const locale of ['de','en']) assert.ok(renderFeatures(data,locale).includes('/features/admin-one-department.html'));
+ const page=readFileSync(new URL('../features/admin-one-department.html',import.meta.url),'utf8');
+ assert.ok(page.includes('data-lang="de"'));assert.ok(page.includes('data-lang="en"'));
+ assert.ok(page.includes('OneTopicPerAgencyPolicy'));assert.ok(page.includes('keep their assignments'));
+});
+
 test('Admin feature pages return to the feature list in the selected language', () => {
- for(const slug of ['admin-support-email','admin-name-slogan','admin-account-inactivity','admin-form-of-address','admin-same-topic']) {
+ for(const slug of ['admin-support-email','admin-name-slogan','admin-account-inactivity','admin-form-of-address','admin-same-topic','admin-one-department']) {
   const page=readFileSync(new URL(`../features/${slug}.html`,import.meta.url),'utf8');
   assert.ok(page.includes('href="/features/de.html" lang="de"'));
   assert.ok(page.includes('href="/features/en.html" lang="en"'));
