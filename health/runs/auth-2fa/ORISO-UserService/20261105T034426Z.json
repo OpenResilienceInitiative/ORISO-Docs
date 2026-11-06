@@ -1,0 +1,144 @@
+{
+  "schemaVersion": 1,
+  "run": {
+    "schemaVersion": 1,
+    "runId": "20261105T034426Z-18e92933",
+    "generatedAt": "2026-11-05T03:44:26Z",
+    "commits": {
+      "ORISO-UserService": "a05d376ed45f2b267a7ab1628ef07d7deaf93451"
+    },
+    "trigger": "health-run"
+  },
+  "scope": {
+    "capability": "auth-2fa",
+    "repo": "ORISO-UserService",
+    "path": null
+  },
+  "commit": "a05d376ed45f2b267a7ab1628ef07d7deaf93451",
+  "criteriaVersion": "2e576c6e6d0935f37d5991a77a8f9928921db1e88d90614e2d6cde5194f5aa34",
+  "model": null,
+  "startedAt": "2026-11-05T03:44:26Z",
+  "metrics": [
+    {
+      "name": "size",
+      "status": "measured",
+      "value": 1358,
+      "threshold": 400,
+      "better": "lower",
+      "unit": "lines per file",
+      "weight": 1,
+      "pass": false,
+      "score": 0,
+      "source": "health-run size: lines of the largest production code file in scope (131 files)",
+      "details": {
+        "files": 131,
+        "largest": [
+          {
+            "file": "src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakService.java",
+            "lines": 1358
+          },
+          {
+            "file": "src/main/java/de/caritas/cob/userservice/api/config/auth/SecurityConfig.java",
+            "lines": 929
+          },
+          {
+            "file": "src/main/java/de/caritas/cob/userservice/api/service/auth/PasswordResetService.java",
+            "lines": 459
+          },
+          {
+            "file": "src/main/java/de/caritas/cob/userservice/api/service/auth/MagicLinkLoginService.java",
+            "lines": 294
+          },
+          {
+            "file": "src/main/java/de/caritas/cob/userservice/api/admin/service/consultant/create/GrantConsultantIdentityService.java",
+            "lines": 282
+          }
+        ]
+      }
+    },
+    {
+      "name": "test-ratio",
+      "status": "measured",
+      "value": 0,
+      "threshold": 0.5,
+      "better": "higher",
+      "unit": "test lines per code line",
+      "weight": 2,
+      "pass": false,
+      "score": 0,
+      "source": "health-run test-ratio: test code lines / production code lines",
+      "details": {
+        "productionLines": 9785,
+        "testLines": 0
+      }
+    },
+    {
+      "name": "lint",
+      "status": "not-available",
+      "value": null,
+      "threshold": 0,
+      "better": "lower",
+      "unit": "findings",
+      "weight": 2,
+      "pass": null,
+      "score": null,
+      "source": "eslint --format json (the checkout's own configuration)",
+      "details": {
+        "reason": "not run in the scheduled workflow: the checkout's own eslint is never executed in the job that holds the model secret (run health-run.mjs run on a trusted checkout to score lint)",
+        "state": "ci-setup"
+      }
+    },
+    {
+      "name": "duplication",
+      "status": "measured",
+      "value": 3.3,
+      "threshold": 5,
+      "better": "lower",
+      "unit": "% duplicated lines",
+      "weight": 1,
+      "pass": true,
+      "score": 100,
+      "source": "health-run duplication: 50-token window hash over production code (131 files)",
+      "details": {
+        "windowTokens": 50,
+        "files": 131,
+        "codeLines": 6540,
+        "duplicatedLines": 216,
+        "worst": [
+          {
+            "file": "src/main/java/de/caritas/cob/userservice/api/service/auth/MagicLinkLoginService.java",
+            "duplicatedLines": 43
+          },
+          {
+            "file": "src/main/java/de/caritas/cob/userservice/api/service/auth/PasswordResetService.java",
+            "duplicatedLines": 42
+          },
+          {
+            "file": "src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakService.java",
+            "duplicatedLines": 30
+          },
+          {
+            "file": "src/main/java/de/caritas/cob/userservice/api/adapters/keycloak/KeycloakClient.java",
+            "duplicatedLines": 26
+          },
+          {
+            "file": "src/main/java/de/caritas/cob/userservice/api/admin/service/admin/AccountLoginStatusService.java",
+            "duplicatedLines": 26
+          }
+        ]
+      }
+    }
+  ],
+  "verdict": [],
+  "overall": 25,
+  "links": {
+    "graphNode": "capability:auth-2fa",
+    "source": "https://github.com/OpenResilienceInitiative/ORISO-UserService/tree/a05d376ed45f2b267a7ab1628ef07d7deaf93451"
+  },
+  "verdictStatus": "skipped",
+  "verdictNote": "HEALTH_MODEL_API_KEY is not set: metrics only",
+  "inputs": {
+    "criteria": "2e576c6e6d0935f37d5991a77a8f9928921db1e88d90614e2d6cde5194f5aa34",
+    "steering": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  }
+}

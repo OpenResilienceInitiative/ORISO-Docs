@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "run": {
+    "schemaVersion": 1,
+    "runId": "20261105T034425Z-3de25e2e",
+    "generatedAt": "2026-11-05T03:44:25Z",
+    "commits": {
+      "ORISO-TenantService": "d8cbd0ae9db14018a6948888f29fb8790d35f3b9"
+    },
+    "trigger": "health-run"
+  },
+  "scope": {
+    "capability": "auth-2fa",
+    "repo": "ORISO-TenantService",
+    "path": null
+  },
+  "commit": "d8cbd0ae9db14018a6948888f29fb8790d35f3b9",
+  "criteriaVersion": "2e576c6e6d0935f37d5991a77a8f9928921db1e88d90614e2d6cde5194f5aa34",
+  "model": null,
+  "startedAt": "2026-11-05T03:44:25Z",
+  "metrics": [
+    {
+      "name": "size",
+      "status": "measured",
+      "value": 467,
+      "threshold": 400,
+      "better": "lower",
+      "unit": "lines per file",
+      "weight": 1,
+      "pass": false,
+      "score": 83,
+      "source": "health-run size: lines of the largest production code file in scope (13 files)",
+      "details": {
+        "files": 13,
+        "largest": [
+          {
+            "file": "src/main/java/com/vi/tenantservice/api/facade/TenantFacadeAuthorisationService.java",
+            "lines": 467
+          },
+          {
+            "file": "src/main/java/com/vi/tenantservice/config/security/TaskServiceIdentity.java",
+            "lines": 195
+          },
+          {
+            "file": "src/main/java/com/vi/tenantservice/config/security/AuthorisationService.java",
+            "lines": 147
+          },
+          {
+            "file": "src/main/java/com/vi/tenantservice/api/service/AssistantIdentityValidator.java",
+            "lines": 129
+          },
+          {
+            "file": "src/main/java/com/vi/tenantservice/config/security/JwtAuthConverter.java",
+            "lines": 92
+          }
+        ]
+      }
+    },
+    {
+      "name": "test-ratio",
+      "status": "measured",
+      "value": 0,
+      "threshold": 0.5,
+      "better": "higher",
+      "unit": "test lines per code line",
+      "weight": 2,
+      "pass": false,
+      "score": 0,
+      "source": "health-run test-ratio: test code lines / production code lines",
+      "details": {
+        "productionLines": 1360,
+        "testLines": 0
+      }
+    },
+    {
+      "name": "lint",
+      "status": "not-available",
+      "value": null,
+      "threshold": 0,
+      "better": "lower",
+      "unit": "findings",
+      "weight": 2,
+      "pass": null,
+      "score": null,
+      "source": "eslint --format json (the checkout's own configuration)",
+      "details": {
+        "reason": "not run in the scheduled workflow: the checkout's own eslint is never executed in the job that holds the model secret (run health-run.mjs run on a trusted checkout to score lint)",
+        "state": "ci-setup"
+      }
+    },
+    {
+      "name": "duplication",
+      "status": "measured",
+      "value": 0,
+      "threshold": 5,
+      "better": "lower",
+      "unit": "% duplicated lines",
+      "weight": 1,
+      "pass": true,
+      "score": 100,
+      "source": "health-run duplication: 50-token window hash over production code (13 files)",
+      "details": {
+        "windowTokens": 50,
+        "files": 13,
+        "codeLines": 968,
+        "duplicatedLines": 0,
+        "worst": []
+      }
+    }
+  ],
+  "verdict": [],
+  "overall": 46,
+  "links": {
+    "graphNode": "capability:auth-2fa",
+    "source": "https://github.com/OpenResilienceInitiative/ORISO-TenantService/tree/d8cbd0ae9db14018a6948888f29fb8790d35f3b9"
+  },
+  "verdictStatus": "skipped",
+  "verdictNote": "HEALTH_MODEL_API_KEY is not set: metrics only",
+  "inputs": {
+    "criteria": "2e576c6e6d0935f37d5991a77a8f9928921db1e88d90614e2d6cde5194f5aa34",
+    "steering": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  }
+}

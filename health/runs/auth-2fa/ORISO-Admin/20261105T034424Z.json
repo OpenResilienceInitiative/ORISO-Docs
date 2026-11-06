@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 1,
+  "run": {
+    "schemaVersion": 1,
+    "runId": "20261105T034424Z-f189f974",
+    "generatedAt": "2026-11-05T03:44:24Z",
+    "commits": {
+      "ORISO-Admin": "7e8e87bba7b9bfcba268066753ef0208be52a704"
+    },
+    "trigger": "health-run"
+  },
+  "scope": {
+    "capability": "auth-2fa",
+    "repo": "ORISO-Admin",
+    "path": null
+  },
+  "commit": "7e8e87bba7b9bfcba268066753ef0208be52a704",
+  "criteriaVersion": "272b25a9e1c05f2f07941924ddce752d7820cae5a14de6d9282f39443fb80127",
+  "model": null,
+  "startedAt": "2026-11-05T03:44:24Z",
+  "metrics": [
+    {
+      "name": "crap",
+      "status": "not-available",
+      "value": null,
+      "threshold": 30,
+      "better": "lower",
+      "unit": "CRAP score per function",
+      "weight": 3,
+      "pass": null,
+      "score": null,
+      "source": "health-run crap: TypeScript AST complexity and line coverage from the given coverage file",
+      "details": {
+        "reason": "no coverage: pass a coverage file (lcov.info or coverage-final.json)",
+        "state": "no-coverage"
+      }
+    },
+    {
+      "name": "size",
+      "status": "measured",
+      "value": 491,
+      "threshold": 400,
+      "better": "lower",
+      "unit": "lines per file",
+      "weight": 1,
+      "pass": false,
+      "score": 77,
+      "source": "health-run size: lines of the largest production code file in scope (55 files)",
+      "details": {
+        "files": 55,
+        "largest": [
+          {
+            "file": "src/components/TwoFactorSetup/ProfileTwoFactorSetup.tsx",
+            "lines": 491
+          },
+          {
+            "file": "src/pages/Login/LoginForm.tsx",
+            "lines": 311
+          },
+          {
+            "file": "src/pages/Agency/Edit/components/RegistrationSettings/index.tsx",
+            "lines": 266
+          },
+          {
+            "file": "src/api/auth/auth.ts",
+            "lines": 216
+          },
+          {
+            "file": "src/pages/Login/OtpResendLink.tsx",
+            "lines": 188
+          }
+        ]
+      }
+    },
+    {
+      "name": "test-ratio",
+      "status": "measured",
+      "value": 0.82,
+      "threshold": 0.5,
+      "better": "higher",
+      "unit": "test lines per code line",
+      "weight": 2,
+      "pass": true,
+      "score": 100,
+      "source": "health-run test-ratio: test code lines / production code lines",
+      "details": {
+        "productionLines": 4155,
+        "testLines": 3394
+      }
+    },
+    {
+      "name": "lint",
+      "status": "not-available",
+      "value": null,
+      "threshold": 0,
+      "better": "lower",
+      "unit": "findings",
+      "weight": 2,
+      "pass": null,
+      "score": null,
+      "source": "eslint --format json (the checkout's own configuration)",
+      "details": {
+        "reason": "not run in the scheduled workflow: the checkout's own eslint is never executed in the job that holds the model secret (run health-run.mjs run on a trusted checkout to score lint)",
+        "state": "ci-setup"
+      }
+    },
+    {
+      "name": "duplication",
+      "status": "measured",
+      "value": 0,
+      "threshold": 5,
+      "better": "lower",
+      "unit": "% duplicated lines",
+      "weight": 1,
+      "pass": true,
+      "score": 100,
+      "source": "health-run duplication: 50-token window hash over production code (55 files)",
+      "details": {
+        "windowTokens": 50,
+        "files": 55,
+        "codeLines": 2977,
+        "duplicatedLines": 0,
+        "worst": []
+      }
+    }
+  ],
+  "verdict": [],
+  "overall": 94,
+  "links": {
+    "graphNode": "capability:auth-2fa",
+    "source": "https://github.com/OpenResilienceInitiative/ORISO-Admin/tree/7e8e87bba7b9bfcba268066753ef0208be52a704"
+  },
+  "verdictStatus": "skipped",
+  "verdictNote": "HEALTH_MODEL_API_KEY is not set: metrics only",
+  "inputs": {
+    "criteria": "272b25a9e1c05f2f07941924ddce752d7820cae5a14de6d9282f39443fb80127",
+    "steering": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  }
+}
