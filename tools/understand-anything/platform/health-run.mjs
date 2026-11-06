@@ -75,7 +75,7 @@ function prepareRun(o) {
   const effective = resolveCriteria(criteria, { capability: scope.capability, path: scope.path === null ? `${scope.repo}/` : `${scope.repo}/${scope.path}/` });
   const rules = o.rules ?? loadRules();
   const names = Object.entries(effective.metrics).filter(([, m]) => m.weight > 0).map(([n]) => n);
-  const measurements = measureScope({ root: checkout, repo: scope.repo, scope: { capability: scope.capability, path: scope.path }, rules, metrics: names, coverage: o.coverage ? resolve(o.coverage) : null, checkoutTools: o.checkoutTools !== false });
+  const measurements = measureScope({ root: checkout, repo: scope.repo, scope: { capability: scope.capability, path: scope.path }, rules, metrics: names, coverage: o.coverage ? resolve(o.coverage) : null, checkoutTools: o.checkoutTools !== false, lintReport: o.lintReport ?? null });
   const startedAt = o.now ?? new Date().toISOString().replace(/\.\d+Z$/, 'Z');
   let verdict = [];
   if (o.verdict) verdict = JSON.parse(readFileSync(o.verdict, 'utf8'));
