@@ -1298,13 +1298,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
-          "sourceHash": "e17116ebfdd73c6a16d2c267c1c999e6aee91fd12c5a411b9a8eacd9def3da0b",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "40fb8b0b0be61ba86b01618cc17481b0b472abde26f4bade50da7a3ea9e5b772",
+          "reviewedAt": "2026-11-04"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
-          "sourceHash": "e17116ebfdd73c6a16d2c267c1c999e6aee91fd12c5a411b9a8eacd9def3da0b",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "40fb8b0b0be61ba86b01618cc17481b0b472abde26f4bade50da7a3ea9e5b772",
+          "reviewedAt": "2026-11-04"
         }
       }
     },
