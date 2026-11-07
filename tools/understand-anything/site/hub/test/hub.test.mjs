@@ -63,3 +63,111 @@ test('the hub home page has no inline style attributes (strict CSP)', () => {
  assert.doesNotMatch(html, /<a class="fcard" href="\/map\/"[^>]*style=/);
  assert.match(html, /<a class="fcard[^"]*" href="\/map\/"/);
 });
+
+test('the support address page is linked in both languages and describes the same feature', () => {
+ for(const locale of ['de','en']) assert.ok(renderFeatures(data,locale).includes('/features/admin-support-email.html'));
+ const page=readFileSync(new URL('../features/admin-support-email.html',import.meta.url),'utf8');
+ assert.ok(page.includes('data-lang="de"'));
+ assert.ok(page.includes('data-lang="en"'));
+ assert.ok(page.includes('AgencyAdminContact.tsx'));
+ assert.ok(page.includes('SupportEmailSettingsCard'));
+});
+
+test('the name and slogan page is listed and has bilingual source-bound content', () => {
+ for(const locale of ['de','en']) assert.ok(renderFeatures(data,locale).includes('/features/admin-name-slogan.html'));
+ const page=readFileSync(new URL('../features/admin-name-slogan.html',import.meta.url),'utf8');
+ assert.ok(page.includes('data-lang="de"'));assert.ok(page.includes('data-lang="en"'));
+ assert.ok(page.includes('NameAndSlogan'));assert.ok(page.includes('useTenantTheming.ts'));
+});
+
+test('the inactivity page covers processing and dry-run in both languages', () => {
+ for(const locale of ['de','en']) assert.ok(renderFeatures(data,locale).includes('/features/admin-account-inactivity.html'));
+ const page=readFileSync(new URL('../features/admin-account-inactivity.html',import.meta.url),'utf8');
+ assert.ok(page.includes('data-lang="de"'));assert.ok(page.includes('data-lang="en"'));
+ assert.ok(page.includes('Prüfmodus'));assert.ok(page.includes('dry-run'));
+ assert.ok(page.includes('AccountInactivityScheduler.java'));
+});
+
+test('the form-of-address page distinguishes new accounts from existing preferences', () => {
+ for(const locale of ['de','en']) assert.ok(renderFeatures(data,locale).includes('/features/admin-form-of-address.html'));
+ const page=readFileSync(new URL('../features/admin-form-of-address.html',import.meta.url),'utf8');
+ assert.ok(page.includes('data-lang="de"'));assert.ok(page.includes('data-lang="en"'));
+ assert.ok(page.includes('CreateUserFacade.java'));assert.ok(page.includes('AuthenticatedApp.tsx'));
+});
+
+test('the same-topic page explains the implemented mode and unavailable alternatives', () => {
+ for(const locale of ['de','en']) assert.ok(renderFeatures(data,locale).includes('/features/admin-same-topic.html'));
+ const page=readFileSync(new URL('../features/admin-same-topic.html',import.meta.url),'utf8');
+ assert.ok(page.includes('data-lang="de"'));assert.ok(page.includes('data-lang="en"'));
+ assert.ok(page.includes('TopicDuplicateService.java'));assert.ok(page.includes('not yet available'));
+});
+
+test('the department page describes existing and newly assigned topics', () => {
+ for(const locale of ['de','en']) assert.ok(renderFeatures(data,locale).includes('/features/admin-one-department.html'));
+ const page=readFileSync(new URL('../features/admin-one-department.html',import.meta.url),'utf8');
+ assert.ok(page.includes('data-lang="de"'));assert.ok(page.includes('data-lang="en"'));
+ assert.ok(page.includes('OneTopicPerAgencyPolicy'));assert.ok(page.includes('keep their assignments'));
+});
+
+test('the chat-recovery page distinguishes new and existing accounts', () => {
+ for(const locale of ['de','en']) assert.ok(renderFeatures(data,locale).includes('/features/admin-chat-recovery.html'));
+ const page=readFileSync(new URL('../features/admin-chat-recovery.html',import.meta.url),'utf8');
+ assert.ok(page.includes('data-lang="de"'));assert.ok(page.includes('data-lang="en"'));
+ assert.ok(page.includes('ChatRecoveryEnrollmentPolicyService'));assert.ok(page.includes('Existing accounts keep'));
+});
+
+test('tutorial, postcode, translation and document-data pages appear in both feature lists', () => {
+ for(const slug of ['admin-counsellor-tutorials','admin-further-postcode','admin-translation-keys','admin-document-master-data','admin-brand-images','admin-assistant-identity','admin-available-languages','admin-theme-colours','admin-statistics-settings','admin-first-response','admin-temporary-accounts','admin-temporary-messages','admin-appearance-editing-rights','admin-provider-information','admin-service-notices','admin-account-absence','admin-account-personal-data','admin-account-roles','admin-account-two-factor','admin-account-language','admin-account-counsellor-role','admin-account-tours','admin-account-documentation','admin-topic-edit','admin-counsellor-provider-change','admin-case-handover-settings','admin-function-smtp','admin-function-communication','admin-function-other','admin-function-topics','admin-legal-management','admin-legal-agreement','admin-legal-imprint','admin-legal-privacy']) {
+  for(const locale of ['de','en']) assert.ok(renderFeatures(data,locale).includes(`/features/${slug}.html`));
+  const page=readFileSync(new URL(`../features/${slug}.html`,import.meta.url),'utf8');
+  assert.ok(page.includes('data-lang="de"'));assert.ok(page.includes('data-lang="en"'));
+ }
+});
+
+test('all twelve list pages appear in both indexes with both languages and back links', () => {
+ const slugs=['counselling-centres','providers','users','topics','invitations','email-templates','csv-preview','tutorial-statistics','case-handovers','deletion-audit','inactivity-audit','supervision-log'];
+ for(const slug of slugs) {
+  for(const locale of ['de','en']) assert.ok(renderFeatures(data,locale).includes(`/features/admin-list-${slug}.html`));
+  const page=readFileSync(new URL(`../features/admin-list-${slug}.html`,import.meta.url),'utf8');
+  assert.ok(page.includes('data-lang="de"'));assert.ok(page.includes('data-lang="en"'));
+  assert.ok(page.includes('href="/features/de.html" lang="de"'));assert.ok(page.includes('href="/features/en.html" lang="en"'));
+ }
+});
+
+test('legal settings pages appear in both localized feature lists', () => {
+ for(const slug of ['management','agreement','imprint','privacy']) for(const locale of ['de','en']) assert.ok(renderFeatures(data,locale).includes(`/features/admin-legal-${slug}.html`));
+});
+
+test('functionality pages appear in both localized feature lists', () => {
+ for(const slug of ['smtp','communication','other','topics']) for(const locale of ['de','en']) assert.ok(renderFeatures(data,locale).includes(`/features/admin-function-${slug}.html`));
+});
+
+test('centre settings pages appear in both lists and have both language links', () => {
+ for(const slug of ['general','registration','settings','department','responsible','contact']) {
+  for(const locale of ['de','en']) assert.ok(renderFeatures(data,locale).includes(`/features/admin-centre-${slug}.html`));
+  const page=readFileSync(new URL(`../features/admin-centre-${slug}.html`,import.meta.url),'utf8');
+  assert.ok(page.includes('data-lang="de"'));assert.ok(page.includes('data-lang="en"'));
+  assert.ok(page.includes('href="/features/de.html" lang="de"'));assert.ok(page.includes('href="/features/en.html" lang="en"'));
+ }
+});
+
+test('permission pages name their verification limits in both languages', () => {
+ for(const slug of ['mail','live','circle','internal-group','seeker-account']) {
+  for(const locale of ['de','en']) assert.ok(renderFeatures(data,locale).includes(`/features/admin-permission-${slug}.html`));
+  const page=readFileSync(new URL(`../features/admin-permission-${slug}.html`,import.meta.url),'utf8');
+  assert.ok(page.includes('noch nicht vollständig geprüft'));assert.ok(page.includes('not yet been fully verified'));
+ }
+});
+
+test('Admin feature pages return to the feature list in the selected language', () => {
+ for(const slug of ['admin-support-email','admin-name-slogan','admin-account-inactivity','admin-form-of-address','admin-same-topic','admin-one-department','admin-chat-recovery','admin-counsellor-tutorials','admin-further-postcode','admin-translation-keys','admin-document-master-data','admin-brand-images','admin-assistant-identity','admin-available-languages','admin-theme-colours','admin-statistics-settings','admin-first-response','admin-temporary-accounts','admin-temporary-messages','admin-appearance-editing-rights','admin-provider-information','admin-service-notices','admin-account-absence','admin-account-personal-data','admin-account-roles','admin-account-two-factor','admin-account-language','admin-account-counsellor-role','admin-account-tours','admin-account-documentation','admin-topic-edit','admin-counsellor-provider-change','admin-case-handover-settings','admin-function-smtp','admin-function-communication','admin-function-other','admin-function-topics','admin-legal-management','admin-legal-agreement','admin-legal-imprint','admin-legal-privacy']) {
+  const page=readFileSync(new URL(`../features/${slug}.html`,import.meta.url),'utf8');
+  assert.ok(page.includes('href="/features/de.html" lang="de"'));
+  assert.ok(page.includes('href="/features/en.html" lang="en"'));
+ }
+});
+
+test('admin feature links carry the selected index language',()=>{
+ const data=JSON.parse(readFileSync(new URL('../features/catalog.json',import.meta.url)));
+ for(const locale of ['de','en']) { const html=renderFeatures(data,locale); const links=[...html.matchAll(/href="(\/features\/admin-[^"]+)"/g)]; assert.ok(links.length>=64); for(const [,link] of links) assert.ok(link.endsWith(`?lang=${locale}`),link); }
+});

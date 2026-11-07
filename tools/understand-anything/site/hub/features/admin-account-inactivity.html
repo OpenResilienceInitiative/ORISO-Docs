@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="de" data-lang="de" data-title-de="Inaktive Konten — ORISO Understand" data-title-en="Inactive accounts — ORISO Understand">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Inaktive Konten — ORISO Understand</title><link rel="stylesheet" href="/assets/tokens.css"><link rel="stylesheet" href="/assets/hub.css"><script src="/assets/lang.js"></script>
+</head>
+<body><main class="wrap">
+<nav><a href="/features/de.html" lang="de">Alle Features</a><a href="/features/en.html" lang="en">All features</a>
+<span class="langswitch"><button type="button" data-lang="de" aria-pressed="true">DE</button><button type="button" data-lang="en" aria-pressed="false">EN</button></span></nav>
+<section lang="de">
+<h1>Inaktive Konten</h1>
+<p>Plattform-Admins legen getrennte Fristen in Monaten für Ratsuchende, Beratende und andere Personen fest. Die Frist wird beim Anlegen eines Kontos übernommen. Änderungen betreffen neue Konten; bestehende behalten ihre bisherige Frist.</p>
+<h2>Wer kann die Einstellung ändern?</h2>
+<p>Plattform-Admins können die Kachel bearbeiten. Träger- und Beratungsstellen-Admins sehen diese Kachel nicht.</p>
+<h2>Was passiert nach der Frist?</h2>
+<p>Ist die automatische Verarbeitung aktiv, sucht ein geplanter Lauf nach fälligen Konten. Konten nur mit der Rolle Ratsuchende werden gelöscht; Konten mit bekannten anderen oder mehreren Rollen werden gesperrt; bei unbekannten Rollen wird keine Aktion ausgeführt. Eine Anmeldung oder ausdrücklich gemeldete persönliche Aktivität setzt die Frist zurück.</p>
+<p>Die Verarbeitung muss im Betrieb eingeschaltet werden. Im Prüfmodus zählt der Lauf nur die vorgesehenen Aktionen; er löscht oder sperrt keine Konten. Ob die Verarbeitung auf einer bestimmten Umgebung aktiv ist, zeigt diese Seite nicht.</p>
+<h2>Wer sieht die Einstellung?</h2><p>Die Kachel liegt in den globalen Einstellungen. Diese Ansicht ist für Plattform-Admins mit Änderungsrecht für Träger erreichbar; Wer ausschließlich Träger- oder Beratungsstellen-Admin ist, sieht diese globale Ansicht nicht.</p><h2>Stand und Quellen</h2><p>Die beschriebenen Regeln sind im Quellcode vorhanden. Diese Seite bestätigt keine laufende Bereitstellung. Stand: 5. November 2026.</p>
+</section>
+<section lang="en">
+<h1>Inactive accounts</h1>
+<p>Platform admins set separate periods in months for advice seekers, counsellors and other people. A new account receives its period when it is created. Changes apply to new accounts; existing accounts retain their previous period.</p>
+<h2>Who can change the setting?</h2>
+<p>Platform admins can edit the tile. Provider and counselling-centre admins do not see this tile.</p>
+<h2>What happens after the period?</h2>
+<p>When automatic processing is active, a scheduled run finds accounts that are due. Accounts with only the advice-seeker role are deleted; accounts with known other or multiple roles are suspended. No action is taken when a role is unknown. Signing in or explicitly reported personal activity restarts the period.</p>
+<p>The platform operator must enable processing. In dry-run mode the job only counts the proposed actions; it does not delete or suspend accounts. This page does not establish whether processing is active in a particular environment.</p>
+<h2>Who sees the setting?</h2><p>The card is in global settings. This view is available to platform admins with permission to update providers; people with only provider- or counselling-centre-admin roles do not see this global view.</p><h2>Status and sources</h2><p>The rules described are present in source code. This page does not verify a running deployment. As of 5 November 2026.</p>
+</section>
+<ul>
+<li><a href="https://github.com/OpenResilienceInitiative/ORISO-Admin/blob/3896212d3285ca7f0af02b50282fc40987857382/src/components/GlobalSettings/AccountInactivitySettingsCard/index.tsx">Admin: AccountInactivitySettingsCard</a></li>
+<li><a href="https://github.com/OpenResilienceInitiative/ORISO-UserService/blob/280585226f2c7308fcf35e1c4135bc2d4e43d051/src/main/java/de/caritas/cob/userservice/api/workflow/accountinactivity/AccountInactivityService.java">UserService: AccountInactivityService.java</a></li>
+<li><a href="https://github.com/OpenResilienceInitiative/ORISO-UserService/blob/280585226f2c7308fcf35e1c4135bc2d4e43d051/src/main/java/de/caritas/cob/userservice/api/workflow/accountinactivity/AccountInactivityScheduler.java">UserService: AccountInactivityScheduler.java</a></li>
+<li><a href="https://github.com/OpenResilienceInitiative/ORISO-Admin/blob/3896212d3285ca7f0af02b50282fc40987857382/src/App.tsx">Admin: settings access</a></li><li><a href="/admin-service/?token=oriso-admin-dashboard">Admin code graph</a></li>
+</ul>
+</main></body></html>
