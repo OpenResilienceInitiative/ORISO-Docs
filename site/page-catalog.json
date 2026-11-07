@@ -1413,13 +1413,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/README.md",
-          "sourceHash": "625e97f2c462da5c8a702fa79244b574e0d394ef565abcda85debe866f6794cc",
-          "reviewedAt": "2026-10-28"
+          "sourceHash": "161392a97ef72fc2d3001269dc30703cf83fb803aa1d93d4d141bddab632ab96",
+          "reviewedAt": "2026-11-07"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/README.md",
-          "sourceHash": "625e97f2c462da5c8a702fa79244b574e0d394ef565abcda85debe866f6794cc",
-          "reviewedAt": "2026-10-28"
+          "sourceHash": "161392a97ef72fc2d3001269dc30703cf83fb803aa1d93d4d141bddab632ab96",
+          "reviewedAt": "2026-11-07"
         }
       }
     },
