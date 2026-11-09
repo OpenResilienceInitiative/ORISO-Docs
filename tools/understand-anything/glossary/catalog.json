@@ -2177,12 +2177,12 @@
       "category": "counselling-and-conversations",
       "de": {
         "term": "Team-Chat",
-        "definition": "Interne Teamberatung während der Anfrage: Berater:innen stimmen sich in einem Raum nur fürs Team ab. Der Raum schließt, sobald die Anfrage angenommen wird.",
+        "definition": "Abstimmung im Team während der Anfrage: Berater:innen stimmen sich in einem Raum nur fürs Team ab. Der Raum schließt, sobald die Anfrage angenommen wird.",
         "example": "Das Team stimmt sich im Team-Chat ab, bevor eine Berater:in die Anfrage annimmt."
       },
       "en": {
         "term": "Team chat",
-        "definition": "Internal team counselling during the enquiry: Counsellors coordinate in a room for the team only. The room closes as soon as the enquiry is accepted.",
+        "definition": "Team chat during the enquiry: counsellors coordinate in a room for the team only. The room closes as soon as the enquiry is accepted.",
         "example": "The team coordinates in the team chat before a counsellor accepts the enquiry."
       },
       "aliases": {
