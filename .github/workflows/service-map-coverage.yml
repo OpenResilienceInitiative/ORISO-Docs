@@ -71,8 +71,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          findings=$(python3 tools/service-map/check.py --helm-dir _helm | sed 's/^::error:://' || true)
-          [ -n "$findings" ] || exit 0
+          # Report only real drift: the checker must fail, and only its ::error:: lines count.
+          if output=$(python3 tools/service-map/check.py --helm-dir _helm); then exit 0; fi
+          findings=$(printf '%s\n' "$output" | sed -n 's/^::error:://p')
+          [ -n "$findings" ] || { echo "Checker failed without drift findings"; exit 1; }
           gh label create service-map-drift --color D93F0B \
             --description "ORISO-Helm and the service map disagree" 2>/dev/null || true
           body=$(printf '%s\n' \
