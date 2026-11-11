@@ -52,6 +52,9 @@ jobs:
     name: Rebuild and publish the graph generation
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    defaults:
+      run:
+        shell: bash
     # Pinned in tools/understand-anything/toolchain.lock.json as `nodeImage`.
     # Keep the two in step: the producer's output is only reproducible on the
     # Node version its toolchain was locked against.
@@ -89,13 +92,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
+          documentation_revision="$(git -c safe.directory="${GITHUB_WORKSPACE:?missing GITHUB_WORKSPACE}" rev-parse --verify HEAD)"
           python3 .github/scripts/ua_sources.py \
             --tooling "${UA_TOOLING}" \
             --base "${UA_WORK}/base" \
             --inventory "${UA_WORK}/inventory.json" \
             --repo-args "${UA_WORK}/repo-args.txt" \
             --release-manifest "$RUNNER_TEMP/platform-release.json" --require-release \
-            --documentation-revision "$(git rev-parse HEAD)"
+            --documentation-revision "$documentation_revision"
 
       - name: Build one complete generation
         env:

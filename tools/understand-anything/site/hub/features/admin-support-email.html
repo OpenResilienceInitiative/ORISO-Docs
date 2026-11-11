@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="de" data-lang="de" data-title-de="Support-Adresse — ORISO Understand" data-title-en="Support address — ORISO Understand">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Support-Adresse — ORISO Understand</title><link rel="stylesheet" href="/assets/tokens.css"><link rel="stylesheet" href="/assets/hub.css"><script src="/assets/lang.js"></script>
+</head>
+<body><main class="wrap">
+<nav><a href="/features/de.html" lang="de">Alle Features</a><a href="/features/en.html" lang="en">All features</a>
+<span class="langswitch"><button type="button" data-lang="de" aria-pressed="true">DE</button><button type="button" data-lang="en" aria-pressed="false">EN</button></span></nav>
+<section lang="de">
+<h1>Support-Adresse</h1>
+<p>Die Plattform kann eine gemeinsame E-Mail-Adresse hinterlegen. Beratende sehen sie als Kontakt, wenn für ihre Beratungsstelle keine Admin-Person für einen Chat verfügbar ist. Ein Klick öffnet das eigene E-Mail-Programm.</p>
+<h2>Wer sieht und ändert die Einstellung?</h2>
+<p>Plattform-Admins können die Adresse in den globalen Einstellungen bearbeiten oder löschen. Andere Rollen sehen die Kachel dort, wo sie Zugriff auf diese Einstellungen haben, ohne sie zu bearbeiten. Beratende sehen die Adresse nur im beschriebenen Fall; Ratsuchenden wird hier keine Adresse angezeigt.</p>
+<h2>Was passiert beim Ändern?</h2>
+<p>Die Adresse wird ohne Leerzeichen am Rand gespeichert. Ein leeres Feld entfernt sie. Ist keine gültige Adresse hinterlegt, erscheint der Hinweis ohne E-Mail-Link. Können die Admin-Kontakte nicht geladen werden, erscheint ein eigener Fehlerhinweis; daraus wird nicht geschlossen, dass keine Admin-Person existiert.</p>
+<p>Die Adresse ist Teil der öffentlich ausgelieferten Anwendungseinstellungen. Verwenden Sie deshalb ein gemeinsames Postfach und keine vertrauliche persönliche Adresse.</p>
+<h2>Wer sieht die Einstellung?</h2><p>Die Kachel liegt in den globalen Einstellungen. Diese Ansicht ist für Plattform-Admins mit Änderungsrecht für Träger erreichbar; Wer ausschließlich Träger- oder Beratungsstellen-Admin ist, sieht diese globale Ansicht nicht.</p><h2>Stand und Quellen</h2><p>Das beschriebene Verhalten ist im Quellcode vorhanden. Eine Prüfung der aktuell bereitgestellten Umgebung ist damit nicht verbunden. Stand: 5. November 2026.</p>
+</section>
+<section lang="en">
+<h1>Support address</h1>
+<p>The platform can set a shared email address. Counsellors see it as a contact when their counselling centre has no administrator available for chat. Selecting it opens their own email application.</p>
+<h2>Who can see and change it?</h2>
+<p>Platform admins can edit or clear the address in global settings. Other roles see the tile without editing it where they have access to those settings. Counsellors see the address only in the situation above; this view does not show it to advice seekers.</p>
+<h2>What happens when it changes?</h2>
+<p>Leading and trailing spaces are removed before saving. An empty field clears the address. If no valid address is configured, the notice appears without an email link. If the admin contacts cannot be loaded, a separate error is shown; the app does not assume that no administrator exists.</p>
+<p>The address is part of the publicly served application settings. Use a shared mailbox rather than a confidential personal address.</p>
+<h2>Who sees the setting?</h2><p>The card is in global settings. This view is available to platform admins with permission to update providers; people with only provider- or counselling-centre-admin roles do not see this global view.</p><h2>Status and sources</h2><p>The behaviour described is present in source code. This does not verify the currently deployed environment. As of 5 November 2026.</p>
+</section>
+<ul>
+<li><a href="https://github.com/OpenResilienceInitiative/ORISO-Admin/blob/3896212d3285ca7f0af02b50282fc40987857382/src/components/GlobalSettings/SupportEmailSettingsCard/index.tsx">Admin: SupportEmailSettingsCard</a></li>
+<li><a href="https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/8c5be36347f2a44e241892cafd0daed315e3119f/src/components/profile/AgencyAdminContact.tsx">Frontend: AgencyAdminContact.tsx</a></li>
+<li><a href="https://github.com/OpenResilienceInitiative/ORISO-Admin/blob/3896212d3285ca7f0af02b50282fc40987857382/src/App.tsx">Admin: settings access</a></li><li><a href="/admin-service/?token=oriso-admin-dashboard">Admin code graph</a></li>
+</ul>
+</main></body></html>

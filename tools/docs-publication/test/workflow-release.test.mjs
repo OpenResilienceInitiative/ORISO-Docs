@@ -21,3 +21,16 @@ test('Dev checks cannot activate Docs or the hub and released code checkout is e
  assert(steps.some(s=>s.run?.includes('--preview --origin http://127.0.0.1:3000')));
  assert(steps.some(s=>s.run?.includes('--release-manifest "$RUNNER_TEMP/platform-release.json" --generation "$RUNNER_TEMP/docs-ua-published/current" --origin https://docs.oriso.org')));
 });
+
+test('the containerized graph refresh uses Bash for pipeline checks and arrays', () => {
+ const job = workflow('ua-graph-refresh').jobs.refresh;
+ assert(job.container, 'the producer runs in a job container');
+ for (const step of job.steps.filter(step => /pipefail|mapfile/.test(step.run ?? ''))) {
+  assert.equal(step.shell ?? job.defaults?.run?.shell, 'bash', step.name);
+ }
+});
+
+test('the public Understand artifact retains the hidden graph and metadata directories', () => {
+ const upload = workflow('ua-public-site').jobs.produce.steps.find(step => step.uses?.startsWith('actions/upload-artifact@'));
+ assert.equal(upload?.with?.['include-hidden-files'], true);
+});
