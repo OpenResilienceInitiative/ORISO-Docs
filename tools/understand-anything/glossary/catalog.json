@@ -312,12 +312,17 @@
         "de": [
           "BST",
           "Agentur",
-          "Agentur-Admins"
+          "Agentur-Admins",
+          "Beratungszentrum"
         ],
         "en": [
           "Agency",
           "agencyId",
-          "Agency Unit"
+          "Agency Unit",
+          "counseling center",
+          "advice center",
+          "consulting center",
+          "advisory center"
         ]
       },
       "deprecatedTerms": [
@@ -1002,7 +1007,9 @@
       "aliases": {
         "de": [
           "Berater",
-          "Beratende"
+          "Beratende",
+          "Berater*in",
+          "Berater_in"
         ],
         "en": [
           "Consultant",
@@ -1211,8 +1218,12 @@
         "example": "Platform and provider administration have different permissions."
       },
       "aliases": {
-        "de": [],
-        "en": []
+        "de": [
+          "Plattform-Admin"
+        ],
+        "en": [
+          "Platform admin"
+        ]
       },
       "deprecatedTerms": [],
       "related": [],
@@ -1278,8 +1289,12 @@
         "example": "A provider administrator manages their assigned counselling centres."
       },
       "aliases": {
-        "de": [],
-        "en": []
+        "de": [
+          "Träger-Admin"
+        ],
+        "en": [
+          "Tenant admin"
+        ]
       },
       "deprecatedTerms": [],
       "related": [],
@@ -1361,8 +1376,14 @@
         "example": "A counselling centre administrator manages the centre assigned to them."
       },
       "aliases": {
-        "de": [],
-        "en": []
+        "de": [
+          "BST-Admin",
+          "Agentur-Admin",
+          "Beratungsstellen-Admin"
+        ],
+        "en": [
+          "Agency admin"
+        ]
       },
       "deprecatedTerms": [],
       "related": [],
@@ -1976,8 +1997,8 @@
         }
       ],
       "editorialNote": {
-        "de": "Getrennt von der Team-Besprechung zu einer offenen Anfrage.",
-        "en": "Separate from team discussion attached to an enquiry."
+        "de": "Getrennt vom Team-Chat zu einer offenen Anfrage.",
+        "en": "Separate from the team chat attached to an enquiry."
       }
     },
     {
@@ -2155,22 +2176,53 @@
       "id": "team-discussion",
       "category": "counselling-and-conversations",
       "de": {
-        "term": "Team-Besprechung",
-        "definition": "Abstimmung des berechtigten Teams zu einer offenen Anfrage vor ihrer Annahme.",
-        "example": "Das Team stimmt sich vor der Annahme einer Anfrage ab."
+        "term": "Team-Chat",
+        "definition": "Abstimmung im Team während der Anfrage: Berater:innen stimmen sich in einem Raum nur fürs Team ab. Der Raum schließt, sobald die Anfrage angenommen wird.",
+        "example": "Das Team stimmt sich im Team-Chat ab, bevor eine Berater:in die Anfrage annimmt."
       },
       "en": {
-        "term": "Team discussion",
-        "definition": "Coordination by the eligible team about an open enquiry before acceptance.",
-        "example": "The team coordinates before an enquiry is accepted."
+        "term": "Team chat",
+        "definition": "Team chat during the enquiry: counsellors coordinate in a room for the team only. The room closes as soon as the enquiry is accepted.",
+        "example": "The team coordinates in the team chat before a counsellor accepts the enquiry."
       },
       "aliases": {
-        "de": [],
-        "en": []
+        "de": [
+          "Team-Besprechung"
+        ],
+        "en": [
+          "Team discussion",
+          "featureTeamDiscussionEnabled"
+        ]
       },
-      "deprecatedTerms": [],
+      "deprecatedTerms": [
+        {
+          "language": "de",
+          "term": "Team-Besprechung",
+          "reason": {
+            "de": "In neuen Texten für Menschen den Namen Team-Chat verwenden.",
+            "en": "Use the name Team chat in new human-facing copy."
+          },
+          "compatibilityScope": {
+            "de": "Der Titel von ADR-016, Kennungen und der Schalter featureTeamDiscussionEnabled bleiben unverändert.",
+            "en": "The ADR-016 title, identifiers and the featureTeamDiscussionEnabled switch remain unchanged."
+          }
+        },
+        {
+          "language": "en",
+          "term": "Team discussion",
+          "reason": {
+            "de": "In neuen Texten für Menschen den Namen Team-Chat verwenden.",
+            "en": "Use the name Team chat in new human-facing copy."
+          },
+          "compatibilityScope": {
+            "de": "Der Titel von ADR-016, Kennungen und der Schalter featureTeamDiscussionEnabled bleiben unverändert.",
+            "en": "The ADR-016 title, identifiers and the featureTeamDiscussionEnabled switch remain unchanged."
+          }
+        }
+      ],
       "related": [
-        "enquiry"
+        "enquiry",
+        "team-counselling"
       ],
       "editorialState": "source-backed",
       "context": {
@@ -2205,6 +2257,16 @@
           "state": "editorial",
           "binding": "input-snapshot",
           "reviewedAt": "2026-10-06"
+        },
+        {
+          "repository": "ORISO-Docs",
+          "path": "tools/understand-anything/glossary/sources/team-functions-2026-11-07.md",
+          "sourceRevision": null,
+          "sourceHash": "8cde585b953c02eb33ba6ebff497f071153e9faa518e483e0e25f0058c10ca26",
+          "title": "Team functions and term sweep — 7 November 2026",
+          "state": "editorial",
+          "binding": "input-snapshot",
+          "reviewedAt": "2026-11-07"
         }
       ],
       "codeMappings": [],
@@ -2216,8 +2278,69 @@
         }
       ],
       "editorialNote": {
-        "de": "ADR-016; die Team-Besprechung ist keine fortgesetzte Fallkoordination nach der Annahme.",
-        "en": "ADR-016; not continued post-acceptance case coordination."
+        "de": "ADR-016. Der Team-Chat gehört zu einer offenen Anfrage und endet mit der Annahme; er ist keine fortgesetzte Fallkoordination. Er ist nicht die Teamberatung, die für alle Chats einer Beratungsstelle gilt. Der Träger schaltet ihn ein; der frühere Name steht unter den Aliasen.",
+        "en": "ADR-016. The team chat belongs to an open enquiry and ends with acceptance; it is not continued case coordination. It is not team counselling, which applies to all chats of a counselling centre. The provider switches it on; the earlier name is kept as an alias."
+      }
+    },
+    {
+      "id": "team-counselling",
+      "category": "counselling-and-conversations",
+      "de": {
+        "term": "Teamberatung",
+        "definition": "Klassische Teamberatung: Alle Berater:innen der Beratungsstelle sehen alle Chats und können jederzeit einsteigen.",
+        "example": "In einer Beratungsstelle mit Teamberatung kann jede Berater:in jeden Chat der Beratungsstelle sehen und einsteigen."
+      },
+      "en": {
+        "term": "Team counselling",
+        "definition": "Classic team counselling: All counsellors of the counselling centre see all chats and can join at any time.",
+        "example": "In a counselling centre with team counselling, every counsellor can see every chat of the centre and join it."
+      },
+      "aliases": {
+        "de": [
+          "Teamberatungsstelle"
+        ],
+        "en": [
+          "Team counseling",
+          "Team counseling center",
+          "teamAgency"
+        ]
+      },
+      "deprecatedTerms": [],
+      "related": [
+        "counselling-centre",
+        "counsellor",
+        "team-discussion"
+      ],
+      "editorialState": "editorial",
+      "context": {
+        "de": "Einstellung einer Beratungsstelle; der Träger legt sie nicht fest.",
+        "en": "Setting of a counselling centre; the provider does not set it."
+      },
+      "responsibility": {
+        "de": "Die Beratungsstelle entscheidet, ob alle ihre Berater:innen alle Chats sehen.",
+        "en": "The counselling centre decides whether all its counsellors see all chats."
+      },
+      "invariant": {
+        "de": "Beim Ausschalten werden bestehende Chats in 1:1-Beratungen umgewandelt; andere Berater:innen der Beratungsstelle sehen sie dann nicht mehr.",
+        "en": "Turning it off converts existing chats into 1:1 counselling; other counsellors of the centre then no longer see them."
+      },
+      "sources": [
+        {
+          "repository": "ORISO-Docs",
+          "path": "tools/understand-anything/glossary/sources/team-functions-2026-11-07.md",
+          "sourceRevision": null,
+          "sourceHash": "8cde585b953c02eb33ba6ebff497f071153e9faa518e483e0e25f0058c10ca26",
+          "title": "Team functions and term sweep — 7 November 2026",
+          "state": "editorial",
+          "binding": "input-snapshot",
+          "reviewedAt": "2026-11-07"
+        }
+      ],
+      "codeMappings": [],
+      "graphMappings": [],
+      "editorialNote": {
+        "de": "Redaktioneller Vorschlag zur Bestätigung durch den Produktverantwortlichen. Gespeichert als teamAgency; der Schlüssel bleibt unverändert. Nicht zu verwechseln mit dem Team-Chat zu einer offenen Anfrage.",
+        "en": "Editorial proposal for the product owner to confirm. Stored as teamAgency; the key stays unchanged. Not to be confused with the team chat on an open enquiry."
       }
     },
     {
@@ -6559,6 +6682,18 @@
         "term": "Agency",
         "preferred": "Counselling Centre",
         "conceptId": "counselling-centre"
+      },
+      {
+        "language": "de",
+        "term": "Team-Besprechung",
+        "preferred": "Team-Chat",
+        "conceptId": "team-discussion"
+      },
+      {
+        "language": "en",
+        "term": "Team discussion",
+        "preferred": "Team chat",
+        "conceptId": "team-discussion"
       }
     ],
     "allowlist": [
