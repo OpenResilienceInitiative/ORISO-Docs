@@ -1,13 +1,15 @@
-# Cutover plan: `understand.oriso.org` on `oriso-understand-dev-1`
+# Cutover plan: the public Understand site on `oriso-understand-dev-1`
 
 Prepared for ORISO-Docs#258. **Nothing in this file has been applied.** It lists what an operator and the release owners must decide and set so that a platform release updates the public Understand site by itself. Read `PRODUCTION.md` first; this file only fills in the values for this host.
+
+`understand.example.org` stands for the public Understand host served by `oriso-understand-dev-1`; the real name is recorded in `tools/understand-anything/README.md`. Substitute it on the operator host only, so a copied command never targets another installation.
 
 ## Why the site shows the 2026-09-21 state
 Measured 2026-11-07. Both release-triggered runs of `ua-public-site.yml` (2026-11-04 06:42 UTC and the manual run 21:59 UTC) failed in job `binding` with `Missing Understand installation binding`, so job `consume` never ran. The graph itself was built (`ua-graph-latest`, 2026-11-04 22:07 UTC). The host still serves the hand-built layout (`/var/www/understand`, `status.json` installed 2026-09-21).
 
 ## What exists on the host (measured, read-only)
 - Runner: service `actions.runner.OpenResilienceInitiative.oriso-understand-dev-1-docs`, active, pool `oriso-docs-production`. Variable `DOCS_PUBLICATION_RUNNER_LABELS` is `["self-hosted","oriso-docs-production"]`.
-- nginx `understand.oriso.org`: `root /var/www/understand`, 16 viewer paths proxied to Vite dev servers on `127.0.0.1:5173-5190` with strip-prefix rewrites, plus `/legal/`, `/dokumentation/`, `/api/dpia`, and `403` for the private `e2e` and `infra` viewers.
+- nginx `understand.example.org`: `root /var/www/understand`, 16 viewer paths proxied to Vite dev servers on `127.0.0.1:5173-5190` with strip-prefix rewrites, plus `/legal/`, `/dokumentation/`, `/api/dpia`, and `403` for the private `e2e` and `infra` viewers.
 - Compose `/opt/oriso-understand/docker-compose.yml`: 18 services on `node:22-bookworm`, no `platform` and no `supergraph` service.
 
 ## Proposed values (operator to confirm)
@@ -32,126 +34,126 @@ All paths must exist and be writable by the runner user `oriso-docs-runner` befo
   {
     "service": "platform",
     "repository": "ORISO-Platform",
-    "origin": "https://understand.oriso.org/platform/",
+    "origin": "https://understand.example.org/platform/",
     "workspaceTarget": "/plugin",
     "graphTarget": "/graph"
   },
   {
     "service": "supergraph",
     "repository": "ORISO-Supergraph",
-    "origin": "https://understand.oriso.org/supergraph/",
+    "origin": "https://understand.example.org/supergraph/",
     "workspaceTarget": "/plugin",
     "graphTarget": "/graph"
   },
   {
     "service": "docs",
     "repository": "ORISO-Docs",
-    "origin": "https://understand.oriso.org/docs/",
+    "origin": "https://understand.example.org/docs/",
     "workspaceTarget": "/plugin",
     "graphTarget": "/graph"
   },
   {
     "service": "admin-service",
     "repository": "ORISO-Admin",
-    "origin": "https://understand.oriso.org/admin-service/",
+    "origin": "https://understand.example.org/admin-service/",
     "workspaceTarget": "/plugin",
     "graphTarget": "/graph"
   },
   {
     "service": "frontend",
     "repository": "ORISO-Frontend",
-    "origin": "https://understand.oriso.org/frontend/",
+    "origin": "https://understand.example.org/frontend/",
     "workspaceTarget": "/plugin",
     "graphTarget": "/graph"
   },
   {
     "service": "user-service",
     "repository": "ORISO-UserService",
-    "origin": "https://understand.oriso.org/user-service/",
+    "origin": "https://understand.example.org/user-service/",
     "workspaceTarget": "/plugin",
     "graphTarget": "/graph"
   },
   {
     "service": "agency-service",
     "repository": "ORISO-AgencyService",
-    "origin": "https://understand.oriso.org/agency-service/",
+    "origin": "https://understand.example.org/agency-service/",
     "workspaceTarget": "/plugin",
     "graphTarget": "/graph"
   },
   {
     "service": "tenant-service",
     "repository": "ORISO-TenantService",
-    "origin": "https://understand.oriso.org/tenant-service/",
+    "origin": "https://understand.example.org/tenant-service/",
     "workspaceTarget": "/plugin",
     "graphTarget": "/graph"
   },
   {
     "service": "consulting-type-service",
     "repository": "ORISO-ConsultingTypeService",
-    "origin": "https://understand.oriso.org/consulting-type-service/",
+    "origin": "https://understand.example.org/consulting-type-service/",
     "workspaceTarget": "/plugin",
     "graphTarget": "/graph"
   },
   {
     "service": "database",
     "repository": "ORISO-Database",
-    "origin": "https://understand.oriso.org/database/",
+    "origin": "https://understand.example.org/database/",
     "workspaceTarget": "/plugin",
     "graphTarget": "/graph"
   },
   {
     "service": "keycloak",
     "repository": "ORISO-Keycloak",
-    "origin": "https://understand.oriso.org/keycloak/",
+    "origin": "https://understand.example.org/keycloak/",
     "workspaceTarget": "/plugin",
     "graphTarget": "/graph"
   },
   {
     "service": "helm",
     "repository": "ORISO-Helm",
-    "origin": "https://understand.oriso.org/helm/",
+    "origin": "https://understand.example.org/helm/",
     "workspaceTarget": "/plugin",
     "graphTarget": "/graph"
   },
   {
     "service": "kubernetes",
     "repository": "ORISO-Kubernetes",
-    "origin": "https://understand.oriso.org/kubernetes/",
+    "origin": "https://understand.example.org/kubernetes/",
     "workspaceTarget": "/plugin",
     "graphTarget": "/graph"
   },
   {
     "service": "element-call",
     "repository": "ORISO-ElementCall",
-    "origin": "https://understand.oriso.org/element-call/",
+    "origin": "https://understand.example.org/element-call/",
     "workspaceTarget": "/plugin",
     "graphTarget": "/graph"
   },
   {
     "service": "livekit",
     "repository": "ORISO-Livekit",
-    "origin": "https://understand.oriso.org/livekit/",
+    "origin": "https://understand.example.org/livekit/",
     "workspaceTarget": "/plugin",
     "graphTarget": "/graph"
   },
   {
     "service": "health-dashboard",
     "repository": "ORISO-HealthDashboard",
-    "origin": "https://understand.oriso.org/health-dashboard/",
+    "origin": "https://understand.example.org/health-dashboard/",
     "workspaceTarget": "/plugin",
     "graphTarget": "/graph"
   },
   {
     "service": "status",
     "repository": "ORISO-Status",
-    "origin": "https://understand.oriso.org/status/",
+    "origin": "https://understand.example.org/status/",
     "workspaceTarget": "/plugin",
     "graphTarget": "/graph"
   },
   {
     "service": "signoz",
     "repository": "ORISO-SigNoz",
-    "origin": "https://understand.oriso.org/signoz/",
+    "origin": "https://understand.example.org/signoz/",
     "workspaceTarget": "/plugin",
     "graphTarget": "/graph"
   }
@@ -183,10 +185,10 @@ Open point: `platform` and `supergraph` have no service and no port yet. The doc
 
 ## Migration steps (operator, in this order)
 1. Release owners approve a published platform release and its full 16-repository tag and SHA vector; its Docs revision must contain these viewers (`PRODUCTION.md`).
-2. Back up `/etc/nginx/sites-enabled/understand.oriso.org`, `/opt/oriso-understand/docker-compose.yml` and `/var/www/understand`.
+2. Back up `/etc/nginx/sites-enabled/understand.example.org`, `/opt/oriso-understand/docker-compose.yml` and `/var/www/understand`.
 3. Create the directories above, owned by `oriso-docs-runner`.
-4. Edit the nginx site: for each of the 16 viewers replace the `file-content.json` rewrites and the `knowledge-graph|meta|config|...` rewrites by `location ^~ /<route>/ { proxy_pass http://127.0.0.1:<port>; }` (no trailing URI, no strip-prefix rewrite). Point `/` and assets at `UNDERSTAND_HUB_CURRENT`, serve `/refresh-attempt.json` from the receipt path with caching off. Keep `/legal/`, `/dokumentation/`, `/api/dpia` and the `403` blocks. Run `nginx -t` before any reload.
-5. Add the `platform` and `supergraph` services and ports to the compose file.
+4. Edit the nginx site: for each of the 16 viewers replace the `file-content.json` rewrites and the `knowledge-graph|meta|config|...` rewrites by `location ^~ /<route>/ { proxy_pass http://127.0.0.1:<port>; }` (no trailing URI, no strip-prefix rewrite). Point `/` and assets at `UNDERSTAND_HUB_CURRENT`, serve `/refresh-attempt.json` from the receipt path with caching off. Keep `/legal/`, `/dokumentation/`, `/api/dpia` and the `403` blocks.
+5. Add the `platform` and `supergraph` services to the compose file on the two newly approved loopback ports, and add their nginx locations in the same form: `location ^~ /platform/ { proxy_pass http://127.0.0.1:<approved platform port>; }` and `location ^~ /supergraph/ { proxy_pass http://127.0.0.1:<approved supergraph port>; }`. All 18 bindings are read back by `activate.sh`; without these two routes the first installation rolls back. Run `nginx -t` before any reload.
 6. Create the readback tokens and store them as the secret; set the variables above.
 7. Dispatch `ua-public-site.yml` with the approved release manifest. The transaction restores the previous pointers and compose on failure.
 
@@ -198,6 +200,6 @@ The 2026-11-04 graph generation exists but is not tied to an approved release ve
 
 ## Proof
 - [ ] `binding` and `consume` green for the release run.
-- [ ] https://understand.oriso.org/status.json (or the hub status) shows the release date, not 2026-09-21.
-- [ ] Each of the 16 viewer routes answers 200 and shows the new generation.
-- [ ] `https://understand.oriso.org/refresh-attempt.json` answers without a cached copy.
+- [ ] https://understand.example.org/status.json (or the hub status) shows the release date, not 2026-09-21.
+- [ ] Each of the 18 viewer routes (the 16 existing ones plus `/platform/` and `/supergraph/`) answers 200 and shows the new generation.
+- [ ] `https://understand.example.org/refresh-attempt.json` answers without a cached copy.
