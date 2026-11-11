@@ -1,0 +1,41 @@
+name: Service map coverage
+
+# Fails when ORISO-Helm deploys a component the service map does not show.
+# Runs on map changes here, and daily, because new services land in ORISO-Helm.
+on:
+  pull_request:
+    paths:
+      - "site/public/service-map/**"
+      - "tools/service-map/**"
+      - ".github/workflows/service-map-coverage.yml"
+  push:
+    branches: [dev, main]
+    paths:
+      - "site/public/service-map/**"
+      - "tools/service-map/**"
+      - ".github/workflows/service-map-coverage.yml"
+  schedule:
+    - cron: "17 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: OpenResilienceInitiative/ORISO-Helm
+          ref: main
+          path: _helm
+          persist-credentials: false
+      - name: Unit tests
+        run: python3 -m unittest discover -s tools/service-map -p 'test_*.py' -v
+      - name: Map covers every ORISO-Helm component
+        run: python3 tools/service-map/check.py --helm-dir _helm

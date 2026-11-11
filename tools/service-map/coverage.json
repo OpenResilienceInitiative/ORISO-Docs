@@ -1,0 +1,27 @@
+{
+  "_comment": "Every component the ORISO-Helm umbrella chart deploys (a templates/<dir> or a Chart.yaml dependency) must appear here: either as the id of a box in site/public/service-map/index.html, or under 'excluded' with a reason. check.py fails when a new component shows up in ORISO-Helm and is not listed.",
+  "mapped": {
+    "admin": "adminApp",
+    "agencyservice": "agency",
+    "consultingtypeservice": "ctype",
+    "element-call": "livekit",
+    "frontend": "frontend",
+    "ip-anonymizer": "ipanon",
+    "livekit": "livekit",
+    "matrix": "matrix",
+    "media-scanner": "mediascan",
+    "nginx": "edge",
+    "signoz": "signoz",
+    "tenantservice": "tenant",
+    "userservice": "user",
+    "online-counseling-keycloak": "keycloak",
+    "online-counseling-mariadb": "db",
+    "online-counseling-mongodb": "db",
+    "online-counseling-rabbitmq": "msg",
+    "online-counseling-redis": "msg"
+  },
+  "excluded": {
+    "health-dashboard": "Operator status page, not part of a user request path.",
+    "storybook": "Developer component catalogue, not part of the running platform."
+  }
+}
