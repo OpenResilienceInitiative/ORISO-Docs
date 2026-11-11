@@ -149,6 +149,7 @@
             "group": "Architecture",
             "pages": [
               "oriso-platform/architecture/overview",
+              "oriso-platform/architecture/service-map",
               "oriso-platform/architecture/frontend",
               "oriso-platform/architecture/backend",
               "oriso-platform/architecture/data",

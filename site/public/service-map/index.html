@@ -1,0 +1,268 @@
+<!doctype html><html lang=en><head><title>ORISO Service Map</title><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>ORISO Service Map</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: four horizontal layers (people → apps → services → infrastructure), detail panel beside; journeys light up the path. */
+:root {
+  --bg: #f6f6f9; --surface: #ffffff; --fg: #1d1f2b; --muted: #5d6175; --line: #dcdde6;
+  --accent: #5b3f8c; --accent-soft: #ece6f6;
+  --people: #b45a2c; --apps: #2f6e8f; --svc: #5b3f8c; --infra: #4d6b3a;
+  --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Figtree", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #15161d; --surface: #1e2029; --fg: #e8e8ef; --muted: #a0a3b5; --line: #343645;
+  --accent: #b69ae6; --accent-soft: #2c2440;
+  --people: #e79a6f; --apps: #74b5d6; --svc: #b69ae6; --infra: #9dc283; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #15161d; --surface: #1e2029; --fg: #e8e8ef; --muted: #a0a3b5; --line: #343645;
+  --accent: #b69ae6; --accent-soft: #2c2440;
+  --people: #e79a6f; --apps: #74b5d6; --svc: #b69ae6; --infra: #9dc283; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--fg); font: 15px/1.55 var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 48px }
+.wrap { max-width: 1180px; margin: 0 auto; display: grid; gap: 28px }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0 }
+h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.01em }
+h2 { font-size: 1.25rem; font-weight: 700 }
+.lede { color: var(--muted); max-width: 68ch; margin: 6px 0 0 }
+code, .mono { font-family: var(--f-mono); font-size: 0.82em }
+.label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600 }
+
+.tabs { display: flex; gap: 6px; flex-wrap: wrap }
+.tabs button { font: 600 0.9rem var(--f-body); padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer }
+.tabs button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--bg) }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+
+.main { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 24px; align-items: start }
+@media (max-width: 860px) { .main { grid-template-columns: 1fr } }
+
+.layers { display: grid; gap: 10px }
+.layer { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 12px; align-items: center; padding: 12px 0; border-top: 1px dashed var(--line) }
+.layer:first-child { border-top: 0 }
+@media (max-width: 520px) { .layer { grid-template-columns: 1fr; gap: 6px } }
+.layer .label { line-height: 1.3 }
+.nodes { display: flex; flex-wrap: wrap; gap: 8px }
+.node { position: relative; font: 600 0.88rem var(--f-body); text-align: left; padding: 9px 12px 9px 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer; transition: opacity .2s, border-color .2s }
+.node::before { content: ""; position: absolute; left: 0; top: 8px; bottom: 8px; width: 3px; border-radius: 2px; background: var(--kind) }
+.node small { display: block; font-weight: 400; color: var(--muted); font-size: 0.76rem }
+.node[aria-pressed="true"] { border-color: var(--kind); box-shadow: 0 0 0 1px var(--kind) }
+.layers.dim .node:not(.on) { opacity: 0.32 }
+.node .step { position: absolute; top: -8px; right: -8px; min-width: 20px; height: 20px; border-radius: 10px; background: var(--kind); color: var(--bg); font: 700 0.7rem/20px var(--f-body); text-align: center; padding: 0 5px; font-variant-numeric: tabular-nums }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: grid; gap: 14px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px) }
+@media (max-width: 860px) { .panel { position: static } }
+.panel .kind { display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--kind) }
+.panel ul { margin: 0; padding-left: 18px; display: grid; gap: 3px }
+.panel p { margin: 0 }
+.panel .how { background: var(--accent-soft); border-radius: 8px; padding: 12px 14px }
+
+.journeys { display: grid; gap: 14px }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; counter-reset: s }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); cursor: pointer }
+.steps li:first-child { border-top: 0 }
+.steps li::before { content: counter(s); width: 26px; height: 26px; border-radius: 13px; display: grid; place-items: center; font: 700 0.78rem var(--f-body); background: var(--accent-soft); color: var(--accent); font-variant-numeric: tabular-nums }
+.steps li.cur::before { background: var(--accent); color: var(--bg) }
+.steps .who { font-size: 0.78rem; color: var(--muted) }
+.note { font-size: 0.85rem; color: var(--muted); max-width: 80ch }
+@media (prefers-reduced-motion: reduce) { .node { transition: none } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="label">ORISO · Online-Beratung platform</div>
+    <h1>Service map</h1>
+    <p class="lede">Who uses which app, what each service does, and how a request travels from an advice seeker to a counsellor. Click any box for details, or pick a journey to see the path it takes.</p>
+  </header>
+
+  <section class="journeys">
+    <div class="tabs" id="jtabs" role="group" aria-label="Journeys"></div>
+  </section>
+
+  <div class="main">
+    <div>
+      <div class="layers" id="layers"></div>
+      <ol class="steps" id="steps" style="margin-top:18px"></ol>
+    </div>
+    <aside class="panel" id="panel" aria-live="polite"></aside>
+  </div>
+
+  <p class="note">Built from the ORISO repos: READMEs, API specs in each service's <code>api/</code> folder, Frontend components, and Admin routes in <code>appConfig.ts</code>. The infrastructure layer comes from the ORISO-Docs Helm guide. Each infrastructure box describes the component's usual role here; the per-service wiring was not traced in code.</p>
+</div>
+
+<script>
+const KIND = { people: "var(--people)", apps: "var(--apps)", svc: "var(--svc)", infra: "var(--infra)" };
+const LAYERS = [
+  ["people", "People"], ["apps", "Apps you open"], ["svc", "Platform services"], ["infra", "Infrastructure"]
+];
+const N = {
+  seeker: { k: "people", name: "Advice seeker", sub: "asker", what: "A person looking for help. They can stay anonymous behind a username.",
+    feat: ["Registers for a topic", "Writes an enquiry", "Chats with their counsellor (encrypted)", "Books appointments, joins video calls", "Manages their profile and 2FA"],
+    how: "Opens the Frontend at <code>/&lt;topic-slug&gt;/registration</code> and signs up. Afterwards they log in at the Frontend." },
+  counsellor: { k: "people", name: "Counsellor", sub: "consultant", what: "Answers enquiries and runs counselling sessions for one or more agencies and topics.",
+    feat: ["Accepts new enquiries", "1:1, team and group counselling", "Video calls and appointments", "Hands over cases, asks a supervisor"],
+    how: "Can't sign up alone. An admin creates the account at <code>/admin/users/consultants</code> or sends an invite. The counsellor then logs in to the <b>Frontend</b>." },
+  admin: { k: "people", name: "Admin", sub: "platform / tenant / agency", what: "Sets up the platform: tenants, agencies, topics and staff accounts. Platform admins see everything. Tenant and agency admins see only their own part.",
+    feat: ["Creates counsellors and other admins", "Configures agencies and topics", "Branding, legal texts, SMTP", "Reads statistics and audit logs"],
+    how: "Logs in to <b>ORISO-Admin</b> at <code>/admin/login</code>." },
+  operator: { k: "people", name: "Operator", sub: "devops", what: "Keeps the platform running on Kubernetes.",
+    feat: ["Deploys everything through one Helm umbrella chart", "Watches logs and traces", "Builds and imports images"],
+    how: "Uses <code>helm</code> and <code>kubectl -n caritas</code>, plus SigNoz for traces. The step-by-step guide is in ORISO-Docs." },
+
+  frontend: { k: "apps", name: "ORISO-Frontend", sub: "React app for seekers & counsellors", what: "The app advice seekers and counsellors use day to day. It talks to the services under <code>/service/*</code>, and to Matrix for real-time chat.",
+    feat: ["Registration wizard, topic & agency selection", "Sessions list, chat, drafts, notifications", "Counsellor dashboard, enquiry assignment, case handover", "Group chat, team discussion, supervision", "Video and voice calls, appointment booking", "Anonymous live chat, waiting room", "Profile, 2FA, password reset, temporary accounts"],
+    how: "Run locally with <code>npm install && npm run dev</code> in ORISO-Frontend. Seekers sign up at <code>/registration</code>. Everyone logs in at the Frontend's login page." },
+  adminApp: { k: "apps", name: "ORISO-Admin", sub: "admin dashboard", what: "The back office. Every change here goes through the platform services' <code>/useradmin</code>, agency-admin and tenant APIs.",
+    feat: ["Users: counsellors, agency, tenant and platform admins", "Agencies and topics", "Links: invites for tenants and counsellors", "Tenant and counsellor onboarding wizards", "Theme settings: legal, SMTP, permissions, first reply, notices", "Statistics; logs for handovers, inactive accounts, deletions"],
+    how: "Run locally with <code>npm install && npm run dev</code> in ORISO-Admin (copy <code>.env.example</code> to <code>.env</code> first). Main pages: <code>/admin/users</code>, <code>/admin/agency</code>, <code>/admin/topics</code>, <code>/admin/links</code>." },
+
+  user: { k: "svc", name: "UserService", sub: "accounts, sessions, chat rooms", what: "The core of the platform. It owns seeker and counsellor accounts, enquiries and counselling sessions, and creates the Matrix chat rooms that sessions run in.",
+    feat: ["Seeker registration <code>/users/askers/new</code>", "Creating counsellors <code>/useradmin/consultants</code> and invites", "Enquiries, sessions, assigning a counsellor", "1:1, team and group chats; Matrix room memberships", "Live-chat availability, conversations", "Appointments, statistics, account inactivity"],
+    how: "Spring Boot. Specs are in <code>api/userservice.yaml</code> and <code>api/useradminservice.yaml</code>. Logs: <code>kubectl logs -n caritas -l app=userservice</code>." },
+  agency: { k: "svc", name: "AgencyService", sub: "counselling agencies", what: "Holds the agencies, meaning the counselling centres that counsellors belong to. Registration uses it to find the right agency for a seeker.",
+    feat: ["Agency directory and lookup during registration", "Agency admin API: create and edit agencies", "Assigning agencies to topics and counsellors"],
+    how: "Spring Boot. Run locally with <code>./mvnw spring-boot:run -Dspring-boot.run.profiles=local</code>. Managed from Admin → Agency." },
+  ctype: { k: "svc", name: "ConsultingTypeService", sub: "topics & app settings", what: "Defines what people can get help with: the consulting types and topics, plus app-wide settings.",
+    feat: ["Consulting types and how each one behaves", "Topics (shown on registration, assigned to counsellors)", "Application settings"],
+    how: "Spring Boot. Specs are in <code>api/consultingtypeservice.yml</code> and <code>api/topicservice.yml</code>. Managed from Admin → Topics and Global settings." },
+  tenant: { k: "svc", name: "TenantService", sub: "tenants & branding", what: "Keeps the list of tenants. A tenant is one organisation running its own branded copy of ORISO on its own subdomain.",
+    feat: ["Tenant identity, subdomain, licence limits", "Theming and feature switches", "Legal texts in several languages, with start dates", "Public tenant info before login; SMTP test, system emails"],
+    how: "Spring Boot. Spec is in <code>api/tenantservice.yaml</code>. Managed from Admin → Tenants, Theme settings and Tenant onboarding." },
+
+  keycloak: { k: "infra", name: "Keycloak", sub: "login & roles", what: "Handles logins for every user, and stores their roles and 2FA. Creating a user also creates them in Keycloak.",
+    feat: ["Login and token issuing", "Roles: asker, consultant, admins", "One account per email (duplicates are rejected)"],
+    how: "Its own admin console. Usually you manage users through ORISO-Admin, not directly." },
+  matrix: { k: "infra", name: "Matrix Synapse", sub: "encrypted chat", what: "The chat server. Every counselling session is a Matrix room. UserService creates the room and the Frontend sends and receives messages through it.",
+    feat: ["End-to-end encrypted rooms (Olm device keys, Megolm sending keys)", "Delivers sealed key copies device-to-device; stores only ciphertext", "Encrypted key backup for new devices", "Signals calls (MatrixRTC) and carries call media keys", "Real-time messages, typing indicators"], how: "Deployed by the Helm chart. It needs no day-to-day work." },
+  livekit: { k: "infra", name: "LiveKit", sub: "video & voice", what: "The media server for video and voice calls, reached through Element Call. Calls are end-to-end encrypted per participant by default (ADR-018), so LiveKit only forwards frames it can't decode.", feat: ["Video and voice calls", "Frames encrypted in the browser; keys exchanged over Matrix", "TURN relay for restrictive networks", "Off switch: <code>releaseToggles.enableCallMediaE2EE = false</code> (transport encryption only)"], how: "Deployed by the Helm chart. The Frontend reads <code>REACT_APP_LIVEKIT_WS_URL</code>." },
+  db: { k: "infra", name: "MariaDB · MongoDB", sub: "data", what: "Databases that hold each service's records: users, sessions, agencies, tenants and settings.", feat: ["Relational data in MariaDB/MySQL", "Document data in MongoDB"], how: "Back these up before upgrades." },
+  msg: { k: "infra", name: "Redis · RabbitMQ", sub: "cache & events", what: "Redis caches data. RabbitMQ carries events between services.", feat: ["Caching", "Asynchronous messages"], how: "Deployed by the Helm chart." },
+  edge: { k: "infra", name: "Nginx gateway", sub: "routing", what: "Sits in front of everything and sends each <code>/service/...</code> call to the right service.", feat: ["Routes calls by URL path", "Serves the web apps"], how: "Configured in the Helm chart." },
+  signoz: { k: "infra", name: "SigNoz", sub: "observability", what: "Collects traces, metrics and logs, so you can see where a request failed.", feat: ["Traces across services", "Dashboards and alerts"], how: "Operators open its UI when debugging." }
+};
+const J = [
+  { id: "seeker", name: "Seeker gets help", steps: [
+    ["seeker", "Opens the Frontend at <code>/&lt;topic&gt;/registration</code>", "Advice seeker"],
+    ["frontend", "Frontend shows the registration wizard", "Frontend"],
+    ["tenant", "Tenant branding and legal texts load", "TenantService"],
+    ["ctype", "Topics to choose from load", "ConsultingTypeService"],
+    ["agency", "An agency is picked for the topic", "AgencyService"],
+    ["user", "The account is created via <code>/users/askers/new</code>", "UserService"],
+    ["keycloak", "The login is created, and the seeker is signed in", "Keycloak"],
+    ["matrix", "The enquiry gets its own encrypted chat room", "Matrix"],
+    ["counsellor", "A counsellor from that agency accepts it, and the chat starts", "Counsellor"] ] },
+  { id: "trace", name: "Seeker → agency → counsellor (in code)", steps: [
+    ["seeker", "Fills in the registration wizard (topic, agency, username, password, consent). <code>Registration.tsx:806</code>", "Advice seeker"],
+    ["frontend", "Sends <code>POST /users/askers/new</code> and logs in automatically when it succeeds. <code>useRegisterThenLogin.ts:45</code>", "Frontend"],
+    ["user", "Checks the fields, that the username is free, that the topic matches the agency, and that the agency's DPA is in place. <code>CreateUserFacade.java:142–154</code>", "UserService"],
+    ["keycloak", "Creates the login. If a later step fails, the login is rolled back. <code>identityClient.createUser</code>", "Keycloak"],
+    ["db", "Saves the user record. <code>userService.saveUser</code>", "Database"],
+    ["matrix", "Creates the seeker's Matrix account and stores its <code>matrixUserId</code>. <code>matrixSynapseService.createUser</code>", "Matrix"],
+    ["user", "Creates the session for this topic and agency, in status <code>INITIAL</code>. <code>CreateNewSessionFacade → CreateSessionFacade.createUserSession</code>", "UserService"],
+    ["agency", "The agency's own Matrix service account is looked up. <code>AgencyPreAssignmentRoomService</code>", "Agency"],
+    ["matrix", "That account creates the room, encrypted with Megolm. The agency's counsellors join first, then the seeker is invited (ADR-002). The rest join in the background.", "Matrix"],
+    ["seeker", "Writes the first message at <code>/sessions/user/view/write</code>. The browser encrypts it and sends it to the room.", "Advice seeker"],
+    ["user", "<code>POST /sessions/{id}/enquiry/new</code> checks that the event exists and is encrypted, using only its ID. The session becomes <code>NEW</code>. <code>CreateEnquiryMessageFacade.java:72–114</code>", "UserService"],
+    ["tenant", "The tenant's automatic first reply is posted to the room. <code>postErstantwort</code>", "Tenant texts"],
+    ["counsellor", "Sees the request under Requests (<code>/sessions/consultant/sessionPreview</code>) and clicks Accept. <code>AcceptAssign.tsx:398</code>", "Counsellor"],
+    ["user", "<code>PUT /sessions/new/{id}</code> assigns the session, saving agency, counsellor and status together. The supervisor is attached, the team discussion is archived, and the seeker is notified. <code>AssignEnquiryFacade.java:97–128</code>", "UserService"],
+    ["matrix", "The counsellor joins the existing room, so the earlier messages stay. The agency account and counsellors who lost access leave. Other counsellors' request entries are removed. <code>AssignEnquiryFacade.java:291–437</code>", "Matrix"],
+    ["frontend", "Both people now see it under Chats. Messages go browser ↔ Matrix ↔ browser, encrypted end to end, without UserService.", "Both browsers"] ] },
+  { id: "supervision", name: "Supervision", steps: [
+    ["admin", "Before you start: create counsellor B in the same agency as A. Supervision must be switched on for the tenant and agency.", "Admin"],
+    ["counsellor", "Counsellor A opens the chat on a desktop browser and chooses <b>Manage Supervisors</b> from the chat header menu. <code>SessionMenu.tsx:904</code>", "Counsellor A"],
+    ["frontend", "A picks counsellor B and enters a reason, then clicks Add.", "Frontend"],
+    ["user", "Checks: not an anonymous session, the seeker hasn't switched supervision off, A is the assigned counsellor or from the same agency, and the feature is on. <code>SessionSupervisorFacade.java:143–178</code>", "UserService"],
+    ["matrix", "B is added to the room as a read-only observer (power level 10). B can read but not post.", "Matrix"],
+    ["counsellor", "Counsellor B opens the case and reads it. When A removes B, B loses access. A standing supervisor is attached automatically when a case is accepted.", "Counsellor B"] ] },
+  { id: "handover", name: "Case handover", steps: [
+    ["counsellor", "Counsellor A opens the client info panel (<code>…/userProfile</code>) and starts a handover. <code>AskerInfoAssign.tsx:467</code>", "Counsellor A"],
+    ["frontend", "A picks counsellor B and a reason, then sends the offer: <code>POST /sessions/{id}/case-handover/offers</code>", "Frontend"],
+    ["user", "Stores the offer. A can still withdraw it (<code>…/withdraw</code>).", "UserService"],
+    ["counsellor", "Counsellor B accepts or declines it: <code>…/recipient-decision</code>", "Counsellor B"],
+    ["seeker", "The seeker is asked to consent: <code>…/client-consent</code>", "Advice seeker"],
+    ["matrix", "B takes over the room. A and B may both have access for a while, which can be extended (<code>…/extend</code>). A can reclaim the case (<code>…/reclaim</code>).", "Matrix"],
+    ["adminApp", "The handover is logged under Admin → Logs → Case handover (<code>/admin/logs/case-handover</code>).", "ORISO-Admin"] ] },
+  { id: "counsellor", name: "Counsellor joins", steps: [
+    ["admin", "Admin opens Links → Counsellor, or Users → Consultants", "Admin"],
+    ["adminApp", "Creates an invite, or creates the account directly", "ORISO-Admin"],
+    ["user", "The invite is stored and emailed to the counsellor", "UserService"],
+    ["counsellor", "Counsellor opens the link and fills in name, topics and 2FA", "Counsellor"],
+    ["keycloak", "The account is created with the consultant role", "Keycloak"],
+    ["frontend", "Counsellor logs in to the Frontend and sees new enquiries", "Frontend"] ] },
+  { id: "setup", name: "Admin sets up a tenant", steps: [
+    ["admin", "Platform admin creates a tenant, or sends a tenant invite", "Admin"],
+    ["adminApp", "The tenant onboarding wizard runs", "ORISO-Admin"],
+    ["tenant", "Subdomain, branding, legal texts and SMTP are saved", "TenantService"],
+    ["ctype", "Topics are created", "ConsultingTypeService"],
+    ["agency", "Agencies are created and linked to topics", "AgencyService"],
+    ["user", "Counsellors and agency admins are added", "UserService"] ] },
+  { id: "both", name: "Test both roles", steps: [
+    ["counsellor", "Make a counsellor account with your real email", "Counsellor"],
+    ["seeker", "Register a seeker under a topic and agency that counsellor covers. Use a different username, or an email like you+seeker@…", "Advice seeker"],
+    ["frontend", "Log in as one in a normal window and as the other in incognito. Two tabs in one window share a single login.", "Frontend"],
+    ["matrix", "Send the enquiry, accept it as the counsellor, and chat between the two windows", "Matrix"] ] },
+  { id: "crypto", name: "Encrypted chat & calls", steps: [
+    ["user", "Creates the session's Matrix room as an encrypted room", "UserService"],
+    ["frontend", "When someone logs in, the browser makes its own device key pair (Olm) and uploads the public half. Cross-signing and key backup are set up too.", "Every browser"],
+    ["seeker", "The sender's browser makes a <b>sending key</b> (a Megolm session) for the room", "Sender"],
+    ["matrix", "A copy of the sending key goes to each participant, sealed with that device's public key, as a device-to-device message. Only that device can open it.", "Matrix"],
+    ["matrix", "The message is encrypted with the sending key. The server stores only <code>m.room.encrypted</code>.", "Matrix"],
+    ["counsellor", "The recipient opens the sealed copy with their private device key and decrypts the message. Replies use the recipient's own sending key.", "Recipient"],
+    ["livekit", "Calls: each browser encrypts every audio and video frame with its own media key. The keys travel over Matrix as <code>io.element.call.encryption_keys</code>, so LiveKit only forwards encrypted frames.", "LiveKit"],
+    ["frontend", "On a new device, old keys are restored from the encrypted key backup using the recovery key. If a key is missing, the message shows \"missing key\".", "Frontend"] ] },
+  { id: "ops", name: "Operate it", steps: [
+    ["operator", "Deploy the platform with the Helm umbrella chart (see ORISO-Docs)", "Operator"],
+    ["edge", "The gateway sends <code>/service/*</code> calls to each service", "Nginx"],
+    ["user", "Check a service: <code>kubectl logs -n caritas -l app=userservice</code>", "Services"],
+    ["signoz", "Follow a failing request across services", "SigNoz"],
+    ["db", "Back up the databases before upgrades", "Data"] ] }
+];
+
+const $ = s => document.querySelector(s);
+let sel = "frontend", jour = "seeker", cur = 0;
+
+function renderLayers() {
+  const j = J.find(x => x.id === jour), order = {};
+  j.steps.forEach(([id], i) => { (order[id] ||= []).push(i + 1) });
+  $("#layers").className = "layers dim";
+  $("#layers").innerHTML = LAYERS.map(([k, label]) => `
+    <div class="layer"><div class="label">${label}</div><div class="nodes">
+    ${Object.entries(N).filter(([, n]) => n.k === k).map(([id, n]) => `
+      <button class="node${order[id] ? " on" : ""}" style="--kind:${KIND[k]}" data-id="${id}" aria-pressed="${id === sel}">
+        ${n.name}<small>${n.sub}</small>${order[id] ? `<span class="step">${order[id].join("·")}</span>` : ""}
+      </button>`).join("")}
+    </div></div>`).join("");
+  $("#steps").innerHTML = j.steps.map(([id, text, who], i) =>
+    `<li class="${i === cur ? "cur" : ""}" data-id="${id}" data-i="${i}" tabindex="0"><span><span class="who">${who}</span><br>${text}</span></li>`).join("");
+}
+function renderPanel() {
+  const n = N[sel];
+  $("#panel").style.setProperty("--kind", KIND[n.k]);
+  $("#panel").innerHTML = `
+    <div><span class="kind">${LAYERS.find(l => l[0] === n.k)[1]}</span><h2>${n.name}</h2></div>
+    <p>${n.what}</p>
+    <div><div class="label">What it does</div><ul>${n.feat.map(f => `<li>${f}</li>`).join("")}</ul></div>
+    <div class="how"><div class="label">How you use it</div><p>${n.how}</p></div>`;
+}
+function renderTabs() {
+  $("#jtabs").innerHTML = J.map(j => `<button data-j="${j.id}" aria-pressed="${j.id === jour}">${j.name}</button>`).join("");
+}
+function all() { renderTabs(); renderLayers(); renderPanel() }
+
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-j],[data-id]");
+  if (!t) return;
+  if (t.dataset.j) { jour = t.dataset.j; cur = 0; sel = J.find(x => x.id === jour).steps[0][0] }
+  else { sel = t.dataset.id; if (t.dataset.i) cur = +t.dataset.i }
+  all();
+});
+document.addEventListener("keydown", e => {
+  if ((e.key === "Enter" || e.key === " ") && e.target.matches("li[data-id]")) { e.preventDefault(); e.target.click() }
+});
+all();
+</script>
+
+</body></html>
