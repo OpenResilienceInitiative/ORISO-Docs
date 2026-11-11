@@ -38,6 +38,7 @@ class ConsumerTests(unittest.TestCase):
    def clone(name,revision,target):shutil.copytree(repo,target)
    root=temp/'installed';result=install_sources(gen,root,clone);self.assertEqual((root/'current').resolve(),result.resolve());self.assertEqual((result/'ORISO-UserService/source.txt').read_text(),'synthetic source')
    self.assertTrue((result/'graph-generation/manifest.json').is_file())
+   self.assertEqual(result.stat().st_mode & 0o755,0o755,'installed generation must be readable by the viewer container user')
    other=temp/'other-generation';other.mkdir();(root/'current').unlink();(root/'current').symlink_to(other)
    def no_clone(*args):raise AssertionError('Immutable reuse must not clone again')
    reused=install_sources(gen,root,no_clone);self.assertEqual(reused.resolve(),result.resolve());self.assertEqual((root/'current').resolve(),result.resolve())
