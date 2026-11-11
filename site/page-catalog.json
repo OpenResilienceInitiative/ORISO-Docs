@@ -707,6 +707,30 @@
       }
     },
     {
+      "id": "oriso-platform/architecture/service-map",
+      "source": "oriso-platform/architecture/service-map.mdx",
+      "route": "betrieb/architecture/service-map",
+      "aliases": [
+        "oriso-platform/architecture/service-map",
+        "oriso-platform/architecture/service-map.md",
+        "oriso-platform/architecture/service-map.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "de": {
+          "path": "site/translations/de/oriso-platform/architecture/service-map.mdx",
+          "sourceHash": "03d5f5e95c24cd2f3e3f5af772ba5e47b8db907d0f7e75f654cb192d0c0875e8",
+          "reviewedAt": "2026-11-11"
+        },
+        "en": {
+          "path": "site/translations/en/oriso-platform/architecture/service-map.mdx",
+          "sourceHash": "03d5f5e95c24cd2f3e3f5af772ba5e47b8db907d0f7e75f654cb192d0c0875e8",
+          "reviewedAt": "2026-11-11"
+        }
+      }
+    },
+    {
       "id": "oriso-platform/backup-configuration",
       "source": "oriso-platform/backup-configuration.mdx",
       "route": "betrieb/operations/backup-configuration",
