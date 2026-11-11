@@ -43,6 +43,9 @@ not its `_artifacts/` subfolder). The series was re-synchronised on 2026-08-17 f
   data-driven family chips without an "Alle" chip, and a working Timeline preview that never
   registers an active view (product decision 2026-10-21, ORISO-Frontend#1824). Needs product sign-off.
 
+- `ADR-031-production-telemetry-boundary-for-signoz.md` — proposed 2026-11-07 for E2E #99 F.4.
+  Describes the telemetry, access, retention and recovery requirements for production SigNoz.
+
 New decisions in this section are repository-owned records and are not part of the unchanged
 19-file import described above.
 
