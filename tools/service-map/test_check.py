@@ -32,12 +32,13 @@ class ServiceMapCheck(unittest.TestCase):
             (root / "templates/userservice").mkdir(parents=True)
             (root / "templates/_helpers.tpl").write_text("")
             (root / "Chart.yaml").write_text(
-                "name: x\ndependencies:\n  - name: redis\n    version: 1\n  - name: signoz\n"
+                "name: x\ndependencies:\n  - name: redis\n    version: 1\n  - name: \"signoz\"\n"
             )
             self.assertEqual(check.helm_components(root), {"userservice", "redis", "signoz"})
 
     def test_reads_box_ids_from_map(self):
-        html = '  user: { k: "svc", name: "UserService" },\n  db: { k: "infra" },'
+        html = ('const LAYERS = [\n  ["svc", "Services"], ["infra", "Infra"]\n];\n'
+                '  user: { k: "svc", name: "UserService" },\n  db: { k: "infra" },\n  typo: { k: "svcc" },')
         self.assertEqual(check.map_node_ids(html), {"user", "db"})
 
 

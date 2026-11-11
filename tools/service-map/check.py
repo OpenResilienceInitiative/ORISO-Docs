@@ -9,6 +9,8 @@ import re
 import sys
 from pathlib import Path
 
+import yaml  # PyYAML; the workflow installs it, and a missing parser must fail loudly
+
 ROOT = Path(__file__).resolve().parents[2]
 COVERAGE = Path(__file__).with_name("coverage.json")
 MAP_HTML = ROOT / "site/public/service-map/index.html"
@@ -17,14 +19,15 @@ MAP_HTML = ROOT / "site/public/service-map/index.html"
 def helm_components(helm_dir: Path) -> set[str]:
     """Template directories plus Chart.yaml dependency names."""
     names = {p.name for p in (helm_dir / "templates").iterdir() if p.is_dir()}
-    chart = (helm_dir / "Chart.yaml").read_text()
-    deps = chart.split("dependencies:", 1)[1] if "dependencies:" in chart else ""
-    names |= set(re.findall(r"^\s*-\s*name:\s*([\w.-]+)", deps, re.M))
+    chart = yaml.safe_load((helm_dir / "Chart.yaml").read_text()) or {}
+    names |= {str(dep["name"]) for dep in chart.get("dependencies") or []}
     return names
 
 
 def map_node_ids(html: str) -> set[str]:
-    return set(re.findall(r"^\s*(\w+): \{ k: \"", html, re.M))
+    """Ids of boxes whose kind is one of the rendered LAYERS (others never show)."""
+    layers = set(re.findall(r'\["(\w+)", "[^"]+"\]', html.split("const LAYERS", 1)[1].split("];", 1)[0]))
+    return {i for i, k in re.findall(r'^\s*(\w+): \{ k: "(\w+)"', html, re.M) if k in layers}
 
 
 def problems(components: set[str], coverage: dict, node_ids: set[str]) -> list[str]:

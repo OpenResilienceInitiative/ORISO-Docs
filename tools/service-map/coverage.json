@@ -4,7 +4,7 @@
     "admin": "adminApp",
     "agencyservice": "agency",
     "consultingtypeservice": "ctype",
-    "element-call": "livekit",
+    "element-call": "elementcall",
     "frontend": "frontend",
     "ip-anonymizer": "ipanon",
     "livekit": "livekit",

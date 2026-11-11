@@ -49,7 +49,8 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
 .node::before { content: ""; position: absolute; left: 0; top: 8px; bottom: 8px; width: 3px; border-radius: 2px; background: var(--kind) }
 .node small { display: block; font-weight: 400; color: var(--muted); font-size: 0.76rem }
 .node[aria-pressed="true"] { border-color: var(--kind); box-shadow: 0 0 0 1px var(--kind) }
-.layers.dim .node:not(.on) { opacity: 0.32 }
+.layers.dim .node:not(.on) { background: transparent; border-style: dashed }
+.layers.dim .node:not(.on)::before { opacity: 0.35 }
 .node .step { position: absolute; top: -8px; right: -8px; min-width: 20px; height: 20px; border-radius: 10px; background: var(--kind); color: var(--bg); font: 700 0.7rem/20px var(--f-body); text-align: center; padding: 0 5px; font-variant-numeric: tabular-nums }
 
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: grid; gap: 14px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px) }
@@ -61,7 +62,9 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
 
 .journeys { display: grid; gap: 14px }
 .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; counter-reset: s }
-.steps li { counter-increment: s; display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); cursor: pointer }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 12px; padding: 10px 0; border-top: 1px solid var(--line) }
+.steps li button { all: unset; cursor: pointer; display: block }
+.steps li button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
 .steps li:first-child { border-top: 0 }
 .steps li::before { content: counter(s); width: 26px; height: 26px; border-radius: 13px; display: grid; place-items: center; font: 700 0.78rem var(--f-body); background: var(--accent-soft); color: var(--accent); font-variant-numeric: tabular-nums }
 .steps li.cur::before { background: var(--accent); color: var(--bg) }
@@ -136,6 +139,7 @@ const N = {
     how: "Its own admin console. Usually you manage users through ORISO-Admin, not directly." },
   matrix: { k: "infra", name: "Matrix Synapse", sub: "encrypted chat", what: "The chat server. Every counselling session is a Matrix room. UserService creates the room and the Frontend sends and receives messages through it.",
     feat: ["End-to-end encrypted rooms (Olm device keys, Megolm sending keys)", "Delivers sealed key copies device-to-device; stores only ciphertext", "Encrypted key backup for new devices", "Signals calls (MatrixRTC) and carries call media keys", "Real-time messages, typing indicators"], how: "Deployed by the Helm chart. It needs no day-to-day work." },
+  elementcall: { k: "apps", name: "Element Call", sub: "call screen", what: "The call screen that opens inside the Frontend for video and voice calls. It signals the call over Matrix (MatrixRTC) and sends media to LiveKit.", feat: ["Video and voice calls inside a chat", "Encrypts every audio and video frame in the browser", "Exchanges media keys over Matrix"], how: "Built from ORISO-ElementCall and deployed by the Helm chart. Users reach it from the call button in a chat." },
   livekit: { k: "infra", name: "LiveKit", sub: "video & voice", what: "The media server for video and voice calls, reached through Element Call. Calls are end-to-end encrypted per participant by default (ADR-018), so LiveKit only forwards frames it can't decode.", feat: ["Video and voice calls", "Frames encrypted in the browser; keys exchanged over Matrix", "TURN relay for restrictive networks", "Off switch: <code>releaseToggles.enableCallMediaE2EE = false</code> (transport encryption only)"], how: "Deployed by the Helm chart. The Frontend reads <code>REACT_APP_LIVEKIT_WS_URL</code>." },
   db: { k: "infra", name: "MariaDB · MongoDB", sub: "data", what: "Databases that hold each service's records: users, sessions, agencies, tenants and settings.", feat: ["Relational data in MariaDB/MySQL", "Document data in MongoDB"], how: "Back these up before upgrades." },
   msg: { k: "infra", name: "Redis · RabbitMQ", sub: "cache & events", what: "Redis caches data. RabbitMQ carries events between services.", feat: ["Caching", "Asynchronous messages"], how: "Deployed by the Helm chart." },
@@ -238,7 +242,7 @@ function renderLayers() {
       </button>`).join("")}
     </div></div>`).join("");
   $("#steps").innerHTML = j.steps.map(([id, text, who], i) =>
-    `<li class="${i === cur ? "cur" : ""}" data-id="${id}" data-i="${i}" tabindex="0"><span><span class="who">${who}</span><br>${text}</span></li>`).join("");
+    `<li class="${i === cur ? "cur" : ""}"><button data-id="${id}" data-i="${i}" aria-current="${i === cur ? "step" : "false"}"><span class="who">${who}</span><br>${text}</button></li>`).join("");
 }
 function renderPanel() {
   const n = N[sel];
@@ -259,10 +263,10 @@ document.addEventListener("click", e => {
   if (!t) return;
   if (t.dataset.j) { jour = t.dataset.j; cur = 0; sel = J.find(x => x.id === jour).steps[0][0] }
   else { sel = t.dataset.id; if (t.dataset.i) cur = +t.dataset.i }
+  // Re-rendering replaces the buttons; put focus back on the matching one.
+  const key = t.dataset.j ? `[data-j="${t.dataset.j}"]` : t.dataset.i ? `#steps [data-i="${t.dataset.i}"]` : `#layers [data-id="${t.dataset.id}"]`;
   all();
-});
-document.addEventListener("keydown", e => {
-  if ((e.key === "Enter" || e.key === " ") && e.target.matches("li[data-id]")) { e.preventDefault(); e.target.click() }
+  document.querySelector(key)?.focus();
 });
 all();
 </script>
