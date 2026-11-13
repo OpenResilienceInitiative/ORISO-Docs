@@ -36,11 +36,22 @@ The calendar is an ORISO-Frontend feature built on the **MIT packages of FullCal
 - Counsellors **create** an appointment by selecting a free time (choosing the conversation it belongs to), **move** it by dragging (the advice seeker is notified as on any reschedule), and create **availability blockers** the same way.
 - **Advice seekers** get a read-only calendar view and the list of their own appointments, plus the existing single-appointment "add to my calendar" export. They get **no** subscription link.
 
-### 3. Team view as ORISO's own code
+### 2a. Appointment kinds
 
-Counsellors of the same Beratungsstelle can show colleagues' calendars side by side or as overlays. This is built as ORISO code on top of the MIT core (per-person columns or colour layers), not with FullCalendar Premium.
+Every 1:1 appointment has one of four kinds, matching the `location` values already in the code: **on-site** (In der Beratungsstelle, `IN_PERSON`), **video** (`VIDEO_CALL`/`LINK`), **phone** (`PHONE_CALL`/`USER_PHONE`) and **chat** (`CHAT`). The kind sets colour, icon and the start action in the calendar ("Video-Call starten", "Anruf starten", "Chat öffnen"; on-site shows the address of the Beratungsstelle and has no start action). Group dates and availability blockers are separate entry types, not kinds.
 
-A colleague's entry shows only **busy + kind** (1:1 appointment, group date, absence). No advice-seeker name, no topic, no note.
+### 3. Team view as ORISO's own code, visibility set by the Träger
+
+Counsellors can show colleagues' calendars side by side or as overlays. This is built as ORISO code on top of the MIT core (per-person columns or colour layers), not with FullCalendar Premium.
+
+**Who can be seen** follows the same model as the internal chat (`internalGroupChat.recipientScope`): the Träger chooses in ORISO-Admin one of
+- **counselling centre** (default): colleagues of the same Beratungsstelle;
+- **Träger**: all counsellors of the Träger;
+- **platform**: all counsellors on the platform.
+
+The setting lives in ORISO-TenantService (`calendar.visibilityScope`, counselling centre when unset), uses the same Admin control as the internal-chat scope, and is enforced by ORISO-UserService. Hiding a colleague in the frontend is not enforcement.
+
+**What is seen** of a colleague's entry: always time, **busy** and the appointment kind (§2a) or "absence". The Träger may additionally switch on **"show advice-seeker usernames"** (default off). Nothing beyond the username is ever shown to colleagues: no topic, no note, no conversation content, no contact data.
 
 ### 4. Outbound sync: one secret ICS subscription link per counsellor
 
@@ -71,7 +82,8 @@ All parts above are P1 (Frank, 2026-11-13).
 
 | Concern | Owner |
 |---|---|
-| Calendar projection, ICS feed, feed tokens, inbound busy import | ORISO-UserService |
+| Calendar projection, ICS feed, feed tokens, inbound busy import, enforcement of calendar visibility | ORISO-UserService |
+| Calendar visibility scope and "show usernames" switch per Träger | ORISO-TenantService (setting), ORISO-Admin (control, reused from the internal-chat scope) |
 | Calendar views, create/move/blocker UI, team view, feed and import settings UI | ORISO-Frontend |
 | Removal of the cal.com integration | ORISO-Frontend, ORISO-UserService, ORISO-Helm |
 
@@ -86,6 +98,8 @@ All parts above are P1 (Frank, 2026-11-13).
 - **Advice-seeker subscription links** — another permanent channel that could expose an anonymous advice seeker.
 
 ## Consequences
+
+**Amended 2026-11-13 (same day, Frank):** §2a appointment kinds and the Träger-set visibility scope in §3 were added after the first acceptance.
 
 **Positive:** one stack, one source of truth, no paid licence and no licence review for the chosen parts. One link reaches all three major calendars. External calendars never learn who the advice seeker is. The inbound import prevents bookings into busy time without OAuth.
 
