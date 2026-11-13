@@ -56,7 +56,14 @@ A counsellor can paste the private ICS address of their Outlook or Google calend
 
 Two-way sync through the Google Calendar API, Microsoft Graph or a CalDAV server is out of scope. It may be reconsidered when a Träger requires it; that would need a new decision including the Träger's data protection officer.
 
-### 7. Priority
+### 7. Delivery order: Storybook first, Frank's click-through acceptance, then backend
+
+1. **Clickable prototype** of the calendar on the FullCalendar MIT core, for early feedback.
+2. **Frontend in Storybook first**, against mocked data: every view, the create/move/blocker flows, team view, feed and import settings, advice-seeker view, empty/loading/error states, phone and desktop. Everything uses the ORISO design system (tokens, components, Figma `App.Oriso` → `Termine`); no one-off styling.
+3. **Click-through acceptance by Frank** of every function in Storybook. Nothing is wired to the app before this acceptance.
+4. **Backend afterwards** (UserService projection, feed, import, write endpoints), shaped by the accepted Storybook behaviour. Then app wiring and real-browser tests on Dev.
+
+### 8. Priority
 
 All parts above are P1 (Frank, 2026-11-13).
 
