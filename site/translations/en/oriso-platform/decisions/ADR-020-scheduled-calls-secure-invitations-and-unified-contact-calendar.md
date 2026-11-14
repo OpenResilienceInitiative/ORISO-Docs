@@ -197,3 +197,5 @@ This record is the one place for this decision; ADR-029 and the issues link here
 - Guests do not count toward the call's start or end.
 
 **Why here and not in an ADR-018.** Platform ADR-018 is about the Erstantwort and has nothing to do with calls. ORISO-Frontend's ADR-018 is about embedding Element Call as a widget; it says the host joins the call room before mounting the widget, but not who may become a member. Room membership for calls is a Call Session rule, and that is this record.
+
+> **Extended by ADR-032** (2026-11-13): how the Contact Calendar is built (FullCalendar MIT core, own team view) and synced (neutral ICS feed out, busy-time import in).
