@@ -1,6 +1,7 @@
 # ADR-002: Stille Raummitgliedschaft mit Vertraulichkeitsschranke durch Zugriffskontrolle, nicht Ende-zu-Ende-Verschlüsselung
 
 - **Status:** Angenommen — Frank, 2026-06-25 (Bestätigung durch das Team steht aus)
+- **Geändert:** 2026-11-14 — siehe [Nachtrag 2026-11-14](#nachtrag-2026-11-14--späte-beitretende-sehen-nachrichten-ab-ihrem-beitritt) am Ende (Verlauf beim späten Beitritt).
 - **Datum:** 2026-06-25
 - **Entscheider:** Frank und Backend-/Matrix-/Frontend-Leads
 - **Verwandt:** ADR-001 (Beratungsformen als Module); `ORISO-UserService/CONTEXT.md`; `ORISO-Frontend/CONTEXT.md` (Übergabe); UserService `UnauthorizedMembersProvider`, `AgencyPreAssignmentRoomService`, `AssignEnquiryFacade`, `MatrixRoomClient`, `SessionSupervisorFacade`
@@ -154,3 +155,12 @@ Zielgruppenbeschränkungen des Mitarbeitenden-Audits und die Datenschutzgrenze a
 nichtleeren Text, während Angebote an Empfänger bereits eine fehlende Erläuterung akzeptieren. Die Richtlinie für
 Erläuterungen je Grund ist nicht implementiert. Eine Änderung der Oberflächenbeschriftung allein erfüllt diese Entscheidung nicht:
 Speichern und erneutes Laden der Richtlinie, serverseitige Durchsetzung und das entsprechende Formularverhalten müssen gemeinsam geliefert werden.
+
+## Nachtrag 2026-11-14 — späte Beitretende sehen Nachrichten ab ihrem Beitritt
+
+- **Status:** Angenommen vom Produktverantwortlichen — Frank, 2026-11-14.
+- **Ändert:** den Kontextsatz „jedes Mitglied, das beitritt, liest den vollständigen früheren Verlauf“ (kein `history_visibility`-Override, unverschlüsselte Räume). Er beschrieb den Stand vor Megolm und ist veraltet. Die Zugriffskontroll-Schranke von ADR-002 bleibt im Übrigen unverändert.
+
+Seit Megolm ([ADR-004](ADR-004-chat-keep-custom-ui-adopt-matrix-sdk-megolm.md)) kann eine Person, die später in ein Gespräch einsteigt, Nachrichten ab ihrem Beitritt lesen. Früheren Verlauf erhält sie nur über die Verlaufsschlüssel-Übertragung in ORISO-Frontend `src/services/matrixRoomHistoryKeyTransfer.ts` ([ORISO-Frontend#2072](https://github.com/OpenResilienceInitiative/ORISO-Frontend/pull/2072)): Die Person muss beigetretenes Mitglied sein und die Schlüssel mit schriftlicher Begründung anfordern, und eine bereits im Raum befindliche Person genehmigt. Die serverseitige Matrix-Verlaufssichtbarkeit von 1:1-Räumen bleibt „shared“; die Grenze sind die Verschlüsselungsschlüssel, keine Raumeinstellung.
+
+Darauf stützt sich [ADR-033](ADR-033-direkteinladung-direct-invitation-with-optional-appointment.md), wenn ein eingeladener Gast einem bestehenden 1:1-Gespräch beitritt.
