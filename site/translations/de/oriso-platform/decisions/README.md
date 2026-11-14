@@ -19,8 +19,9 @@ Dieses Verzeichnis enthält die Architekturentscheidungsprotokolle (ADRs) auf Pl
 - `ADR-030-activity-timeline-read-state-filters-and-preview.md` — vorgeschlagen am 2026-09-05 (ORISO-Frontend#1200), nummeriert und aktualisiert am 2026-10-28: Massenhaftes Als-gelesen-Markieren betrifft nur Aktivitätsereignisse, datengetriebene Familien-Chips ohne „Alle“-Chip und eine funktionierende Timeline-Vorschau, die nie eine aktive Ansicht registriert (Produktentscheidung 2026-10-21, ORISO-Frontend#1824). Braucht noch die Freigabe durch das Produkt.
 
 - `ADR-031-production-telemetry-boundary-for-signoz.md` — vorgeschlagen am 2026-11-07 für E2E #99 F.4.
-- `ADR-033-direkteinladung-direct-invitation-with-optional-appointment.md`
   Beschreibt die Anforderungen an Telemetrie, Zugriff, Aufbewahrung und Wiederherstellung vor dem Produktionseinsatz von SigNoz.
+
+- `ADR-033-direkteinladung-direct-invitation-with-optional-appointment.md` — angenommen am 2026-11-14 (ORISO-Frontend#2252): Ein Direktlink kann einen Termin tragen; ändert ADR-029; ADR-002 ist um den Verlauf beim späten Beitritt ergänzt. ADR-032 liegt in seinem offenen PR.
 
 Neue Entscheidungen in diesem Abschnitt gehören zum Repository und sind kein Teil des oben beschriebenen unveränderten Imports von 19 Dateien.
 

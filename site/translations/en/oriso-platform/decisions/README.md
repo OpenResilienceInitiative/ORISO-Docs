@@ -44,8 +44,9 @@ not its `_artifacts/` subfolder). The series was re-synchronised on 2026-08-17 f
   registers an active view (product decision 2026-10-21, ORISO-Frontend#1824). Needs product sign-off.
 
 - `ADR-031-production-telemetry-boundary-for-signoz.md` — proposed 2026-11-07 for E2E #99 F.4.
-- `ADR-033-direkteinladung-direct-invitation-with-optional-appointment.md`
   Describes the telemetry, access, retention and recovery requirements for production SigNoz.
+
+- `ADR-033-direkteinladung-direct-invitation-with-optional-appointment.md` — accepted 2026-11-14 (ORISO-Frontend#2252). A direct link may carry an appointment; amends ADR-029; ADR-002 amended for history on late join. ADR-032 is held by its open PR.
 
 New decisions in this section are repository-owned records and are not part of the unchanged
 19-file import described above.
