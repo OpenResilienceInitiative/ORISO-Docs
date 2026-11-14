@@ -197,3 +197,5 @@ Dieses Dokument ist der einzige Ort für diese Entscheidung; ADR-029 und die Iss
 - Gäste zählen nicht für Beginn oder Ende des Anrufs.
 
 **Warum hier und nicht in einem ADR-018.** Das Plattform-ADR-018 behandelt die Erstantwort und hat mit Anrufen nichts zu tun. Das ADR-018 von ORISO-Frontend behandelt die Einbettung von Element Call als Widget; es sagt, dass der Host dem Anrufraum beitritt, bevor das Widget eingebunden wird, aber nicht, wer Mitglied werden darf. Die Raummitgliedschaft bei Anrufen ist eine Regel der Anrufsitzung, und das ist dieses Dokument.
+
+> **Erweitert durch ADR-032** (2026-11-13): wie der Kontaktkalender gebaut wird (MIT-Kern von FullCalendar, eigene Team-Ansicht) und wie er abgeglichen wird (neutraler ICS-Abo-Link nach außen, Import belegter Zeiten nach innen).
