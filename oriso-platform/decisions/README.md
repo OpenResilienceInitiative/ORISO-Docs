@@ -47,8 +47,8 @@ not its `_artifacts/` subfolder). The series was re-synchronised on 2026-08-17 f
   — proposed 2026-11-07 for E2E #99 F.4. Sets the telemetry, access, retention and recovery gates for production SigNoz.
 - [`ADR-032-counsellor-calendar-module-and-external-calendar-sync.md`](ADR-032-counsellor-calendar-module-and-external-calendar-sync.md)
   — accepted 2026-11-13. Counsellor calendar on the FullCalendar MIT core, own team view, neutral ICS feed out, busy-time import in; cal.com removed. Extends ADR-020.
-- [`ADR-035-configurable-first-reply-module-per-conversation-type.md`](ADR-035-configurable-first-reply-module-per-conversation-type.md)
-  — proposed 2026-11-16. The Erstantwort becomes one configurable module per conversation type (messages, panels, fixed modules, closing questions), resolved as a whole per level. Amends ADR-018 decisions 1, 2, 5 and 6. Numbered 035 because 033 and 034 are taken by open PRs (ORISO-Docs#267, #268).
+- [`ADR-035-configurable-conversation-modules-and-one-question-model.md`](ADR-035-configurable-conversation-modules-and-one-question-model.md)
+  — proposed 2026-11-16. The Erstantwort becomes one configurable module per conversation type (messages, panels, fixed modules, question blocks), edited in Admin (platform, Träger, centre) and Frontend (one conversation) with one shared configurator; one question model serves registration, the first reply and follow-up surveys. Amends ADR-018 decisions 1, 2, 5 and 6. Numbered 035 because 033 and 034 are taken by open PRs (ORISO-Docs#267, #268).
 
 New decisions in this section are repository-owned records and are not part of the unchanged
 19-file import described above.
