@@ -31,6 +31,8 @@ def install_sources(generation,source_root,clone=clone_public):
             shutil.copytree(generation,stage/'graph-generation');stage.rename(target)
         finally:
             if stage.exists():shutil.rmtree(stage)
+    # mkdtemp creates the staging directory as 0700; the viewer container runs as a different user and must read /sources.
+    target.chmod(0o755)
     current=source_root/'current'
     if current.exists() and not current.is_symlink():raise ValueError('Existing source root needs explicit operator migration')
     pending=source_root/'current.pending'

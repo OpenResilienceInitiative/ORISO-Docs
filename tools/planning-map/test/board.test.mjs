@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync, mkdtempSync } from "node:fs";
+import { readFileSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -40,6 +40,44 @@ test("a gateway error at the smallest page size, or any other error, is not retr
   let n = 0;
   await assert.rejects(fetchAll((q, v) => { if (v.first !== undefined) { n++; throw new Error("GraphQL errors: bad field"); } return run(q, v); }, { owner: "o", number: 1 }), /bad field/);
   assert.equal(n, 1);
+});
+
+test("an incomplete export fails and leaves the last published board untouched", async (t) => {
+  const dir = mkdtempSync(join(tmpdir(), "board-"));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  const input = join(dir, "partial.json");
+  const out = join(dir, "board.json");
+  const fx = fixture();
+  for (const page of fx.pages) page.response.data.organization.projectV2.items.totalCount = 7;
+  writeFileSync(input, JSON.stringify(fx));
+  const previous = '{"syncedAt":"2026-10-22T12:00:00Z"}\n';
+  writeFileSync(out, previous);
+
+  await assert.rejects(main(["--fixture", input, "--out", out]), /Incomplete board export: expected 7 items, received 6/);
+  assert.equal(readFileSync(out, "utf8"), previous);
+});
+
+test("a duplicate item cannot conceal a missing item at the expected count", async () => {
+  const run = fixtureRunner(FX);
+  await assert.rejects(fetchAll((query, vars) => {
+    const result = run(query, vars);
+    if (vars.after === "CUR2") {
+      const items = result.data.organization.projectV2.items;
+      items.nodes[0] = run(query, { ...vars, after: null }).data.organization.projectV2.items.nodes[0];
+    }
+    return result;
+  }, { owner: "o", number: 1 }), /Incomplete board export: duplicate item/);
+});
+
+test("a repeated cursor fails instead of reading the same page indefinitely", async () => {
+  const run = fixtureRunner(FX);
+  let calls = 0;
+  await assert.rejects(fetchAll((query, vars) => {
+    if (++calls > 4) throw new Error("cursor did not advance");
+    const result = run(query, vars);
+    if (vars.after === "CUR1") result.data.organization.projectV2.items.pageInfo.endCursor = "CUR1";
+    return result;
+  }, { owner: "o", number: 1 }), /Incomplete board export: invalid pagination cursor/);
 });
 
 test("fixture board validates against the v1 schema", async () => {
