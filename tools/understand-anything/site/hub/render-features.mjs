@@ -26,7 +26,7 @@ export function renderFeatures(data,locale){
   ['activity-feed', 'Activity Feed', 'Activity Feed'],
   ['internal-group-chats', 'Interne Gruppenchats', 'Internal group chats'],
   ['self-help-groups', 'Selbsthilfegruppen und Gesprächskreise', 'Self-help groups and meetings'],
- ].map(([slug, german, english]) => `<li><a href="/features/${slug}.html">${de ? german : english}</a></li>`).join('');
+ ].map(([slug, german, english]) => `<li><a href="/features/${slug}.html?lang=${locale}">${de ? german : english}</a></li>`).join('');
  const adminPage=de?'Support-Adresse':'Support address';
  const namePage=de?'Benennung und Slogan':'Name and slogan';
  const inactivityPage=de?'Inaktive Konten':'Inactive accounts';
