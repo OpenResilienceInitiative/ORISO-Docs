@@ -1252,13 +1252,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/ADR-020-scheduled-calls-secure-invitations-and-unified-contact-calendar.md",
-          "sourceHash": "4069bc7e91c834ebf2b5a3c16dc447a1b029cf23633458c878302c2a418505e1",
-          "reviewedAt": "2026-10-28"
+          "sourceHash": "6a5e890ddb3294dbbde7b37ab6acdbb2ee67dc6ec80e977e1a825c7dc3d3cfc2",
+          "reviewedAt": "2026-11-14"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/ADR-020-scheduled-calls-secure-invitations-and-unified-contact-calendar.md",
-          "sourceHash": "4069bc7e91c834ebf2b5a3c16dc447a1b029cf23633458c878302c2a418505e1",
-          "reviewedAt": "2026-10-28"
+          "sourceHash": "6a5e890ddb3294dbbde7b37ab6acdbb2ee67dc6ec80e977e1a825c7dc3d3cfc2",
+          "reviewedAt": "2026-11-14"
         }
       }
     },
@@ -1413,12 +1413,12 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/README.md",
-          "sourceHash": "b607f1728ad505ca77b46495bebbaa144d9bb324572bc9f24d2130442f4078f6",
+          "sourceHash": "3d9fdcc86841b31fa0ac3d219d72a5c156483ec0b154eaef168661efad474f55",
           "reviewedAt": "2026-11-14"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/README.md",
-          "sourceHash": "b607f1728ad505ca77b46495bebbaa144d9bb324572bc9f24d2130442f4078f6",
+          "sourceHash": "3d9fdcc86841b31fa0ac3d219d72a5c156483ec0b154eaef168661efad474f55",
           "reviewedAt": "2026-11-14"
         }
       }
