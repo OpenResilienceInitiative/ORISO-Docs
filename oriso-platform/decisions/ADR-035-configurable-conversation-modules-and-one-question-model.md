@@ -4,7 +4,7 @@
 - **Date:** 2026-11-16
 - **Deciders:** Frank (product) + AI (engineering)
 - **Amends:** ADR-018 decisions 1, 2, 5 and 6 (fixed Baustein catalogue, single free Baustein, platform-owned ordering, no toggle on safety Bausteine, Admin-only editing). ADR-018 decisions 3, 4 and 7–11 stay.
-- **Related:** ADR-018 (Erstantwort as one persisted event), ADR-014 (topic before consent), ADR-029 / ADR-033 draft (direct links and direct invitation), ORISO-UserService#1565 (no platform wording for "who reads along"), ORISO-Admin#601 (centre level), ORISO-Frontend#825 (client-side trigger), the registration-questions-per-topic decision (separate grill session, 2026-11-16, not yet written), Frontend `CircleSettingsView` / `GroupChatAuthorContentFields` (counsellor-authored welcome text and rules per group), branches `feat/platform-greeting-override` (UserService) and `feat/platform-greeting-tab` (Admin)
+- **Related:** ADR-018 (Erstantwort as one persisted event), ADR-014 (topic before consent), ADR-029 / ADR-033 draft (direct links and direct invitation), ORISO-UserService#1565 (no platform wording for "who reads along"), ORISO-Admin#601 (centre level), ORISO-Frontend#825 (client-side trigger), the registration-questions-per-topic decision (part C, from a separate grill session on 2026-11-16), Frontend `CircleSettingsView` / `GroupChatAuthorContentFields` (counsellor-authored welcome text and rules per group), branches `feat/platform-greeting-override` (UserService) and `feat/platform-greeting-tab` (Admin)
 - **Trigger:** While the platform and centre overrides for the fixed greeting texts were being built, Frank asked for:
   - a configurable module instead of fixed text slots, separately per conversation type;
   - configuration in the Frontend as well as in the Admin;
@@ -108,7 +108,7 @@ Measured on `origin/dev` (2026-11-16), four things do not fit:
 
    | Element | Meaning |
    |---|---|
-   | **Question types** | free text, single select, multi select |
+   | **Question types** | free text, single select (radio), single select (dropdown), multi select |
    | **Hint** | text-only, no answer |
    | **Per question** | id, label, optional help text, required yes/no, options (for select), per-language texts |
    | **Answers** | stored per question id with the question's version, so a later edit never changes the meaning of an old answer |
@@ -117,9 +117,9 @@ Measured on `origin/dev` (2026-11-16), four things do not fit:
 
     | Moment | When | Configured at | Owner of the decision |
     |---|---|---|---|
-    | **1. Registration** | while registering, per topic | platform / Träger per topic (ADR-014: topic before consent) | the registration-questions-per-topic decision (separate session); it adopts this model |
-    | **2. After the enquiry** | right after the first message, as a question block in the conversation module | per conversation type and level (decision 4) | this ADR |
-    | **3. Follow-up survey** | afterwards, e.g. when a conversation is closed or a set time after the last message | per conversation type and level, same configurator | this ADR; trigger options are platform-assigned, as in decision 7 |
+    | **1. Registration** | before the conversation, while registering; Mailberatung only | per topic, and per secret link (part C) | this ADR, part C |
+    | **2. During** | after the first enquiry, at a moment the editor picks from platform-defined triggers, as a question block in the conversation module | per conversation type and level (decision 4) | this ADR |
+    | **3. At the end** | when the conversation or the counselling ends, as a follow-up survey | per conversation type and level, same configurator | this ADR; trigger options are platform-assigned, as in decision 7 |
 
     - The editor component, storage format and translation path are shared across all three moments.
     - Only the moment and its trigger differ.
@@ -130,9 +130,58 @@ Measured on `origin/dev` (2026-11-16), four things do not fit:
     - Until then, a question block renders as a hint.
     - The follow-up survey must also say whether answers are linked to the conversation or collected anonymously. That is an open product question (see Open questions).
 
-### C. Storage
+### C. Moment 1: registration questions per topic (Mailberatung)
 
-12. **Modules and questions are stored in UserService.**
+Grilled with Frank on 2026-11-16 in a separate session; this part records it, there is no separate ADR. The record with the measured `origin/dev` state is `registration-questions-per-topic.md` in the shared session notes.
+
+13. **Scope: Mailberatung only.**
+    - Mailberatung is conversation type `AGENCY_COUNSELLING` — not a topic, not a consulting type.
+    - Live chat, video and groups get no registration questions this way.
+
+14. **Four building blocks of Mailberatung.**
+    - **Access:**
+      - findable through the official search, or
+      - a **secret link** to one or more Beratungsstellen "off the record".
+      - A Träger may create such links.
+    - **Before the conversation (moment 1):**
+      - always: user name and password;
+      - optional: e-mail, postcode, further questions;
+      - the greeting texts.
+    - **During (moment 2):** after the first enquiry, at a controllable moment.
+    - **At the end (moment 3):** at the end of the conversation or the counselling.
+
+15. **The topic decides.**
+    - Questions are configured per topic; the platform admin creates topics.
+    - A topic without its own setting inherits the **platform default**. On Caritas installations that default is: postcode on, everything else off.
+    - The topic replaces the consulting type's `registration.mandatoryFields.age/state` for Mailberatung. A service that needs age (e.g. U25) gets a topic or a link that asks for it.
+
+16. **First step: one question on/off per topic, platform level only.**
+    - On Dev the only switchable question is the postcode.
+    - Without a postcode, the person sees the list of Beratungsstellen for the topic and chooses one. A nationwide contact point is possible as the topic's fallback Beratungsstelle in the access settings.
+    - The full configurator (up to ~20 steps) and Träger / Beratungsstelle levels follow once subdomains are done.
+
+17. **Secret links (Mailberatung, like live chat).**
+    - A link preselects one Beratungsstelle and one or more topics.
+    - It says whether the postcode is asked.
+    - An enquiry made through it is recognisable as a **local / own channel**.
+    - It may carry its own questionnaire and greeting with its own rules. Example: U25 — not in the official search, asks for age, has its own greeting.
+    - When a link is created, the system asks: let the guest straight in, or answer questions first. The preselection is "answer questions".
+    - For registration questions the link plays the role of the conversation level: `link ?? topic ?? platform default`, each as a whole questionnaire.
+
+18. **A follow-up enquiry on another topic asks all of that topic's questions again**, including ones already answered.
+
+19. **Where it is edited.**
+    - Admin: Funktionszugriff → Mailberatung (with links and the contact point), as a tile with a button that opens the shared configurator.
+    - The configurator prototype has a "Registration per topic" tab; on Dev only the postcode is on.
+    - Settings → Topics keeps names, icons and categories.
+
+20. **Stepper.** The registration stepper is redesigned so that it looks right with 2 steps and carries ~20 (design task).
+
+21. **Side requirement.** The four conversation types get their own configurable names and icons.
+
+### D. Storage
+
+22. **Modules and questions are stored in UserService.**
     - Modules: one row per (scope, scope id, conversation type) holding versioned JSON, beside `erstantwort_text_override`.
     - Scopes: `PLATFORM`, `TENANT`, `AGENCY`, `CONVERSATION`.
     - Migration so that nothing an editor saved is lost:
@@ -146,12 +195,18 @@ Measured on `origin/dev` (2026-11-16), four things do not fit:
 
 - **The held platform/centre override PRs land with the builder as one PR set** (Frank, 2026-11-16). Their storage, access checks (`AdminScope`) and translation flow are reused; their fixed-slot editors are replaced by the configurator.
 - **Storybook first, in this order:**
-  1. the shared configurator: tile with two fields, dialog, section list, the four kinds, question editor, prototype reset, safety warning — desktop and mobile;
+  1. the shared configurator: tile with two fields, dialog, section list, the four kinds, question editor, prototype reset, safety warning, and a "Registration per topic" tab (Dev state: postcode only) — desktop and mobile;
   2. the Frontend `ErstantwortSequence` rendering version-2 payloads, including a question block;
   3. the group settings dialog using the shared configurator.
 
   Backend work starts after Frank approves the stories.
-- **The registration-questions session must adopt the question model of decision 9.** Otherwise registration gets a fourth editor.
+- **Registration is built in slices.**
+  1. Postcode on/off per topic at platform level. Needs a field on the topic, so it depends on the topic-defaults work, branch `feat/topic-defaults-seed-override`.
+  2. Stepper design.
+  3. Registration as moment 1 in the shared configurator.
+  4. Secret links for Mailberatung.
+  5. Names and icons of the conversation types.
+  6. Träger / Beratungsstelle levels after subdomains.
 - **Translation:**
   - Admin uses the TenantService translate endpoint.
   - A centre-only admin cannot call it (`AUTHORIZATION_UPDATE_TENANT`). They publish untranslated, and missing languages fall back as in ADR-018 decision 8.
@@ -167,6 +222,10 @@ Measured on `origin/dev` (2026-11-16), four things do not fit:
 1. **Follow-up survey:** anonymous, or linked to the conversation? Who sees the answers — the counsellor, the Beratungsstelle, only aggregated statistics?
 2. **Follow-up survey trigger:** on conversation close, after N days without messages, sent by the counsellor by hand, or all three?
 3. **Live chat:** does live chat need a conversation level after all, e.g. per live-chat slot?
+4. **Several topics in one secret link:** which questions apply? Proposal: the link's own questionnaire, otherwise the union of the topics' questions.
+5. **"Local / own channel":** where does the Beratungsstelle see it — a mark in the inbox, its own filter?
+6. **Registration answers:** do new questions (age, gender) also wait for a DSFA entry (decision 11 applied to moment 1)? How are today's `session_data` (age, state) and `session.postcode` migrated to answers with question id and version?
+7. **Counsellor link for Mailberatung:** today it exists only for live chat. Align the scope with the direct-invitation draft (ADR-033).
 
 ## Rejected
 
