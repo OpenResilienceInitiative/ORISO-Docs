@@ -20,6 +20,8 @@ Dieses Verzeichnis enthält die Architekturentscheidungsprotokolle (ADRs) auf Pl
 
 - `ADR-031-production-telemetry-boundary-for-signoz.md` — vorgeschlagen am 2026-11-07 für E2E #99 F.4.
   Beschreibt die Anforderungen an Telemetrie, Zugriff, Aufbewahrung und Wiederherstellung vor dem Produktionseinsatz von SigNoz.
+- `ADR-032-counsellor-calendar-module-and-external-calendar-sync.md` — angenommen am 2026-11-13.
+  Kalender für Beratende auf dem MIT-Kern von FullCalendar, eigene Team-Ansicht, neutraler ICS-Abo-Link nach außen, Import belegter Zeiten nach innen; cal.com wird entfernt. Erweitert ADR-020.
 
 Neue Entscheidungen in diesem Abschnitt gehören zum Repository und sind kein Teil des oben beschriebenen unveränderten Imports von 19 Dateien.
 
