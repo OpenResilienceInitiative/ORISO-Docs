@@ -47,6 +47,8 @@ not its `_artifacts/` subfolder). The series was re-synchronised on 2026-08-17 f
   Describes the telemetry, access, retention and recovery requirements for production SigNoz.
 - `ADR-032-counsellor-calendar-module-and-external-calendar-sync.md` — accepted 2026-11-13.
   Counsellor calendar on the FullCalendar MIT core, own team view, neutral ICS feed out, busy-time import in; cal.com removed. Extends ADR-020.
+- `ADR-034-addons-optional-services-with-their-own-ui.md` — proposed 2026-11-12 (BITS GmbH, DigiSucht).
+  Add-ons: optional services with their own UI, discovered by the platform, enabled per Träger, reached through one gateway in the AddonService.
 
 New decisions in this section are repository-owned records and are not part of the unchanged
 19-file import described above.

@@ -22,6 +22,8 @@ Dieses Verzeichnis enthält die Architekturentscheidungsprotokolle (ADRs) auf Pl
   Beschreibt die Anforderungen an Telemetrie, Zugriff, Aufbewahrung und Wiederherstellung vor dem Produktionseinsatz von SigNoz.
 - `ADR-032-counsellor-calendar-module-and-external-calendar-sync.md` — angenommen am 2026-11-13.
   Kalender für Beratende auf dem MIT-Kern von FullCalendar, eigene Team-Ansicht, neutraler ICS-Abo-Link nach außen, Import belegter Zeiten nach innen; cal.com wird entfernt. Erweitert ADR-020.
+- `ADR-034-addons-optional-services-with-their-own-ui.md` — vorgeschlagen am 2026-11-12 (BITS GmbH, DigiSucht).
+  Add-ons: optionale Dienste mit eigener Oberfläche, von der Plattform erkannt, pro Träger freigeschaltet und über ein Gateway im AddonService erreichbar.
 
 Neue Entscheidungen in diesem Abschnitt gehören zum Repository und sind kein Teil des oben beschriebenen unveränderten Imports von 19 Dateien.
 
