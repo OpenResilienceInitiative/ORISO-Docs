@@ -54,7 +54,7 @@
       <div class="step-text"><span lang="de">Wechsle in der Beratungsanwendung zu „Profil → Einstellungen → Benachrichtigungen“. Die Tonwahl erscheint, wenn die neue Benachrichtigungsansicht für die Installation freigeschaltet ist.</span><span lang="en">In the counselling app, go to Profile → Settings → Notifications. Tone selection appears when the new notification interface is enabled for the deployment.</span></div>
       <details class="feature-graph"><summary><span lang="de">Im Graphen · Einstellungsseite</span><span lang="en">In the graph · settings screen</span></summary>
 <ul>
-<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fcomponents%2Fprofile%2FNotificationSettings%2Findex.tsx%3ANotificationSettingsPanel"><span lang="de">Benachrichtigungseinstellungen öffnen</span><span lang="en">Open notification settings</span></a></li>
+<li><a href="/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fcomponents%2Fprofile%2FNotificationSettings%2Findex.tsx%3ANotificationSettingsPanel"><span lang="de">Benachrichtigungseinstellungen öffnen</span><span lang="en">Open notification settings</span></a></li>
 </ul>
 </details>
     </div>
@@ -66,7 +66,7 @@
       <div class="step-text"><span lang="de">Wähle Anfrage, Gespräch oder Zeitkritisch. Die Zeilen unterscheiden zum Beispiel neue Anfragen, Live-Chat-Nachrichten, Erwähnungen, Übergaben, eingehende Anrufe und Termine.</span><span lang="en">Pick Requests, Conversations or Time-critical. Rows include events such as new requests, live chat messages, mentions, handovers, incoming calls and appointments.</span></div>
       <details class="feature-graph"><summary><span lang="de">Im Graphen · Auswahl pro Anlass</span><span lang="en">In the graph · per-event selection</span></summary>
 <ul>
-<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fcomponents%2Fprofile%2FNotificationSettings%2FNotificationConfigDialog.tsx%3ANotificationConfigView"><span lang="de">Ton- und Lautstärkewahl</span><span lang="en">Tone and volume controls</span></a></li>
+<li><a href="/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fcomponents%2Fprofile%2FNotificationSettings%2FNotificationConfigDialog.tsx%3ANotificationConfigView"><span lang="de">Ton- und Lautstärkewahl</span><span lang="en">Tone and volume controls</span></a></li>
 </ul>
 </details>
     </div>
@@ -78,8 +78,8 @@
       <div class="step-text"><span lang="de">Wähle einen Ton oder „Kein Ton gewählt“. Mit Lauter und Leiser änderst du die Lautstärke, mit der Wiedergabetaste hörst du die Auswahl vor. Auf der Einstellungsseite speichert ORISO sofort. In der Schnellauswahl aus dem Gespräch bestätigst du die Änderungen.</span><span lang="en">Choose a tone or no sound. Use the volume controls and play button to preview your selection. On the settings page ORISO saves immediately. In the quick settings from a conversation, confirm your changes.</span></div>
       <details class="feature-graph"><summary><span lang="de">Im Graphen · Vorschau und Speicherung</span><span lang="en">In the graph · preview and storage</span></summary>
 <ul>
-<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Futils%2FnotificationSettings%2FsoundPlayback.ts%3ApreviewNotificationSound"><span lang="de">Vorschau abspielen</span><span lang="en">Play the preview</span></a></li>
-<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=file%3Asrc%2Futils%2FnotificationSettings%2Fstore.ts"><span lang="de">Kontoeinstellungen speichern</span><span lang="en">Save account preferences</span></a></li>
+<li><a href="/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Futils%2FnotificationSettings%2FsoundPlayback.ts%3ApreviewNotificationSound"><span lang="de">Vorschau abspielen</span><span lang="en">Play the preview</span></a></li>
+<li><a href="/frontend/?token=oriso-frontend-dashboard&amp;node=file%3Asrc%2Futils%2FnotificationSettings%2Fstore.ts"><span lang="de">Kontoeinstellungen speichern</span><span lang="en">Save account preferences</span></a></li>
 </ul>
 </details>
     </div>
@@ -98,7 +98,7 @@
 </tbody>
 </table></div><details class="feature-graph"><summary><span lang="de">Im Graphen · Stummschaltung</span><span lang="en">In the graph · suppression</span></summary>
 <ul>
-<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Futils%2FnotificationSettings%2Fmodel.ts%3AisNotificationSuppressed"><span lang="de">Prüfen, ob ein Ereignis unterdrückt wird</span><span lang="en">Check if an event is suppressed</span></a></li>
+<li><a href="/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Futils%2FnotificationSettings%2Fmodel.ts%3AisNotificationSuppressed"><span lang="de">Prüfen, ob ein Ereignis unterdrückt wird</span><span lang="en">Check if an event is suppressed</span></a></li>
 </ul>
 </details>
 <p><span lang="de">Wenn trotzdem ein Ton kommt oder unerwartet fehlt, prüfe in der betreffenden Gesprächsliste den Anzeigefilter und dort die Spalte „Ton“. Danach prüfe „Nicht stören“, die Stummschaltung und die Audiofreigabe im Browser.</span><span lang="en">If a sound still plays or is unexpectedly missing, check the Sound column in the affected conversation list’s display filter. Then check Do not disturb, mute and browser audio permissions.</span></p><p><a href="https://github.com/OpenResilienceInitiative/ORISO-Frontend/blob/5d48af580d7956b337eb65d366ed105233e0bb2f/src/globalState/provider/NotificationsProvider.tsx#L734"><span lang="de">Anzeigefilter bei der Tonwahl anwenden</span><span lang="en">Apply the display filter when choosing a tone</span></a></p>
@@ -113,7 +113,7 @@
       <div class="step-text"><span lang="de">Die Anwendung ordnet ein eingehendes Ereignis einem Bereich und einer Zeile zu. Die Auswahl für eine Live-Chat-Nachricht kann sich dadurch vom Ton für eine normale Nachricht unterscheiden.</span><span lang="en">The app maps an incoming event to an area and row. Live chat messages can therefore use a different tone from ordinary messages.</span></div>
       <details class="feature-graph"><summary><span lang="de">Im Graphen · Ereignis und Ton</span><span lang="en">In the graph · event and tone</span></summary>
 <ul>
-<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Futils%2FnotificationSettings%2FnotificationConfig.ts%3AsoundSettingForEvent"><span lang="de">Ton für den Ereignistyp bestimmen</span><span lang="en">Resolve tone for an event type</span></a></li>
+<li><a href="/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Futils%2FnotificationSettings%2FnotificationConfig.ts%3AsoundSettingForEvent"><span lang="de">Ton für den Ereignistyp bestimmen</span><span lang="en">Resolve tone for an event type</span></a></li>
 </ul>
 </details>
     </div>
@@ -125,8 +125,8 @@
       <div class="step-text"><span lang="de">Die Anwendung prüft die Stummschaltung und spielt den gewählten Ton mit der gespeicherten Lautstärke. Mehrere schnell aufeinanderfolgende Ereignisse werden begrenzt. Manche Browser geben Audio erst nach einem Klick in der Anwendung frei.</span><span lang="en">The app checks suppression and plays the chosen sound at the saved volume. It limits bursts of sounds. Some browsers enable audio only after an interaction in the app.</span></div>
       <details class="feature-graph"><summary><span lang="de">Im Graphen · Wiedergabe</span><span lang="en">In the graph · playback</span></summary>
 <ul>
-<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Futils%2FnotificationSettings%2FsoundPlayback.ts%3AplayNotificationSound"><span lang="de">Benachrichtigungston abspielen</span><span lang="en">Play the notification sound</span></a></li>
-<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Futils%2FnotificationSettings%2FsoundPlayback.ts%3AprimeAudioPlayback"><span lang="de">Audiowiedergabe beim ersten Klick vorbereiten</span><span lang="en">Prepare audio after interaction</span></a></li>
+<li><a href="/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Futils%2FnotificationSettings%2FsoundPlayback.ts%3AplayNotificationSound"><span lang="de">Benachrichtigungston abspielen</span><span lang="en">Play the notification sound</span></a></li>
+<li><a href="/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Futils%2FnotificationSettings%2FsoundPlayback.ts%3AprimeAudioPlayback"><span lang="de">Audiowiedergabe beim ersten Klick vorbereiten</span><span lang="en">Prepare audio after interaction</span></a></li>
 </ul>
 </details>
     </div>

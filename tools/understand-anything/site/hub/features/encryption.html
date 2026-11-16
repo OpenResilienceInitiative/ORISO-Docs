@@ -67,8 +67,8 @@
       <div class="step-text"><span lang="de">Bei der ersten schriftlichen Beratungsanfrage einer registrierten Person sendet das Frontend die Nachricht im verschlüsselten Matrix-Pfad. Der UserService erhält die Referenz für die Zuordnung der Anfrage.</span><span lang="en">For the first written counselling enquiry from a registered person, the frontend sends the message through the encrypted Matrix path. UserService receives the reference used to associate the enquiry.</span></div>
       <details class="feature-graph"><summary><span lang="de">Im Graphen · verschlüsselte Erstanfrage</span><span lang="en">In the graph · encrypted initial enquiry</span></summary>
 <ul>
-<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fcomponents%2FmessageSubmitInterface%2FmessageEncryptionMode.ts%3AsendEncryptedInitialEnquiry"><span lang="de">Erste Anfrage verschlüsselt senden</span><span lang="en">Send the encrypted initial enquiry</span></a></li>
-<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fapi%2FencryptedEnquiryPayload.ts%3AbuildEncryptedEnquiryFinalizationPayload"><span lang="de">Referenz für den Dienst vorbereiten</span><span lang="en">Prepare the reference for the service</span></a></li>
+<li><a href="/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fcomponents%2FmessageSubmitInterface%2FmessageEncryptionMode.ts%3AsendEncryptedInitialEnquiry"><span lang="de">Erste Anfrage verschlüsselt senden</span><span lang="en">Send the encrypted initial enquiry</span></a></li>
+<li><a href="/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fapi%2FencryptedEnquiryPayload.ts%3AbuildEncryptedEnquiryFinalizationPayload"><span lang="de">Referenz für den Dienst vorbereiten</span><span lang="en">Prepare the reference for the service</span></a></li>
 </ul>
 </details>
     </div>
@@ -80,8 +80,8 @@
       <div class="step-text"><span lang="de">Der Browser erzeugt einen Dateischlüssel und verschlüsselt den Anhang vor dem Upload. Der Upload im Matrix-Pfad enthält verschlüsselte Bytes ohne den ursprünglichen Dateinamen. Schlüssel und Dateireferenz stehen im geschützten Nachrichtenereignis. Der empfangende Client prüft und entschlüsselt die Datei.</span><span lang="en">The browser creates a file key and encrypts the attachment before upload. The Matrix upload contains encrypted bytes without the original filename. The key and file reference are carried in the protected message event. The receiving client verifies and decrypts the file.</span></div>
       <details class="feature-graph"><summary><span lang="de">Im Graphen · Anhang im Browser</span><span lang="en">In the graph · browser attachment handling</span></summary>
 <ul>
-<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Futils%2FmatrixEncryptedAttachment.ts%3AencryptMatrixAttachment"><span lang="de">Anhang verschlüsseln</span><span lang="en">Encrypt attachment</span></a></li>
-<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Futils%2FmatrixEncryptedAttachment.ts%3AdecryptMatrixAttachment"><span lang="de">Anhang prüfen und entschlüsseln</span><span lang="en">Verify and decrypt attachment</span></a></li>
+<li><a href="/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Futils%2FmatrixEncryptedAttachment.ts%3AencryptMatrixAttachment"><span lang="de">Anhang verschlüsseln</span><span lang="en">Encrypt attachment</span></a></li>
+<li><a href="/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Futils%2FmatrixEncryptedAttachment.ts%3AdecryptMatrixAttachment"><span lang="de">Anhang prüfen und entschlüsseln</span><span lang="en">Verify and decrypt attachment</span></a></li>
 </ul>
 </details>
     </div>
@@ -93,8 +93,8 @@
       <div class="step-text"><span lang="de">Der Matrix-SDK startet seine Kryptografie im Browser. Die App führt den Kryptospeicher im Gerätekontext und bietet eine gesonderte Wiederherstellung an. Ein fehlender Schlüssel kann den Verlauf auf dem neuen Gerät unlesbar lassen.</span><span lang="en">The Matrix SDK starts its cryptography in the browser. The app maintains the cryptographic store in the device context and provides a separate recovery flow. A missing key can make history unreadable on a new device.</span></div>
       <details class="feature-graph"><summary><span lang="de">Im Graphen · Kryptospeicher</span><span lang="en">In the graph · crypto store</span></summary>
 <ul>
-<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=file%3Asrc%2Fservices%2FmatrixCrypto.ts"><span lang="de">Kryptospeicher im Browser zuordnen</span><span lang="en">Scope the browser crypto store</span></a></li>
-<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=file%3Asrc%2Fservices%2FmatrixClientService.ts"><span lang="de">Matrix-Client starten</span><span lang="en">Start the Matrix client</span></a></li>
+<li><a href="/frontend/?token=oriso-frontend-dashboard&amp;node=file%3Asrc%2Fservices%2FmatrixCrypto.ts"><span lang="de">Kryptospeicher im Browser zuordnen</span><span lang="en">Scope the browser crypto store</span></a></li>
+<li><a href="/frontend/?token=oriso-frontend-dashboard&amp;node=file%3Asrc%2Fservices%2FmatrixClientService.ts"><span lang="de">Matrix-Client starten</span><span lang="en">Start the Matrix client</span></a></li>
 </ul>
 </details>
     </div>
@@ -102,7 +102,7 @@
 </ol>
 <h3><span lang="de">Alte Nachrichten auf einem neuen Gerät lesen</span><span lang="en">Read old messages on a new device</span></h3><p><span lang="de">Öffne „Profil → Einstellungen → Sicherheit → Wiederherstellung alter Nachrichten“. Richte die Schlüsselsicherung ein und bewahre den Wiederherstellungsschlüssel sicher auf. Auf einem neuen Gerät kannst du mit der vorhandenen Sicherung und dem passenden Schlüssel den zugänglichen Verlauf wiederherstellen. Ein Zurücksetzen kann den Zugriff auf alte Nachrichten dauerhaft verlieren lassen.</span><span lang="en">Open Profile → Settings → Security → Restore old messages. Set up key backup and keep the recovery key safe. On a new device, the existing backup and the correct key can restore accessible history. A reset can permanently remove access to old messages.</span></p><details class="feature-graph"><summary><span lang="de">Im Graphen · Schlüssel wiederherstellen</span><span lang="en">In the graph · recover keys</span></summary>
 <ul>
-<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=flow%3Akey-backup-recovery"><span lang="de">Ablauf der Wiederherstellung</span><span lang="en">Recovery flow</span></a></li>
+<li><a href="/frontend/?token=oriso-frontend-dashboard&amp;node=flow%3Akey-backup-recovery"><span lang="de">Ablauf der Wiederherstellung</span><span lang="en">Recovery flow</span></a></li>
 </ul>
 </details>
 </section>
@@ -110,13 +110,13 @@
 <div class="ch"><span class="chapter-no">3</span><h2><span lang="de">Gespräch und Aktivitätsliste</span><span lang="en">Conversation and activity list</span></h2></div>
 <div class="kurz"><p><span lang="de">Eine Karte im Activity Feed enthält den Anlass und die Zuordnung. Eine sichtbare Chatvorschau kommt aus dem Matrix-Client im Browser. Die Admin-Datenhaltung, die Anzeige im Chat und die Verschlüsselung des Anruf-Medienstroms sind eigene technische Pfade.</span><span lang="en">An Activity Feed card carries the occasion and its reference. A visible chat preview comes from the browser’s Matrix client. Admin storage, chat rendering and call media encryption use separate technical paths.</span></p></div><details class="feature-graph"><summary><span lang="de">Im Graphen · Vorschau und Ereignis</span><span lang="en">In the graph · preview and activity</span></summary>
 <ul>
-<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fcomponents%2FnotificationsCenter%2FConversationPreview.tsx%3AConversationPreview"><span lang="de">Chatvorschau im Browser</span><span lang="en">Chat preview in the browser</span></a></li>
-<li><a href="https://understand.oriso.org/user-service/?token=oriso-userservice-dashboard&amp;node=file%3Asrc%2Fmain%2Fjava%2Fde%2Fcaritas%2Fcob%2Fuserservice%2Fapi%2Fservice%2Fnotification%2FEventNotificationService.java"><span lang="de">Aktivitätsereignis im Dienst</span><span lang="en">Activity event in the service</span></a></li>
+<li><a href="/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fcomponents%2FnotificationsCenter%2FConversationPreview.tsx%3AConversationPreview"><span lang="de">Chatvorschau im Browser</span><span lang="en">Chat preview in the browser</span></a></li>
+<li><a href="/user-service/?token=oriso-userservice-dashboard&amp;node=file%3Asrc%2Fmain%2Fjava%2Fde%2Fcaritas%2Fcob%2Fuserservice%2Fapi%2Fservice%2Fnotification%2FEventNotificationService.java"><span lang="de">Aktivitätsereignis im Dienst</span><span lang="en">Activity event in the service</span></a></li>
 </ul>
 </details>
 <h3><span lang="de">Audio und Video im Anruf</span><span lang="en">Audio and video in calls</span></h3><p><span lang="de">Der Element-Call-Pfad fordert die Ende-zu-Ende-Verschlüsselung des Medienstroms standardmäßig an. Die Installation kann diese Option über eine Freigabeeinstellung ändern. Der Quellcode belegt den Standardwert und die Option. Der konkrete Schutz eines laufenden Anrufs hängt von der ausgerollten Konfiguration ab.</span><span lang="en">The Element Call path requests end-to-end encryption for call media by default. A deployment setting can change that option. The source establishes the default and the option. Protection in a running call depends on the deployed configuration.</span></p><details class="feature-graph"><summary><span lang="de">Im Graphen · Element Call</span><span lang="en">In the graph · Element Call</span></summary>
 <ul>
-<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fcomponents%2Fcall%2Fwidget%2FuseElementCallWidget.ts%3AuseElementCallWidget"><span lang="de">Element Call und Medieneinstellungen</span><span lang="en">Element Call and media settings</span></a></li>
+<li><a href="/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fcomponents%2Fcall%2Fwidget%2FuseElementCallWidget.ts%3AuseElementCallWidget"><span lang="de">Element Call und Medieneinstellungen</span><span lang="en">Element Call and media settings</span></a></li>
 </ul>
 </details>
 </section>

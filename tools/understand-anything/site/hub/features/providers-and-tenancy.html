@@ -53,7 +53,7 @@
       <div class="step-text"><span lang="de">Öffne als Plattform-Admin „Links → Träger-Invites“ und wähle die Anlage eines neuen Trägers. Für einen weiteren Admin eines bestehenden Trägers wählst du stattdessen den vorhandenen Träger aus.</span><span lang="en">As a platform admin, open Links → Provider invitations and choose to create a new provider. For an additional admin at an existing provider, select that provider instead.</span></div>
       <details class="feature-graph"><summary><span lang="de">Im Graphen · Eine Einladung für einen neuen Träger anlegen</span><span lang="en">In the graph · Create a new-provider invitation</span></summary>
 <ul>
-<li><a href="https://understand.oriso.org/admin-service/?token=oriso-admin-dashboard&amp;node=function%3Asrc%2Fpages%2FLinks%2FAccountInvitesTab.tsx%3AAccountInvitesTab"><span lang="de">Einladungsverwaltung öffnen</span><span lang="en">Open account invitations</span></a></li>
+<li><a href="/admin-service/?token=oriso-admin-dashboard&amp;node=function%3Asrc%2Fpages%2FLinks%2FAccountInvitesTab.tsx%3AAccountInvitesTab"><span lang="de">Einladungsverwaltung öffnen</span><span lang="en">Open account invitations</span></a></li>
 </ul>
 </details>
     </div>
@@ -65,8 +65,8 @@
       <div class="step-text"><span lang="de">Die eingeladene Person öffnet den Config Wizard. Beim neuen Träger führt dieser durch Organisationsdaten und den vorgesehenen AVV-Schritt. Die Einladungsart entscheidet, ob ein Träger angelegt oder ein bestehender ergänzt wird.</span><span lang="en">The invitee opens the Config Wizard. New providers go through organisation details and the applicable data processing agreement step. The invite type determines whether a provider is created or an existing one is joined.</span></div>
       <details class="feature-graph"><summary><span lang="de">Im Graphen · Einrichtung abschließen</span><span lang="en">In the graph · Complete setup</span></summary>
 <ul>
-<li><a href="https://understand.oriso.org/user-service/?token=oriso-userservice-dashboard&amp;node=file%3Asrc%2Fmain%2Fjava%2Fde%2Fcaritas%2Fcob%2Fuserservice%2Fapi%2Fservice%2Faccountinvite%2Fonboarding%2FTenantAdminOnboardingService.java"><span lang="de">Einrichtung im UserService</span><span lang="en">Onboarding in UserService</span></a></li>
-<li><a href="https://understand.oriso.org/tenant-service/?token=oriso-tenant-dashboard&amp;node=function%3Asrc%2Fmain%2Fjava%2Fcom%2Fvi%2Ftenantservice%2Fapi%2Ffacade%2FTenantServiceFacade.java%3Acom.vi.tenantservice.api.facade.TenantServiceFacade.createTenant%28MultilingualTenantDTO%29"><span lang="de">Träger im TenantService anlegen</span><span lang="en">Create a provider in TenantService</span></a></li>
+<li><a href="/user-service/?token=oriso-userservice-dashboard&amp;node=file%3Asrc%2Fmain%2Fjava%2Fde%2Fcaritas%2Fcob%2Fuserservice%2Fapi%2Fservice%2Faccountinvite%2Fonboarding%2FTenantAdminOnboardingService.java"><span lang="de">Einrichtung im UserService</span><span lang="en">Onboarding in UserService</span></a></li>
+<li><a href="/tenant-service/?token=oriso-tenant-dashboard&amp;node=function%3Asrc%2Fmain%2Fjava%2Fcom%2Fvi%2Ftenantservice%2Fapi%2Ffacade%2FTenantServiceFacade.java%3Acom.vi.tenantservice.api.facade.TenantServiceFacade.createTenant%28MultilingualTenantDTO%29"><span lang="de">Träger im TenantService anlegen</span><span lang="en">Create a provider in TenantService</span></a></li>
 </ul>
 </details>
     </div>
@@ -78,7 +78,7 @@
       <div class="step-text"><span lang="de">Der Träger-Admin verwaltet die freigegebenen Einstellungen und Beratungsstellen seines Trägers. Der Dienst verwendet den Trägerkontext auch bei der Verarbeitung der Anfragen.</span><span lang="en">The provider admin manages permitted settings and centres for their provider. The service also uses the provider context when processing requests.</span></div>
       <details class="feature-graph"><summary><span lang="de">Im Graphen · Im eigenen Bereich arbeiten</span><span lang="en">In the graph · Work within your own scope</span></summary>
 <ul>
-<li><a href="https://understand.oriso.org/user-service/?token=oriso-userservice-dashboard&amp;node=file%3Asrc%2Fmain%2Fjava%2Fde%2Fcaritas%2Fcob%2Fuserservice%2Fapi%2Ftenant%2FTenantContext.java"><span lang="de">Trägerkontext im UserService</span><span lang="en">Provider context in UserService</span></a></li>
+<li><a href="/user-service/?token=oriso-userservice-dashboard&amp;node=file%3Asrc%2Fmain%2Fjava%2Fde%2Fcaritas%2Fcob%2Fuserservice%2Fapi%2Ftenant%2FTenantContext.java"><span lang="de">Trägerkontext im UserService</span><span lang="en">Provider context in UserService</span></a></li>
 </ul>
 </details>
     </div>
@@ -90,7 +90,7 @@
 <div class="kurz"><p><span lang="de">Die Plattform setzt den gemeinsamen Rahmen. Der Träger pflegt seine Organisation und die anpassbaren Vorgaben. Die Beratungsstelle ist die Einheit, die ein konkretes Beratungsangebot trägt.</span><span lang="en">The platform sets the common baseline. The provider manages its organisation and adjustable policies. The counselling centre runs the concrete counselling offer.</span></p><p><span lang="de">Ein freigegebener Funktionsschalter und die Zuständigkeit für einen Träger sind getrennte Voraussetzungen. Beide werden im jeweiligen Ablauf geprüft.</span><span lang="en">An enabled feature and authority over a provider are separate prerequisites. Each is checked in the relevant flow.</span></p></div>
 <p><span lang="de">Beispiel: Eine Beratungsstellen-Admin kann die ihr zugewiesene Stelle verwalten. Eine zweite Stelle desselben Trägers gehört erst mit einer eigenen Zuweisung zu ihrem Bereich. Ein Träger-Admin arbeitet in seinem Träger. Der Trägerkontext ordnet die Anfrage ein. Welche Verwaltungshandlung erlaubt ist, prüft der Dienst zusätzlich.</span><span lang="en">Example: A centre admin can manage her assigned centre. Another centre within the same provider requires a separate assignment. A provider admin works within their provider. The provider context identifies the request’s scope. The service checks which administrative action is allowed separately.</span></p><details class="feature-graph"><summary><span lang="de">Im Graphen · sichtbare Einladungsbereiche</span><span lang="en">In the graph · visible invitation areas</span></summary>
 <ul>
-<li><a href="https://understand.oriso.org/admin-service/?token=oriso-admin-dashboard&amp;node=function%3Asrc%2Fconstants%2FlinksAccess.ts%3AresolveVisibleLinksTabs"><span lang="de">Reiter nach Verwaltungsrolle anzeigen</span><span lang="en">Show tabs by administrative role</span></a></li>
+<li><a href="/admin-service/?token=oriso-admin-dashboard&amp;node=function%3Asrc%2Fconstants%2FlinksAccess.ts%3AresolveVisibleLinksTabs"><span lang="de">Reiter nach Verwaltungsrolle anzeigen</span><span lang="en">Show tabs by administrative role</span></a></li>
 </ul>
 </details>
 </section>

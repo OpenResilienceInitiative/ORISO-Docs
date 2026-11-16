@@ -55,7 +55,7 @@
       <div class="step-text"><span lang="de">Plattform-Admins öffnen „Einstellungen → Funktionszugriff“. Für unterstützte Funktionen legen sie fest, ob der Wert verbindlich ist oder von der nächsten Ebene angepasst werden darf.</span><span lang="en">Platform admins open Settings → Functionality Access. For supported features they decide whether a value is binding or adjustable at the next level.</span></div>
       <details class="feature-graph"><summary><span lang="de">Im Graphen · Plattformansicht</span><span lang="en">In the graph · platform view</span></summary>
 <ul>
-<li><a href="https://understand.oriso.org/admin-service/?token=oriso-admin-dashboard&amp;node=function%3Asrc%2Fcomponents%2FTenants%2FAppSettings%2FPermissionsSettings%2FSuperAdminPermissionsSettings.tsx%3ASuperAdminPermissionsSettings"><span lang="de">Funktionszugriff der Plattform</span><span lang="en">Platform feature access</span></a></li>
+<li><a href="/admin-service/?token=oriso-admin-dashboard&amp;node=function%3Asrc%2Fcomponents%2FTenants%2FAppSettings%2FPermissionsSettings%2FSuperAdminPermissionsSettings.tsx%3ASuperAdminPermissionsSettings"><span lang="de">Funktionszugriff der Plattform</span><span lang="en">Platform feature access</span></a></li>
 </ul>
 </details>
     </div>
@@ -67,8 +67,8 @@
       <div class="step-text"><span lang="de">Träger-Admins öffnen „Einstellungen → Funktionszugriff“. Wo die Plattform eine Wahl lässt, setzen sie einen Wert für den eigenen Träger und können bei unterstützten Funktionen den Spielraum der Beratungsstellen festlegen.</span><span lang="en">Provider admins open Settings → Functionality Access. Where the platform leaves a choice, they set a value for their provider and can constrain centre choices for supported features.</span></div>
       <details class="feature-graph"><summary><span lang="de">Im Graphen · Träger und Vererbung</span><span lang="en">In the graph · provider and inheritance</span></summary>
 <ul>
-<li><a href="https://understand.oriso.org/admin-service/?token=oriso-admin-dashboard&amp;node=function%3Asrc%2Fcomponents%2FTenants%2FAppSettings%2FPermissionsSettings%2FTenantPermissionsSettings.tsx%3ATenantPermissionsSettings"><span lang="de">Funktionszugriff des Trägers</span><span lang="en">Provider feature access</span></a></li>
-<li><a href="https://understand.oriso.org/tenant-service/?token=oriso-tenant-dashboard&amp;node=file%3Asrc%2Fmain%2Fjava%2Fcom%2Fvi%2Ftenantservice%2Fapi%2Fpolicy%2FPermissionPolicyResolver.java"><span lang="de">Vorgabe und lokale Wahl auflösen</span><span lang="en">Resolve inherited and local policy</span></a></li>
+<li><a href="/admin-service/?token=oriso-admin-dashboard&amp;node=function%3Asrc%2Fcomponents%2FTenants%2FAppSettings%2FPermissionsSettings%2FTenantPermissionsSettings.tsx%3ATenantPermissionsSettings"><span lang="de">Funktionszugriff des Trägers</span><span lang="en">Provider feature access</span></a></li>
+<li><a href="/tenant-service/?token=oriso-tenant-dashboard&amp;node=file%3Asrc%2Fmain%2Fjava%2Fcom%2Fvi%2Ftenantservice%2Fapi%2Fpolicy%2FPermissionPolicyResolver.java"><span lang="de">Vorgabe und lokale Wahl auflösen</span><span lang="en">Resolve inherited and local policy</span></a></li>
 </ul>
 </details>
     </div>
@@ -80,8 +80,8 @@
       <div class="step-text"><span lang="de">Öffne „Beratungsstellen → [Stelle] → Funktionszugriff“. Die Stelle sieht den wirksamen Wert. Gesperrte Werte und die angezeigten Benachrichtigungskanäle des Trägers sind hier nur lesbar. Änderbare Schalter hängen von deiner Rolle und der jeweiligen Kachel ab.</span><span lang="en">Open Agencies → [Centre] → Functionality Access. The centre sees the effective value. Locked values and the provider notification channels shown here are read-only. Editable switches depend on your role and the tile.</span></div>
       <details class="feature-graph"><summary><span lang="de">Im Graphen · Beratungsstelle</span><span lang="en">In the graph · counselling centre</span></summary>
 <ul>
-<li><a href="https://understand.oriso.org/admin-service/?token=oriso-admin-dashboard&amp;node=function%3Asrc%2Fcomponents%2FTenants%2FAppSettings%2FPermissionsSettings%2FAgencyPermissionsSettings.tsx%3AAgencyPermissionsSettings"><span lang="de">Ansicht für Beratungsstellen</span><span lang="en">Centre settings view</span></a></li>
-<li><a href="https://understand.oriso.org/agency-service/?token=oriso-agency-dashboard&amp;node=file%3Asrc%2Fmain%2Fjava%2Fde%2Fcaritas%2Fcob%2Fagencyservice%2Fapi%2Fconverter%2FAgencyEffectivePermissionSettingsApplier.java"><span lang="de">Wirksame Einstellungen der Stelle berechnen</span><span lang="en">Compute effective centre settings</span></a></li>
+<li><a href="/admin-service/?token=oriso-admin-dashboard&amp;node=function%3Asrc%2Fcomponents%2FTenants%2FAppSettings%2FPermissionsSettings%2FAgencyPermissionsSettings.tsx%3AAgencyPermissionsSettings"><span lang="de">Ansicht für Beratungsstellen</span><span lang="en">Centre settings view</span></a></li>
+<li><a href="/agency-service/?token=oriso-agency-dashboard&amp;node=file%3Asrc%2Fmain%2Fjava%2Fde%2Fcaritas%2Fcob%2Fagencyservice%2Fapi%2Fconverter%2FAgencyEffectivePermissionSettingsApplier.java"><span lang="de">Wirksame Einstellungen der Stelle berechnen</span><span lang="en">Compute effective centre settings</span></a></li>
 </ul>
 </details>
     </div>
@@ -110,7 +110,7 @@
       <div class="step-text"><span lang="de">Bei Audio und Video zählt zuerst der gemeinsame Anrufschalter. Dann müssen der Schalter für Audio oder Video und der Wert für die jeweilige Gesprächsart den Anruf zulassen. Ein gesperrtes Video kann deshalb neben erlaubtem Audio stehen.</span><span lang="en">Audio and video first check the master call switch. The audio or video switch and the value for the conversation type must also permit the call. Video can therefore be unavailable while audio remains allowed.</span></div>
       <details class="feature-graph"><summary><span lang="de">Im Graphen · Audio und Video</span><span lang="en">In the graph · audio and video</span></summary>
 <ul>
-<li><a href="https://understand.oriso.org/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fcomponents%2Fcall%2FcallFeatureGates.ts%3AresolveCallFeatureGates"><span lang="de">Anruf-Freigaben je Gesprächsart berechnen</span><span lang="en">Resolve call permissions by conversation type</span></a></li>
+<li><a href="/frontend/?token=oriso-frontend-dashboard&amp;node=function%3Asrc%2Fcomponents%2Fcall%2FcallFeatureGates.ts%3AresolveCallFeatureGates"><span lang="de">Anruf-Freigaben je Gesprächsart berechnen</span><span lang="en">Resolve call permissions by conversation type</span></a></li>
 </ul>
 </details>
     </div>
@@ -135,7 +135,7 @@
 </tbody>
 </table></div><details class="feature-graph"><summary><span lang="de">Im Graphen · Fallübergabe</span><span lang="en">In the graph · case handover</span></summary>
 <ul>
-<li><a href="https://understand.oriso.org/admin-service/?token=oriso-admin-dashboard&amp;node=function%3Asrc%2Fcomponents%2FTenants%2FAppSettings%2FPermissionsSettings%2FCaseHandoverCard%2FCaseHandoverCardView.tsx%3ACaseHandoverCardView"><span lang="de">Regeln für Fallübergabe im Admin</span><span lang="en">Handover rules in Admin</span></a></li>
+<li><a href="/admin-service/?token=oriso-admin-dashboard&amp;node=function%3Asrc%2Fcomponents%2FTenants%2FAppSettings%2FPermissionsSettings%2FCaseHandoverCard%2FCaseHandoverCardView.tsx%3ACaseHandoverCardView"><span lang="de">Regeln für Fallübergabe im Admin</span><span lang="en">Handover rules in Admin</span></a></li>
 </ul>
 </details><p><a href="/features/case-handover.html"><span lang="de">Ablauf der Fallübergabe</span><span lang="en">How handover works</span></a></p>
 </section>
