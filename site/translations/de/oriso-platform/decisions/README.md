@@ -23,6 +23,8 @@ Dieses Verzeichnis enthält die Architekturentscheidungsprotokolle (ADRs) auf Pl
 - `ADR-032-counsellor-calendar-module-and-external-calendar-sync.md` — angenommen am 2026-11-13.
   Kalender für Beratende auf dem MIT-Kern von FullCalendar, eigene Team-Ansicht, neutraler ICS-Abo-Link nach außen, Import belegter Zeiten nach innen; cal.com wird entfernt. Erweitert ADR-020.
 
+- `ADR-033-direkteinladung-direct-invitation-with-optional-appointment.md` — angenommen am 2026-11-14 (ORISO-Frontend#2252): Ein Direktlink kann einen Termin tragen; ändert ADR-029; ADR-002 ist um den Verlauf beim späten Beitritt ergänzt. ADR-032 liegt in seinem offenen PR.
+
 Neue Entscheidungen in diesem Abschnitt gehören zum Repository und sind kein Teil des oben beschriebenen unveränderten Imports von 19 Dateien.
 
 ## Bekannte Probleme
