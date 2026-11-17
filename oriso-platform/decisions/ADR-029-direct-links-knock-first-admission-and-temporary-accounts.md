@@ -209,4 +209,4 @@ A counsellor shares invitation links on four paths: direct links, call share lin
 
 **Cost / risk:** Nine new permission settings (three modes × three conversation types) in TenantService and Admin. The entry mode must be stored per account, and the deletion job must respect a keep that races with it. Group-call links need a server-side binding for encrypted group calls. A temporary guest who keeps the account needs a working key backup after setting the password. Older clients read the old booleans for one release.
 
-**Not decided here:** how ADR-033 decision 8 ("who may enter: guests only, accounts only, or both") maps onto the three modes. Both exist on a Direkteinladung today and must be reconciled.
+**Relation to ADR-033 decision 8** ("who may enter: guests only, accounts only, or both"): the three modes replace it one to one — *guests only* = delete after the session, *both* = guests choose, *accounts only* = permanent account. "Guests allowed: no" is the permanent-account mode. The stored ADR-033 access mode is kept as a mirror of the account mode for one release.
