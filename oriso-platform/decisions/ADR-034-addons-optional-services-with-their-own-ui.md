@@ -120,6 +120,8 @@ There is one kind of add-on. It declares in its manifest which **slots** its app
 | `consultant.navigation` | Counsellors | own page in the navigation of the web app | agency |
 | `consultant.session` | Counsellors | side panel in the case view | agency, open session, its client |
 | `consultant.asker-profile` | Counsellors | tile in the client profile overview | agency, client |
+| `asker.session-menu` | Clients | entry in the chat's menu, opens the app in a side panel of the chat | agency, open session (verified as the client's own) |
+| `consultant.session-menu` | Counsellors | entry in the chat's menu, opens the app in the case view's side panel | agency, open session, its client |
 | `admin.page` | Admins | own page in ORISO-Admin | admin level, Träger, agency where applicable |
 | `registration.agency-finder` | Anonymous visitors | replaces the agency selection step of the registration | Träger, locale, topic and postcode known so far |
 
