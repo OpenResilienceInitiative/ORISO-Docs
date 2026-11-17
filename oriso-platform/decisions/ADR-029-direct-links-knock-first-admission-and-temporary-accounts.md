@@ -3,6 +3,7 @@
 - **Status:** Accepted by the product owner — 2026-10-27. Technical review open.
 - **Amended:** 2026-10-28 — see [Amendment 2026-10-28](#amendment-2026-10-28--direkteinladung-erlauben-replaces-the-call-policy-admission-holds-per-conversation) at the end. It replaces the tenant call policy and makes an admission hold per conversation.
 - **Amended again:** 2026-11-14 by [ADR-033](ADR-033-direkteinladung-direct-invitation-with-optional-appointment.md) (Direkteinladung: a link may carry an appointment and a guest may join an existing conversation).
+- **Amended:** 2026-11-17 — see [Amendment 2026-11-17](#amendment-2026-11-17--guest-account-modes-keep-account-group-call-links) at the end: guest account mode per link (delete after session, guests choose, permanent) with platform/Träger caps, keep-account by entry mode, no e-mail for temporary accounts, guest links for group calls.
 - **Date:** 2026-10-27 (product decisions taken 2026-10-17 and 2026-10-27)
 - **Decision owner:** Frank Gerhardt (product owner)
 - **Amends:** ADR-020 §2 (admission and the one-time-guest identity), §3 step 3 and §7 (persistent links never reach a live room)
@@ -147,3 +148,65 @@ When "Direkteinladung erlauben" (§6) is off for every conversation type the cou
 
 **12. A call share link's public context keeps agencyId, consultingTypeId and topicId (accepted risk).**
 The public context that the entry room reads for a call share link, before anyone signs in, keeps `agencyId`, `consultingTypeId` and `topicId`. The entry room needs them to show the right legal texts and to register the person with the right Beratungsstelle and topic. This is an accepted risk: the values are internal IDs only, with no names or personal data, and the link works only while the call runs.
+
+## Amendment 2026-11-17 — guest account modes, keep-account, group-call links
+
+- **Status:** Accepted by the product owner — Frank, 2026-11-16 and 2026-11-17.
+- **Changes:** §3 (a link now decides which kind of account a guest gets, and a guest can keep it), §4 (a kept account is not deleted), §6 (Träger caps on the account modes, beside the permission), the Amendment 2026-10-28 §1 (the caps are not a second access policy), and ADR-020 Amendment 2026-10-28 §B for group calls. §1, §2, §5 and the knock-first rule are unchanged.
+- **Issues:** [ORISO-UserService#1662](https://github.com/OpenResilienceInitiative/ORISO-UserService/issues/1662), parent [ORISO-Frontend#2184](https://github.com/OpenResilienceInitiative/ORISO-Frontend/issues/2184); related [ORISO-UserService#1575](https://github.com/OpenResilienceInitiative/ORISO-UserService/issues/1575), [ORISO-UserService#1601](https://github.com/OpenResilienceInitiative/ORISO-UserService/issues/1601), [ORISO-Frontend#2269](https://github.com/OpenResilienceInitiative/ORISO-Frontend/issues/2269)
+
+### Context
+
+A counsellor shares invitation links on four paths: direct links, call share links, Gesprächskreis invites and group calls. Every share can bring a new guest. Until now the paths used three different "temporary" models: a switch on the direct link, a switch on the call link, and a guest-side choice only on the Gesprächskreis invite. A temporary guest who wanted to stay had no way to keep the account. Nothing told a temporary guest apart from a permanent one, so profile functions (display name, e-mail, notifications) behaved the same for both. Group calls offered no guest link at all.
+
+### Decision
+
+**Guest account mode per link**
+
+- Every invitation link — direct link, call share link, Gesprächskreis invite and group-call link — carries one **guest account mode**, chosen by the counsellor:
+  - **Delete after the session** (`TEMPORARY`) — today's temporary account under §3 and §4.
+  - **Guests choose** (`GUEST_CHOOSES`) — at entry the guest picks "join without an account" (temporary) or "create an account" (permanent).
+  - **Permanent account** (`PERMANENT`).
+- **Guests allowed: yes / no** stays a separate per-link decision. The mode only says what kind of account a guest gets.
+- **Guest names** stay governed by the function-access rule (Funktionszugriff) of the conversation type, not by the link.
+- Existing direct links that had "temporary account" switched on behave as **Guests choose**, so their behaviour does not change.
+
+**Platform and Träger caps**
+
+- Which modes may be offered is a permission per mode and per conversation type (chat, audio call, video call), with the usual inheritance: platform enforce → Träger. All modes start as allowed.
+- The effective set is what both the platform and the Träger allow. The counsellor only sees modes in that set. If a link's preferred mode is not allowed, the next allowed mode in the order *Permanent → Guests choose → Delete after the session* applies.
+- The caps now apply to direct links too. They decide the **account kind** of a guest, not **whether** a link may be used. "Direkteinladung erlauben" (§6 and Amendment 2026-10-28 §1) stays the one switch for link access.
+- The backend enforces the caps at link creation and redemption; hiding an option is not enforcement.
+
+**Keep my account**
+
+- A temporary guest can turn the account into a permanent one, at entry and later, until the account is deleted. The only input is a **password**, as in the Live Chat conversion.
+- Keeping is allowed only when the guest **entered under Guests choose**. The mode at entry is recorded on the account; changing a link's mode later affects only new guests.
+- A kept account leaves the deletion schedule of §4. Its messages are no longer subject to the "deleted with the account" retention of §5.
+
+**Function access follows the account kind**
+
+- A permanent guest may change the display name and use e-mail and browser/push notifications as the conversation type's function access allows.
+- A temporary account may not: the backend refuses a display-name change, e-mail notification opt-in and push registration.
+- **No e-mail address for temporary accounts.** Saving an address is refused, including at registration; clearing one stays allowed. After "keep my account" these functions work again.
+
+**Gesprächskreis lifetime**
+
+- "Join without account" on a Gesprächskreis invite keeps its **24-hour** lifetime. It is not aligned with the session-end lifetimes of §4.
+
+**Group calls get a guest link**
+
+- Group calls and group appointments offer the guest link in the call menu, as 1:1 calls do. Guests knock first (§2) and join the call room only (ADR-020 Amendment 2026-10-28 §B).
+- Consent and registration of new guests happen under **the call creator's agency** (its consent text applies, ADR-022 gate 2).
+- If the creator serves several or none of the group's Beratungsstellen, the **chat owner's agency** is used, chosen deterministically when the owner serves several. If the owner serves none of them either, the link admits **existing accounts only**; nobody can register through it.
+- The agency is decided by the server from the call and the group; nothing the client sends decides it.
+- A group call started by a plain member or an advice seeker gets **no guest link**. (Under [ADR-020 Amendment 2026-11-17](ADR-020-scheduled-calls-secure-invitations-and-unified-contact-calendar.md#amendment-2026-11-17--only-counsellors-start-calls) such calls should no longer start at all; this rule covers calls that exist anyway.)
+- The in-call invite entries ("Einladelink senden", "Link teilen") follow the server's answer **live**: when a call cannot be shared, they are switched off during the call, without a reload.
+
+### Consequences
+
+**Positive:** One mode model replaces three. Guests can stay without re-registering. The backend, not the client, separates what temporary and permanent guests may do. Group calls reach the same guest flow as 1:1 calls.
+
+**Cost / risk:** Nine new permission settings (three modes × three conversation types) in TenantService and Admin. The entry mode must be stored per account, and the deletion job must respect a keep that races with it. Group-call links need a server-side binding for encrypted group calls. A temporary guest who keeps the account needs a working key backup after setting the password. Older clients read the old booleans for one release.
+
+**Not decided here:** how ADR-033 decision 8 ("who may enter: guests only, accounts only, or both") maps onto the three modes. Both exist on a Direkteinladung today and must be reconciled.
