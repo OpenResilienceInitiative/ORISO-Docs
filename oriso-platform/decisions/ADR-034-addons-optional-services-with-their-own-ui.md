@@ -51,7 +51,7 @@ flowchart LR
 - It carries the label `oriso.io/addon: "true"` on its Service and serves a **manifest** at `GET /.well-known/oriso-addon.json`.
 - It may contain one or more apps.
 
-Manifest (contract `oriso-addon/v1`; `react` names the React major the bundle expects from the host (section 4), `readme` and `screenshots` feed ORISO-Admin (section 5), `visibility` is explained in section 2, `calendar` and `events` in section 6; an export entry is reserved for section 6 and `health` for section 7, neither evaluated yet):
+Manifest (contract `oriso-addon/v1`; `react` names the React major the bundle expects from the host (section 4), `readme`, the apps' short `description` (at most 200 characters per language) and `screenshots` feed ORISO-Admin (section 5), `visibility` is explained in section 2, `calendar` and `events` in section 6; an export entry is reserved for section 6 and `health` for section 7, neither evaluated yet):
 
 ```json
 {
@@ -63,6 +63,7 @@ Manifest (contract `oriso-addon/v1`; `react` names the React major the bundle ex
   "apps": [{
     "id": "goals",
     "title": { "de": "Ausgangssituation und Ziele" },
+    "description": { "de": "Fragebogen zu Beginn der Beratung, den Ratsuchende mit der Beratung teilen können" },
     "slots": ["asker.navigation", "consultant.session", "consultant.asker-profile"],
     "visibility": "dynamic",
     "icon": "/ui/icons/goals.svg",
@@ -145,7 +146,7 @@ There is one kind of add-on. It declares in its manifest which **slots** its app
 
 ### 5. Admin: settings, statistics and admin pages in ORISO-Admin
 
-- **Description:** the manifest may point to a Markdown `readme`, for example in the add-on's repository, and list up to six `screenshots` per app, each for one of its slots. The AddonService fetches and caches the readme from an allowlist of hosts (default `raw.githubusercontent.com`, also required for screenshots) and resolves relative links. ORISO-Admin shows the readme with its images on the add-on's page, without raw HTML, and lists each app with readable slot names (for example "Beratende: Seitenleiste im Fall") and its screenshots. Images load from that host, so an instance with a strict Content Security Policy has to allow it.
+- **Description:** the manifest may point to a Markdown `readme`, for example in the add-on's repository, and list up to six `screenshots` per app, each for one of its slots. The AddonService fetches and caches the readme from an allowlist of hosts (default `raw.githubusercontent.com`, also required for screenshots) and resolves relative links. ORISO-Admin shows the readme with its images on the add-on's page, without raw HTML, and lists each app with its short description, readable slot names (for example "Beratende: Seitenleiste im Fall") and its screenshots. Images load from that host, so an instance with a strict Content Security Policy has to allow it.
 - **Settings** need no UI from the add-on: the manifest points to a **JSON Schema**, ORISO-Admin renders the form, and the AddonService stores the values and serves them to the add-on through the host API. v1 supports a deliberately small subset: an object of `string`, `boolean`, `number` and `integer` properties with `title`, `description` and `default`, plus `enum` and `maxLength` for strings and `minimum`/`maximum` for numbers. Values merge in the order **schema defaults, Träger, agency**.
 - **Statistics:** the manifest declares them (id, label, type). The AddonService fetches aggregated, anonymous values per Träger from the add-on's `/stats?tenantId=…` with a service token (role `addon-service`); add-ons never push. ORISO-Admin shows them as tiles.
 - **Admin pages** (`admin.page`) are for add-ons whose administration is more than configuration, for example the survey editor. ORISO-Admin lists them in its navigation and mounts them with the same contract as the web app.
