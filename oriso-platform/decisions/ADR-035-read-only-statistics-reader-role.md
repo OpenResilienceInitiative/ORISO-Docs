@@ -39,7 +39,7 @@ A "reduced platform admin" (platform admin roles minus some permissions) was rej
 
 A security review of the four backend branches (17 Nov 2026) found no critical or high issue. These smaller points are accepted on purpose:
 
-- **The names lookups are not behind the 2FA check.** A reader without 2FA can read the list of Träger and Beratungsstelle names. These names are public on the ORISO start page anyway; the numbers stay behind 2FA.
+- **The names lookups are not behind the 2FA check.** A reader without 2FA can read the list of Träger and Beratungsstelle names. Beratungsstelle names are already shown to anonymous visitors during registration; the numbers stay behind 2FA.
 - **The 2FA check looks at the account, not at the login.** The server checks that the reader has an active 2FA app, not that this particular login used it. Keycloak asks for the code at every login once the app is set up, so the gap only matters if Keycloak's login flow is changed.
 - **The Keycloak account page stays open to the reader**, as it is for every ORISO account (own name, password, 2FA). It gives no access to statistics or other accounts.
 - **The tenant names list includes inactive Träger**, so older statistics rows keep a name.
