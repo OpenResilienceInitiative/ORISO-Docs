@@ -22,6 +22,8 @@ Dieses Verzeichnis enthält die Architekturentscheidungsprotokolle (ADRs) auf Pl
   Beschreibt die Anforderungen an Telemetrie, Zugriff, Aufbewahrung und Wiederherstellung vor dem Produktionseinsatz von SigNoz.
 - `ADR-032-counsellor-calendar-module-and-external-calendar-sync.md` — angenommen am 2026-11-13.
   Kalender für Beratende auf dem MIT-Kern von FullCalendar, eigene Team-Ansicht, neutraler ICS-Abo-Link nach außen, Import belegter Zeiten nach innen; cal.com wird entfernt. Erweitert ADR-020.
+- `ADR-034-addons-optional-services-with-their-own-ui.md` — vorgeschlagen am 2026-11-12 (BITS GmbH, DigiSucht).
+  Add-ons: optionale Dienste mit eigener Oberfläche, von der Plattform erkannt, pro Träger freigeschaltet und über ein Gateway im AddonService erreichbar.
 
 - `ADR-033-direkteinladung-direct-invitation-with-optional-appointment.md` — angenommen am 2026-11-14 (ORISO-Frontend#2252): Ein Direktlink kann einen Termin tragen; ändert ADR-029; ADR-002 ist um den Verlauf beim späten Beitritt ergänzt. ADR-032 liegt in seinem offenen PR.
 - `ADR-035-read-only-statistics-reader-role.md` — vom Product Owner angenommen am 2026-11-17 (ORISO-UserService#1666): Statistik-Leser als eigene Rolle, nur von Plattform-Admins angelegt, liest nur das Plattform-Statistik-Panel und den CSV-Export; serverseitige Freigabeliste und verpflichtende 2FA. ADR-034 liegt in seinem offenen PR.
