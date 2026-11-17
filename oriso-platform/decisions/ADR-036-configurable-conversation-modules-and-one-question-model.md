@@ -1,7 +1,8 @@
-# ADR-035: Configurable conversation modules and one question model for three moments
+# ADR-036: Configurable conversation modules and one question model for three moments
 
 - **Status:** Accepted — Frank, 2026-11-17 (written form approved; drafted 2026-11-16 in the platform-greeting session and extended with the registration-questions grill). Four open questions remain at the end and do not block the Storybook prototype.
 - **Date:** 2026-11-16
+- **Number:** renumbered from ADR-035 on 2026-11-17, because ADR-035 (read-only statistics reader role, ORISO-Docs#272) was merged first.
 - **Deciders:** Frank (product) + AI (engineering)
 - **Amends:** ADR-018 decisions 1, 2, 5 and 6 (fixed Baustein catalogue, single free Baustein, platform-owned ordering, no toggle on safety Bausteine, Admin-only editing). ADR-018 decisions 3, 4 and 7–11 stay.
 - **Related:** ADR-018 (Erstantwort as one persisted event), ADR-014 (topic before consent), ADR-029 / ADR-033 draft (direct links and direct invitation), ORISO-UserService#1565 (no platform wording for "who reads along"), ORISO-Admin#601 (centre level), ORISO-Frontend#825 (client-side trigger), the registration-questions-per-topic decision (part C, from a separate grill session on 2026-11-16), Frontend `CircleSettingsView` / `GroupChatAuthorContentFields` (counsellor-authored welcome text and rules per group), branches `feat/platform-greeting-override` (UserService) and `feat/platform-greeting-tab` (Admin)

@@ -25,6 +25,7 @@ Dieses Verzeichnis enthält die Architekturentscheidungsprotokolle (ADRs) auf Pl
 
 - `ADR-033-direkteinladung-direct-invitation-with-optional-appointment.md` — angenommen am 2026-11-14 (ORISO-Frontend#2252): Ein Direktlink kann einen Termin tragen; ändert ADR-029; ADR-002 ist um den Verlauf beim späten Beitritt ergänzt. ADR-032 liegt in seinem offenen PR.
 - `ADR-035-read-only-statistics-reader-role.md` — vom Product Owner angenommen am 2026-11-17 (ORISO-UserService#1666): Statistik-Leser als eigene Rolle, nur von Plattform-Admins angelegt, liest nur das Plattform-Statistik-Panel und den CSV-Export; serverseitige Freigabeliste und verpflichtende 2FA. ADR-034 liegt in seinem offenen PR.
+- `ADR-036-configurable-conversation-modules-and-one-question-model.md` — vom Product Owner angenommen am 2026-11-17: Die Erstantwort wird ein konfigurierbares Modul pro Gesprächstyp, bearbeitet im Admin und im Frontend mit einem gemeinsamen Konfigurator; ein Fragemodell dient Registrierung, erster Antwort und Nachbefragung. Ändert ADR-018.
 
 Neue Entscheidungen in diesem Abschnitt gehören zum Repository und sind kein Teil des oben beschriebenen unveränderten Imports von 19 Dateien.
 

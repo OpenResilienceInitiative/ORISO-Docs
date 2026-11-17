@@ -1,12 +1,12 @@
-# ADR-035 delivery plan: conversation modules, questions, registration journeys
+# ADR-036 delivery plan: conversation modules, questions, registration journeys
 
-Working plan for [ADR-035](./ADR-035-configurable-conversation-modules-and-one-question-model.md).
+Working plan for [ADR-036](./ADR-036-configurable-conversation-modules-and-one-question-model.md).
 It is the hand-over surface: anyone (a person, Claude Code, Codex) can continue
 from here on another machine. Status is as of **2026-11-17**.
 
 ## Resume here
 
-1. Read this file, then ADR-035.
+1. Read this file, then ADR-036.
 2. Read **Frank's review of 2026-11-17** below. It changes the direction of the
    registration part, and the next step is a redesign, not more building.
 3. Check out the four draft branches (table below). Nothing is merged, nothing
@@ -17,13 +17,13 @@ from here on another machine. Status is as of **2026-11-17**.
 
 | Repo | Branch | Draft PR | What it holds |
 |---|---|---|---|
-| ORISO-Docs | `docs/adr-035-configurable-first-reply` | OpenResilienceInitiative/ORISO-Docs#273 | ADR-035 (accepted 2026-11-17) and this plan |
+| ORISO-Docs | `docs/adr-035-configurable-first-reply` | OpenResilienceInitiative/ORISO-Docs#273 | ADR-036 (accepted 2026-11-17) and this plan |
 | ORISO-Admin | `feat/platform-greeting-tab` | OpenResilienceInitiative/ORISO-Admin#1551 | Platform and centre greeting tabs (first slice) + conversation module configurator prototype + screenshots |
 | ORISO-UserService | `feat/platform-greeting-override` | OpenResilienceInitiative/ORISO-UserService#1680 | Platform and centre text override storage and API (first slice) |
 | ORISO-Frontend | `feat/erstantwort-v2-sections` | OpenResilienceInitiative/ORISO-Frontend#2315 | Version-2 first-response rendering with a question block + screenshots |
 
 All four PRs are drafts and belong together. They are one PR set and land
-with the builder (ADR-035 "Consequences"). Hub issues:
+with the builder (ADR-036 "Consequences"). Hub issues:
 OpenResilienceInitiative/ORISO-Frontend#824 (Erstantwort epic) and
 OpenResilienceInitiative/ORISO-Admin#601 (agency editor).
 
@@ -117,26 +117,26 @@ flowchart LR
    conversation type** (`topic ?? conversation type ?? platform ?? prototype`),
    or does a topic replace the conversation-type level completely?
 3. Who may change topic visibility and journeys: platform only, or also Träger
-   and Beratungsstelle (ADR-035 decision 14 allows all three to create links)?
+   and Beratungsstelle (ADR-036 decision 14 allows all three to create links)?
 4. Should the journey editor be a **visual journey** (steps left to right, as
    in the diagram) rather than a list in a dialog?
 
-ADR-035 part C (decisions 15–17) needs an amendment once these are answered.
+ADR-036 part C (decisions 15–17) needs an amendment once these are answered.
 
 ## Checkpoints
 
 Each checkpoint is one reviewable step. Order matters top to bottom.
 
-- [x] ADR-035 written and accepted (2026-11-17)
+- [x] ADR-036 written and accepted (2026-11-17)
 - [x] Admin configurator prototype in Storybook (desktop + mobile)
 - [x] Frontend version-2 rendering with question block in Storybook
-- [ ] **Redesign the registration part as a user journey** (Frank's review): topic visibility in Funktionszugriff → Mailberatung, question catalogues, journey modules (postcode, e-mail), greeting/closing per topic, secret links. Storybook first, then an ADR-035 amendment.
+- [ ] **Redesign the registration part as a user journey** (Frank's review): topic visibility in Funktionszugriff → Mailberatung, question catalogues, journey modules (postcode, e-mail), greeting/closing per topic, secret links. Storybook first, then an ADR-036 amendment.
 - [ ] Group settings dialog (Frontend `CircleSettingsView`) using the shared configurator
 - [ ] UserService: store modules per level (replaces the fixed-slot overrides), answers table keyed by conversation, question id and version
 - [ ] Admin: wire the configurator into the menu, replace the fixed-slot greeting tabs
 - [ ] Frontend: wire version-2 events into the chat (`ErstantwortMessage`), send answers
 - [ ] Secret links for Mailberatung (create, topics, catalogue, inbox label)
-- [ ] Migration of old texts and fields (ADR-035 decision 22)
+- [ ] Migration of old texts and fields (ADR-036 decision 22)
 - [ ] One PR set ready for review, reviewers requested, then Dev deploy and test on dev.oriso.org
 
 ## Side findings (not part of this work)
@@ -146,4 +146,4 @@ Each checkpoint is one reviewable step. Order matters top to bottom.
 - A centre-only admin cannot use AI translation in the greeting editor.
 - OpenResilienceInitiative/ORISO-Frontend#825: client-side trigger still uses the fixed catalogue.
 - Some live installs require age/state at registration; confirm before the
-  migration (ADR-035 open question 3).
+  migration (ADR-036 open question 3).
