@@ -1,6 +1,6 @@
 # ADR-035: Configurable conversation modules and one question model for three moments
 
-- **Status:** Proposed — Frank, 2026-11-16 (decisions taken in the platform-greeting session; revised the same day after Frank asked for Frontend configuration and three question moments). Needs product sign-off on this written form before it is treated as canonical.
+- **Status:** Accepted — Frank, 2026-11-17 (written form approved; drafted 2026-11-16 in the platform-greeting session and extended with the registration-questions grill). Four open questions remain at the end and do not block the Storybook prototype.
 - **Date:** 2026-11-16
 - **Deciders:** Frank (product) + AI (engineering)
 - **Amends:** ADR-018 decisions 1, 2, 5 and 6 (fixed Baustein catalogue, single free Baustein, platform-owned ordering, no toggle on safety Bausteine, Admin-only editing). ADR-018 decisions 3, 4 and 7–11 stay.
