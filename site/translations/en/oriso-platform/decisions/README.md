@@ -49,6 +49,7 @@ not its `_artifacts/` subfolder). The series was re-synchronised on 2026-08-17 f
   Counsellor calendar on the FullCalendar MIT core, own team view, neutral ICS feed out, busy-time import in; cal.com removed. Extends ADR-020.
 
 - `ADR-033-direkteinladung-direct-invitation-with-optional-appointment.md` — accepted 2026-11-14 (ORISO-Frontend#2252). A direct link may carry an appointment; amends ADR-029; ADR-002 amended for history on late join. ADR-032 is held by its open PR.
+- `ADR-035-read-only-statistics-reader-role.md` — accepted by the product owner 2026-11-17 (ORISO-UserService#1666). Statistik-Leser: own role, created only by platform admins, reads only the platform statistics panel and CSV; server-side allow-list and mandatory 2FA. ADR-034 is held by its open PR.
 
 - Amendments 2026-11-17 (ORISO-UserService#1662, ORISO-Frontend#2287): **ADR-029** — guest account
   mode per link (delete after session, guests choose, permanent) with platform/Träger caps,
