@@ -838,13 +838,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/ADR-002-silent-room-membership-and-access-control-curtain.md",
-          "sourceHash": "b0bb76a6714688757f407e5e887297f5c6d899e4f03675b62501d3765f316c3d",
-          "reviewedAt": "2026-10-20"
+          "sourceHash": "de277fa51642e82467355b8bf34c26b31aacdb086f6e8a565c4a32924291c059",
+          "reviewedAt": "2026-11-14"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/ADR-002-silent-room-membership-and-access-control-curtain.md",
-          "sourceHash": "b0bb76a6714688757f407e5e887297f5c6d899e4f03675b62501d3765f316c3d",
-          "reviewedAt": "2026-10-20"
+          "sourceHash": "de277fa51642e82467355b8bf34c26b31aacdb086f6e8a565c4a32924291c059",
+          "reviewedAt": "2026-11-14"
         }
       }
     },
@@ -1413,13 +1413,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/README.md",
-          "sourceHash": "f3deb9d8e500dbc807a4582e4190b1e39029ccbc9b5918664a9d502d39ccc577",
-          "reviewedAt": "2026-11-14"
+          "sourceHash": "9a214530a2e35a0784f1f18b47103c01be3eb683f2e01f39b91bce808207cbdd",
+          "reviewedAt": "2026-11-17"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/README.md",
-          "sourceHash": "f3deb9d8e500dbc807a4582e4190b1e39029ccbc9b5918664a9d502d39ccc577",
-          "reviewedAt": "2026-11-14"
+          "sourceHash": "9a214530a2e35a0784f1f18b47103c01be3eb683f2e01f39b91bce808207cbdd",
+          "reviewedAt": "2026-11-17"
         }
       }
     },
