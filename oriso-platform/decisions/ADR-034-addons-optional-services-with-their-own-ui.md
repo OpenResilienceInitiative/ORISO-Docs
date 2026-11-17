@@ -4,7 +4,7 @@
 - **Date:** 2026-11-06 (updated 2026-11-12, 2026-11-13 and 2026-11-16 with the results of a working implementation)
 - **Deciders:** ORISO product owner and platform leads; BITS GmbH (DigiSucht) as proposer
 - **Related:** ADR-001 (modules toggleable per tenant and per agency), ADR-010 (per-Träger allowlist computed server-side), ADR-011 (single domain, path-based routing under `/service/*`), ADR-024 (notification matrix), ADR-030 (Activity Timeline), ADR-032 (counsellor calendar); `ORISO-Frontend/src/extensions` (build-time file replacement, unchanged by this ADR)
-- **Reference implementation:** [BITS-GmbH/ORISO-AddonService](https://github.com/BITS-GmbH/ORISO-AddonService), offered for transfer into this organisation once the ADR is accepted; first add-on [BITS-GmbH/oriso-addon-digisucht-tools](https://github.com/BITS-GmbH/oriso-addon-digisucht-tools); host changes in ORISO-Frontend, ORISO-Admin, ORISO-UserService and ORISO-Helm (PRs linked from this ADR's PR)
+- **Reference implementation:** [OpenResilienceInitiative/ORISO-AddonService](https://github.com/OpenResilienceInitiative/ORISO-AddonService); first add-on [BITS-GmbH/oriso-addon-digisucht-tools](https://github.com/BITS-GmbH/oriso-addon-digisucht-tools); host changes in ORISO-Frontend, ORISO-Admin, ORISO-UserService and ORISO-Helm (PRs linked from this ADR's PR)
 
 ---
 
