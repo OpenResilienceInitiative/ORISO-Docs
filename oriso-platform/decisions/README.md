@@ -50,6 +50,9 @@ not its `_artifacts/` subfolder). The series was re-synchronised on 2026-08-17 f
 - [`ADR-034-addons-optional-services-with-their-own-ui.md`](ADR-034-addons-optional-services-with-their-own-ui.md)
   — proposed 2026-11-12 (BITS GmbH, DigiSucht). Add-ons: optional services with their own UI, discovered by the platform, enabled per Träger, reached through one gateway in the AddonService.
 
+- [`ADR-033-direkteinladung-direct-invitation-with-optional-appointment.md`](ADR-033-direkteinladung-direct-invitation-with-optional-appointment.md)
+  — accepted 2026-11-14 (ORISO-Frontend#2252). A direct link may carry an appointment; amends ADR-029; ADR-002 amended for history on late join. ADR-032 is held by its open PR.
+
 New decisions in this section are repository-owned records and are not part of the unchanged
 19-file import described above.
 

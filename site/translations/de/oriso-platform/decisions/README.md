@@ -25,6 +25,8 @@ Dieses Verzeichnis enthält die Architekturentscheidungsprotokolle (ADRs) auf Pl
 - `ADR-034-addons-optional-services-with-their-own-ui.md` — vorgeschlagen am 2026-11-12 (BITS GmbH, DigiSucht).
   Add-ons: optionale Dienste mit eigener Oberfläche, von der Plattform erkannt, pro Träger freigeschaltet und über ein Gateway im AddonService erreichbar.
 
+- `ADR-033-direkteinladung-direct-invitation-with-optional-appointment.md` — angenommen am 2026-11-14 (ORISO-Frontend#2252): Ein Direktlink kann einen Termin tragen; ändert ADR-029; ADR-002 ist um den Verlauf beim späten Beitritt ergänzt. ADR-032 liegt in seinem offenen PR.
+
 Neue Entscheidungen in diesem Abschnitt gehören zum Repository und sind kein Teil des oben beschriebenen unveränderten Imports von 19 Dateien.
 
 ## Bekannte Probleme
