@@ -2,6 +2,7 @@
 
 - **Status:** Accepted by the product owner — 2026-10-27. Technical review open.
 - **Amended:** 2026-10-28 — see [Amendment 2026-10-28](#amendment-2026-10-28--direkteinladung-erlauben-replaces-the-call-policy-admission-holds-per-conversation) at the end. It replaces the tenant call policy and makes an admission hold per conversation.
+- **Amended again:** 2026-11-14 by [ADR-033](ADR-033-direkteinladung-direct-invitation-with-optional-appointment.md) (Direkteinladung: a link may carry an appointment and a guest may join an existing conversation).
 - **Date:** 2026-10-27 (product decisions taken 2026-10-17 and 2026-10-27)
 - **Decision owner:** Frank Gerhardt (product owner)
 - **Amends:** ADR-020 §2 (admission and the one-time-guest identity), §3 step 3 and §7 (persistent links never reach a live room)
