@@ -17,10 +17,10 @@ from here on another machine. Status is as of **2026-11-17**.
 
 | Repo | Branch | Draft PR | What it holds |
 |---|---|---|---|
-| ORISO-Docs | `docs/adr-035-configurable-first-reply` | see PR list | ADR-035 (accepted 2026-11-17) and this plan |
-| ORISO-Admin | `feat/platform-greeting-tab` | see PR list | Platform and centre greeting tabs (first slice) + conversation module configurator prototype + screenshots |
-| ORISO-UserService | `feat/platform-greeting-override` | see PR list | Platform and centre text override storage and API (first slice) |
-| ORISO-Frontend | `feat/erstantwort-v2-sections` | see PR list | Version-2 first-response rendering with a question block + screenshots |
+| ORISO-Docs | `docs/adr-035-configurable-first-reply` | OpenResilienceInitiative/ORISO-Docs#273 | ADR-035 (accepted 2026-11-17) and this plan |
+| ORISO-Admin | `feat/platform-greeting-tab` | OpenResilienceInitiative/ORISO-Admin#1551 | Platform and centre greeting tabs (first slice) + conversation module configurator prototype + screenshots |
+| ORISO-UserService | `feat/platform-greeting-override` | OpenResilienceInitiative/ORISO-UserService#1680 | Platform and centre text override storage and API (first slice) |
+| ORISO-Frontend | `feat/erstantwort-v2-sections` | OpenResilienceInitiative/ORISO-Frontend#2315 | Version-2 first-response rendering with a question block + screenshots |
 
 All four PRs are drafts and belong together. They are one PR set and land
 with the builder (ADR-035 "Consequences"). Hub issues:
