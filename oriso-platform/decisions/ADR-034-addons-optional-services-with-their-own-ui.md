@@ -1,10 +1,10 @@
 # ADR-034: Add-ons, optional services with their own UI, discovered by the platform and enabled per Träger
 
 - **Status:** Proposed, 2026-11-12. Discussed at the DigiSucht kickoff (Caritas, delphi, BITS GmbH); needs product and technical sign-off.
-- **Date:** 2026-11-06 (updated 2026-11-12, 2026-11-13 and 2026-11-16 with the results of a working implementation)
+- **Date:** 2026-11-06 (updated 2026-11-12, 2026-11-13, 2026-11-16 and 2026-11-17 with the results of a working implementation)
 - **Deciders:** ORISO product owner and platform leads; BITS GmbH (DigiSucht) as proposer
 - **Related:** ADR-001 (modules toggleable per tenant and per agency), ADR-010 (per-Träger allowlist computed server-side), ADR-011 (single domain, path-based routing under `/service/*`), ADR-024 (notification matrix), ADR-030 (Activity Timeline), ADR-032 (counsellor calendar); `ORISO-Frontend/src/extensions` (build-time file replacement, unchanged by this ADR)
-- **Reference implementation:** [OpenResilienceInitiative/ORISO-AddonService](https://github.com/OpenResilienceInitiative/ORISO-AddonService); first add-on [BITS-GmbH/oriso-addon-digisucht-tools](https://github.com/BITS-GmbH/oriso-addon-digisucht-tools); host changes in ORISO-Frontend, ORISO-Admin, ORISO-UserService and ORISO-Helm (PRs linked from this ADR's PR)
+- **Reference implementation:** [OpenResilienceInitiative/ORISO-AddonService](https://github.com/OpenResilienceInitiative/ORISO-AddonService); demo add-on [BITS-GmbH/oriso-addon-digisucht-tools](https://github.com/BITS-GmbH/oriso-addon-digisucht-tools); host changes in ORISO-Frontend, ORISO-Admin, ORISO-UserService and ORISO-Helm (PRs linked from this ADR's PR)
 
 ---
 
@@ -46,12 +46,12 @@ flowchart LR
 
 ### 1. What an add-on is
 
-- A service in its own Kubernetes namespace (default `addons`), installed with its own Helm chart, written in any language; the contract prescribes no technology. For add-ons maintained by the ORISO community, Spring Boot is recommended because it matches the core services. The first add-on is a small Node service, to show that the contract does not depend on the stack.
+- A service in its own Kubernetes namespace (default `addons`), installed with its own Helm chart, written in any language; the contract prescribes no technology. For add-ons maintained by the ORISO community, Spring Boot is recommended because it matches the core services. The demo add-on is a small Node service, to show that the contract does not depend on the stack.
 - It owns its storage. It has no direct access to MariaDB, MongoDB, Redis or Matrix.
 - It carries the label `oriso.io/addon: "true"` on its Service and serves a **manifest** at `GET /.well-known/oriso-addon.json`.
 - It may contain one or more apps.
 
-Manifest (contract `oriso-addon/v1`; `react` names the React major the bundle expects from the host (section 4), `calendar` is the add-on's calendar route (section 6), `visibility` is explained in section 2; entries for export and lifecycle events are reserved for section 6 and `health` for section 7, none of them evaluated yet):
+Manifest (contract `oriso-addon/v1`; `react` names the React major the bundle expects from the host (section 4), `readme` and `screenshots` feed ORISO-Admin (section 5), `visibility` is explained in section 2, `calendar` and `events` in section 6; an export entry is reserved for section 6 and `health` for section 7, neither evaluated yet):
 
 ```json
 {
@@ -60,11 +60,18 @@ Manifest (contract `oriso-addon/v1`; `react` names the React major the bundle ex
   "contract": "oriso-addon/v1",
   "react": "^19",
   "readme": "https://raw.githubusercontent.com/BITS-GmbH/oriso-addon-digisucht-tools/main/docs/README.md",
-  "apps": [{ "id": "goals", "title": { "de": "Ausgangssituation und Ziele" }, "slots": ["asker.navigation", "consultant.session", "consultant.asker-profile"], "visibility": "dynamic" }],
+  "apps": [{
+    "id": "goals",
+    "title": { "de": "Ausgangssituation und Ziele" },
+    "slots": ["asker.navigation", "consultant.session", "consultant.asker-profile"],
+    "visibility": "dynamic",
+    "screenshots": [{ "slot": "asker.navigation", "url": "https://raw.githubusercontent.com/BITS-GmbH/oriso-addon-digisucht-tools/main/docs/img/fragebogen.png", "caption": { "de": "Fragebogen der ratsuchenden Person" } }]
+  }],
   "ui": "/ui/entry.js",
   "settings": "/schema/settings.json",
   "calendar": "/calendar",
   "stats": [{ "id": "released", "label": { "de": "Freigegebene Tools" }, "type": "count" }],
+  "events": ["user.deleted", "session.deleted"],
   "health": "/health"
 }
 ```
@@ -87,7 +94,7 @@ Manifest (contract `oriso-addon/v1`; `react` names the React major the bundle ex
   - Controls an admin may not use are not shown, rather than shown disabled.
   - Like ADR-010, the effective state is computed server-side; a client only learns the add-ons enabled for itself.
 - **What a user sees is decided in three stages, all in the AddonService; the UI only shows what the registry returns:**
-  1. *Enablement (operator, static):* the Träger switch and agency overrides. The registry evaluates them **in context**: the web app asks with the same `X-Oriso-Agency-Id` / `X-Oriso-Session-Id` headers as its API calls, so a counsellor in a case sees only add-ons enabled for that case's agency, and a disabled add-on shows no button, tile or menu entry at all. Without a context header the registry uses the caller's own agencies (a counsellor's agencies, a client's session agencies): an add-on is listed if it is enabled for at least one of them.
+  1. *Enablement (operator, static):* the global switch, the mode per Träger and agency overrides. The registry evaluates them **in context**: the web app asks with the same `X-Oriso-Agency-Id` / `X-Oriso-Session-Id` headers as its API calls, so a counsellor in a case sees only add-ons enabled for that case's agency, and a disabled add-on shows no button, tile or menu entry at all. Without a context header the registry uses the caller's own agencies (a counsellor's agencies, a client's session agencies): an add-on is listed if it is enabled for at least one of them.
   2. *Slot and role (manifest, static):* the slot decides the audience (section 4).
   3. *App state (add-on, dynamic):* an app marked `"visibility": "dynamic"` in the manifest is only listed if the add-on says so for this person. The AddonService asks `GET /visibility` with a user-scoped add-on token (including agency and session context) and gets per app `visible` and an optional `badge` count (for example "1 new"). Answers are cached for a short time per user and context. If the add-on does not answer in time, a dynamic app stays hidden. Example: the client's menu entry for a tool only appears once a counsellor has released it.
 - **Trust model:** installed add-ons are trusted. The operator decides what is installed; there is no per-add-on permission model in v1.
@@ -131,7 +138,7 @@ There is one kind of add-on. It declares in its manifest which **slots** its app
 
 ### 5. Admin: settings, statistics and admin pages in ORISO-Admin
 
-- **Description:** the manifest may point to a Markdown `readme`, for example in the add-on's repository. The AddonService fetches and caches it from an allowlist of hosts (default `raw.githubusercontent.com`) and resolves relative links; ORISO-Admin shows it with its images on the add-on's page, without raw HTML. Images load from the same host, so an instance with a strict Content Security Policy has to allow it.
+- **Description:** the manifest may point to a Markdown `readme`, for example in the add-on's repository, and list up to six `screenshots` per app, each for one of its slots. The AddonService fetches and caches the readme from an allowlist of hosts (default `raw.githubusercontent.com`, also required for screenshots) and resolves relative links. ORISO-Admin shows the readme with its images on the add-on's page, without raw HTML, and lists each app with readable slot names (for example "Beratende: Seitenleiste im Fall") and its screenshots. Images load from that host, so an instance with a strict Content Security Policy has to allow it.
 - **Settings** need no UI from the add-on: the manifest points to a **JSON Schema**, ORISO-Admin renders the form, and the AddonService stores the values and serves them to the add-on through the host API. v1 supports a deliberately small subset: an object of `string`, `boolean`, `number` and `integer` properties with `title`, `description` and `default`, plus `enum` and `maxLength` for strings and `minimum`/`maximum` for numbers. Values merge in the order **schema defaults, Träger, agency**.
 - **Statistics:** the manifest declares them (id, label, type). The AddonService fetches aggregated, anonymous values per Träger from the add-on's `/stats?tenantId=…` with a service token (role `addon-service`); add-ons never push. ORISO-Admin shows them as tiles.
 - **Admin pages** (`admin.page`) are for add-ons whose administration is more than configuration, for example the survey editor. ORISO-Admin lists them in its navigation and mounts them with the same contract as the web app.
@@ -144,7 +151,7 @@ There is one kind of add-on. It declares in its manifest which **slots** its app
 - **Notifications:** an add-on asks the core to notify a person (for example "a new tool has been released for you") with a title, a short text, a link back into the add-on and one flag: important or not. It never chooses a channel. The core delivers through its existing channels (Activity Timeline, e-mail, push; ADR-024, ADR-030) according to the person's own notification preferences, and only addresses people within the caller's context: the caller's Träger, clients only through a session the caller may access, and the counsellors of a client (`recipient: "counsellors"`) only for the client themself or a counsellor in that client's session. Add-ons have no mail configuration of their own; if mail is off in the core it is off for add-ons too.
 - **Audit entries (write only):** an add-on reports auditable actions (for example "counsellor released tool X to client Y"). The AddonService stamps each entry with actor, time, Träger and add-on, stores it, and ORISO-Admin shows it in its existing Logs area next to the core's audit logs, with the same visibility rules per admin level. Add-ons can only write entries; they cannot read the log, not even their own entries.
 - **Calendar entries (read only):** an add-on can declare that it has dated entries such as appointments, deadlines or reminders. The core asks it for the entries of one person in a time range, the way it fetches statistics, and shows them in the counsellor calendar (ADR-032) together with its own appointments. Each entry has a title, a start (and optional end), a kind and a link into the add-on. The calendar only shows and links; booking, moving or cancelling happens inside the add-on.
-- **Data export:** add-ons expose an export endpoint; the central export collects it, configurable per admin level as the tender requires. This depends on the central export.
+- **Data export:** add-ons expose an export endpoint; the central export collects it, configurable per admin level as the tender requires. Not implemented yet; it depends on the central export.
 - **Lifecycle events** via RabbitMQ (already part of the platform): UserService publishes `user.deleted` and `session.deleted`, TenantService `tenant.deleted`, on the topic exchange `oriso.lifecycle` after the deletion is committed (ids only, no personal data). The AddonService consumes them with a durable queue of its own and forwards each event to every add-on that lists its type in the manifest's `events`, as `POST /events` with a service token; deliveries are stored and retried with growing pauses, so an add-on that is down receives them later. Add-ons therefore need no access to RabbitMQ. Handlers must be **idempotent and tolerate unknown ids**: a Träger created and rolled back within a second still produces a deletion event, and events can arrive twice.
 
 ### 7. Operations
@@ -152,7 +159,7 @@ There is one kind of add-on. It declares in its manifest which **slots** its app
 - Network policies allow traffic into the add-on namespace only from the AddonService; outbound only to the AddonService host API and the add-on's own storage.
 - Every add-on exposes its health route and OpenTelemetry, and appears in the Health Dashboard and SigNoz like a core service.
 - The AddonService can switch an add-on off per Träger or globally at any time.
-- The AddonService is part of the ORISO Helm chart, disabled by default.
+- The AddonService is part of the ORISO Helm chart, disabled by default. Its image is published like the other services' as `ghcr.io/openresilienceinitiative/oriso-addonservice` (`latest` from main, `dev` from dev, versions from `release/addonservice-<version>`).
 
 ### 8. Versioning
 
