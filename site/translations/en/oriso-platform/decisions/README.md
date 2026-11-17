@@ -50,6 +50,13 @@ not its `_artifacts/` subfolder). The series was re-synchronised on 2026-08-17 f
 
 - `ADR-033-direkteinladung-direct-invitation-with-optional-appointment.md` — accepted 2026-11-14 (ORISO-Frontend#2252). A direct link may carry an appointment; amends ADR-029; ADR-002 amended for history on late join. ADR-032 is held by its open PR.
 
+- Amendments 2026-11-17 (ORISO-UserService#1662, ORISO-Frontend#2287): **ADR-029** — guest account
+  mode per link (delete after session, guests choose, permanent) with platform/Träger caps,
+  keep-account by entry mode, no e-mail for temporary accounts, guest links for group calls.
+  **ADR-020** — only counsellors start calls (enforced in the call policy, join needs a live
+  counsellor), and self-booking in Sprechstunden replaces the Auto-confirmation Lead Time.
+  **ADR-032** — Sprechstunden settings and booking requests in the calendar.
+
 New decisions in this section are repository-owned records and are not part of the unchanged
 19-file import described above.
 

@@ -25,6 +25,8 @@ Dieses Verzeichnis enthält die Architekturentscheidungsprotokolle (ADRs) auf Pl
 
 - `ADR-033-direkteinladung-direct-invitation-with-optional-appointment.md` — angenommen am 2026-11-14 (ORISO-Frontend#2252): Ein Direktlink kann einen Termin tragen; ändert ADR-029; ADR-002 ist um den Verlauf beim späten Beitritt ergänzt. ADR-032 liegt in seinem offenen PR.
 
+- Änderungen vom 2026-11-17 (ORISO-UserService#1662, ORISO-Frontend#2287): **ADR-029** — Gastkontomodus je Link (nach der Sitzung löschen, Gäste wählen, dauerhaft) mit Begrenzung durch Plattform und Träger, Konto behalten je nach Eintrittsmodus, keine E-Mail-Adresse für temporäre Konten, Gastlinks für Gruppenanrufe. **ADR-020** — nur Berater starten Anrufe (in der Anrufrichtlinie durchgesetzt, der Beitritt braucht einen anwesenden Berater), und die Selbstbuchung in Sprechstunden ersetzt den Vorlauf für automatische Bestätigung. **ADR-032** — Einstellungen für Sprechstunden und Buchungsanfragen im Kalender.
+
 Neue Entscheidungen in diesem Abschnitt gehören zum Repository und sind kein Teil des oben beschriebenen unveränderten Imports von 19 Dateien.
 
 ## Bekannte Probleme
