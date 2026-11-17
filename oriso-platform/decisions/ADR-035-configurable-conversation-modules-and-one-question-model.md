@@ -113,6 +113,8 @@ Measured on `origin/dev` (2026-11-16), four things do not fit:
    | **Per question** | id, label, optional help text, required yes/no, options (for select), per-language texts |
    | **Answers** | stored per question id with the question's version, so a later edit never changes the meaning of an old answer |
 
+   - A "select field" (Frank's term) is the dropdown rendering of single select, not a separate type. Radio vs. dropdown is a display choice of the same question.
+
 10. **Three moments, one model.**
 
     | Moment | When | Configured at | Owner of the decision |
@@ -124,10 +126,10 @@ Measured on `origin/dev` (2026-11-16), four things do not fit:
     - The editor component, storage format and translation path are shared across all three moments.
     - Only the moment and its trigger differ.
 
-11. **Answers are new personal data in a special-category context.**
-    - Moments 2 and 3 can be configured and previewed now.
-    - Their answers are persisted only after a DSFA entry exists (purpose, retention, who may read them).
-    - Until then, a question block renders as a hint.
+11. **Answers are personal data in a special-category context; the platform does not gate them.**
+    - Frank, 2026-11-17, for registration: the platform does not block storing answers behind a DSFA entry; data protection is the operator's / Träger's responsibility. What matters is that the questionnaire gets filled in.
+    - Moment 1: answers are held only temporarily while the person registers and are assigned to the matched Beratungsstelle once registration completes.
+    - Moments 2 and 3: whether the same rule applies, or whether their answers wait for a DSFA entry (purpose, retention, who may read them), is open (see Open questions). Until decided, they can be configured and previewed, and a question block renders as a hint.
     - The follow-up survey must also say whether answers are linked to the conversation or collected anonymously. That is an open product question (see Open questions).
 
 ### C. Moment 1: registration questions per topic (Mailberatung)
@@ -142,7 +144,7 @@ Grilled with Frank on 2026-11-16 in a separate session; this part records it, th
     - **Access:**
       - findable through the official search, or
       - a **secret link** to one or more Beratungsstellen "off the record".
-      - A Träger may create such links.
+      - Platform, Träger and Beratungsstelle admins may create such links in the Admin. Counsellors use finished links; they do not build questionnaires.
     - **Before the conversation (moment 1):**
       - always: user name and password;
       - optional: e-mail, postcode, further questions;
@@ -150,10 +152,13 @@ Grilled with Frank on 2026-11-16 in a separate session; this part records it, th
     - **During (moment 2):** after the first enquiry, at a controllable moment.
     - **At the end (moment 3):** at the end of the conversation or the counselling.
 
-15. **The topic decides.**
+15. **The topic decides; one official questionnaire per topic.**
     - Questions are configured per topic; the platform admin creates topics.
+    - The official registration has exactly one questionnaire per topic. What it asks applies to everyone; the Beratungsstelle is matched as today. It may hold more than one question once the topic's Beratungsstellen agree.
     - A topic without its own setting inherits the **platform default**. On Caritas installations that default is: postcode on, everything else off.
-    - The topic replaces the consulting type's `registration.mandatoryFields.age/state` for Mailberatung. A service that needs age (e.g. U25) gets a topic or a link that asks for it.
+    - The topic replaces the consulting type's `registration.mandatoryFields.age/state` for Mailberatung. Before the switch, the age/state requirements centres have today are migrated into their topics, so no question silently disappears.
+    - A topic can be hidden from the normal registration ("link only"). Example: U25 has supervision, and Caritas wants one Fachbereich per Beratungsstelle, so U25 may be its own hidden topic.
+    - Required or optional is set per question; in the first step the postcode is required when it is on.
 
 16. **First step: one question on/off per topic, platform level only.**
     - On Dev the only switchable question is the postcode.
@@ -161,12 +166,14 @@ Grilled with Frank on 2026-11-16 in a separate session; this part records it, th
     - The full configurator (up to ~20 steps) and Träger / Beratungsstelle levels follow once subdomains are done.
 
 17. **Secret links (Mailberatung, like live chat).**
+    - Special flows exist only through a link that must be shared. A topic has one official questionnaire plus any number of link questionnaires.
     - A link preselects one Beratungsstelle and one or more topics.
     - It says whether the postcode is asked.
-    - An enquiry made through it is recognisable as a **local / own channel**.
     - It may carry its own questionnaire and greeting with its own rules. Example: U25 — not in the official search, asks for age, has its own greeting.
+    - **One questionnaire, three visibilities** instead of a precedence chain: a questionnaire is shown (a) in the official registration and in additional links, (b) in a link only, or (c) in the topic's official registration only. Case (c) needs no duplicate link.
+    - **Several topics in one link:** the topic choice is a required first field; after the choice, that topic's questions apply. With exactly one topic the choice is skipped.
+    - **Recognisable:** an enquiry made through a link carries a label with the link's name (e.g. "U25") in the inbox, filterable. There is no separate inbox.
     - When a link is created, the system asks: let the guest straight in, or answer questions first. The preselection is "answer questions".
-    - For registration questions the link plays the role of the conversation level: `link ?? topic ?? platform default`, each as a whole questionnaire.
 
 18. **A follow-up enquiry on another topic asks all of that topic's questions again**, including ones already answered.
 
@@ -189,7 +196,7 @@ Grilled with Frank on 2026-11-16 in a separate session; this part records it, th
       - Träger content in TenantService `content.erstantwort*` is migrated the same way.
       - Group welcome texts and rules (`hintMessageTranslations`, `groupChatRulesTranslations`) become conversation-level `SELF_HELP` modules: a message plus a "rules" panel.
     - Question definitions are part of the module JSON.
-    - Answers, once allowed (decision 11), go in their own table keyed by conversation, question id and question version.
+    - Answers go in their own table keyed by conversation, question id and question version. Registration answers are held client-side until registration completes and are then stored with the enquiry for the matched Beratungsstelle (decision 11).
 
 ## Consequences
 
@@ -204,7 +211,7 @@ Grilled with Frank on 2026-11-16 in a separate session; this part records it, th
   1. Postcode on/off per topic at platform level. Needs a field on the topic, so it depends on the topic-defaults work, branch `feat/topic-defaults-seed-override`.
   2. Stepper design.
   3. Registration as moment 1 in the shared configurator.
-  4. Secret links for Mailberatung.
+  4. Secret links for Mailberatung (created by platform, Träger and Beratungsstelle admins; inbox label per link; topics hidden from normal registration).
   5. Names and icons of the conversation types.
   6. Träger / Beratungsstelle levels after subdomains.
 - **Translation:**
@@ -222,10 +229,9 @@ Grilled with Frank on 2026-11-16 in a separate session; this part records it, th
 1. **Follow-up survey:** anonymous, or linked to the conversation? Who sees the answers — the counsellor, the Beratungsstelle, only aggregated statistics?
 2. **Follow-up survey trigger:** on conversation close, after N days without messages, sent by the counsellor by hand, or all three?
 3. **Live chat:** does live chat need a conversation level after all, e.g. per live-chat slot?
-4. **Several topics in one secret link:** which questions apply? Proposal: the link's own questionnaire, otherwise the union of the topics' questions.
-5. **"Local / own channel":** where does the Beratungsstelle see it — a mark in the inbox, its own filter?
-6. **Registration answers:** do new questions (age, gender) also wait for a DSFA entry (decision 11 applied to moment 1)? How are today's `session_data` (age, state) and `session.postcode` migrated to answers with question id and version?
-7. **Counsellor link for Mailberatung:** today it exists only for live chat. Align the scope with the direct-invitation draft (ADR-033).
+4. **Answers in moments 2 and 3:** no platform gate as for registration (decision 11), or wait for a DSFA entry?
+5. **Registration answers:** how are today's `session_data` (age, state) and `session.postcode` migrated to answers with question id and version? Which live installations require age/state today?
+6. **Counsellor link for Mailberatung:** today it exists only for live chat. Align the scope with the direct-invitation draft (ADR-033).
 
 ## Rejected
 
