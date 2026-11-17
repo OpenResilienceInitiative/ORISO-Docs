@@ -108,7 +108,14 @@ There is one kind of add-on. It declares in its manifest which **slots** its app
 - **Bundles are public code.** A browser's module import cannot send a bearer token, so `/ui/**` is served without authentication. Bundles must contain code only, never data; everything user-related goes through the authenticated API.
 - An add-on can further restrict an app by role inside its slot; it cannot widen the audience of a slot.
 - **Lifecycle:** the bundle exports `bootstrap`, `mount(element, context)`, `unmount` and optionally `update(context)`, the shape of a single-spa parcel, so authors can use existing adapters. `update` lets the host pass a new context (for example another session) without remounting. `context` carries the user and role, tenant, locale including the form of address (`de` / `de@informal`), the tenant's theme tokens, the slot context from the table above, an API client bound to the add-on's own route, `navigate` and `notify`.
-- **Shared React:** the host provides its React, ReactDOM client and JSX runtime on `globalThis.__ORISO_ADDON_SHARED__`. An add-on uses these instead of bundling React, which keeps one React instance per page and lets a bundle be a plain ES module without a build step. Other libraries, including MUI, are bundled by the add-on.
+- **Shared React:** the host provides its React, ReactDOM client and JSX runtime on `globalThis.__ORISO_ADDON_SHARED__`. An add-on uses these instead of bundling React, which keeps one React instance per page and lets a bundle be a plain ES module without a build step. Other libraries are bundled by the add-on; UI components come from the host's kit.
+- **Component kit:** the host also shares a small, curated set of its own components as `kit` on the same global, so add-ons look and behave like ORISO without copying its design. The web kit (`@oriso/web-kit` 1.x) offers `Provider`, `Button`, `TextField`, `Textarea`, `Checkbox`, `Select`, `Notice`, `Card`, `Headline` and `Spinner`.
+  - Each kit component renders the real core component (for example `OrisoTextarea`, `M3Checkbox`, the core `Button`) behind small props of its own. Only those props are contract; the core can refactor the component behind them.
+  - Add-ons render in their own React root, outside the host's providers. They wrap their tree in the kit's `Provider`, which supplies the host's theme including the Träger colours.
+  - Kit components treat add-on text as text: no translation lookup, no HTML.
+  - Authors import the kit like a package (`import { Button } from '@oriso/web-kit'`). A small bundler plugin maps that import, and React, onto the global; the host publishes a types-only package generated from the kit's prop types. No component code is bundled into an add-on.
+  - The kit's components appear in the host's Storybook under "Add-ons", which is also the reference for authors.
+  - ORISO-Admin uses a different component library (antd); an admin kit with the same approach is planned and not part of v1. Until then an `admin.page` app brings its own components.
 - Add-ons ship their own translations; the host only passes the active locale.
 
 ### 5. Admin: settings, statistics and admin pages in ORISO-Admin
@@ -138,6 +145,7 @@ There is one kind of add-on. It declares in its manifest which **slots** its app
 ### 8. Versioning
 
 - The contract is versioned (`oriso-addon/v1`), independently of ORISO releases. Breaking changes require a new contract version; the AddonService can serve more than one version during a transition.
+- The kit has its own version (`kit.version` on the global). Removing a kit component or changing its props is a breaking change of the kit; adding components is not.
 - Each ORISO release states which contract versions its web app, ORISO-Admin and AddonService support. Operators who stay on an older release line need the host side backported to it; the reference implementation was backported to 2.0.15 for the DigiSucht test instance.
 
 ## Consequences
@@ -153,6 +161,7 @@ There is one kind of add-on. It declares in its manifest which **slots** its app
 
 - A new core service to build and run, and a public contract that ORISO has to keep stable.
 - Shared React couples add-ons to the host's React major; a React major upgrade in ORISO needs an announcement and compatible add-on releases.
+- The kit's props are public API. ORISO has to keep them stable even when it reworks the components behind them, which is why the kit stays small.
 - Trusted, in-page add-ons can see what the page can see. This is acceptable only because operators choose what they install; it must be stated in the operator documentation.
 - ORISO-Admin needs a JSON Schema form, statistics tiles and the same slot loader as the web app.
 
@@ -163,4 +172,6 @@ There is one kind of add-on. It declares in its manifest which **slots** its app
 - **One Ingress per add-on, no gateway.** Rejected: every add-on would have to validate Keycloak tokens, enablement and core gates itself, there is no central kill switch, and every install touches the ingress setup.
 - **Iframe-only integration.** Rejected for v1: strongest isolation, but no shared theme or React, awkward layout in slots. Can be added later as a second integration mode for untrusted add-ons.
 - **A permission or scope model per add-on.** Deferred: with operator-installed, trusted add-ons it adds approval work without a real gain in v1.
+- **A separate component package (`@oriso/ui`) extracted from the core.** Not now: cleanest separation, but a large extraction both frontends would have to adopt. The kit gives add-ons the same imports without moving code, and its prop types are a natural starting point if the package comes later.
+- **Module Federation for host components.** Rejected: it solves the same problem with more machinery, and the web app (webpack) and ORISO-Admin (Vite) would need two different federation setups. Sharing through the existing global needs neither.
 - **Enablement as tenant settings in TenantService.** Rejected: agency overrides and per-add-on state would add a second, differently shaped settings store to TenantService; the AddonService already owns the registry and the gateway check.
