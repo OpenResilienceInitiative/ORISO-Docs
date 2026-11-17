@@ -127,10 +127,10 @@ Measured on `origin/dev` (2026-11-16), four things do not fit:
     - Only the moment and its trigger differ.
 
 11. **Answers are personal data in a special-category context; the platform does not gate them.**
-    - Frank, 2026-11-17, for registration: the platform does not block storing answers behind a DSFA entry; data protection is the operator's / Träger's responsibility. What matters is that the questionnaire gets filled in.
+    - Frank, 2026-11-17, for all three moments: the platform does not block storing answers behind a DSFA entry; data protection is the operator's / Träger's responsibility. What matters is that the questionnaire gets filled in.
     - Moment 1: answers are held only temporarily while the person registers and are assigned to the matched Beratungsstelle once registration completes.
-    - Moments 2 and 3: whether the same rule applies, or whether their answers wait for a DSFA entry (purpose, retention, who may read them), is open (see Open questions). Until decided, they can be configured and previewed, and a question block renders as a hint.
-    - The follow-up survey must also say whether answers are linked to the conversation or collected anonymously. That is an open product question (see Open questions).
+    - Moments 2 and 3: answers are stored when given, like any conversation content.
+    - **Anonymous or linked is a setting of the follow-up survey**, chosen by whoever configures it (Träger, Beratungsstelle), not fixed by the platform (Frank, 2026-11-17). Anonymous answers are stored without the conversation id and only shown aggregated; linked answers are shown at the conversation.
 
 ### C. Moment 1: registration questions per topic (Mailberatung)
 
@@ -196,7 +196,7 @@ Grilled with Frank on 2026-11-16 in a separate session; this part records it, th
       - Träger content in TenantService `content.erstantwort*` is migrated the same way.
       - Group welcome texts and rules (`hintMessageTranslations`, `groupChatRulesTranslations`) become conversation-level `SELF_HELP` modules: a message plus a "rules" panel.
     - Question definitions are part of the module JSON.
-    - Answers go in their own table keyed by conversation, question id and question version. Registration answers are held client-side until registration completes and are then stored with the enquiry for the matched Beratungsstelle (decision 11).
+    - Answers go in their own table keyed by conversation (empty for an anonymous survey), question id and question version. Registration answers are held client-side until registration completes and are then stored with the enquiry for the matched Beratungsstelle (decision 11).
 
 ## Consequences
 
@@ -226,12 +226,10 @@ Grilled with Frank on 2026-11-16 in a separate session; this part records it, th
 
 ## Open questions
 
-1. **Follow-up survey:** anonymous, or linked to the conversation? Who sees the answers — the counsellor, the Beratungsstelle, only aggregated statistics?
-2. **Follow-up survey trigger:** on conversation close, after N days without messages, sent by the counsellor by hand, or all three?
-3. **Live chat:** does live chat need a conversation level after all, e.g. per live-chat slot?
-4. **Answers in moments 2 and 3:** no platform gate as for registration (decision 11), or wait for a DSFA entry?
-5. **Registration answers:** how are today's `session_data` (age, state) and `session.postcode` migrated to answers with question id and version? Which live installations require age/state today?
-6. **Counsellor link for Mailberatung:** today it exists only for live chat. Align the scope with the direct-invitation draft (ADR-033).
+1. **Follow-up survey trigger:** on conversation close, after N days without messages, sent by the counsellor by hand, or all three?
+2. **Live chat:** does live chat need a conversation level after all, e.g. per live-chat slot?
+3. **Registration answers:** how are today's `session_data` (age, state) and `session.postcode` migrated to answers with question id and version? Which live installations require age/state today?
+4. **Counsellor link for Mailberatung:** today it exists only for live chat. Align the scope with the direct-invitation draft (ADR-033).
 
 ## Rejected
 
