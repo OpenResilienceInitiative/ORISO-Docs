@@ -59,6 +59,7 @@ Manifest (contract `oriso-addon/v1`; `react` names the React major the bundle ex
   "version": "1.4.0",
   "contract": "oriso-addon/v1",
   "react": "^19",
+  "readme": "https://raw.githubusercontent.com/BITS-GmbH/oriso-addon-digisucht-tools/main/docs/README.md",
   "apps": [{ "id": "goals", "title": { "de": "Ausgangssituation und Ziele" }, "slots": ["asker.navigation", "consultant.session", "consultant.asker-profile"], "visibility": "dynamic" }],
   "ui": "/ui/entry.js",
   "settings": "/schema/settings.json",
@@ -72,8 +73,18 @@ Manifest (contract `oriso-addon/v1`; `react` names the React major the bundle ex
 
 - The AddonService lists Services with the label in the add-on namespace every 30 seconds (read-only RBAC on Services in that namespace) and reads each manifest. A static list in the Helm values is the fallback for environments without the Kubernetes API.
 - A discovered add-on is **available**, not active. Enablement lives in the AddonService:
-  - A **SuperAdmin** switches an add-on on or off per Träger.
-  - Träger admins can override that per **agency**. An agency override only takes effect while the add-on is enabled for the Träger, so a Träger switch is always a complete off switch.
+  - A **SuperAdmin** switches an add-on on or off globally (off by default) and sets a **mode per Träger**:
+
+    | Mode | Effect | Träger admins |
+    |---|---|---|
+    | `OFF` (default) | not available | do not see the add-on |
+    | `TENANT` | the Träger decides | see it and switch it on or off |
+    | `ON` | always on | see it, cannot switch it off |
+    | `ON_HIDDEN` | always on for the Träger and all its agencies | do not see it |
+
+    `ON_HIDDEN` is for add-ons a Träger should not have to care about, for example one every Träger of an instance runs.
+  - Träger admins can override the Träger state per **agency** (modes `TENANT` and `ON`). An agency override only takes effect while the add-on is on for the Träger, so the Träger level is always a complete off switch.
+  - Controls an admin may not use are not shown, rather than shown disabled.
   - Like ADR-010, the effective state is computed server-side; a client only learns the add-ons enabled for itself.
 - **What a user sees is decided in three stages, all in the AddonService; the UI only shows what the registry returns:**
   1. *Enablement (operator, static):* the Träger switch and agency overrides. The registry evaluates them **in context**: the web app asks with the same `X-Oriso-Agency-Id` / `X-Oriso-Session-Id` headers as its API calls, so a counsellor in a case sees only add-ons enabled for that case's agency, and a disabled add-on shows no button, tile or menu entry at all. Without a context header the registry uses the caller's own agencies (a counsellor's agencies, a client's session agencies): an add-on is listed if it is enabled for at least one of them.
@@ -120,6 +131,7 @@ There is one kind of add-on. It declares in its manifest which **slots** its app
 
 ### 5. Admin: settings, statistics and admin pages in ORISO-Admin
 
+- **Description:** the manifest may point to a Markdown `readme`, for example in the add-on's repository. The AddonService fetches and caches it from an allowlist of hosts (default `raw.githubusercontent.com`) and resolves relative links; ORISO-Admin shows it with its images on the add-on's page, without raw HTML. Images load from the same host, so an instance with a strict Content Security Policy has to allow it.
 - **Settings** need no UI from the add-on: the manifest points to a **JSON Schema**, ORISO-Admin renders the form, and the AddonService stores the values and serves them to the add-on through the host API. v1 supports a deliberately small subset: an object of `string`, `boolean`, `number` and `integer` properties with `title`, `description` and `default`, plus `enum` and `maxLength` for strings and `minimum`/`maximum` for numbers. Values merge in the order **schema defaults, Träger, agency**.
 - **Statistics:** the manifest declares them (id, label, type). The AddonService fetches aggregated, anonymous values per Träger from the add-on's `/stats?tenantId=…` with a service token (role `addon-service`); add-ons never push. ORISO-Admin shows them as tiles.
 - **Admin pages** (`admin.page`) are for add-ons whose administration is more than configuration, for example the survey editor. ORISO-Admin lists them in its navigation and mounts them with the same contract as the web app.
