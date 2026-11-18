@@ -218,6 +218,13 @@ Edge cases to test (each a likely bug):
 - **Answers and questions** have up/down next to remove, the controls centred on the field, more space between answers.
 - **Profile card („Steckbrief für Redaktionen“)** on every block: description for editors (next to the one for advice seekers), goal, author, audiences, keywords. A search over them exists in the model (`matchesSearch`) for the library to come.
 
+### Fifth round of 2026-11-18 (built)
+
+- **All dialogs keep header and buttons on small screens** (Modal `scrollableBody`); checked at 1280×720 and 390×700.
+- **Plus line** between steps in grey; the steps move apart on hover; the add-step dialog zooms in from the click.
+- **Machine translation is wired to the real endpoint shape**: one batched `POST /tenantadmin/translate` (stored OpenRouter or Mistral key) per step, per field and for conversation-type names, with the existing human error messages. For the page wiring: pass `adminTranslator` only where the admin may call it (a centre-only admin may not, see Consequences).
+- **Search terms per language** in a „Steckbrief und Suchbegriffe“ dialog (step menu); the step shows a language mark and a search mark (✓ when every language has ≥ 3 terms). German terms translate into all languages in one call; suggestions per language need a new endpoint — **ORISO-Admin#1562** (sub-issue of #1419) covers it, together with the same search terms for **topics**, which today are hard-coded in the Frontend (`topicSearchRelatedTerms.ts`).
+
 ### Ideas for reuse („pooling“) — for Frank
 
 Goal: lower levels should not build the same survey ten times, and should not
@@ -273,6 +280,7 @@ Each checkpoint is one reviewable step. Order matters top to bottom.
 - [x] Decisions of 2026-11-18, second round: built in Storybook (stories 13–36), ADR-036 part E decisions 23, 29–35, ADR-018 amended
 - [ ] **Frank reviews the journeys stories and ADR-036 part E** (open: add-ons at the start, final wording, the duplicated tiles, reuse ideas)
 - [ ] Decide whether the separate Journeys section stays: Frank asked on 2026-11-18 why the tiles appear twice (Journeys section and Funktionszugriff). Proposal: Funktionszugriff is the only place; the section is Storybook-only.
+- [ ] Suggest-terms endpoint on the stored AI keys and search terms per language for topics (ORISO-Admin#1562)
 - [ ] Storage of journeys (UserService) with scope per journey and lower-level changes per platform journey; name/icon in the global configuration (ConsultingTypeService `settingsadmin`), with a server-side SVG check
 - [ ] Frontend registration: „Beratungsstelle wählen“ with the topic's list when there is no postcode (new path)
 - [ ] Chat: one persisted event per step (ADR-018 amendment), manual trigger in the conversation's three-dot menu
