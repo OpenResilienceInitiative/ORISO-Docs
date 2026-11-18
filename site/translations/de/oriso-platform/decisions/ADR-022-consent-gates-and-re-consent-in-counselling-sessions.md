@@ -56,3 +56,12 @@ Anonymität folgt aus **unveränderlichem Anzeigenamen und erzeugtem Passwort**,
 - **Benutzer-Einwilligungsereignisse mit Version/Zeit speichern.** Verhaltensdaten anonymer Personen ohne Mehrwert gegenüber Veröffentlichungshistorie. Nur nötiger Zustand aus Punkt 2.
 - **Jede Änderung Ja/Nein.** Jeder Tippfehler löst Zustimmungswelle aus, verworfen.
 - **Zweite Sitzung gleichen Themas sperren.** Erzeugt datenschutzseitig ungünstigste Zweitkonten, verworfen.
+
+
+## Ergänzung vom 28.10.2026: Folgeanfragen und Themenüberschneidungen (ORISO-Frontend#1876)
+
+Am 28.10.2026 mit dem Product Owner entschieden. Die Ergänzung präzisiert Entscheidungen 1 und 7, ohne eine weitere Einwilligungsschranke einzuführen.
+
+- **Schranke 2 wird bei einer Folgeanfrage vorgezogen.** Wenn eine registrierte ratsuchende Person eine Folgeanfrage über das Profil oder die Empfehlung einer Beratungsperson beginnt, bestätigt sie die Erklärung der gewählten Beratungsstelle direkt nach deren Auswahl im Anfragedialog. Die Erklärung erscheint jedes Mal, auch bei derselben Stelle. Es bleibt dieselbe Schranke 2, keine dritte: Die Version wird an der neuen Sitzung festgehalten, sodass der neue Raum nicht erneut fragt.
+- **Der Themenhinweis wartet auf die Annahme.** Der Hinweis aus Entscheidung 7 erscheint im älteren Chat erst, wenn die neue Anfrage **angenommen** wurde, nicht beim Absenden. Beide Seiten des älteren Chats sehen ihn; die andere Beratungsstelle wird nicht genannt und die bisherige Beratungsperson erhält einmal die normale Benachrichtigung. Nur in diesem Fall darf die ratsuchende Person die neuere Beratung beenden; eine Nachricht im älteren Chat hält anschließend fest, dass die zweite Beratung zu diesem Thema beendet wurde.
+- **Der Umgang mit Themenüberschneidungen ist eine Plattformeinstellung.** Standard ist „die bisherige Beratungsperson einmal informieren“. Beide Stellen zu informieren, bei jeder Nachricht zu informieren und eine Sperre sind vorbehaltene Optionen (ORISO-Frontend#1878). Eine Sperre würde die unten verworfene Alternative umkehren und benötigt deshalb eine neue Entscheidung.

@@ -265,3 +265,14 @@ test('email metrics: a scope without templates is not available, never 0 broken'
 test('an unknown metric name is refused', () => {
   assert.throws(() => run(mkRepo({ 'src/chat/a.ts': 'x' }), ['cyclomatic']), /unknown metric/);
 });
+
+test('lint: incomplete eslint output is unavailable, never a fabricated zero', () => {
+  const root = mkRepo({
+    'eslint.config.js': 'export default [];',
+    'node_modules/.bin/eslint': '#!/usr/bin/env node\nprocess.stdout.write("[]");\n',
+    'src/chat/a.ts': 'export const a = 1;\n',
+  });
+  const result = run(root, ['lint']).lint;
+  assert.equal(result.value, null);
+  assert.match(result.details.reason, /did not report every target/);
+});

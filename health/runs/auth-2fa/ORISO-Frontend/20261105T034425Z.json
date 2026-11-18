@@ -1,0 +1,160 @@
+{
+  "schemaVersion": 1,
+  "run": {
+    "schemaVersion": 1,
+    "runId": "20261105T034425Z-6445d64b",
+    "generatedAt": "2026-11-05T03:44:25Z",
+    "commits": {
+      "ORISO-Frontend": "ee91e0c5e4402384c555029e1f8b9b2b0b163968"
+    },
+    "trigger": "health-run"
+  },
+  "scope": {
+    "capability": "auth-2fa",
+    "repo": "ORISO-Frontend",
+    "path": null
+  },
+  "commit": "ee91e0c5e4402384c555029e1f8b9b2b0b163968",
+  "criteriaVersion": "272b25a9e1c05f2f07941924ddce752d7820cae5a14de6d9282f39443fb80127",
+  "model": null,
+  "startedAt": "2026-11-05T03:44:25Z",
+  "metrics": [
+    {
+      "name": "crap",
+      "status": "not-available",
+      "value": null,
+      "threshold": 30,
+      "better": "lower",
+      "unit": "CRAP score per function",
+      "weight": 3,
+      "pass": null,
+      "score": null,
+      "source": "health-run crap: TypeScript AST complexity and line coverage from the given coverage file",
+      "details": {
+        "reason": "no coverage: pass a coverage file (lcov.info or coverage-final.json)",
+        "state": "no-coverage"
+      }
+    },
+    {
+      "name": "size",
+      "status": "measured",
+      "value": 1654,
+      "threshold": 400,
+      "better": "lower",
+      "unit": "lines per file",
+      "weight": 1,
+      "pass": false,
+      "score": 0,
+      "source": "health-run size: lines of the largest production code file in scope (118 files)",
+      "details": {
+        "files": 118,
+        "largest": [
+          {
+            "file": "src/components/registration/Registration.tsx",
+            "lines": 1654
+          },
+          {
+            "file": "src/components/login/Login.tsx",
+            "lines": 1109
+          },
+          {
+            "file": "src/components/twoFactorAuth/TwoFactorSetupDialog.tsx",
+            "lines": 1103
+          },
+          {
+            "file": "src/components/registration/topicSelection/TopicSelection.tsx",
+            "lines": 1085
+          },
+          {
+            "file": "src/components/registration/accountData/AccountData.tsx",
+            "lines": 1048
+          }
+        ]
+      }
+    },
+    {
+      "name": "test-ratio",
+      "status": "measured",
+      "value": 0.68,
+      "threshold": 0.5,
+      "better": "higher",
+      "unit": "test lines per code line",
+      "weight": 2,
+      "pass": true,
+      "score": 100,
+      "source": "health-run test-ratio: test code lines / production code lines",
+      "details": {
+        "productionLines": 21725,
+        "testLines": 14723
+      }
+    },
+    {
+      "name": "lint",
+      "status": "not-available",
+      "value": null,
+      "threshold": 0,
+      "better": "lower",
+      "unit": "findings",
+      "weight": 2,
+      "pass": null,
+      "score": null,
+      "source": "eslint --format json (the checkout's own configuration)",
+      "details": {
+        "reason": "not run in the scheduled workflow: the checkout's own eslint is never executed in the job that holds the model secret (run health-run.mjs run on a trusted checkout to score lint)",
+        "state": "ci-setup"
+      }
+    },
+    {
+      "name": "duplication",
+      "status": "measured",
+      "value": 2.63,
+      "threshold": 5,
+      "better": "lower",
+      "unit": "% duplicated lines",
+      "weight": 1,
+      "pass": true,
+      "score": 100,
+      "source": "health-run duplication: 50-token window hash over production code (117 files)",
+      "details": {
+        "windowTokens": 50,
+        "files": 117,
+        "codeLines": 17212,
+        "duplicatedLines": 452,
+        "worst": [
+          {
+            "file": "src/components/registration/agencySelection/AgencySelectionResults.tsx",
+            "duplicatedLines": 101
+          },
+          {
+            "file": "src/components/passwordResetRequest/SetNewPassword.tsx",
+            "duplicatedLines": 65
+          },
+          {
+            "file": "src/components/registration/Registration.tsx",
+            "duplicatedLines": 61
+          },
+          {
+            "file": "src/components/login/Login.tsx",
+            "duplicatedLines": 44
+          },
+          {
+            "file": "src/components/registration/registrationHeader/RegistrationHeader.tsx",
+            "duplicatedLines": 42
+          }
+        ]
+      }
+    }
+  ],
+  "verdict": [],
+  "overall": 75,
+  "links": {
+    "graphNode": "capability:auth-2fa",
+    "source": "https://github.com/OpenResilienceInitiative/ORISO-Frontend/tree/ee91e0c5e4402384c555029e1f8b9b2b0b163968"
+  },
+  "verdictStatus": "skipped",
+  "verdictNote": "HEALTH_MODEL_API_KEY is not set: metrics only",
+  "inputs": {
+    "criteria": "272b25a9e1c05f2f07941924ddce752d7820cae5a14de6d9282f39443fb80127",
+    "steering": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  }
+}

@@ -312,12 +312,17 @@
         "de": [
           "BST",
           "Agentur",
-          "Agentur-Admins"
+          "Agentur-Admins",
+          "Beratungszentrum"
         ],
         "en": [
           "Agency",
           "agencyId",
-          "Agency Unit"
+          "Agency Unit",
+          "counseling center",
+          "advice center",
+          "consulting center",
+          "advisory center"
         ]
       },
       "deprecatedTerms": [
@@ -929,12 +934,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
-          "sourceRevision": "7b544fbb0faca5ec941db4369855b4bcfa28207c",
-          "sourceHash": "e17116ebfdd73c6a16d2c267c1c999e6aee91fd12c5a411b9a8eacd9def3da0b",
+          "sourceRevision": "34d5f31d23a6d808b32c5b963a851f39e571079b",
+          "sourceHash": "40fb8b0b0be61ba86b01618cc17481b0b472abde26f4bade50da7a3ea9e5b772",
           "title": "ADR-022: Two consent gates, consent state as a session pointer, and re-consent on change",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-06"
+          "reviewedAt": "2026-10-28"
         },
         {
           "repository": "ORISO-Docs",
@@ -1002,7 +1007,9 @@
       "aliases": {
         "de": [
           "Berater",
-          "Beratende"
+          "Beratende",
+          "Berater*in",
+          "Berater_in"
         ],
         "en": [
           "Consultant",
@@ -1211,8 +1218,12 @@
         "example": "Platform and provider administration have different permissions."
       },
       "aliases": {
-        "de": [],
-        "en": []
+        "de": [
+          "Plattform-Admin"
+        ],
+        "en": [
+          "Platform admin"
+        ]
       },
       "deprecatedTerms": [],
       "related": [],
@@ -1278,8 +1289,12 @@
         "example": "A provider administrator manages their assigned counselling centres."
       },
       "aliases": {
-        "de": [],
-        "en": []
+        "de": [
+          "Träger-Admin"
+        ],
+        "en": [
+          "Tenant admin"
+        ]
       },
       "deprecatedTerms": [],
       "related": [],
@@ -1361,8 +1376,14 @@
         "example": "A counselling centre administrator manages the centre assigned to them."
       },
       "aliases": {
-        "de": [],
-        "en": []
+        "de": [
+          "BST-Admin",
+          "Agentur-Admin",
+          "Beratungsstellen-Admin"
+        ],
+        "en": [
+          "Agency admin"
+        ]
       },
       "deprecatedTerms": [],
       "related": [],
@@ -1620,12 +1641,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
-          "sourceRevision": "7b544fbb0faca5ec941db4369855b4bcfa28207c",
-          "sourceHash": "e17116ebfdd73c6a16d2c267c1c999e6aee91fd12c5a411b9a8eacd9def3da0b",
+          "sourceRevision": "34d5f31d23a6d808b32c5b963a851f39e571079b",
+          "sourceHash": "40fb8b0b0be61ba86b01618cc17481b0b472abde26f4bade50da7a3ea9e5b772",
           "title": "ADR-022: Two consent gates, consent state as a session pointer, and re-consent on change",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-06"
+          "reviewedAt": "2026-10-28"
         },
         {
           "repository": "ORISO-Docs",
@@ -1650,6 +1671,104 @@
         "de": "Keine Registrierung, kein doppeltes Konto und keine Zweitmeinung. ADR-022, Entscheidung 6 erlaubt mehrere Beratungsstellen auf einem Konto.",
         "en": "Not registration, a duplicate account or a second opinion; ADR-022 decision 6."
       }
+    },
+    {
+      "id": "further-counselling-recommendation",
+      "category": "counselling-and-conversations",
+      "de": {
+        "term": "Beratungsempfehlung",
+        "definition": "Eine Beraterin oder ein Berater schlägt einer ratsuchenden Person im Gespräch eine Folgeanfrage zu einem bestimmten Thema vor.",
+        "example": "Nach einem Umzug empfiehlt die Beraterin eine Schuldnerberatung; die Person findet über die Karte im Chat eine Stelle in ihrer Nähe."
+      },
+      "en": {
+        "term": "Counselling recommendation",
+        "definition": "A counsellor suggests an additional enquiry on a specific topic to a help-seeker from within the conversation.",
+        "example": "After a move, the counsellor recommends debt counselling; the person uses the card in the chat to find a centre nearby."
+      },
+      "aliases": {
+        "de": [],
+        "en": []
+      },
+      "deprecatedTerms": [],
+      "related": [
+        "additional-enquiry"
+      ],
+      "editorialState": "source-backed",
+      "context": {
+        "de": "Kontextabgrenzung noch nicht als eigener DDD-Kontext bestätigt.",
+        "en": "Context boundary has not been confirmed as a separate DDD context."
+      },
+      "responsibility": {
+        "de": "Fachliche Zuständigkeit noch nicht gesondert bestätigt.",
+        "en": "Business responsibility has not been separately confirmed."
+      },
+      "invariant": {
+        "de": "Keine zusätzliche fachliche Invariante bestätigt.",
+        "en": "No additional business invariant has been confirmed."
+      },
+      "sources": [
+        {
+          "repository": "ORISO-Docs",
+          "path": "oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
+          "sourceRevision": "34d5f31d23a6d808b32c5b963a851f39e571079b",
+          "sourceHash": "40fb8b0b0be61ba86b01618cc17481b0b472abde26f4bade50da7a3ea9e5b772",
+          "title": "ADR-022: Two consent gates, consent state as a session pointer, and re-consent on change",
+          "state": "accepted",
+          "binding": "reviewed",
+          "reviewedAt": "2026-10-28"
+        }
+      ],
+      "codeMappings": [],
+      "graphMappings": []
+    },
+    {
+      "id": "topic-collision",
+      "category": "counselling-and-conversations",
+      "de": {
+        "term": "Themendopplung",
+        "definition": "Eine ratsuchende Person hat zwei angenommene Beratungen mit demselben ausgewählten Thema.",
+        "example": "Eine zweite Anfrage zum Thema Schulden wird angenommen; im älteren Gespräch erscheint ein Hinweis, damit beide klären, welche Beratung weiterläuft."
+      },
+      "en": {
+        "term": "Topic collision",
+        "definition": "A help-seeker has two accepted counselling conversations with the same selected topic.",
+        "example": "A second enquiry about debt is accepted; the older conversation shows a notice so both sides can agree which one continues."
+      },
+      "aliases": {
+        "de": [],
+        "en": []
+      },
+      "deprecatedTerms": [],
+      "related": [
+        "additional-enquiry"
+      ],
+      "editorialState": "source-backed",
+      "context": {
+        "de": "Kontextabgrenzung noch nicht als eigener DDD-Kontext bestätigt.",
+        "en": "Context boundary has not been confirmed as a separate DDD context."
+      },
+      "responsibility": {
+        "de": "Fachliche Zuständigkeit noch nicht gesondert bestätigt.",
+        "en": "Business responsibility has not been separately confirmed."
+      },
+      "invariant": {
+        "de": "Keine zusätzliche fachliche Invariante bestätigt.",
+        "en": "No additional business invariant has been confirmed."
+      },
+      "sources": [
+        {
+          "repository": "ORISO-Docs",
+          "path": "oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
+          "sourceRevision": "34d5f31d23a6d808b32c5b963a851f39e571079b",
+          "sourceHash": "40fb8b0b0be61ba86b01618cc17481b0b472abde26f4bade50da7a3ea9e5b772",
+          "title": "ADR-022: Two consent gates, consent state as a session pointer, and re-consent on change",
+          "state": "accepted",
+          "binding": "reviewed",
+          "reviewedAt": "2026-10-28"
+        }
+      ],
+      "codeMappings": [],
+      "graphMappings": []
     },
     {
       "id": "centre-based-counselling",
@@ -1878,8 +1997,8 @@
         }
       ],
       "editorialNote": {
-        "de": "Getrennt von der Team-Besprechung zu einer offenen Anfrage.",
-        "en": "Separate from team discussion attached to an enquiry."
+        "de": "Getrennt vom Team-Chat zu einer offenen Anfrage.",
+        "en": "Separate from the team chat attached to an enquiry."
       }
     },
     {
@@ -2057,22 +2176,53 @@
       "id": "team-discussion",
       "category": "counselling-and-conversations",
       "de": {
-        "term": "Team-Besprechung",
-        "definition": "Abstimmung des berechtigten Teams zu einer offenen Anfrage vor ihrer Annahme.",
-        "example": "Das Team stimmt sich vor der Annahme einer Anfrage ab."
+        "term": "Team-Chat",
+        "definition": "Abstimmung im Team während der Anfrage: Berater:innen stimmen sich in einem Raum nur fürs Team ab. Der Raum schließt, sobald die Anfrage angenommen wird.",
+        "example": "Das Team stimmt sich im Team-Chat ab, bevor eine Berater:in die Anfrage annimmt."
       },
       "en": {
-        "term": "Team discussion",
-        "definition": "Coordination by the eligible team about an open enquiry before acceptance.",
-        "example": "The team coordinates before an enquiry is accepted."
+        "term": "Team chat",
+        "definition": "Team chat during the enquiry: counsellors coordinate in a room for the team only. The room closes as soon as the enquiry is accepted.",
+        "example": "The team coordinates in the team chat before a counsellor accepts the enquiry."
       },
       "aliases": {
-        "de": [],
-        "en": []
+        "de": [
+          "Team-Besprechung"
+        ],
+        "en": [
+          "Team discussion",
+          "featureTeamDiscussionEnabled"
+        ]
       },
-      "deprecatedTerms": [],
+      "deprecatedTerms": [
+        {
+          "language": "de",
+          "term": "Team-Besprechung",
+          "reason": {
+            "de": "In neuen Texten für Menschen den Namen Team-Chat verwenden.",
+            "en": "Use the name Team chat in new human-facing copy."
+          },
+          "compatibilityScope": {
+            "de": "Der Titel von ADR-016, Kennungen und der Schalter featureTeamDiscussionEnabled bleiben unverändert.",
+            "en": "The ADR-016 title, identifiers and the featureTeamDiscussionEnabled switch remain unchanged."
+          }
+        },
+        {
+          "language": "en",
+          "term": "Team discussion",
+          "reason": {
+            "de": "In neuen Texten für Menschen den Namen Team-Chat verwenden.",
+            "en": "Use the name Team chat in new human-facing copy."
+          },
+          "compatibilityScope": {
+            "de": "Der Titel von ADR-016, Kennungen und der Schalter featureTeamDiscussionEnabled bleiben unverändert.",
+            "en": "The ADR-016 title, identifiers and the featureTeamDiscussionEnabled switch remain unchanged."
+          }
+        }
+      ],
       "related": [
-        "enquiry"
+        "enquiry",
+        "team-counselling"
       ],
       "editorialState": "source-backed",
       "context": {
@@ -2107,6 +2257,16 @@
           "state": "editorial",
           "binding": "input-snapshot",
           "reviewedAt": "2026-10-06"
+        },
+        {
+          "repository": "ORISO-Docs",
+          "path": "tools/understand-anything/glossary/sources/team-functions-2026-11-07.md",
+          "sourceRevision": null,
+          "sourceHash": "8cde585b953c02eb33ba6ebff497f071153e9faa518e483e0e25f0058c10ca26",
+          "title": "Team functions and term sweep — 7 November 2026",
+          "state": "editorial",
+          "binding": "input-snapshot",
+          "reviewedAt": "2026-11-07"
         }
       ],
       "codeMappings": [],
@@ -2118,8 +2278,69 @@
         }
       ],
       "editorialNote": {
-        "de": "ADR-016; die Team-Besprechung ist keine fortgesetzte Fallkoordination nach der Annahme.",
-        "en": "ADR-016; not continued post-acceptance case coordination."
+        "de": "ADR-016. Der Team-Chat gehört zu einer offenen Anfrage und endet mit der Annahme; er ist keine fortgesetzte Fallkoordination. Er ist nicht die Teamberatung, die für alle Chats einer Beratungsstelle gilt. Der Träger schaltet ihn ein; der frühere Name steht unter den Aliasen.",
+        "en": "ADR-016. The team chat belongs to an open enquiry and ends with acceptance; it is not continued case coordination. It is not team counselling, which applies to all chats of a counselling centre. The provider switches it on; the earlier name is kept as an alias."
+      }
+    },
+    {
+      "id": "team-counselling",
+      "category": "counselling-and-conversations",
+      "de": {
+        "term": "Teamberatung",
+        "definition": "Klassische Teamberatung: Alle Berater:innen der Beratungsstelle sehen alle Chats und können jederzeit einsteigen.",
+        "example": "In einer Beratungsstelle mit Teamberatung kann jede Berater:in jeden Chat der Beratungsstelle sehen und einsteigen."
+      },
+      "en": {
+        "term": "Team counselling",
+        "definition": "Classic team counselling: All counsellors of the counselling centre see all chats and can join at any time.",
+        "example": "In a counselling centre with team counselling, every counsellor can see every chat of the centre and join it."
+      },
+      "aliases": {
+        "de": [
+          "Teamberatungsstelle"
+        ],
+        "en": [
+          "Team counseling",
+          "Team counseling center",
+          "teamAgency"
+        ]
+      },
+      "deprecatedTerms": [],
+      "related": [
+        "counselling-centre",
+        "counsellor",
+        "team-discussion"
+      ],
+      "editorialState": "editorial",
+      "context": {
+        "de": "Einstellung einer Beratungsstelle; der Träger legt sie nicht fest.",
+        "en": "Setting of a counselling centre; the provider does not set it."
+      },
+      "responsibility": {
+        "de": "Die Beratungsstelle entscheidet, ob alle ihre Berater:innen alle Chats sehen.",
+        "en": "The counselling centre decides whether all its counsellors see all chats."
+      },
+      "invariant": {
+        "de": "Beim Ausschalten werden bestehende Chats in 1:1-Beratungen umgewandelt; andere Berater:innen der Beratungsstelle sehen sie dann nicht mehr.",
+        "en": "Turning it off converts existing chats into 1:1 counselling; other counsellors of the centre then no longer see them."
+      },
+      "sources": [
+        {
+          "repository": "ORISO-Docs",
+          "path": "tools/understand-anything/glossary/sources/team-functions-2026-11-07.md",
+          "sourceRevision": null,
+          "sourceHash": "8cde585b953c02eb33ba6ebff497f071153e9faa518e483e0e25f0058c10ca26",
+          "title": "Team functions and term sweep — 7 November 2026",
+          "state": "editorial",
+          "binding": "input-snapshot",
+          "reviewedAt": "2026-11-07"
+        }
+      ],
+      "codeMappings": [],
+      "graphMappings": [],
+      "editorialNote": {
+        "de": "Redaktioneller Vorschlag zur Bestätigung durch den Produktverantwortlichen. Gespeichert als teamAgency; der Schlüssel bleibt unverändert. Nicht zu verwechseln mit dem Team-Chat zu einer offenen Anfrage.",
+        "en": "Editorial proposal for the product owner to confirm. Stored as teamAgency; the key stays unchanged. Not to be confused with the team chat on an open enquiry."
       }
     },
     {
@@ -2228,12 +2449,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
-          "sourceRevision": "7b544fbb0faca5ec941db4369855b4bcfa28207c",
-          "sourceHash": "e17116ebfdd73c6a16d2c267c1c999e6aee91fd12c5a411b9a8eacd9def3da0b",
+          "sourceRevision": "34d5f31d23a6d808b32c5b963a851f39e571079b",
+          "sourceHash": "40fb8b0b0be61ba86b01618cc17481b0b472abde26f4bade50da7a3ea9e5b772",
           "title": "ADR-022: Two consent gates, consent state as a session pointer, and re-consent on change",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-06"
+          "reviewedAt": "2026-10-28"
         },
         {
           "repository": "ORISO-Docs",
@@ -2996,12 +3217,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
-          "sourceRevision": "7b544fbb0faca5ec941db4369855b4bcfa28207c",
-          "sourceHash": "e17116ebfdd73c6a16d2c267c1c999e6aee91fd12c5a411b9a8eacd9def3da0b",
+          "sourceRevision": "34d5f31d23a6d808b32c5b963a851f39e571079b",
+          "sourceHash": "40fb8b0b0be61ba86b01618cc17481b0b472abde26f4bade50da7a3ea9e5b772",
           "title": "ADR-022: Two consent gates, consent state as a session pointer, and re-consent on change",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-06"
+          "reviewedAt": "2026-10-28"
         },
         {
           "repository": "ORISO-Docs",
@@ -3085,12 +3306,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
-          "sourceRevision": "7b544fbb0faca5ec941db4369855b4bcfa28207c",
-          "sourceHash": "e17116ebfdd73c6a16d2c267c1c999e6aee91fd12c5a411b9a8eacd9def3da0b",
+          "sourceRevision": "34d5f31d23a6d808b32c5b963a851f39e571079b",
+          "sourceHash": "40fb8b0b0be61ba86b01618cc17481b0b472abde26f4bade50da7a3ea9e5b772",
           "title": "ADR-022: Two consent gates, consent state as a session pointer, and re-consent on change",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-06"
+          "reviewedAt": "2026-10-28"
         },
         {
           "repository": "ORISO-Docs",
@@ -3507,12 +3728,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
-          "sourceRevision": "7b544fbb0faca5ec941db4369855b4bcfa28207c",
-          "sourceHash": "e17116ebfdd73c6a16d2c267c1c999e6aee91fd12c5a411b9a8eacd9def3da0b",
+          "sourceRevision": "34d5f31d23a6d808b32c5b963a851f39e571079b",
+          "sourceHash": "40fb8b0b0be61ba86b01618cc17481b0b472abde26f4bade50da7a3ea9e5b772",
           "title": "ADR-022: Two consent gates, consent state as a session pointer, and re-consent on change",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-06"
+          "reviewedAt": "2026-10-28"
         },
         {
           "repository": "ORISO-Docs",
@@ -3816,12 +4037,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
-          "sourceRevision": "7b544fbb0faca5ec941db4369855b4bcfa28207c",
-          "sourceHash": "e17116ebfdd73c6a16d2c267c1c999e6aee91fd12c5a411b9a8eacd9def3da0b",
+          "sourceRevision": "34d5f31d23a6d808b32c5b963a851f39e571079b",
+          "sourceHash": "40fb8b0b0be61ba86b01618cc17481b0b472abde26f4bade50da7a3ea9e5b772",
           "title": "ADR-022: Two consent gates, consent state as a session pointer, and re-consent on change",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-06"
+          "reviewedAt": "2026-10-28"
         },
         {
           "repository": "ORISO-Docs",
@@ -6461,6 +6682,18 @@
         "term": "Agency",
         "preferred": "Counselling Centre",
         "conceptId": "counselling-centre"
+      },
+      {
+        "language": "de",
+        "term": "Team-Besprechung",
+        "preferred": "Team-Chat",
+        "conceptId": "team-discussion"
+      },
+      {
+        "language": "en",
+        "term": "Team discussion",
+        "preferred": "Team chat",
+        "conceptId": "team-discussion"
       }
     ],
     "allowlist": [

@@ -3,6 +3,8 @@
 > **Amended by ADR-029** (`ADR-029-direct-links-knock-first-admission-and-temporary-accounts.md`, 2026-10-27): §2 admission and one-time-guest identity, §3 step 3, §7.
 >
 > **Amended 2026-10-28** (see [Amendment 2026-10-28](#amendment-2026-10-28--knock-first-and-the-call-guest-join-path) at the end): a valid link no longer enters directly — every link knocks first; the tenant call policy in §2 is replaced by the permission "Direkteinladung erlauben"; a call guest joins the call room only. Not to be confused with **ADR-020 in ORISO-Frontend**, which is about e-mail templates.
+>
+> **Amended 2026-11-17** (two amendments at the end): [only counsellors start calls](#amendment-2026-11-17--only-counsellors-start-calls), enforced in the call policy, and joining needs a live counsellor ([ORISO-Frontend#2287](https://github.com/OpenResilienceInitiative/ORISO-Frontend/issues/2287)); [self-booking in Sprechstunden](#amendment-2026-11-17--self-booking-in-sprechstunden) with per-counsellor auto-accept, notice days and slot length replaces the Auto-confirmation Lead Time in §4.
 
 - **Status:** Accepted — 2026-08-12
 - **Date:** 2026-08-12
@@ -197,3 +199,60 @@ This record is the one place for this decision; ADR-029 and the issues link here
 - Guests do not count toward the call's start or end.
 
 **Why here and not in an ADR-018.** Platform ADR-018 is about the Erstantwort and has nothing to do with calls. ORISO-Frontend's ADR-018 is about embedding Element Call as a widget; it says the host joins the call room before mounting the widget, but not who may become a member. Room membership for calls is a Call Session rule, and that is this record.
+
+> **Extended by ADR-032** (2026-11-13): how the Contact Calendar is built (FullCalendar MIT core, own team view) and synced (neutral ICS feed out, busy-time import in).
+
+## Amendment 2026-11-17 — only counsellors start calls
+
+- **Status:** Accepted by the product owner — Frank, 2026-11-17.
+- **Changes:** §1 (who may start a Call Session is now an enforced rule, not a UI convention) and the bounded-context table (the call policy owns the start rule). Amendment 2026-10-28 §B is unchanged: admitted guests still join the call room only.
+- **Issues:** [ORISO-Frontend#2287](https://github.com/OpenResilienceInitiative/ORISO-Frontend/issues/2287), related [ORISO-Frontend#1050](https://github.com/OpenResilienceInitiative/ORISO-Frontend/issues/1050)
+
+### Context
+
+§1 says a Call Session is materialised "when a counsellor starts" a call, and ADR-012 §7 says group calls are "opened by a counsellor". Neither was enforced: the backend call policy admitted any member of the source room, so the rule held only because the advice seeker's client hid the call buttons. An advice seeker in a 1:1 conversation therefore saw no call buttons at all and could not tell whether a call was planned or how to get one.
+
+### Decision
+
+- **Only counsellors start calls**, in 1:1 conversations and in groups. The backend call policy refuses a start by anyone else (advice seeker, admitted guest, plain group member) with a dedicated reason. Hiding a button is not enforcement.
+- **Joining needs a live counsellor.** An advice seeker or an admitted guest may join a call only while it is running **and** a counsellor is live in it. If that cannot be checked, the join is refused (fail closed).
+- An advice seeker let in through a link **answers** the counsellor's call; their client waits for the counsellor instead of starting a call itself.
+- **Advice seeker call buttons in a 1:1 conversation** are shown, but a click never starts a call. It opens a dialog with the next appointment (date, time, video or phone), or, without one, the self-booking of [Amendment 2026-11-17 — self-booking in Sprechstunden](#amendment-2026-11-17--self-booking-in-sprechstunden).
+- **Groups:** advice seekers get no call buttons, as before.
+
+### Consequences
+
+**Positive:** The rule in §1 and ADR-012 §7 is now true on the server, not only in the UI. An advice seeker can see and book a call instead of facing a missing button.
+
+**Cost / risk:** The call policy must read live call state (who is in the call right now); a Matrix outage refuses non-counsellor joins. An advice seeker who opens the call a moment before the counsellor gets a short "the call has not started yet" notice. Group calls started by members before this change get no guest link ([ADR-029 Amendment 2026-11-17](ADR-029-direct-links-knock-first-admission-and-temporary-accounts.md#amendment-2026-11-17--guest-account-modes-keep-account-group-call-links)).
+
+| Concern | Owner |
+|---|---|
+| Start and join rule in the MatrixRTC call policy | ORISO-UserService; the LiveKit gateway passes the refusal reason through |
+| Asker call buttons, appointment dialog, "not started yet" notice | ORISO-Frontend, ORISO-ElementCall |
+
+## Amendment 2026-11-17 — self-booking in Sprechstunden
+
+- **Status:** Accepted by the product owner — Frank, 2026-11-17.
+- **Changes:** §4, the paragraph on self-booking and the **Auto-confirmation Lead Time**. Everything else in §4 and §5 is unchanged. [ADR-032](ADR-032-counsellor-calendar-module-and-external-calendar-sync.md) gets a matching amendment for the calendar settings and views.
+- **Issues:** [ORISO-Frontend#2287](https://github.com/OpenResilienceInitiative/ORISO-Frontend/issues/2287), [ORISO-Frontend#1050](https://github.com/OpenResilienceInitiative/ORISO-Frontend/issues/1050)
+
+### Context
+
+§4 lets an advice seeker select a free slot from the conversation and uses one personal lead time to decide between automatic confirmation and counsellor approval. It does not say **which** times are free. Without that, any gap in a counsellor's calendar would be bookable, including times the counsellor never meant to offer.
+
+### Decision
+
+- **Sprechstunden.** Each counsellor defines Sprechstunden (consultation hours) in their calendar settings: weekly time windows that advice seekers can book. They are separate from working hours and from availability blockers; blockers and imported busy times (ADR-032 §5) still take slots out.
+- **No Sprechstunden, no free times.** A counsellor without Sprechstunden offers nothing to book; a registered advice seeker gets the hint to write in the chat instead.
+- **Auto-accept, per counsellor, on or off.** On: a booking in a Sprechstunde is confirmed at once. Off: every booking is a **request** the counsellor confirms or declines.
+- **Notice period in days, per counsellor** (default 1 day). Inside the notice period before a date, auto-accepted Sprechstunden slots are no longer offered; an advice seeker can still send a request that needs confirmation. This replaces the Auto-confirmation Lead Time of §4. The rule that a confirmed appointment never becomes approval-required because time passes stays.
+- **Slot length, per counsellor:** 30 or 60 minutes.
+- **No double booking.** The server re-checks a slot when it is booked; two advice seekers cannot hold the same slot.
+- The counsellor is notified of every booking and every request.
+
+### Consequences
+
+**Positive:** Counsellors decide exactly which times are bookable and whether they want to approve each booking. The notice period protects short-notice planning without blocking urgent requests.
+
+**Cost / risk:** Four new per-counsellor settings, a request/confirm/decline flow with notifications, and race-safe slot booking in ORISO-UserService. The current build's limits (a 14-day booking horizon, one upcoming appointment per conversation) are implementation defaults, not decisions of this amendment.
