@@ -138,3 +138,6 @@ tools/understand-anything/site/hub/test/fixtures/ideas.json # fixture with idea 
 tools/understand-anything/site/hub/test/ideas-render.test.mjs # pins the idea page links in the rendered map
 tools/understand-anything/site/hub/test/ideas-view.test.mjs # pins the idea page links and the https guard
 tools/understand-anything/site/hub/test/health-history-view.test.mjs # pins the https guard of the run links to the Understand viewer
+
+# Post-merge test plans that name the Dev environment and its Test Access accounts.
+oriso-platform/testing/v2.0.17-calls-guests-booking-post-merge.md # documents tests against ORISO own Dev environment
