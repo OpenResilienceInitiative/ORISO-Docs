@@ -253,6 +253,16 @@ Frank's review of 2026-11-17 and his sketch of 2026-11-18 (`paths`): the registr
     - Number input is dropped except for real numbers such as the age.
     - The **info panel** stays a step kind of its own with aspects that open on tap, separate from the hint without answer: one message instead of a wall of text or five messages.
 
+36. **One rule entry for every change** (review of 2026-11-18, ORISO-Admin#1566). Every change to a journey is a command applied for an editing context (level, building blocks switched off) by one function that returns the changed journeys or a named refusal: *phase of a higher level*, *platform only*, *against the rules*. No dialog changes a journey on its own. The server runs the same rules when it stores (ORISO-UserService#1689). Rules that were only in dialogs moved into the model: step kinds per phase, the postcode before „Beratungsstelle wählen“ (moved or added back), no registration route for a type without one.
+
+37. **Lower-level changes are layers** (makes decision 29 concrete). A Träger or Beratungsstelle stores, per platform journey, only the phases it may edit, as `{journeyId, level, ownerId, phases}`. What a level sees is the platform journey with the Träger layer on top and the Beratungsstelle layer on top of that, **a whole phase at a time**. A phase put back to what the level inherits drops out of its layer. Journey actions (create, copy, delete, rename), destinations and the anonymous-survey switch stay with the platform. Consequence: once a Träger has its own on-board phase, later platform changes to that phase do not reach it; a per-step merge is a later refinement.
+
+38. **A question's version follows its meaning, not its translations.** Meaning is the German source of label and answers (with their ids), the type, the scale, `required` and „Etwas anderes …“; a range's labels count, a star rating has none. Questions are tracked by their own id across steps, so splitting a step keeps their history. Copies of a journey get new ids for steps and questions, starting at version 1.
+
+39. **Link addresses are fixed on first save** and unique across all conversation types (one `/l/` namespace); renaming a link no longer changes a published address. Topics deleted since a journey was saved are removed from its routes when the journeys load, and the editor is told. A topic preselection that is no longer allowed is dropped instead of coming back later. Groups and the first Live-Chat journey count as reachable without a route.
+
+40. **Edits are safe against late answers and stray clicks.** Machine translations and term suggestions are applied by the path of each field and only to fields unchanged since the request; answers for a removed field, a removed step or a language the editor left are dropped. Closing a dialog with changes by Escape, the X or a click beside it asks „Änderungen verwerfen?“; „Abbrechen“ discards without asking. Closing a nested dialog returns focus to what opened it.
+
 **Open questions of part E**
 
 1. ~~Are journeys per installation only?~~ Decided in decision 29.
@@ -272,7 +282,8 @@ Frank's review of 2026-11-17 and his sketch of 2026-11-18 (`paths`): the registr
       - Träger content in TenantService `content.erstantwort*` is migrated the same way.
       - Group welcome texts and rules (`hintMessageTranslations`, `groupChatRulesTranslations`) become conversation-level `SELF_HELP` modules: a message plus a "rules" panel.
     - Question definitions are part of the module JSON.
-    - Answers go in their own table keyed by conversation (empty for an anonymous survey), question id and question version. Registration answers are held client-side until registration completes and are then stored with the enquiry for the matched Beratungsstelle (decision 11).
+    - Answers go in their own table keyed by conversation (empty for an anonymous survey), question id and question version.
+    - **Journeys** (part E): one row per (scope, scope id, journey id) holding versioned JSON. A `PLATFORM` row holds the whole journey; `TENANT` and `AGENCY` rows hold the layer of decision 37 (the phases that level changed). Writes carry the version read and are refused with 409 when someone else saved meanwhile. Ids of journeys, steps and questions and link slugs are issued by the server (ORISO-UserService#1689). Registration answers are held client-side until registration completes and are then stored with the enquiry for the matched Beratungsstelle (decision 11).
 
 ## Consequences
 

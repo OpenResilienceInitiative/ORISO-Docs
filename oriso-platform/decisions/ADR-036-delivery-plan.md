@@ -225,6 +225,24 @@ Edge cases to test (each a likely bug):
 - **Machine translation is wired to the real endpoint shape**: one batched `POST /tenantadmin/translate` (stored OpenRouter or Mistral key) per step, per field and for conversation-type names, with the existing human error messages. For the page wiring: pass `adminTranslator` only where the admin may call it (a centre-only admin may not, see Consequences).
 - **Search terms per language** in a „Steckbrief und Suchbegriffe“ dialog (step menu); the step shows a language mark and a search mark (✓ when every language has ≥ 3 terms). German terms translate into all languages in one call; suggestions per language need a new endpoint — **ORISO-Admin#1562** (sub-issue of #1419) covers it, together with the same search terms for **topics**, which today are hard-coded in the Frontend (`topicSearchRelatedTerms.ts`).
 
+### Review and foundation of 2026-11-18 (built)
+
+Frank asked to review everything before any deploy. An independent review of the journeys code found gaps no story covered. They are tracked in the epic **ORISO-Admin#1565** with sub-issues, and the Admin part is built:
+
+| Sub-issue | What | State |
+| --- | --- | --- |
+| ORISO-Admin#1566 | One rule entry per level; Träger/Beratungsstelle changes as layers (decisions 36, 37) | built, tests per level |
+| ORISO-Admin#1567 | Ask before discarding; focus returns; language tabs by keyboard | built |
+| ORISO-Admin#1568 | Versions follow meaning, not translations (decision 38) | built |
+| ORISO-Admin#1569 | Late translation/suggestion answers never overwrite newer edits (decision 40) | built |
+| ORISO-Admin#1570 | Deleted topics pruned, fixed link addresses, preselection, reachability (decision 39) | built |
+| ORISO-Admin#1571 | Store seam and wiring into Funktionszugriff | open (needs #1689) |
+| ORISO-UserService#1689 | Store journeys per scope with a version check | open |
+| ORISO-Frontend#2333 | Registration follows the routed journey's check-in; `/l/<slug>` | open |
+| ORISO-E2E#164 | End-to-end on a local stack with two Träger | open (needs a Docker machine) |
+
+Not deployed: nothing of the journeys is stored or used by the registration yet; the Admin part is a Storybook prototype until #1571 and #1689.
+
 ### Ideas for reuse („pooling“) — for Frank
 
 Goal: lower levels should not build the same survey ten times, and should not
