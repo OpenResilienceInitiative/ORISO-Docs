@@ -229,9 +229,14 @@ Frank's review of 2026-11-17 and his sketch of 2026-11-18 (`paths`): the registr
 
 28. **Name and icon of a conversation type** (realises decision 21). The platform admin renames each type in all seven languages and uploads its icon as SVG in three variants: outline 200, outline 400, filled. Stored in the global configuration. Only the platform may change it; the SVG is checked for scripts, event handlers, external references and size before it is stored, and shown through `<img>` only.
 
+29. **Who owns journeys: platform first, Träger and Beratungsstelle later** (Frank, 2026-11-18).
+    - The goal is that Träger and Beratungsstelle can own journeys too.
+    - The first step is tested at platform level only. Funktionszugriff shows the journeys entry on the platform level; on the Träger and Beratungsstelle levels it is not shown yet.
+    - Storage keeps a scope per journey from the start (`PLATFORM`, `TENANT`, `AGENCY`, as for modules in decision 22), so the later levels need no migration. How a lower level's journey relates to the platform's (own copy, or override per topic) is decided when the levels are opened.
+
 **Open questions of part E**
 
-1. Are journeys per installation only, or can a Träger or Beratungsstelle own journeys of its own (ADR-036 decision 14 lets all three create links)?
+1. ~~Are journeys per installation only?~~ Decided in decision 29.
 2. Greeting resolution: does a journey's flight replace the conversation-type module of part A completely, or does a journey without flight steps fall back to it?
 3. Which add-ons exist at the start beyond age and federal state?
 

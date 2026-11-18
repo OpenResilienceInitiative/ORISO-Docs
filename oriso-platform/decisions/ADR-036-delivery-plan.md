@@ -163,7 +163,9 @@ Each checkpoint is one reviewable step. Order matters top to bottom.
 - [x] Frontend version-2 rendering with question block in Storybook
 - [x] **Redesign the registration part as a user journey** (Frank's review): journeys with departure, flight, arrival; steps as core/add-on/question/rating/info panel/message; routes and links per topic. Storybook built 2026-11-18, ADR-036 part E proposed.
 - [x] **Name and icon per conversation type** (Frank, 2026-11-18): rename in 7 languages, SVG icon in outline 200, outline 400 and filled, platform admin only, stored in the global configuration. Storybook built 2026-11-18.
-- [ ] **Frank reviews the journeys stories and ADR-036 part E** (and its three open questions)
+- [x] Part E open question 1 decided (Frank, 2026-11-18): journeys for Träger and Beratungsstelle are the goal; first tested at platform level only (decision 29)
+- [ ] **Frank reviews the journeys stories and ADR-036 part E** (open questions 2 and 3: greeting resolution, add-ons at the start)
+- [ ] Decide whether the separate Journeys section stays: Frank asked on 2026-11-18 why the tiles appear twice (Journeys section and Funktionszugriff). Proposal: Funktionszugriff is the only place; the section is Storybook-only.
 - [ ] Storage of journeys (UserService) and of name/icon (global configuration, ConsultingTypeService `settingsadmin`), with a server-side SVG check
 - [ ] Admin: wire the journeys entry into Funktionszugriff (`PermissionsSettingsView` `renderJourneys` slot) and add the Journeys section to the settings menu
 - [ ] Frontend: registration stepper driven by the departure steps of the routed journey; `/l/<name>` links; inbox label per link
