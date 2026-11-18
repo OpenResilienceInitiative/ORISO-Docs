@@ -3,6 +3,8 @@
 > **Geändert durch ADR-029** (`ADR-029-direct-links-knock-first-admission-and-temporary-accounts.md`, 27.10.2026): §2 Einlass und Identität des Einmalgasts, §3 Schritt 3, §7.
 >
 > **Geändert am 28.10.2026** (siehe [Änderung 2026-10-28](#änderung-2026-10-28--zuerst-anklopfen-und-der-beitrittsweg-des-anrufgasts) am Ende): Ein gültiger Link führt nicht mehr direkt hinein — jeder Link klopft zuerst an; die Träger-Anrufrichtlinie in §2 ist durch die Berechtigung „Direkteinladung erlauben“ ersetzt; ein Anrufgast tritt nur dem Anrufraum bei. Nicht zu verwechseln mit **ADR-020 in ORISO-Frontend**, das E-Mail-Vorlagen behandelt.
+>
+> **Geändert am 17.11.2026** (zwei Änderungen am Ende): [Nur Berater starten Anrufe](#änderung-2026-11-17--nur-berater-starten-anrufe), durchgesetzt in der Anrufrichtlinie, und der Beitritt braucht einen anwesenden Berater ([ORISO-Frontend#2287](https://github.com/OpenResilienceInitiative/ORISO-Frontend/issues/2287)); [Selbstbuchung in Sprechstunden](#änderung-2026-11-17--selbstbuchung-in-sprechstunden) mit automatischer Annahme, Vorlauf in Tagen und Terminlänge je Berater ersetzt den Vorlauf für automatische Bestätigung in §4.
 
 - **Status:** Angenommen — 2026-08-12
 - **Datum:** 2026-08-12
@@ -199,3 +201,58 @@ Dieses Dokument ist der einzige Ort für diese Entscheidung; ADR-029 und die Iss
 **Warum hier und nicht in einem ADR-018.** Das Plattform-ADR-018 behandelt die Erstantwort und hat mit Anrufen nichts zu tun. Das ADR-018 von ORISO-Frontend behandelt die Einbettung von Element Call als Widget; es sagt, dass der Host dem Anrufraum beitritt, bevor das Widget eingebunden wird, aber nicht, wer Mitglied werden darf. Die Raummitgliedschaft bei Anrufen ist eine Regel der Anrufsitzung, und das ist dieses Dokument.
 
 > **Erweitert durch ADR-032** (2026-11-13): wie der Kontaktkalender gebaut wird (MIT-Kern von FullCalendar, eigene Team-Ansicht) und wie er abgeglichen wird (neutraler ICS-Abo-Link nach außen, Import belegter Zeiten nach innen).
+
+## Änderung 2026-11-17 — nur Berater starten Anrufe
+
+- **Status:** Vom Product Owner angenommen — Frank, 17.11.2026.
+- **Ändert:** §1 (wer eine Anrufsitzung starten darf, ist jetzt eine durchgesetzte Regel, keine UI-Konvention) und die Tabelle der Zuständigkeiten (die Anrufrichtlinie besitzt die Startregel). Änderung 2026-10-28 §B bleibt unverändert: Eingelassene Gäste treten weiterhin nur dem Anrufraum bei.
+- **Issues:** [ORISO-Frontend#2287](https://github.com/OpenResilienceInitiative/ORISO-Frontend/issues/2287), verwandt [ORISO-Frontend#1050](https://github.com/OpenResilienceInitiative/ORISO-Frontend/issues/1050)
+
+### Kontext
+
+§1 sagt, eine Anrufsitzung entsteht, „wenn ein Berater startet“, und ADR-012 §7 sagt, Gruppenanrufe werden „von einem Berater eröffnet“. Beides war nicht durchgesetzt: Die Anrufrichtlinie im Backend ließ jedes Mitglied des Quellraums zu, die Regel hielt also nur, weil der Client des Ratsuchenden die Anrufknöpfe ausblendete. Ein Ratsuchender in einem 1:1-Gespräch sah deshalb gar keine Anrufknöpfe und konnte nicht erkennen, ob ein Anruf geplant ist oder wie er einen bekommt.
+
+### Entscheidung
+
+- **Nur Berater starten Anrufe**, in 1:1-Gesprächen und in Gruppen. Die Anrufrichtlinie im Backend lehnt einen Start durch alle anderen (Ratsuchende, eingelassene Gäste, einfache Gruppenmitglieder) mit einem eigenen Grund ab. Einen Knopf auszublenden ist keine Durchsetzung.
+- **Der Beitritt braucht einen anwesenden Berater.** Ein Ratsuchender oder ein eingelassener Gast darf einem Anruf nur beitreten, solange er läuft **und** ein Berater darin anwesend ist. Lässt sich das nicht prüfen, wird der Beitritt abgelehnt (fail closed).
+- Ein Ratsuchender, der über einen Link eingelassen wurde, **nimmt den Anruf des Beraters an**; sein Client wartet auf den Berater, statt selbst einen Anruf zu starten.
+- **Anrufknöpfe des Ratsuchenden im 1:1-Gespräch** werden angezeigt, ein Klick startet aber nie einen Anruf. Er öffnet einen Dialog mit dem nächsten Termin (Datum, Uhrzeit, Video oder Telefon) oder, ohne Termin, die Selbstbuchung aus [Änderung 2026-11-17 — Selbstbuchung in Sprechstunden](#änderung-2026-11-17--selbstbuchung-in-sprechstunden).
+- **Gruppen:** Ratsuchende bekommen wie bisher keine Anrufknöpfe.
+
+### Folgen
+
+**Positiv:** Die Regel aus §1 und ADR-012 §7 gilt jetzt auf dem Server, nicht nur in der Oberfläche. Ein Ratsuchender kann einen Anruf sehen und buchen, statt vor einem fehlenden Knopf zu stehen.
+
+**Kosten / Risiko:** Die Anrufrichtlinie muss den Live-Zustand des Anrufs lesen (wer gerade im Anruf ist); ein Matrix-Ausfall lehnt Beitritte von Nicht-Beratern ab. Ein Ratsuchender, der den Anruf kurz vor dem Berater öffnet, sieht kurz den Hinweis „Der Anruf hat noch nicht begonnen“. Gruppenanrufe, die vor dieser Änderung von Mitgliedern gestartet wurden, bekommen keinen Gastlink ([ADR-029 Änderung 2026-11-17](ADR-029-direct-links-knock-first-admission-and-temporary-accounts.md#amendment-2026-11-17--guest-account-modes-keep-account-group-call-links)).
+
+| Bereich | Zuständig |
+|---|---|
+| Start- und Beitrittsregel in der MatrixRTC-Anrufrichtlinie | ORISO-UserService; das LiveKit-Gateway reicht den Ablehnungsgrund durch |
+| Anrufknöpfe des Ratsuchenden, Termindialog, Hinweis „noch nicht begonnen“ | ORISO-Frontend, ORISO-ElementCall |
+
+## Änderung 2026-11-17 — Selbstbuchung in Sprechstunden
+
+- **Status:** Vom Product Owner angenommen — Frank, 17.11.2026.
+- **Ändert:** §4, den Absatz zur Selbstbuchung und zum **Vorlauf für automatische Bestätigung**. Alles andere in §4 und §5 bleibt unverändert. [ADR-032](ADR-032-counsellor-calendar-module-and-external-calendar-sync.md) bekommt eine passende Änderung für die Kalendereinstellungen und -ansichten.
+- **Issues:** [ORISO-Frontend#2287](https://github.com/OpenResilienceInitiative/ORISO-Frontend/issues/2287), [ORISO-Frontend#1050](https://github.com/OpenResilienceInitiative/ORISO-Frontend/issues/1050)
+
+### Kontext
+
+§4 lässt einen Ratsuchenden aus dem Gespräch einen freien Zeitraum wählen und entscheidet über einen persönlichen Vorlauf zwischen automatischer Bestätigung und Freigabe durch den Berater. Es sagt nicht, **welche** Zeiten frei sind. Ohne das wäre jede Lücke im Kalender eines Beraters buchbar, auch Zeiten, die er nie anbieten wollte.
+
+### Entscheidung
+
+- **Sprechstunden.** Jeder Berater legt in seinen Kalendereinstellungen Sprechstunden fest: wöchentliche Zeitfenster, die Ratsuchende buchen können. Sie sind von Arbeitszeiten und Verfügbarkeitssperren getrennt; Sperren und importierte belegte Zeiten (ADR-032 §5) nehmen weiterhin Termine heraus.
+- **Keine Sprechstunden, keine freien Zeiten.** Ein Berater ohne Sprechstunden bietet nichts zum Buchen an; ein registrierter Ratsuchender bekommt den Hinweis, stattdessen im Chat zu schreiben.
+- **Automatische Annahme, je Berater, an oder aus.** An: Eine Buchung in einer Sprechstunde ist sofort bestätigt. Aus: Jede Buchung ist eine **Anfrage**, die der Berater bestätigt oder ablehnt.
+- **Vorlauf in Tagen, je Berater** (Standard 1 Tag). Innerhalb des Vorlaufs vor einem Datum werden automatisch angenommene Sprechstundentermine nicht mehr angeboten; ein Ratsuchender kann trotzdem eine Anfrage senden, die bestätigt werden muss. Das ersetzt den Vorlauf für automatische Bestätigung aus §4. Die Regel, dass ein bestätigter Termin nie durch Zeitablauf freigabepflichtig wird, bleibt.
+- **Terminlänge, je Berater:** 30 oder 60 Minuten.
+- **Keine Doppelbuchung.** Der Server prüft einen Termin beim Buchen erneut; zwei Ratsuchende können nicht denselben Termin halten.
+- Der Berater wird über jede Buchung und jede Anfrage benachrichtigt.
+
+### Folgen
+
+**Positiv:** Berater entscheiden genau, welche Zeiten buchbar sind und ob sie jede Buchung freigeben wollen. Der Vorlauf schützt die kurzfristige Planung, ohne dringende Anfragen zu blockieren.
+
+**Kosten / Risiko:** Vier neue Einstellungen je Berater, ein Ablauf aus Anfrage, Bestätigung und Ablehnung mit Benachrichtigungen sowie race-sichere Terminbuchung in ORISO-UserService. Die Grenzen des aktuellen Builds (14 Tage Buchungshorizont, ein kommender Termin je Gespräch) sind Implementierungsvorgaben, keine Entscheidungen dieser Änderung.

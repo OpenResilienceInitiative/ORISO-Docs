@@ -2,6 +2,7 @@
 
 - **Status:** Accepted — 2026-11-13 (Frank)
 - **Date:** 2026-11-13
+- **Amended:** 2026-11-17 — see [Amendment 2026-11-17](#amendment-2026-11-17--sprechstunden-booking-approval-and-the-advice-seekers-booking-entry) at the end: Sprechstunden, auto-accept, notice days and slot length in the calendar settings; booking requests in the counsellor views.
 - **Deciders:** Frank (product), calendar refinement session
 - **Extends:** ADR-020 §4, §5 and §9 (unified Contact Calendar, availability blockers, confidentiality-neutral external data). ADR-020 stays in force; this record decides *how* the calendar is built and synced.
 - **Related:** ADR-012 (group occurrences, Future Timeline), ADR-029 (direct links), ORISO-Frontend#974 (epic), ORISO-Frontend#1050, ORISO-UserService#1000, ORISO-Frontend#2010 (cal.com booking)
@@ -104,3 +105,31 @@ All parts above are P1 (Frank, 2026-11-13).
 **Positive:** one stack, one source of truth, no paid licence and no licence review for the chosen parts. One link reaches all three major calendars. External calendars never learn who the advice seeker is. The inbound import prevents bookings into busy time without OAuth.
 
 **Cost / risk:** ICS subscriptions refresh slowly (hours), so counsellors must treat ORISO as the live source. A leaked feed URL exposes neutral time slots until reset. The team view, drag-to-move and the import job are ORISO code to build, test and maintain. Accessibility of the FullCalendar views must be verified with keyboard and screen reader (BITV 2.0); the list view is the accessible fallback.
+
+## Amendment 2026-11-17 — Sprechstunden, booking approval and the advice seeker's booking entry
+
+- **Status:** Accepted by the product owner — Frank, 2026-11-17.
+- **Changes:** §2 (counsellor actions and views, advice-seeker booking entry) and the bounded-context table. The booking rules themselves are decided in [ADR-020 Amendment 2026-11-17 — self-booking in Sprechstunden](ADR-020-scheduled-calls-secure-invitations-and-unified-contact-calendar.md#amendment-2026-11-17--self-booking-in-sprechstunden); this amendment only places them in the calendar module.
+- **Issues:** [ORISO-Frontend#2287](https://github.com/OpenResilienceInitiative/ORISO-Frontend/issues/2287), [ORISO-Frontend#1050](https://github.com/OpenResilienceInitiative/ORISO-Frontend/issues/1050)
+
+### Context
+
+§2 gives advice seekers a read-only calendar and leaves self-booking to ADR-020 §4. ADR-020 now bases self-booking on Sprechstunden with per-counsellor settings, so the calendar needs a place to set them, show them and handle requests.
+
+### Decision
+
+- **Calendar settings** hold the counsellor's Sprechstunden (weekly windows), auto-accept on/off, notice period in days (default 1) and slot length (30 or 60 minutes).
+- **Counsellor views** show Sprechstunden as a background layer and booked slots as ordinary appointments of their kind (§2a). Booking **requests** that need confirmation appear as their own entry state with confirm and decline actions.
+- **Advice seekers** still have no bookable calendar view. They book from the conversation (the call buttons' appointment dialog, ADR-020 Amendment 2026-11-17); the read-only view of §2 shows the result.
+- Sprechstunden are a counsellor setting, not an availability blocker and not working hours; they are not exported in the ICS feed (§4).
+
+### Consequences
+
+**Positive:** One place for everything a counsellor offers, in the calendar they already use.
+
+**Cost / risk:** A new settings section and a request state in the Storybook-first flow of §7, accepted by Frank before wiring.
+
+| Concern | Owner |
+|---|---|
+| Sprechstunden, booking settings, free-slot computation, requests | ORISO-UserService |
+| Settings UI, Sprechstunden layer, request confirm/decline, booking dialog | ORISO-Frontend |
