@@ -210,6 +210,14 @@ Edge cases to test (each a likely bug):
 - **A question step asks all its questions at once** — one screen in the check-in, one message on board. To ask question by question, split it („In n einzelne Schritte aufteilen“, story `split-into-steps`).
 - **Languages in the step dialog:** all seven side by side with their state; the original under every field; translate one field; „Zurück zum Original“; a machine-made text is marked, the original on hover. To be taken over elsewhere once it proves itself.
 
+### Fourth round of 2026-11-18 (built)
+
+- **„Thema wählen“ is a must step and always first** (replaces the before-topic warning). Nothing can be placed or moved before it. A journey reached only by links with one topic each may preselect the topic from the step's menu; adding a registration route makes the screen ask again.
+- **Plus line between steps** on hover or focus inserts a step right there; there is none before the topic.
+- **Removing the postcode asks first** and says that the person then picks from the topic's centres; the standing notices in the check-in are gone. „Wann die Beratungsstelle feststeht“ now lives in the profile of „Beratungsstelle wählen“.
+- **Answers and questions** have up/down next to remove, the controls centred on the field, more space between answers.
+- **Profile card („Steckbrief für Redaktionen“)** on every block: description for editors (next to the one for advice seekers), goal, author, audiences, keywords. A search over them exists in the model (`matchesSearch`) for the library to come.
+
 ### Ideas for reuse („pooling“) — for Frank
 
 Goal: lower levels should not build the same survey ten times, and should not
@@ -233,7 +241,7 @@ spend hours in the editor.
 5. **„Wo verwendet“ and promotion.** Every block shows where it is used. The
    platform sees blocks Träger share widely and can promote one to the platform
    catalogue.
-6. **A profile card per block („Steckbrief“), like a shop** (Frank, 2026-11-18). Every block in the library shows: who made it (e.g. „Beratungsstelle Köln-Mitte“), what it is for, what it brings (e.g. „klärt die Dringlichkeit vor der ersten Antwort“), which phase it fits, how many questions, the languages it is translated into, and where it is used. The step dialog already shows „Über diesen Baustein“ with the purpose; owner and benefits come with the library.
+6. **A profile card per block („Steckbrief“), like a shop** (Frank, 2026-11-18; the card itself is built, owner and search UI come with the library). Every block in the library shows: who made it (e.g. „Beratungsstelle Köln-Mitte“), what it is for, what it brings (e.g. „klärt die Dringlichkeit vor der ersten Antwort“), which phase it fits, how many questions, the languages it is translated into, and where it is used. The step dialog already shows „Über diesen Baustein“ with the purpose; owner and benefits come with the library.
 7. **Standard surveys for comparable statistics.** A few platform blocks with
    fixed question ids (satisfaction, how are you now −5 … +5). Same id across
    Träger means answers can be aggregated without mapping.
