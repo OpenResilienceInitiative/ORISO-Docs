@@ -2,13 +2,14 @@
 
 Working plan for [ADR-036](./ADR-036-configurable-conversation-modules-and-one-question-model.md).
 It is the hand-over surface: anyone (a person, Claude Code, Codex) can continue
-from here on another machine. Status is as of **2026-11-17**.
+from here on another machine. Status is as of **2026-11-18**.
 
 ## Resume here
 
 1. Read this file, then ADR-036.
-2. Read **Frank's review of 2026-11-17** below. It changes the direction of the
-   registration part, and the next step is a redesign, not more building.
+2. Read **Frank's review of 2026-11-17** and **the journeys round of
+   2026-11-18** below. The registration part is now designed as journeys
+   (ADR-036 part E, proposed); Frank decides on part E before backend work.
 3. Check out the four draft branches (table below). Nothing is merged, nothing
    is deployed.
 4. Run the two Storybooks (commands below) to see the current state.
@@ -30,15 +31,17 @@ OpenResilienceInitiative/ORISO-Admin#601 (agency editor).
 **For developers — run it locally (skip if you only need the status):**
 
 ```text
-# Admin Storybook (configurator)
+# Admin Storybook (journeys + configurator)
 cd ORISO-Admin && git switch feat/platform-greeting-tab && npm ci && npm run storybook -- -p 6233
-open http://localhost:6233/?path=/story/settings-conversation-modules--greeting-dialog
+open http://localhost:6233/?path=/story/settings-journeys--journeys-of-mailberatung
+open http://localhost:6233/?path=/story/settings-funktionszugriff-journeys--on-every-tile
 
 # Frontend Storybook (what the advice seeker sees)
 cd ORISO-Frontend && git switch feat/erstantwort-v2-sections && npm ci --legacy-peer-deps && npm run storybook -- -p 6234
 open http://localhost:6234/?path=/story/components-chat-erstantwort-module--with-question-block
 
-Node 22 for both. Story ids: settings-conversation-modules--* (Admin, 8 stories),
+Node 22 for both. Story ids: settings-journeys--* (Admin, 22 stories), settings-funktionszugriff-journeys--*
+(Admin, 2), settings-conversation-modules--* (Admin, 8),
 components-chat-erstantwort-module--* (Frontend, 9 stories).
 Screenshots: ORISO-Admin docs/storybook/issue-601-conversation-modules/,
 ORISO-Frontend docs/storybook/issue-824-erstantwort-v2/ (desktop + 390 px mobile).
@@ -51,7 +54,10 @@ ORISO-Frontend docs/storybook/issue-824-erstantwort-v2/ (desktop + 390 px mobile
 | Admin: one tile per conversation type with "Begrüßung" and "Abschließende Fragen" | ✅ prototype, local state only |
 | Admin: configurator dialog (message, panel, fixed module, question block; reorder, remove, safety warning, reset to prototype) | ✅ prototype |
 | Admin: question editor (free text, single select as radio or dropdown, multi select, hint; required per question; version bump on publish) | ✅ prototype |
-| Admin: "Registrierung pro Thema" tab (postcode on/off and "link only" per topic) | ✅ prototype, **superseded by the review below** |
+| Admin: "Registrierung pro Thema" tab (postcode on/off and "link only" per topic) | ✅ prototype, **superseded by journeys** |
+| Admin: **Journeys** — tile per conversation type, journeys dialog, phases with steps (drag, keyboard, must steps, add core/add-on/question/rating/info panel/message), step dialog with translation state and AI, destinations with routes and links per topic | ✅ prototype, local state only (2026-11-18) |
+| Admin: **name and icon per conversation type** (7 languages, SVG outline 200/400/filled, platform only) | ✅ prototype, local state only (2026-11-18) |
+| Admin: journeys entry on the Funktionszugriff tiles (`renderJourneys` slot) | ✅ story only, not wired into the page |
 | Frontend: version-2 payload parser and renderer, question block, "after first reply" trigger | ✅ Storybook, not wired into the chat |
 | UserService: platform and centre text overrides (first slice, fixed slots) | ✅ code + tests, to be replaced by module storage |
 | Storage of modules and answers, menu wiring, chat wiring, secret links | 💤 not started |
@@ -109,6 +115,31 @@ flowchart LR
   G -. drives .-> S6
 ```
 
+### Journeys round, 2026-11-18
+
+Frank's sketch (`paths`) turned the registration redesign into **journeys**:
+three phases named after a flight (departure, flight, arrival), steps in
+each phase, routes (registration or own link) that lead onto a journey, and
+topics as its destinations. Recorded as ADR-036 part E (proposed). Built in
+the Admin Storybook the same day.
+
+Frank's feedback on the first build, and what changed:
+
+1. **Too many white boxes.** Everything is now an outline on the surface it
+   sits on; only a selected state is filled.
+2. **The Mailberatung tile said too little.** The tile now draws the flight
+   (departure → flight → arrival → destinations), shows the number of
+   journeys and destinations, the topics reached (registration or link), and
+   one sentence on what a journey is and what editing it means.
+3. **Journey cards.** Each phase tile lists its steps (must steps with a
+   lock); the destinations tile lists the route path and the topics.
+4. **Destinations were hard to use.** Routes now sit on top as buttons
+   (`/registrierung`, every link, "Link erstellen"); below, one row per topic
+   with a `/registrierung` toggle and "create a link for this topic", which
+   names the link after the topic and jumps to it.
+5. **New task: rename conversation types and upload their icons** (see
+   checkpoints). Built as a platform-only dialog on every tile.
+
 ### Open questions for the redesign
 
 1. Is a **question catalogue** a reusable library item (one catalogue, many
@@ -130,7 +161,12 @@ Each checkpoint is one reviewable step. Order matters top to bottom.
 - [x] ADR-036 written and accepted (2026-11-17)
 - [x] Admin configurator prototype in Storybook (desktop + mobile)
 - [x] Frontend version-2 rendering with question block in Storybook
-- [ ] **Redesign the registration part as a user journey** (Frank's review): topic visibility in Funktionszugriff → Mailberatung, question catalogues, journey modules (postcode, e-mail), greeting/closing per topic, secret links. Storybook first, then an ADR-036 amendment.
+- [x] **Redesign the registration part as a user journey** (Frank's review): journeys with departure, flight, arrival; steps as core/add-on/question/rating/info panel/message; routes and links per topic. Storybook built 2026-11-18, ADR-036 part E proposed.
+- [x] **Name and icon per conversation type** (Frank, 2026-11-18): rename in 7 languages, SVG icon in outline 200, outline 400 and filled, platform admin only, stored in the global configuration. Storybook built 2026-11-18.
+- [ ] **Frank reviews the journeys stories and ADR-036 part E** (and its three open questions)
+- [ ] Storage of journeys (UserService) and of name/icon (global configuration, ConsultingTypeService `settingsadmin`), with a server-side SVG check
+- [ ] Admin: wire the journeys entry into Funktionszugriff (`PermissionsSettingsView` `renderJourneys` slot) and add the Journeys section to the settings menu
+- [ ] Frontend: registration stepper driven by the departure steps of the routed journey; `/l/<name>` links; inbox label per link
 - [ ] Group settings dialog (Frontend `CircleSettingsView`) using the shared configurator
 - [ ] UserService: store modules per level (replaces the fixed-slot overrides), answers table keyed by conversation, question id and version
 - [ ] Admin: wire the configurator into the menu, replace the fixed-slot greeting tabs
@@ -147,3 +183,9 @@ Each checkpoint is one reviewable step. Order matters top to bottom.
 - OpenResilienceInitiative/ORISO-Frontend#825: client-side trigger still uses the fixed catalogue.
 - Some live installs require age/state at registration; confirm before the
   migration (ADR-036 open question 3).
+- `InputChipPicker` put its "+" button directly inside `role="list"` (axe
+  `aria-required-children`); fixed on the Admin branch, which also makes
+  more counsellor-onboarding stories pass. Four onboarding stories still fail
+  for unrelated reasons (heading contrast, antd select options).
+- The shared rich-text editor's language/version controls trip axe
+  `label-content-name-mismatch` intermittently (about one run in three).

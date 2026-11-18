@@ -135,6 +135,8 @@ Measured on `origin/dev` (2026-11-16), four things do not fit:
 
 ### C. Moment 1: registration questions per topic (Mailberatung)
 
+> **Amended by part E (2026-11-18, proposed).** Journeys replace the per-topic questionnaire, the topic visibility switch and the postcode toggle of decisions 15, 16, 17 and 19. Decisions 13, 14, 18, 20 and 21 stay.
+
 Grilled with Frank on 2026-11-16 in a separate session; this part records it, there is no separate ADR. The record with the measured `origin/dev` state is `registration-questions-per-topic.md` in the shared session notes.
 
 13. **Scope: Mailberatung only.**
@@ -186,6 +188,52 @@ Grilled with Frank on 2026-11-16 in a separate session; this part records it, th
 20. **Stepper.** The registration stepper is redesigned so that it looks right with 2 steps and carries ~20 (design task).
 
 21. **Side requirement.** The four conversation types get their own configurable names and icons.
+
+### E. Journeys (amendment, proposed 2026-11-18)
+
+Frank's review of 2026-11-17 and his sketch of 2026-11-18 (`paths`): the registration part was too coarse. Topics must be reachable both in the registration and by link, with different questions; postcode and e-mail are building blocks, not switches; and the editor must see the advice seeker's way as a whole.
+
+23. **A journey is the way one person takes through one conversation type**, in three phases named after a flight:
+    - **Departure** — before and while registering (moment 1).
+    - **Flight** — once the person is in: the enquiry, the greeting, questions on the way (moment 2).
+    - **Arrival** — after the counselling: looking back and rating (moment 3).
+
+    The three moments of part B become the three phases of one journey. Group conversations (`SELF_HELP`, `INTERNAL_GROUP`) have no departure: nobody registers into a group through a journey.
+
+24. **A phase is an ordered list of steps.** Six step kinds:
+
+    | Kind | What it is | Examples |
+    |---|---|---|
+    | **Core** | a building block in the platform code; the editor places and words it, the behaviour is fixed | choose topic, postcode, user name and password, consent, e-mail, enquiry |
+    | **Add-on** | a programmed building block with its own logic, added per installation | age, federal state, account completion |
+    | **Question** | one or more questions of the shared question model (decision 9) | |
+    | **Rating** | stars (1–5) or a scale (e.g. 0–10 with labels) | satisfaction, recommendation |
+    | **Info panel** | a container of aspects that open on tap (today's "Allgemeine Infos") | who reads along, response time, emergency numbers |
+    | **Message** | a chat bubble; not in the departure, where there is no chat yet | greeting |
+
+    - A core element or add-on occurs **once per journey**; the editor offers the ones already used as "used".
+    - **Must** steps (user name and password, consent) keep their place and cannot be removed; they are marked with a lock and the word "Pflicht", not by colour alone.
+    - The enquiry cannot be removed, but may move within the flight.
+    - Without a postcode step, the person picks the Beratungsstelle from the topic's list (decision 16 still applies to that path).
+    - Every step carries its own translation state (languages checked, machine-translated, missing) and a "translate with AI" action.
+
+25. **Routes lead onto a journey; the topics behind them are its destinations.**
+    - The **registration** is a route (`/registrierung`), Mailberatung only. Each topic has **exactly one** journey in the registration; assigning a topic to one journey takes it out of the other.
+    - A **link** is a route of its own: a name (the inbox label, decision 17), one or more topics, and a readable path (`/l/<name>`) beside the secret token.
+    - A topic that no journey routes into the registration is **link only** — this replaces the "hidden from registration" switch on the topic (decisions 15, 17). A topic with no route at all is shown as a warning.
+    - Live chat may get its own registration route (`/live-registrierung`) later.
+
+26. **Many journeys per conversation type, combined freely with topics.** A journey is numbered (`Journey #3`), may be named, duplicated (steps only, not routes) and deleted. An installation starts with one shipped journey per conversation type; the Mailberatung one routes every topic through the registration, which is today's behaviour.
+
+27. **Where it is edited.** A Journeys section with one tile per conversation type, and the same entry on each conversation type's tile in Funktionszugriff (replacing decision 19's dialog tab). The tile shows the flight, the number of journeys and destinations and the topics reached.
+
+28. **Name and icon of a conversation type** (realises decision 21). The platform admin renames each type in all seven languages and uploads its icon as SVG in three variants: outline 200, outline 400, filled. Stored in the global configuration. Only the platform may change it; the SVG is checked for scripts, event handlers, external references and size before it is stored, and shown through `<img>` only.
+
+**Open questions of part E**
+
+1. Are journeys per installation only, or can a Träger or Beratungsstelle own journeys of its own (ADR-036 decision 14 lets all three create links)?
+2. Greeting resolution: does a journey's flight replace the conversation-type module of part A completely, or does a journey without flight steps fall back to it?
+3. Which add-ons exist at the start beyond age and federal state?
 
 ### D. Storage
 
