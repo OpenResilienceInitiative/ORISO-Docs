@@ -198,6 +198,8 @@ Frank's review of 2026-11-17 and his sketch of 2026-11-18 (`paths`): the registr
     - **Flight** — once the person is in: the enquiry, the greeting, questions on the way (moment 2).
     - **Arrival** — after the counselling: looking back and rating (moment 3).
 
+    **Wording (Frank, 2026-11-18; final choice still Frank's).** The German Admin calls a journey **„Reise“** throughout. The phases are **Check-in · An Bord · Ankunft**, each with a subtitle (*Bei der Registrierung · Während der Beratung · Nach der Beratung*). „Vorflug“ is not used. The plane icons stay. For Träger that dislike the flight image, an alternative set is **hotel**: Check-in · Aufenthalt · Check-out. The code keeps `departure`, `flight`, `arrival`.
+
     The three moments of part B become the three phases of one journey. Group conversations (`SELF_HELP`, `INTERNAL_GROUP`) have no departure: nobody registers into a group through a journey.
 
 24. **A phase is an ordered list of steps.** Six step kinds:
@@ -230,15 +232,35 @@ Frank's review of 2026-11-17 and his sketch of 2026-11-18 (`paths`): the registr
 28. **Name and icon of a conversation type** (realises decision 21). The platform admin renames each type in all seven languages and uploads its icon as SVG in three variants: outline 200, outline 400, filled. Stored in the global configuration. Only the platform may change it; the SVG is checked for scripts, event handlers, external references and size before it is stored, and shown through `<img>` only.
 
 29. **Who owns journeys: platform first, Träger and Beratungsstelle later** (Frank, 2026-11-18).
-    - The goal is that Träger and Beratungsstelle can own journeys too.
-    - The first step is tested at platform level only. Funktionszugriff shows the journeys entry on the platform level; on the Träger and Beratungsstelle levels it is not shown yet.
-    - Storage keeps a scope per journey from the start (`PLATFORM`, `TENANT`, `AGENCY`, as for modules in decision 22), so the later levels need no migration. How a lower level's journey relates to the platform's (own copy, or override per topic) is decided when the levels are opened.
+    - The goal is that Träger and Beratungsstelle can own journeys too. The first step is tested at platform level only.
+    - Storage keeps a scope per journey from the start (`PLATFORM`, `TENANT`, `AGENCY`, as for modules in decision 22), so the later levels need no migration.
+    - **What lower levels may change (precised the same day):** through the normal registration, Träger and Beratungsstelle get the **platform's journey**, chosen by topic. They may change **on board and arrival** only, never the check-in. A check-in of their own exists only with a **link or subdomain of their own**.
+    - Their changes resolve like the modules of part A: `Beratungsstelle ?? Träger ?? Plattform`, per platform journey.
+
+30. **When the Beratungsstelle is fixed** (Frank, 2026-11-18). The postcode often returns several centres. The centre is fixed only by the core step **„Beratungsstelle wählen“**, or earlier by a link or subdomain of its own. Without a postcode (U25) the step shows the **list of the topic's centres**, which today's registration does not have and must be built. The step cannot be removed; a link or subdomain that preselects a centre skips it. Because the centre is unknown during the check-in, nothing in the check-in can depend on Träger or Beratungsstelle — the reason for decision 29.
+
+31. **Greeting and survey are building blocks** (variant 3; answers open question 2 of part E). The conversation module of part A becomes the core step **„Begrüßung der Beratungsstelle“** on board, resolved `Gruppe ?? Beratungsstelle ?? Träger ?? Plattform`. Likewise **„Umfrage der Beratungsstelle“** at arrival. The shipped journeys place both; a journey may add steps of its own around them. The text overrides of the first slice (ORISO-UserService#1680) stay usable as the content of these steps.
+
+32. **Funktionszugriff allows building blocks; the journey places them.** Switches such as „Im Gespräch nach E-Mail fragen“ become permissions („E-Mail-Baustein erlaubt“). Whether the step occurs is the journey's decision. A step whose building block is switched off stays in the journey and is skipped. New permission: **the Träger allows a Beratungsstelle to shape on board and arrival itself.**
+
+33. **„Alternative Beratung vorschlagen“ and a manual trigger.** A new core step on board: the counsellor triggers it in the conversation's three-dot menu, and a message is sent. For this there is a new trigger **„von der Beratung ausgelöst“** (manual), also usable for „Umfrage jetzt schicken“. Triggers: on board *with the greeting · after the first reply · manual*; at arrival *on close · manual*. This answers ADR-036 open question 1.
+
+34. **One step = one chat message** (amends ADR-018 decisions 3 and 11). On board and at arrival every step is **its own persisted event**, frozen at send time. A question step with two questions stays one message. In the check-in a step is a **screen**, not a message. ADR-018's guarantees stay per event: frozen words, live state, Carimat as rendering identity.
+
+35. **Question types** (Frank, 2026-11-18).
+    - New: single and multiple choice may offer **„Etwas anderes …“** with free text.
+    - New: a **scale** defaults to **−5 … +5**, the 0 labelled **„normal“**; the editor picks a scale (−5 … +5, 0 … 10, 1 … 5) instead of typing numbers.
+    - Number input is dropped except for real numbers such as the age.
+    - The **info panel** stays a step kind of its own with aspects that open on tap, separate from the hint without answer: one message instead of a wall of text or five messages.
 
 **Open questions of part E**
 
 1. ~~Are journeys per installation only?~~ Decided in decision 29.
-2. Greeting resolution: does a journey's flight replace the conversation-type module of part A completely, or does a journey without flight steps fall back to it?
-3. Which add-ons exist at the start beyond age and federal state?
+2. ~~Greeting resolution?~~ Decided in decision 31 (variant 3).
+3. Which add-ons exist at the start? Frank answered „Alter,“ on 2026-11-18; whether that means age only or the list was cut off is to be confirmed.
+4. Final wording (flight or hotel set, subtitles) — Frank.
+5. The separate Journeys section next to Funktionszugriff: proposal is that Funktionszugriff is the only place and the section stays Storybook-only — Frank's confirmation pending.
+6. Reuse across levels (pooling steps and surveys between Träger and Beratungsstellen): see the ideas in the delivery plan.
 
 ### D. Storage
 
@@ -280,7 +302,7 @@ Frank's review of 2026-11-17 and his sketch of 2026-11-18 (`paths`): the registr
 
 ## Open questions
 
-1. **Follow-up survey trigger:** on conversation close, after N days without messages, sent by the counsellor by hand, or all three?
+1. ~~**Follow-up survey trigger:**~~ Decided in decision 33 (on close, or manual by the counsellor). Original question: on conversation close, after N days without messages, sent by the counsellor by hand, or all three?
 2. **Live chat:** does live chat need a conversation level after all, e.g. per live-chat slot?
 3. **Registration answers:** how are today's `session_data` (age, state) and `session.postcode` migrated to answers with question id and version? Which live installations require age/state today?
 4. **Counsellor link for Mailberatung:** today it exists only for live chat. Align the scope with the direct-invitation draft (ADR-033).

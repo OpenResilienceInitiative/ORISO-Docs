@@ -9,6 +9,8 @@
 
 ---
 
+> **Amended by ADR-036 decision 34 (2026-11-18, proposed):** the Erstantwort is no longer one event. In a journey every step on board and at arrival is its own persisted `[SYSTEM_NOTIFICATION]` event, frozen at send time; a question step with several questions stays one event. Decisions 3 and 11 (one event, one timeline entry) are affected; frozen words, live state and Carimat as a rendering identity stay, per event. See [ADR-036](./ADR-036-configurable-conversation-modules-and-one-question-model.md) part E.
+
 ## Context
 
 Retiring the Rocket.Chat transport (ADR-004) took the first-response posting with it, and nothing replaced it. Verified on `origin/pre-dev`: `postWelcomeMessageIfConfigured`, `postFurtherStepsIfConfigured` and `FURTHER_STEPS` have **zero occurrences** in UserService `src/main`, and `createEnquiryMessage` delegates unconditionally to `createMatrixEnquiryMessage`. What survived is the scaffolding around the removed mechanism:

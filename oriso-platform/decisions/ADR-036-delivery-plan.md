@@ -140,6 +140,96 @@ Frank's feedback on the first build, and what changed:
 5. **New task: rename conversation types and upload their icons** (see
    checkpoints). Built as a platform-only dialog on every tile.
 
+### Decisions of 2026-11-18, second round
+
+Recorded as ADR-036 part E decisions 23 (wording), 29–35 and the ADR-018
+amendment; built in the Admin Storybook the same day (stories 13–36).
+
+| # | Decision | In the prototype |
+|---|---|---|
+| 1 | „Reise“; Check-in · An Bord · Ankunft with subtitles; hotel set as alternative; plane icons stay; final wording Frank's | all German texts |
+| 2 | Centre fixed only by „Beratungsstelle wählen“ (or own link/subdomain); without postcode: list of the topic's centres | core step, not removable; notice in the check-in |
+| 3 | Lower levels get the platform's journey via registration; change on board and arrival only | `level` prop; check-in tile locked below platform |
+| 4 | Greeting and survey of the centre as core steps (variant 3) | shipped journeys use them |
+| 5 | Funktionszugriff allows building blocks; Träger allows a centre to shape on board/arrival | `blocked` prop; skipped steps marked; new Träger permission only in ADR |
+| 6 | „Alternative Beratung vorschlagen“ + manual trigger | core step, fixed manual trigger; arrival: on close or manual |
+| 7 | One step = one chat message (ADR-018 amended); check-in step = screen | step label „Schritt n · Nachricht/Bildschirm“ |
+| 8 | „Etwas anderes …“; scale −5 … +5 with 0 = „normal“; no number fields except real numbers; info panel separate from hint | question editor, scale presets |
+| 9 | Funktionszugriff as the only place | **pending Frank** |
+
+### Use case walk-through: a Träger extends on board and arrival
+
+The point of this walk-through is the order in which things become known. It
+is the source of most bugs to expect.
+
+1. **Platform** keeps *Reise #1 Standard* for Mailberatung: check-in topic →
+   postcode → Beratungsstelle wählen → user name → consent → e-mail; on board
+   enquiry → greeting of the centre → suggest another service; arrival
+   survey of the centre. All topics but U25 route `/registrierung` here.
+2. **Träger „Caritas Köln“** opens Funktionszugriff → Mailberatung → Reisen.
+   It sees Reise #1 with the check-in locked („Kommt von der Plattform“). On
+   board it adds an info panel „Unsere Angebote vor Ort“ after the greeting
+   and a question „Wie haben Sie von uns erfahren?“ after the first reply. At
+   arrival it adds a rating „Wie geht es Ihnen jetzt?“ (−5 … +5). This is
+   stored as Caritas Köln's version of Reise #1 (scope `TENANT`).
+3. **Caritas Köln allows its centre A** to shape on board and arrival
+   (decision 32). Centre A adds its own survey; centre B does not.
+4. **An advice seeker** registers via `/registrierung`, topic Sucht, postcode
+   50667. The postcode returns three centres, two of them Caritas Köln. Until
+   „Beratungsstelle wählen“ nothing Träger-specific may show — the check-in is
+   the platform's. The person picks centre A.
+5. **On board** resolves `centre A ?? Caritas Köln ?? platform` per step block:
+   enquiry, greeting of centre A (its module, decision 31), Caritas Köln's
+   info panel, suggest another service. Each is one chat message, frozen when
+   sent (decision 34). The question comes after the counsellor's first reply.
+6. **Arrival** at close: centre A's survey. A person at centre B gets Caritas
+   Köln's rating plus the platform survey of the centre.
+
+Edge cases to test (each a likely bug):
+
+- The topic moves from Reise #1 to Reise #2 on the platform: what happens to
+  Caritas Köln's changes on Reise #1? Proposal: lower-level changes hang on the
+  platform journey; if a topic leaves it, the Träger is told and its topic
+  falls back to the new platform journey until it adds its changes there.
+- Case handover to a centre of another Träger mid-conversation: messages
+  already sent stay frozen; steps still to come (after-first-reply question,
+  arrival) resolve by the **current** centre at send time.
+- Centre A loses the permission to shape: its steps stop being sent, the
+  stored version is kept (like a skipped step, decision 32).
+- Funktionszugriff switches the e-mail block off for Caritas Köln while the
+  platform check-in has the e-mail step: the step is skipped for its centres —
+  but the check-in runs before the centre is known, so this permission can only
+  act after „Beratungsstelle wählen“. Check-in steps after it must read it.
+- A link with a preselected centre skips „Beratungsstelle wählen“; the Träger
+  is known from the first screen.
+
+### Ideas for reuse („pooling“) — for Frank
+
+Goal: lower levels should not build the same survey ten times, and should not
+spend hours in the editor.
+
+1. **Building-block library („Bausteine“).** Every question step, rating,
+   info panel or survey can be saved as a block with an owner (platform,
+   Träger, centre) and a reach: *only me*, *my centres* (Träger), *everyone*.
+   „Schritt hinzufügen“ gets a fourth column „Aus der Bibliothek“.
+2. **Linked, not copied, by default.** A block taken from the library stays
+   linked: when the owner improves it, every journey gets the improvement. „Lösen“
+   makes a copy for local changes. Question versions (decision 9) keep old
+   answers meaningful when a linked block changes.
+3. **Insert points instead of copies.** A Träger does not copy Reise #1; it
+   adds steps at marked points (after the greeting, before the survey). The
+   editor shows each step with a level badge (P · T · B). Platform changes keep
+   flowing in; nobody maintains a fork.
+4. **Packages per topic.** A package bundles blocks for a topic („Schulden:
+   Situation, Dringlichkeit, Rückblick“). When a topic is routed to a journey,
+   its package is offered.
+5. **„Wo verwendet“ and promotion.** Every block shows where it is used. The
+   platform sees blocks Träger share widely and can promote one to the platform
+   catalogue.
+6. **Standard surveys for comparable statistics.** A few platform blocks with
+   fixed question ids (satisfaction, how are you now −5 … +5). Same id across
+   Träger means answers can be aggregated without mapping.
+
 ### Open questions for the redesign
 
 1. Is a **question catalogue** a reusable library item (one catalogue, many
@@ -164,9 +254,13 @@ Each checkpoint is one reviewable step. Order matters top to bottom.
 - [x] **Redesign the registration part as a user journey** (Frank's review): journeys with departure, flight, arrival; steps as core/add-on/question/rating/info panel/message; routes and links per topic. Storybook built 2026-11-18, ADR-036 part E proposed.
 - [x] **Name and icon per conversation type** (Frank, 2026-11-18): rename in 7 languages, SVG icon in outline 200, outline 400 and filled, platform admin only, stored in the global configuration. Storybook built 2026-11-18.
 - [x] Part E open question 1 decided (Frank, 2026-11-18): journeys for Träger and Beratungsstelle are the goal; first tested at platform level only (decision 29)
-- [ ] **Frank reviews the journeys stories and ADR-036 part E** (open questions 2 and 3: greeting resolution, add-ons at the start)
+- [x] Decisions of 2026-11-18, second round: built in Storybook (stories 13–36), ADR-036 part E decisions 23, 29–35, ADR-018 amended
+- [ ] **Frank reviews the journeys stories and ADR-036 part E** (open: add-ons at the start, final wording, the duplicated tiles, reuse ideas)
 - [ ] Decide whether the separate Journeys section stays: Frank asked on 2026-11-18 why the tiles appear twice (Journeys section and Funktionszugriff). Proposal: Funktionszugriff is the only place; the section is Storybook-only.
-- [ ] Storage of journeys (UserService) and of name/icon (global configuration, ConsultingTypeService `settingsadmin`), with a server-side SVG check
+- [ ] Storage of journeys (UserService) with scope per journey and lower-level changes per platform journey; name/icon in the global configuration (ConsultingTypeService `settingsadmin`), with a server-side SVG check
+- [ ] Frontend registration: „Beratungsstelle wählen“ with the topic's list when there is no postcode (new path)
+- [ ] Chat: one persisted event per step (ADR-018 amendment), manual trigger in the conversation's three-dot menu
+- [ ] **End-to-end test on a local stack** before Dev: ORISO-Docs `services-local-setup` (four Java services, Admin, Keycloak, MariaDB, MongoDB) plus Frontend, provisioning for two Träger with two centres each; run the use case and edge cases above with real users. Needs a machine with a running Docker daemon (the cloud container of 2026-11-18 has the Docker CLI but no daemon).
 - [ ] Admin: wire the journeys entry into Funktionszugriff (`PermissionsSettingsView` `renderJourneys` slot) and add the Journeys section to the settings menu
 - [ ] Frontend: registration stepper driven by the departure steps of the routed journey; `/l/<name>` links; inbox label per link
 - [ ] Group settings dialog (Frontend `CircleSettingsView`) using the shared configurator
