@@ -52,7 +52,7 @@
       "source": "product/features/handover.mdx",
       "route": "produkt/core-features/handover",
       "sourceHash": "bb7bac58093c4be0aa62d8562c03216f28cf1a901952c4d1d330733404a0a2cc",
-      "sourceRevision": "796a8390b17a60725600215a61557f903e3e2212",
+      "sourceRevision": "73ab42b6f6895f827284063b0484f4d4f5fd39a1",
       "de": {
         "title": "4.7 Fallübergabe",
         "summary": "Übertragung eines aktiven Falls von einer Beratungsperson auf eine andere — Systematik der Gründe, Einwilligungsmatrix, Systemnachrichten und Zusammenspiel mit E2EE."
