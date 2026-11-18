@@ -203,6 +203,13 @@ Edge cases to test (each a likely bug):
 - A link with a preselected centre skips „Beratungsstelle wählen“; the Träger
   is known from the first screen.
 
+### Questions answered on 2026-11-18, third round
+
+- **U25 in the registration with its own questions.** One journey can be reached by the registration *and* by its own link (story `u25-registration-and-link`). A new journey is needed only when the registration and the link should ask different things. Further topics can join the same journey.
+- **Found while checking:** the registration knows the journey only once the topic is chosen. Steps before „Thema wählen“ in a journey of the registration can therefore only run for its links; the check-in now warns about them (story `step-before-topic`).
+- **A question step asks all its questions at once** — one screen in the check-in, one message on board. To ask question by question, split it („In n einzelne Schritte aufteilen“, story `split-into-steps`).
+- **Languages in the step dialog:** all seven side by side with their state; the original under every field; translate one field; „Zurück zum Original“; a machine-made text is marked, the original on hover. To be taken over elsewhere once it proves itself.
+
 ### Ideas for reuse („pooling“) — for Frank
 
 Goal: lower levels should not build the same survey ten times, and should not
@@ -226,7 +233,8 @@ spend hours in the editor.
 5. **„Wo verwendet“ and promotion.** Every block shows where it is used. The
    platform sees blocks Träger share widely and can promote one to the platform
    catalogue.
-6. **Standard surveys for comparable statistics.** A few platform blocks with
+6. **A profile card per block („Steckbrief“), like a shop** (Frank, 2026-11-18). Every block in the library shows: who made it (e.g. „Beratungsstelle Köln-Mitte“), what it is for, what it brings (e.g. „klärt die Dringlichkeit vor der ersten Antwort“), which phase it fits, how many questions, the languages it is translated into, and where it is used. The step dialog already shows „Über diesen Baustein“ with the purpose; owner and benefits come with the library.
+7. **Standard surveys for comparable statistics.** A few platform blocks with
    fixed question ids (satisfaction, how are you now −5 … +5). Same id across
    Träger means answers can be aggregated without mapping.
 
