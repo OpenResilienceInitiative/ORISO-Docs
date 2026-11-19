@@ -236,8 +236,8 @@ Frank asked to review everything before any deploy. An independent review of the
 | ORISO-Admin#1568 | Versions follow meaning, not translations (decision 38) | built |
 | ORISO-Admin#1569 | Late translation/suggestion answers never overwrite newer edits (decision 40) | built |
 | ORISO-Admin#1570 | Deleted topics pruned, fixed link addresses, preselection, reachability (decision 39) | built |
-| ORISO-Admin#1571 | Store seam and wiring into Funktionszugriff | open (needs #1689) |
-| ORISO-UserService#1689 | Store journeys per scope with a version check | open |
+| ORISO-Admin#1571 | Store seam and wiring into Funktionszugriff | store port and HTTP adapter built; page mount open |
+| ORISO-UserService#1689 | Store journeys per scope with a version check | built in ORISO-UserService#1700 (draft); server-issued ids and public read for the registration open |
 | ORISO-Frontend#2333 | Registration follows the routed journey's check-in; `/l/<slug>` | open |
 | ORISO-E2E#164 | End-to-end on a local stack with two Träger | open (needs a Docker machine) |
 
