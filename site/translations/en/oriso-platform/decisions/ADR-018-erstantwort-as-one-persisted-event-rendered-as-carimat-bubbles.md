@@ -2,11 +2,14 @@
 
 - **Status:** Accepted — Frank, 2026-07-30 (grill-with-docs session)
 - **Date:** 2026-07-30
+- **Amended by:** ADR-036 (proposed 2026-11-16) — decisions 1, 2, 5 and 6 are replaced by a configurable module per conversation type, editable in Admin and Frontend; safety sections become removable by the editor.
 - **Deciders:** Frank (product) + AI (engineering)
 - **Related:** `CONTEXT-erstantwort-und-carimat.md` (full glossary), ADR-003 + `ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent.md` (Fachbereich owns DPP/Impressum; topic before consent), ADR-004/ADR-005 (Matrix + Megolm), ADR-008 (who reads along), ADR-010 (platform-controlled per-tenant allowlist — the same shape, deferred here), `CONTEXT-conversation-types.md`, `ORISO-Frontend/CONTEXT.md` (Activity Timeline), ORISO-Frontend issue #772
 - **Trigger:** U25 supplied a first-response text that deviates drastically from the platform default — informal, gender-free, "we counsel by MAIL and are NOT a chat service", a peer-counselling and supervision disclosure, an explicit "do not send us personal data" and therefore **no** invitation to leave an e-mail address, plus emergency numbers. Björn's open questions to Janna (2026-07-24) asked whether such a message must become per-agency configurable.
 
 ---
+
+> **Amended by ADR-036 decision 34 (2026-11-18, proposed):** the Erstantwort is no longer one event. In a journey every step on board and at arrival is its own persisted `[SYSTEM_NOTIFICATION]` event, frozen at send time; a question step with several questions stays one event. Decisions 3 and 11 (one event, one timeline entry) are affected; frozen words, live state and Carimat as a rendering identity stay, per event. See [ADR-036](./ADR-036-configurable-conversation-modules-and-one-question-model.md) part E.
 
 ## Context
 

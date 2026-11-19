@@ -311,7 +311,7 @@ Each checkpoint is one reviewable step. Order matters top to bottom.
 - [ ] Frontend: wire version-2 events into the chat (`ErstantwortMessage`), send answers
 - [ ] Secret links for Mailberatung (create, topics, catalogue, inbox label)
 - [ ] Migration of old texts and fields (ADR-036 decision 22)
-- [ ] One PR set ready for review, reviewers requested, then Dev deploy and test on dev.oriso.org
+- [ ] One PR set ready for review, reviewers requested, then Dev deploy and test on the dev environment
 
 ## Side findings (not part of this work)
 
