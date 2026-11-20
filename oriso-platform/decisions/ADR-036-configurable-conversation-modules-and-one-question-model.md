@@ -263,6 +263,8 @@ Frank's review of 2026-11-17 and his sketch of 2026-11-18 (`paths`): the registr
 
 40. **Edits are safe against late answers and stray clicks.** Machine translations and term suggestions are applied by the path of each field and only to fields unchanged since the request; answers for a removed field, a removed step or a language the editor left are dropped. Closing a dialog with changes by Escape, the X or a click beside it asks „Änderungen verwerfen?“; „Abbrechen“ discards without asking. Closing a nested dialog returns focus to what opened it.
 
+41. **The check-in asks one question per screen** (Frank, 2026-11-20; fixed rule). However many questions a step has, the check-in shows one at a time, like a questionnaire tool. A one-tap answer (a choice card, a star) moves on by itself; the next question slides in from the right, and „Zurück“ or a swipe to the right goes back to change an answer. Nothing scrolls in the check-in, on desktop or on a 390 px phone. The next part of the registration (its „Weiter“ and the next step of the stepper) becomes active only once every required question of the step is answered. Hints travel with the question they stand before. In the chat (flight, arrival) a step keeps all its questions in one card. Frontend: `JourneyQuestionPager` (ORISO-Frontend#2417).
+
 **Open questions of part E**
 
 1. ~~Are journeys per installation only?~~ Decided in decision 29.
