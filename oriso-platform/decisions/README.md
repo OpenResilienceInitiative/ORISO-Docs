@@ -56,6 +56,9 @@ not its `_artifacts/` subfolder). The series was re-synchronised on 2026-08-17 f
 - [`ADR-035-read-only-statistics-reader-role.md`](ADR-035-read-only-statistics-reader-role.md)
   — accepted by the product owner 2026-11-17 (ORISO-UserService#1666). Statistik-Leser: own role, created only by platform admins, reads only the platform statistics panel and CSV; server-side allow-list and mandatory 2FA. ADR-034 is held by its open PR.
 
+- [`ADR-036-configurable-conversation-modules-and-one-question-model.md`](ADR-036-configurable-conversation-modules-and-one-question-model.md)
+  — accepted by the product owner 2026-11-17. The Erstantwort becomes one configurable module per conversation type (messages, panels, fixed modules, question blocks), edited in Admin (platform, Träger, centre) and Frontend (one conversation) with one shared configurator; one question model serves registration, the first reply and follow-up surveys. Amends ADR-018 decisions 1, 2, 5 and 6. Renumbered from 035, which ADR-035 read-only statistics reader role took first. Delivery plan: `ADR-036-delivery-plan.md`; the registration part is being redesigned as a user journey (product owner review 2026-11-17).
+
 - Amendments 2026-11-17 (ORISO-UserService#1662, ORISO-Frontend#2287): **ADR-029** — guest account
   mode per link (delete after session, guests choose, permanent) with platform/Träger caps,
   keep-account by entry mode, no e-mail for temporary accounts, guest links for group calls.
