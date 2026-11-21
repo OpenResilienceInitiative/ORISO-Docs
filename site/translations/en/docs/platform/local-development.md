@@ -10,7 +10,7 @@ description: Practical local startup order based on inspected repository depende
 - [Architecture](./architecture.md)
 - [Authentication and Keycloak](./authentication-and-keycloak.md)
 - [Database and data model](./database-and-data-model.md)
-- [Kubernetes deployment](./kubernetes-deployment.md)
+- [Kubernetes deployment](/docs/platform/kubernetes-deployment)
 - [Frontend/Admin overview](./frontend-admin-overview.md)
 - [Backend services](./backend-services.md)
 - [Tenant lifecycle](./tenant-lifecycle.md)
@@ -23,14 +23,14 @@ description: Practical local startup order based on inspected repository depende
 
 ## Startup Order
 
-1. ORISO-Database stores: MariaDB schemas, MongoDB documents, Redis/RabbitMQ if required, Matrix PostgreSQL if running Matrix.
-2. ORISO-Keycloak realm.
+1. Data stores for the chosen local environment. [Set up databases](/oriso-platform/setup-databases)
+2. Keycloak with the realm configuration for the chosen local environment. [Configure Keycloak](/oriso-platform/configure-keycloak)
 3. TenantService.
 4. ConsultingTypeService.
 5. AgencyService.
 6. UserService.
 7. ORISO-Frontend and ORISO-Admin.
-8. ORISO-Kubernetes only when testing chart/ingress/runtime wiring.
+8. ORISO-Helm when testing chart, ingress or runtime wiring. [Kubernetes deployment](/docs/platform/kubernetes-deployment)
 
 ## Repo Local Notes
 
@@ -66,20 +66,12 @@ description: Practical local startup order based on inspected repository depende
 - ./mvnw spring-boot:run with a local profile
 - Requires MariaDB tenantservice schema, Keycloak, and configured ConsultingType/ApplicationSettings/UserAdmin/AgencyAdmin APIs.
 
-### ORISO-Database
+### Data stores, Keycloak and Helm
 
-- Read mariadb/README.md and mongodb/README.md.
-- Use scripts/database-initialize.yaml and scripts/system-users-job.yaml for cluster initialization patterns.
-
-### ORISO-Keycloak
-
-- Import realm.json into local Keycloak.
-- Verify app/admin redirect URLs and backend issuer/JWK URLs for the local hostnames.
-
-### ORISO-Kubernetes
-
-- The previously referenced `helm/oriso-platform/values-local-macos.example.yaml` is absent from the inspected `dev` tree. Do not use that path. Choose the supported Docker/manual tracks in the local installation guide; a Kubernetes local override needs a separately reviewed configuration.
-- Deploy dependencies before backend and UI charts.
+- Start dependencies before the backend and UI in the chosen local environment. The installation guide covers the supported local verification path. [Install and run locally](/docs/platform/install-and-run-locally)
+- The database guide identifies SQL initialisation and the owning service migrations. [Set up databases](/oriso-platform/setup-databases)
+- Check Keycloak’s redirect URIs and the issuer for the chosen environment. [Configure Keycloak](/oriso-platform/configure-keycloak)
+- Use the current ORISO-Helm chart when testing Kubernetes configuration. [Kubernetes deployment](/docs/platform/kubernetes-deployment)
 
 ## Rule
 

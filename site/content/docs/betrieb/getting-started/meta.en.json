@@ -2,11 +2,6 @@
   "title": "Getting started",
   "pages": [
     "index",
-    "clone-repositories",
-    "initial-setup",
-    "install-software",
-    "network-firewall",
-    "overview",
-    "setup-kubernetes"
+    "overview"
   ]
 }

@@ -164,65 +164,15 @@ kubectl get svc -n caritas mongodb
 
 ### HTTPS Required Error
 
-<Warning>
-This means HTTP access was not configured. This is a critical configuration step.
-</Warning>
+Check the ingress TLS hostname and certificate, and the forwarded host and protocol headers. The public OIDC discovery document at `https://<platform-host>/auth/realms/<realm>/.well-known/openid-configuration` must return the configured HTTPS issuer. [Configure Keycloak](/oriso-platform/configure-keycloak)
 
-```bash
-# Run the configuration script
-cd ~/online-beratung/caritas-workspace/ORISO-Keycloak
-chmod +x configure-http-access.sh
-./configure-http-access.sh
+### Cannot log in to Keycloak
 
-# Or configure manually
-KEYCLOAK_POD=$(kubectl get pods -n caritas -l app=keycloak -o jsonpath="{.items[0].metadata.name}")
-kubectl exec -n caritas $KEYCLOAK_POD -- \
-  /opt/keycloak/bin/kcadm.sh update realms/master -s sslRequired=NONE
-```
+Check the Keycloak deployment logs and the active client’s redirect URIs and web origins. Both must match the public platform URL. [Configure Keycloak](/oriso-platform/configure-keycloak)
 
-See [Configure Keycloak](/oriso-platform/configure-keycloak) for detailed instructions.
+### Realm not found
 
-### Cannot Login to Keycloak
-
-Check Keycloak logs and accessibility:
-
-```bash
-# Check Keycloak logs
-kubectl logs deployment/oriso-platform-keycloak -n caritas
-
-# Verify Keycloak is accessible (internal)
-kubectl exec -n caritas deployment/oriso-platform-keycloak -- \
-  curl -I http://localhost:8080
-
-# Verify Keycloak is accessible (external via Ingress)
-curl -I https://auth.example.org
-
-# Check Keycloak service
-kubectl get svc -n caritas oriso-platform-keycloak
-
-# Reset admin password if needed (see Security Hardening)
-```
-
-### Realm Not Found
-
-Verify realm exists and re-import if necessary:
-
-```bash
-# Check if realm exists
-KEYCLOAK_POD=$(kubectl get pods -n caritas -l app=keycloak -o jsonpath="{.items[0].metadata.name}")
-
-kubectl exec -n caritas $KEYCLOAK_POD -- \
-  /opt/keycloak/bin/kcadm.sh config credentials \
-  --server http://localhost:8080 \
-  --realm master \
-  --user admin \
-  --password admin
-
-kubectl exec -n caritas $KEYCLOAK_POD -- \
-  /opt/keycloak/bin/kcadm.sh get realms --fields realm
-
-# If realm missing, re-import (see Configure Keycloak)
-```
+Compare the realm in the issuer with the environment’s effective Helm values. Check the Helm-managed realm configuration against the deployment guide. [Configure Keycloak](/oriso-platform/configure-keycloak)
 
 </Accordion>
 

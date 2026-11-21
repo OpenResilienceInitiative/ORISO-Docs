@@ -51,7 +51,7 @@ ORISO Platform includes 4 core backend microservices, all deployed via Helm char
 - **Framework:** Spring Boot 2.7.14
 - **Java Version:** 17
 - **Build Tool:** Maven
-- **Database Migration:** Liquibase **DISABLED** (schemas managed in ORISO-Database)
+- **Database Migration:** Liquibase changelogs in the owning service repositories
 
 ### Database Connections
 All services connect to MariaDB via Kubernetes ClusterIP:
@@ -67,19 +67,7 @@ http://oriso-platform-<service-name>.caritas.svc.cluster.local:<port>
 
 ## Database Schema Management
 
-### Liquibase Status
-**Liquibase is DISABLED in all services.** Database schemas are managed centrally in the ORISO-Database repository.
-
-### Schema Location
-- **Repository:** `caritas-workspace/ORISO-Database`
-- **MariaDB Schemas:** `mariadb/*/schema.sql`
-- **MongoDB Schemas:** `mongodb/consulting_types/`
-- **Setup Script:** `scripts/setup/00-master-setup.sh`
-
-### Schema Updates
-1. Update schema files in ORISO-Database repository
-2. Run migration scripts manually
-3. Services do NOT auto-migrate on startup
+The Helm chart creates empty MariaDB databases and grants during first initialisation. The services create and evolve their application tables through their Liquibase changelogs. The schema files in the chart are mirrors. Before an upgrade or restore, check the effective profile and migration state of each affected service. [Set up databases](/en/betrieb/deployment/setup-databases)
 
 ## Health Checks
 
@@ -88,9 +76,6 @@ All services expose Spring Boot Actuator health endpoints:
 ```bash
 # Check service health
 curl http://oriso-platform-userservice.caritas.svc.cluster.local:8082/actuator/health
-
-# From outside cluster (via Ingress)
-curl https://api.example.org/actuator/health
 ```
 
 ### Health Check Response
@@ -111,26 +96,7 @@ curl https://api.example.org/actuator/health
 
 ## Deployment
 
-### Helm Deployment
-All backend services are deployed via the `oriso-platform` umbrella Helm chart:
-
-```bash
-cd caritas-workspace/ORISO-Kubernetes/helm
-helm install oriso-platform ./oriso-platform \
-  --namespace caritas \
-  --create-namespace \
-  -f values.yaml
-```
-
-### Individual Service Deployment
-Services can be upgraded individually:
-
-```bash
-helm upgrade oriso-platform ./oriso-platform \
-  --namespace caritas \
-  -f values.yaml \
-  --set userservice.enabled=true
-```
+The `online-counseling` umbrella chart lives at the root of ORISO-Helm. The deployment guide covers environment-specific configuration and the install and upgrade paths. [Kubernetes deployment](/en/plattform/core-systems/kubernetes-deployment)
 
 ## Configuration
 

@@ -3,11 +3,6 @@
   "pages": [
     "configure-keycloak",
     "deploy-backend-services",
-    "deploy-frontend",
-    "deploy-infrastructure",
-    "deploy-matrix",
-    "deploy-monitoring",
-    "deploy-nginx",
     "setup-databases"
   ]
 }

@@ -44,11 +44,11 @@ flowchart TB
 | `consultingtypeservice` | ConsultingTypeService | `topic`, `topic_group`, `topic_group_x_topic` |
 | `uploadservice`, `videoservice`, `caritas` | — | historische Schemas; die zuständigen Repositories gehören nicht zu dieser Plattform |
 
-Die mit dem Deployment ausgelieferten Schemas liegen im Chart, beispielsweise
+Das Chart enthält SQL-Schemadateien als Referenz, beispielsweise
 [`charts/mariadb/sql-schemas/userservice-schema.sql`](https://github.com/OpenResilienceInitiative/ORISO-Helm/blob/dev/charts/mariadb/sql-schemas/userservice-schema.sql).
-[ORISO-Database](https://github.com/OpenResilienceInitiative/ORISO-Database) enthält zusätzlich Schema-Exporte, MongoDB-Dumps und Betriebsdokumentation für Redis, RabbitMQ und Matrix-PostgreSQL.
+Die zuständigen Dienste pflegen ihre Liquibase-Changelogs in ihren eigenen Repositories. Die Anleitung führt getrennt durch Initialisierung, Upgrade und Wiederherstellung. [Datenbanken einrichten](/oriso-platform/setup-databases) · [Sicherungen konfigurieren](/oriso-platform/backup-configuration)
 
-Jedes Schema enthält die Liquibase-Tabellen `DATABASECHANGELOG` und `DATABASECHANGELOGLOCK`. Ob Liquibase tatsächlich ausgeführt wird, hängt vom Service und der Umgebung ab. Prüfe die laufende Umgebung; die vorhandenen Tabellen allein belegen das nicht.
+Liquibase verwaltet den Migrationsstand in den Tabellen `DATABASECHANGELOG` und `DATABASECHANGELOGLOCK`. Ob Liquibase tatsächlich ausgeführt wird, hängt vom Service und der Umgebung ab. Prüfe die laufende Umgebung; die vorhandenen Tabellen allein belegen das nicht.
 
 ## Der Fallstrick: Kennungen ohne Fremdschlüssel
 
@@ -78,4 +78,4 @@ Jedes Schema enthält die Liquibase-Tabellen `DATABASECHANGELOG` und `DATABASECH
 - [Backend-Services](./backend-services.md) — die zuständigen Services
 - [Architektur](./architecture.md) — warum die Grenze dort verläuft
 - [Mandantenlebenszyklus](./tenant-lifecycle.md)
-- [Kubernetes-Deployment](./kubernetes-deployment.md) — wo die Schemas angewendet werden
+- [Kubernetes-Deployment](/docs/platform/kubernetes-deployment) — wo die Schemas angewendet werden

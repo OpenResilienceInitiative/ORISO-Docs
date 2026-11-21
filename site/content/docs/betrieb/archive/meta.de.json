@@ -1,0 +1,25 @@
+{
+  "title": "Archiv",
+  "pages": [
+    "[Backend-Microservices](/de/betrieb/architecture/backend)",
+    "[Datenschicht](/de/betrieb/architecture/data)",
+    "[Frontend-Schicht](/de/betrieb/architecture/frontend)",
+    "[Infrastruktur und Authentifizierung](/de/betrieb/architecture/infra)",
+    "[Überblick über die ORISO-Architektur](/de/betrieb/architecture/overview)",
+    "[ORISO-Repositories klonen](/de/betrieb/getting-started/clone-repositories)",
+    "[Frontend bereitstellen](/de/betrieb/deployment/deploy-frontend)",
+    "[Infrastruktur bereitstellen](/de/betrieb/deployment/deploy-infrastructure)",
+    "[Matrix-Kommunikation bereitstellen](/de/betrieb/deployment/deploy-matrix)",
+    "[Überwachung bereitstellen](/de/betrieb/deployment/deploy-monitoring)",
+    "[Kubernetes-Ingress bereitstellen](/de/betrieb/deployment/deploy-nginx)",
+    "[DNS- und SSL-Konfiguration](/de/betrieb/configuration-und-testing/dns-ssl)",
+    "[Erste Servereinrichtung](/de/betrieb/getting-started/initial-setup)",
+    "[Erforderliche Software installieren](/de/betrieb/getting-started/install-software)",
+    "[Netzwerk- und Firewall-Konfiguration](/de/betrieb/getting-started/network-firewall)",
+    "[Kurzreferenz](/de/betrieb/operations/quick-reference)",
+    "[Sicherheit verbessern](/de/betrieb/operations/security-hardening)",
+    "[Kubernetes (k3s) einrichten](/de/betrieb/getting-started/setup-kubernetes)",
+    "[Fehlerbehebung](/de/betrieb/operations/troubleshooting)",
+    "[Überprüfung und Tests](/de/betrieb/configuration-und-testing/verification-testing)"
+  ]
+}

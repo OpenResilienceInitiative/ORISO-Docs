@@ -12,7 +12,7 @@ import { getMDXComponents } from '@/components/mdx';
 import type { Metadata } from 'next';
 import { createRelativeLink } from 'fumadocs-ui/mdx';
 import {translationUsable} from '@/lib/locale-router.mjs';
-import {pageIndex as index} from '@/lib/page-index';
+import {currentOperatorGuideFor, pageIndex as index} from '@/lib/page-index';
 import { SectionAliases } from '@/components/section-aliases';
 import { gitConfig, basePath } from '@/lib/shared';
 
@@ -23,6 +23,7 @@ export default async function Page(props: { params: Promise<{lang:string; slug?:
 
   const record = index.pages.find((entry) => entry.route === (params.slug ?? []).join('/'));
   const state = record?.locales[params.lang as 'de' | 'en'];
+  const currentSetup = currentOperatorGuideFor(record);
   const MDX = page.data.body;
   const markdownUrl = getPageMarkdownUrl(page).url;
 
@@ -40,6 +41,12 @@ export default async function Page(props: { params: Promise<{lang:string; slug?:
       {state && <SectionAliases aliases={state.sectionAliases} />}
       {record && <aside className="my-4 rounded border p-3 text-sm" aria-label={params.lang === 'de' ? 'Quellenstand' : 'Source provenance'}>
         <p>{params.lang === 'de' ? 'Verantwortlicher Quellbereich' : 'Source owner'}: {record.owner}. {record.lifecycle === 'archived' ? (params.lang === 'de' ? 'Historischer Inhalt.' : 'Historical content.') : (params.lang === 'de' ? 'Aktuelle Dokumentationsseite.' : 'Current documentation page.')}</p>
+        {currentSetup && <p>
+          {params.lang === 'de' ? 'Für eine Installation oder Wiederherstellung verwenden Sie die ' : 'For an installation or recovery, follow the '}
+          <a href={`${basePath}/${params.lang}/${currentSetup}`}>
+            {params.lang === 'de' ? 'aktuelle Anleitung für den Betrieb' : 'current operator guide'}
+          </a>.
+        </p>}
         <p>{params.lang === 'de' ? 'Dokumentationsquelle: dev; letzter Quellcommit' : 'Documentation source: dev; last source commit'}: {record.sourceRevision?.slice(0,12) ?? (params.lang === 'de' ? 'noch nicht committed' : 'not committed yet')}. {record.sourceState === 'working-copy' && (params.lang === 'de' ? 'Dieser Vorschautext enthält lokale Änderungen.' : 'This preview contains local source changes.')}</p>
         {record.graphSource && <p>{params.lang === 'de' ? 'Generierte Quellenbelege' : 'Generated source evidence'}: {record.graphSource.generatedAt}; {record.graphSource.sources.map(s => `${s.repository} ${s.ref} ${s.sourceSHA.slice(0,12)}`).join('; ')}.</p>}
         <p>{params.lang === 'de' ? 'Der veröffentlichte Understand-Graph beschreibt seinen eigenen Release-Stand. Quellenvergleich und Übersetzung bestätigen keine Laufzeitprüfung oder juristische Freigabe.' : 'The published Understand graph describes its own released revision. Source comparison and translation do not establish runtime verification or legal approval.'}</p>

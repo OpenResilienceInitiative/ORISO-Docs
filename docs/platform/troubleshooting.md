@@ -21,15 +21,15 @@ description: Practical troubleshooting paths from enriched source/config inspect
 
 ## Auth Problems
 
-Check Keycloak realm/client config, browser token cookies/local storage, backend issuer/JWK config, role mappers, and tenant claim behavior.
+Verify the [public HTTPS issuer](/oriso-platform/configure-keycloak) and compare the realm, client, redirect URI, backend issuer and role mapping with the selected deployment. Keep tokens and cookies out of diagnostic records.
 
 ## API Routing Problems
 
-Check frontend/admin runtime API URL, ORISO-Kubernetes ingress host/path rules, and backend OpenAPI paths. API host routes are concentrated under api.oriso-dev.site in inspected ingress files.
+Compare the frontend and Admin runtime API URLs with the Ingress in the [selected Helm release](/docs/platform/kubernetes-deployment) and the owning service’s OpenAPI paths. Check the public hostname and `/service` routes for the affected deployment.
 
 ## Database Problems
 
-Check ORISO-Database schema exports, service application*.properties DB keys, and Kubernetes values for DB host/password/secret handling. Verify live schema before changing service code.
+Check the rendered database Service and the application’s resolved connection settings. Use the [database setup guide](/oriso-platform/setup-databases) to find the owning changelog, then compare the expected changesets with the deployed schema history.
 
 ## Tenant Problems
 

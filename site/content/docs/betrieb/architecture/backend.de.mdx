@@ -51,7 +51,7 @@ Die ORISO-Plattform umfasst vier zentrale Backend-Microservices, die alle über 
 - **Framework:** Spring Boot 2.7.14
 - **Java-Version:** 17
 - **Build-Werkzeug:** Maven
-- **Datenbankmigration:** Liquibase **DEAKTIVIERT** (Schemata werden in ORISO-Database verwaltet)
+- **Datenbankmigration:** Liquibase-Changelogs in den zuständigen Service-Repositories
 
 ### Datenbankverbindungen
 Alle Dienste verbinden sich über Kubernetes ClusterIP mit MariaDB:
@@ -67,19 +67,7 @@ http://oriso-platform-<service-name>.caritas.svc.cluster.local:<port>
 
 ## Verwaltung der Datenbankschemata
 
-### Liquibase-Status
-**Liquibase ist in allen Diensten DEAKTIVIERT.** Die Datenbankschemata werden zentral im Repository ORISO-Database verwaltet.
-
-### Speicherort der Schemata
-- **Repository:** `caritas-workspace/ORISO-Database`
-- **MariaDB-Schemata:** `mariadb/*/schema.sql`
-- **MongoDB-Schemata:** `mongodb/consulting_types/`
-- **Einrichtungsskript:** `scripts/setup/00-master-setup.sh`
-
-### Schemaaktualisierungen
-1. Aktualisieren Sie die Schemadateien im Repository ORISO-Database.
-2. Führen Sie die Migrationsskripte manuell aus.
-3. Dienste führen beim Start KEINE automatische Migration aus.
+Das Helm-Chart legt bei der ersten Initialisierung leere MariaDB-Datenbanken und Berechtigungen an. Die Dienste erstellen und ändern ihre Anwendungstabellen über ihre Liquibase-Changelogs. Die Schemadateien im Chart dienen als Referenz. Prüfen Sie vor einem Upgrade oder einer Wiederherstellung das effektive Profil und den Migrationsstand jedes betroffenen Dienstes. [Datenbanken einrichten](/de/betrieb/deployment/setup-databases)
 
 ## Zustandsprüfungen
 
@@ -88,9 +76,6 @@ Alle Dienste stellen Spring-Boot-Actuator-Endpunkte für Zustandsprüfungen bere
 ```bash
 # Check service health
 curl http://oriso-platform-userservice.caritas.svc.cluster.local:8082/actuator/health
-
-# From outside cluster (via Ingress)
-curl https://api.example.org/actuator/health
 ```
 
 ### Antwort der Zustandsprüfung
@@ -111,26 +96,7 @@ curl https://api.example.org/actuator/health
 
 ## Bereitstellung
 
-### Helm-Bereitstellung
-Alle Backend-Dienste werden über das übergeordnete Helm-Chart `oriso-platform` bereitgestellt:
-
-```bash
-cd caritas-workspace/ORISO-Kubernetes/helm
-helm install oriso-platform ./oriso-platform \
-  --namespace caritas \
-  --create-namespace \
-  -f values.yaml
-```
-
-### Bereitstellung einzelner Dienste
-Dienste können einzeln aktualisiert werden:
-
-```bash
-helm upgrade oriso-platform ./oriso-platform \
-  --namespace caritas \
-  -f values.yaml \
-  --set userservice.enabled=true
-```
+Das Umbrella-Chart `online-counseling` liegt im Stammverzeichnis von ORISO-Helm. Die Bereitstellungsanleitung beschreibt die Konfiguration pro Umgebung und den Ablauf für Installation und Upgrade. [Kubernetes-Deployment](/de/plattform/core-systems/kubernetes-deployment)
 
 ## Konfiguration
 

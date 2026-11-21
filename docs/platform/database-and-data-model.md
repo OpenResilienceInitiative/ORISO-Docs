@@ -45,14 +45,12 @@ flowchart TB
 | `consultingtypeservice` | ConsultingTypeService | `topic`, `topic_group`, `topic_group_x_topic` |
 | `uploadservice`, `videoservice`, `caritas` | — | legacy schemas; the owning repositories are not part of this platform |
 
-The schemas that ship with the deployment live in the chart, for example
+The chart includes SQL schema mirrors, for example
 [`charts/mariadb/sql-schemas/userservice-schema.sql`](https://github.com/OpenResilienceInitiative/ORISO-Helm/blob/dev/charts/mariadb/sql-schemas/userservice-schema.sql).
-[ORISO-Database](https://github.com/OpenResilienceInitiative/ORISO-Database) additionally
-holds schema exports, MongoDB dumps and the operational documentation for Redis,
-RabbitMQ and Matrix PostgreSQL.
+The owning services maintain their Liquibase changelogs in their own repositories. The database guide distinguishes initialisation, upgrade and restore. [Set up databases](/oriso-platform/setup-databases) · [Configure backups](/oriso-platform/backup-configuration)
 
-Every schema carries `DATABASECHANGELOG` and `DATABASECHANGELOGLOCK` tables from
-Liquibase. Whether Liquibase actually runs is a per-service, per-environment setting —
+Liquibase-managed schemas track migrations in `DATABASECHANGELOG` and
+`DATABASECHANGELOGLOCK`. Whether Liquibase actually runs is a per-service, per-environment setting —
 verify it against the running environment rather than assuming from the presence of the
 tables.
 
@@ -91,4 +89,4 @@ them**. Three consequences you will meet in practice:
 - [Backend services](./backend-services.md) — the owners
 - [Architecture](./architecture.md) — why the boundary is where it is
 - [Tenant lifecycle](./tenant-lifecycle.md)
-- [Kubernetes deployment](./kubernetes-deployment.md) — where the schemas are applied
+- [Kubernetes deployment](/docs/platform/kubernetes-deployment) — where the schemas are applied
