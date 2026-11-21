@@ -21,15 +21,15 @@ source: "docs/platform/troubleshooting.md"
 
 ## Anmelde- und Berechtigungsprobleme
 
-Prüfe die Realm-/Client-Konfiguration von Keycloak, Token-Cookies und Local Storage im Browser, die Issuer-/JWK-Konfiguration im Backend, Rollenzuordnungen und das Verhalten des Mandanten-Claims.
+Prüfe den [öffentlichen HTTPS-Issuer](/de/betrieb/deployment/configure-keycloak) und gleiche Realm, Client, Redirect-URI, Backend-Issuer und Rollenzuordnung mit der gewählten Bereitstellung ab. Halte Tokens und Cookies aus Diagnoseprotokollen heraus.
 
 ## API-Routing-Probleme
 
-Prüfe die Laufzeit-API-URL von Frontend/Admin, die Ingress-Host-/Pfadregeln in ORISO-Kubernetes und die OpenAPI-Pfade des Backends. In den untersuchten Ingress-Dateien liegen die API-Hostrouten überwiegend unter api.oriso-dev.site.
+Gleiche die Laufzeit-API-URLs von Frontend und Admin mit dem Ingress im [gewählten Helm-Release](/de/plattform/core-systems/kubernetes-deployment) und den OpenAPI-Pfaden des zuständigen Dienstes ab. Prüfe den öffentlichen Hostnamen und die `/service`-Routen der betroffenen Bereitstellung.
 
 ## Datenbankprobleme
 
-Prüfe die Schema-Exporte in ORISO-Database, die Datenbankeinträge in application*.properties der Services und die Kubernetes-Werte für Datenbankhost, Passwort und Secret-Verarbeitung. Prüfe das laufende Schema vor einer Änderung des Servicecodes.
+Prüfe den gerenderten Datenbank-Service und die effektiven Verbindungseinstellungen der Anwendung. Der [Leitfaden zur Datenbankeinrichtung](/de/betrieb/deployment/setup-databases) nennt das zuständige Changelog. Gleiche die erwarteten Changesets mit der Migrationshistorie der Bereitstellung ab.
 
 ## Mandantenprobleme
 

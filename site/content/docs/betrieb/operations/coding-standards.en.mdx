@@ -23,7 +23,7 @@ source: "oriso-platform/coding-standards.mdx"
 - **Spring Boot**: 2.7.14
 - **Build**: Maven project structure
 - **Encoding**: UTF-8 everywhere
-- **DB Migrations**: Liquibase **DISABLED** (schemas managed in ORISO-Database)
+- **DB Migrations**: Add schema changes to the owning service’s Liquibase changelog. The Helm chart provides initialisation for empty databases. [Set up databases](/en/betrieb/deployment/setup-databases)
 - **Auth**: Keycloak OAuth2/JWT
 - **Service Naming**: `oriso-platform-*` prefix for Kubernetes resources
 

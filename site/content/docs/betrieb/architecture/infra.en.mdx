@@ -26,31 +26,9 @@ ORISO Platform v3.0.0 is deployed on Kubernetes using Helm charts with automated
 
 ## Helm Architecture
 
-### Umbrella Chart Pattern
-All services are deployed via a single umbrella Helm chart:
+### Umbrella chart
 
-```
-caritas-workspace/ORISO-Kubernetes/helm/
-├── oriso-platform/          # Umbrella chart
-│   ├── Chart.yaml
-│   ├── values.yaml
-│   └── charts/              # Sub-charts
-│       ├── userservice/
-│       ├── agencyservice/
-│       ├── mariadb/
-│       └── ...
-└── values.yaml              # Global values
-```
-
-### Deployment Command
-```bash
-cd caritas-workspace/ORISO-Kubernetes/helm
-helm dependency update oriso-platform
-helm install oriso-platform ./oriso-platform \
-  --namespace caritas \
-  --create-namespace \
-  -f values.yaml
-```
+The `online-counseling` umbrella chart lives at the root of ORISO-Helm. Infrastructure subcharts are under `charts/`, and application workloads and ingress resources are under `templates/`. The deployment guide covers the workflow for each environment. [Kubernetes deployment](/en/plattform/core-systems/kubernetes-deployment)
 
 ### Chart Dependencies
 The umbrella chart manages dependencies for all 21 services:
@@ -69,51 +47,9 @@ The umbrella chart manages dependencies for all 21 services:
 - **Deployment:** Via Helm
 - **Namespace:** `ingress-nginx`
 
-### Ingress Resources
-**Location:** `caritas-workspace/ORISO-Kubernetes/ingress/`
+### Ingress resources
 
-**Statistics:**
-- **Total Files:** 22 YAML files
-- **Total Ingress Resources:** 33
-- **Features:**
-  - Path rewriting
-  - CORS support
-  - TLS automation
-  - Service routing
-
-### Ingress Deployment
-```bash
-cd caritas-workspace/ORISO-Kubernetes/ingress
-kubectl apply -f .
-```
-
-### Example Ingress Resource
-```yaml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: frontend-ingress
-  namespace: caritas
-  annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-prod
-    nginx.ingress.kubernetes.io/rewrite-target: /
-spec:
-  tls:
-  - hosts:
-    - app.example.org
-    secretName: frontend-tls
-  rules:
-  - host: app.example.org
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: oriso-platform-frontend
-            port:
-              number: 80
-```
+The umbrella chart manages path-based routing on the public platform host. Matrix uses its own hostname. Update ingress resources through ORISO-Helm. [Kubernetes deployment](/en/plattform/core-systems/kubernetes-deployment)
 
 ## TLS/SSL Management
 
@@ -212,16 +148,9 @@ kubectl get all -n caritas
 ## Authentication Infrastructure
 
 ### Keycloak
-- **Purpose:** OIDC/OAuth2 authentication
-- **Service:** `oriso-platform-keycloak.caritas.svc.cluster.local:8080`
-- **External URL:** https://auth.example.org
-- **Realm:** `online-beratung`
-- **Client:** `app`
-
-### Keycloak Configuration
-- **Realm Import:** From `ORISO-Keycloak/realm.json`
-- **HTTP Access:** Configured via `configure-http-access.sh`
-- **Token Lifespans:** 5 hours access, 30 min SSO idle
+- **Purpose:** OIDC and OAuth2 authentication
+- **Public issuer:** `https://<platform-host>/auth/realms/<realm>`
+- **Realm and clients:** Configuration in the ORISO-Helm Keycloak subchart. [Configure Keycloak](/en/betrieb/deployment/configure-keycloak)
 
 ## Monitoring Infrastructure
 

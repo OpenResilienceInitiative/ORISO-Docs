@@ -2,9 +2,6 @@
   "title": "Betrieb",
   "pages": [
     "backup-configuration",
-    "coding-standards",
-    "quick-reference",
-    "security-hardening",
-    "troubleshooting"
+    "coding-standards"
   ]
 }
