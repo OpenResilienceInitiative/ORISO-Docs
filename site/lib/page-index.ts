@@ -5,3 +5,11 @@ const page = z.object({id:z.string(),route:z.string(),aliases:z.array(z.string()
 export type LocaleState = z.infer<typeof state>;
 export type PublicPage = z.infer<typeof page>;
 export const pageIndex = z.object({version:z.literal(1),pages:z.array(page)}).parse(generated);
+
+const operatorGuide = pageIndex.pages.find((entry) => entry.id === 'oriso-platform/overview');
+
+export function currentOperatorGuideFor(record?: PublicPage): string | undefined {
+  if (record?.lifecycle === 'archived' && record.route.startsWith('betrieb/')) {
+    return operatorGuide?.route;
+  }
+}

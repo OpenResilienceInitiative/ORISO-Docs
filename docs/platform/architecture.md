@@ -96,9 +96,9 @@ owns.
 | Layer | Repositories | What lives here |
 | --- | --- | --- |
 | UI | [ORISO-Frontend](https://github.com/OpenResilienceInitiative/ORISO-Frontend), [ORISO-Admin](https://github.com/OpenResilienceInitiative/ORISO-Admin) | React apps, routing, API clients, Storybook |
-| Identity | [ORISO-Keycloak](https://github.com/OpenResilienceInitiative/ORISO-Keycloak) | realm, clients, roles, token issuance |
+| Identity | [ORISO-Helm Keycloak subchart](/oriso-platform/configure-keycloak) | realm, clients, roles, token issuance |
 | Services | [UserService](https://github.com/OpenResilienceInitiative/ORISO-UserService), [AgencyService](https://github.com/OpenResilienceInitiative/ORISO-AgencyService), [TenantService](https://github.com/OpenResilienceInitiative/ORISO-TenantService), [ConsultingTypeService](https://github.com/OpenResilienceInitiative/ORISO-ConsultingTypeService) | OpenAPI contracts, controllers, domain logic, persistence |
-| Data | [ORISO-Database](https://github.com/OpenResilienceInitiative/ORISO-Database), and the schemas shipped with the chart | MariaDB schemas, MongoDB documents, Matrix PostgreSQL |
+| Data | [ORISO-Helm initialisation and service-owned migrations](/oriso-platform/setup-databases) | MariaDB schemas, MongoDB documents, Matrix PostgreSQL |
 | Runtime | [ORISO-Helm](https://github.com/OpenResilienceInitiative/ORISO-Helm) | the umbrella chart, ingress, secrets, all subcharts |
 
 ## Where do I intervene?
@@ -111,7 +111,7 @@ owns.
 | Who may call an endpoint | the service's security configuration — see [authentication and Keycloak](./authentication-and-keycloak.md) |
 | Which tenant a request belongs to | the tenant resolvers — [`TenantResolverService`](https://github.com/OpenResilienceInitiative/ORISO-TenantService/blob/dev/src/main/java/com/vi/tenantservice/api/tenant/TenantResolverService.java#L23-L30) |
 | A table or a column | the owning service, never another service's schema — see [database and data model](./database-and-data-model.md) |
-| Routing, hostnames, secrets, resources | the chart — [`ORISO-Helm`](https://github.com/OpenResilienceInitiative/ORISO-Helm), see [Kubernetes deployment](./kubernetes-deployment.md) |
+| Routing, hostnames, secrets, resources | the chart — [`ORISO-Helm`](https://github.com/OpenResilienceInitiative/ORISO-Helm), see [Kubernetes deployment](/docs/platform/kubernetes-deployment) |
 
 ## Rules that survive refactors
 
@@ -133,4 +133,4 @@ owns.
 - [Backend services](./backend-services.md)
 - [Authentication and Keycloak](./authentication-and-keycloak.md)
 - [Database and data model](./database-and-data-model.md)
-- [Kubernetes deployment](./kubernetes-deployment.md)
+- [Kubernetes deployment](/docs/platform/kubernetes-deployment)

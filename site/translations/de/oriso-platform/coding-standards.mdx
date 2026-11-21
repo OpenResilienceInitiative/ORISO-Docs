@@ -24,7 +24,7 @@ description: "Programmierrichtlinien für Frontend und Backend, Projektstruktur,
 - **Spring Boot**: 2.7.14
 - **Build**: Maven-Projektstruktur
 - **Zeichenkodierung**: Überall UTF-8
-- **DB-Migrationen**: Liquibase **DEAKTIVIERT** (Schemata werden in ORISO-Database verwaltet)
+- **DB-Migrationen**: Schemaänderungen gehören in das Liquibase-Changelog des zuständigen Dienstes. Das Helm-Chart liefert die Initialisierung leerer Datenbanken. [Datenbanken einrichten](/oriso-platform/setup-databases)
 - **Authentifizierung**: Keycloak OAuth2/JWT
 - **Dienstbenennung**: Präfix `oriso-platform-*` für Kubernetes-Ressourcen
 

@@ -137,50 +137,50 @@
             "group": "Getting Started",
             "pages": [
               "index",
-              "oriso-platform/overview",
-              "oriso-platform/initial-setup",
-              "oriso-platform/network-firewall",
-              "oriso-platform/install-software",
-              "oriso-platform/clone-repositories",
-              "oriso-platform/setup-kubernetes"
-            ]
-          },
-          {
-            "group": "Architecture",
-            "pages": [
-              "oriso-platform/architecture/overview",
-              "oriso-platform/architecture/frontend",
-              "oriso-platform/architecture/backend",
-              "oriso-platform/architecture/data",
-              "oriso-platform/architecture/infra"
+              "oriso-platform/overview"
             ]
           },
           {
             "group": "Deployment",
             "pages": [
-              "oriso-platform/deploy-infrastructure",
               "oriso-platform/configure-keycloak",
               "oriso-platform/setup-databases",
-              "oriso-platform/deploy-backend-services",
-              "oriso-platform/deploy-frontend",
-              "oriso-platform/deploy-matrix",
-              "oriso-platform/deploy-nginx",
-              "oriso-platform/deploy-monitoring"
+              "oriso-platform/deploy-backend-services"
             ]
           },
           {
             "group": "Configuration & Testing",
             "pages": [
-              "oriso-platform/post-deployment",
-              "oriso-platform/dns-ssl",
-              "oriso-platform/verification-testing"
+              "oriso-platform/post-deployment"
             ]
           },
           {
             "group": "Operations",
             "pages": [
               "oriso-platform/coding-standards",
-              "oriso-platform/backup-configuration",
+              "oriso-platform/backup-configuration"
+            ]
+          },
+          {
+            "group": "Archive",
+            "pages": [
+              "oriso-platform/initial-setup",
+              "oriso-platform/network-firewall",
+              "oriso-platform/install-software",
+              "oriso-platform/clone-repositories",
+              "oriso-platform/setup-kubernetes",
+              "oriso-platform/architecture/overview",
+              "oriso-platform/architecture/frontend",
+              "oriso-platform/architecture/backend",
+              "oriso-platform/architecture/data",
+              "oriso-platform/architecture/infra",
+              "oriso-platform/deploy-infrastructure",
+              "oriso-platform/deploy-frontend",
+              "oriso-platform/deploy-matrix",
+              "oriso-platform/deploy-nginx",
+              "oriso-platform/deploy-monitoring",
+              "oriso-platform/dns-ssl",
+              "oriso-platform/verification-testing",
               "oriso-platform/security-hardening",
               "oriso-platform/troubleshooting",
               "oriso-platform/quick-reference"

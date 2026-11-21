@@ -10,7 +10,7 @@ description: "Praktische lokale Startreihenfolge anhand der untersuchten Reposit
 - [Architektur](./architecture.md)
 - [Authentifizierung und Keycloak](./authentication-and-keycloak.md)
 - [Datenbank und Datenmodell](./database-and-data-model.md)
-- [Kubernetes-Deployment](./kubernetes-deployment.md)
+- [Kubernetes-Deployment](/docs/platform/kubernetes-deployment)
 - [Frontend-/Admin-Überblick](./frontend-admin-overview.md)
 - [Backend-Services](./backend-services.md)
 - [Mandantenlebenszyklus](./tenant-lifecycle.md)
@@ -23,14 +23,14 @@ description: "Praktische lokale Startreihenfolge anhand der untersuchten Reposit
 
 ## Startreihenfolge
 
-1. ORISO-Database-Datenspeicher: MariaDB-Schemas, MongoDB-Dokumente, bei Bedarf Redis/RabbitMQ sowie Matrix-PostgreSQL, wenn Matrix läuft.
-2. ORISO-Keycloak-Realm.
+1. Datenspeicher der gewählten lokalen Umgebung. [Datenbanken einrichten](/oriso-platform/setup-databases)
+2. Keycloak mit der Realm-Konfiguration der gewählten lokalen Umgebung. [Keycloak konfigurieren](/oriso-platform/configure-keycloak)
 3. TenantService.
 4. ConsultingTypeService.
 5. AgencyService.
 6. UserService.
 7. ORISO-Frontend und ORISO-Admin.
-8. ORISO-Kubernetes nur für Tests von Chart, Ingress oder Laufzeitverdrahtung.
+8. ORISO-Helm für Tests von Chart, Ingress oder Laufzeitverdrahtung. [Kubernetes-Deployment](/docs/platform/kubernetes-deployment)
 
 ## Lokale Hinweise je Repository
 
@@ -66,20 +66,12 @@ description: "Praktische lokale Startreihenfolge anhand der untersuchten Reposit
 - ./mvnw spring-boot:run mit einem lokalen Profil
 - Benötigt das MariaDB-Schema tenantservice, Keycloak und konfigurierte ConsultingType/ApplicationSettings/UserAdmin/AgencyAdmin-APIs.
 
-### ORISO-Database
+### Datenspeicher, Keycloak und Helm
 
-- Lies mariadb/README.md und mongodb/README.md.
-- Verwende scripts/database-initialize.yaml und scripts/system-users-job.yaml als Muster für die Clusterinitialisierung.
-
-### ORISO-Keycloak
-
-- Importiere realm.json in das lokale Keycloak.
-- Prüfe die App-/Admin-Weiterleitungs-URLs und die Issuer-/JWK-URLs des Backends für die lokalen Hostnamen.
-
-### ORISO-Kubernetes
-
-- Die früher genannte Datei `helm/oriso-platform/values-local-macos.example.yaml` fehlt im geprüften `dev`-Stand. Verwende diesen Pfad nicht. Nutze die Docker- oder manuellen Wege der lokalen Installationsanleitung; eine lokale Kubernetes-Konfiguration muss gesondert geprüft werden.
-- Stelle Abhängigkeiten vor den Backend- und UI-Charts bereit.
+- Starte Abhängigkeiten in der vorgesehenen lokalen Umgebung vor Backend und Oberfläche. Die Installationsanleitung beschreibt den unterstützten lokalen Prüfpfad. [Lokal installieren und ausführen](/docs/platform/install-and-run-locally)
+- Die Datenbankanleitung benennt die SQL-Initialisierung und die zuständigen Service-Migrationen. [Datenbanken einrichten](/oriso-platform/setup-databases)
+- Prüfe für Keycloak die Redirect-URIs und den Issuer der gewählten Umgebung. [Keycloak konfigurieren](/oriso-platform/configure-keycloak)
+- Verwende für Tests der Kubernetes-Konfiguration das aktuelle Chart in ORISO-Helm. [Kubernetes-Deployment](/docs/platform/kubernetes-deployment)
 
 ## Regel
 

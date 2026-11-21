@@ -92,10 +92,9 @@ Externer Zugriff wird über Kubernetes-Ingress bereitgestellt:
 ## Datenarchitektur
 
 ### Datenbankverwaltung
-- **Schemaverwaltung:** Zentral im Repository ORISO-Database
-- **Liquibase:** In allen Diensten DEAKTIVIERT
-- **Migration:** Manuell über ORISO-Database-Skripte
-- **Sicherung:** Automatisch über CronJobs
+- **Initialisierung:** Das aktuelle Helm-Chart legt leere MariaDB-Datenbanken und Berechtigungen an. [Datenbanken einrichten](/oriso-platform/setup-databases)
+- **Migration:** Die zuständigen Dienste pflegen ihre Liquibase-Changelogs. Das wirksame Profil entscheidet, wann Liquibase läuft.
+- **Sicherung und Wiederherstellung:** Die Sicherungsanleitung verlinkt die gepflegten Runbooks für die Plattform. [Sicherungen konfigurieren](/oriso-platform/backup-configuration)
 
 ### Datenbanktypen
 - **MariaDB:** 7 Datenbanken für Backend-Dienste
@@ -108,8 +107,8 @@ Externer Zugriff wird über Kubernetes-Ingress bereitgestellt:
 
 1. **Übergeordnetes Helm-Chart:** Ein Bereitstellungsbefehl für die gesamte Plattform
 2. **Kubernetes-DNS:** Keine fest eingetragenen IPs; gesamte Diensterkennung über DNS
-3. **Zentrale Schemata:** Alle Datenbankschemata im Repository ORISO-Database
-4. **Liquibase deaktiviert:** Schemata werden getrennt verwaltet, nicht von Diensten.
+3. **Initialisierung über Helm:** Das Chart legt leere Datenbanken und Berechtigungen an.
+4. **Migrationen je Dienst:** Der zuständige Dienst pflegt Schemaänderungen.
 5. **Routing über Ingress:** Keine manuelle Nginx-Konfiguration
 6. **TLS-Automatisierung:** Cert-Manager verwaltet alle SSL-Zertifikate.
 

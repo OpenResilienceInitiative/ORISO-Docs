@@ -5,7 +5,7 @@ description: ORISO-Datenarchitektur mit zentraler Schemaverwaltung und mehreren 
 
 ## Überblick über die Datenarchitektur
 
-Die ORISO-Plattform verwendet mehrere Datenbanktypen, die alle zentral über das Repository ORISO-Database verwaltet werden. **Liquibase ist in allen Diensten DEAKTIVIERT** – Schemata werden getrennt verwaltet.
+Die ORISO-Plattform verwendet mehrere Datenspeicher. Das Helm-Chart erstellt leere MariaDB-Datenbanken und Berechtigungen, und die zuständigen Dienste pflegen ihre eigenen Migrationen.
 
 ```mermaid
 %%{init: { 'theme': 'base', 'themeVariables': { 'fontSize': '18px', 'lineColor': '#3B82F6' } }}%%
@@ -126,58 +126,13 @@ flowchart TB
   - Veröffentlichung von Ereignissen
   - Arbeitswarteschlangen
 
-## Grundsätze der Schemaverwaltung
+## Schemaverwaltung und Datenbankeinrichtung
 
-### Zentrale Schemaverwaltung
-**Alle Datenbankschemata werden im Repository ORISO-Database verwaltet**, nicht durch einzelne Dienste.
+- **Leere Datenbank:** Legen Sie Datenbanken und Berechtigungen mit dem aktuellen Helm-Chart an und wenden Sie anschließend die Service-Migrationen an.
+- **Vorhandene Datenbank:** Prüfen Sie den Migrationsstand und die Liquibase-Konfiguration des zuständigen Dienstes.
+- **Wiederherstellung:** Wählen Sie eine zur Zielversion passende Sicherung und prüfen Sie das Ergebnis in einer isolierten Umgebung.
 
-### Liquibase-Status
-**Liquibase ist in allen Backend-Diensten DEAKTIVIERT.** Das bedeutet:
-- Dienste führen beim Start KEINE automatische Migration aus.
-- Schemata müssen manuell verwaltet werden.
-- Schemaänderungen werden in ORISO-Database versionsverwaltet.
-- Migrationsskripte werden getrennt ausgeführt.
-
-### Speicherort der Schemata
-```
-caritas-workspace/ORISO-Database/
-├── mariadb/
-│   ├── tenantservice/
-│   │   └── schema.sql
-│   ├── userservice/
-│   │   └── schema.sql
-│   ├── consultingtypeservice/
-│   │   └── schema.sql
-│   └── agencyservice/
-│       └── schema.sql
-├── mongodb/
-│   └── consulting_types/
-│       └── schema.json
-└── scripts/
-    └── setup/
-        └── 00-master-setup.sh
-```
-
-## Datenbankeinrichtung
-
-### Zentrales Einrichtungsskript
-**Speicherort:** `caritas-workspace/ORISO-Database/scripts/setup/00-master-setup.sh`
-
-**Aufgaben:**
-1. Erstellt alle MariaDB-Datenbanken
-2. Importiert alle Schemadateien
-3. Erstellt Systembenutzer
-4. Richtet MongoDB-Collections ein
-5. Initialisiert PostgreSQL (falls erforderlich)
-
-**Verwendung:**
-```bash
-cd caritas-workspace/ORISO-Database
-./scripts/setup/00-master-setup.sh
-```
-
-### Einrichtung einzelner Datenbanken
-Jede Datenbank hat ihr eigenes Einrichtungsskript in `ORISO-Database/mariadb/<service>/setup.sh`.
+Die Anleitung verlinkt die Helm-Initialisierung, Service-Changelogs und Prüfpfade. Die SQL-Schemadateien im Chart dienen als Referenz. [Datenbanken einrichten](/oriso-platform/setup-databases)
 
 ## Verbindungszeichenfolgen
 
@@ -209,68 +164,9 @@ spring.rabbitmq.username=${RABBITMQ_USER}
 spring.rabbitmq.password=${RABBITMQ_PASSWORD}
 ```
 
-## Systembenutzer
-
-### MariaDB-Systembenutzer
-Erstellung über `system-users-job.yaml`:
-- `caritas_admin` – Admin-Benutzer für Caritas-Vorgänge
-- `oriso_call_admin` – Admin für die Anrufverwaltung
-- `group-chat-system` – Systembenutzer für Gruppenchats
-
-**Erstellung:**
-```bash
-cd caritas-workspace/ORISO-Database/scripts
-kubectl apply -f system-users-job.yaml
-```
-
 ## Sicherung und Wiederherstellung
 
-### Sicherungsskripte
-**Speicherort:** `caritas-workspace/ORISO-Database/scripts/backup/`
-
-**Verfügbare Skripte:**
-- `backup-all.sh` – Alle Datenbanken sichern
-- `backup-mariadb.sh` – Nur MariaDB sichern
-- `backup-mongodb.sh` – Nur MongoDB sichern
-
-**Verwendung:**
-```bash
-cd caritas-workspace/ORISO-Database/scripts/backup
-./backup-all.sh
-```
-
-### Wiederherstellungsskripte
-**Speicherort:** `caritas-workspace/ORISO-Database/scripts/restore/`
-
-**Verfügbare Skripte:**
-- `restore-mariadb.sh` – MariaDB aus einer Sicherung wiederherstellen
-- `restore-mongodb.sh` – MongoDB aus einer Sicherung wiederherstellen
-
-**Verwendung:**
-```bash
-cd caritas-workspace/ORISO-Database/scripts/restore
-./restore-mariadb.sh <backup-file>
-```
-
-### Automatische Sicherungen
-Matrix PostgreSQL hat automatische Sicherungen über einen CronJob:
-```yaml
-# matrix-cronjobs.yaml
-apiVersion: batch/v1
-kind: CronJob
-metadata:
-  name: matrix-postgres-backup
-spec:
-  schedule: "0 2 * * *"  # Daily at 2 AM
-  jobTemplate:
-    spec:
-      template:
-        spec:
-          containers:
-          - name: backup
-            image: postgres:13
-            command: ["pg_dump", "-U", "synapse_user", "synapse"]
-```
+Die Sicherungsanleitung verweist auf die gepflegten Runbooks. Prüfen Sie dort die für Ihre Umgebung konfigurierten Sicherungen sowie Aufbewahrung und Wiederherstellung. [Sicherungen konfigurieren](/oriso-platform/backup-configuration)
 
 ## Datenpersistenz
 
@@ -283,14 +179,8 @@ Alle Datenbanken verwenden Kubernetes PersistentVolumeClaims (PVCs):
 - **RabbitMQ:** `rabbitmq-data` (5Gi)
 
 ### Aufbewahrung der Volumes
-PVCs bleiben bei der Deinstallation mit Helm erhalten (Daten werden bewahrt):
-```yaml
-# Helm values.yaml
-persistence:
-  enabled: true
-  storageClass: local-path  # k3s default
-  size: 20Gi
-```
+
+Die Aufbewahrung hängt vom Chart und von der konfigurierten StorageClass ab. Prüfen Sie die Regeln für Volumes und Sicherungen vor einem Upgrade oder einer Deinstallation. [Kubernetes-Deployment](/docs/platform/kubernetes-deployment) · [Sicherungen konfigurieren](/oriso-platform/backup-configuration)
 
 ## Sicherheit
 
@@ -363,14 +253,6 @@ kubectl exec -n caritas deployment/oriso-platform-mariadb -- \
   mysql -u root -p userservice -e "SHOW TABLES;"
 ```
 
-### Probleme bei Sicherung/Wiederherstellung
-```bash
-# Verify backup file
-ls -lh caritas-workspace/ORISO-Database/backups/
+### Probleme bei Sicherung und Wiederherstellung
 
-# Test restore on test database first
-kubectl exec -i matrix-postgres-0 -n caritas -- \
-  psql -U synapse_user test_db < backup.sql
-```
-
-
+Prüfen Sie das Sicherungsartefakt und führen Sie die Wiederherstellung zuerst in einer isolierten Umgebung nach dem Runbook für den jeweiligen Datenspeicher durch. [Sicherungen konfigurieren](/oriso-platform/backup-configuration)
