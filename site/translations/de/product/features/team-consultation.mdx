@@ -1,0 +1,63 @@
+---
+title: "4.14 Team-Besprechung neben jeder Anfrage"
+description: "Ein eigener interner Raum zu jeder offenen Anfrage, in dem Beratende sich abstimmen, bevor jemand sie annimmt; Ratsuchende sind nie Mitglied; der Raum schließt mit der Annahme und wird nach 90 Tagen gelöscht."
+---
+
+Eine neue Anfrage wirft oft zuerst eine Frage ans Team auf: Wer kennt sich mit dem Thema aus, wer hat
+Zeit, wirkt etwas dringend? Beratende brauchen einen Ort, um darüber zu sprechen — und dieser Ort darf
+nie der Chat der ratsuchenden Person sein, auch nicht versteckt. ORISO gibt jeder offenen Anfrage eine
+eigene Team-Besprechung: einen internen Raum neben der Anfrage, in dem nur Beratende schreiben.
+
+Diese Seite beschreibt, **was** die Funktion tut. Sie richtet sich an Beratende und Leitungen von
+Beratungsstellen.
+
+## 4.14.1 Das kann ich damit machen
+
+- **Mich zu einer neuen Anfrage abstimmen**, bevor jemand sie annimmt, ohne in den Chat der
+  ratsuchenden Person zu schreiben.
+- **Immer wissen, auf welcher Seite ich schreibe.** Der Bereich trägt dauerhaft den Hinweis „nur fürs
+  Team — für die ratsuchende Person unsichtbar“ und zeigt, wie viele Beiträge es gibt.
+- **Mich auf ein sauberes Ende verlassen.** Mit der Annahme der Anfrage schließt die Besprechung; nach
+  90 Tagen wird sie gelöscht.
+
+## 4.14.2 So funktioniert es
+
+| Phase | Team-Besprechung |
+|---|---|
+| Anfrage ist offen | neben der Anfrage gibt es einen eigenen Raum; Beratende, die die Anfrage sehen, können darin schreiben |
+| Anfrage wird angenommen | der Raum wird sofort geschlossen und archiviert; er wird nicht in den Fall mitgenommen |
+| Nach der Annahme | das Archiv lässt sich lesen, aber niemand kann mehr hineinschreiben |
+| 90 Tage nach der Archivierung | Raum und Einträge werden gelöscht |
+
+Nach der Annahme nutzt das Team die Werkzeuge für diese Phase: [Supervision](/product/features/session-management),
+um einen Fall lesend zu begleiten, oder die [Fallübergabe](/product/features/case-handover), um Einsicht
+zu nehmen oder zu übernehmen. Drei getrennte Werkzeuge, jedes mit klarem Zweck.
+
+<Note>
+Ratsuchende sind nie Mitglied der Team-Besprechung. Sie ist ein eigener Raum, kein versteckter Teil
+des Chats der ratsuchenden Person — in einem verschlüsselten Chat lässt sich eine Nachricht nicht vor
+einem Mitglied verbergen.
+</Note>
+
+## 4.14.3 Wer teilnimmt
+
+Genau die Beratenden, die die Anfrage sehen und sie deshalb annehmen könnten, dürfen teilnehmen. Es
+gibt keine zusätzliche Berechtigung. Die Funktion gilt für die Beratung über eine Beratungsstelle;
+der anonyme Live-Chat hat keine Team-Besprechung. Ein Träger kann die Funktion abschalten.
+
+## 4.14.4 Stand der Entwicklung
+
+| Teil | Stand |
+|---|---|
+| Offene Team-Beratungsstelle, in der alle Beratenden alle Fälle sahen | gab es schon vor ORISO; ersetzt durch Team-Besprechung und Fallübergabe |
+| Team-Besprechung neben jeder Anfrage, Schließen bei Annahme | gebaut |
+| Löschung 90 Tage nach der Archivierung | gebaut (je Installation einstellbar) |
+
+## 4.14.5 Verwandte Seiten
+
+- [Team-Besprechung als Nebenraum (ADR-016)](/oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept)
+- [Supervisor-Rolle und vertraulicher Nebenkanal (ADR-008)](/oriso-platform/decisions/ADR-008-supervision-role-and-side-channel-confidentiality)
+- [Stille Raummitgliedschaft und Zugriffsschutz (ADR-002)](/oriso-platform/decisions/ADR-002-silent-room-membership-and-access-control-curtain)
+- [Fallübergabe](/product/features/case-handover)
+- [Benachrichtigungen](/product/features/notifications) — Beiträge der Team-Besprechung erscheinen in der Aktivitäts-Zeitleiste.
+- Storybook Beratungs-App: [Bereich Team-Besprechung](https://dev.oriso.org/storybook-frontend/?path=/docs/components-session-teamdiscussionpanel--docs)

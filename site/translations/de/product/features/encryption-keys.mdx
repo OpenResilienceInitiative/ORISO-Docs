@@ -1,0 +1,73 @@
+---
+title: "4.16 Verschlüsselung und Schlüssel"
+description: "Wie ORISO Beratungsnachrichten Ende-zu-Ende verschlüsselt und trotzdem für ihre Besitzer lesbar hält: Schlüssel-Backup, Wiederherstellungsschlüssel, signierte Geräte, die Wahl zwischen Passwort und Wiederherstellungsschlüssel je Rolle und zwei zuschaltbare Schutzstufen."
+---
+
+Beratungsnachrichten sind Ende-zu-Ende verschlüsselt: Nur die Menschen im Gespräch können sie lesen,
+nicht der Server und nicht der Plattformbetreiber. Schwierig ist, sie für ihre Besitzer lesbar zu
+halten — auf einem neuen Gerät, nach einem Passwortwechsel, nach langer Abwesenheit. ORISO sichert die
+Schlüssel, die den Verlauf öffnen, verschlüsselt, damit die Person immer wieder hineinkommt.
+
+Diese Seite beschreibt, **was** die Funktion tut. Sie richtet sich an Beratende, Verwaltende von
+Trägern und Datenschutzbeauftragte.
+
+## 4.16.1 Das kann ich damit machen
+
+- **Meinen Verlauf nach einem Passwortwechsel weiter lesen**, auch auf einem neuen Gerät.
+- **Wählen, wie stark der Verlauf geschützt ist:** Die Plattform legt je Rolle fest, ob der Verlauf
+  mit dem Anmeldepasswort oder mit einem eigenen Wiederherstellungsschlüssel entsperrt wird.
+- **Einen Wiederherstellungsschlüssel sichern**, wenn die Plattform einen verlangt, und erinnert
+  werden, falls ich ihn noch nicht gesichert habe.
+
+## 4.16.2 Wie der Verlauf lesbar bleibt
+
+| Teil | Was er tut |
+|---|---|
+| **Schlüssel-Backup** | die Schlüssel jedes Gesprächs liegen verschlüsselt auf dem Server; der Server kann sie nicht lesen |
+| **Entsperren** | das Backup wird je nach Rolle mit dem Anmeldepasswort oder mit einem Wiederherstellungsschlüssel entsperrt |
+| **Signierte Geräte** | die Geräte eines Kontos sind als zusammengehörig signiert (Cross-Signing) und können einander vertrauen |
+| **Wiederherstellen** | auf einem neuen Gerät oder nach einem Passwortwechsel wird der Verlauf aus dem Backup wiederhergestellt |
+
+## 4.16.3 Passwort oder Wiederherstellungsschlüssel, je Rolle
+
+Die Plattform-Verwaltung legt getrennt für Ratsuchende und für Beratende fest, wie **neue** Konten
+ihren Verlauf entsperren:
+
+| Wahl | Bedeutet | Passt zu |
+|---|---|---|
+| **Anmeldepasswort** | nichts zusätzlich aufzubewahren; wer das Passwort kennt, kann den Verlauf lesen | Ratsuchenden, die ORISO oft nur wenige Male nutzen |
+| **Wiederherstellungsschlüssel** | ein eigener Schlüssel, den die Person sicher aufbewahrt; das Passwort allein öffnet den Verlauf nicht | Beratenden, für ein höheres Schutzniveau |
+
+Ein höheres Schutzniveau lässt sich so mit einer Einstellung einschalten, ohne neue Entwicklung und
+ohne Ratsuchende zu überfordern.
+
+## 4.16.4 Zwei zuschaltbare Schutzstufen
+
+Zwei weitere Stufen stammen aus dem Element-Projekt, der Referenz-App für Matrix. Beide sind gebaut
+und werden je Installation eingeschaltet:
+
+- **Lesbar nach einer Abwesenheit.** Nachrichten, die eintreffen, während eine Person abgemeldet ist,
+  bleiben lesbar, wenn sie sich wieder anmeldet.
+- **Schlüssel nur für signierte Geräte.** Schlüssel für ein Gespräch gehen nur an Geräte, die als zum
+  Konto gehörig signiert sind. Ein unbekanntes Gerät bekommt nichts, was es entschlüsseln könnte.
+
+Auch Anrufe sind Ende-zu-Ende verschlüsselt: Der Videoserver leitet nur verschlüsselte Medien weiter.
+
+## 4.16.5 Stand der Entwicklung
+
+| Teil | Stand |
+|---|---|
+| Schlüssel aus Chat-Kennung und Passwort abgeleitet | gab es schon vor ORISO; ersetzt |
+| Schlüssel-Backup, Wiederherstellungsschlüssel, signierte Geräte — Verlauf nach Passwortwechsel lesbar | mit CAR-07 beauftragt und gebaut |
+| Wahl je Rolle zwischen Passwort und Wiederherstellungsschlüssel | gebaut |
+| „Lesbar nach einer Abwesenheit“ und „Schlüssel nur für signierte Geräte“ | gebaut; je Installation eingeschaltet |
+
+## 4.16.6 Verwandte Seiten
+
+- [Eigene Chat-Oberfläche auf dem Matrix-SDK (ADR-004)](/oriso-platform/decisions/ADR-004-chat-keep-custom-ui-adopt-matrix-sdk-megolm)
+- [Stille Raummitgliedschaft und Zugriffsschutz (ADR-002)](/oriso-platform/decisions/ADR-002-silent-room-membership-and-access-control-curtain)
+- [Fallübergabe](/product/features/case-handover) — warum eine Übergabe keine neuen Schlüssel braucht.
+- Storybook Beratungs-App: [Verschlüsselungs-Einstellungen](https://dev.oriso.org/storybook-frontend/?path=/docs/organisms-encryptionsettingspanel--docs) ·
+  [Wiederherstellung](https://dev.oriso.org/storybook-frontend/?path=/docs/organisms-keybackuprecoverydialog--docs) ·
+  [Erinnerung an den Wiederherstellungsschlüssel](https://dev.oriso.org/storybook-frontend/?path=/docs/organisms-recoverykeysavereminder--docs)
+- Storybook Verwaltung: [Chat-Wiederherstellung je Rolle](https://dev.oriso.org/storybook-admin/?path=/story/organisms-globalsettings-chatrecoverysettingscard--default)
