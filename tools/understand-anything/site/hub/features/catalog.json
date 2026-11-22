@@ -420,12 +420,12 @@
       "sourceHash": "3b59e4adf9ce694ac33497fadf4b9db552b61e81491d655fcb00494a282117f1",
       "sourceRevision": "30ce6775a8248a0a1dbe87d8cf9494ae7830a7ef",
       "de": {
-        "title": "4.13 Selbsthilfegruppen",
-        "summary": "Geschützte Gruppenräume für die Selbsthilfe: Beitritt erst nach Zulassung durch die Gruppenleitung, ein Wartebereich mit Countdown und Gruppenregeln, Übergabe der Gruppenleitung, Beitritt per Link ohne Konto und wiederkehrende Gruppentermine."
+        "title": "4.10 Gesprächskreise — Einladungslink und Beitritt",
+        "summary": "Wie Ratsuchende einem Gesprächskreis über seinen Einladungslink beitreten, was mit und ohne Konto geschieht, wo Beratende landen und warum der Beitritt zu einer Gruppe keine Beratungsanfrage eröffnet."
       },
       "en": {
-        "title": "4.13 Self-help Groups",
-        "summary": "Protected group rooms for self-help: joining only after the group lead admits you, a waiting area with countdown and group rules, handing over the group lead, joining by link without an account, and recurring group appointments."
+        "title": "4.10 Self-Help Groups — Invite Link and Joining",
+        "summary": "How a client joins a self-help group (Gesprächskreis) through its invite link, what happens with and without an account, where counsellors land, and why joining a group opens no counselling enquiry."
       },
       "adrs": [
         12,
