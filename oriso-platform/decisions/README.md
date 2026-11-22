@@ -26,6 +26,46 @@ not its `_artifacts/` subfolder). The series was re-synchronised on 2026-08-17 f
   product owner (ORISO-UserService#1264): a global, default-off platform switch that limits
   every agency to one topic; the data model stays multi-topic.
 
+- `ADR-028-capability-map-stays-in-hub-health-in-viewer-node-panel.md` — proposed 2026-10-24
+  (Docs#224): keep the capability map in the hub, add a health section to the viewer node panel
+  through a bounded patch after the run-record schema exists; fork rejected for now.
+
+- `ADR-029-direct-links-knock-first-admission-and-temporary-accounts.md` — accepted by the
+  product owner 2026-10-27 (epic ORISO-Frontend#974): persistent direct links under the
+  AgencyInviteLink model, knock-first admission for calls, temporary accounts always with
+  username and password, platform-set lifetimes and message retention. Amends ADR-020 §2, §3, §7.
+  Amended 2026-10-28 (ORISO-Docs#231): the permission "Direkteinladung erlauben" replaces the
+  tenant call policy, and an admission holds per conversation. ADR-020 got a matching amendment the
+  same day: knock first, and a call guest joins the call room only (the guest join path lives there).
+
+- `ADR-030-activity-timeline-read-state-filters-and-preview.md` — proposed 2026-09-05
+  (ORISO-Frontend#1200), numbered and updated 2026-10-28: bulk read touches activity events only,
+  data-driven family chips without an "Alle" chip, and a working Timeline preview that never
+  registers an active view (product decision 2026-10-21, ORISO-Frontend#1824). Needs product sign-off.
+
+- [`ADR-031-production-telemetry-boundary-for-signoz.md`](ADR-031-production-telemetry-boundary-for-signoz.md)
+  — proposed 2026-11-07 for E2E #99 F.4. Sets the telemetry, access, retention and recovery gates for production SigNoz.
+- [`ADR-032-counsellor-calendar-module-and-external-calendar-sync.md`](ADR-032-counsellor-calendar-module-and-external-calendar-sync.md)
+  — accepted 2026-11-13. Counsellor calendar on the FullCalendar MIT core, own team view, neutral ICS feed out, busy-time import in; cal.com removed. Extends ADR-020.
+- [`ADR-034-addons-optional-services-with-their-own-ui.md`](ADR-034-addons-optional-services-with-their-own-ui.md)
+  — proposed 2026-11-12 (BITS GmbH, DigiSucht). Add-ons: optional services with their own UI, discovered by the platform, enabled per Träger, reached through one gateway in the AddonService.
+
+- [`ADR-033-direkteinladung-direct-invitation-with-optional-appointment.md`](ADR-033-direkteinladung-direct-invitation-with-optional-appointment.md)
+  — accepted 2026-11-14 (ORISO-Frontend#2252). A direct link may carry an appointment; amends ADR-029; ADR-002 amended for history on late join. ADR-032 is held by its open PR.
+
+- [`ADR-035-read-only-statistics-reader-role.md`](ADR-035-read-only-statistics-reader-role.md)
+  — accepted by the product owner 2026-11-17 (ORISO-UserService#1666). Statistik-Leser: own role, created only by platform admins, reads only the platform statistics panel and CSV; server-side allow-list and mandatory 2FA. ADR-034 is held by its open PR.
+
+- [`ADR-036-configurable-conversation-modules-and-one-question-model.md`](ADR-036-configurable-conversation-modules-and-one-question-model.md)
+  — accepted by the product owner 2026-11-17. The Erstantwort becomes one configurable module per conversation type (messages, panels, fixed modules, question blocks), edited in Admin (platform, Träger, centre) and Frontend (one conversation) with one shared configurator; one question model serves registration, the first reply and follow-up surveys. Amends ADR-018 decisions 1, 2, 5 and 6. Renumbered from 035, which ADR-035 read-only statistics reader role took first. Delivery plan: `ADR-036-delivery-plan.md`; the registration part is being redesigned as a user journey (product owner review 2026-11-17).
+
+- Amendments 2026-11-17 (ORISO-UserService#1662, ORISO-Frontend#2287): **ADR-029** — guest account
+  mode per link (delete after session, guests choose, permanent) with platform/Träger caps,
+  keep-account by entry mode, no e-mail for temporary accounts, guest links for group calls.
+  **ADR-020** — only counsellors start calls (enforced in the call policy, join needs a live
+  counsellor), and self-booking in Sprechstunden replaces the Auto-confirmation Lead Time.
+  **ADR-032** — Sprechstunden settings and booking requests in the calendar.
+
 New decisions in this section are repository-owned records and are not part of the unchanged
 19-file import described above.
 

@@ -12,6 +12,25 @@ Dieses Verzeichnis enthält die Architekturentscheidungsprotokolle (ADRs) auf Pl
 
 - `ADR-014-amendment-2026-09-25-one-topic-per-agency-policy.md` — am 2026-09-26 vom Produktverantwortlichen angenommen (ORISO-UserService#1264): ein globaler, standardmäßig ausgeschalteter Plattformschalter, der jede Beratungsstelle auf ein Thema beschränkt; das Datenmodell bleibt mehrthemig.
 
+- `ADR-028-capability-map-stays-in-hub-health-in-viewer-node-panel.md` — vorgeschlagen am 2026-10-24 (Docs#224): Die Fähigkeitskarte bleibt im Hub; ein Gesundheitsabschnitt kommt über einen begrenzten Patch in das Knotenpanel des Viewers, sobald das Schema für Laufprotokolle existiert; ein Fork ist vorerst verworfen.
+
+- `ADR-029-direct-links-knock-first-admission-and-temporary-accounts.md` — am 2026-10-27 vom Produktverantwortlichen angenommen (Epic ORISO-Frontend#974): dauerhafte Direktlinks im Modell AgencyInviteLink, Einlass nach Anklopfen bei Anrufen, temporäre Konten immer mit Benutzername und Passwort, von der Plattform festgelegte Lebensdauern und Nachrichtenaufbewahrung. Ändert ADR-020 §2, §3, §7. Geändert am 2026-10-28 (ORISO-Docs#231): Die Berechtigung „Direkteinladung erlauben“ ersetzt die Anrufrichtlinie des Trägers, und ein Einlass gilt pro Gespräch. ADR-020 bekam am selben Tag eine passende Änderung: zuerst anklopfen, und ein Anrufgast tritt nur dem Anrufraum bei (der Beitrittsweg des Gasts steht dort).
+
+- `ADR-030-activity-timeline-read-state-filters-and-preview.md` — vorgeschlagen am 2026-09-05 (ORISO-Frontend#1200), nummeriert und aktualisiert am 2026-10-28: Massenhaftes Als-gelesen-Markieren betrifft nur Aktivitätsereignisse, datengetriebene Familien-Chips ohne „Alle“-Chip und eine funktionierende Timeline-Vorschau, die nie eine aktive Ansicht registriert (Produktentscheidung 2026-10-21, ORISO-Frontend#1824). Braucht noch die Freigabe durch das Produkt.
+
+- `ADR-031-production-telemetry-boundary-for-signoz.md` — vorgeschlagen am 2026-11-07 für E2E #99 F.4.
+  Beschreibt die Anforderungen an Telemetrie, Zugriff, Aufbewahrung und Wiederherstellung vor dem Produktionseinsatz von SigNoz.
+- `ADR-032-counsellor-calendar-module-and-external-calendar-sync.md` — angenommen am 2026-11-13.
+  Kalender für Beratende auf dem MIT-Kern von FullCalendar, eigene Team-Ansicht, neutraler ICS-Abo-Link nach außen, Import belegter Zeiten nach innen; cal.com wird entfernt. Erweitert ADR-020.
+- `ADR-034-addons-optional-services-with-their-own-ui.md` — vorgeschlagen am 2026-11-12 (BITS GmbH, DigiSucht).
+  Add-ons: optionale Dienste mit eigener Oberfläche, von der Plattform erkannt, pro Träger freigeschaltet und über ein Gateway im AddonService erreichbar.
+
+- `ADR-033-direkteinladung-direct-invitation-with-optional-appointment.md` — angenommen am 2026-11-14 (ORISO-Frontend#2252): Ein Direktlink kann einen Termin tragen; ändert ADR-029; ADR-002 ist um den Verlauf beim späten Beitritt ergänzt. ADR-032 liegt in seinem offenen PR.
+- `ADR-035-read-only-statistics-reader-role.md` — vom Product Owner angenommen am 2026-11-17 (ORISO-UserService#1666): Statistik-Leser als eigene Rolle, nur von Plattform-Admins angelegt, liest nur das Plattform-Statistik-Panel und den CSV-Export; serverseitige Freigabeliste und verpflichtende 2FA. ADR-034 liegt in seinem offenen PR.
+- `ADR-036-configurable-conversation-modules-and-one-question-model.md` — vom Product Owner angenommen am 2026-11-17: Die Erstantwort wird ein konfigurierbares Modul pro Gesprächstyp, bearbeitet im Admin und im Frontend mit einem gemeinsamen Konfigurator; ein Fragemodell dient Registrierung, erster Antwort und Nachbefragung. Ändert ADR-018.
+
+- Änderungen vom 2026-11-17 (ORISO-UserService#1662, ORISO-Frontend#2287): **ADR-029** — Gastkontomodus je Link (nach der Sitzung löschen, Gäste wählen, dauerhaft) mit Begrenzung durch Plattform und Träger, Konto behalten je nach Eintrittsmodus, keine E-Mail-Adresse für temporäre Konten, Gastlinks für Gruppenanrufe. **ADR-020** — nur Berater starten Anrufe (in der Anrufrichtlinie durchgesetzt, der Beitritt braucht einen anwesenden Berater), und die Selbstbuchung in Sprechstunden ersetzt den Vorlauf für automatische Bestätigung. **ADR-032** — Einstellungen für Sprechstunden und Buchungsanfragen im Kalender.
+
 Neue Entscheidungen in diesem Abschnitt gehören zum Repository und sind kein Teil des oben beschriebenen unveränderten Imports von 19 Dateien.
 
 ## Bekannte Probleme

@@ -99,6 +99,8 @@ def _install_locked(root, profile=None, docker=False):
             run('git', '-C', str(upstream), 'apply', str(tooling / patch['path']))
         shutil.copyfile(tooling / 'hosted-viewer/source-location.mjs', upstream / 'understand-anything-plugin/packages/dashboard/source-location.mjs')
         shutil.copyfile(tooling / 'hosted-viewer/source-location.d.mts', upstream / 'understand-anything-plugin/packages/dashboard/source-location.d.mts')
+        for name in ('deep-link.mjs', 'deep-link.d.mts'):
+            shutil.copyfile(tooling / 'hosted-viewer' / name, upstream / 'understand-anything-plugin/packages/dashboard' / name)
         def runtime(args, cwd):
             if docker:
                 run('docker', 'run', '--rm', '-v', f'{root}:{root}', '-w', str(cwd), lock['nodeImage'], *args)

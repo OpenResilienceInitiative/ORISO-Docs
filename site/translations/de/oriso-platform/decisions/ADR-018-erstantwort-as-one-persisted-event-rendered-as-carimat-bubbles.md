@@ -2,11 +2,14 @@
 
 - **Status:** Angenommen — Frank, 2026-07-30 (grill-with-docs-Sitzung)
 - **Datum:** 2026-07-30
+- **Geändert durch:** ADR-036 (vorgeschlagen 2026-11-16) — die Entscheidungen 1, 2, 5 und 6 werden durch ein konfigurierbares Modul pro Gesprächstyp ersetzt, bearbeitbar in Admin und Frontend; Sicherheitsabschnitte kann die bearbeitende Person entfernen.
 - **Entscheider:** Frank (Produkt) und KI (Engineering)
 - **Verwandt:** `CONTEXT-erstantwort-und-carimat.md` (Glossar), ADR-003 und `ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent.md` (Fachbereichsrechtstexte, Thema vor Einwilligung), ADR-004/ADR-005 (Matrix/Megolm), ADR-008 (Mitleser), ADR-010 (Plattformfreigabeliste je Mandant, hier verschoben), `CONTEXT-conversation-types.md`, `ORISO-Frontend/CONTEXT.md` (Aktivitätszeitleiste), ORISO-Frontend #772
 - **Anlass:** U25-Erstantwort weicht stark vom Plattformstandard ab: informell, ohne geschlechtsspezifische Bezeichnungen, Beratung per MAIL statt Chat, Offenlegung von Peerberatung/Supervision, ausdrückliche Bitte um keine personenbezogenen Daten und deshalb **keine** Einladung zur E-Mail-Angabe, dazu Notfallnummern. Björns Fragen an Janna vom 2026-07-24 betrafen Konfiguration je Beratungsstelle.
 
 ---
+
+> **Geändert durch ADR-036 Entscheidung 34 (2026-11-18, vorgeschlagen):** Die Erstantwort ist nicht mehr ein einzelnes Ereignis. In einer Reise ist jeder Schritt an Bord und bei der Ankunft ein eigenes gespeichertes `[SYSTEM_NOTIFICATION]`-Ereignis, eingefroren beim Senden; ein Frageschritt mit mehreren Fragen bleibt ein Ereignis. Betroffen sind die Entscheidungen 3 und 11 (ein Ereignis, ein Eintrag in der Zeitleiste); eingefrorener Wortlaut, Live-Zustand und Carimat als Darstellungsidentität bleiben, je Ereignis. Siehe [ADR-036](./ADR-036-configurable-conversation-modules-and-one-question-model.md) Teil E.
 
 ## Kontext
 
@@ -35,6 +38,14 @@ Einfach editierbaren Text je Stelle anzubieten würde Trägertext auf inaktive M
 9. **Vorwärtssperre ja, Rückwärtssperre nein.** Eingabe bleibt bis Einwilligung blockiert; sichert Versprechen während Anfragephase vor Zuweisung. Serverprüfung von `dataPrivacyConfirmation` zusätzlich, begrenzt auf Wege ohne vorherige Stellenwahl; bei Beratungsstellenberatung Einwilligung bereits bei Registrierung nach ADR-014. Regressionstest sichert Ablauf gegen stille spätere Entfernung. Kein Baustein blockiert Zuweisung/Beraterantwort; E-Mail, 2FA und Zugangsdaten speichern bleiben freiwillig.
 10. **Versandbestätigung reduziert:** bestätigt Versand ohne Frist, die nur noch einen Verantwortlichen hat. Schließt bei erster Sprechblase statt nach festen zehn Sekunden.
 11. **Ein Eintrag in Aktivitätszeitleiste** für ganze Erstantwort, Ziel Chat. Bewusste Ausnahme im Filter gegen Systembenachrichtigungen. Ein Eintrag je offener Aktion verworfen: Person mit erster Nachricht zu Suizidgedanken soll nicht drei Aufgaben erhalten.
+
+### Kontoeinstellungen nach Konversationstyp (3. November 2026)
+
+Plattform- und Trägeradmins können für Mail-Beratung, Live-Chat und Selbsthilfe festlegen, ob Ratsuchende einen Namen eingeben dürfen. Einen anpassbaren Wert kann der Träger ändern. Eine Plattformvorgabe bindet den Träger. Für seine Beratungsstellen ist der resultierende Wert schreibgeschützt. Die kontoweite Namensregel gilt als Obergrenze. Ist die Eingabe deaktiviert, bietet die Registrierung einen generierten Login-Namen an. In unterstützten Anzeigename-Feldern steht der Würfel zur Verfügung. Der Dienst prüft die generierten Werte bei der Eingabe. Bestehende Login-Namen bleiben unveränderlich und bestehende Konten gültig.
+
+Für Mail-Beratung und Selbsthilfe lässt sich getrennt einstellen, ob nach einer E-Mail-Adresse gefragt wird. Die kontoweite E-Mail-Einstellung kann die Erfassung vollständig sperren. Hinweise im Chat richten sich nach dem jeweiligen Konversationstyp. Profil und Zwei-Faktor-Einrichtung prüfen die tatsächlich zum Konto gehörenden Konversationen. Live-Chat bleibt anonym. Er fragt keine Adresse ab und versendet keine E-Mails. Die Erstantwort darf nach einer Adresse fragen, wenn für die aktuelle Konversation sowohl die Erfassung als auch der Versand erlaubt sind.
+
+Zugehörige Arbeit: OpenResilienceInitiative/ORISO-Admin#602 und OpenResilienceInitiative/ORISO-Frontend#825.
 
 ## Lieferumfang
 

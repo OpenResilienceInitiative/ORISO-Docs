@@ -31,9 +31,6 @@
         "title": "4.9 Case Handover — Getting and Giving a Case",
         "summary": "How a counselling case moves between colleagues: pulling a case, offering a case, the reasons, who has to agree, and the difference between a look-in and a takeover."
       },
-      "hubPage": {
-        "label": "Case handover"
-      },
       "adrs": [
         2
       ],
@@ -116,9 +113,6 @@
         "title": "4.11 Feature Permissions — What Is Allowed Where",
         "summary": "How the platform, a Träger and a Beratungsstelle decide which functions are available in which conversation type: 55 switches on three levels, inherited downwards, lockable, and enforced on the server."
       },
-      "hubPage": {
-        "label": "Feature permissions"
-      },
       "adrs": [
         1,
         15
@@ -152,8 +146,8 @@
       "id": "product/features/group-chats",
       "source": "product/features/group-chats.mdx",
       "route": "produkt/core-features/group-chats",
-      "sourceHash": "873c5c15d4d1fe8bc49514af11e236ff11f19b37436d54a1a6388be5a8d1fbd5",
-      "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
+      "sourceHash": "3296648a4cc97bf9152273444b2d8f7a803072f25852206e54c4bfa31623fcb9",
+      "sourceRevision": "72bc00b04b1bc5d84f6ea39ed85a58ff4c644433",
       "de": {
         "title": "4.5 Gruppenchats und Versand an mehrere Empfänger",
         "summary": "Gruppengespräche (Selbsthilfe, Teamberatung, Familie, interne Runden), Versand an mehrere Empfänger, Antworten im Thread und Regeln für ausschließlich Beratenden vorbehaltene Werkzeuge."
@@ -182,8 +176,8 @@
       "id": "product/features/index",
       "source": "product/features/index.mdx",
       "route": "produkt/core-features",
-      "sourceHash": "5d61551d859eeae8947aece8c094a049d0e829be240a292535bb7a08cc832cad",
-      "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
+      "sourceHash": "ed58a1f1af3ca258e06cd0159449a7a1dd185d6c45e02d3d29ffdcd4aa48f6eb",
+      "sourceRevision": "72bc00b04b1bc5d84f6ea39ed85a58ff4c644433",
       "de": {
         "title": "Kernfunktionen",
         "summary": "Die acht Funktionssäulen von ORISO — Live-Chat, Gruppengespräche, KI-Werkzeuge, Übergabe, Benachrichtigungen, Sitzungen, Pincode-Zugang und Transkripte."
@@ -314,9 +308,6 @@
         "title": "4.2 Live Chat — Anonymous, Without an Account",
         "summary": "How a person starts an anonymous live chat without an account: topic and pseudonym, the waiting room with queue position, the two consents, the counsellor who accepts, the first response in the person's language, and when everything is deleted."
       },
-      "hubPage": {
-        "label": "Live chat"
-      },
       "adrs": [
         7,
         18,
@@ -426,8 +417,8 @@
       "id": "product/features/self-help-groups",
       "source": "product/features/self-help-groups.mdx",
       "route": "produkt/core-features/self-help-groups",
-      "sourceHash": "f1513a2693ff18929c0c4f607d2bf4047dcb9374153fb5094ccfe9d90574bc2d",
-      "sourceRevision": "a8c9b416dd1df395b155a436cc14c2070c9347e0",
+      "sourceHash": "3b59e4adf9ce694ac33497fadf4b9db552b61e81491d655fcb00494a282117f1",
+      "sourceRevision": "30ce6775a8248a0a1dbe87d8cf9494ae7830a7ef",
       "de": {
         "title": "4.13 Selbsthilfegruppen",
         "summary": "Geschützte Gruppenräume für die Selbsthilfe: Beitritt erst nach Zulassung durch die Gruppenleitung, ein Wartebereich mit Countdown und Gruppenregeln, Übergabe der Gruppenleitung, Beitritt per Link ohne Konto und wiederkehrende Gruppentermine."
@@ -435,9 +426,6 @@
       "en": {
         "title": "4.13 Self-help Groups",
         "summary": "Protected group rooms for self-help: joining only after the group lead admits you, a waiting area with countdown and group rules, handing over the group lead, joining by link without an account, and recurring group appointments."
-      },
-      "hubPage": {
-        "label": "Self-help groups"
       },
       "adrs": [
         12,

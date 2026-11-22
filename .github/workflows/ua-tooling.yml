@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'tools/understand-anything/**'
+      - 'tools/planning-map/**'
       - '.github/workflows/ua-tooling.yml'
       - '.github/scripts/ua_public_policy_test.py'
       - 'tools/truth-chain/public-repositories.json'
@@ -10,6 +11,7 @@ on:
     branches: [dev, pre-dev]
     paths:
       - 'tools/understand-anything/**'
+      - 'tools/planning-map/**'
       - '.github/workflows/ua-tooling.yml'
       - '.github/scripts/ua_public_policy_test.py'
       - 'tools/truth-chain/public-repositories.json'
@@ -55,6 +57,8 @@ jobs:
       - name: Test guarded source, static serving and hub status
         run: |
           export UNDERSTAND_TEST_UPSTREAM=/tmp/oriso-ua-runtime/current/upstream
+          export UA_PLAYWRIGHT=/tmp/ua-browser/node_modules/playwright/index.mjs
+          export UA_PLAYWRIGHT_REQUIRED=1
           cd tools/understand-anything
           node --test hosted-viewer/*.test.mjs site/hub/test/*.test.mjs
           node hosted-viewer/runtime-test.mjs --upstream /tmp/oriso-ua-runtime/current/upstream

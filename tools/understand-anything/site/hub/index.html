@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/tokens.css">
 <link rel="stylesheet" href="/assets/hub.css">
 <script src="/assets/lang.js"></script>
 <script src="/assets/status.js" defer></script>
@@ -53,6 +54,8 @@
     <a href="#code"><span class="no">2</span><span lang="de">Code</span><span lang="en">Code</span></a>
     <a href="#doku"><span class="no">3</span><span lang="de">Doku &amp; Rechtliches</span><span lang="en">Docs &amp; legal</span></a>
     <a href="#frische"><span class="no">4</span><span lang="de">Frische</span><span lang="en">Freshness</span></a>
+    <a href="#colour-scheme"><span class="no">5</span><span lang="de">Farbschema</span><span lang="en">Colour scheme</span></a>
+    <a href="/map/"><span lang="de">Fähigkeiten-Karte</span><span lang="en">Capability map</span></a>
     <a href="/glossary/"><span lang="de">Fachliches Glossar</span><span lang="en">Domain glossary</span></a>
   </div>
 </nav>
@@ -64,7 +67,7 @@
     <div><div class="vlabel"><span lang="de">Quelle</span><span lang="en">Source</span></div><div class="vvalue"><span lang="de">Referenzen</span><span lang="en">Refs</span> <span class="mono" data-ua="branch">–</span></div></div>
     <div><div class="vlabel"><span lang="de">Repositorien</span><span lang="en">Repositories</span></div><div class="vvalue" data-ua="repositories">…</div></div>
     <div><div class="vlabel"><span lang="de">Knoten insgesamt</span><span lang="en">Nodes in total</span></div><div class="vvalue" data-ua="nodes">…</div></div>
-    <div><div class="vlabel"><span lang="de">Feature-Seiten</span><span lang="en">Feature pages</span></div><div class="vvalue">10</div></div>
+    <div><div class="vlabel"><span lang="de">Feature-Seiten</span><span lang="en">Feature pages</span></div><div class="vvalue">25</div></div>
     <div><div class="vlabel"><span lang="de">Zustand</span><span lang="en">State</span></div><div class="vvalue"><span class="status plan" data-ua="state"><span lang="de">wird geladen</span><span lang="en">loading</span></span></div></div>
   </div>
 
@@ -82,15 +85,32 @@
       </p>
     </div>
     <div class="fcards">
-      <a class="fcard" href="/features/case-handover.html" style="--sc:var(--brand)">
-        <div class="eb"><span><span lang="de">Fallübergabe</span><span lang="en">Case handover</span></span><span class="status warn"><span lang="de">teilweise gebaut</span><span lang="en">partly built</span></span></div>
-        <h3><span lang="de">Wie Case Handover funktioniert</span><span lang="en">How case handover works</span></h3>
-        <p class="q"><span lang="de">„Eine Kollegin ist abwesend — wie kommt ihr Fall zu jemand anderem?"</span><span lang="en">"A colleague is away — how does her case reach somebody else?"</span></p>
+<a class="fcard" href="/features/case-handover.html" style="--sc:var(--brand)"><div class="eb"><span lang="de">Fallübergabe</span><span lang="en">Case handover</span><span class="status warn"><span lang="de">Interne QA</span><span lang="en">Internal QA</span></span></div><h3><span lang="de">Wie Case Handover funktioniert</span><span lang="en">How case handover works</span></h3><p class="d"><span lang="de">Eine Kollegin fällt aus. Oder sie plant ihre Abwesenheit und möchte ihre Fälle vorher abgeben. In beiden Fällen läuft die Beratung im bestehenden Chat weiter, wenn die nötigen Freigaben vorliegen.</span><span lang="en">A colleague is unexpectedly away, or wants to hand over her cases before a planned absence. In both situations, counselling continues in the existing chat once the required approvals are in place.</span></p></a>
+<a class="fcard" href="/features/supervision-chat.html" style="--sc:var(--brand)"><div class="eb"><span lang="de">Supervisionschat</span><span lang="en">Supervision chat</span><span class="status warn"><span lang="de">Listenfix im Review</span><span lang="en">List fix in review</span></span></div><h3><span lang="de">Wie der Supervisionschat funktioniert</span><span lang="en">How supervision chat works</span></h3><p class="d"><span lang="de">Eine Fachkraft begleitet einen Beratungsfall. Sie kann im Beratungschat mitlesen und gibt der zuständigen Person Rückmeldung in einem eigenen, privaten Chat.</span><span lang="en">A supervisor supports a counselling case. They can read the counselling chat and give the assigned counsellor feedback in a separate private chat.</span></p></a>
+<a class="fcard" href="/features/live-chat.html" style="--sc:var(--brand)"><div class="eb"><span lang="de">Live-Chat</span><span lang="en">Live chat</span><span class="status warn"><span lang="de">Linkänderung auf dev</span><span lang="en">Link change on dev</span></span></div><h3><span lang="de">Wie der Live-Chat funktioniert</span><span lang="en">How live chat works</span></h3><p class="d"><span lang="de">Ratsuchende öffnen einen Link und warten auf eine verfügbare Beratungsperson. Sobald jemand die Anfrage annimmt und die nötigen Bestätigungen vorliegen, sprechen beide direkt im Chat.</span><span lang="en">An advice seeker opens a link and waits for an available counsellor. Once a counsellor takes the request and the required confirmations are in place, they can talk in real time.</span></p></a>
+      <a class="fcard" href="/features/waiting-room.html" style="--sc:var(--brand)"><div class="eb"><span lang="de">Wie der Warteraum funktioniert</span><span lang="en">How the waiting room works</span></div><h3><span lang="de">Warten und eintreten</span><span lang="en">Wait and enter</span></h3><p class="d"><span lang="de">Im Warteraum sehen Ratsuchende, worauf sie warten und was den Eintritt freigibt. Beim Live-Chat ist es die Annahme der Anfrage, beim Gesprächskreis der Gruppenstart. Ein Anruf hat einen eigenen Gerätecheck.</span><span lang="en">The waiting room shows people what they are waiting for and what unlocks entry. Live chat waits for a counsellor to take the request. A self-help group waits for its start. Calls have their own device check.</span></p></a>
+      <a class="fcard" href="/features/conversation-types.html" style="--sc:var(--brand)"><div class="eb"><span lang="de">Drei Konversationstypen für Ratsuchende</span><span lang="en">Three conversation types for advice seekers</span></div><h3><span lang="de">Drei Wege in die Beratung</span><span lang="en">Three ways into counselling</span></h3><p class="d"><span lang="de">Wer einer Beratungsstelle schreibt, sofort mit einer Fachkraft sprechen möchte oder einem Gesprächskreis beitritt, startet jeweils auf einer eigenen Einstiegsfläche. Jeder Weg führt zu einer anderen Art von Gespräch.</span><span lang="en">Writing to a counselling centre, seeking immediate help or joining a self-help group starts on a dedicated entry screen. Each path leads to a different kind of conversation.</span></p></a>
+      <a class="fcard" href="/features/notification-sounds.html" style="--sc:var(--brand)"><div class="eb"><span lang="de">Benachrichtigungstöne einstellen</span><span lang="en">Set notification sounds</span></div><h3><span lang="de">Einstellungen → Benachrichtigungen</span><span lang="en">Settings → Notifications</span></h3><p class="d"><span lang="de">Öffne in der Beratungsanwendung Einstellungen → Benachrichtigungen. Dort wählst du für Anfragen, Gespräche und zeitkritische Ereignisse einen Ton und seine Lautstärke.</span><span lang="en">In the counselling app, open Settings → Notifications. Choose a tone and volume for requests, conversations and time-critical events.</span></p></a>
+      <a class="fcard" href="/features/feature-permissions.html" style="--sc:var(--brand)"><div class="eb"><span lang="de">Wer darf welche Funktionen nutzen?</span><span lang="en">Who can use which features?</span></div><h3><span lang="de">Admin → Funktionszugriff</span><span lang="en">Admin → Feature access</span></h3><p class="d"><span lang="de">Im Admin-Bereich unter Funktionszugriff legen Plattform, Träger und Beratungsstelle fest, welche Funktionen verfügbar sind. Im Gespräch zählen zusätzlich der Konversationstyp und die Rechte der beteiligten Person.</span><span lang="en">In Admin under Feature access, the platform, provider and counselling centre decide which features are available. Conversation type and participant permissions also affect what a person can do.</span></p></a>
+      <a class="fcard" href="/features/providers-and-tenancy.html" style="--sc:var(--brand)"><div class="eb"><span lang="de">Träger und Mandanten</span><span lang="en">Providers and tenancy</span></div><h3><span lang="de">Plattform → Träger → Beratungsstellen</span><span lang="en">Platform → provider → centres</span></h3><p class="d"><span lang="de">Ein Träger bündelt Beratungsstellen, Konten und Einstellungen. Seine Berechtigungen gelten innerhalb des zugeordneten Bereichs der Plattform.</span><span lang="en">A provider groups counselling centres, accounts and settings. Its permissions apply within its assigned part of the platform.</span></p></a>
+      <a class="fcard" href="/features/config-wizard.html" style="--sc:var(--brand)"><div class="eb"><span lang="de">Config Wizard</span><span lang="en">Config Wizard</span></div><h3><span lang="de">Einladen, einrichten, zuordnen</span><span lang="en">Invite, set up and assign</span></h3><p class="d"><span lang="de">Die Einladung bestimmt, welchen Weg der Config Wizard anbietet. Ein neuer Träger, der Beitritt zu einem vorhandenen Träger und die anschließende Einrichtung einer Beratungsstelle brauchen unterschiedliche Angaben.</span><span lang="en">The invitation determines the path in the Config Wizard. A new provider, joining an existing provider and setting up a centre require different information.</span></p></a>
+      <a class="fcard" href="/features/counselling-centres.html" style="--sc:var(--brand)"><div class="eb"><span lang="de">Beratungsstellen und Themen</span><span lang="en">Counselling centres and topics</span></div><h3><span lang="de">Anlegen → Themen zuordnen → Sichtbarkeit prüfen</span><span lang="en">Create → assign topics → check visibility</span></h3><p class="d"><span lang="de">Eine Beratungsstelle gehört zu einem Träger. Sie kann je nach Plattformregel ein oder mehrere Beratungsthemen anbieten. Das gewählte Thema bestimmt den Fachbereich.</span><span lang="en">A counselling centre belongs to a provider. Depending on platform policy, it can offer one or more counselling topics. The selected topic determines the department.</span></p></a>
+      <a class="fcard" href="/features/video-calls.html" style="--sc:var(--brand)"><div class="eb"><span lang="de">Videocalls starten und freigeben</span><span lang="en">Start and enable video calls</span></div><h3><span lang="de">Freigabe → Geräte → Gespräch</span><span lang="en">Permission → devices → call</span></h3><p class="d"><span lang="de">Ein Videocall beginnt im erlaubten Gespräch oder über einen passenden Anruflink. Ob die Schaltfläche verfügbar ist, hängt von den Funktionsregeln und der Gesprächsart ab.</span><span lang="en">A video call starts from an eligible conversation or a call link. Whether its control is available depends on feature rules and conversation type.</span></p></a>
+      <a class="fcard" href="/features/user-tutorials.html" style="--sc:var(--brand)"><div class="eb"><span lang="de">User-Tutorials mit Beispieldaten</span><span lang="en">User tutorials with sample data</span></div><h3><span lang="de">Übung zum Durchklicken</span><span lang="en">Click-through practice</span></h3><p class="d"><span lang="de">In der Hilfe führen Touren Schritt für Schritt durch die Oberfläche. Auf dieser Seite kannst du den Einstieg in eine Beratungsanfrage mit fiktiven Daten durchspielen.</span><span lang="en">Tours in Help guide you through the interface. On this page you can practise the start of a counselling enquiry with fictional data.</span></p></a>
+      <a class="fcard" href="/features/admin-help.html" style="--sc:var(--brand)"><div class="eb"><span lang="de">Admin Panel und Hilfen</span><span lang="en">Admin panel and help</span></div><h3><span lang="de">Bereich wählen → Kachelhilfe öffnen</span><span lang="en">Choose a section → open tile help</span></h3><p class="d"><span lang="de">Im Admin Panel zeigt ORISO die Bereiche, für die dein Konto zuständig ist. Viele Einstellungen erklären sich direkt über die Hilfe an der Kachel.</span><span lang="en">The admin panel shows the sections available to your account. Many settings have explanations directly on the relevant tile.</span></p></a>
+      <a class="fcard" href="/features/voice-messages.html" style="--sc:var(--brand)"><div class="eb"><span lang="de">Sprachnachrichten</span><span lang="en">Voice messages</span></div><h3><span lang="de">Aufnehmen → prüfen → senden</span><span lang="en">Record → review → send</span></h3><p class="d"><span lang="de">Eine Sprachnachricht ist eine Aufnahme im Chat. Das Mikrofon erscheint, wenn die Funktion und der Upload im aktuellen Gespräch erlaubt sind.</span><span lang="en">A voice message is an audio recording in chat. The microphone is available when recording and upload are permitted in the current conversation.</span></p></a>
+      <a class="fcard" href="/features/encryption.html" style="--sc:var(--brand)"><div class="eb"><span lang="de">Verschlüsselung in ORISO</span><span lang="en">Encryption in ORISO</span></div><h3><span lang="de">Browser und Matrix</span><span lang="en">Browser and Matrix</span></h3><p class="d"><span lang="de">Der Browser schützt Gesprächsinhalte vor dem Versand und entschlüsselt sie für berechtigte Geräte. Für Dateien, Schlüssel, Transport und Verwaltungsdaten gelten eigene Schutzgrenzen.</span><span lang="en">The browser protects conversation content before sending and decrypts it for authorised devices. Files, keys, transport and administrative data have their own boundaries.</span></p></a>
+      <a class="fcard" href="/features/create-user-accounts.html" style="--sc:var(--brand)"><div class="eb"><span lang="de">Benutzerkonten mit wenigen Klicks</span><span lang="en">Create user accounts in a few clicks</span></div><h3><span lang="de">Rolle wählen → einladen → Einrichtung abschließen</span><span lang="en">Choose a role → invite → finish setup</span></h3><p class="d"><span lang="de">Über Kontoeinladungen bereitest du den Zugang für Mitarbeitende vor. Die eingeladene Person schließt die Einrichtung passend zu ihrer Rolle ab.</span><span lang="en">Account invitations prepare access for staff. The invitee completes setup for the relevant role.</span></p></a>
+      <a class="fcard" href="/features/activity-feed.html" style="--sc:var(--brand)"><div class="eb"><span lang="de">Activity Feed</span><span lang="en">Activity Feed</span></div><h3><span lang="de">Filtern → Details öffnen → als gelesen markieren</span><span lang="en">Filter → open details → mark as read</span></h3><p class="d"><span lang="de">Unter Aktivität findest du Ereignisse für dein Konto, etwa neue Anfragen, Nachrichten, Übergaben und Anrufe. Ein Eintrag führt zur passenden Information oder zum Gespräch.</span><span lang="en">Activity lists events for your account, such as new requests, messages, handovers and calls. Each item leads to the relevant information or conversation.</span></p></a>
+      <a class="fcard" href="/features/internal-group-chats.html" style="--sc:var(--brand)"><div class="eb"><span lang="de">Interne Gruppenchats</span><span lang="en">Internal group chats</span></div><h3><span lang="de">Kolleginnen und Kollegen im eigenen Raum</span><span lang="en">Colleagues in their own room</span></h3><p class="d"><span lang="de">Interne Gruppenchats sind dauerhafte Räume für die Zusammenarbeit von Mitarbeitenden. Welche Personen du hinzufügen kannst, hängt vom Zugriff und von den Regeln des Trägers ab.</span><span lang="en">Internal group chats are persistent rooms for staff collaboration. Access and provider rules determine whom you can add.</span></p></a>
+      <a class="fcard" href="/features/self-help-groups.html" style="--sc:var(--brand)"><div class="eb"><span lang="de">Selbsthilfegruppen und Gesprächskreise</span><span lang="en">Self-help groups and meetings</span></div><h3><span lang="de">Termin planen → Einladung teilen → Gruppe öffnen</span><span lang="en">Plan → share the invitation → open the group</span></h3><p class="d"><span lang="de">Ein Gesprächskreis ist ein moderiertes Gruppenangebot. Teilnehmende gelangen über eine Einladung zu den Informationen und zum Warteraum des Treffens.</span><span lang="en">A self-help group is a moderated group offer. Participants use an invitation to reach meeting information and the waiting room.</span></p></a>
+      <a class="fcard sc-brand" href="/map/">
+        <div class="eb"><span><span lang="de">Fähigkeiten-Karte</span><span lang="en">Capability map</span></span><span class="status warn"><span lang="de">Prototyp</span><span lang="en">prototype</span></span></div>
+        <h3><span lang="de">Was man mit ORISO heute tun kann</span><span lang="en">What people can do with ORISO today</span></h3>
+        <p class="q"><span lang="de">„Was war schon da, was haben wir gebaut, was kommt als Nächstes?"</span><span lang="en">"What was already there, what did we build, what comes next?"</span></p>
         <p class="d">
-          <span lang="de">Fall holen, Zustimmung der ratsuchenden Person, Mitlesen oder Übernahme,
-            beteiligte Dienste und Entscheidungen. Das Abgeben durch die bisherige Beraterin wird gerade entwickelt.</span>
-          <span lang="en">Taking a case, consent of the person seeking advice, reading along or taking over,
-            the services and decisions involved. Handing a case over is currently being developed.</span>
+          <span lang="de">Eine Karte aller Fähigkeiten für Ratsuchende, Beratende und Träger: Code, Tests, Stories und geplante Arbeit, bis zur einzelnen Datei.</span>
+          <span lang="en">A map of all capabilities for help-seekers, counsellors and providers: code, tests, stories and planned work, down to the single file.</span>
         </p>
       </a>
       <a class="fcard" href="/features/notifications.html" style="--sc:var(--brand)">
@@ -111,15 +131,6 @@
           <span lang="en">Templates from platform to Träger to Beratungsstelle, versions, contract documents with forwarding and deadline. The in-chat notice on a new version is decided but not built yet.</span>
         </p>
       </a>
-      <a class="fcard" href="/features/feature-permissions.html" style="--sc:var(--brand)">
-        <div class="eb"><span><span lang="de">Funktionsfreigaben</span><span lang="en">Feature permissions</span></span><span class="status ok"><span lang="de">gebaut</span><span lang="en">built</span></span></div>
-        <h3><span lang="de">Wie Funktionsfreigaben funktionieren</span><span lang="en">How feature permissions work</span></h3>
-        <p class="q"><span lang="de">„Kann unser Träger Videoanrufe im Live-Chat abschalten?“</span><span lang="en">"Can our Träger switch off video calls in live chat?"</span></p>
-        <p class="d">
-          <span lang="de">55 Schalter auf drei Ebenen, je Gesprächsart, vorgeschlagen oder festgelegt, auf dem Server durchgesetzt.</span>
-          <span lang="en">55 switches on three levels, per conversation type, suggested or enforced, checked on the server.</span>
-        </p>
-      </a>
       <a class="fcard" href="/features/invitations-onboarding.html" style="--sc:var(--brand)">
         <div class="eb"><span><span lang="de">Einladungen</span><span lang="en">Invitations</span></span><span class="status ok"><span lang="de">gebaut</span><span lang="en">built</span></span></div>
         <h3><span lang="de">Wie Einladungen und Einrichtung funktionieren</span><span lang="en">How invitations and onboarding work</span></h3>
@@ -127,24 +138,6 @@
         <p class="d">
           <span lang="de">Einladungen mit Fortschrittsanzeige, Träger-Assistent, Sammeleinladungen aus einer Tabelle, Einrichtung für Beratende.</span>
           <span lang="en">Invitations with progress tracking, Träger wizard, bulk invitations from a spreadsheet, set-up for counsellors.</span>
-        </p>
-      </a>
-      <a class="fcard" href="/features/self-help-groups.html" style="--sc:var(--brand)">
-        <div class="eb"><span><span lang="de">Selbsthilfegruppen</span><span lang="en">Self-help groups</span></span><span class="status ok"><span lang="de">gebaut</span><span lang="en">built</span></span></div>
-        <h3><span lang="de">Wie Selbsthilfegruppen funktionieren</span><span lang="en">How self-help groups work</span></h3>
-        <p class="q"><span lang="de">„Wie kommt jemand in die Gruppe, ohne dass jeder hereinkommt?“</span><span lang="en">"How does someone join without letting just anyone in?"</span></p>
-        <p class="d">
-          <span lang="de">Beitrittsanfrage mit Zulassung, Wartebereich mit Regeln, Übergabe der Leitung, Beitritt ohne Konto, wiederkehrende Termine.</span>
-          <span lang="en">Join request with admission, waiting area with rules, handing over the lead, joining without an account, recurring appointments.</span>
-        </p>
-      </a>
-      <a class="fcard" href="/features/live-chat.html" style="--sc:var(--brand)">
-        <div class="eb"><span><span lang="de">Live-Chat</span><span lang="en">Live chat</span></span><span class="status warn"><span lang="de">teilweise gebaut</span><span lang="en">partly built</span></span></div>
-        <h3><span lang="de">Wie der anonyme Live-Chat funktioniert</span><span lang="en">How the anonymous live chat works</span></h3>
-        <p class="q"><span lang="de">„Wie spricht jemand mit uns, ohne seinen Namen zu nennen?“</span><span lang="en">"How does someone talk to us without giving their name?"</span></p>
-        <p class="d">
-          <span lang="de">Thema und Pseudonym, Warteraum mit Position, zwei Einwilligungen, Erstantwort, Löschung. Umwandlung in ein Konto ist offen, Bot-Schutz geplant.</span>
-          <span lang="en">Topic and pseudonym, waiting room with position, two consents, first response, deletion. Conversion into an account is open, bot protection planned.</span>
         </p>
       </a>
       <a class="fcard" href="/features/team-consultation.html" style="--sc:var(--brand)">
@@ -301,6 +294,51 @@
     <p class="src" data-ua="attempt" role="status" aria-live="polite"><span lang="de">Aktualisierungsnachweis wird geladen.</span><span lang="en">Loading refresh receipt.</span></p>
     <div class="source-table" tabindex="0" role="region" aria-label="Quellrevisionen / Source revisions">
       <table><thead><tr><th>Repository</th><th><span lang="de">Vollständige Quellrevision</span><span lang="en">Full source revision</span></th><th><span lang="de">Quellreferenz</span><span lang="en">Source ref</span></th><th><span lang="de">Generation erstellt</span><span lang="en">Generation created</span></th></tr></thead><tbody data-ua="source-list"></tbody></table>
+    </div>
+  </section>
+
+  <section id="colour-scheme">
+    <div class="ch"><span class="chapter-no">5</span><h2><span lang="de">Farbschema</span><span lang="en">Colour scheme</span></h2>
+      <span class="sub2"><span lang="de">Ein Zustand, eine Farbe: in der Planungskarte und im Wissensgraphen</span><span lang="en">One state, one colour: in the planning map and in the knowledge graph</span></span></div>
+    <div class="prose">
+      <p><span lang="de">Alle Zustandsfarben kommen aus einer gemeinsamen Datei (<a href="/assets/tokens.css"><code>tokens.css</code></a>, auch als <a href="/assets/tokens.json"><code>tokens.json</code></a>). Hell und dunkel sind getrennt abgestimmt. Text auf Flächen erreicht mindestens 4,5:1; die Stufen innerhalb einer Rampe unterscheiden sich in der Helligkeit, damit sie auch bei Rot-Grün-Schwäche (Deuteranopie, Protanopie) auseinanderzuhalten sind. Die Farbe ist nie der einzige Hinweis: Tests sind schraffiert, Gelöschtes ist gestrichelt umrandet, jeder Zustand hat einen Namen.</span>
+      <span lang="en">All state colours come from one shared file (<a href="/assets/tokens.css"><code>tokens.css</code></a>, also as <a href="/assets/tokens.json"><code>tokens.json</code></a>). Light and dark are tuned separately. Text on fills reaches at least 4.5:1; steps within a ramp differ in lightness so they stay apart under red-green colour-vision deficiency (deuteranopia, protanopia). Colour is never the only cue: tests are hatched, deleted items have a dashed outline, every state has a name.</span></p>
+      <h3><span lang="de">Code-Herkunft (Teal-Rampe, hell nach dunkel: alt → zusätzlich)</span><span lang="en">Code origin (teal ramp, light to dark: old → additional)</span></h3>
+      <ul class="scheme">
+        <li><span class="ua-sw" data-token="origin-unchanged" aria-hidden="true">Aa</span><span><span lang="de">Code unverändert (alt)</span><span lang="en">Code unchanged (old)</span> <code>--ua-origin-unchanged</code></span></li>
+        <li><span class="ua-sw" data-token="origin-reworked" aria-hidden="true">Aa</span><span><span lang="de">Code überarbeitet</span><span lang="en">Code reworked</span> <code>--ua-origin-reworked</code></span></li>
+        <li><span class="ua-sw" data-token="origin-commissioned" aria-hidden="true">Aa</span><span><span lang="de">Code beauftragt</span><span lang="en">Code commissioned</span> <code>--ua-origin-commissioned</code></span></li>
+        <li><span class="ua-sw" data-token="origin-additional" aria-hidden="true">Aa</span><span><span lang="de">Code zusätzlich</span><span lang="en">Code additional</span> <code>--ua-origin-additional</code></span></li>
+      </ul>
+      <h3><span lang="de">Tests und Gelöschtes</span><span lang="en">Tests and deleted</span></h3>
+      <ul class="scheme">
+        <li><span class="ua-sw hatch" data-token="test-new" aria-hidden="true"></span><span><span lang="de">Tests (Schraffur)</span><span lang="en">Tests (hatch)</span> <code>--ua-test-new</code></span></li>
+        <li><span class="ua-sw hatch" data-token="test-old" aria-hidden="true"></span><span><span lang="de">Tests, alt (Schraffur)</span><span lang="en">Tests, old (hatch)</span> <code>--ua-test-old</code></span></li>
+        <li><span class="ua-sw" data-token="deleted" aria-hidden="true">Aa</span><span><span lang="de">Gelöscht (Ziegelrot)</span><span lang="en">Deleted (brick)</span> <code>--ua-deleted</code></span></li>
+      </ul>
+      <h3><span lang="de">Planung</span><span lang="en">Planning</span></h3>
+      <ul class="scheme">
+        <li><span class="ua-sw" data-token="plan-not-started" aria-hidden="true">Aa</span><span><span lang="de">Geplant, nicht begonnen (grau)</span><span lang="en">Planned, not started (grey)</span> <code>--ua-plan-not-started</code></span></li>
+        <li><span class="ua-sw" data-token="plan-in-progress" aria-hidden="true">Aa</span><span><span lang="de">Geplant, in Arbeit (blau)</span><span lang="en">Planned, in progress (blue)</span> <code>--ua-plan-in-progress</code></span></li>
+      </ul>
+      <h3><span lang="de">Board-Status (Grün-Rampe: QA intern → QA extern → Done; Backlog, Ready, On hold neutral; In progress, In review blau)</span><span lang="en">Board status (green ramp: QA internal → QA external → Done; Backlog, Ready, On hold neutral; In progress, In review blue)</span></h3>
+      <ul class="scheme">
+        <li><span class="ua-sw" data-token="status-backlog" aria-hidden="true">Aa</span><span><span lang="de">Board: Backlog</span><span lang="en">Board: Backlog</span> <code>--ua-status-backlog</code></span></li>
+        <li><span class="ua-sw" data-token="status-ready" aria-hidden="true">Aa</span><span><span lang="de">Board: Ready</span><span lang="en">Board: Ready</span> <code>--ua-status-ready</code></span></li>
+        <li><span class="ua-sw" data-token="status-on-hold" aria-hidden="true">Aa</span><span><span lang="de">Board: On hold</span><span lang="en">Board: On hold</span> <code>--ua-status-on-hold</code></span></li>
+        <li><span class="ua-sw" data-token="status-in-progress" aria-hidden="true">Aa</span><span><span lang="de">Board: In progress</span><span lang="en">Board: In progress</span> <code>--ua-status-in-progress</code></span></li>
+        <li><span class="ua-sw" data-token="status-in-review" aria-hidden="true">Aa</span><span><span lang="de">Board: In review</span><span lang="en">Board: In review</span> <code>--ua-status-in-review</code></span></li>
+        <li><span class="ua-sw" data-token="status-qa-internal" aria-hidden="true">Aa</span><span><span lang="de">Board: QA internal</span><span lang="en">Board: QA internal</span> <code>--ua-status-qa-internal</code></span></li>
+        <li><span class="ua-sw" data-token="status-qa-external" aria-hidden="true">Aa</span><span><span lang="de">Board: QA external</span><span lang="en">Board: QA external</span> <code>--ua-status-qa-external</code></span></li>
+        <li><span class="ua-sw" data-token="status-done" aria-hidden="true">Aa</span><span><span lang="de">Board: Done</span><span lang="en">Board: Done</span> <code>--ua-status-done</code></span></li>
+      </ul>
+      <h3><span lang="de">Gesundheit (Ansicht Health der Karte: kritisch → gut, nach Gesamtwert des letzten Prüflaufs; grau = keine Daten)</span><span lang="en">Health (Health view of the map: critical → good, by the overall score of the latest run; grey = no data)</span></h3>
+      <ul class="scheme">
+        <li><span class="ua-sw" data-token="health-poor" aria-hidden="true">Aa</span><span><span lang="de">Gesundheit: kritisch (unter 40)</span><span lang="en">Health: critical (below 40)</span> <code>--ua-health-poor</code></span></li>
+        <li><span class="ua-sw" data-token="health-weak" aria-hidden="true">Aa</span><span><span lang="de">Gesundheit: schwach (40 bis 59)</span><span lang="en">Health: weak (40 to 59)</span> <code>--ua-health-weak</code></span></li>
+        <li><span class="ua-sw" data-token="health-fair" aria-hidden="true">Aa</span><span><span lang="de">Gesundheit: mittel (60 bis 79)</span><span lang="en">Health: fair (60 to 79)</span> <code>--ua-health-fair</code></span></li>
+        <li><span class="ua-sw" data-token="health-good" aria-hidden="true">Aa</span><span><span lang="de">Gesundheit: gut (ab 80)</span><span lang="en">Health: good (80 and above)</span> <code>--ua-health-good</code></span></li>
+      </ul>
     </div>
   </section>
 

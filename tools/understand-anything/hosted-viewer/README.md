@@ -85,3 +85,15 @@ The host operator still must supply the actual approved viewer list, tokens,
 Compose path/container targets, runner registration and nginx hub current-link
 migration. The actual Understand root is a directory, so no existing current-link
 is inferred. Missing bindings fail; these tools were not run on the host.
+
+## Deep links (Docs#199)
+
+`oriso-deep-link-v1.patch` (with `deep-link.mjs`, copied next to the dashboard by
+the installer) makes every viewer accept `?node=<id>`: the node is selected and
+centred, the sidebar shows it, and an id the graph does not contain shows a
+"Knoten nicht gefunden / Node not found" notice instead of failing silently.
+A repository-prefixed id (`ORISO-X::file:p`) also matches a single-repository
+graph that stores `file:p`. Each node panel gets "Auf der Karte zeigen / Show on
+map", linking to `/map/#node=<id>`. Ids: `capability:<slug>`,
+`<repo>::folder:<dir>`, `<repo>::file:<path>`. `deep-link-browser-test.mjs
+--upstream DIR --playwright PATH` runs the real dashboard against a synthetic graph.

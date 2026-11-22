@@ -1,0 +1,85 @@
+---
+title: "Ideen-Vorlage — eine Idee beschreiben, bevor Tickets entstehen"
+description: "Die Vorlage für eine Ideen-Seite: das Problem aus Sicht der Nutzenden, der Ablauf, die Rollen, die offenen Fragen und wie der Kopfbereich die Idee auf der Fähigkeiten-Karte platziert."
+status: "idea"
+capabilities: []
+template: true
+source: "product/ideas/idea-template.mdx"
+---
+
+Eine Ideen-Seite ist der Ort, an dem ein Feature besprochen wird, bevor jemand Aufgaben schreibt.
+Sie richtet sich zugleich an Beratende, Verwaltende der Beratungsstelle, Produktverantwortliche und
+Entwickelnde. Sie beschreibt deshalb, **was Menschen brauchen und was sie sehen würden**, nicht wie
+es gebaut wird.
+
+Kopieren Sie diese Seite, geben Sie ihr einen kurzen Dateinamen und ersetzen Sie jeden Abschnitt.
+Die Seite wird wie jede Feature-Seite auf Deutsch und Englisch veröffentlicht, und die Plan-Ansicht
+der Fähigkeiten-Karte zeigt sie auf den Fähigkeiten, die sie berührt.
+
+## Kopfbereich (Front Matter)
+
+Die ersten Zeilen der Seite liest die Karte. Nur diese Schlüssel zählen:
+
+| Schlüssel | Bedeutung |
+|---|---|
+| `status` | `idea`, `discussed`, `specified` oder `epic` — wie weit die Idee gekommen ist |
+| `capabilities` | die berührten Fähigkeiten als IDs aus der Fähigkeitenliste, zum Beispiel `[case-handover, notifications]` |
+| `epic` | optional, `Organisation/Repository#Nummer` des Epics, sobald es eines gibt; nur öffentliche Repositories |
+| `draftItems` | optional, wie viele Entwurfs-Einträge auf dem Board warten; nur eine Zahl, keine Titel |
+
+Eine unbekannte Fähigkeiten-ID stoppt den Build der Dokumentation. Diese Vorlage trägt
+`template: true`, deshalb zeigt die Karte sie nicht.
+
+## Das Problem aus Sicht der Nutzenden
+
+Beschreiben Sie, wer nicht weiterkommt und was heute nicht geht. Nehmen Sie eine konkrete Situation, in den Worten
+der Person, die sie erlebt.
+
+- **Wer:** zum Beispiel eine Beraterin im Nachtdienst oder ein Verwalter der Beratungsstelle.
+- **Situation:** was heute Schritt für Schritt passiert.
+- **Kosten:** was es sie kostet — Zeit, Vertrauen, ein verlorener Fall.
+
+<Callout>
+Beschreiben Sie hier nicht die Lösung. Wenn sich das Problem nicht ohne die Lösung erzählen lässt,
+ist es noch nicht verstanden.
+</Callout>
+
+## Der Ablauf
+
+Zeigen Sie, was die Person mit der Idee tun und sehen würde. Ein kurzes Diagramm hilft; bleiben
+Sie bei fünf bis acht Schritten.
+
+<Mermaid chart={"flowchart LR\n  A[Person beginnt<br/>die Aufgabe]:::a --> B[Sieht die Auswahl]:::m\n  B --> C{Braucht es die<br/>Zustimmung<br/>einer anderen Person?}:::c\n  C -->|ja| D[Andere Person<br/>wird gefragt]:::cl\n  C -->|nein| E[Fertig]:::ok\n  D --> E\n\n  classDef a fill:#e3f2fd,stroke:#1565c0\n  classDef m fill:#fff3e0,stroke:#ef6c00\n  classDef c fill:#fce4ec,stroke:#ad1457\n  classDef cl fill:#f3e5f5,stroke:#6a1b9a\n  classDef ok fill:#e8f5e8,stroke:#2e7d32"} />
+
+## Rollen
+
+Wer was tut und wer es nie können darf.
+
+| Rolle | Darf | Darf nicht |
+|---|---|---|
+| Beratende | … | … |
+| Verwaltung der Beratungsstelle | … | … |
+| Ratsuchende | … | … |
+
+## Wo die Idee landet
+
+Nennen Sie die Fähigkeiten aus dem Kopfbereich in je einem Satz: was sich dort ändern würde und was
+bleibt, wie es ist.
+
+## Offene Fragen
+
+Schreiben Sie auf, was noch nicht entschieden ist, eine Frage pro Zeile, mit der Person, die sie
+beantworten kann. Ist eine Frage beantwortet, gehört sie in den Text oben. Ist keine mehr offen,
+kann der Status auf `specified` wechseln.
+
+- **Frage:** … — Antwort von: …
+- **Frage:** … — Antwort von: …
+
+## Von der Idee zum Epic
+
+| Status | Bedeutet |
+|---|---|
+| `idea` | das Problem ist aufgeschrieben |
+| `discussed` | die Betroffenen haben es gelesen und kommentiert |
+| `specified` | Ablauf, Rollen und offene Fragen sind geklärt |
+| `epic` | ein Epic mit dem Label `idea` existiert; `epic:` im Kopfbereich eintragen |

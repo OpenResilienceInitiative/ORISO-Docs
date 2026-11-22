@@ -1,0 +1,724 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:oriso:planning-map:board-schema:v1",
+  "title": "ORISO planning map board.json",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "syncedAt",
+    "source",
+    "totals",
+    "fieldOptions",
+    "statusCounts",
+    "readinessRange",
+    "releases",
+    "privateCounts",
+    "items",
+    "warnings"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "syncedAt": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+    },
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "runId",
+        "generatedAt",
+        "commits"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "runId": {
+          "type": "string",
+          "pattern": "^\\d{8}T\\d{6}Z-[0-9a-f]{8}$"
+        },
+        "generatedAt": {
+          "type": "string"
+        },
+        "commits": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$"
+          }
+        },
+        "trigger": {
+          "type": "string"
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owner",
+        "projectNumber",
+        "title"
+      ],
+      "properties": {
+        "owner": {
+          "type": "string"
+        },
+        "projectNumber": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "totals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "items",
+        "public",
+        "private"
+      ],
+      "properties": {
+        "items": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "public": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "private": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "drafts": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "fieldOptions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "priority",
+        "effort",
+        "platformRelease"
+      ],
+      "properties": {
+        "status": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "priority": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "effort": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "platformRelease": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "gate": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "statusCounts": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "readinessRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "min",
+        "max"
+      ],
+      "properties": {
+        "min": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "max": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      }
+    },
+    "releases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "count"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "privateCounts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "repository",
+          "count",
+          "byStatus"
+        ],
+        "properties": {
+          "repository": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "byStatus": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "contentType",
+          "repository",
+          "number",
+          "title",
+          "url",
+          "state",
+          "updatedAt",
+          "status",
+          "readiness",
+          "issueType",
+          "parent",
+          "priority",
+          "effort",
+          "platformRelease"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "contentType": {
+            "enum": [
+              "Issue",
+              "PullRequest"
+            ]
+          },
+          "repository": {
+            "type": "string"
+          },
+          "number": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^https://"
+          },
+          "state": {
+            "enum": [
+              "OPEN",
+              "CLOSED",
+              "MERGED",
+              null
+            ]
+          },
+          "stateReason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "updatedAt": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "readiness": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "issueType": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "parent": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": false,
+            "required": [
+              "repository",
+              "number"
+            ],
+            "properties": {
+              "repository": {
+                "type": "string"
+              },
+              "number": {
+                "type": "integer"
+              }
+            }
+          },
+          "priority": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "effort": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "platformRelease": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "assignees": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "rule",
+                "severity",
+                "detail"
+              ],
+              "properties": {
+                "rule": {
+                  "enum": [
+                    "stalled",
+                    "closed-not-done",
+                    "qa-external-no-bjoern",
+                    "epic-no-readiness",
+                    "gate-status-mismatch",
+                    "job-stale"
+                  ]
+                },
+                "severity": {
+                  "enum": [
+                    "warn",
+                    "error"
+                  ]
+                },
+                "detail": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "gate": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "work": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "branches",
+              "prs",
+              "hidden"
+            ],
+            "properties": {
+              "hidden": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "branches": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "name",
+                    "repository",
+                    "source",
+                    "lastCommitDate",
+                    "url",
+                    "prs"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "repository": {
+                      "type": "string"
+                    },
+                    "source": {
+                      "enum": [
+                        "linked",
+                        "pr",
+                        "name"
+                      ]
+                    },
+                    "lastCommitDate": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "url": {
+                      "type": "string",
+                      "pattern": "^https://"
+                    },
+                    "prs": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              },
+              "prs": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "number",
+                    "repository",
+                    "title",
+                    "url",
+                    "state",
+                    "isDraft",
+                    "checks",
+                    "reviewDecision",
+                    "updatedAt",
+                    "branch"
+                  ],
+                  "properties": {
+                    "number": {
+                      "type": "integer"
+                    },
+                    "repository": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string",
+                      "pattern": "^https://"
+                    },
+                    "state": {
+                      "enum": [
+                        "OPEN",
+                        "CLOSED",
+                        "MERGED"
+                      ]
+                    },
+                    "isDraft": {
+                      "type": "boolean"
+                    },
+                    "checks": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "reviewDecision": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "updatedAt": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "branch": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            }
+          },
+          "job": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "state",
+              "runner",
+              "machine",
+              "started",
+              "updated",
+              "model",
+              "branches",
+              "prs",
+              "next",
+              "report"
+            ],
+            "properties": {
+              "state": {
+                "enum": [
+                  "running",
+                  "stopped",
+                  "waiting-human",
+                  "done",
+                  "failed"
+                ]
+              },
+              "runner": {
+                "enum": [
+                  "local",
+                  "cloud"
+                ]
+              },
+              "machine": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "started": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+              },
+              "updated": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+              },
+              "model": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "branches": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "prs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "next": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "report": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^https://"
+              }
+            }
+          },
+          "refactor": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "scope"
+            ],
+            "properties": {
+              "scope": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^[a-z][a-z0-9-]*(:[A-Za-z0-9_.-]+(:[A-Za-z0-9_.@/-]+)?)?$"
+              }
+            }
+          }
+        }
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "findingCounts": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "hiddenCounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "redacted",
+        "drafts"
+      ],
+      "properties": {
+        "redacted": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "count",
+            "byStatus"
+          ],
+          "properties": {
+            "count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "byStatus": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        },
+        "drafts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "count",
+            "byStatus"
+          ],
+          "properties": {
+            "count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "byStatus": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        },
+        "unlisted": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "count",
+            "byStatus"
+          ],
+          "properties": {
+            "count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "byStatus": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

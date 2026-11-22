@@ -2,11 +2,14 @@
 
 - **Status:** Accepted — Frank, 2026-07-30 (grill-with-docs session)
 - **Date:** 2026-07-30
+- **Amended by:** ADR-036 (proposed 2026-11-16) — decisions 1, 2, 5 and 6 are replaced by a configurable module per conversation type, editable in Admin and Frontend; safety sections become removable by the editor.
 - **Deciders:** Frank (product) + AI (engineering)
 - **Related:** `CONTEXT-erstantwort-und-carimat.md` (full glossary), ADR-003 + `ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent.md` (Fachbereich owns DPP/Impressum; topic before consent), ADR-004/ADR-005 (Matrix + Megolm), ADR-008 (who reads along), ADR-010 (platform-controlled per-tenant allowlist — the same shape, deferred here), `CONTEXT-conversation-types.md`, `ORISO-Frontend/CONTEXT.md` (Activity Timeline), ORISO-Frontend issue #772
 - **Trigger:** U25 supplied a first-response text that deviates drastically from the platform default — informal, gender-free, "we counsel by MAIL and are NOT a chat service", a peer-counselling and supervision disclosure, an explicit "do not send us personal data" and therefore **no** invitation to leave an e-mail address, plus emergency numbers. Björn's open questions to Janna (2026-07-24) asked whether such a message must become per-agency configurable.
 
 ---
+
+> **Amended by ADR-036 decision 34 (2026-11-18, proposed):** the Erstantwort is no longer one event. In a journey every step on board and at arrival is its own persisted `[SYSTEM_NOTIFICATION]` event, frozen at send time; a question step with several questions stays one event. Decisions 3 and 11 (one event, one timeline entry) are affected; frozen words, live state and Carimat as a rendering identity stay, per event. See [ADR-036](./ADR-036-configurable-conversation-modules-and-one-question-model.md) part E.
 
 ## Context
 
@@ -35,6 +38,14 @@ Naively "making the message editable per agency" would therefore paste a Träger
 9. **Forward lock yes, backward lock no.** The composer stays blocked until consent is confirmed — which today is what actually guarantees the promise, since the gate is active only in the pre-assignment enquiry phase. A server-side check of `dataPrivacyConfirmation` is added on top as defence in depth, scoped to entry paths where the person did not choose the agency beforehand (in Agency Counselling consent is given at registration per ADR-014 *shared legal text objects*), together with a regression test pinning the flow invariant so a later refactor cannot remove the protection silently. No Baustein ever blocks assignment or a counsellor's reply; e-mail, 2FA and credential saving are voluntary throughout.
 10. **The send confirmation is hollowed out**: it acknowledges dispatch and no longer names the deadline, which now has exactly one owner. It closes when the first bubble is up rather than after a fixed 10 s.
 11. **One Activity Timeline entry** for the whole Erstantwort, targeting the chat — which requires a deliberate exception to the current filter that discards system notifications. Rejected one entry per open action: a person who has just sent a first message about suicidal thoughts should not receive three to-do items.
+
+### Conversation account controls (3 November 2026)
+
+Platform and Träger administrators can set the name-typing rule for agency counselling, live chat and self-help. An adaptable value can be changed by the Träger. A platform requirement binds the Träger, and the resulting Träger value is read-only for its centres. The account-wide name rule remains the outer limit. With typing off, registration offers a generated login name and supported display-name fields use the dice. The service validates generated values at entry. Existing login names stay immutable and existing accounts stay valid.
+
+Agency counselling and self-help may independently offer to collect an address. The account-wide e-mail control remains the hard stop. In-chat prompts respect their own conversation type, while profile and two-factor setup check eligibility across the account's actual conversations. Live chat stays anonymous, with neither address collection nor e-mail delivery. The Erstantwort may offer an address only when both collection and delivery are allowed for the current conversation.
+
+Related work: OpenResilienceInitiative/ORISO-Admin#602 and OpenResilienceInitiative/ORISO-Frontend#825.
 
 ## Delivery cut
 

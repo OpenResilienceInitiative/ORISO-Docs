@@ -1,0 +1,30 @@
+/* Refactoring in the Health view (ORISO-Docs#222). Own file: #219 and #220 edit map.css in parallel.
+   Colours come from the tokens of tokens.css / map.css, so light and dark follow the page; no inline style. */
+
+/* ───── 1. Marker on the squares (Health view, top-level squares) ─────
+   map.js sets data-rf (planned | running | done), data-rft (full text) and data-rfw (the state word alone) from MapViews.VIEWS.health.refactor.
+   The state is ALWAYS a word; the border style only repeats it (dashed = planned, thick = running, plain = done). */
+.tm.vview .blk[data-rf]::before{content:attr(data-rft);position:absolute;top:4px;left:4px;z-index:1;box-sizing:border-box;max-width:calc(100% - 44px);max-height:2.5em;padding:1px 5px;border-radius:4px;border:1px solid var(--line);background:var(--label-bg);color:var(--ink);font-weight:600;font-size:10.5px;line-height:1.2;text-align:left;overflow:hidden;overflow-wrap:anywhere;pointer-events:none}
+.tm.vview .blk[data-rf]:not([data-hs])::before{max-width:calc(100% - 8px)}
+.tm.vview .blk[data-rf="planned"]::before{border-style:dashed}
+.tm.vview .blk[data-rf="running"]::before{border-width:2px;border-color:var(--brand)}
+.tm.vview .blk[data-rf="done"]::before{border-color:var(--ink-3)}
+/* The status badges of the State view (urgent, readiness) sit in the same corner; like the doc badge and the status bar they stay out of the other views. */
+.tm.vview .blk .sbadges{display:none}
+/* Very small squares have room for the word only. */
+.tm.vview .blk.xs[data-rf]::before,.tm.vview .blk.sm[data-rf]::before{content:attr(data-rfw);max-width:calc(100% - 8px);font-size:9.5px;white-space:nowrap;text-overflow:ellipsis}
+/* The smallest squares cannot hold a word; their aria-label (set by map.js) and the panel still name the state. */
+.tm.vview .blk.xs[data-rf][data-hs]::before,.tm.vview .blk.sm[data-rf][data-hs]::before{top:auto;bottom:4px}
+
+/* ───── 2. Section in the Health panel (MapViews refactorBox) ───── */
+.rfx{display:grid;gap:8px;margin:0 0 14px;padding:12px 14px;border:1px solid var(--line);border-radius:var(--radius);background:var(--card);min-width:0;overflow-wrap:anywhere}
+.rfx-h{font-size:13px;color:var(--brand-deep);margin:0}
+.rfx-none,.rfx-sum,.rfx-cmdh{margin:0;font-size:12.5px;color:var(--ink-2)}
+.rfx-sum strong{color:var(--ink)}
+.rfx-l{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.rfx-t{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--sunken);font-size:13px;min-width:0}
+.rfx-t[data-rf-state="planned"]{border-style:dashed}
+.rfx-t[data-rf-state="running"]{border-left:4px solid var(--brand)}
+.rfx-s{font-weight:700;text-transform:uppercase;letter-spacing:.04em;font-size:11px;color:var(--ink)}
+.rfx-st{color:var(--ink-2);font-size:12px}
+.rfx-cmd{margin:0;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--brand-wash);white-space:pre-wrap;overflow-wrap:anywhere;font-family:var(--mono);font-size:12px;min-width:0}

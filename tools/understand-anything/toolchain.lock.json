@@ -21,6 +21,10 @@
     {
       "path": "patches/oriso-platform-tour-v1.patch",
       "sha256": "02f916e0d0b117d6282c159ad85b5b46096a57dee5622ef47be2c899aa600cab"
+    },
+    {
+      "path": "patches/oriso-deep-link-v1.patch",
+      "sha256": "7a2a14d07fc7ffac889aa40fac171902d6ce690d300ba4fc8bf84df12bd47119"
     }
   ],
   "nodeImage": "node@sha256:8a34c4ab3ea2c5cd194f07e317b2a8f09461d3c8b05c4e34c8ccd56d56024c4d",
@@ -36,6 +40,14 @@
     {
       "path": "hosted-viewer/source-location.d.mts",
       "sha256": "c6cdb881227478a1d4d0b376b32fd80d61f16d13886972eeaa16c42cf5f2d57e"
+    },
+    {
+      "path": "hosted-viewer/deep-link.mjs",
+      "sha256": "30ee927f43822b144a8a10bda88e7b87b3389752a596ab7be1f82721d7dedb36"
+    },
+    {
+      "path": "hosted-viewer/deep-link.d.mts",
+      "sha256": "2b137eba5c387b46ad312c2b2596dc1045abea295f8b24a535fbb17a6e9bc2c9"
     }
   ]
 }

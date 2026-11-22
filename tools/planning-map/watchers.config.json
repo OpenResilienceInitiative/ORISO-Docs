@@ -1,0 +1,54 @@
+{
+  "_note": "Single place for watcher thresholds (ORISO-Docs#207). stalledDays: an open item whose last update is MORE than this many days old in that status is flagged; statuses not listed are never flagged as stalled.",
+  "stalledDays": {
+    "Ready": 60,
+    "On hold": 90,
+    "In progress": 14,
+    "In review": 7,
+    "QA internal": 7,
+    "QA external": 7
+  },
+  "qaExternalAssignee": "BjoernLudwig",
+  "jobStaleHours": 24,
+  "_jobStaleNote": "job-stale (ORISO-Docs#216): an agent job whose section says running and was last updated MORE than this many hours before the sync is flagged. Open question of the spec: 24 h is the proposal.",
+  "gate": {
+    "_note": "Reviewed Gate -> Status mapping (ORISO-Docs#211). The Gate/Status mismatch watcher flags an item whose Status is not in the list of its Gate; items without a Gate are never flagged. Reviewed deviations from the spec's strict pairing: P4 also allows In progress (an agent that starts moves the card to In progress while the gate stays P4 until R1); R4 also allows QA external and Done (the gate stays at the last one reached once the client's lifecycle takes over); every gate allows On hold (a pause is orthogonal).",
+    "allowedStatuses": {
+      "P1 Framed": [
+        "Backlog",
+        "On hold"
+      ],
+      "P2 Specified": [
+        "Backlog",
+        "On hold"
+      ],
+      "P3 Sliced": [
+        "Backlog",
+        "On hold"
+      ],
+      "P4 Ready for agent": [
+        "Ready",
+        "In progress",
+        "On hold"
+      ],
+      "R1 Checks green": [
+        "In review",
+        "On hold"
+      ],
+      "R2 AI review": [
+        "In review",
+        "On hold"
+      ],
+      "R3 Human review": [
+        "In review",
+        "On hold"
+      ],
+      "R4 Verified on Dev": [
+        "QA internal",
+        "QA external",
+        "Done",
+        "On hold"
+      ]
+    }
+  }
+}

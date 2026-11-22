@@ -1,0 +1,11 @@
+{"schemaVersion":1,"ideas":[
+ {"id":"handover-v2","status":"discussed","capabilities":["case-handover","notifications"],
+  "title":{"de":"Übergabe mit Erinnerung","en":"Handover with reminder"},
+  "summary":{"de":"Eine Übergabe erinnert die Kollegin, bevor die Frist abläuft.","en":"A handover reminds the colleague before the deadline runs out."},
+  "pages":{"de":"https://docs.oriso.org/de/produkt/ideas/handover-v2","en":"https://docs.oriso.org/en/produkt/ideas/handover-v2"}},
+ {"id":"night-shift","status":"epic","capabilities":["live-chat"],
+  "epic":"OpenResilienceInitiative/ORISO-Frontend#42","epicUrl":"https://github.com/OpenResilienceInitiative/ORISO-Frontend/issues/42","draftItems":3,
+  "title":{"de":"Nachtdienst","en":"Night shift"},
+  "summary":{"de":"Chat nachts an eine Rufbereitschaft weiterleiten.","en":"Route the chat to an on-call counsellor at night."},
+  "pages":{"de":"https://docs.oriso.org/de/produkt/ideas/night-shift","en":"https://docs.oriso.org/en/produkt/ideas/night-shift"}}
+]}

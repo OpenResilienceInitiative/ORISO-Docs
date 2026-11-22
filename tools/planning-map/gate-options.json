@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "_note": "Reviewed list of the Gate options (ORISO-Docs#211). The field does NOT exist yet: a project admin creates it with createField below. Do not rename options without updating board-contract.json, watchers.config.json and map/board-agg.js (tests compare all four).",
+  "project": {
+    "id": "PVT_kwDODkeBP84BHH8p",
+    "owner": "OpenResilienceInitiative",
+    "number": 1,
+    "title": "ORISO Roadmap"
+  },
+  "field": {
+    "name": "Gate",
+    "dataType": "SINGLE_SELECT"
+  },
+  "options": [
+    {
+      "name": "P1 Framed",
+      "phase": "plan",
+      "step": 1,
+      "color": "GRAY",
+      "description": "Problem and outcome are stated",
+      "criteria": {
+        "de": "Das Problem und das gewünschte Ergebnis stehen im Issue; Epic und Fähigkeit sind bekannt.",
+        "en": "Problem and desired outcome are written in the issue; epic and capability are known."
+      }
+    },
+    {
+      "name": "P2 Specified",
+      "phase": "plan",
+      "step": 2,
+      "color": "GRAY",
+      "description": "Acceptance criteria and test plan written",
+      "criteria": {
+        "de": "Abnahmekriterien und Testplan sind geschrieben; offene Fragen sind beantwortet.",
+        "en": "Acceptance criteria and test plan are written; open questions are answered."
+      }
+    },
+    {
+      "name": "P3 Sliced",
+      "phase": "plan",
+      "step": 3,
+      "color": "GRAY",
+      "description": "Cut into agent-sized slices, effort set",
+      "criteria": {
+        "de": "In Teile geschnitten, die ein Agent in einem Pull Request schafft; Aufwand ist gesetzt.",
+        "en": "Cut into slices an agent can finish in one pull request; effort is set."
+      }
+    },
+    {
+      "name": "P4 Ready for agent",
+      "phase": "plan",
+      "step": 4,
+      "color": "BLUE",
+      "description": "Last planning gate: an agent may start",
+      "criteria": {
+        "de": "P1 bis P3 erfüllt, Priorität, Readiness und Release gesetzt, kein offener Blocker; Status ist Ready.",
+        "en": "P1 to P3 met, priority, readiness and release set, no open blocker; status is Ready."
+      }
+    },
+    {
+      "name": "R1 Checks green",
+      "phase": "review",
+      "step": 5,
+      "color": "YELLOW",
+      "description": "Pull request open, CI green",
+      "criteria": {
+        "de": "Pull Request ist offen und alle Prüfungen (Build, Tests, Lint) sind grün.",
+        "en": "Pull request is open and all checks (build, tests, lint) are green."
+      }
+    },
+    {
+      "name": "R2 AI review",
+      "phase": "review",
+      "step": 6,
+      "color": "YELLOW",
+      "description": "AI review passed, findings handled",
+      "criteria": {
+        "de": "Die KI-Prüfung ist durch; Befunde sind behoben oder beantwortet.",
+        "en": "The AI review passed; findings are fixed or answered."
+      }
+    },
+    {
+      "name": "R3 Human review",
+      "phase": "review",
+      "step": 7,
+      "color": "ORANGE",
+      "description": "A human reviewed and approved the code",
+      "criteria": {
+        "de": "Ein Mensch hat den Code geprüft und den Pull Request freigegeben.",
+        "en": "A human reviewed the code and approved the pull request."
+      }
+    },
+    {
+      "name": "R4 Verified on Dev",
+      "phase": "review",
+      "step": 8,
+      "color": "GREEN",
+      "description": "Merged and checked on Dev (QA internal)",
+      "criteria": {
+        "de": "Gemergt und auf Dev geprüft; Status ist QA internal. Danach gilt der bestehende Ablauf (QA external, Done).",
+        "en": "Merged and checked on Dev; status is QA internal. After that the existing lifecycle applies (QA external, Done)."
+      }
+    }
+  ],
+  "createField": {
+    "gh": "gh project field-create 1 --owner OpenResilienceInitiative --name Gate --data-type SINGLE_SELECT --single-select-options \"P1 Framed,P2 Specified,P3 Sliced,P4 Ready for agent,R1 Checks green,R2 AI review,R3 Human review,R4 Verified on Dev\"",
+    "graphql": "gh api graphql -f project=PVT_kwDODkeBP84BHH8p -f query='mutation($project: ID!) { createProjectV2Field(input: {projectId: $project, dataType: SINGLE_SELECT, name: \"Gate\", singleSelectOptions: [{name: \"P1 Framed\", color: GRAY, description: \"Problem and outcome are stated\"}, {name: \"P2 Specified\", color: GRAY, description: \"Acceptance criteria and test plan written\"}, {name: \"P3 Sliced\", color: GRAY, description: \"Cut into agent-sized slices, effort set\"}, {name: \"P4 Ready for agent\", color: BLUE, description: \"Last planning gate: an agent may start\"}, {name: \"R1 Checks green\", color: YELLOW, description: \"Pull request open, CI green\"}, {name: \"R2 AI review\", color: YELLOW, description: \"AI review passed, findings handled\"}, {name: \"R3 Human review\", color: ORANGE, description: \"A human reviewed and approved the code\"}, {name: \"R4 Verified on Dev\", color: GREEN, description: \"Merged and checked on Dev (QA internal)\"}]}) { projectV2Field { ... on ProjectV2SingleSelectField { id name options { id name } } } } }'"
+  }
+}
