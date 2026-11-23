@@ -1160,13 +1160,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md",
-          "sourceHash": "d7d5b0646f752e26a97ecc1027bf16168a0b084aeb28d4c63f44d39b9e2912e9",
-          "reviewedAt": "2026-10-28"
+          "sourceHash": "83783d084cee7626fe5032fb6e7319def0f709213fdce59a9ea3075f6b41d216",
+          "reviewedAt": "2026-11-23"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md",
-          "sourceHash": "d7d5b0646f752e26a97ecc1027bf16168a0b084aeb28d4c63f44d39b9e2912e9",
-          "reviewedAt": "2026-10-28"
+          "sourceHash": "83783d084cee7626fe5032fb6e7319def0f709213fdce59a9ea3075f6b41d216",
+          "reviewedAt": "2026-11-23"
         }
       }
     },
