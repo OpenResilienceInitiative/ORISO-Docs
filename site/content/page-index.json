@@ -3541,7 +3541,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md",
-      "sourceHash": "d7d5b0646f752e26a97ecc1027bf16168a0b084aeb28d4c63f44d39b9e2912e9",
+      "sourceHash": "1597ae8ebd83b7b7edc7905c0096dc6c7d18a776b3e709126d3352b1bdd193f5",
       "locales": {
         "de": {
           "available": true,
@@ -3558,7 +3558,9 @@
             "consequences": "consequences",
             "folgen": "consequences",
             "addendum-2026-09-05-§3-was-wrong--there-is-no-archive-auto-deletion-a-dedicated-purge-run-replaces-it": "addendum-2026-09-05-§3-was-wrong--there-is-no-archive-auto-deletion-a-dedicated-purge-run-replaces-it",
-            "nachtrag-2026-09-05-§3-war-falsch--es-gibt-keine-automatische-archivlöschung-ein-eigener-löschlauf-ersetzt-sie": "addendum-2026-09-05-§3-was-wrong--there-is-no-archive-auto-deletion-a-dedicated-purge-run-replaces-it"
+            "nachtrag-2026-09-05-§3-war-falsch--es-gibt-keine-automatische-archivlöschung-ein-eigener-löschlauf-ersetzt-sie": "addendum-2026-09-05-§3-was-wrong--there-is-no-archive-auto-deletion-a-dedicated-purge-run-replaces-it",
+            "addendum-2026-11-23-configured-and-switched-like-supervision": "addendum-2026-11-23-configured-and-switched-like-supervision",
+            "nachtrag-2026-11-23-gesteuert-und-geschaltet-wie-supervision": "addendum-2026-11-23-configured-and-switched-like-supervision"
           }
         },
         "en": {
@@ -3570,11 +3572,12 @@
             "decision": "decision",
             "considered-options": "considered-options",
             "consequences": "consequences",
-            "addendum-2026-09-05-§3-was-wrong--there-is-no-archive-auto-deletion-a-dedicated-purge-run-replaces-it": "addendum-2026-09-05-§3-was-wrong--there-is-no-archive-auto-deletion-a-dedicated-purge-run-replaces-it"
+            "addendum-2026-09-05-§3-was-wrong--there-is-no-archive-auto-deletion-a-dedicated-purge-run-replaces-it": "addendum-2026-09-05-§3-was-wrong--there-is-no-archive-auto-deletion-a-dedicated-purge-run-replaces-it",
+            "addendum-2026-11-23-configured-and-switched-like-supervision": "addendum-2026-11-23-configured-and-switched-like-supervision"
           }
         }
       },
-      "sourceRevision": "58834bd2b70f2c6878e523c4512cbe5cc265c232",
+      "sourceRevision": "c0bc0ec474ec9376cbd7d8370d5b8bc0a6a87605",
       "sourceState": "working-copy",
       "factsStatus": "source-only"
     },
