@@ -1478,8 +1478,8 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md",
-          "sourceRevision": "c0bc0ec474ec9376cbd7d8370d5b8bc0a6a87605",
-          "sourceHash": "1597ae8ebd83b7b7edc7905c0096dc6c7d18a776b3e709126d3352b1bdd193f5",
+          "sourceRevision": "ecc6888135b541bc1772f72ed6e790bb94e413ab",
+          "sourceHash": "98b874b5bb71817a6333392061fd9c5cd72360eff970b80b58fe0c1921ca73ef",
           "title": "ADR-016: Team-Besprechung — separate side room per open enquiry, hard close at acceptance",
           "state": "accepted",
           "binding": "reviewed",
@@ -1554,8 +1554,8 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md",
-          "sourceRevision": "c0bc0ec474ec9376cbd7d8370d5b8bc0a6a87605",
-          "sourceHash": "1597ae8ebd83b7b7edc7905c0096dc6c7d18a776b3e709126d3352b1bdd193f5",
+          "sourceRevision": "ecc6888135b541bc1772f72ed6e790bb94e413ab",
+          "sourceHash": "98b874b5bb71817a6333392061fd9c5cd72360eff970b80b58fe0c1921ca73ef",
           "title": "ADR-016: Team-Besprechung — separate side room per open enquiry, hard close at acceptance",
           "state": "accepted",
           "binding": "reviewed",
@@ -2241,8 +2241,8 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md",
-          "sourceRevision": "c0bc0ec474ec9376cbd7d8370d5b8bc0a6a87605",
-          "sourceHash": "1597ae8ebd83b7b7edc7905c0096dc6c7d18a776b3e709126d3352b1bdd193f5",
+          "sourceRevision": "ecc6888135b541bc1772f72ed6e790bb94e413ab",
+          "sourceHash": "98b874b5bb71817a6333392061fd9c5cd72360eff970b80b58fe0c1921ca73ef",
           "title": "ADR-016: Team-Besprechung — separate side room per open enquiry, hard close at acceptance",
           "state": "accepted",
           "binding": "reviewed",
