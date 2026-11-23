@@ -3541,7 +3541,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md",
-      "sourceHash": "98b874b5bb71817a6333392061fd9c5cd72360eff970b80b58fe0c1921ca73ef",
+      "sourceHash": "83783d084cee7626fe5032fb6e7319def0f709213fdce59a9ea3075f6b41d216",
       "locales": {
         "de": {
           "available": true,
@@ -3577,7 +3577,7 @@
           }
         }
       },
-      "sourceRevision": "ecc6888135b541bc1772f72ed6e790bb94e413ab",
+      "sourceRevision": "8220d35f26800a088997c3badf31f057f5984d1a",
       "sourceState": "working-copy",
       "factsStatus": "source-only"
     },
