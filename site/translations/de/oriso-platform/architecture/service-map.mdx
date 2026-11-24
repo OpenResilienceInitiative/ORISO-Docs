@@ -1,0 +1,18 @@
+---
+title: Service-Karte
+description: Interaktive Karte, wer welche App nutzt, was jeder Dienst tut und wie eine Anfrage von Ratsuchenden zu Beratenden gelangt.
+---
+
+Neu bei ORISO? Hier anfangen. Die Karte zeigt vier Ebenen (Menschen, Apps, Plattform-Dienste, Infrastruktur).
+Ein Klick auf ein Kästchen zeigt, was es tut und wie man es nutzt. Eine Journey – etwa „Seeker gets help",
+„Seeker → agency → counsellor (in code)", Supervision, Fallübergabe, verschlüsselter Chat und Anrufe –
+zeigt den Weg einer Anfrage, mit Datei- und Zeilenangaben. Die Karte selbst ist auf Englisch.
+
+[Service-Karte im Vollbild öffnen](/service-map/)
+
+<iframe src="/service-map/" title="ORISO Service Map" style={{width: '100%', height: '1400px', border: 0}} />
+
+Quellen: READMEs, die API-Spezifikationen im `api/`-Ordner jedes Dienstes, Frontend-Komponenten und die
+Admin-Routen in `appConfig.ts`. Die Infrastruktur-Kästchen beschreiben die übliche Rolle der Komponente;
+die Verdrahtung pro Dienst wurde dort nicht im Code nachverfolgt. Ein CI-Check (`tools/service-map`)
+schlägt fehl, sobald ORISO-Helm einen Dienst ausrollt, der auf der Karte fehlt.

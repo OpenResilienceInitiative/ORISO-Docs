@@ -33,6 +33,8 @@ function approvedOutput(path,pages,root) {
     const original=join(root,prefix,`${imported[1]}.${imported[2]}`);
     return existsSync(original) && !lstatSync(original).isSymbolicLink() && digest(readFileSync(original))===digest(readFileSync(join(root,path)));
   });
+  // Standalone interactive page embedded by oriso-platform/architecture/service-map.mdx.
+  if (path==='service-map/index.html') return true;
   if (path==='api/search' || path==='404.html' || path==='404/index.html' || path==='favicon.svg') return true;
   if (/^_next\/static\/[A-Za-z0-9_./~+-]+\.(?:js|css|woff2?)$/.test(path)) return true;
   if (/^(?:logo|product\/assets|oriso-platform\/assets)\/[A-Za-z0-9_./~-]+\.(?:png|jpe?g|webp|svg|gif)$/.test(path)) return true;

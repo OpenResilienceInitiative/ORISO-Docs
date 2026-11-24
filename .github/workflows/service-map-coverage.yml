@@ -1,0 +1,102 @@
+name: Service map coverage
+
+# Fails when ORISO-Helm deploys a component the service map does not show.
+# Runs on map changes here, and daily, because new services land in ORISO-Helm.
+on:
+  pull_request:
+    paths:
+      - "site/public/service-map/**"
+      - "tools/service-map/**"
+      - ".github/workflows/service-map-coverage.yml"
+  push:
+    branches: [dev, main]
+    paths:
+      - "site/public/service-map/**"
+      - "tools/service-map/**"
+      - ".github/workflows/service-map-coverage.yml"
+  schedule:
+    - cron: "17 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: OpenResilienceInitiative/ORISO-Helm
+          ref: main
+          path: _helm
+          persist-credentials: false
+      - name: Install YAML parser
+        run: python3 -m pip install --quiet 'PyYAML==6.0.3'
+      - name: Unit tests
+        run: python3 -m unittest discover -s tools/service-map -p 'test_*.py' -v
+      - name: Map covers every ORISO-Helm component
+        id: check
+        run: |
+          set -o pipefail
+          python3 tools/service-map/check.py --helm-dir _helm | tee "$RUNNER_TEMP/check.txt"
+
+  # The daily run catches services added in ORISO-Helm. It opens one issue (or comments on the
+  # open one) written as a ready-to-run task, so a person or a coding agent can fix the map.
+  report-drift:
+    needs: coverage
+    if: failure() && github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: OpenResilienceInitiative/ORISO-Helm
+          ref: main
+          path: _helm
+          persist-credentials: false
+      - run: python3 -m pip install --quiet 'PyYAML==6.0.3'
+      - name: Open or update the drift issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          # Report only real drift: the checker must fail, and only its ::error:: lines count.
+          if output=$(python3 tools/service-map/check.py --helm-dir _helm); then exit 0; fi
+          findings=$(printf '%s\n' "$output" | sed -n 's/^::error:://p')
+          [ -n "$findings" ] || { echo "Checker failed without drift findings"; exit 1; }
+          gh label create service-map-drift --color D93F0B \
+            --description "ORISO-Helm and the service map disagree" 2>/dev/null || true
+          body=$(printf '%s\n' \
+            "The daily service map check found that ORISO-Helm and the service map disagree. New developers rely on the map to learn the platform, so it should match what is deployed." \
+            "" \
+            "**For developers and coding agents — the task (skip if you only need the status):**" \
+            '```text' \
+            "$findings" \
+            "" \
+            "Fix in OpenResilienceInitiative/ORISO-Docs, branch off main, one PR:" \
+            "1. Read the component's README and its folder in ORISO-Helm templates/." \
+            "2. Add a box to site/public/service-map/index.html (const N), in the right layer," \
+            "   with what / feat / how written like the existing boxes." \
+            "3. Map it in tools/service-map/coverage.json, or list it under excluded with a reason." \
+            "4. Run: python3 tools/service-map/check.py --helm-dir <ORISO-Helm checkout>" \
+            '```' \
+            "" \
+            "Failing run: $RUN_URL")
+          existing=$(gh issue list --label service-map-drift --state open --json number --jq '.[0].number')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+          else
+            gh issue create --title "Service map is missing components that ORISO-Helm deploys" \
+              --label service-map-drift --body "$body"
+          fi
