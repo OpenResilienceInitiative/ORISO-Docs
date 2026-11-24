@@ -1,6 +1,6 @@
 # ADR-036: Configurable conversation modules and one question model for three moments
 
-- **Status:** Accepted — Frank, 2026-11-17 (written form approved; drafted 2026-11-16 in the platform-greeting session and extended with the registration-questions grill). Four open questions remain at the end and do not block the Storybook prototype.
+- **Status:** Accepted — Frank, 2026-11-17; decision 42 added 2026-11-24 (ORISO-Admin#1660) (written form approved; drafted 2026-11-16 in the platform-greeting session and extended with the registration-questions grill). Four open questions remain at the end and do not block the Storybook prototype.
 - **Date:** 2026-11-16
 - **Number:** renumbered from ADR-035 on 2026-11-17, because ADR-035 (read-only statistics reader role, ORISO-Docs#272) was merged first.
 - **Deciders:** Frank (product) + AI (engineering)
@@ -265,6 +265,17 @@ Frank's review of 2026-11-17 and his sketch of 2026-11-18 (`paths`): the registr
 
 41. **The check-in asks one question per screen** (Frank, 2026-11-20; fixed rule). However many questions a step has, the check-in shows one at a time, like a questionnaire tool. A one-tap answer (a choice card, a star) moves on by itself; the next question slides in from the right, and „Zurück“ or a swipe to the right goes back to change an answer. Nothing scrolls in the check-in, on desktop or on a 390 px phone. The next part of the registration (its „Weiter“ and the next step of the stepper) becomes active only once every required question of the step is answered. Hints travel with the question they stand before. In the chat (flight, arrival) a step keeps all its questions in one card. Frontend: `JourneyQuestionPager` (ORISO-Frontend#2417).
 
+42. **The first reply comes from the journey's on-board phase** (Frank, 2026-11-24; ORISO-Admin#1660). Changing the journey must change what the advice seeker receives; until now the on-board phase was shown in the editor but the first reply still came from the separate greeting pages.
+    - UserService resolves the effective `AGENCY_COUNSELLING` journey for the enquiry's topic and Beratungsstelle (platform journey with the Träger and Beratungsstelle layers of decision 37) and builds a version-2 payload (decision 8) from its on-board steps, in their order. Steps with the trigger *with the greeting* (or none) go into the first reply; *after the first reply* and *manual* steps do not.
+    - The core step „Begrüßung der Beratungsstelle" (decision 31) contributes the sections of today's first reply: the greeting text resolved as before (Beratungsstelle ?? Träger ?? Plattform), „Wer liest mit", the emergency numbers, the free notice and the closing, each as a message or panel section. The e-mail Baustein becomes the fixed e-mail module and keeps its explanation. The second-factor invitation is not sent, as in version 1 (Frank, 2026-10-14). Link targets (privacy, imprint, links the editor wrote) travel as `links` beside the plain text, so the Frontend draws them as links.
+    - A `panel` step contributes one panel section per aspect (title, text, open or collapsed, safety flag kept); a `message` step contributes one message section.
+    - Removing „Begrüßung der Beratungsstelle" and adding an own panel replaces the greeting. This is the editor's demo path: create a panel, drag it into the on-board phase, remove the old greeting, save.
+    - **A topic that no stored journey reaches keeps today's version-1 payload, byte for byte.** So does an on-board phase that sends nothing of its own (missing, empty, or only steps of a later slice), and any error while building: version 1 is the better first reply than one holding only the emergency numbers. Version 1 stays the format until every installation has a journey.
+    - **The platform emergency numbers are always sent** (amends decision 6 for the first reply). The check is on the content, not on the safety flag: unless a safety section already carries the platform's emergency text, the platform emergency panel is added before the first optional action (e-mail, closing), as in ADR-018. An own safety panel ("Ruf uns an") or the "send no personal data" section therefore never replaces the numbers; it adds to them. The editor's warning stays; it tells the editor that the platform adds its numbers. Tests fail when a first reply without the platform emergency numbers can be built, including the partial removal (only "no personal data" kept).
+    - **Known limitation: saving makes the journey live.** Journeys have no draft state (Storage, decision 22); the next registration after a save uses the new steps. Until a draft exists, demos and trials on Dev only change the journey of the U25 demo topic „[U25] Suizidprävention".
+    - The Frontend renders version 2 with `ErstantwortModuleSequence` in the conversation; one step stays one message (decision 34) once the per-step events are built, until then the whole on-board phase is one frozen event as in ADR-018.
+    - Before any old greeting or first-reply page in the Admin is removed, every field on it gets a named new place (a step, a panel or a setting). A field without a home keeps its page.
+
 **Open questions of part E**
 
 1. ~~Are journeys per installation only?~~ Decided in decision 29.
@@ -307,9 +318,9 @@ Frank's review of 2026-11-17 and his sketch of 2026-11-18 (`paths`): the registr
   - Admin uses the TenantService translate endpoint.
   - A centre-only admin cannot call it (`AUTHORIZATION_UPDATE_TENANT`). They publish untranslated, and missing languages fall back as in ADR-018 decision 8.
   - The Frontend keeps its existing group-content translation path until both are unified.
-- **Lost guarantee:**
-  - ADR-018 guaranteed that every advice seeker sees emergency numbers. Under this ADR that holds only while the editor keeps the section.
-  - The remaining controls are the warning (decision 6) and the audit columns (`updated_by`, `update_date`).
+- **Guarantee restored for the first reply** (decision 42):
+  - ADR-018 guaranteed that every advice seeker sees emergency numbers. Decision 6 gave that up; decision 42 brings it back for the first reply: the platform emergency panel is added whenever no safety section carries the platform's emergency text.
+  - For other modules (group welcome texts, surveys) the guarantee still holds only while the editor keeps the section; the controls there are the warning (decision 6) and the audit columns (`updated_by`, `update_date`).
   - The DSFA transparency record must say so.
 - **ORISO-Frontend#825** (client-side trigger without a server event) must read the resolved module, or be retired.
 
