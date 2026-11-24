@@ -838,13 +838,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/ADR-002-silent-room-membership-and-access-control-curtain.md",
-          "sourceHash": "b0bb76a6714688757f407e5e887297f5c6d899e4f03675b62501d3765f316c3d",
-          "reviewedAt": "2026-10-20"
+          "sourceHash": "de277fa51642e82467355b8bf34c26b31aacdb086f6e8a565c4a32924291c059",
+          "reviewedAt": "2026-11-14"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/ADR-002-silent-room-membership-and-access-control-curtain.md",
-          "sourceHash": "b0bb76a6714688757f407e5e887297f5c6d899e4f03675b62501d3765f316c3d",
-          "reviewedAt": "2026-10-20"
+          "sourceHash": "de277fa51642e82467355b8bf34c26b31aacdb086f6e8a565c4a32924291c059",
+          "reviewedAt": "2026-11-14"
         }
       }
     },
@@ -1252,13 +1252,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/ADR-020-scheduled-calls-secure-invitations-and-unified-contact-calendar.md",
-          "sourceHash": "4069bc7e91c834ebf2b5a3c16dc447a1b029cf23633458c878302c2a418505e1",
-          "reviewedAt": "2026-10-28"
+          "sourceHash": "2dbdac529826f917c22a7928dacf26d74231c841cc9ac401a1066d36d1af9670",
+          "reviewedAt": "2026-11-17"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/ADR-020-scheduled-calls-secure-invitations-and-unified-contact-calendar.md",
-          "sourceHash": "4069bc7e91c834ebf2b5a3c16dc447a1b029cf23633458c878302c2a418505e1",
-          "reviewedAt": "2026-10-28"
+          "sourceHash": "2dbdac529826f917c22a7928dacf26d74231c841cc9ac401a1066d36d1af9670",
+          "reviewedAt": "2026-11-17"
         }
       }
     },
@@ -1298,13 +1298,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
-          "sourceHash": "e17116ebfdd73c6a16d2c267c1c999e6aee91fd12c5a411b9a8eacd9def3da0b",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "40fb8b0b0be61ba86b01618cc17481b0b472abde26f4bade50da7a3ea9e5b772",
+          "reviewedAt": "2026-11-04"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
-          "sourceHash": "e17116ebfdd73c6a16d2c267c1c999e6aee91fd12c5a411b9a8eacd9def3da0b",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "40fb8b0b0be61ba86b01618cc17481b0b472abde26f4bade50da7a3ea9e5b772",
+          "reviewedAt": "2026-11-04"
         }
       }
     },
@@ -1413,13 +1413,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/README.md",
-          "sourceHash": "625e97f2c462da5c8a702fa79244b574e0d394ef565abcda85debe866f6794cc",
-          "reviewedAt": "2026-10-28"
+          "sourceHash": "667dce35284f998fdff8c5c8acee0040b8dc00041fa5a3dc080d7838dc674bcc",
+          "reviewedAt": "2026-11-17"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/README.md",
-          "sourceHash": "625e97f2c462da5c8a702fa79244b574e0d394ef565abcda85debe866f6794cc",
-          "reviewedAt": "2026-10-28"
+          "sourceHash": "667dce35284f998fdff8c5c8acee0040b8dc00041fa5a3dc080d7838dc674bcc",
+          "reviewedAt": "2026-11-17"
         }
       }
     },

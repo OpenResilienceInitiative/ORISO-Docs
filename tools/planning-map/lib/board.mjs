@@ -22,6 +22,8 @@ const GATEWAY = /HTTP 50[234]|timed? ?out|Something went wrong while executing y
 export async function fetchAll(run, { owner, number }) {
   const meta = (await run(META_QUERY, { owner, number })).data.organization;
   const items = [];
+  const itemIds = new Set();
+  const cursors = new Set();
   let after = null;
   let title = meta.projectV2.title;
   let totalCount = null;
@@ -37,10 +39,24 @@ export async function fetchAll(run, { owner, number }) {
     }
     const conn = res.data.organization.projectV2;
     title = conn.title ?? title;
-    totalCount = conn.items.totalCount;
-    items.push(...conn.items.nodes);
-    if (!conn.items.pageInfo.hasNextPage) break;
-    after = conn.items.pageInfo.endCursor;
+    const page = conn.items;
+    if (!Number.isSafeInteger(page.totalCount) || page.totalCount < 0 || (totalCount !== null && totalCount !== page.totalCount)) {
+      throw new Error("Incomplete board export: project item count is missing or changed during pagination");
+    }
+    totalCount = page.totalCount;
+    for (const item of page.nodes) {
+      if (!item?.id) throw new Error("Incomplete board export: missing item ID");
+      if (itemIds.has(item.id)) throw new Error("Incomplete board export: duplicate item");
+      itemIds.add(item.id);
+      items.push(item);
+    }
+    if (!page.pageInfo.hasNextPage) break;
+    after = page.pageInfo.endCursor;
+    if (!after || cursors.has(after)) throw new Error("Incomplete board export: invalid pagination cursor");
+    cursors.add(after);
+  }
+  if (items.length !== totalCount) {
+    throw new Error(`Incomplete board export: expected ${totalCount} items, received ${items.length}`);
   }
   return { meta, items, totalCount, title };
 }

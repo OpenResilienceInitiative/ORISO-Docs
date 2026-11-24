@@ -102,7 +102,15 @@ Configuration is environment only: `HEALTH_MODEL_API_KEY` (secret), `HEALTH_MODE
 OpenAI-compatible endpoint with `HEALTH_MODEL_BASE_URL`). Without the key or the model name the record is metrics only (`verdictStatus: skipped`). Repositories that are not known
 public are never sent unless `HEALTH_MODEL_ALLOW_PRIVATE=true` (the workflow never sets it). A model error or an unusable answer also leaves a skipped verdict with the reason.
 
-Metrics that need an installed checkout (`lint`, `crap` coverage) are `not-available` in the workflow runs; they are measured when a run is made on a prepared checkout.
+Scheduled lint and coverage are attempted in isolated containers; when tools or reports are unavailable their metrics stay `not-available`.
 
 "Send health check" for one scope: `node tools/planning-map/plan.mjs health-check --capability <id> --repo <name> [--path <folder>] [--apply]` files one request issue in ORISO-Docs
 (dry run without `--apply`; an open request for the same scope is found, not duplicated). The Health panel shows this command for the capability, folder or file the map is drilled into.
+
+### Scheduled measurements and the model boundary
+
+The scheduled workflow first selects changed scopes on protected Docs `dev`/`main` and records each public repository's exact `dev` commit and effective criteria hash in a run-specific plan. A separate job checks out those commits. For each selected repository, a pinned official Node container receives only a scratch clone of its own repository in a 4 GiB temporary filesystem, with no host workspace, plan, tooling, credentials, or Docker socket. Dependency installation disables lifecycle scripts; ESLint and (for Frontend and Admin) unit coverage run without network access. The host collects and validates reports only after each container stops, then filters them for each selected scope; inconsistent, oversized or unsafe reports are rejected. Successful coverage comes from `coverage/coverage-final.json`; failed installs or coverage runs leave the relevant metric `not-available`, never zero. Files absent from coverage are not assumed uncovered.
+
+A fresh verdict job downloads the independently produced plan and the measurement envelope. It checks the workflow run ID, plan digest, selected scope, commit, criteria and record schema before any model call or proposal. It does not run the measured repositories' code. A bad, missing or mismatched artifact fails the run; arbitrary failure text from checkout tools is not sent to the model. The plan digest binds artifacts to a plan; it is not a cryptographic attestation that code running in a measured repository reported honest measurements. The trust premise is the protected public `dev` commit. The metrics are checkout-reported: a malicious protected-branch test or linter can fabricate plausible coverage hits or lint output, which schema and path validation cannot detect. Such code cannot access the model key in the separate job.
+
+Coverage and lint commands may be expensive or fail due to repository configuration; inspect the recorded `not-available` reason. Running the workflow, provisioning a model key, approving its output and merging its proposed records remain separate operational steps.

@@ -1,6 +1,7 @@
 # ADR-002: Silent room membership with an access-control confidentiality curtain (not E2EE)
 
 - **Status:** Accepted — Frank, 2026-06-25 (team ratification pending)
+- **Amended:** 2026-11-14 — see [Amendment 2026-11-14](#amendment-2026-11-14--late-joiners-see-messages-from-their-join-onwards) at the end (history on late join).
 - **Date:** 2026-06-25
 - **Deciders:** Frank + backend/Matrix/frontend leads
 - **Related:** ADR-001 (modalities as modules); `ORISO-UserService/CONTEXT.md`; `ORISO-Frontend/CONTEXT.md` (Handover); UserService `UnauthorizedMembersProvider`, `AgencyPreAssignmentRoomService`, `AssignEnquiryFacade`, `MatrixRoomClient`, `SessionSupervisorFacade`
@@ -272,3 +273,12 @@ staff-audit audience restrictions and the privacy boundary established by
 nonblank text, while recipient offers already accept an omitted explanation. The per-reason
 explanation policy is not implemented. A UI label change alone cannot fulfil this decision: policy
 save/reload, server enforcement and the corresponding form behavior must be delivered together.
+
+## Amendment 2026-11-14 — late joiners see messages from their join onwards
+
+- **Status:** Accepted by the product owner — Frank, 2026-11-14.
+- **Changes:** the context sentence "any member who joins reads the full prior history" (no `history_visibility` override, rooms unencrypted). It described the state before Megolm and is outdated. ADR-002's access-control curtain is otherwise unchanged.
+
+Since Megolm ([ADR-004](ADR-004-chat-keep-custom-ui-adopt-matrix-sdk-megolm.md)) a person who joins a conversation later can read messages from their join onwards. Earlier history reaches them only through the history key transfer in ORISO-Frontend `src/services/matrixRoomHistoryKeyTransfer.ts` ([ORISO-Frontend#2072](https://github.com/OpenResilienceInitiative/ORISO-Frontend/pull/2072)): the person must be a joined member and request the keys with a written reason, and a person already in the room approves. The server-side Matrix history visibility of 1:1 rooms stays "shared"; the boundary is the encryption keys, not a room setting.
+
+This is what [ADR-033](ADR-033-direkteinladung-direct-invitation-with-optional-appointment.md) relies on when an invited guest joins an existing 1:1 conversation.

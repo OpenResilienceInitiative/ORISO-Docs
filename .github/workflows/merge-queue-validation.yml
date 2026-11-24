@@ -1,0 +1,185 @@
+name: Docs merge queue validation
+
+on:
+  pull_request:
+  merge_group:
+    types: [checks_requested]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docs-queue-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  hosts:
+    name: Queue production hosts
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Guard unit tests
+        run: python3 -m unittest discover -v -s .github/scripts -p 'test_check_production_hosts.py'
+
+      - name: Fail on ORISO hosts outside the allowlist
+        run: python3 .github/scripts/check_production_hosts.py
+  legal:
+    name: Queue bilingual legal contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install -r tools/dsfa-requirements.txt
+      - name: Validate exact source bindings, approvals, sanitization and immutable publication
+        env:
+          PYTHONPATH: tools
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          python -m unittest discover -s tools -p 'test_dsfa_*.py' -q
+          python -m unittest discover -s tools -p 'test_legal_publication.py' -q
+          python tools/dsfa_evidence.py oriso-platform/dsfa-text/evidence-map-v2.json
+      # Synthetic tests install only into temporary directories. No real approval,
+      # host credential, activation or legal sign-off is available in this job.
+  commands:
+    name: Queue documentation commands
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Test Markdown command extraction
+        run: python3 -m unittest discover -s tools/docs-commands -p 'test_*.py' -v
+      - name: Check selected local development guides
+        run: >-
+          python3 tools/docs-commands/extract.py --strict
+          services-local-setup/README.md
+          services-local-setup/README.de.md
+          services-local-setup/ORISO-local-development-runbook.md
+  scripts:
+    name: Queue source CI scripts
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Run the CI script tests
+        run: python3 -m unittest discover -s .github/scripts -p 'test_*.py' -v
+  tooling:
+    name: Queue Understand tooling contracts
+    runs-on: ubuntu-latest
+    container: node@sha256:8a34c4ab3ea2c5cd194f07e317b2a8f09461d3c8b05c4e34c8ccd56d56024c4d
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Trust the checked-out workspace in the ephemeral container
+        run: git config --global --add safe.directory "${GITHUB_WORKSPACE:?missing GITHUB_WORKSPACE}"
+      - name: Verify supported repositories against canonical public visibility
+        run: python3 .github/scripts/ua_public_policy_test.py -v
+      - name: Install the pinned producer and consumer in a clean profile
+        run: |
+          python3 tools/understand-anything/install.py --runtime-root /tmp/oriso-ua-runtime --profile /tmp/oriso-ua-profile
+      - name: Test graph extraction, semantics, platform and consumer
+        run: |
+          export UA_CORE=/tmp/oriso-ua-runtime/current/upstream/understand-anything-plugin/packages/core/dist/index.js
+          cd tools/understand-anything
+          npm ci
+          npm test
+      - name: Test patched viewer evidence, relation categories and container connections
+        run: |
+          cd /tmp/oriso-ua-runtime/current/upstream
+          npm exec --yes --package=pnpm@10.6.2 -- pnpm --filter @understand-anything/core exec vitest run src/__tests__/search.test.ts src/__tests__/embedding-search.test.ts
+          npm exec --yes --package=pnpm@10.6.2 -- pnpm --filter @understand-anything/dashboard exec vitest run src/__tests__/edgeCategories.test.ts src/__tests__/oriso-status-config.test.ts src/components/__tests__/ContainerNodeHandles.test.ts src/components/__tests__/OrisoNodeEvidence.test.ts src/components/__tests__/OrisoCallRelations.test.ts src/components/__tests__/OrisoPlatformTour.test.ts
+      - name: Test selected function source actions in the actual browser
+        run: |
+          npm install --prefix /tmp/ua-browser --no-save --no-package-lock --ignore-scripts playwright@1.61.1
+          /tmp/ua-browser/node_modules/.bin/playwright install --with-deps chromium
+          export UA_PLAYWRIGHT=/tmp/ua-browser/node_modules/playwright/index.mjs
+          cd /tmp/oriso-ua-runtime/current/upstream/understand-anything-plugin/packages/dashboard
+          node --test src/components/__tests__/NodeInfo.browser.mjs
+          cd "$GITHUB_WORKSPACE/tools/understand-anything"
+          node hosted-viewer/platform-tour-browser-test.mjs --upstream /tmp/oriso-ua-runtime/current/upstream --playwright /tmp/ua-browser/node_modules/playwright/index.mjs --output /tmp/oriso-platform-browser
+      - name: Test guarded source, static serving and hub status
+        run: |
+          export UNDERSTAND_TEST_UPSTREAM=/tmp/oriso-ua-runtime/current/upstream
+          export UA_PLAYWRIGHT=/tmp/ua-browser/node_modules/playwright/index.mjs
+          export UA_PLAYWRIGHT_REQUIRED=1
+          cd tools/understand-anything
+          node --test hosted-viewer/*.test.mjs site/hub/test/*.test.mjs
+          node hosted-viewer/runtime-test.mjs --upstream /tmp/oriso-ua-runtime/current/upstream
+      - name: Test publication, failed transfers and real Git worktrees
+        run: |
+          export UA_CORE=/tmp/oriso-ua-runtime/current/upstream/understand-anything-plugin/packages/core/dist/index.js
+          cd tools/understand-anything
+          python3 -m unittest discover -s test -p '*_test.py' -v
+  public-site:
+    name: Queue public site and source contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: '${{ github.sha }}', persist-credentials: false, fetch-depth: 0}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24'}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python3 -m pip install PyYAML==6.0.2
+      - run: node --test tools/understand-anything/glossary/test/*.test.mjs tools/understand-anything/site/hub/test/*.test.mjs tools/understand-anything/hosted-viewer/*.test.mjs
+      - run: PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tools/understand-anything/hosted-viewer -p "*_test.py"
+      - run: python3 tools/understand-anything/install.py --runtime-root "$RUNNER_TEMP/ua-contract-runtime"
+      - run: node tools/understand-anything/hosted-viewer/runtime-test.mjs --upstream "$RUNNER_TEMP/ua-contract-runtime/current/upstream"
+      - run: UNDERSTAND_TEST_UPSTREAM="$RUNNER_TEMP/ua-contract-runtime/current/upstream" node --test tools/understand-anything/hosted-viewer/production.test.mjs
+  publication:
+    name: Queue documentation publication contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: pnpm/action-setup@v4
+        with: {version: '10.6.2'}
+      - run: pnpm --dir site install --frozen-lockfile
+      - run: npm ci
+        working-directory: tools/understand-anything
+      - run: node --test site/tests/*.test.mjs site/scripts/page-catalog.test.mjs site/scripts/catalog/*.test.mjs tools/truth-chain/test/*.test.mjs tools/docs-publication/test/*.test.mjs tools/planning-map/test/*.test.mjs tools/understand-anything/site/hub/test/*.test.mjs tools/understand-anything/hosted-viewer/*.test.mjs
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.13'}
+      - run: python -m pip install PyYAML==6.0.3
+      - run: PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -s tools/understand-anything/hosted-viewer -p '*_test.py' -q
+  health-planning:
+    name: Queue Health and planning contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: '${{ github.sha }}', persist-credentials: false}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24'}
+      - run: npm ci
+        working-directory: tools/understand-anything
+      - run: node --test tools/understand-anything/platform/test/*.test.mjs tools/planning-map/test/*.test.mjs
