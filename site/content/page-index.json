@@ -2699,8 +2699,8 @@
           }
         }
       },
-      "sourceRevision": "645863292ef7736cb682c2b8e81e59fb5025df56",
-      "sourceState": "working-copy",
+      "sourceRevision": "9d2b156576b7a8207a0741a42a2d94d76beac8da",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     },
     {
@@ -2871,8 +2871,8 @@
           }
         }
       },
-      "sourceRevision": "7b09a5a70ca0f9303aac70e60fc941f71a60bf66",
-      "sourceState": "working-copy",
+      "sourceRevision": "3a9da26117b80bfedbc129b33f7015a7efbf61a0",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     },
     {
@@ -3578,7 +3578,7 @@
         }
       },
       "sourceRevision": "8220d35f26800a088997c3badf31f057f5984d1a",
-      "sourceState": "working-copy",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     },
     {
@@ -3668,8 +3668,8 @@
           }
         }
       },
-      "sourceRevision": "b02af4254a944f33fb24e11c82ab6b961e4ec01b",
-      "sourceState": "working-copy",
+      "sourceRevision": "4ae64a40f096d406a50252c03901037a505b1127",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     },
     {
@@ -3822,8 +3822,8 @@
           }
         }
       },
-      "sourceRevision": "b02af4254a944f33fb24e11c82ab6b961e4ec01b",
-      "sourceState": "working-copy",
+      "sourceRevision": "e8e033f7f67429bf668f0211c7501c44f2d7fe7a",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     },
     {
@@ -3919,8 +3919,8 @@
           }
         }
       },
-      "sourceRevision": "b02af4254a944f33fb24e11c82ab6b961e4ec01b",
-      "sourceState": "working-copy",
+      "sourceRevision": "34d5f31d23a6d808b32c5b963a851f39e571079b",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     },
     {
@@ -3975,8 +3975,8 @@
           }
         }
       },
-      "sourceRevision": "656d6474caf4b1f3365b2ee3018c0a0537b6a5cd",
-      "sourceState": "working-copy",
+      "sourceRevision": "ea60b56d7f7aa85c9fdfa17d67d0368bee7ad95b",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     },
     {
@@ -4142,7 +4142,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/decisions/README.md",
-      "sourceHash": "c06268ac65695cebc1b471df0476f92eea8e2624fe2f9df9a942e86844c48fb1",
+      "sourceHash": "31c9ae5a8cfdc49f0bce1fd8e4534e39f9e1a76b76f41ec64f890ef7b48d7fe4",
       "locales": {
         "de": {
           "available": true,
@@ -4169,8 +4169,8 @@
           }
         }
       },
-      "sourceRevision": "74fd6f3314b373f8bd1397d2ae1c8779bffd62fe",
-      "sourceState": "working-copy",
+      "sourceRevision": "a77db3a9da0a77ae52a9b2a2a0a15469be699c53",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     },
     {
@@ -5641,7 +5641,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "product/edge-cases.mdx",
-      "sourceHash": "1afef05b515897daae237f14b414c7813adbe8ddff901647fe3dd0ec10cafeb3",
+      "sourceHash": "c310a304a70eb0a8c71c52adf80eb886f1dd01e3999d6df11c96fa5b0e818b07",
       "locales": {
         "de": {
           "available": true,
@@ -5729,6 +5729,10 @@
             "912-ki---annotationsfälle": "912-ai--annotation-edge-cases",
             "913-notification--escalation-edge-cases": "913-notification--escalation-edge-cases",
             "913-benachrichtigungs--und-eskalationsfälle": "913-notification--escalation-edge-cases",
+            "914-account-recovery-edge-cases": "914-account-recovery-edge-cases",
+            "914-sonderfälle-bei-der-kontowiederherstellung": "914-account-recovery-edge-cases",
+            "9141-the-advice-seeker-forgot-their-password-and-left-no-e-mail-address": "9141-the-advice-seeker-forgot-their-password-and-left-no-e-mail-address",
+            "9141-die-ratsuchende-person-hat-ihr-passwort-vergessen-und-keine-e-mail-adresse-hinterlegt": "9141-the-advice-seeker-forgot-their-password-and-left-no-e-mail-address",
             "98-compact-what-happens-if-cheat-sheet": "98-compact-what-happens-if-cheat-sheet",
             "98-kurzübersicht-was-passiert-wenn": "98-compact-what-happens-if-cheat-sheet"
           }
@@ -5778,11 +5782,13 @@
             "911-group-chat-edge-cases": "911-group-chat-edge-cases",
             "912-ai--annotation-edge-cases": "912-ai--annotation-edge-cases",
             "913-notification--escalation-edge-cases": "913-notification--escalation-edge-cases",
+            "914-account-recovery-edge-cases": "914-account-recovery-edge-cases",
+            "9141-the-advice-seeker-forgot-their-password-and-left-no-e-mail-address": "9141-the-advice-seeker-forgot-their-password-and-left-no-e-mail-address",
             "98-compact-what-happens-if-cheat-sheet": "98-compact-what-happens-if-cheat-sheet"
           }
         }
       },
-      "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
+      "sourceRevision": "c832f8a0bfdef05e8128b3d7d4cfa18d0c6b010f",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -6102,8 +6108,8 @@
           }
         }
       },
-      "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
-      "sourceState": "working-copy",
+      "sourceRevision": "72bc00b04b1bc5d84f6ea39ed85a58ff4c644433",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     },
     {
@@ -6196,8 +6202,8 @@
           }
         }
       },
-      "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
-      "sourceState": "working-copy",
+      "sourceRevision": "72bc00b04b1bc5d84f6ea39ed85a58ff4c644433",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     },
     {
@@ -6520,8 +6526,8 @@
           }
         }
       },
-      "sourceRevision": "a8c9b416dd1df395b155a436cc14c2070c9347e0",
-      "sourceState": "working-copy",
+      "sourceRevision": "30ce6775a8248a0a1dbe87d8cf9494ae7830a7ef",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     },
     {
@@ -6979,8 +6985,8 @@
           }
         }
       },
-      "sourceRevision": null,
-      "sourceState": "working-copy",
+      "sourceRevision": "b6e762a30fe1a3427c41b9200b3acf82412766ee",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     },
     {
