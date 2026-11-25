@@ -1478,12 +1478,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md",
-          "sourceRevision": "329f0c3bb71f72740589b408dbd21bee1a183e8d",
-          "sourceHash": "d7d5b0646f752e26a97ecc1027bf16168a0b084aeb28d4c63f44d39b9e2912e9",
+          "sourceRevision": "8220d35f26800a088997c3badf31f057f5984d1a",
+          "sourceHash": "83783d084cee7626fe5032fb6e7319def0f709213fdce59a9ea3075f6b41d216",
           "title": "ADR-016: Team-Besprechung — separate side room per open enquiry, hard close at acceptance",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-28"
+          "reviewedAt": "2026-11-23"
         },
         {
           "repository": "ORISO-Docs",
@@ -1554,12 +1554,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md",
-          "sourceRevision": "329f0c3bb71f72740589b408dbd21bee1a183e8d",
-          "sourceHash": "d7d5b0646f752e26a97ecc1027bf16168a0b084aeb28d4c63f44d39b9e2912e9",
+          "sourceRevision": "8220d35f26800a088997c3badf31f057f5984d1a",
+          "sourceHash": "83783d084cee7626fe5032fb6e7319def0f709213fdce59a9ea3075f6b41d216",
           "title": "ADR-016: Team-Besprechung — separate side room per open enquiry, hard close at acceptance",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-28"
+          "reviewedAt": "2026-11-23"
         },
         {
           "repository": "ORISO-Docs",
@@ -2177,12 +2177,12 @@
       "category": "counselling-and-conversations",
       "de": {
         "term": "Team-Chat",
-        "definition": "Abstimmung im Team während der Anfrage: Berater:innen stimmen sich in einem Raum nur fürs Team ab. Der Raum schließt, sobald die Anfrage angenommen wird.",
+        "definition": "Abstimmung im Team zu einer Anfrage: Berater:innen stimmen sich in einem Raum nur fürs Team ab. Bei Annahme schließt der Raum, außer der Funktionszugriff lässt ihn nach der Annahme weiterlaufen.",
         "example": "Das Team stimmt sich im Team-Chat ab, bevor eine Berater:in die Anfrage annimmt."
       },
       "en": {
         "term": "Team chat",
-        "definition": "Team chat during the enquiry: counsellors coordinate in a room for the team only. The room closes as soon as the enquiry is accepted.",
+        "definition": "Team coordination on an enquiry: counsellors coordinate in a room for the team only. The room closes on acceptance unless Funktionszugriff lets it continue after acceptance.",
         "example": "The team coordinates in the team chat before a counsellor accepts the enquiry."
       },
       "aliases": {
@@ -2241,12 +2241,12 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md",
-          "sourceRevision": "329f0c3bb71f72740589b408dbd21bee1a183e8d",
-          "sourceHash": "d7d5b0646f752e26a97ecc1027bf16168a0b084aeb28d4c63f44d39b9e2912e9",
+          "sourceRevision": "8220d35f26800a088997c3badf31f057f5984d1a",
+          "sourceHash": "83783d084cee7626fe5032fb6e7319def0f709213fdce59a9ea3075f6b41d216",
           "title": "ADR-016: Team-Besprechung — separate side room per open enquiry, hard close at acceptance",
           "state": "accepted",
           "binding": "reviewed",
-          "reviewedAt": "2026-10-28"
+          "reviewedAt": "2026-11-23"
         },
         {
           "repository": "ORISO-Docs",
@@ -2278,8 +2278,8 @@
         }
       ],
       "editorialNote": {
-        "de": "ADR-016. Der Team-Chat gehört zu einer offenen Anfrage und endet mit der Annahme; er ist keine fortgesetzte Fallkoordination. Er ist nicht die Teamberatung, die für alle Chats einer Beratungsstelle gilt. Der Träger schaltet ihn ein; der frühere Name steht unter den Aliasen.",
-        "en": "ADR-016. The team chat belongs to an open enquiry and ends with acceptance; it is not continued case coordination. It is not team counselling, which applies to all chats of a counselling centre. The provider switches it on; the earlier name is kept as an alias."
+        "de": "ADR-016 mit Nachtrag vom 23.11.2026. Der Team-Chat gehört zu einer Anfrage, wird je Anfrage ein- und ausgeschaltet und endet mit der Annahme, außer die Einstellung „Team-Chat läuft nach der Annahme weiter“ ist an. Er ist nicht die Teamberatung, die für alle Chats einer Beratungsstelle gilt. Plattform, Träger und Beratungsstelle steuern ihn wie Supervision; der frühere Name steht unter den Aliasen.",
+        "en": "ADR-016 with the addendum of 23 Nov 2026. The team chat belongs to an enquiry, is switched on and off per enquiry and ends with acceptance unless the setting \"team chat continues after acceptance\" is on. It is not team counselling, which applies to all chats of a counselling centre. Platform, provider and counselling centre control it like Supervision; the earlier name is kept as an alias."
       }
     },
     {
@@ -2519,8 +2519,8 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-018-erstantwort-as-one-persisted-event-rendered-as-carimat-bubbles.md",
-          "sourceRevision": "4cbd713f9a5c2e6183840e7497b3f52bf178d604",
-          "sourceHash": "e9724228bfe039d54438bf30b6a9e4e37eadfab7a53c8c45e39c05461b28af95",
+          "sourceRevision": "4ae64a40f096d406a50252c03901037a505b1127",
+          "sourceHash": "436b149705e51324ad394595c9a3acb3421a7abe0daee792bd8d8847f051d8a4",
           "title": "ADR-018: Erstantwort — one persisted event rendered as a Carimat bubble sequence, configured per Träger",
           "state": "accepted",
           "binding": "reviewed",
@@ -2589,8 +2589,8 @@
         {
           "repository": "ORISO-Docs",
           "path": "oriso-platform/decisions/ADR-018-erstantwort-as-one-persisted-event-rendered-as-carimat-bubbles.md",
-          "sourceRevision": "4cbd713f9a5c2e6183840e7497b3f52bf178d604",
-          "sourceHash": "e9724228bfe039d54438bf30b6a9e4e37eadfab7a53c8c45e39c05461b28af95",
+          "sourceRevision": "4ae64a40f096d406a50252c03901037a505b1127",
+          "sourceHash": "436b149705e51324ad394595c9a3acb3421a7abe0daee792bd8d8847f051d8a4",
           "title": "ADR-018: Erstantwort — one persisted event rendered as a Carimat bubble sequence, configured per Träger",
           "state": "accepted",
           "binding": "reviewed",

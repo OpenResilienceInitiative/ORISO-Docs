@@ -2806,7 +2806,7 @@
           }
         }
       },
-      "sourceRevision": "e1235df760b96a734440f3cf41c829988ab1f611",
+      "sourceRevision": "26c1323fae062c19f3e285cbd2920edf48688042",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -2820,7 +2820,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/decisions/ADR-002-silent-room-membership-and-access-control-curtain.md",
-      "sourceHash": "b0bb76a6714688757f407e5e887297f5c6d899e4f03675b62501d3765f316c3d",
+      "sourceHash": "de277fa51642e82467355b8bf34c26b31aacdb086f6e8a565c4a32924291c059",
       "locales": {
         "de": {
           "available": true,
@@ -2847,7 +2847,9 @@
             "addendum-2026-09-05--case-handover-gains-a-push-direction-no-third-consent-gate-no-room-clearing": "addendum-2026-09-05--case-handover-gains-a-push-direction-no-third-consent-gate-no-room-clearing",
             "ergänzung-2026-09-05--fallübergabe-erhält-abgaberichtung-keine-dritte-einwilligungsschranke-und-keine-raumleerung": "addendum-2026-09-05--case-handover-gains-a-push-direction-no-third-consent-gate-no-room-clearing",
             "addendum-2026-10-14--optional-explanations-with-a-per-reason-policy": "addendum-2026-10-14--optional-explanations-with-a-per-reason-policy",
-            "nachtrag-2026-10-14--optionale-erläuterungen-mit-einer-richtlinie-je-grund": "addendum-2026-10-14--optional-explanations-with-a-per-reason-policy"
+            "nachtrag-2026-10-14--optionale-erläuterungen-mit-einer-richtlinie-je-grund": "addendum-2026-10-14--optional-explanations-with-a-per-reason-policy",
+            "amendment-2026-11-14--late-joiners-see-messages-from-their-join-onwards": "amendment-2026-11-14--late-joiners-see-messages-from-their-join-onwards",
+            "nachtrag-2026-11-14--späte-beitretende-sehen-nachrichten-ab-ihrem-beitritt": "amendment-2026-11-14--late-joiners-see-messages-from-their-join-onwards"
           }
         },
         "en": {
@@ -2864,11 +2866,12 @@
             "resolved-design-session-2026-06-25": "resolved-design-session-2026-06-25",
             "implementation-notes-added-2026-07-30-after-905-made-§1-live": "implementation-notes-added-2026-07-30-after-905-made-§1-live",
             "addendum-2026-09-05--case-handover-gains-a-push-direction-no-third-consent-gate-no-room-clearing": "addendum-2026-09-05--case-handover-gains-a-push-direction-no-third-consent-gate-no-room-clearing",
-            "addendum-2026-10-14--optional-explanations-with-a-per-reason-policy": "addendum-2026-10-14--optional-explanations-with-a-per-reason-policy"
+            "addendum-2026-10-14--optional-explanations-with-a-per-reason-policy": "addendum-2026-10-14--optional-explanations-with-a-per-reason-policy",
+            "amendment-2026-11-14--late-joiners-see-messages-from-their-join-onwards": "amendment-2026-11-14--late-joiners-see-messages-from-their-join-onwards"
           }
         }
       },
-      "sourceRevision": "7b09a5a70ca0f9303aac70e60fc941f71a60bf66",
+      "sourceRevision": "3a9da26117b80bfedbc129b33f7015a7efbf61a0",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -2980,7 +2983,7 @@
           }
         }
       },
-      "sourceRevision": "e1235df760b96a734440f3cf41c829988ab1f611",
+      "sourceRevision": "26c1323fae062c19f3e285cbd2920edf48688042",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -3139,7 +3142,7 @@
           }
         }
       },
-      "sourceRevision": "e1235df760b96a734440f3cf41c829988ab1f611",
+      "sourceRevision": "26c1323fae062c19f3e285cbd2920edf48688042",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -3239,7 +3242,7 @@
           }
         }
       },
-      "sourceRevision": "e1235df760b96a734440f3cf41c829988ab1f611",
+      "sourceRevision": "26c1323fae062c19f3e285cbd2920edf48688042",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -3289,7 +3292,7 @@
           }
         }
       },
-      "sourceRevision": "e1235df760b96a734440f3cf41c829988ab1f611",
+      "sourceRevision": "26c1323fae062c19f3e285cbd2920edf48688042",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -3339,7 +3342,7 @@
           }
         }
       },
-      "sourceRevision": "e1235df760b96a734440f3cf41c829988ab1f611",
+      "sourceRevision": "26c1323fae062c19f3e285cbd2920edf48688042",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -3436,7 +3439,7 @@
           }
         }
       },
-      "sourceRevision": "e1235df760b96a734440f3cf41c829988ab1f611",
+      "sourceRevision": "26c1323fae062c19f3e285cbd2920edf48688042",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -3524,7 +3527,7 @@
           }
         }
       },
-      "sourceRevision": "e1235df760b96a734440f3cf41c829988ab1f611",
+      "sourceRevision": "26c1323fae062c19f3e285cbd2920edf48688042",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -3538,7 +3541,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md",
-      "sourceHash": "d7d5b0646f752e26a97ecc1027bf16168a0b084aeb28d4c63f44d39b9e2912e9",
+      "sourceHash": "83783d084cee7626fe5032fb6e7319def0f709213fdce59a9ea3075f6b41d216",
       "locales": {
         "de": {
           "available": true,
@@ -3555,7 +3558,9 @@
             "consequences": "consequences",
             "folgen": "consequences",
             "addendum-2026-09-05-§3-was-wrong--there-is-no-archive-auto-deletion-a-dedicated-purge-run-replaces-it": "addendum-2026-09-05-§3-was-wrong--there-is-no-archive-auto-deletion-a-dedicated-purge-run-replaces-it",
-            "nachtrag-2026-09-05-§3-war-falsch--es-gibt-keine-automatische-archivlöschung-ein-eigener-löschlauf-ersetzt-sie": "addendum-2026-09-05-§3-was-wrong--there-is-no-archive-auto-deletion-a-dedicated-purge-run-replaces-it"
+            "nachtrag-2026-09-05-§3-war-falsch--es-gibt-keine-automatische-archivlöschung-ein-eigener-löschlauf-ersetzt-sie": "addendum-2026-09-05-§3-was-wrong--there-is-no-archive-auto-deletion-a-dedicated-purge-run-replaces-it",
+            "addendum-2026-11-23-configured-and-switched-like-supervision": "addendum-2026-11-23-configured-and-switched-like-supervision",
+            "nachtrag-2026-11-23-gesteuert-und-geschaltet-wie-supervision": "addendum-2026-11-23-configured-and-switched-like-supervision"
           }
         },
         "en": {
@@ -3567,11 +3572,12 @@
             "decision": "decision",
             "considered-options": "considered-options",
             "consequences": "consequences",
-            "addendum-2026-09-05-§3-was-wrong--there-is-no-archive-auto-deletion-a-dedicated-purge-run-replaces-it": "addendum-2026-09-05-§3-was-wrong--there-is-no-archive-auto-deletion-a-dedicated-purge-run-replaces-it"
+            "addendum-2026-09-05-§3-was-wrong--there-is-no-archive-auto-deletion-a-dedicated-purge-run-replaces-it": "addendum-2026-09-05-§3-was-wrong--there-is-no-archive-auto-deletion-a-dedicated-purge-run-replaces-it",
+            "addendum-2026-11-23-configured-and-switched-like-supervision": "addendum-2026-11-23-configured-and-switched-like-supervision"
           }
         }
       },
-      "sourceRevision": "329f0c3bb71f72740589b408dbd21bee1a183e8d",
+      "sourceRevision": "8220d35f26800a088997c3badf31f057f5984d1a",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -3615,7 +3621,7 @@
           }
         }
       },
-      "sourceRevision": "e1235df760b96a734440f3cf41c829988ab1f611",
+      "sourceRevision": "26c1323fae062c19f3e285cbd2920edf48688042",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -3629,7 +3635,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/decisions/ADR-018-erstantwort-as-one-persisted-event-rendered-as-carimat-bubbles.md",
-      "sourceHash": "e9724228bfe039d54438bf30b6a9e4e37eadfab7a53c8c45e39c05461b28af95",
+      "sourceHash": "436b149705e51324ad394595c9a3acb3421a7abe0daee792bd8d8847f051d8a4",
       "locales": {
         "de": {
           "available": true,
@@ -3662,7 +3668,7 @@
           }
         }
       },
-      "sourceRevision": "4cbd713f9a5c2e6183840e7497b3f52bf178d604",
+      "sourceRevision": "4ae64a40f096d406a50252c03901037a505b1127",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -3720,7 +3726,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/decisions/ADR-020-scheduled-calls-secure-invitations-and-unified-contact-calendar.md",
-      "sourceHash": "4069bc7e91c834ebf2b5a3c16dc447a1b029cf23633458c878302c2a418505e1",
+      "sourceHash": "2dbdac529826f917c22a7928dacf26d74231c841cc9ac401a1066d36d1af9670",
       "locales": {
         "de": {
           "available": true,
@@ -3763,7 +3769,23 @@
             "a-knock-first-decided-in-adr-029": "a-knock-first-decided-in-adr-029",
             "a-zuerst-anklopfen-entschieden-in-adr-029": "a-knock-first-decided-in-adr-029",
             "b-the-call-guest-joins-the-call-room-only-decided-here": "b-the-call-guest-joins-the-call-room-only-decided-here",
-            "b-der-anrufgast-tritt-nur-dem-anrufraum-bei-hier-entschieden": "b-the-call-guest-joins-the-call-room-only-decided-here"
+            "b-der-anrufgast-tritt-nur-dem-anrufraum-bei-hier-entschieden": "b-the-call-guest-joins-the-call-room-only-decided-here",
+            "amendment-2026-11-17--only-counsellors-start-calls": "amendment-2026-11-17--only-counsellors-start-calls",
+            "änderung-2026-11-17--nur-berater-starten-anrufe": "amendment-2026-11-17--only-counsellors-start-calls",
+            "context-1": "context-1",
+            "kontext-1": "context-1",
+            "decision-1": "decision-1",
+            "entscheidung-1": "decision-1",
+            "consequences-1": "consequences-1",
+            "folgen-1": "consequences-1",
+            "amendment-2026-11-17--self-booking-in-sprechstunden": "amendment-2026-11-17--self-booking-in-sprechstunden",
+            "änderung-2026-11-17--selbstbuchung-in-sprechstunden": "amendment-2026-11-17--self-booking-in-sprechstunden",
+            "context-2": "context-2",
+            "kontext-2": "context-2",
+            "decision-2": "decision-2",
+            "entscheidung-2": "decision-2",
+            "consequences-2": "consequences-2",
+            "folgen-2": "consequences-2"
           }
         },
         "en": {
@@ -3788,11 +3810,19 @@
             "required-implementation-slices": "required-implementation-slices",
             "amendment-2026-10-28--knock-first-and-the-call-guest-join-path": "amendment-2026-10-28--knock-first-and-the-call-guest-join-path",
             "a-knock-first-decided-in-adr-029": "a-knock-first-decided-in-adr-029",
-            "b-the-call-guest-joins-the-call-room-only-decided-here": "b-the-call-guest-joins-the-call-room-only-decided-here"
+            "b-the-call-guest-joins-the-call-room-only-decided-here": "b-the-call-guest-joins-the-call-room-only-decided-here",
+            "amendment-2026-11-17--only-counsellors-start-calls": "amendment-2026-11-17--only-counsellors-start-calls",
+            "context-1": "context-1",
+            "decision-1": "decision-1",
+            "consequences-1": "consequences-1",
+            "amendment-2026-11-17--self-booking-in-sprechstunden": "amendment-2026-11-17--self-booking-in-sprechstunden",
+            "context-2": "context-2",
+            "decision-2": "decision-2",
+            "consequences-2": "consequences-2"
           }
         }
       },
-      "sourceRevision": "f3de4683d653da260a09b6b808f365f4b372f5eb",
+      "sourceRevision": "e8e033f7f67429bf668f0211c7501c44f2d7fe7a",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -3853,7 +3883,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions.md",
-      "sourceHash": "e17116ebfdd73c6a16d2c267c1c999e6aee91fd12c5a411b9a8eacd9def3da0b",
+      "sourceHash": "40fb8b0b0be61ba86b01618cc17481b0b472abde26f4bade50da7a3ea9e5b772",
       "locales": {
         "de": {
           "available": true,
@@ -3870,7 +3900,9 @@
             "consequences": "consequences",
             "folgen": "consequences",
             "alternatives-considered": "alternatives-considered",
-            "erwogene-alternativen": "alternatives-considered"
+            "erwogene-alternativen": "alternatives-considered",
+            "addendum-2026-10-28-additional-enquiries-and-topic-collisions-oriso-frontend1876": "addendum-2026-10-28-additional-enquiries-and-topic-collisions-oriso-frontend1876",
+            "ergänzung-vom-28102026-folgeanfragen-und-themenüberschneidungen-oriso-frontend1876": "addendum-2026-10-28-additional-enquiries-and-topic-collisions-oriso-frontend1876"
           }
         },
         "en": {
@@ -3882,11 +3914,12 @@
             "measured-current-state-2026-08-16-originpre-dev": "measured-current-state-2026-08-16-originpre-dev",
             "decision": "decision",
             "consequences": "consequences",
-            "alternatives-considered": "alternatives-considered"
+            "alternatives-considered": "alternatives-considered",
+            "addendum-2026-10-28-additional-enquiries-and-topic-collisions-oriso-frontend1876": "addendum-2026-10-28-additional-enquiries-and-topic-collisions-oriso-frontend1876"
           }
         }
       },
-      "sourceRevision": "b02af4254a944f33fb24e11c82ab6b961e4ec01b",
+      "sourceRevision": "34d5f31d23a6d808b32c5b963a851f39e571079b",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -4109,7 +4142,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/decisions/README.md",
-      "sourceHash": "625e97f2c462da5c8a702fa79244b574e0d394ef565abcda85debe866f6794cc",
+      "sourceHash": "31c9ae5a8cfdc49f0bce1fd8e4534e39f9e1a76b76f41ec64f890ef7b48d7fe4",
       "locales": {
         "de": {
           "available": true,
@@ -4136,7 +4169,7 @@
           }
         }
       },
-      "sourceRevision": "94fea82ba8909bc15c10e382ea0bb2ba965128a9",
+      "sourceRevision": "a77db3a9da0a77ae52a9b2a2a0a15469be699c53",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -5906,6 +5939,99 @@
       "factsStatus": "source-only"
     },
     {
+      "id": "product/features/encryption-keys",
+      "route": "produkt/core-features/encryption-keys",
+      "aliases": [
+        "product/features/encryption-keys",
+        "product/features/encryption-keys.md",
+        "product/features/encryption-keys.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "source": "product/features/encryption-keys.mdx",
+      "sourceHash": "c7a73ae6eae62abd5867b74669e12019b9ca577799c31b664ef32303d02dce33",
+      "locales": {
+        "de": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "4161-what-you-can-do-with-it": "4161-what-you-can-do-with-it",
+            "4161-das-kann-ich-damit-machen": "4161-what-you-can-do-with-it",
+            "4162-how-the-history-stays-readable": "4162-how-the-history-stays-readable",
+            "4162-wie-der-verlauf-lesbar-bleibt": "4162-how-the-history-stays-readable",
+            "4163-password-or-recovery-key-per-role": "4163-password-or-recovery-key-per-role",
+            "4163-passwort-oder-wiederherstellungsschlüssel-je-rolle": "4163-password-or-recovery-key-per-role",
+            "4164-two-optional-protection-levels": "4164-two-optional-protection-levels",
+            "4164-zwei-zuschaltbare-schutzstufen": "4164-two-optional-protection-levels",
+            "4165-state-of-development": "4165-state-of-development",
+            "4165-stand-der-entwicklung": "4165-state-of-development",
+            "4166-related": "4166-related",
+            "4166-verwandte-seiten": "4166-related"
+          }
+        },
+        "en": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "4161-what-you-can-do-with-it": "4161-what-you-can-do-with-it",
+            "4162-how-the-history-stays-readable": "4162-how-the-history-stays-readable",
+            "4163-password-or-recovery-key-per-role": "4163-password-or-recovery-key-per-role",
+            "4164-two-optional-protection-levels": "4164-two-optional-protection-levels",
+            "4165-state-of-development": "4165-state-of-development",
+            "4166-related": "4166-related"
+          }
+        }
+      },
+      "sourceRevision": "a8c9b416dd1df395b155a436cc14c2070c9347e0",
+      "sourceState": "committed",
+      "factsStatus": "source-only"
+    },
+    {
+      "id": "product/features/feature-permissions",
+      "route": "produkt/core-features/feature-permissions",
+      "aliases": [
+        "product/features/feature-permissions",
+        "product/features/feature-permissions.md",
+        "product/features/feature-permissions.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "source": "product/features/feature-permissions.mdx",
+      "sourceHash": "de755c569be495b27b0dc714a55b8b8ae04a16dd50aff2ad0631067ba3ead755",
+      "locales": {
+        "de": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "4111-what-you-can-do-with-it": "4111-what-you-can-do-with-it",
+            "4111-das-kann-ich-damit-machen": "4111-what-you-can-do-with-it",
+            "4112-three-levels": "4112-three-levels",
+            "4112-drei-ebenen": "4112-three-levels",
+            "4113-what-can-be-switched": "4113-what-can-be-switched",
+            "4113-was-sich-schalten-lässt": "4113-what-can-be-switched",
+            "4114-state-of-development": "4114-state-of-development",
+            "4114-stand-der-entwicklung": "4114-state-of-development",
+            "4115-related": "4115-related",
+            "4115-verwandte-seiten": "4115-related"
+          }
+        },
+        "en": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "4111-what-you-can-do-with-it": "4111-what-you-can-do-with-it",
+            "4112-three-levels": "4112-three-levels",
+            "4113-what-can-be-switched": "4113-what-can-be-switched",
+            "4114-state-of-development": "4114-state-of-development",
+            "4115-related": "4115-related"
+          }
+        }
+      },
+      "sourceRevision": "a8c9b416dd1df395b155a436cc14c2070c9347e0",
+      "sourceState": "committed",
+      "factsStatus": "source-only"
+    },
+    {
       "id": "product/features/group-chats",
       "route": "produkt/core-features/group-chats",
       "aliases": [
@@ -6042,7 +6168,7 @@
           }
         }
       },
-      "sourceRevision": "73ab42b6f6895f827284063b0484f4d4f5fd39a1",
+      "sourceRevision": "796a8390b17a60725600215a61557f903e3e2212",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -6081,6 +6207,105 @@
       "factsStatus": "source-only"
     },
     {
+      "id": "product/features/invitations-onboarding",
+      "route": "produkt/core-features/invitations-onboarding",
+      "aliases": [
+        "product/features/invitations-onboarding",
+        "product/features/invitations-onboarding.md",
+        "product/features/invitations-onboarding.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "source": "product/features/invitations-onboarding.mdx",
+      "sourceHash": "31fee1d28c165ed7a0640ed4521fa24394feade484f067e8e6d2dbb5857a8564",
+      "locales": {
+        "de": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "4121-what-you-can-do-with-it": "4121-what-you-can-do-with-it",
+            "4121-das-kann-ich-damit-machen": "4121-what-you-can-do-with-it",
+            "4122-the-stages-of-an-invitation": "4122-the-stages-of-an-invitation",
+            "4122-die-stufen-einer-einladung": "4122-the-stages-of-an-invitation",
+            "4123-who-invites-whom": "4123-who-invites-whom",
+            "4123-wer-wen-einlädt": "4123-who-invites-whom",
+            "4124-set-up-after-accepting": "4124-set-up-after-accepting",
+            "4124-einrichtung-nach-dem-annehmen": "4124-set-up-after-accepting",
+            "4125-state-of-development": "4125-state-of-development",
+            "4125-stand-der-entwicklung": "4125-state-of-development",
+            "4126-related": "4126-related",
+            "4126-verwandte-seiten": "4126-related"
+          }
+        },
+        "en": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "4121-what-you-can-do-with-it": "4121-what-you-can-do-with-it",
+            "4122-the-stages-of-an-invitation": "4122-the-stages-of-an-invitation",
+            "4123-who-invites-whom": "4123-who-invites-whom",
+            "4124-set-up-after-accepting": "4124-set-up-after-accepting",
+            "4125-state-of-development": "4125-state-of-development",
+            "4126-related": "4126-related"
+          }
+        }
+      },
+      "sourceRevision": "a8c9b416dd1df395b155a436cc14c2070c9347e0",
+      "sourceState": "committed",
+      "factsStatus": "source-only"
+    },
+    {
+      "id": "product/features/legal-texts",
+      "route": "produkt/core-features/legal-texts",
+      "aliases": [
+        "product/features/legal-texts",
+        "product/features/legal-texts.md",
+        "product/features/legal-texts.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "source": "product/features/legal-texts.mdx",
+      "sourceHash": "4b56d066ec996568b7bb6b3fa48a35323eee6b25d85f99de11cc6c3e505220b0",
+      "locales": {
+        "de": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "4101-what-you-can-do-with-it": "4101-what-you-can-do-with-it",
+            "4101-das-kann-ich-damit-machen": "4101-what-you-can-do-with-it",
+            "4102-four-levels-resolved-from-the-bottom-up": "4102-four-levels-resolved-from-the-bottom-up",
+            "4102-vier-ebenen-von-unten-nach-oben-aufgelöst": "4102-four-levels-resolved-from-the-bottom-up",
+            "4103-the-consent-sentence-belongs-to-the-privacy-policy": "4103-the-consent-sentence-belongs-to-the-privacy-policy",
+            "4103-der-einwilligungssatz-gehört-zur-datenschutzerklärung": "4103-the-consent-sentence-belongs-to-the-privacy-policy",
+            "4104-contract-documents": "4104-contract-documents",
+            "4104-vertragsunterlagen": "4104-contract-documents",
+            "4105-who-does-what": "4105-who-does-what",
+            "4105-wer-was-tut": "4105-who-does-what",
+            "4106-state-of-development": "4106-state-of-development",
+            "4106-stand-der-entwicklung": "4106-state-of-development",
+            "4107-related": "4107-related",
+            "4107-verwandte-seiten": "4107-related"
+          }
+        },
+        "en": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "4101-what-you-can-do-with-it": "4101-what-you-can-do-with-it",
+            "4102-four-levels-resolved-from-the-bottom-up": "4102-four-levels-resolved-from-the-bottom-up",
+            "4103-the-consent-sentence-belongs-to-the-privacy-policy": "4103-the-consent-sentence-belongs-to-the-privacy-policy",
+            "4104-contract-documents": "4104-contract-documents",
+            "4105-who-does-what": "4105-who-does-what",
+            "4106-state-of-development": "4106-state-of-development",
+            "4107-related": "4107-related"
+          }
+        }
+      },
+      "sourceRevision": "a8c9b416dd1df395b155a436cc14c2070c9347e0",
+      "sourceState": "committed",
+      "factsStatus": "source-only"
+    },
+    {
       "id": "product/features/live-chat",
       "route": "produkt/core-features/live-chat",
       "aliases": [
@@ -6091,67 +6316,40 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "product/features/live-chat.mdx",
-      "sourceHash": "3d7f5e56bda0d596c9bd4dcb898b67c8df5aaf0a16db52f8581ed34d603d0cb5",
+      "sourceHash": "164130c23b6196fc8620d4d6c1616373335114788f72eb17606e27e3c08e87f2",
       "locales": {
         "de": {
           "available": true,
           "translationState": "current",
           "sectionAliases": {
-            "421-what-live-chat-is": "421-what-live-chat-is",
-            "421-was-live-chat-ist": "421-what-live-chat-is",
-            "422-how-it-is-activated": "422-how-it-is-activated",
-            "422-aktivierung": "422-how-it-is-activated",
-            "a-counseling-center-activation-admin-side": "a-counseling-center-activation-admin-side",
-            "a-aktivierung-der-beratungsstelle-administration": "a-counseling-center-activation-admin-side",
-            "b-counselor-activation-per-counselor": "b-counselor-activation-per-counselor",
-            "b-aktivierung-der-beratungsperson-je-person": "b-counselor-activation-per-counselor",
-            "423-the-real-time-flow-step-by-step": "423-the-real-time-flow-step-by-step",
-            "423-echtzeitablauf-schritt-für-schritt": "423-the-real-time-flow-step-by-step",
-            "424-role-by-role-interaction": "424-role-by-role-interaction",
-            "424-interaktion-nach-rolle": "424-role-by-role-interaction",
-            "client-anonymous": "client-anonymous",
-            "ratsuchende-anonym": "client-anonymous",
-            "counselor": "counselor",
-            "beratende": "counselor",
-            "counselor-admin-agency-lead": "counselor-admin-agency-lead",
-            "beratungsstellen-admins-leitung": "counselor-admin-agency-lead",
-            "platform--tenant-admin": "platform--tenant-admin",
-            "plattform-träger-admins": "platform--tenant-admin",
-            "425-the-two-gdpr-consents-why-two": "425-the-two-gdpr-consents-why-two",
-            "425-die-zwei-dsgvo-einwilligungen-warum-zwei": "425-the-two-gdpr-consents-why-two",
-            "426-backend-logic-inferred-from-code--huddle": "426-backend-logic-inferred-from-code--huddle",
-            "426-backend-logik-aus-code-und-gespräch-abgeleitet": "426-backend-logic-inferred-from-code--huddle",
-            "427-edge-cases-live-chat-specific": "427-edge-cases-live-chat-specific",
-            "427-sonderfälle-live-chatspezifisch": "427-edge-cases-live-chat-specific",
-            "428-anti-patterns-things-oriso-must-not-do": "428-anti-patterns-things-oriso-must-not-do",
-            "428-fehlmuster-was-oriso-nicht-tun-darf": "428-anti-patterns-things-oriso-must-not-do",
-            "429-related": "429-related",
-            "429-verwandte-seiten": "429-related"
+            "421-what-you-can-do-with-it": "421-what-you-can-do-with-it",
+            "421-das-kann-ich-damit-machen": "421-what-you-can-do-with-it",
+            "422-the-way-through": "422-the-way-through",
+            "422-der-weg-durch-den-chat": "422-the-way-through",
+            "423-the-first-response": "423-the-first-response",
+            "423-die-erstantwort": "423-the-first-response",
+            "424-anonymity-and-deletion": "424-anonymity-and-deletion",
+            "424-anonymität-und-löschung": "424-anonymity-and-deletion",
+            "425-state-of-development": "425-state-of-development",
+            "425-stand-der-entwicklung": "425-state-of-development",
+            "426-related": "426-related",
+            "426-verwandte-seiten": "426-related"
           }
         },
         "en": {
           "available": true,
           "translationState": "current",
           "sectionAliases": {
-            "421-what-live-chat-is": "421-what-live-chat-is",
-            "422-how-it-is-activated": "422-how-it-is-activated",
-            "a-counseling-center-activation-admin-side": "a-counseling-center-activation-admin-side",
-            "b-counselor-activation-per-counselor": "b-counselor-activation-per-counselor",
-            "423-the-real-time-flow-step-by-step": "423-the-real-time-flow-step-by-step",
-            "424-role-by-role-interaction": "424-role-by-role-interaction",
-            "client-anonymous": "client-anonymous",
-            "counselor": "counselor",
-            "counselor-admin-agency-lead": "counselor-admin-agency-lead",
-            "platform--tenant-admin": "platform--tenant-admin",
-            "425-the-two-gdpr-consents-why-two": "425-the-two-gdpr-consents-why-two",
-            "426-backend-logic-inferred-from-code--huddle": "426-backend-logic-inferred-from-code--huddle",
-            "427-edge-cases-live-chat-specific": "427-edge-cases-live-chat-specific",
-            "428-anti-patterns-things-oriso-must-not-do": "428-anti-patterns-things-oriso-must-not-do",
-            "429-related": "429-related"
+            "421-what-you-can-do-with-it": "421-what-you-can-do-with-it",
+            "422-the-way-through": "422-the-way-through",
+            "423-the-first-response": "423-the-first-response",
+            "424-anonymity-and-deletion": "424-anonymity-and-deletion",
+            "425-state-of-development": "425-state-of-development",
+            "426-related": "426-related"
           }
         }
       },
-      "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
+      "sourceRevision": "a8c9b416dd1df395b155a436cc14c2070c9347e0",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -6166,67 +6364,43 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "product/features/notifications.mdx",
-      "sourceHash": "ca5b1a0990ee52baed9f1515eaf2e03663bf9eb8dfd84f35114a4d5433319029",
+      "sourceHash": "2443b187b68f6627a76e5c2071d35edfd16fb99665b4af441f2506a77ec2632b",
       "locales": {
         "de": {
           "available": true,
           "translationState": "current",
           "sectionAliases": {
-            "481-whats-new": "481-whats-new",
-            "481-neuerungen": "481-whats-new",
-            "482-notifications-inbox": "482-notifications-inbox",
-            "482-benachrichtigungseingang": "482-notifications-inbox",
-            "what-the-user-sees": "what-the-user-sees",
-            "was-nutzende-sehen": "what-the-user-sees",
-            "source-of-notifications": "source-of-notifications",
-            "quellen-der-benachrichtigungen": "source-of-notifications",
-            "channels": "channels",
-            "kanäle": "channels",
-            "persistence--retention": "persistence--retention",
-            "speicherung-und-aufbewahrung": "persistence--retention",
-            "483-help-requests--internal-escalation": "483-help-requests--internal-escalation",
-            "483-hilfsanfragen--interne-eskalation": "483-help-requests--internal-escalation",
-            "flow": "flow",
-            "ablauf": "flow",
-            "modes": "modes",
-            "modi": "modes",
-            "privacy-guarantees": "privacy-guarantees",
-            "datenschutzgarantien": "privacy-guarantees",
-            "484-system-messages-in-chat": "484-system-messages-in-chat",
-            "484-systemnachrichten-im-chat": "484-system-messages-in-chat",
-            "485-carimat--scripted-bot": "485-carimat--scripted-bot",
-            "485-carimat--skriptgesteuerter-bot": "485-carimat--scripted-bot",
-            "486-permissions--settings": "486-permissions--settings",
-            "486-berechtigungen-und-einstellungen": "486-permissions--settings",
-            "487-edge-cases": "487-edge-cases",
-            "487-sonderfälle": "487-edge-cases",
-            "488-related": "488-related",
-            "488-verwandte-seiten": "488-related"
+            "481-what-you-can-do-with-it": "481-what-you-can-do-with-it",
+            "481-das-kann-ich-damit-machen": "481-what-you-can-do-with-it",
+            "482-two-audiences-two-short-lists": "482-two-audiences-two-short-lists",
+            "482-zwei-zielgruppen-zwei-kurze-listen": "482-two-audiences-two-short-lists",
+            "483-who-sets-what": "483-who-sets-what",
+            "483-wer-was-einstellt": "483-who-sets-what",
+            "484-what-the-server-knows": "484-what-the-server-knows",
+            "484-was-der-server-weiß": "484-what-the-server-knows",
+            "485-how-long-notifications-are-kept": "485-how-long-notifications-are-kept",
+            "485-wie-lange-benachrichtigungen-bleiben": "485-how-long-notifications-are-kept",
+            "486-state-of-development": "486-state-of-development",
+            "486-stand-der-entwicklung": "486-state-of-development",
+            "487-related": "487-related",
+            "487-verwandte-seiten": "487-related"
           }
         },
         "en": {
           "available": true,
           "translationState": "current",
           "sectionAliases": {
-            "481-whats-new": "481-whats-new",
-            "482-notifications-inbox": "482-notifications-inbox",
-            "what-the-user-sees": "what-the-user-sees",
-            "source-of-notifications": "source-of-notifications",
-            "channels": "channels",
-            "persistence--retention": "persistence--retention",
-            "483-help-requests--internal-escalation": "483-help-requests--internal-escalation",
-            "flow": "flow",
-            "modes": "modes",
-            "privacy-guarantees": "privacy-guarantees",
-            "484-system-messages-in-chat": "484-system-messages-in-chat",
-            "485-carimat--scripted-bot": "485-carimat--scripted-bot",
-            "486-permissions--settings": "486-permissions--settings",
-            "487-edge-cases": "487-edge-cases",
-            "488-related": "488-related"
+            "481-what-you-can-do-with-it": "481-what-you-can-do-with-it",
+            "482-two-audiences-two-short-lists": "482-two-audiences-two-short-lists",
+            "483-who-sets-what": "483-who-sets-what",
+            "484-what-the-server-knows": "484-what-the-server-knows",
+            "485-how-long-notifications-are-kept": "485-how-long-notifications-are-kept",
+            "486-state-of-development": "486-state-of-development",
+            "487-related": "487-related"
           }
         }
       },
-      "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
+      "sourceRevision": "a8c9b416dd1df395b155a436cc14c2070c9347e0",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -6425,6 +6599,99 @@
         }
       },
       "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
+      "sourceState": "committed",
+      "factsStatus": "source-only"
+    },
+    {
+      "id": "product/features/team-consultation",
+      "route": "produkt/core-features/team-consultation",
+      "aliases": [
+        "product/features/team-consultation",
+        "product/features/team-consultation.md",
+        "product/features/team-consultation.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "source": "product/features/team-consultation.mdx",
+      "sourceHash": "04f0db507ebd5f22967806b603f84374b673d64eb8eef084387c2f2cc4fe53d2",
+      "locales": {
+        "de": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "4141-what-you-can-do-with-it": "4141-what-you-can-do-with-it",
+            "4141-das-kann-ich-damit-machen": "4141-what-you-can-do-with-it",
+            "4142-how-it-works": "4142-how-it-works",
+            "4142-so-funktioniert-es": "4142-how-it-works",
+            "4143-who-takes-part": "4143-who-takes-part",
+            "4143-wer-teilnimmt": "4143-who-takes-part",
+            "4144-state-of-development": "4144-state-of-development",
+            "4144-stand-der-entwicklung": "4144-state-of-development",
+            "4145-related": "4145-related",
+            "4145-verwandte-seiten": "4145-related"
+          }
+        },
+        "en": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "4141-what-you-can-do-with-it": "4141-what-you-can-do-with-it",
+            "4142-how-it-works": "4142-how-it-works",
+            "4143-who-takes-part": "4143-who-takes-part",
+            "4144-state-of-development": "4144-state-of-development",
+            "4145-related": "4145-related"
+          }
+        }
+      },
+      "sourceRevision": "a8c9b416dd1df395b155a436cc14c2070c9347e0",
+      "sourceState": "committed",
+      "factsStatus": "source-only"
+    },
+    {
+      "id": "product/features/training-tours",
+      "route": "produkt/core-features/training-tours",
+      "aliases": [
+        "product/features/training-tours",
+        "product/features/training-tours.md",
+        "product/features/training-tours.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "source": "product/features/training-tours.mdx",
+      "sourceHash": "71e05bb3ceb4d578cd4539c5c8a5b5ab8fcbff707f783f652849cf4e0f7d0ee5",
+      "locales": {
+        "de": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "4151-what-you-can-do-with-it": "4151-what-you-can-do-with-it",
+            "4151-das-kann-ich-damit-machen": "4151-what-you-can-do-with-it",
+            "4152-the-four-tours": "4152-the-four-tours",
+            "4152-die-vier-touren": "4152-the-four-tours",
+            "4153-why-nothing-can-go-wrong-in-the-practice-area": "4153-why-nothing-can-go-wrong-in-the-practice-area",
+            "4153-warum-im-übungsbereich-nichts-schiefgehen-kann": "4153-why-nothing-can-go-wrong-in-the-practice-area",
+            "4154-who-decides": "4154-who-decides",
+            "4154-wer-entscheidet": "4154-who-decides",
+            "4155-state-of-development": "4155-state-of-development",
+            "4155-stand-der-entwicklung": "4155-state-of-development",
+            "4156-related": "4156-related",
+            "4156-verwandte-seiten": "4156-related"
+          }
+        },
+        "en": {
+          "available": true,
+          "translationState": "current",
+          "sectionAliases": {
+            "4151-what-you-can-do-with-it": "4151-what-you-can-do-with-it",
+            "4152-the-four-tours": "4152-the-four-tours",
+            "4153-why-nothing-can-go-wrong-in-the-practice-area": "4153-why-nothing-can-go-wrong-in-the-practice-area",
+            "4154-who-decides": "4154-who-decides",
+            "4155-state-of-development": "4155-state-of-development",
+            "4156-related": "4156-related"
+          }
+        }
+      },
+      "sourceRevision": "a8c9b416dd1df395b155a436cc14c2070c9347e0",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -7241,8 +7508,8 @@
     }
   ],
   "coverage": {
-    "currentPages": 94,
-    "completePairs": 94,
+    "currentPages": 100,
+    "completePairs": 100,
     "missing": [],
     "stale": []
   }

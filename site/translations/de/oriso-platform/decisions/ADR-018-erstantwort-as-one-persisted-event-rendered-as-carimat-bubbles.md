@@ -2,11 +2,14 @@
 
 - **Status:** Angenommen — Frank, 2026-07-30 (grill-with-docs-Sitzung)
 - **Datum:** 2026-07-30
+- **Geändert durch:** ADR-036 (vorgeschlagen 2026-11-16) — die Entscheidungen 1, 2, 5 und 6 werden durch ein konfigurierbares Modul pro Gesprächstyp ersetzt, bearbeitbar in Admin und Frontend; Sicherheitsabschnitte kann die bearbeitende Person entfernen.
 - **Entscheider:** Frank (Produkt) und KI (Engineering)
 - **Verwandt:** `CONTEXT-erstantwort-und-carimat.md` (Glossar), ADR-003 und `ADR-014-shared-legal-text-objects-multi-topic-agencies-topic-before-consent.md` (Fachbereichsrechtstexte, Thema vor Einwilligung), ADR-004/ADR-005 (Matrix/Megolm), ADR-008 (Mitleser), ADR-010 (Plattformfreigabeliste je Mandant, hier verschoben), `CONTEXT-conversation-types.md`, `ORISO-Frontend/CONTEXT.md` (Aktivitätszeitleiste), ORISO-Frontend #772
 - **Anlass:** U25-Erstantwort weicht stark vom Plattformstandard ab: informell, ohne geschlechtsspezifische Bezeichnungen, Beratung per MAIL statt Chat, Offenlegung von Peerberatung/Supervision, ausdrückliche Bitte um keine personenbezogenen Daten und deshalb **keine** Einladung zur E-Mail-Angabe, dazu Notfallnummern. Björns Fragen an Janna vom 2026-07-24 betrafen Konfiguration je Beratungsstelle.
 
 ---
+
+> **Geändert durch ADR-036 Entscheidung 34 (2026-11-18, vorgeschlagen):** Die Erstantwort ist nicht mehr ein einzelnes Ereignis. In einer Reise ist jeder Schritt an Bord und bei der Ankunft ein eigenes gespeichertes `[SYSTEM_NOTIFICATION]`-Ereignis, eingefroren beim Senden; ein Frageschritt mit mehreren Fragen bleibt ein Ereignis. Betroffen sind die Entscheidungen 3 und 11 (ein Ereignis, ein Eintrag in der Zeitleiste); eingefrorener Wortlaut, Live-Zustand und Carimat als Darstellungsidentität bleiben, je Ereignis. Siehe [ADR-036](./ADR-036-configurable-conversation-modules-and-one-question-model.md) Teil E.
 
 ## Kontext
 

@@ -1,0 +1,72 @@
+---
+title: "4.16 Encryption and Keys"
+description: "How ORISO keeps counselling messages end-to-end encrypted and still readable for their owner: key backup, recovery key, signed devices, the per-role choice between password and recovery key, and two optional protection levels."
+---
+
+Counselling messages are end-to-end encrypted: only the people in a conversation can read them, not
+the server and not the platform operator. The hard part is keeping them readable for their owner — on
+a new device, after a password change, after a long absence. ORISO backs up the keys that unlock the
+history, encrypted, so the person can always get back in.
+
+This page describes **what** the feature does. It is written for counsellors, Träger administrators
+and data protection officers.
+
+## 4.16.1 What you can do with it
+
+- **Keep reading your history after a password change** or on a new device.
+- **Choose how strongly your history is protected:** the platform decides per role whether the
+  history is unlocked with the login password or with a separate recovery key.
+- **Save a recovery key** when the platform asks for one, and get reminded if you have not saved it.
+
+## 4.16.2 How the history stays readable
+
+| Part | What it does |
+|---|---|
+| **Key backup** | the keys for every conversation are stored on the server, encrypted; the server cannot read them |
+| **Unlocking** | the backup is unlocked with the login password or with a recovery key, depending on the role |
+| **Signed devices** | the devices of one account are signed as belonging together (cross-signing), so they can trust each other |
+| **Restore** | on a new device, or after a password change, the history is restored from the backup |
+
+## 4.16.3 Password or recovery key, per role
+
+The platform administration decides, separately for people seeking help and for counsellors,
+how **new** accounts unlock their history:
+
+| Choice | Means | Suits |
+|---|---|---|
+| **Login password** | nothing extra to keep; whoever knows the password can read the history | people seeking help, who often use ORISO only a few times |
+| **Recovery key** | a separate key the person stores safely; the password alone does not unlock the history | counsellors, for a higher level of protection |
+
+A higher level of protection can thus be switched on with one setting, without new development and
+without overburdening people seeking help.
+
+## 4.16.4 Two optional protection levels
+
+Two further levels come from the Element project, the reference app for Matrix. Both are built and
+are switched on per installation:
+
+- **Readable after an absence.** Messages that arrive while a person is logged out are still
+  readable when they log in again.
+- **Keys only for signed devices.** Keys for a conversation go only to devices that are signed as
+  belonging to the account. An unknown device receives nothing it could decrypt.
+
+Calls are encrypted end to end as well: the video server only forwards encrypted media.
+
+## 4.16.5 State of development
+
+| Part | State |
+|---|---|
+| Key derived from chat ID and password | existed before ORISO; replaced |
+| Key backup, recovery key, signed devices — history readable after a password change | commissioned with CAR-07 and built |
+| Choice per role between password and recovery key | built |
+| "Readable after an absence" and "keys only for signed devices" | built; switched on per installation |
+
+## 4.16.6 Related
+
+- [Own chat UI on the Matrix SDK (ADR-004)](/oriso-platform/decisions/ADR-004-chat-keep-custom-ui-adopt-matrix-sdk-megolm)
+- [Silent room membership and access control (ADR-002)](/oriso-platform/decisions/ADR-002-silent-room-membership-and-access-control-curtain)
+- [Case Handover](/product/features/case-handover) — why a handover needs no new keys.
+- Storybook, counselling app: [Encryption settings](https://dev.oriso.org/storybook-frontend/?path=/docs/organisms-encryptionsettingspanel--docs) ·
+  [Recovery dialog](https://dev.oriso.org/storybook-frontend/?path=/docs/organisms-keybackuprecoverydialog--docs) ·
+  [Recovery key reminder](https://dev.oriso.org/storybook-frontend/?path=/docs/organisms-recoverykeysavereminder--docs)
+- Storybook, administration: [Chat recovery per role](https://dev.oriso.org/storybook-admin/?path=/story/organisms-globalsettings-chatrecoverysettingscard--default)

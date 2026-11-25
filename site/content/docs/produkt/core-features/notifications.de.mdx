@@ -1,135 +1,103 @@
 ---
-title: "4.8 Benachrichtigungen und Hilfsanfragen"
-description: "Der Benachrichtigungseingang für Mitarbeitende und optional Ratsuchende, der Ablauf für Hilfsanfragen und Eskalation im Chat sowie die Systematik der Systemnachrichten."
+title: "4.8 Benachrichtigungen — Aktivitäts-Zeitleiste, E-Mails, Töne und Nicht-stören"
+description: "Wie Beratende und Ratsuchende erfahren, dass etwas passiert ist: die Aktivitäts-Zeitleiste, E-Mail-Benachrichtigungen je Gesprächsart, Töne je Ereignis, Nicht-stören-Zeiten und Service-Hinweise."
 source: "product/features/notifications.mdx"
 ---
 
+Beratende entscheiden selbst, was sie wann sehen und hören. Ratsuchende bekommen nur die
+Benachrichtigungen, die sie brauchen — so formuliert, dass niemand, der mitliest, etwas über ihre
+Beratung erfährt. Benachrichtigungen machen beides möglich: ein Ort in der App, an dem jedes Ereignis
+erscheint, dazu E-Mails, Browser-Hinweise und Töne, die jede Person selbst einstellt.
+
+Diese Seite beschreibt, **was** die Funktion tut. Sie richtet sich an Beratende, Leitungen von
+Beratungsstellen und Verwaltende von Trägern.
+
+## 4.8.1 Das kann ich damit machen
+
+- **Alle Ereignisse an einem Ort sehen.** Die Aktivitäts-Zeitleiste zeigt neue Anfragen, Nachrichten,
+  Antworten in Threads, Übergaben, Anrufe, Supervision und Systemereignisse. Sie lässt sich nach Art
+  filtern und durchsuchen; jeder Eintrag öffnet das zugehörige Gespräch.
+- **Selbst wählen, was ankommt.** Für Anfragen, Gespräche und zeitkritische Ereignisse (Anrufe und
+  Termine) legen Beratende je Ereignisart fest, ob ein Browser-Hinweis erscheint, welcher Ton in
+  welcher Lautstärke spielt und ob eine E-Mail kommt.
+- **Einen Ton wählen oder stumm schalten.** Jede Ereignisart kann einen eigenen Ton haben — zwölf
+  nummerierte Töne und einige benannte, etwa ein Klingelton — oder gar keinen.
+- **Ruhe haben.** Nicht-stören schaltet Hinweise, Töne und Push-Nachrichten auf allen Geräten bis zu
+  einer gewählten Uhrzeit stumm. Die Zeitleiste füllt sich weiter; es geht nichts verloren.
+- **E-Mails in der eigenen Sprache bekommen.** E-Mails kommen in der Sprache und Anrede der Person
+  (Deutsch mit „Sie“ oder „du“, Englisch, Französisch, Russisch, Türkisch, Tigrinya).
+
+## 4.8.2 Zwei Zielgruppen, zwei kurze Listen
+
+Ratsuchende und Beratende nutzen ORISO sehr unterschiedlich. Ratsuchende nutzen es wenige Male, in
+einer Lage, die sie sich nicht ausgesucht haben, manchmal auf einem geteilten Handy. Beratende
+arbeiten jeden Tag darin. ORISO führt deshalb zwei getrennte Listen mit E-Mail-Schaltern statt einer
+Liste, die nach Rolle gefiltert wird.
+
+| | **Ratsuchende** | **Beratende** |
+|---|---|---|
+| Schalter | neue Nachricht · Termin · Service-Hinweis | neue Anfrage · Tagesübersicht · neue Nachricht · Zuweisung · Übergabe · Rückmeldung · Service-Hinweis |
+| Was eine E-Mail sagt | nennt nie eine beratende Person, einen Fall oder Inhalte | darf das Ereignis genauer benennen |
+| Nie abschaltbar | Zugang zum Konto, rechtliche Hinweise, Störungsmeldungen | dieselben drei |
+
+Jede Benachrichtigungs-E-Mail enthält einen Link, der direkt zum Schalter für genau diese E-Mail
+führt. E-Mails zum Kontozugang und zu Rechtlichem haben keinen Abbestell-Link; die Einstellungsseite
+sagt, warum.
+
 <Callout>
-Die Figma-Ausgabe vom Mai 2026 ergänzt eine eigene Seite **Benachrichtigungen** und einen strukturierten Ablauf für **Hilfsanfragen / Eskalation** innerhalb der Chatraum-Einstellungen. Zusammen bilden sie die Ebene für asynchrone Nachrichten und Eskalation der Plattform.
+Ein Browser-Hinweis zeigt keinen Nachrichtentext, solange die Person das nicht einschaltet. In der
+Beratung ist eine Vorschau auf dem Sperrbildschirm ein Datenschutzrisiko; deshalb ist sie
+voreingestellt aus.
 </Callout>
 
-## 4.8.1 Neuerungen
+## 4.8.3 Wer was einstellt
 
-| Funktion | Ursprung |
+| Ebene | Kann |
 |---|---|
-| **Benachrichtigungseingang** | Eigene Seite in der Seitenleiste mit Zähler |
-| **Systemnachrichten** mit typisierten Bannern (Urlaub, Krankheit, Notfall, …) | Im Chat |
-| **Hilfsanfragen** als Dialog `⇧Ä` aus den Chatraum-Einstellungen | Im Chat |
-| **E-Mail-Kopie** der Benachrichtigungen (nur bei angegebener E-Mail-Adresse) | Backend |
-| **Carimat / skriptgesteuerte Chatbot-Einstiegsnachrichten** | Neuer Ursprung für Systemnachrichten |
+| **Beratende** | Hinweis, Ton, Lautstärke und E-Mail je Ereignisart einstellen; Nicht-stören setzen; Töne ganz abschalten |
+| **Ratsuchende** | die E-Mails für Ratsuchende ein- oder ausschalten; Browser-Hinweise einstellen |
+| **Plattform, Träger und Beratungsstelle** | je Gesprächsart (Beratung über eine Beratungsstelle, Live-Chat, Selbsthilfe) festlegen, ob Ratsuchende überhaupt E-Mails und Browser-Hinweise bekommen dürfen und ob Beratende E-Mails zu internen Gruppenchats erhalten — siehe [Funktionsfreigaben](/de/produkt/core-features/feature-permissions) |
+| **Plattformbetreiber** | Service-Hinweise versenden, etwa zu geplanten Wartungen; ein Hinweis bleibt Entwurf, bis die verfassende Person ihn bestätigt |
 
-## 4.8.2 Benachrichtigungseingang
+Die persönlichen Einstellungen werden mit dem Chat-Konto der Person gespeichert und gelten so auf
+jedem Gerät und in jedem Browser.
 
-### Was Nutzende sehen
+## 4.8.4 Was der Server weiß
 
-Eine eigene Seite (`Notifications`), erreichbar über eine Schaltfläche in der Seitenleiste; diese zeigt einen Zähler ungelesener Nachrichten.
+Der Server speichert ein Ereignis als Art, einige Bezugsnummern und den Zeitpunkt — nie den Text,
+der angezeigt wird. Die Worte in der Zeitleiste entstehen in der App der Person, in ihrer Sprache.
+Eine Nachrichtenvorschau wird auf dem Gerät entschlüsselt; der Server sieht nie Nachrichteninhalte.
 
-Jeder Benachrichtigungseintrag enthält:
-- **Typkennzeichnung** (Systembenachrichtigung, Anfrageaktualisierung, Übergabe, wichtige Benachrichtigung, Urlaub, Krankheit, Notfall).
-- **Titel** (z. B. *„Ihre Anfrage wurde von einer Beratungsperson angenommen.“*).
-- **Inhalt** (z. B. *„Ihre letzte Beratungsanfrage wurde angenommen; Sie können jetzt mit der Beratungsperson chatten.“*).
-- **Datum** im Format `MM/DD/YYYY`.
-- Schaltfläche **Antworten** (öffnet den betreffenden Chat).
-- Aufruf **Chats ansehen** oben im Eingang.
+## 4.8.5 Wie lange Benachrichtigungen bleiben
 
-### Quellen der Benachrichtigungen
-
-| Quelle | Beispiel |
+| Was | Wird aufbewahrt |
 |---|---|
-| `inquiry.accepted` | „Ihre Anfrage wurde von einer Beratungsperson angenommen.“ |
-| `handover.completed` | „Deine Beratung wurde an Gudrun übergeben.“ |
-| `appointment.reminder` | „Live Mo 9. Sep 2026 um 18:00 Uhr — Kreis Suchtberatung“ |
-| `chat.archived` | „Archivierte Benachrichtigungen sind inaktiv. Der Chat wird in 12 Monaten gelöscht.“ |
-| `mfa.required` | „Bitte aktivieren Sie 2FA, um Ihr Konto zu schützen.“ |
-| `account.deletion` | „Ihr Konto wurde gelöscht.“ |
-| `system.maintenance` | „Wartungsfenster heute 02:00–03:00 UTC.“ |
+| ein gelesener Eintrag der Zeitleiste | 90 Tage |
+| jeder Eintrag der Zeitleiste, gelesen oder nicht | höchstens 365 Tage |
+| die Einträge eines gelöschten Kontos | werden mit dem Konto gelöscht |
 
-### Kanäle
+Beide Fristen sind der Vorschlag aus der Datenschutz-Folgenabschätzung und je Installation
+einstellbar. Die Bestätigung durch die Datenschutzbeauftragte des Auftraggebers steht noch aus.
 
-- **In der App** (immer).
-- **E-Mail** (nur wenn Ratsuchende eine angegeben haben — für Beratende niemals sichtbar).
-- **Push** (über Matrix Push Gateway geplant — siehe [Figma-Analyse §4.7](/de/produkt/design-und-quality/figma-analysis-2026-05#47-notification-channels)).
+## 4.8.6 Stand der Entwicklung
 
-### Speicherung und Aufbewahrung
-
-- Benachrichtigungen sind **personenbezogen zugeordnet**.
-- Ungelesen → 90 Tage, danach archiviert.
-- Archiviert → zwölf Monate, danach gelöscht.
-- Benachrichtigungen der Ratsuchenden werden zusammen mit deren Konto bei Verbindungsabbruch / Kontolöschung entfernt.
-
-## 4.8.3 Hilfsanfragen / interne Eskalation
-
-Ausgelöst über **Chatraum Einstellungen → Hilfe Anfragen (`⇧Ä`)**, mit dem Text:
-
-> *„Eskaliere den Fall intern oder extern ohne den Datenschutz zu vernachlässigen.“*
-> *„Wähle intern von einer Person ohne den Datenschutz zu vernachlässigen.“*
-
-### Ablauf
-
-<Mermaid chart={"sequenceDiagram\n  autonumber\n  participant Co as Counselor\n  participant FE as ORISO-Admin\n  participant US as UserService\n  participant Sup as Supervisor / Peer counselor\n\n  Co->>FE: Click Hilfe Anfragen (⇧Ä)\n  FE->>Co: Modal: pick mode (Intern / Extern), pick recipient\n  Co->>FE: Submit\n  FE->>US: POST /escalation { sessionId, recipient, mode, note }\n  US->>Sup: Notification + read-only Matrix invite\n  Sup-->>FE: Open chat, review, reply (in-thread or new note)\n  FE->>US: POST /escalation/{id}/resolve"} />
-
-### Modi
-
-| Modus | Verhalten |
+| Teil | Stand |
 |---|---|
-| **Intern** | Andere Beratende oder Supervision innerhalb derselben Beratungsstelle auswählen. Sie werden dem Raum hinzugefügt (Matrix-Einladung) — standardmäßig nur lesend. |
-| **Extern** | Übergabe oder Eskalation in menschlicher Sprache auslösen (z. B. Krisentelefon, Aufsicht). Externe Empfänger erhalten **niemals** Nachrichteninhalte — nur Metadaten und einen Einladungslink nach ausdrücklicher Zustimmung. |
+| Aktivitäts-Zeitleiste mit Filtern und Suche | gebaut |
+| Töne, Lautstärke und Hinweise je Ereignisart; Nicht-stören über alle Geräte | gebaut |
+| E-Mail-Schalter je Gesprächsart für Träger und Beratungsstelle | gebaut |
+| Die neue persönliche Seite für E-Mail-Einstellungen (zwei Listen) | gebaut; je Installation über den Release-Schalter `enableNewNotifications` eingeschaltet — ohne ihn erscheinen die älteren Schalter |
+| Termin-E-Mail für Ratsuchende | Schalter und Gestaltung der E-Mail gibt es, den Versand noch nicht |
+| Einfache Benachrichtigungs-Schalter | gab es schon vor ORISO |
 
-### Datenschutzgarantien
+## 4.8.7 Verwandte Seiten
 
-- Empfänger erhalten denselben E2EE-Schutz wie reguläre Mitglieder.
-- Bei externer Eskalation werden nur **nicht aussagekräftige Metadaten** und ein Token zur Rückkontaktaufnahme gesendet.
-- Das Prüfprotokoll erfasst das Eskalationsereignis, niemals Nachrichteninhalte.
-
-## 4.8.4 Systemnachrichten im Chat
-
-Eine typisierte Systematik automatisch erzeugter Banner, die im Chat erscheinen können:
-
-| Typschlüssel | Bannertext (DE/EN) | Auslöser |
-|---|---|---|
-| `inquiry.accepted` | *„Ihre Anfrage wurde von einer Beratungsperson angenommen.“* | Beratende nehmen ein Ticket an |
-| `consent.required` | *„Bitte stimmen Sie der Datenschutzerklärung der Beratungsstelle zu.“* | DSGVO-Abfrage Nr. 2 |
-| `e2ee.enabled` | *„Ihre Nachrichten sind Ende-zu-Ende verschlüsselt …“* | Raumerstellung |
-| `supervision.added` | *„Die Beratungsperson hat eine Supervision zu diesem Chat hinzugefügt, die ihn begleiten wird.“* | Supervision tritt bei |
-| `handover.completed` | *„Deine Beratung wurde an &#123;Berater:in&#125; übergeben: Grund &#123;reason&#125;.“* | Übergabe abgeschlossen |
-| `live_call.active` | *„Derzeit aktiver Anruf → Videoanruf beitreten“* | Ein LiveKit-Anruf beginnt |
-| `live_call.ended` | *„Anrufsitzung beendet.“* | Anruf beendet |
-| `chat.archived` | *„Archivierte Benachrichtigungen sind inaktiv. Der Chat wird in 12 Monaten gelöscht.“* | Chat archiviert |
-| `holiday`, `sickness`, `emergency`, `law_violation`, `colleague_fired` | Grundspezifischer Text | Übergabe oder Nichtverfügbarkeit von Beratenden |
-| `chatbot.onboarding` | Skriptgesteuert, mehrstufig (Carimat) | Erstmaliger Einstieg |
-| `chatbot.quick_guide` | Skriptgesteuerte Hilfe | Beratende oder Ratsuchende fragen Anleitung an |
-
-Systemnachrichten haben eine eigene Gestaltung (zentriert, neutrale Farbe), um sie von menschlichen Nachrichten zu unterscheiden.
-
-## 4.8.5 Carimat — skriptgesteuerter Bot
-
-Carimat ist der geplante **regelbasierte** Einstiegsbot der Plattform. Er ist **kein** LLM. Verhalten:
-
-- Sendet die ersten Systemnachrichten (E2EE-Banner, DSGVO-Text).
-- Führt neue Ratsuchende optional durch eine mehrstufige Kurzanleitung.
-- Reagiert auf ausdrückliche Befehle wie `/help`, `/topic`, `/language`.
-- Kann Antworten nicht lesen — er sendet nur vorbereitete Inhalte anhand von Auslösern.
-
-Status: **[NEUE FUNKTION]** — Name in Figma bestätigt; Verhalten vorgeschlagen.
-
-## 4.8.6 Berechtigungen und Einstellungen
-
-Steuerungen je Chat-Typ (siehe [Rollen und Berechtigungen §3.7](/de/produkt/architecture-und-roles/roles-permissions#37-per-chat-type-permissions-matrix)):
-
-- Benachrichtigungen können je Chat stummgeschaltet werden (`Stummschalten ⇧Ö`).
-- Träger-Admins können Hilfsanfragen für einen Chat-Typ vollständig deaktivieren.
-- E-Mail-Kopien erfordern die Zustimmung der jeweiligen Person und die Erlaubnis auf Trägerebene.
-
-## 4.8.7 Sonderfälle
-
-- **Person ohne E-Mail-Adresse** aktiviert E-Mail-Kopien → Oberfläche erklärt, dass dies erst nach Hinzufügen einer Adresse verfügbar ist.
-- **Benachrichtigung trifft für gelöschtes Pseudonym ein** → Sie wird stillschweigend verworfen; der Absender erhält keinen Zustellfehler.
-- **Hilfsanfrage an Beratende im Urlaub** → Fällt auf die nächste verfügbare Supervision der Beratungsstelle zurück.
-- **Zeitlimit bei externer Eskalation** → Nach 24 Stunden abbrechen; Beratende informieren; nichts verlässt das System.
-
-## 4.8.8 Verwandte Seiten
-
-- [Gruppenchats](/de/produkt/core-features/group-chats) — Hilfsanfragen befinden sich in den Chatraum-Einstellungen.
-- [Übergabe](/de/produkt/core-features/handover) — arbeitet mit Systemnachrichten und Benachrichtigungen zusammen.
-- [Rollen und Berechtigungen](/de/produkt/architecture-und-roles/roles-permissions).
-- [Figma-Analyse](/de/produkt/design-und-quality/figma-analysis-2026-05).
+- [Fallübergabe](/de/produkt/core-features/case-handover) — Übergabe-Angebote und -Anfragen kommen als Benachrichtigung an.
+- [Funktionsfreigaben](/de/produkt/core-features/feature-permissions) — die Schalter je Gesprächsart.
+- [E-Mail-Benachrichtigungen: zwei Listen statt einer (ADR-024)](/de/decisions/adr-024)
+- [E-Mails im Erscheinungsbild des Trägers (ADR-026)](/de/decisions/adr-026)
+- Storybook Beratungs-App: [Aktivitäts-Zeitleiste](https://dev.oriso.org/storybook-frontend/?path=/docs/organisms-notificationscenter--docs) ·
+  [Benachrichtigungs-Einstellungen](https://dev.oriso.org/storybook-frontend/?path=/docs/organisms-notificationsettingspanel--docs) ·
+  [Nicht-stören](https://dev.oriso.org/storybook-frontend/?path=/docs/profile-donotdisturbcontrol--docs) ·
+  [E-Mail-Einstellungen](https://dev.oriso.org/storybook-frontend/?path=/docs/organisms-emailnotificationsettings--docs)
+- Storybook Verwaltung: [E-Mail-Schalter je Gesprächsart](https://dev.oriso.org/storybook-admin/?path=/story/organisms-permissions-chattypenotificationswitches--switches-on-tiles)
