@@ -1,3 +1,7 @@
+# =============================================================================
+# Local Obsidian vault config
+# =============================================================================
+.obsidian/
 # Understand Anything: generated graphs are published daily as release assets
 # (ORISO-Docs, tag ua-graph-latest) and fetched at runtime - never commit them.
 .understand-anything/knowledge-graph.json
