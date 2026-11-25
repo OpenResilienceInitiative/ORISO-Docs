@@ -1,0 +1,62 @@
+---
+title: "4.14 Team Discussion Next to Each Enquiry"
+description: "A separate internal room for every open enquiry in which counsellors coordinate before someone accepts it; the client is never a member; the room closes at acceptance and is deleted after 90 days."
+source: "product/features/team-consultation.mdx"
+---
+
+A new enquiry often raises a question for the team first: who has experience with this topic, who
+has time, does anything look urgent? Counsellors need a place to talk about it — and that place must
+never be the client's chat, not even hidden. ORISO gives every open enquiry its own team discussion:
+an internal room next to the enquiry, in which only counsellors write.
+
+This page describes **what** the feature does. It is written for counsellors and heads of
+Beratungsstellen.
+
+## 4.14.1 What you can do with it
+
+- **Coordinate on a new enquiry** before anyone accepts it, without writing into the client's chat.
+- **Always know which side you are on.** The panel carries a permanent "team only — invisible to the
+  person seeking help" marker and shows how many posts there are.
+- **Rely on a clean end.** When the enquiry is accepted, the discussion closes; after 90 days it is
+  deleted.
+
+## 4.14.2 How it works
+
+| Phase | Team discussion |
+|---|---|
+| Enquiry is open | a separate room exists next to the enquiry; counsellors who can see the enquiry can write in it |
+| Enquiry is accepted | the room is closed at once and archived; it is not carried into the case |
+| After acceptance | the archive can be read, but nobody can write in it any more |
+| 90 days after archiving | room and records are deleted |
+
+After acceptance, the team uses the tools made for that phase: [Supervision](/en/produkt/core-features/session-management)
+to accompany a case read-only, or [Case Handover](/en/produkt/core-features/case-handover) to look in or take
+over. Three separate tools, each with a clear purpose.
+
+<Callout>
+The client is never a member of the team discussion. It is a room of its own, not a hidden part of
+the client's chat — in an encrypted chat, a message cannot be hidden from one member.
+</Callout>
+
+## 4.14.3 Who takes part
+
+Exactly the counsellors who can see the enquiry, and could therefore accept it, may take part. There
+is no extra permission. The feature applies to counselling through a Beratungsstelle; the anonymous
+live chat has no team discussion. A Träger can switch the feature off.
+
+## 4.14.4 State of development
+
+| Part | State |
+|---|---|
+| Open team Beratungsstelle in which every counsellor saw every case | existed before ORISO; replaced by team discussion and case handover |
+| Team discussion next to each enquiry, closing at acceptance | built |
+| Deletion 90 days after archiving | built (configurable per installation) |
+
+## 4.14.5 Related
+
+- [Team discussion as a side room (ADR-016)](/en/decisions/adr-016)
+- [Supervision role and side channel (ADR-008)](/en/decisions/adr-008)
+- [Silent room membership and access control (ADR-002)](/en/decisions/adr-002)
+- [Case Handover](/en/produkt/core-features/case-handover)
+- [Notifications](/en/produkt/core-features/notifications) — team discussion posts appear in the activity timeline.
+- Storybook, counselling app: [Team discussion panel](https://dev.oriso.org/storybook-frontend/?path=/docs/components-session-teamdiscussionpanel--docs)

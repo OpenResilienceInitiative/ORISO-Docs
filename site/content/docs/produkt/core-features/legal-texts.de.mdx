@@ -1,0 +1,108 @@
+---
+title: "4.10 Rechtstexte und Vertragsunterlagen"
+description: "Impressum, Datenschutzerklärung und Einwilligungssatz aus Vorlagen, die von der Plattform an den Träger und weiter an die Beratungsstelle gehen; Versionen; die Vertragsunterlagen mit Weiterleitung an die zeichnungsberechtigte Person, erneuter Bestätigung und Stand."
+source: "product/features/legal-texts.mdx"
+---
+
+Jede Beratungsstelle braucht ein Impressum, eine Datenschutzerklärung und einen Einwilligungssatz,
+und jeder Träger muss mit dem Plattformbetreiber die Vertragsunterlagen abschließen. Ohne Hilfe
+schreibt und pflegt jede Stelle diese Texte allein. ORISO macht daraus eine Kette: Die Plattform
+stellt Vorlagen bereit, der Träger übernimmt und passt sie an, die Beratungsstelle übernimmt sie
+ihrerseits — im einfachsten Fall trägt sie nur noch den Namen ihrer Datenschutzbeauftragten ein.
+
+Diese Seite beschreibt, **was** die Funktion tut. Sie richtet sich an Verwaltende von Trägern,
+Leitungen von Beratungsstellen und Datenschutzbeauftragte.
+
+## 4.10.1 Das kann ich damit machen
+
+- **Mit einer Vorlage beginnen.** Impressum, Datenschutzerklärung und Einwilligungssatz von der
+  Ebene darüber übernehmen, statt sie neu zu schreiben.
+- **Vergleichen, bevor ich übernehme.** Veröffentlicht die Ebene darüber eine neue Vorlage, sehe ich
+  sie neben meinem eigenen Text und entscheide, ob ich sie übernehme.
+- **Wissen, welcher Text wann galt.** Jede veröffentlichte Fassung bleibt als Version erhalten, mit
+  Datum und der Person, die sie veröffentlicht hat.
+- **Vor dem Veröffentlichen übersetzen.** Ein Text lässt sich maschinell in die Sprachen der App
+  übersetzen, bevor er online geht.
+- **Die Vertragsunterlagen weiterleiten.** Wer den Träger einrichtet, darf selten selbst
+  unterschreiben. Die Vertragsunterlagen lassen sich per E-Mail oder Link an die
+  zeichnungsberechtigte Person weiterleiten; die Verwaltung zeigt, ob die E-Mail versendet wurde und
+  ob unterschrieben ist.
+
+## 4.10.2 Vier Ebenen, von unten nach oben aufgelöst
+
+<Mermaid chart={"flowchart TB\n  P[Plattformbetreiber<br/>Vorlagen und eigene Texte]:::p --> T[Träger<br/>übernimmt, passt an, gibt weiter]:::t\n  T --> B[Beratungsstelle<br/>übernimmt, ergänzt eigene Angaben]:::b\n  B --> F[Fachbereich<br/>Beratungsstelle × Thema, optional eigener Text]:::f\n\n  classDef p fill:#e3f2fd,stroke:#1565c0\n  classDef t fill:#fff3e0,stroke:#ef6c00\n  classDef b fill:#e8f5e8,stroke:#2e7d32\n  classDef f fill:#f3e5f5,stroke:#6a1b9a"} />
+
+Ratsuchende sehen immer den Text der untersten Ebene, die einen hat: den des Fachbereichs, falls es
+ihn gibt, sonst den der Beratungsstelle, sonst den des Trägers, sonst den der Plattform. Ein
+Träger-Text **ersetzt** den Plattform-Text; Texte werden nie übereinandergestapelt.
+
+Eine Vorlage hat selbst keine rechtliche Wirkung. Eine geänderte Vorlage ändert den geltenden Text
+für niemanden, bis die empfangende Ebene eine eigene neue Version veröffentlicht.
+
+## 4.10.3 Der Einwilligungssatz gehört zur Datenschutzerklärung
+
+Der Satz, dem Ratsuchende zustimmen, ist Teil der Datenschutzerklärung, kein eigenes Dokument. Wer den
+Satz ändert, veröffentlicht eine neue Version der Erklärung; so hat die Frage „welche Einwilligung
+gehörte zu welcher Erklärung“ immer genau eine Antwort. Ein Einwilligungssatz lässt sich nur
+veröffentlichen, wenn er den Platzhalter für die Links zu den Rechtstexten enthält — die Links
+können also nie fehlen.
+
+Ratsuchende stimmen höchstens zweimal zu: beim Eintreten dem Text der Plattform (oder des Trägers)
+und im Gespräch vor der ersten Nachricht dem Text der Beratungsstelle. ORISO speichert nur, für
+welche Version ein Gespräch freigegeben ist — kein Protokoll, wer wann zugestimmt hat.
+
+## 4.10.4 Vertragsunterlagen
+
+Der Vertrag zwischen Plattformbetreiber und Träger besteht aus den Vertragsunterlagen: dem
+Plattformvertrag selbst mit seinen Anlagen zur Auftragsverarbeitung, zu den technischen und
+organisatorischen Maßnahmen, zu den Unterauftragsverarbeitern und zur Leistungsbeschreibung.
+
+| Schritt | Was passiert |
+|---|---|
+| Veröffentlichen | der Plattformbetreiber veröffentlicht eine Fassung und setzt für eine neue Fassung eine Frist zur Unterschrift |
+| Unterschreiben oder weiterleiten | eine Verwaltende des Trägers unterschreibt oder leitet einen Einmal-Link an die zeichnungsberechtigte Person weiter |
+| Stand verfolgen | die Verwaltung zeigt: nicht unterschrieben · weitergeleitet und wartend · unterschrieben · ältere Fassung unterschrieben |
+| Bestätigung | nach der Unterschrift geht eine Bestätigung per E-Mail hinaus |
+| Neue Fassung | jede neue Fassung wird erneut unterschrieben; bis zur Frist arbeitet der Träger normal weiter |
+
+<Callout>
+Läuft die Frist ohne Unterschrift ab, werden nur **neue** Beratungen gesperrt. Laufende Gespräche,
+Anmeldungen bestehender Ratsuchender und der Zugang zu bisherigen Verläufen werden nie unterbrochen.
+Durchsetzung des Datenschutzes darf die Menschen nicht gefährden, die er schützen soll.
+</Callout>
+
+## 4.10.5 Wer was tut
+
+| Rolle | Kann |
+|---|---|
+| **Plattformbetreiber** | pflegt Vorlagen und die eigenen Texte der Plattform; veröffentlicht Fassungen der Vertragsunterlagen und Fristen |
+| **Verwaltende des Trägers** | übernehmen oder passen Vorlagen an; geben sie an ihre Beratungsstellen weiter; unterschreiben die Vertragsunterlagen oder leiten sie weiter |
+| **Zeichnungsberechtigte Person** | öffnet den weitergeleiteten Link und unterschreibt, ohne ein ORISO-Konto zu brauchen |
+| **Leitung der Beratungsstelle** | übernimmt die Texte des Trägers, ergänzt örtliche Angaben, veröffentlicht Texte je Fachbereich |
+| **Ratsuchende** | lesen die geltenden Texte und stimmen vor Beginn des Gesprächs zu |
+
+## 4.10.6 Stand der Entwicklung
+
+| Teil | Stand |
+|---|---|
+| Textfelder für Impressum, Datenschutz und Nutzungsbedingungen je Träger | gab es schon vor ORISO |
+| Ablauf der Vertragsunterlagen (unterschreiben, Stand) | mit CAR-13 beauftragt und gebaut |
+| Weiterleitung an die zeichnungsberechtigte Person, erneute Bestätigung neuer Fassungen, Frist zur Unterschrift | gebaut |
+| Vorlagen von der Plattform über den Träger an die Beratungsstelle, Vergleich, Versionen | gebaut |
+| Freigabe je Gespräch (für welche Version ein Gespräch freigegeben ist) | gebaut |
+| Hinweis im Chat, wenn eine Beratungsstelle eine neue Version veröffentlicht; Ja/Nein-Zustimmung bei wesentlichen Änderungen | entschieden ([ADR-022](/de/decisions/adr-022), Entscheidungen 4 und 5), im Code noch nicht gefunden |
+
+## 4.10.7 Verwandte Seiten
+
+- [Rechtstexte: Hierarchie, Versionen, Einwilligungstext (ADR-021)](/de/decisions/adr-021)
+- [Einwilligung und erneute Einwilligung im Gespräch (ADR-022)](/de/decisions/adr-022)
+- [Plattformvertrag und Steuerung durch Träger (ADR-023)](/de/decisions/adr-023)
+- [Fachbereich mit Impressum und Datenschutz (ADR-003)](/de/decisions/adr-003)
+- [Gemeinsame Rechtstexte, Thema vor Einwilligung (ADR-014)](/de/decisions/adr-014)
+- [Einladungen und Einrichtung](/de/produkt/core-features/invitations-onboarding) — der Träger-Assistent enthält die Vertragsunterlagen.
+- Storybook Verwaltung: [Vertragsunterlagen](https://dev.oriso.org/storybook-admin/?path=/story/organisms-legal-dataprocessingagreementcontainer--platform-admin) ·
+  [Weiterleiten](https://dev.oriso.org/storybook-admin/?path=/story/organisms-dpaforwarddialog--default) ·
+  [Empfangene Vorlage (Träger)](https://dev.oriso.org/storybook-admin/?path=/story/organisms-legal-legaltext-received-template-tr%C3%A4ger--traeger-with-new-template) ·
+  [Versionen und Einwilligung](https://dev.oriso.org/storybook-admin/?path=/story/organisms-legal-departmentdataprotectioncard-versions-consent--with-version-history)
+- Storybook Beratungs-App: [Einwilligung vor der ersten Nachricht](https://dev.oriso.org/storybook-frontend/?path=/docs/components-dialog-anonymousconsentgate--docs) ·
+  [Seite zum Unterschreiben](https://dev.oriso.org/storybook-frontend/?path=/docs/pages-dpasign--docs)

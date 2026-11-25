@@ -1,200 +1,101 @@
 ---
-title: "4.2 Live-Chat"
-description: "Der vollständige Ablauf des anonymen ORISO-Live-Chats: Aktivierung, Warteraum und Einwilligung, Übernahme durch Beratende und verschlüsselte Sitzung."
+title: "4.2 Live-Chat — anonym, ohne Konto"
+description: "Wie eine Person ohne Konto einen anonymen Live-Chat beginnt: Thema und Pseudonym, der Warteraum mit Position in der Warteschlange, die zwei Einwilligungen, die beratende Person, die annimmt, die Erstantwort in der eigenen Sprache und wann alles gelöscht wird."
 ---
 
-<Info>
-Live-Chat ist die **zentrale Funktion** von ORISO. Der Großteil des Systems dient dazu, ihn sicher, anonym und in größerem Maßstab zu ermöglichen.
-</Info>
+Manche Menschen schreiben nur, wenn sie ihren Namen nicht nennen müssen. Der Live-Chat lässt eine
+Person sofort mit einer beratenden Person sprechen, anonym und ohne Registrierung. Sie wählt ein
+Thema, bekommt ein Pseudonym, wartet in einem Warteraum, der ihren Platz in der Warteschlange zeigt,
+und wird von der nächsten verfügbaren beratenden Person angenommen. Danach wird der anonyme Zugang
+abgeschaltet und gelöscht.
 
-## 4.2.1 Was Live-Chat ist
+Diese Seite beschreibt, **was** die Funktion tut. Sie richtet sich an Beratende, Leitungen von
+Beratungsstellen und Datenschutzbeauftragte.
 
-Ein anonymer Echtzeit-Textchat ohne Registrierung zwischen einer **ratsuchenden Person in Not** und **verfügbaren Beratenden** einer Beratungsstelle. Optional zu einem Videoanruf erweiterbar (LiveKit). Die Sitzung ist Ende-zu-Ende-verschlüsselt und wird unmittelbar nach Gesprächsende bereinigt.
+## 4.2.1 Das kann ich damit machen
 
-Das Produkt unterscheidet Live-Chat vom älteren **Anfrage-Chat** (PLZ-basiert, registriert, asynchron) — beide Abläufe existieren im Code, Live-Chat ist jedoch der moderne Weg mit Vorrang für Anonymität.
+Als ratsuchende Person:
 
-<Note>
-**Live-Chat ist der Einstieg als Einzelgespräch**, aber eine Sitzung bleibt nicht dauerhaft zu zweit. Beratende können im aktiven Raum **Weitere Personen einladen** (`⇧I`) anklicken, um Kolleginnen und Kollegen, Supervision oder weitere Ratsuchende hinzuzufügen — der Raum wird dann zum [Gruppenchat](/product/features/group-chats). Die Figma-Ausgabe vom Mai 2026 bestätigt außerdem, dass **Videoanrufe** (LiveKit) in denselben Raum eingebettet werden, statt eine getrennte Sitzung zu erzeugen.
-</Note>
+- ohne Konto einen Chat beginnen und sehen, wie viele Menschen vor mir warten
+- im Warteraum eine kurze Atemübung machen und lesen, wie der Chat abläuft
+- vor dem Chat ein Pseudonym mit Tier-Avatar sehen und bestätigen
+- sofort eine Erstantwort bekommen, in meiner eigenen Sprache
+- die Warteschlange jederzeit verlassen; mein Zugang wird dann abgeschaltet
 
-## 4.2.2 Aktivierung
+Als beratende Person:
 
-Zwei Aktivierungen müssen vorliegen, damit Ratsuchende den Live-Chat mit echten Beratenden betreten können:
+- meine Verfügbarkeit selbst ein- und ausschalten; der Warteraum zeigt nie, wer verfügbar ist
+- die nächste Person aus der Warteschlange annehmen und in einem Ende-zu-Ende-verschlüsselten Raum
+  sprechen
 
-### A. **Aktivierung der Beratungsstelle** (Administration)
+Als Träger:
 
-- Beratungsstellen-Admins (oder Träger-Admins) öffnen den Adminbereich.
-- Erzeugen einen **Live-Chat-Link** für die Beratungsstelle mit optionalem **Themenparameter** (z. B. `?topic=debt`).
-- Setzen den Schalter **Live-Chat aktiviert** der Beratungsstelle.
+- Live-Chat für jedes Themengebiet anbieten, über Links, die in der Verwaltung erstellt werden
+- festlegen, in welchen Gesprächsarten Anrufe, Uploads und andere Funktionen erlaubt sind, siehe
+  [Funktionsfreigaben](/product/features/feature-permissions)
 
-### B. **Aktivierung der Beratungsperson** (je Person)
+## 4.2.2 Der Weg durch den Chat
 
-- Die Beratungsperson meldet sich im Adminbereich an.
-- Schaltet persönlich **Live-Chat: AN**.
-- Ist nun in der Live-Chat-Ticketwarteschlange ihrer Beratungsstelle sichtbar.
+| Schritt | Was passiert |
+|---|---|
+| **Eingang** | die Person öffnet einen Live-Chat-Link, wählt ein Thema und erhält ein erzeugtes Pseudonym |
+| **Einwilligung 1** | Zustimmung zur Datenschutzerklärung der Plattform (oder des Trägers, wenn der Link schon zu einem gehört) |
+| **Warteraum** | Position in der Warteschlange, Atemübung, Erklärung des Chats; die Verfügbarkeit der Beratenden wird nicht gezeigt |
+| **Angenommen** | eine beratende Person nimmt die Person an; erst jetzt ist eine Beratungsstelle zuständig |
+| **Einwilligung 2** | im Raum, vor der ersten Nachricht: Zustimmung zum Text der Beratungsstelle |
+| **Gespräch** | Ende-zu-Ende-verschlüsselter Chat; die Erstantwort erscheint als kurze Folge von Nachrichten |
+| **Ende** | die Person oder die beratende Person beendet den Chat; der anonyme Zugang wird abgeschaltet |
 
-<Note>
-**Wichtige UX-Regel** (Gespräch vom 2026-05-05): Wenn Beratende auf **Live-Chat: AUS** schalten, muss der Live-Chat-Bereich **sichtbar, aber deaktiviert bleiben**, mit Hinweis zur erneuten Aktivierung. Er darf **nicht** aus der Navigation verschwinden. Dies verhindert die in früheren Versionen entstandene Verwirrung „Eine Funktion ist verschwunden“.
-</Note>
+Es gibt zwei Einwilligungen, weil zwei verschiedene Stellen verantwortlich sind. Im Warteraum ist noch
+keine Beratungsstelle zugeordnet; es kann nur der Text der Plattform (oder des Trägers) gelten. Der
+Text der Beratungsstelle gilt, sobald eine beratende Person die Person angenommen hat. Siehe
+[Rechtstexte](/product/features/legal-texts).
 
-## 4.2.3 Echtzeitablauf (Schritt für Schritt)
+## 4.2.3 Die Erstantwort
 
-```mermaid
-sequenceDiagram
-  autonumber
-  participant Cl as Client
-  participant FE as ORISO-Frontend
-  participant US as UserService
-  participant AS as AgencyService
-  participant KC as Keycloak
-  participant MX as Matrix Synapse
-  participant Co as Counselor
+Hat eine Person geschrieben, bekommt sie sofort eine Erstantwort in ihrer Sprache: wie es weitergeht,
+dass sie keine persönlichen Daten schicken soll, Notrufnummern und — wo es passt — das Angebot, ihren
+Zugang zu speichern oder eine E-Mail-Adresse zu hinterlassen. Die Reihenfolge legt die Plattform
+fest; ein Träger kann eigene Worte ergänzen. Die Antwort wird einmal als ein Ereignis gespeichert und
+lässt sich so später genau so zeigen, wie sie gesagt wurde. Sie kommt von der Plattform, nicht von
+einer Person oder einem Bot im Raum; dem verschlüsselten Gespräch wird keine weitere lesende Stelle
+hinzugefügt.
 
-  Cl->>FE: Open live-chat link (agency + topic)
-  FE->>AS: Resolve agency + topic
-  AS-->>FE: Active counselors, live-chat enabled?
-  alt live-chat disabled
-    FE-->>Cl: Show "currently unavailable" + opt to file an enquiry
-  else live-chat enabled
-    FE->>US: POST /live-chat/anonymous
-    US->>KC: Create anonymous user, role=anonymous
-    KC-->>US: token + pseudonym
-    US-->>FE: cookie session, ticket id, queue position
-    FE-->>Cl: Render Waiting Room (queue pos, GDPR popup #1, breathing-game animation)
-    Note over Cl,US: Client may leave at any time → wipe job
-  end
+## 4.2.4 Anonymität und Löschung
 
-  loop until accepted
-    FE->>US: GET /live-chat/queue/{ticketId} (heartbeat)
-    US-->>FE: queue position, ETA hint
-  end
+Die Person ist anonym bis zum Eintritt in den Chat: Der Anzeigename wird erzeugt und lässt sich nicht
+ändern, das Passwort ebenfalls. Was sie danach schreibt, liegt bei ihr.
 
-  Co->>FE: Accept oldest ticket
-  FE->>US: POST /live-chat/accept?ticketId
-  US->>MX: Create encrypted room, invite Cl + Co
-  US-->>FE: Room id, push consent prompt
-  FE-->>Cl: Show GDPR consent popup #2 (counseling-center version)
-  Cl->>FE: Click "Bestätigen"
-  FE->>US: POST /live-chat/consent
-  US-->>Co: Ticket promoted to active session
-  Cl<<->>MX: E2EE chat
-  Co<<->>MX: E2EE chat
-  alt client leaves
-    Cl->>FE: Close tab
-    FE->>US: DELETE /live-chat/session
-    US->>MX: Tombstone room
-    US->>KC: Wipe anonymous user
-  else counselor ends
-    Co->>FE: End session
-    FE->>US: POST /live-chat/end
-    US->>MX: Schedule purge in 48 h
-  end
-```
+| Was | Wann |
+|---|---|
+| Gespräch beendet und anonymer Zugang abgeschaltet | sofort, wenn die Person geht, oder nach 6 Stunden ohne jede Aktivität |
+| anonymes Konto und Gespräch gelöscht | 47 Stunden nach der letzten Aktivität eines beendeten Gesprächs (je Installation einstellbar) |
 
-## 4.2.4 Interaktion nach Rolle
+Das Angebot nannte 3 Stunden bis zur Löschung; eingestellt sind derzeit 47 Stunden. Die endgültige
+Frist ist noch mit der Caritas abzustimmen.
 
-### Ratsuchende (anonym)
+## 4.2.5 Stand der Entwicklung
 
-- Rufen den Live-Chat-Link auf.
-- Erhalten automatisch ein **Pseudonym** (z. B. *„geschmeidiges Kanninchen Kim“* — eine deutsche Tier-Adjektiv-Kombination).
-- Sehen den **Warteraum** mit Warteschlangenposition („23 Noch vor Ihnen“), einer animierten Atemspiel-Ablenkung und einem Banner: *„Nachrichten sind Ende-zu-Ende-verschlüsselt und werden nach 48 Stunden automatisch gelöscht“*.
-- Erhalten das **erste DSGVO-Popup** („Bestätigen“) zur allgemeinen Datenrichtlinie der Plattform.
-- Nach Übernahme durch Beratende sehen sie das **zweite DSGVO-Popup** mit den Bedingungen der jeweiligen Beratungsstelle.
-- Nach Einwilligung öffnet sich der Chat.
+| Teil | Stand |
+|---|---|
+| Live-Chat mit Verfügbarkeit, automatisch erzeugte Namen, Einwilligung im Warteraum | gab es schon vor ORISO |
+| Warteschlange mit Positionsanzeige, Annahme durch Beratende, automatisches Löschen | mit CAR-02 beauftragt und gebaut |
+| Exakte Warteschlange über mehrere Server, Live-Chat für jedes Themengebiet | gebaut |
+| Warteraum mit Atemübung; Pseudonym mit Tier-Avatar | gebaut |
+| Erstantwort in mehreren Sprachen | gebaut |
+| Umwandlung eines anonymen Chats in ein Konto | mit CAR-02 beauftragt, offen — Umfang noch zu klären |
+| Bot-Schutz am anonymen Eingang | geplant (CAR-15), nicht gebaut |
 
-### Beratende
+## 4.2.6 Verwandte Seiten
 
-- Sehen eine **Ticketwarteschlange** im Live-Chat-Tab, **älteste zuerst** (bewusst — priorisiert die am längsten wartende Person).
-- Jedes Ticket zeigt Pseudonym, „Vor N Minuten beigetreten“, Thema.
-- Wählen ein beliebiges sichtbares Ticket (bewusst keine automatische Zuweisung — um spätere PLZ-Berücksichtigung zu ermöglichen).
-- Sehen den geöffneten Chatraum mit Systemnachricht „DSGVO-Einwilligung der ratsuchenden Person ausstehend“.
-- Nach Bestätigung wird der vollständige Chat freigeschaltet.
-
-### Beratungsstellen-Admins (Leitung)
-
-- Beobachten gesamte Warteschlangengröße und aktive Beratende der Stelle.
-- Können deren Live-Chat-Schalter umstellen.
-- Konfigurieren den Live-Chat-Link (Thema und linkbezogene Überschreibung).
-
-### Plattform-/Träger-Admins
-
-- Können keine Ticketinhalte sehen.
-- Sehen zusammengefasste Metriken (Anzahl Wartender, durchschnittliche Wartezeit).
-- Legen Vorlagen für Rechtstexte fest, die entlang der Vererbungskette weitergegeben werden.
-
-## 4.2.5 Die zwei DSGVO-Einwilligungen (warum zwei?)
-
-Dies ist **das** Detail, das Frank im Gespräch betont hat. Es gibt **zwei** Einwilligungszeitpunkte, weil sie **zwei** unterschiedliche Datenbereiche abdecken:
-
-| Zeitpunkt | Abdeckung | Verantwortlich | Umfang erhobener Daten |
-|---|---|---|---|
-| **Nr. 1 — beim Betreten des Warteraums** | Allgemeine Datenrichtlinie und Impressum der Plattform | Plattform-Admins | Pseudonym, Cookie, Warteschlangenzähler, optional Thema und PLZ |
-| **Nr. 2 — bei Übernahme durch Beratende** | DSGVO-Vereinbarung der **Beratungsstelle** | Beratungsstellen-Admins / vom Träger / von der Plattform geerbt | Alles, was Ratsuchende und Beratende im Chat austauschen |
-
-Lehnen Ratsuchende Nr. 2 ab, öffnet sich der Chat **niemals** — Beratende erhalten „Ratsuchende haben abgelehnt“ und das Pseudonym wird gelöscht.
-
-## 4.2.6 Backend-Logik (aus Code und Gespräch abgeleitet)
-
-Routen (UserService, REST):
-
-```
-POST   /live-chat/anonymous         create pseudonymous user + ticket
-GET    /live-chat/queue/{ticketId}  long-poll / WS heartbeat
-POST   /live-chat/accept            counselor accepts ticket
-POST   /live-chat/consent           client confirms GDPR #2
-POST   /live-chat/end               either side closes
-DELETE /live-chat/session           explicit teardown + wipe
-```
-
-Zustandsautomat eines Tickets:
-
-```mermaid
-stateDiagram-v2
-  [*] --> Waiting
-  Waiting --> Accepted: counselor.pick
-  Accepted --> Consented: client.confirms_gdpr
-  Consented --> Active: room ready, both joined
-  Active --> Ended: either party closes
-  Waiting --> Abandoned: client closes / heartbeat lost
-  Ended --> Wiped: scheduled cleanup
-  Abandoned --> Wiped: immediate cleanup
-  Wiped --> [*]
-```
-
-Nebenwirkungen bei Zustandswechsel:
-
-- `Waiting → Abandoned`: Keycloak-Person gelöscht; Ticketzeile gelöscht; Cookie ungültig.
-- `Active → Ended`: Matrix-Raum bleibt für ≤ 48 Stunden und wird dann gelöscht; Sitzungsmetadaten anonymisiert.
-- Beliebig → `Wiped`: Pseudonym aus allen Speichern entfernt; nur eine nicht aussagekräftige, nicht identifizierende session_id darf für Prüfzwecke bleiben.
-
-## 4.2.7 Sonderfälle (live-chatspezifisch)
-
-- **Beratende gehen während Übernahme offline** → Ticket nach Heartbeat-Zeitüberschreitung automatisch zurück in Warteschlange.
-- **Beratende nehmen an, aber Tab der Ratsuchenden ist weg** → System wiederholt Einwilligungsabfrage mit Zeitlimit; bei Ablauf kehrt Ticket in Warteschlange zurück und ratsuchende Person wird gelöscht.
-- **Mehrere Beratende nehmen gleichzeitig an** → AgencyService verwendet Zeilensperre; zweiter Klick zeigt „bereits übernommen“.
-- **Live-Chat-Link für deaktivierte Beratungsstelle erzeugt** → Freundliche Seite „derzeit nicht verfügbar“ mit alternativer Anfragemöglichkeit.
-- **Thema im Link fehlt** → Rückfall auf allgemeine Warteschlange der Beratungsstelle (beliebiges Thema).
-- **Browserspracherkennung** → Beim ersten Anzeigen lädt die Oberfläche die bevorzugte Browsersprache; Rückfall ist Englisch (nicht Deutsch). Franks ausdrückliche Anforderung.
-
-Der vollständige Katalog steht unter [Sonderfälle](/product/edge-cases).
-
-## 4.2.8 Fehlmuster (was ORISO nicht tun darf)
-
-- ❌ Ratsuchende automatisch den nächsten Beratenden in der Warteschlange zuweisen (verliert PLZ-/Themenflexibilität).
-- ❌ Live-Chat-Bereich bei Ausschalten ausblenden (stattdessen *deaktivierten Zustand* verwenden).
-- ❌ IP-Adressen Ratsuchender in Protokolle oder Datenbank schreiben.
-- ❌ Nicht angenommene Tickets unbegrenzt behalten (war ein echter Fehler — Ratsuchende sammelten sich dauerhaft an).
-- ❌ Einwilligung Nr. 2 überspringen, weil Nr. 1 erteilt wurde.
-- ❌ Live-Chat im Entwicklungsmodus wieder online bringen.
-
-## 4.2.9 Verwandte Seiten
-
-- [Gruppenchats und Versand an mehrere Empfänger (4.5)](/product/features/group-chats) — was aus einem Einzelchat nach `Invite more people` wird.
-- [KI-Werkzeuge (4.6)](/product/features/ai-tools) — Markierung, Unkenntlichmachung, Zusammenfassung im Chat.
-- [Fallübergabe (4.7)](/product/features/handover) — diesen Chat an andere Beratende übergeben.
-- [Benachrichtigungen und Hilfsanfragen (4.8)](/product/features/notifications) — Eskalation aus dem Chat.
-- [Pincode-basierter Chat und Zugang](/product/features/pincode-chat)
-- [Sitzungsverwaltung](/product/features/session-management)
-- [Nutzungsablauf: Live-Chat-Aktivierung](/product/user-flows#5-5-live-chat-activation)
-- [UI/UX-Auslegung](/product/ui-ux)
-- [Figma-Analyse (Mai 2026)](/product/figma-analysis-2026-05)
+- [Pincode-basierter Chat und Zugang](/product/features/pincode-chat) — die Links, die in den Live-Chat führen.
+- [Sitzungsverwaltung](/product/features/session-management) — was nach der Annahme passiert.
+- [Live-Chat: Verfügbarkeit und Erreichbarkeit (ADR-007)](/oriso-platform/decisions/ADR-007-live-chat-availability-and-liveness)
+- [Erstantwort als ein gespeichertes Ereignis (ADR-018)](/oriso-platform/decisions/ADR-018-erstantwort-as-one-persisted-event-rendered-as-carimat-bubbles)
+- [Einwilligung und erneute Einwilligung im Gespräch (ADR-022)](/oriso-platform/decisions/ADR-022-consent-gates-and-re-consent-in-counselling-sessions)
+- Storybook Beratungs-App: [Eingangsraum](https://dev.oriso.org/storybook-frontend/?path=/docs/live-chat-entry-room--docs) ·
+  [Alle Eingänge](https://dev.oriso.org/storybook-frontend/?path=/docs/live-chat-all-entry-flows--docs) ·
+  [Einwilligung vor der ersten Nachricht](https://dev.oriso.org/storybook-frontend/?path=/docs/components-dialog-anonymousconsentgate--docs) ·
+  [Erstantwort](https://dev.oriso.org/storybook-frontend/?path=/docs/components-chat-erstantwort--docs) ·
+  [Tier-Avatar](https://dev.oriso.org/storybook-frontend/?path=/docs/pseudonym-atoms-animalavatar--docs) ·
+  [Warteschlange verlassen](https://dev.oriso.org/storybook-frontend/?path=/docs/components-dialog-leavequeuedialog--docs)

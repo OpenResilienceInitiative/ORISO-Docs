@@ -1160,13 +1160,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md",
-          "sourceHash": "d7d5b0646f752e26a97ecc1027bf16168a0b084aeb28d4c63f44d39b9e2912e9",
-          "reviewedAt": "2026-10-28"
+          "sourceHash": "83783d084cee7626fe5032fb6e7319def0f709213fdce59a9ea3075f6b41d216",
+          "reviewedAt": "2026-11-23"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/ADR-016-team-besprechung-side-room-hard-close-at-accept.md",
-          "sourceHash": "d7d5b0646f752e26a97ecc1027bf16168a0b084aeb28d4c63f44d39b9e2912e9",
-          "reviewedAt": "2026-10-28"
+          "sourceHash": "83783d084cee7626fe5032fb6e7319def0f709213fdce59a9ea3075f6b41d216",
+          "reviewedAt": "2026-11-23"
         }
       }
     },
@@ -1413,13 +1413,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/README.md",
-          "sourceHash": "c06268ac65695cebc1b471df0476f92eea8e2624fe2f9df9a942e86844c48fb1",
-          "reviewedAt": "2026-11-17"
+          "sourceHash": "31c9ae5a8cfdc49f0bce1fd8e4534e39f9e1a76b76f41ec64f890ef7b48d7fe4",
+          "reviewedAt": "2026-11-22"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/README.md",
-          "sourceHash": "c06268ac65695cebc1b471df0476f92eea8e2624fe2f9df9a942e86844c48fb1",
-          "reviewedAt": "2026-11-17"
+          "sourceHash": "31c9ae5a8cfdc49f0bce1fd8e4534e39f9e1a76b76f41ec64f890ef7b48d7fe4",
+          "reviewedAt": "2026-11-22"
         }
       }
     },
@@ -2110,13 +2110,13 @@
       "translations": {
         "en": {
           "path": "site/translations/en/product/features/live-chat.mdx",
-          "sourceHash": "3d7f5e56bda0d596c9bd4dcb898b67c8df5aaf0a16db52f8581ed34d603d0cb5",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "164130c23b6196fc8620d4d6c1616373335114788f72eb17606e27e3c08e87f2",
+          "reviewedAt": "2026-10-22"
         },
         "de": {
           "path": "site/translations/de/product/features/live-chat.mdx",
-          "sourceHash": "3d7f5e56bda0d596c9bd4dcb898b67c8df5aaf0a16db52f8581ed34d603d0cb5",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "164130c23b6196fc8620d4d6c1616373335114788f72eb17606e27e3c08e87f2",
+          "reviewedAt": "2026-10-22"
         }
       }
     },
@@ -2134,13 +2134,13 @@
       "translations": {
         "en": {
           "path": "site/translations/en/product/features/notifications.mdx",
-          "sourceHash": "ca5b1a0990ee52baed9f1515eaf2e03663bf9eb8dfd84f35114a4d5433319029",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "2443b187b68f6627a76e5c2071d35edfd16fb99665b4af441f2506a77ec2632b",
+          "reviewedAt": "2026-10-22"
         },
         "de": {
           "path": "site/translations/de/product/features/notifications.mdx",
-          "sourceHash": "ca5b1a0990ee52baed9f1515eaf2e03663bf9eb8dfd84f35114a4d5433319029",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "2443b187b68f6627a76e5c2071d35edfd16fb99665b4af441f2506a77ec2632b",
+          "reviewedAt": "2026-10-22"
         }
       }
     },
@@ -2448,6 +2448,150 @@
           "path": "site/translations/en/docs/platform/dpia-publication.md",
           "sourceHash": "cf1df70b2ec9ae6efa8e04f68fc7086633f296354bd24c522c92642f9485fc93",
           "reviewedAt": "2026-09-30"
+        }
+      }
+    },
+    {
+      "id": "product/features/legal-texts",
+      "source": "product/features/legal-texts.mdx",
+      "route": "produkt/core-features/legal-texts",
+      "aliases": [
+        "product/features/legal-texts",
+        "product/features/legal-texts.md",
+        "product/features/legal-texts.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/product/features/legal-texts.mdx",
+          "sourceHash": "4b56d066ec996568b7bb6b3fa48a35323eee6b25d85f99de11cc6c3e505220b0",
+          "reviewedAt": "2026-10-22"
+        },
+        "de": {
+          "path": "site/translations/de/product/features/legal-texts.mdx",
+          "sourceHash": "4b56d066ec996568b7bb6b3fa48a35323eee6b25d85f99de11cc6c3e505220b0",
+          "reviewedAt": "2026-10-22"
+        }
+      }
+    },
+    {
+      "id": "product/features/feature-permissions",
+      "source": "product/features/feature-permissions.mdx",
+      "route": "produkt/core-features/feature-permissions",
+      "aliases": [
+        "product/features/feature-permissions",
+        "product/features/feature-permissions.md",
+        "product/features/feature-permissions.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/product/features/feature-permissions.mdx",
+          "sourceHash": "de755c569be495b27b0dc714a55b8b8ae04a16dd50aff2ad0631067ba3ead755",
+          "reviewedAt": "2026-10-22"
+        },
+        "de": {
+          "path": "site/translations/de/product/features/feature-permissions.mdx",
+          "sourceHash": "de755c569be495b27b0dc714a55b8b8ae04a16dd50aff2ad0631067ba3ead755",
+          "reviewedAt": "2026-10-22"
+        }
+      }
+    },
+    {
+      "id": "product/features/invitations-onboarding",
+      "source": "product/features/invitations-onboarding.mdx",
+      "route": "produkt/core-features/invitations-onboarding",
+      "aliases": [
+        "product/features/invitations-onboarding",
+        "product/features/invitations-onboarding.md",
+        "product/features/invitations-onboarding.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/product/features/invitations-onboarding.mdx",
+          "sourceHash": "31fee1d28c165ed7a0640ed4521fa24394feade484f067e8e6d2dbb5857a8564",
+          "reviewedAt": "2026-10-22"
+        },
+        "de": {
+          "path": "site/translations/de/product/features/invitations-onboarding.mdx",
+          "sourceHash": "31fee1d28c165ed7a0640ed4521fa24394feade484f067e8e6d2dbb5857a8564",
+          "reviewedAt": "2026-10-22"
+        }
+      }
+    },
+    {
+      "id": "product/features/team-consultation",
+      "source": "product/features/team-consultation.mdx",
+      "route": "produkt/core-features/team-consultation",
+      "aliases": [
+        "product/features/team-consultation",
+        "product/features/team-consultation.md",
+        "product/features/team-consultation.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/product/features/team-consultation.mdx",
+          "sourceHash": "04f0db507ebd5f22967806b603f84374b673d64eb8eef084387c2f2cc4fe53d2",
+          "reviewedAt": "2026-10-22"
+        },
+        "de": {
+          "path": "site/translations/de/product/features/team-consultation.mdx",
+          "sourceHash": "04f0db507ebd5f22967806b603f84374b673d64eb8eef084387c2f2cc4fe53d2",
+          "reviewedAt": "2026-10-22"
+        }
+      }
+    },
+    {
+      "id": "product/features/training-tours",
+      "source": "product/features/training-tours.mdx",
+      "route": "produkt/core-features/training-tours",
+      "aliases": [
+        "product/features/training-tours",
+        "product/features/training-tours.md",
+        "product/features/training-tours.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/product/features/training-tours.mdx",
+          "sourceHash": "71e05bb3ceb4d578cd4539c5c8a5b5ab8fcbff707f783f652849cf4e0f7d0ee5",
+          "reviewedAt": "2026-10-22"
+        },
+        "de": {
+          "path": "site/translations/de/product/features/training-tours.mdx",
+          "sourceHash": "71e05bb3ceb4d578cd4539c5c8a5b5ab8fcbff707f783f652849cf4e0f7d0ee5",
+          "reviewedAt": "2026-10-22"
+        }
+      }
+    },
+    {
+      "id": "product/features/encryption-keys",
+      "source": "product/features/encryption-keys.mdx",
+      "route": "produkt/core-features/encryption-keys",
+      "aliases": [
+        "product/features/encryption-keys",
+        "product/features/encryption-keys.md",
+        "product/features/encryption-keys.mdx"
+      ],
+      "owner": "ORISO-Docs",
+      "lifecycle": "current",
+      "translations": {
+        "en": {
+          "path": "site/translations/en/product/features/encryption-keys.mdx",
+          "sourceHash": "c7a73ae6eae62abd5867b74669e12019b9ca577799c31b664ef32303d02dce33",
+          "reviewedAt": "2026-10-22"
+        },
+        "de": {
+          "path": "site/translations/de/product/features/encryption-keys.mdx",
+          "sourceHash": "c7a73ae6eae62abd5867b74669e12019b9ca577799c31b664ef32303d02dce33",
+          "reviewedAt": "2026-10-22"
         }
       }
     }
