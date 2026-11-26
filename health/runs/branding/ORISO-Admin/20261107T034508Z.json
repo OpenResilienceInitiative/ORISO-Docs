@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 1,
+  "run": {
+    "schemaVersion": 1,
+    "runId": "20261107T034508Z-63887871",
+    "generatedAt": "2026-11-07T03:45:08Z",
+    "commits": {
+      "ORISO-Admin": "51700eb61d1e2a42b1b52b8fb6c98195299ff708"
+    },
+    "trigger": "health-run"
+  },
+  "scope": {
+    "capability": "branding",
+    "repo": "ORISO-Admin",
+    "path": null
+  },
+  "commit": "51700eb61d1e2a42b1b52b8fb6c98195299ff708",
+  "criteriaVersion": "272b25a9e1c05f2f07941924ddce752d7820cae5a14de6d9282f39443fb80127",
+  "model": null,
+  "startedAt": "2026-11-07T03:45:08Z",
+  "metrics": [
+    {
+      "name": "crap",
+      "status": "not-available",
+      "value": null,
+      "threshold": 30,
+      "better": "lower",
+      "unit": "CRAP score per function",
+      "weight": 3,
+      "pass": null,
+      "score": null,
+      "source": "health-run crap: TypeScript AST complexity and line coverage from the given coverage file",
+      "details": {
+        "reason": "no coverage: pass a coverage file (lcov.info or coverage-final.json)",
+        "state": "no-coverage"
+      }
+    },
+    {
+      "name": "size",
+      "status": "measured",
+      "value": 354,
+      "threshold": 400,
+      "better": "lower",
+      "unit": "lines per file",
+      "weight": 1,
+      "pass": true,
+      "score": 100,
+      "source": "health-run size: lines of the largest production code file in scope (18 files)",
+      "details": {
+        "files": 18,
+        "largest": [
+          {
+            "file": "src/utils/theme/orisoScheme.ts",
+            "lines": 354
+          },
+          {
+            "file": "src/theme/appliedTokenInspection.ts",
+            "lines": 309
+          },
+          {
+            "file": "src/theme/AppliedTokenInspector.tsx",
+            "lines": 160
+          },
+          {
+            "file": "src/theme/antdM3Theme.ts",
+            "lines": 134
+          },
+          {
+            "file": "src/utils/theme/seedUsability.ts",
+            "lines": 126
+          }
+        ]
+      }
+    },
+    {
+      "name": "test-ratio",
+      "status": "measured",
+      "value": 0.38,
+      "threshold": 0.5,
+      "better": "higher",
+      "unit": "test lines per code line",
+      "weight": 2,
+      "pass": false,
+      "score": 76,
+      "source": "health-run test-ratio: test code lines / production code lines",
+      "details": {
+        "productionLines": 1694,
+        "testLines": 640
+      }
+    },
+    {
+      "name": "lint",
+      "status": "not-available",
+      "value": null,
+      "threshold": 0,
+      "better": "lower",
+      "unit": "findings",
+      "weight": 2,
+      "pass": null,
+      "score": null,
+      "source": "eslint --format json (the checkout's own configuration)",
+      "details": {
+        "reason": "not run in the scheduled workflow: the checkout's own eslint is never executed in the job that holds the model secret (run health-run.mjs run on a trusted checkout to score lint)",
+        "state": "ci-setup"
+      }
+    },
+    {
+      "name": "duplication",
+      "status": "measured",
+      "value": 0,
+      "threshold": 5,
+      "better": "lower",
+      "unit": "% duplicated lines",
+      "weight": 1,
+      "pass": true,
+      "score": 100,
+      "source": "health-run duplication: 50-token window hash over production code (18 files)",
+      "details": {
+        "windowTokens": 50,
+        "files": 18,
+        "codeLines": 1288,
+        "duplicatedLines": 0,
+        "worst": []
+      }
+    }
+  ],
+  "verdict": [],
+  "overall": 88,
+  "links": {
+    "graphNode": "capability:branding",
+    "source": "https://github.com/OpenResilienceInitiative/ORISO-Admin/tree/51700eb61d1e2a42b1b52b8fb6c98195299ff708"
+  },
+  "verdictStatus": "skipped",
+  "verdictNote": "HEALTH_MODEL_API_KEY is not set: metrics only",
+  "inputs": {
+    "criteria": "272b25a9e1c05f2f07941924ddce752d7820cae5a14de6d9282f39443fb80127",
+    "steering": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  }
+}
