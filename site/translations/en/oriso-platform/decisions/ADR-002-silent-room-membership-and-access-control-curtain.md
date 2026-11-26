@@ -282,3 +282,38 @@ save/reload, server enforcement and the corresponding form behavior must be deli
 Since Megolm ([ADR-004](ADR-004-chat-keep-custom-ui-adopt-matrix-sdk-megolm.md)) a person who joins a conversation later can read messages from their join onwards. Earlier history reaches them only through the history key transfer in ORISO-Frontend `src/services/matrixRoomHistoryKeyTransfer.ts` ([ORISO-Frontend#2072](https://github.com/OpenResilienceInitiative/ORISO-Frontend/pull/2072)): the person must be a joined member and request the keys with a written reason, and a person already in the room approves. The server-side Matrix history visibility of 1:1 rooms stays "shared"; the boundary is the encryption keys, not a room setting.
 
 This is what [ADR-033](ADR-033-direkteinladung-direct-invitation-with-optional-appointment.md) relies on when an invited guest joins an existing 1:1 conversation.
+
+## Amendment 2026-11-25 — three explanation levels per reason, default Off
+
+- **Status:** Accepted product decision — Frank, 2026-11-25. Technical review is pending.
+- **Changes:** the 2026-10-14 addendum above. Its boolean `explanationRequired` (default optional)
+  is replaced by three levels per reason, and the default becomes **Off**. Everything else in that
+  addendum (audit, privacy boundary, enforcement before Matrix side effects) stays in force.
+- **Delivery record:** [ORISO-Frontend#2040](https://github.com/OpenResilienceInitiative/ORISO-Frontend/issues/2040).
+
+The selected reason often already says enough, and no staff screen shows the typed text today (the
+Admin handover log has no column for it). Administrators therefore choose per reason whether the
+counsellor sees a text field at all:
+
+| Level | What the counsellor sees |
+| --- | --- |
+| **Off** (default) | No text field. The reason alone is enough. |
+| **Optional** | A field labelled optional; it may stay empty. |
+| **Required** | A field that must be filled in before sending. |
+
+The reason itself stays mandatory at every level. Reason and text field are shown on one screen.
+
+**For developers — the changed contract:**
+
+```text
+Per-reason explanationLevel: ExplanationLevelPermissionPolicy { value: OFF | OPTIONAL | REQUIRED, mode }.
+Default value OFF (SUGGESTED). Policies stored before this amendment carry no level and read as OFF.
+TenantService owns and resolves it through the platform-default / tenant-override cascade.
+UserService exposes the effective level as CaseHandoverReason.explanationLevel and enforces it for
+individual requests, batch requests and recipient offers:
+  REQUIRED  blank text is rejected before anything is saved or any Matrix side effect;
+  OPTIONAL  blank text is stored as the empty string;
+  OFF       submitted text is not stored (empty string).
+The request DTOs no longer carry @NotBlank on explanation; the level decides.
+A counselling-centre ("Beratungsstelle") level is not part of this amendment.
+```

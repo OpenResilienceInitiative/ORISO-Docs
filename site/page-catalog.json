@@ -838,13 +838,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/decisions/ADR-002-silent-room-membership-and-access-control-curtain.md",
-          "sourceHash": "de277fa51642e82467355b8bf34c26b31aacdb086f6e8a565c4a32924291c059",
-          "reviewedAt": "2026-11-14"
+          "sourceHash": "078ccb147a0f3c6728406765588a10515f1184afb364747991f4e3c07ea0926b",
+          "reviewedAt": "2026-11-26"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/decisions/ADR-002-silent-room-membership-and-access-control-curtain.md",
-          "sourceHash": "de277fa51642e82467355b8bf34c26b31aacdb086f6e8a565c4a32924291c059",
-          "reviewedAt": "2026-11-14"
+          "sourceHash": "078ccb147a0f3c6728406765588a10515f1184afb364747991f4e3c07ea0926b",
+          "reviewedAt": "2026-11-26"
         }
       }
     },

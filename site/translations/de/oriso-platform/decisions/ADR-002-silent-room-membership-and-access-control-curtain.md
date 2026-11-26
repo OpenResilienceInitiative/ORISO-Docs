@@ -164,3 +164,38 @@ Speichern und erneutes Laden der Richtlinie, serverseitige Durchsetzung und das 
 Seit Megolm ([ADR-004](ADR-004-chat-keep-custom-ui-adopt-matrix-sdk-megolm.md)) kann eine Person, die später in ein Gespräch einsteigt, Nachrichten ab ihrem Beitritt lesen. Früheren Verlauf erhält sie nur über die Verlaufsschlüssel-Übertragung in ORISO-Frontend `src/services/matrixRoomHistoryKeyTransfer.ts` ([ORISO-Frontend#2072](https://github.com/OpenResilienceInitiative/ORISO-Frontend/pull/2072)): Die Person muss beigetretenes Mitglied sein und die Schlüssel mit schriftlicher Begründung anfordern, und eine bereits im Raum befindliche Person genehmigt. Die serverseitige Matrix-Verlaufssichtbarkeit von 1:1-Räumen bleibt „shared“; die Grenze sind die Verschlüsselungsschlüssel, keine Raumeinstellung.
 
 Darauf stützt sich [ADR-033](ADR-033-direkteinladung-direct-invitation-with-optional-appointment.md), wenn ein eingeladener Gast einem bestehenden 1:1-Gespräch beitritt.
+
+## Nachtrag 2026-11-25 — drei Stufen für die Erläuterung je Grund, Standard Aus
+
+- **Status:** Angenommene Produktentscheidung — Frank, 2026-11-25. Die technische Prüfung steht noch aus.
+- **Ändert:** den Nachtrag vom 2026-10-14 oben. Dessen Schalter `explanationRequired` (Standard optional)
+  wird durch drei Stufen je Grund ersetzt, und der Standard wird **Aus**. Alles andere aus diesem
+  Nachtrag (Audit, Datenschutzgrenze, Prüfung vor Matrix-Nebenwirkungen) gilt weiter.
+- **Umsetzung:** [ORISO-Frontend#2040](https://github.com/OpenResilienceInitiative/ORISO-Frontend/issues/2040).
+
+Der gewählte Grund sagt oft schon genug, und heute zeigt kein Bildschirm für Mitarbeitende den
+eingegebenen Text (das Admin-Protokoll der Fallübergaben hat keine Spalte dafür). Administrator:innen
+legen deshalb je Grund fest, ob Berater:innen überhaupt ein Textfeld sehen:
+
+| Stufe | Was Berater:innen sehen |
+| --- | --- |
+| **Aus** (Standard) | Kein Textfeld. Der Grund allein genügt. |
+| **Freiwillig** | Ein als optional beschriftetes Feld; es darf leer bleiben. |
+| **Pflicht** | Ein Feld, das vor dem Senden ausgefüllt sein muss. |
+
+Der Grund selbst bleibt auf jeder Stufe Pflicht. Grund und Textfeld stehen auf einem Bildschirm.
+
+**Für Entwickler:innen — der geänderte Vertrag:**
+
+```text
+Per-reason explanationLevel: ExplanationLevelPermissionPolicy { value: OFF | OPTIONAL | REQUIRED, mode }.
+Default value OFF (SUGGESTED). Policies stored before this amendment carry no level and read as OFF.
+TenantService owns and resolves it through the platform-default / tenant-override cascade.
+UserService exposes the effective level as CaseHandoverReason.explanationLevel and enforces it for
+individual requests, batch requests and recipient offers:
+  REQUIRED  blank text is rejected before anything is saved or any Matrix side effect;
+  OPTIONAL  blank text is stored as the empty string;
+  OFF       submitted text is not stored (empty string).
+The request DTOs no longer carry @NotBlank on explanation; the level decides.
+A counselling-centre ("Beratungsstelle") level is not part of this amendment.
+```
