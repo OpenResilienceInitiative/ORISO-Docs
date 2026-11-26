@@ -92,10 +92,9 @@ External access is provided via Kubernetes Ingress:
 ## Data Architecture
 
 ### Database Management
-- **Schema Management:** Centralized in ORISO-Database repository
-- **Liquibase:** DISABLED in all services
-- **Migration:** Manual via ORISO-Database scripts
-- **Backup:** Automated via CronJobs
+- **Initialisation:** The current Helm chart creates empty MariaDB databases and grants. [Set up databases](/oriso-platform/setup-databases)
+- **Migrations:** The owning services maintain their Liquibase changelogs. The effective profile controls when Liquibase runs.
+- **Backup and restore:** The backup guide links maintained runbooks for the platform. [Configure backups](/oriso-platform/backup-configuration)
 
 ### Database Types
 - **MariaDB:** 7 databases for backend services
@@ -108,8 +107,8 @@ External access is provided via Kubernetes Ingress:
 
 1. **Helm Umbrella Chart:** Single deployment command for entire platform
 2. **Kubernetes DNS:** No hardcoded IPs, all service discovery via DNS
-3. **Centralized Schemas:** All database schemas in ORISO-Database repo
-4. **Liquibase Disabled:** Schemas managed separately, not by services
+3. **Helm initialisation:** The chart creates empty databases and grants.
+4. **Service-owned migrations:** The owning service maintains schema changes.
 5. **Ingress-Based Routing:** No manual Nginx configuration
 6. **TLS Automation:** Cert-Manager handles all SSL certificates
 

@@ -1,8 +1,6 @@
 {
   "title": "Konfiguration und Tests",
   "pages": [
-    "dns-ssl",
-    "post-deployment",
-    "verification-testing"
+    "post-deployment"
   ]
 }

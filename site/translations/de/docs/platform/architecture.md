@@ -86,9 +86,9 @@ Zwei Eigenschaften dieser Übersicht solltest du früh verstehen.
 | Schicht | Repositories | Inhalt |
 | --- | --- | --- |
 | UI | [ORISO-Frontend](https://github.com/OpenResilienceInitiative/ORISO-Frontend), [ORISO-Admin](https://github.com/OpenResilienceInitiative/ORISO-Admin) | React-Anwendungen, Routing, API-Clients, Storybook |
-| Identität | [ORISO-Keycloak](https://github.com/OpenResilienceInitiative/ORISO-Keycloak) | Realm, Clients, Rollen, Token-Ausgabe |
+| Identität | [Keycloak-Subchart von ORISO-Helm](/oriso-platform/configure-keycloak) | Realm, Clients, Rollen und Token-Ausstellung |
 | Services | [UserService](https://github.com/OpenResilienceInitiative/ORISO-UserService), [AgencyService](https://github.com/OpenResilienceInitiative/ORISO-AgencyService), [TenantService](https://github.com/OpenResilienceInitiative/ORISO-TenantService), [ConsultingTypeService](https://github.com/OpenResilienceInitiative/ORISO-ConsultingTypeService) | OpenAPI-Verträge, Controller, Fachlogik, Persistenz |
-| Daten | [ORISO-Database](https://github.com/OpenResilienceInitiative/ORISO-Database), und die mit dem Chart ausgelieferten Schemas | MariaDB-Schemas, MongoDB-Dokumente, Matrix-PostgreSQL |
+| Daten | [Initialisierung über ORISO-Helm und Migrationen der zuständigen Dienste](/oriso-platform/setup-databases) | MariaDB-Schemata, MongoDB-Dokumente, Matrix-PostgreSQL |
 | Laufzeit | [ORISO-Helm](https://github.com/OpenResilienceInitiative/ORISO-Helm) | Umbrella-Chart, Ingress, Secrets und alle Subcharts |
 
 ## Wo setze ich an?
@@ -101,7 +101,7 @@ Zwei Eigenschaften dieser Übersicht solltest du früh verstehen.
 | Wer einen Endpunkt aufrufen darf | die Sicherheitskonfiguration des Services — siehe [Authentifizierung und Keycloak](./authentication-and-keycloak.md) |
 | Zu welchem Mandanten eine Anfrage gehört | die Mandanten-Resolver — [`TenantResolverService`](https://github.com/OpenResilienceInitiative/ORISO-TenantService/blob/dev/src/main/java/com/vi/tenantservice/api/tenant/TenantResolverService.java#L23-L30) |
 | Eine Tabelle oder Spalte | den zuständigen Service, niemals das Schema eines anderen Services — siehe [Datenbank und Datenmodell](./database-and-data-model.md) |
-| Routing, Hostnamen, Secrets, Ressourcen | das Chart — [`ORISO-Helm`](https://github.com/OpenResilienceInitiative/ORISO-Helm), siehe [Kubernetes-Deployment](./kubernetes-deployment.md) |
+| Routing, Hostnamen, Secrets, Ressourcen | das Chart — [`ORISO-Helm`](https://github.com/OpenResilienceInitiative/ORISO-Helm), siehe [Kubernetes-Deployment](/docs/platform/kubernetes-deployment) |
 
 ## Regeln, die auch nach Refactorings gelten
 
@@ -118,4 +118,4 @@ Zwei Eigenschaften dieser Übersicht solltest du früh verstehen.
 - [Backend-Services](./backend-services.md)
 - [Authentifizierung und Keycloak](./authentication-and-keycloak.md)
 - [Datenbank und Datenmodell](./database-and-data-model.md)
-- [Kubernetes-Deployment](./kubernetes-deployment.md)
+- [Kubernetes-Deployment](/docs/platform/kubernetes-deployment)

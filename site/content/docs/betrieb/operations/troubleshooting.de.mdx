@@ -163,65 +163,15 @@ kubectl get svc -n caritas mongodb
 
 ### Fehler „HTTPS Required“
 
-<Callout type="warn">
-Dies bedeutet, dass HTTP-Zugriff nicht konfiguriert wurde. Dies ist ein entscheidender Konfigurationsschritt.
-</Callout>
-
-```bash
-# Run the configuration script
-cd ~/online-beratung/caritas-workspace/ORISO-Keycloak
-chmod +x configure-http-access.sh
-./configure-http-access.sh
-
-# Or configure manually
-KEYCLOAK_POD=$(kubectl get pods -n caritas -l app=keycloak -o jsonpath="{.items[0].metadata.name}")
-kubectl exec -n caritas $KEYCLOAK_POD -- \
-  /opt/keycloak/bin/kcadm.sh update realms/master -s sslRequired=NONE
-```
-
-Ausführliche Anweisungen finden Sie unter [Keycloak konfigurieren](/de/betrieb/deployment/configure-keycloak).
+Prüfen Sie den TLS-Host und das Zertifikat des Ingress sowie die übermittelten Host- und Protokoll-Header. Die öffentliche OIDC-Discovery muss unter `https://<plattform-host>/auth/realms/<realm>/.well-known/openid-configuration` erreichbar sein und den konfigurierten HTTPS-Issuer liefern. [Keycloak konfigurieren](/de/betrieb/deployment/configure-keycloak)
 
 ### Anmeldung bei Keycloak nicht möglich
 
-Prüfen Sie Keycloak-Protokolle und Erreichbarkeit:
-
-```bash
-# Check Keycloak logs
-kubectl logs deployment/oriso-platform-keycloak -n caritas
-
-# Verify Keycloak is accessible (internal)
-kubectl exec -n caritas deployment/oriso-platform-keycloak -- \
-  curl -I http://localhost:8080
-
-# Verify Keycloak is accessible (external via Ingress)
-curl -I https://auth.example.org
-
-# Check Keycloak service
-kubectl get svc -n caritas oriso-platform-keycloak
-
-# Reset admin password if needed (see Security Hardening)
-```
+Prüfen Sie die Protokolle des Keycloak-Deployments sowie die Redirect-URIs und Web Origins des aktuellen Clients. Beide müssen zur öffentlichen Plattform-URL passen. [Keycloak konfigurieren](/de/betrieb/deployment/configure-keycloak)
 
 ### Realm nicht gefunden
 
-Prüfen Sie, ob der Realm vorhanden ist, und importieren Sie ihn gegebenenfalls erneut:
-
-```bash
-# Check if realm exists
-KEYCLOAK_POD=$(kubectl get pods -n caritas -l app=keycloak -o jsonpath="{.items[0].metadata.name}")
-
-kubectl exec -n caritas $KEYCLOAK_POD -- \
-  /opt/keycloak/bin/kcadm.sh config credentials \
-  --server http://localhost:8080 \
-  --realm master \
-  --user admin \
-  --password admin
-
-kubectl exec -n caritas $KEYCLOAK_POD -- \
-  /opt/keycloak/bin/kcadm.sh get realms --fields realm
-
-# If realm missing, re-import (see Configure Keycloak)
-```
+Vergleichen Sie den Realm im Issuer mit den wirksamen Helm-Werten der Umgebung. Prüfen Sie die von Helm verwaltete Realm-Konfiguration anhand der Bereitstellungsanleitung. [Keycloak konfigurieren](/de/betrieb/deployment/configure-keycloak)
 
 </Accordion>
 

@@ -12,7 +12,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "docs/platform/architecture.md",
-      "sourceHash": "23e88344ee5ff6c30b74f1fe67f2f3a3f3983aa7ebc39a8d1c040c4c6c0cbbfa",
+      "sourceHash": "dc0a8654320a682bd325b1e8fd70a72a308beab68214c2c5a74897510caf27d7",
       "locales": {
         "de": {
           "available": true,
@@ -45,7 +45,7 @@
           }
         }
       },
-      "sourceRevision": "e5b055db4c93c29b4cc314724e93ee2d13f19f45",
+      "sourceRevision": "942d332059398de180865d6e6fbd97513ba8bece",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -172,7 +172,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "docs/platform/database-and-data-model.md",
-      "sourceHash": "eb82ce6dac9a1467b53ec2023cff1db15398bb476afc503c2c9fbb6498039ed3",
+      "sourceHash": "877d03321ef58199ab389e24460028cc7c11c779ea76cdc062f6769843184658",
       "locales": {
         "de": {
           "available": true,
@@ -205,7 +205,7 @@
           }
         }
       },
-      "sourceRevision": "c8dd52928ab0e32b4e6aaf26b293a6ccea80ed0d",
+      "sourceRevision": "942d332059398de180865d6e6fbd97513ba8bece",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -504,7 +504,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "docs/platform/local-development.md",
-      "sourceHash": "6ae55d59c2551c95f651e392add04b27b775108c1f6d298946ffc9b0ebfed3f9",
+      "sourceHash": "a393d232a58f04797a152b9278adba9d9d15879be8436deae5bf289e3e1e793f",
       "locales": {
         "de": {
           "available": true,
@@ -522,9 +522,8 @@
             "oriso-agencyservice": "oriso-agencyservice",
             "oriso-consultingtypeservice": "oriso-consultingtypeservice",
             "oriso-tenantservice": "oriso-tenantservice",
-            "oriso-database": "oriso-database",
-            "oriso-keycloak": "oriso-keycloak",
-            "oriso-kubernetes": "oriso-kubernetes",
+            "data-stores-keycloak-and-helm": "data-stores-keycloak-and-helm",
+            "datenspeicher-keycloak-und-helm": "data-stores-keycloak-and-helm",
             "rule": "rule",
             "regel": "rule"
           }
@@ -542,14 +541,12 @@
             "oriso-agencyservice": "oriso-agencyservice",
             "oriso-consultingtypeservice": "oriso-consultingtypeservice",
             "oriso-tenantservice": "oriso-tenantservice",
-            "oriso-database": "oriso-database",
-            "oriso-keycloak": "oriso-keycloak",
-            "oriso-kubernetes": "oriso-kubernetes",
+            "data-stores-keycloak-and-helm": "data-stores-keycloak-and-helm",
             "rule": "rule"
           }
         }
       },
-      "sourceRevision": "645863292ef7736cb682c2b8e81e59fb5025df56",
+      "sourceRevision": "942d332059398de180865d6e6fbd97513ba8bece",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -1697,7 +1694,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "docs/platform/troubleshooting.md",
-      "sourceHash": "9b906cdfe0067ccab78cdf94ffe3a40751df8ca9551396c8ed4b153a10cb9d04",
+      "sourceHash": "d423ddbec2cf66647d8cf9cfb903cd323372cf1f7338d2d36d5b91b95b194ae3",
       "locales": {
         "de": {
           "available": true,
@@ -1730,7 +1727,7 @@
           }
         }
       },
-      "sourceRevision": "c8dd52928ab0e32b4e6aaf26b293a6ccea80ed0d",
+      "sourceRevision": "942d332059398de180865d6e6fbd97513ba8bece",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -1883,7 +1880,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "index.mdx",
-      "sourceHash": "465d58883b9bcb6da1758bff426bcf1041224fe257c280d5fb97251534b5b569",
+      "sourceHash": "dd3f4a41c82b55ca7347f2d1a51882119b94f2af514dfc034debbf2269b3a92f",
       "locales": {
         "de": {
           "available": true,
@@ -1910,7 +1907,7 @@
           }
         }
       },
-      "sourceRevision": "645863292ef7736cb682c2b8e81e59fb5025df56",
+      "sourceRevision": "942d332059398de180865d6e6fbd97513ba8bece",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -1923,9 +1920,9 @@
         "oriso-platform/architecture/backend.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "source": "oriso-platform/architecture/backend.mdx",
-      "sourceHash": "180f2bc2193075ec8c100069e5407b595b157261e443b51e0b88d6543c5388af",
+      "sourceHash": "2f40460969fe11fe1ed9ce6da5cb7032c109717890e0334adb112297799d5f09",
       "locales": {
         "de": {
           "available": true,
@@ -1949,21 +1946,12 @@
             "kommunikation-zwischen-diensten": "inter-service-communication",
             "database-schema-management": "database-schema-management",
             "verwaltung-der-datenbankschemata": "database-schema-management",
-            "liquibase-status": "liquibase-status",
-            "schema-location": "schema-location",
-            "speicherort-der-schemata": "schema-location",
-            "schema-updates": "schema-updates",
-            "schemaaktualisierungen": "schema-updates",
             "health-checks": "health-checks",
             "zustandsprüfungen": "health-checks",
             "health-check-response": "health-check-response",
             "antwort-der-zustandsprüfung": "health-check-response",
             "deployment": "deployment",
             "bereitstellung": "deployment",
-            "helm-deployment": "helm-deployment",
-            "helm-bereitstellung": "helm-deployment",
-            "individual-service-deployment": "individual-service-deployment",
-            "bereitstellung-einzelner-dienste": "individual-service-deployment",
             "configuration": "configuration",
             "konfiguration": "configuration",
             "environment-variables": "environment-variables",
@@ -1999,14 +1987,9 @@
             "database-connections": "database-connections",
             "inter-service-communication": "inter-service-communication",
             "database-schema-management": "database-schema-management",
-            "liquibase-status": "liquibase-status",
-            "schema-location": "schema-location",
-            "schema-updates": "schema-updates",
             "health-checks": "health-checks",
             "health-check-response": "health-check-response",
             "deployment": "deployment",
-            "helm-deployment": "helm-deployment",
-            "individual-service-deployment": "individual-service-deployment",
             "configuration": "configuration",
             "environment-variables": "environment-variables",
             "service-discovery": "service-discovery",
@@ -2020,7 +2003,7 @@
           }
         }
       },
-      "sourceRevision": "54deb844a7a74b5545aa4dd6fc00f55535afdbb8",
+      "sourceRevision": "942d332059398de180865d6e6fbd97513ba8bece",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -2033,9 +2016,9 @@
         "oriso-platform/architecture/data.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "source": "oriso-platform/architecture/data.mdx",
-      "sourceHash": "32bb2e3ea9adadfc2f37ce53636925ae107e733b6716ac559420c846acadb632",
+      "sourceHash": "1dfc936f7413c17a5f3375b3333c19f28845866ce5996f46d27187ffb71626e5",
       "locales": {
         "de": {
           "available": true,
@@ -2051,19 +2034,8 @@
             "postgresql": "postgresql",
             "redis": "redis",
             "rabbitmq": "rabbitmq",
-            "schema-management-philosophy": "schema-management-philosophy",
-            "grundsätze-der-schemaverwaltung": "schema-management-philosophy",
-            "centralized-schema-management": "centralized-schema-management",
-            "zentrale-schemaverwaltung": "centralized-schema-management",
-            "liquibase-status": "liquibase-status",
-            "schema-location": "schema-location",
-            "speicherort-der-schemata": "schema-location",
-            "database-setup": "database-setup",
-            "datenbankeinrichtung": "database-setup",
-            "master-setup-script": "master-setup-script",
-            "zentrales-einrichtungsskript": "master-setup-script",
-            "individual-database-setup": "individual-database-setup",
-            "einrichtung-einzelner-datenbanken": "individual-database-setup",
+            "schema-management-and-database-setup": "schema-management-and-database-setup",
+            "schemaverwaltung-und-datenbankeinrichtung": "schema-management-and-database-setup",
             "connection-strings": "connection-strings",
             "verbindungszeichenfolgen": "connection-strings",
             "mariadb-connection": "mariadb-connection",
@@ -2074,18 +2046,8 @@
             "redis-verbindung": "redis-connection",
             "rabbitmq-connection": "rabbitmq-connection",
             "rabbitmq-verbindung": "rabbitmq-connection",
-            "system-users": "system-users",
-            "systembenutzer": "system-users",
-            "mariadb-system-users": "mariadb-system-users",
-            "mariadb-systembenutzer": "mariadb-system-users",
             "backup-and-restore": "backup-and-restore",
             "sicherung-und-wiederherstellung": "backup-and-restore",
-            "backup-scripts": "backup-scripts",
-            "sicherungsskripte": "backup-scripts",
-            "restore-scripts": "restore-scripts",
-            "wiederherstellungsskripte": "restore-scripts",
-            "automated-backups": "automated-backups",
-            "automatische-sicherungen": "automated-backups",
             "data-persistence": "data-persistence",
             "datenpersistenz": "data-persistence",
             "persistent-volumes": "persistent-volumes",
@@ -2108,8 +2070,8 @@
             "probleme-mit-datenbankverbindungen": "database-connection-issues",
             "schema-issues": "schema-issues",
             "schemaprobleme": "schema-issues",
-            "backuprestore-issues": "backuprestore-issues",
-            "probleme-bei-sicherungwiederherstellung": "backuprestore-issues"
+            "backup-and-restore-issues": "backup-and-restore-issues",
+            "probleme-bei-sicherung-und-wiederherstellung": "backup-and-restore-issues"
           }
         },
         "en": {
@@ -2123,24 +2085,13 @@
             "postgresql": "postgresql",
             "redis": "redis",
             "rabbitmq": "rabbitmq",
-            "schema-management-philosophy": "schema-management-philosophy",
-            "centralized-schema-management": "centralized-schema-management",
-            "liquibase-status": "liquibase-status",
-            "schema-location": "schema-location",
-            "database-setup": "database-setup",
-            "master-setup-script": "master-setup-script",
-            "individual-database-setup": "individual-database-setup",
+            "schema-management-and-database-setup": "schema-management-and-database-setup",
             "connection-strings": "connection-strings",
             "mariadb-connection": "mariadb-connection",
             "mongodb-connection": "mongodb-connection",
             "redis-connection": "redis-connection",
             "rabbitmq-connection": "rabbitmq-connection",
-            "system-users": "system-users",
-            "mariadb-system-users": "mariadb-system-users",
             "backup-and-restore": "backup-and-restore",
-            "backup-scripts": "backup-scripts",
-            "restore-scripts": "restore-scripts",
-            "automated-backups": "automated-backups",
             "data-persistence": "data-persistence",
             "persistent-volumes": "persistent-volumes",
             "volume-retention": "volume-retention",
@@ -2152,11 +2103,11 @@
             "troubleshooting": "troubleshooting",
             "database-connection-issues": "database-connection-issues",
             "schema-issues": "schema-issues",
-            "backuprestore-issues": "backuprestore-issues"
+            "backup-and-restore-issues": "backup-and-restore-issues"
           }
         }
       },
-      "sourceRevision": "b928ed9591892b9fe9b0a038890b3beac241422d",
+      "sourceRevision": "942d332059398de180865d6e6fbd97513ba8bece",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -2169,7 +2120,7 @@
         "oriso-platform/architecture/frontend.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "source": "oriso-platform/architecture/frontend.mdx",
       "sourceHash": "bb7ddd4a22bf34bfaf2b8bcd87cda54a5f508564a29fba5f6368a8eeee468cb2",
       "locales": {
@@ -2294,9 +2245,9 @@
         "oriso-platform/architecture/infra.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "source": "oriso-platform/architecture/infra.mdx",
-      "sourceHash": "24111581db62937427125d6b62fd9189ffb19c7a4d62695a9f59c354135eb664",
+      "sourceHash": "cd93ed4e2acf65ad3f3f1e53d78c70d3d6e40031ef0d2d586561e6e555fd8863",
       "locales": {
         "de": {
           "available": true,
@@ -2312,10 +2263,8 @@
             "warum-k3s": "why-k3s",
             "helm-architecture": "helm-architecture",
             "helm-architektur": "helm-architecture",
-            "umbrella-chart-pattern": "umbrella-chart-pattern",
-            "muster-des-übergeordneten-charts": "umbrella-chart-pattern",
-            "deployment-command": "deployment-command",
-            "bereitstellungsbefehl": "deployment-command",
+            "umbrella-chart": "umbrella-chart",
+            "übergeordnetes-chart": "umbrella-chart",
             "chart-dependencies": "chart-dependencies",
             "chart-abhängigkeiten": "chart-dependencies",
             "ingress-architecture": "ingress-architecture",
@@ -2323,10 +2272,6 @@
             "nginx-ingress-controller": "nginx-ingress-controller",
             "ingress-resources": "ingress-resources",
             "ingress-ressourcen": "ingress-resources",
-            "ingress-deployment": "ingress-deployment",
-            "ingress-bereitstellung": "ingress-deployment",
-            "example-ingress-resource": "example-ingress-resource",
-            "beispiel-einer-ingress-ressource": "example-ingress-resource",
             "tlsssl-management": "tlsssl-management",
             "tls-ssl-verwaltung": "tlsssl-management",
             "cert-manager": "cert-manager",
@@ -2358,8 +2303,6 @@
             "authentication-infrastructure": "authentication-infrastructure",
             "authentifizierungsinfrastruktur": "authentication-infrastructure",
             "keycloak": "keycloak",
-            "keycloak-configuration": "keycloak-configuration",
-            "keycloak-konfiguration": "keycloak-configuration",
             "monitoring-infrastructure": "monitoring-infrastructure",
             "überwachungsinfrastruktur": "monitoring-infrastructure",
             "signoz": "signoz",
@@ -2395,14 +2338,11 @@
             "cluster-type": "cluster-type",
             "why-k3s": "why-k3s",
             "helm-architecture": "helm-architecture",
-            "umbrella-chart-pattern": "umbrella-chart-pattern",
-            "deployment-command": "deployment-command",
+            "umbrella-chart": "umbrella-chart",
             "chart-dependencies": "chart-dependencies",
             "ingress-architecture": "ingress-architecture",
             "nginx-ingress-controller": "nginx-ingress-controller",
             "ingress-resources": "ingress-resources",
-            "ingress-deployment": "ingress-deployment",
-            "example-ingress-resource": "example-ingress-resource",
             "tlsssl-management": "tlsssl-management",
             "cert-manager": "cert-manager",
             "clusterissuer-configuration": "clusterissuer-configuration",
@@ -2420,7 +2360,6 @@
             "other-namespaces": "other-namespaces",
             "authentication-infrastructure": "authentication-infrastructure",
             "keycloak": "keycloak",
-            "keycloak-configuration": "keycloak-configuration",
             "monitoring-infrastructure": "monitoring-infrastructure",
             "signoz": "signoz",
             "health-dashboard": "health-dashboard",
@@ -2437,7 +2376,7 @@
           }
         }
       },
-      "sourceRevision": "54deb844a7a74b5545aa4dd6fc00f55535afdbb8",
+      "sourceRevision": "942d332059398de180865d6e6fbd97513ba8bece",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -2450,9 +2389,9 @@
         "oriso-platform/architecture/overview.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "source": "oriso-platform/architecture/overview.mdx",
-      "sourceHash": "63aea765f7310f12c9742bc0001b12f4bb467775bbe3e5ad9e5ef85eb6061680",
+      "sourceHash": "deb64c9213432bd75361383e57f55d01581ca217d9815258355d7cb14e3081ad",
       "locales": {
         "de": {
           "available": true,
@@ -2537,7 +2476,7 @@
           }
         }
       },
-      "sourceRevision": "54deb844a7a74b5545aa4dd6fc00f55535afdbb8",
+      "sourceRevision": "942d332059398de180865d6e6fbd97513ba8bece",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -2552,55 +2491,28 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/backup-configuration.mdx",
-      "sourceHash": "3beefec7e1191570de8db450d77f5619821b1c0421055dc39b2810bf3427df4d",
+      "sourceHash": "1c2bd66d7436bf7faf79ae2127d7034e8840fdba8dd07b6baaaaa98527d9259d",
       "locales": {
         "de": {
           "available": true,
           "translationState": "current",
           "sectionAliases": {
-            "backup-configuration": "backup-configuration",
-            "sicherung-konfigurieren": "backup-configuration",
-            "restore-procedures": "restore-procedures",
-            "wiederherstellungsverfahren": "restore-procedures",
-            "restore-mariadb": "restore-mariadb",
-            "mariadb-wiederherstellen": "restore-mariadb",
-            "restore-mongodb": "restore-mongodb",
-            "mongodb-wiederherstellen": "restore-mongodb",
-            "restore-matrix": "restore-matrix",
-            "matrix-wiederherstellen": "restore-matrix",
-            "backup-locations": "backup-locations",
-            "speicherorte-der-sicherungen": "backup-locations",
-            "data-retention": "data-retention",
-            "datenaufbewahrung": "data-retention",
-            "troubleshooting": "troubleshooting",
-            "fehlerbehebung": "troubleshooting",
-            "backup-script-fails": "backup-script-fails",
-            "sicherungsskript-schlägt-fehl": "backup-script-fails",
-            "cronjob-not-running": "cronjob-not-running",
-            "cronjob-läuft-nicht": "cronjob-not-running",
-            "next-steps": "next-steps",
-            "nächste-schritte": "next-steps"
+            "backup-and-recovery": "backup-and-recovery",
+            "sicherung-und-wiederherstellung": "backup-and-recovery",
+            "rehearse-application-data-recovery": "rehearse-application-data-recovery",
+            "wiederherstellung-von-anwendungsdaten-proben": "rehearse-application-data-recovery"
           }
         },
         "en": {
           "available": true,
           "translationState": "current",
           "sectionAliases": {
-            "backup-configuration": "backup-configuration",
-            "restore-procedures": "restore-procedures",
-            "restore-mariadb": "restore-mariadb",
-            "restore-mongodb": "restore-mongodb",
-            "restore-matrix": "restore-matrix",
-            "backup-locations": "backup-locations",
-            "data-retention": "data-retention",
-            "troubleshooting": "troubleshooting",
-            "backup-script-fails": "backup-script-fails",
-            "cronjob-not-running": "cronjob-not-running",
-            "next-steps": "next-steps"
+            "backup-and-recovery": "backup-and-recovery",
+            "rehearse-application-data-recovery": "rehearse-application-data-recovery"
           }
         }
       },
-      "sourceRevision": "b928ed9591892b9fe9b0a038890b3beac241422d",
+      "sourceRevision": "942d332059398de180865d6e6fbd97513ba8bece",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -2613,9 +2525,9 @@
         "oriso-platform/clone-repositories.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "source": "oriso-platform/clone-repositories.mdx",
-      "sourceHash": "cae0d125e86ff0a3a6e801e606fdcf4afc464286ae9f87f5d1b6d78bce1a27f0",
+      "sourceHash": "2685247b2468a4e314f2fea38cdb91a80f961950fd5e1b88d0d9f33cf389a011",
       "locales": {
         "de": {
           "available": true,
@@ -2636,7 +2548,7 @@
           }
         }
       },
-      "sourceRevision": "b928ed9591892b9fe9b0a038890b3beac241422d",
+      "sourceRevision": "942d332059398de180865d6e6fbd97513ba8bece",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -2651,7 +2563,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/coding-standards.mdx",
-      "sourceHash": "65e3237d71491aaa5384c7b56df395801cbfd8e0a585e3180dded8890ee05b15",
+      "sourceHash": "c26054702b2fabbf2c00795937e5a16cdde80526896f07f38a6084f06e68d96a",
       "locales": {
         "de": {
           "available": true,
@@ -2699,8 +2611,8 @@
           }
         }
       },
-      "sourceRevision": "645863292ef7736cb682c2b8e81e59fb5025df56",
-      "sourceState": "working-copy",
+      "sourceRevision": "942d332059398de180865d6e6fbd97513ba8bece",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     },
     {
@@ -2714,7 +2626,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/configure-keycloak.mdx",
-      "sourceHash": "e6bb310d8d9b28527cdd5934fd3b4cca2a2ad9e528ff92596935ea28379962d7",
+      "sourceHash": "22ffb05a2253dc03393e1f5355aa556afe3224463bee4f68af89bcd8227543e6",
       "locales": {
         "de": {
           "available": true,
@@ -2722,18 +2634,8 @@
           "sectionAliases": {
             "configure-keycloak": "configure-keycloak",
             "keycloak-konfigurieren": "configure-keycloak",
-            "verification": "verification",
-            "überprüfung": "verification",
-            "troubleshooting": "troubleshooting",
-            "fehlerbehebung": "troubleshooting",
-            "https-required-error": "https-required-error",
-            "fehler-https-required": "https-required-error",
-            "cannot-login-to-keycloak": "cannot-login-to-keycloak",
-            "anmeldung-bei-keycloak-nicht-möglich": "cannot-login-to-keycloak",
-            "realm-not-found": "realm-not-found",
-            "realm-nicht-gefunden": "realm-not-found",
-            "next-steps": "next-steps",
-            "nächste-schritte": "next-steps"
+            "verify-the-https-issuer": "verify-the-https-issuer",
+            "den-https-issuer-prüfen": "verify-the-https-issuer"
           }
         },
         "en": {
@@ -2741,16 +2643,11 @@
           "translationState": "current",
           "sectionAliases": {
             "configure-keycloak": "configure-keycloak",
-            "verification": "verification",
-            "troubleshooting": "troubleshooting",
-            "https-required-error": "https-required-error",
-            "cannot-login-to-keycloak": "cannot-login-to-keycloak",
-            "realm-not-found": "realm-not-found",
-            "next-steps": "next-steps"
+            "verify-the-https-issuer": "verify-the-https-issuer"
           }
         }
       },
-      "sourceRevision": "54deb844a7a74b5545aa4dd6fc00f55535afdbb8",
+      "sourceRevision": "942d332059398de180865d6e6fbd97513ba8bece",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -2871,8 +2768,8 @@
           }
         }
       },
-      "sourceRevision": "7b09a5a70ca0f9303aac70e60fc941f71a60bf66",
-      "sourceState": "working-copy",
+      "sourceRevision": "3a9da26117b80bfedbc129b33f7015a7efbf61a0",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     },
     {
@@ -3577,7 +3474,7 @@
           }
         }
       },
-      "sourceRevision": "8220d35f26800a088997c3badf31f057f5984d1a",
+      "sourceRevision": "329f0c3bb71f72740589b408dbd21bee1a183e8d",
       "sourceState": "working-copy",
       "factsStatus": "source-only"
     },
@@ -3668,8 +3565,8 @@
           }
         }
       },
-      "sourceRevision": "b02af4254a944f33fb24e11c82ab6b961e4ec01b",
-      "sourceState": "working-copy",
+      "sourceRevision": "4ae64a40f096d406a50252c03901037a505b1127",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     },
     {
@@ -3822,8 +3719,8 @@
           }
         }
       },
-      "sourceRevision": "b02af4254a944f33fb24e11c82ab6b961e4ec01b",
-      "sourceState": "working-copy",
+      "sourceRevision": "e8e033f7f67429bf668f0211c7501c44f2d7fe7a",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     },
     {
@@ -3919,8 +3816,8 @@
           }
         }
       },
-      "sourceRevision": "b02af4254a944f33fb24e11c82ab6b961e4ec01b",
-      "sourceState": "working-copy",
+      "sourceRevision": "34d5f31d23a6d808b32c5b963a851f39e571079b",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     },
     {
@@ -3975,8 +3872,8 @@
           }
         }
       },
-      "sourceRevision": "656d6474caf4b1f3365b2ee3018c0a0537b6a5cd",
-      "sourceState": "working-copy",
+      "sourceRevision": "ea60b56d7f7aa85c9fdfa17d67d0368bee7ad95b",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     },
     {
@@ -4142,7 +4039,7 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/decisions/README.md",
-      "sourceHash": "c06268ac65695cebc1b471df0476f92eea8e2624fe2f9df9a942e86844c48fb1",
+      "sourceHash": "31c9ae5a8cfdc49f0bce1fd8e4534e39f9e1a76b76f41ec64f890ef7b48d7fe4",
       "locales": {
         "de": {
           "available": true,
@@ -4169,7 +4066,7 @@
           }
         }
       },
-      "sourceRevision": "74fd6f3314b373f8bd1397d2ae1c8779bffd62fe",
+      "sourceRevision": "87c3606c2a51c3240657e87426102890310b1308",
       "sourceState": "working-copy",
       "factsStatus": "source-only"
     },
@@ -4184,62 +4081,25 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/deploy-backend-services.mdx",
-      "sourceHash": "3a67584b2d38d9f37794f532e31eb55e2d63ff73f71876fc538db1031e51dfbb",
+      "sourceHash": "afa6a2e69700ac7d665d9aac0e038fbf642e14d55fc2b4b2290741760de42119",
       "locales": {
         "de": {
           "available": true,
           "translationState": "current",
           "sectionAliases": {
             "deploy-backend-services": "deploy-backend-services",
-            "backend-dienste-bereitstellen": "deploy-backend-services",
-            "backend-services-overview": "backend-services-overview",
-            "überblick-über-backend-dienste": "backend-services-overview",
-            "tenantservice": "tenantservice",
-            "userservice": "userservice",
-            "consultingtypeservice": "consultingtypeservice",
-            "agencyservice": "agencyservice",
-            "service-configuration": "service-configuration",
-            "dienstkonfiguration": "service-configuration",
-            "environment-variables": "environment-variables",
-            "umgebungsvariablen": "environment-variables",
-            "database-connections": "database-connections",
-            "datenbankverbindungen": "database-connections",
-            "liquibase-status": "liquibase-status",
-            "troubleshooting": "troubleshooting",
-            "fehlerbehebung": "troubleshooting",
-            "service-not-starting": "service-not-starting",
-            "dienst-startet-nicht": "service-not-starting",
-            "database-connection-failures": "database-connection-failures",
-            "datenbankverbindungen-schlagen-fehl": "database-connection-failures",
-            "health-check-failures": "health-check-failures",
-            "zustandsprüfungen-schlagen-fehl": "health-check-failures",
-            "next-steps": "next-steps",
-            "nächste-schritte": "next-steps"
+            "backend-dienste-bereitstellen": "deploy-backend-services"
           }
         },
         "en": {
           "available": true,
           "translationState": "current",
           "sectionAliases": {
-            "deploy-backend-services": "deploy-backend-services",
-            "backend-services-overview": "backend-services-overview",
-            "tenantservice": "tenantservice",
-            "userservice": "userservice",
-            "consultingtypeservice": "consultingtypeservice",
-            "agencyservice": "agencyservice",
-            "service-configuration": "service-configuration",
-            "environment-variables": "environment-variables",
-            "database-connections": "database-connections",
-            "liquibase-status": "liquibase-status",
-            "troubleshooting": "troubleshooting",
-            "service-not-starting": "service-not-starting",
-            "database-connection-failures": "database-connection-failures",
-            "health-check-failures": "health-check-failures",
-            "next-steps": "next-steps"
+            "deploy-backend-services": "deploy-backend-services"
           }
         }
       },
-      "sourceRevision": "54deb844a7a74b5545aa4dd6fc00f55535afdbb8",
+      "sourceRevision": "942d332059398de180865d6e6fbd97513ba8bece",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -4252,7 +4112,7 @@
         "oriso-platform/deploy-frontend.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "source": "oriso-platform/deploy-frontend.mdx",
       "sourceHash": "e24cb06ff959879b1ce8697999678f1bec1ddd5c203f87ad90022ee2e569eb09",
       "locales": {
@@ -4320,7 +4180,7 @@
         "oriso-platform/deploy-infrastructure.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "source": "oriso-platform/deploy-infrastructure.mdx",
       "sourceHash": "cbecf90cda44dff237557ed846a0260d1a56d92e166950bc987a7b394d6ff317",
       "locales": {
@@ -4386,7 +4246,7 @@
         "oriso-platform/deploy-matrix.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "source": "oriso-platform/deploy-matrix.mdx",
       "sourceHash": "2b7ba7b3b6f61235a27da44352542c72dec539a4d6983e7cb4e40752bb6e587f",
       "locales": {
@@ -4450,7 +4310,7 @@
         "oriso-platform/deploy-monitoring.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "source": "oriso-platform/deploy-monitoring.mdx",
       "sourceHash": "42b92e80d57454cd328db24413e2bfb39e0b28d5367c2e0c526ee90e4434cbcc",
       "locales": {
@@ -4511,7 +4371,7 @@
         "oriso-platform/deploy-nginx.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "source": "oriso-platform/deploy-nginx.mdx",
       "sourceHash": "b1da6bb821cd8adcfadc17b38386001f068d2469b651071ab256eb3b1049cdb2",
       "locales": {
@@ -4597,7 +4457,7 @@
         "oriso-platform/dns-ssl.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "source": "oriso-platform/dns-ssl.mdx",
       "sourceHash": "a728333a34aed99829b9717729a6a2dce838b9bf93790fc388f69848e61a20ad",
       "locales": {
@@ -4670,7 +4530,7 @@
         "oriso-platform/initial-setup.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "source": "oriso-platform/initial-setup.mdx",
       "sourceHash": "8386298418ed06741c190bb4afdcd446840429b5de1ccff049267a540f081094",
       "locales": {
@@ -4709,7 +4569,7 @@
         "oriso-platform/install-software.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "source": "oriso-platform/install-software.mdx",
       "sourceHash": "94b9b56079a6cf28241cb7c4412d79d57027c5bb5f62a044a2744691cf22c25f",
       "locales": {
@@ -4760,7 +4620,7 @@
         "oriso-platform/network-firewall.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "source": "oriso-platform/network-firewall.mdx",
       "sourceHash": "de864044ba4a3a689b85e0d65048cb75f7e7771dd3d585b7514cbaea4e985ecd",
       "locales": {
@@ -4828,73 +4688,25 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/overview.mdx",
-      "sourceHash": "63222c23c8f096390a8f902c5adc7d15ca3db0f5cbf7119dad535ffc7bb01842",
+      "sourceHash": "08c9a90e448051d1d20d4691265fc64443e3fbc376778ab6c4661a2bbcaf66e0",
       "locales": {
         "de": {
           "available": true,
           "translationState": "current",
           "sectionAliases": {
-            "oriso-platform---setup-guide-overview": "oriso-platform---setup-guide-overview",
-            "oriso-plattform--überblick-zur-einrichtungsanleitung": "oriso-platform---setup-guide-overview",
-            "server-requirements": "server-requirements",
-            "serveranforderungen": "server-requirements",
-            "hardware-requirements": "hardware-requirements",
-            "hardwareanforderungen": "hardware-requirements",
-            "minimum-testingdevelopment": "minimum-testingdevelopment",
-            "mindestanforderungen-testsentwicklung": "minimum-testingdevelopment",
-            "recommended-production": "recommended-production",
-            "empfohlen-produktion": "recommended-production",
-            "software-requirements": "software-requirements",
-            "softwareanforderungen": "software-requirements",
-            "operating-system": "operating-system",
-            "betriebssystem": "operating-system",
-            "access-requirements": "access-requirements",
-            "zugriffsvoraussetzungen": "access-requirements",
-            "network-requirements": "network-requirements",
-            "netzwerkanforderungen": "network-requirements",
-            "required-ports-external-access": "required-ports-external-access",
-            "erforderliche-ports-externer-zugriff": "required-ports-external-access",
-            "service-ports-internal---clusterip": "service-ports-internal---clusterip",
-            "dienstports-intern--clusterip": "service-ports-internal---clusterip",
-            "quick-start-guide": "quick-start-guide",
-            "schnellstart": "quick-start-guide",
-            "support--resources": "support--resources",
-            "unterstützung-und-ressourcen": "support--resources",
-            "oriso-documentation": "oriso-documentation",
-            "oriso-dokumentation": "oriso-documentation",
-            "useful-links": "useful-links",
-            "nützliche-links": "useful-links",
-            "getting-help": "getting-help",
-            "hilfe-erhalten": "getting-help",
-            "next-steps": "next-steps",
-            "nächste-schritte": "next-steps"
+            "operator-setup": "operator-setup",
+            "einrichtung-für-den-betrieb": "operator-setup"
           }
         },
         "en": {
           "available": true,
           "translationState": "current",
           "sectionAliases": {
-            "oriso-platform---setup-guide-overview": "oriso-platform---setup-guide-overview",
-            "server-requirements": "server-requirements",
-            "hardware-requirements": "hardware-requirements",
-            "minimum-testingdevelopment": "minimum-testingdevelopment",
-            "recommended-production": "recommended-production",
-            "software-requirements": "software-requirements",
-            "operating-system": "operating-system",
-            "access-requirements": "access-requirements",
-            "network-requirements": "network-requirements",
-            "required-ports-external-access": "required-ports-external-access",
-            "service-ports-internal---clusterip": "service-ports-internal---clusterip",
-            "quick-start-guide": "quick-start-guide",
-            "support--resources": "support--resources",
-            "oriso-documentation": "oriso-documentation",
-            "useful-links": "useful-links",
-            "getting-help": "getting-help",
-            "next-steps": "next-steps"
+            "operator-setup": "operator-setup"
           }
         }
       },
-      "sourceRevision": "b928ed9591892b9fe9b0a038890b3beac241422d",
+      "sourceRevision": "942d332059398de180865d6e6fbd97513ba8bece",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -4909,46 +4721,25 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/post-deployment.mdx",
-      "sourceHash": "b7675d4d91f12417c5d6b0d54f3f6bdb235863c388f02d52a946c30a888103ea",
+      "sourceHash": "72dcba49007a3b27c3d46ed087b1a2cc1efe2db8bbc6c481f298b47a1c6ec4b3",
       "locales": {
         "de": {
           "available": true,
           "translationState": "current",
           "sectionAliases": {
-            "post-deployment-configuration": "post-deployment-configuration",
-            "konfiguration-nach-der-bereitstellung": "post-deployment-configuration",
-            "access-urls": "access-urls",
-            "zugriffs-urls": "access-urls",
-            "verification-checklist": "verification-checklist",
-            "prüfliste-zur-überprüfung": "verification-checklist",
-            "troubleshooting": "troubleshooting",
-            "fehlerbehebung": "troubleshooting",
-            "pods-not-running": "pods-not-running",
-            "pods-laufen-nicht": "pods-not-running",
-            "database-initialization-failed": "database-initialization-failed",
-            "datenbankinitialisierung-fehlgeschlagen": "database-initialization-failed",
-            "keycloak-issues": "keycloak-issues",
-            "keycloak-probleme": "keycloak-issues",
-            "next-steps": "next-steps",
-            "nächste-schritte": "next-steps"
+            "post-deployment-checks": "post-deployment-checks",
+            "prüfungen-nach-der-bereitstellung": "post-deployment-checks"
           }
         },
         "en": {
           "available": true,
           "translationState": "current",
           "sectionAliases": {
-            "post-deployment-configuration": "post-deployment-configuration",
-            "access-urls": "access-urls",
-            "verification-checklist": "verification-checklist",
-            "troubleshooting": "troubleshooting",
-            "pods-not-running": "pods-not-running",
-            "database-initialization-failed": "database-initialization-failed",
-            "keycloak-issues": "keycloak-issues",
-            "next-steps": "next-steps"
+            "post-deployment-checks": "post-deployment-checks"
           }
         }
       },
-      "sourceRevision": "645863292ef7736cb682c2b8e81e59fb5025df56",
+      "sourceRevision": "942d332059398de180865d6e6fbd97513ba8bece",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -4961,9 +4752,9 @@
         "oriso-platform/quick-reference.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "source": "oriso-platform/quick-reference.mdx",
-      "sourceHash": "9308f1c787eb52d66ea18c5c9ccb9de18b0746726a6150f320e58a1dccb6bdec",
+      "sourceHash": "f936854c872368fde365ae4ffa420898e4e476d3c512f5ad7e56fdfc941976c6",
       "locales": {
         "de": {
           "available": true,
@@ -5013,8 +4804,6 @@
             "skript-zur-schnellen-zustandsprüfung": "quick-health-check-script",
             "common-troubleshooting-commands": "common-troubleshooting-commands",
             "häufige-befehle-zur-fehlerbehebung": "common-troubleshooting-commands",
-            "quick-access-urls": "quick-access-urls",
-            "urls-für-schnellen-zugriff": "quick-access-urls",
             "related-documentation": "related-documentation",
             "weiterführende-dokumentation": "related-documentation"
           }
@@ -5045,12 +4834,11 @@
             "configuration-access": "configuration-access",
             "quick-health-check-script": "quick-health-check-script",
             "common-troubleshooting-commands": "common-troubleshooting-commands",
-            "quick-access-urls": "quick-access-urls",
             "related-documentation": "related-documentation"
           }
         }
       },
-      "sourceRevision": "54deb844a7a74b5545aa4dd6fc00f55535afdbb8",
+      "sourceRevision": "942d332059398de180865d6e6fbd97513ba8bece",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -5063,7 +4851,7 @@
         "oriso-platform/security-hardening.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "source": "oriso-platform/security-hardening.mdx",
       "sourceHash": "6eea0e47c8d7ee6061ee495b5b249fd5ead7d4fef137eb60ddfe7db586fbb352",
       "locales": {
@@ -5122,60 +4910,31 @@
       "owner": "ORISO-Docs",
       "lifecycle": "current",
       "source": "oriso-platform/setup-databases.mdx",
-      "sourceHash": "06024541142c49c38028c1d44fe991bc2f3d6a585012029dda7724e7a9dddd0a",
+      "sourceHash": "54d0e75c82687de5c564483925a71223f29860443cadf9d3708d7d976e5831c0",
       "locales": {
         "de": {
           "available": true,
           "translationState": "current",
           "sectionAliases": {
-            "setup-databases": "setup-databases",
-            "datenbanken-einrichten": "setup-databases",
-            "database-schema-management": "database-schema-management",
-            "verwaltung-der-datenbankschemata": "database-schema-management",
-            "schema-location": "schema-location",
-            "speicherort-der-schemata": "schema-location",
-            "liquibase-status": "liquibase-status",
-            "updating-schemas": "updating-schemas",
-            "schemata-aktualisieren": "updating-schemas",
-            "backup-and-restore": "backup-and-restore",
-            "sicherung-und-wiederherstellung": "backup-and-restore",
-            "backup-scripts": "backup-scripts",
-            "sicherungsskripte": "backup-scripts",
-            "restore-scripts": "restore-scripts",
-            "wiederherstellungsskripte": "restore-scripts",
-            "troubleshooting": "troubleshooting",
-            "fehlerbehebung": "troubleshooting",
-            "master-setup-script-fails": "master-setup-script-fails",
-            "zentrales-einrichtungsskript-schlägt-fehl": "master-setup-script-fails",
-            "schema-import-errors": "schema-import-errors",
-            "fehler-beim-schemaimport": "schema-import-errors",
-            "system-users-not-created": "system-users-not-created",
-            "systembenutzer-wurden-nicht-erstellt": "system-users-not-created",
-            "next-steps": "next-steps",
-            "nächste-schritte": "next-steps"
+            "set-up-databases": "set-up-databases",
+            "datenbanken-einrichten": "set-up-databases",
+            "start-with-an-empty-database": "start-with-an-empty-database",
+            "mit-einer-leeren-datenbank-starten": "start-with-an-empty-database",
+            "upgrade-or-restore-existing-data": "upgrade-or-restore-existing-data",
+            "bestehende-daten-aktualisieren-oder-wiederherstellen": "upgrade-or-restore-existing-data"
           }
         },
         "en": {
           "available": true,
           "translationState": "current",
           "sectionAliases": {
-            "setup-databases": "setup-databases",
-            "database-schema-management": "database-schema-management",
-            "schema-location": "schema-location",
-            "liquibase-status": "liquibase-status",
-            "updating-schemas": "updating-schemas",
-            "backup-and-restore": "backup-and-restore",
-            "backup-scripts": "backup-scripts",
-            "restore-scripts": "restore-scripts",
-            "troubleshooting": "troubleshooting",
-            "master-setup-script-fails": "master-setup-script-fails",
-            "schema-import-errors": "schema-import-errors",
-            "system-users-not-created": "system-users-not-created",
-            "next-steps": "next-steps"
+            "set-up-databases": "set-up-databases",
+            "start-with-an-empty-database": "start-with-an-empty-database",
+            "upgrade-or-restore-existing-data": "upgrade-or-restore-existing-data"
           }
         }
       },
-      "sourceRevision": "b928ed9591892b9fe9b0a038890b3beac241422d",
+      "sourceRevision": "942d332059398de180865d6e6fbd97513ba8bece",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -5188,7 +4947,7 @@
         "oriso-platform/setup-kubernetes.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "source": "oriso-platform/setup-kubernetes.mdx",
       "sourceHash": "e3651da566f91351f6fcfac771fe29667f413e509aed00c84a38f59bf1975350",
       "locales": {
@@ -5242,9 +5001,9 @@
         "oriso-platform/troubleshooting.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "source": "oriso-platform/troubleshooting.mdx",
-      "sourceHash": "2fabddae073015bb5622100aff5f2d6d7018a76864ccefb5df2d6fec1d97e8b1",
+      "sourceHash": "a3615627284e745c916402bcee9bc3809665de2a3c23880665df01ef7876e1b2",
       "locales": {
         "de": {
           "available": true,
@@ -5268,8 +5027,8 @@
             "keine-verbindung-zu-mongodb": "cannot-connect-to-mongodb",
             "https-required-error": "https-required-error",
             "fehler-https-required": "https-required-error",
-            "cannot-login-to-keycloak": "cannot-login-to-keycloak",
-            "anmeldung-bei-keycloak-nicht-möglich": "cannot-login-to-keycloak",
+            "cannot-log-in-to-keycloak": "cannot-log-in-to-keycloak",
+            "anmeldung-bei-keycloak-nicht-möglich": "cannot-log-in-to-keycloak",
             "realm-not-found": "realm-not-found",
             "realm-nicht-gefunden": "realm-not-found",
             "service-returns-500-error": "service-returns-500-error",
@@ -5305,7 +5064,7 @@
             "cannot-connect-to-mariadb": "cannot-connect-to-mariadb",
             "cannot-connect-to-mongodb": "cannot-connect-to-mongodb",
             "https-required-error": "https-required-error",
-            "cannot-login-to-keycloak": "cannot-login-to-keycloak",
+            "cannot-log-in-to-keycloak": "cannot-log-in-to-keycloak",
             "realm-not-found": "realm-not-found",
             "service-returns-500-error": "service-returns-500-error",
             "service-health-check-fails": "service-health-check-fails",
@@ -5319,7 +5078,7 @@
           }
         }
       },
-      "sourceRevision": "54deb844a7a74b5545aa4dd6fc00f55535afdbb8",
+      "sourceRevision": "942d332059398de180865d6e6fbd97513ba8bece",
       "sourceState": "committed",
       "factsStatus": "source-only"
     },
@@ -5332,7 +5091,7 @@
         "oriso-platform/verification-testing.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "source": "oriso-platform/verification-testing.mdx",
       "sourceHash": "69a1212650d4387af8978bbad7fb4062cf7a1730f668d5a0689d317b5f1e8b1d",
       "locales": {
@@ -5976,8 +5735,8 @@
           }
         }
       },
-      "sourceRevision": "a8c9b416dd1df395b155a436cc14c2070c9347e0",
-      "sourceState": "committed",
+      "sourceRevision": null,
+      "sourceState": "working-copy",
       "factsStatus": "source-only"
     },
     {
@@ -6021,8 +5780,8 @@
           }
         }
       },
-      "sourceRevision": "a8c9b416dd1df395b155a436cc14c2070c9347e0",
-      "sourceState": "committed",
+      "sourceRevision": null,
+      "sourceState": "working-copy",
       "factsStatus": "source-only"
     },
     {
@@ -6102,8 +5861,8 @@
           }
         }
       },
-      "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
-      "sourceState": "working-copy",
+      "sourceRevision": "72bc00b04b1bc5d84f6ea39ed85a58ff4c644433",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     },
     {
@@ -6196,8 +5955,8 @@
           }
         }
       },
-      "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
-      "sourceState": "working-copy",
+      "sourceRevision": "72bc00b04b1bc5d84f6ea39ed85a58ff4c644433",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     },
     {
@@ -6244,8 +6003,8 @@
           }
         }
       },
-      "sourceRevision": "a8c9b416dd1df395b155a436cc14c2070c9347e0",
-      "sourceState": "committed",
+      "sourceRevision": null,
+      "sourceState": "working-copy",
       "factsStatus": "source-only"
     },
     {
@@ -6295,8 +6054,8 @@
           }
         }
       },
-      "sourceRevision": "a8c9b416dd1df395b155a436cc14c2070c9347e0",
-      "sourceState": "committed",
+      "sourceRevision": null,
+      "sourceState": "working-copy",
       "factsStatus": "source-only"
     },
     {
@@ -6343,8 +6102,8 @@
           }
         }
       },
-      "sourceRevision": "a8c9b416dd1df395b155a436cc14c2070c9347e0",
-      "sourceState": "committed",
+      "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
+      "sourceState": "working-copy",
       "factsStatus": "source-only"
     },
     {
@@ -6394,8 +6153,8 @@
           }
         }
       },
-      "sourceRevision": "a8c9b416dd1df395b155a436cc14c2070c9347e0",
-      "sourceState": "committed",
+      "sourceRevision": "a7e93a2b48a2d7f3b638d804a67d58e2f2210823",
+      "sourceState": "working-copy",
       "factsStatus": "source-only"
     },
     {
@@ -6520,8 +6279,8 @@
           }
         }
       },
-      "sourceRevision": "a8c9b416dd1df395b155a436cc14c2070c9347e0",
-      "sourceState": "working-copy",
+      "sourceRevision": "30ce6775a8248a0a1dbe87d8cf9494ae7830a7ef",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     },
     {
@@ -6637,8 +6396,8 @@
           }
         }
       },
-      "sourceRevision": "a8c9b416dd1df395b155a436cc14c2070c9347e0",
-      "sourceState": "committed",
+      "sourceRevision": null,
+      "sourceState": "working-copy",
       "factsStatus": "source-only"
     },
     {
@@ -6685,8 +6444,8 @@
           }
         }
       },
-      "sourceRevision": "a8c9b416dd1df395b155a436cc14c2070c9347e0",
-      "sourceState": "committed",
+      "sourceRevision": null,
+      "sourceState": "working-copy",
       "factsStatus": "source-only"
     },
     {
@@ -6979,8 +6738,8 @@
           }
         }
       },
-      "sourceRevision": null,
-      "sourceState": "working-copy",
+      "sourceRevision": "b6e762a30fe1a3427c41b9200b3acf82412766ee",
+      "sourceState": "committed",
       "factsStatus": "source-only"
     },
     {
@@ -7502,8 +7261,8 @@
     }
   ],
   "coverage": {
-    "currentPages": 100,
-    "completePairs": 100,
+    "currentPages": 80,
+    "completePairs": 80,
     "missing": [],
     "stale": []
   }

@@ -15,13 +15,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/docs/platform/architecture.md",
-          "sourceHash": "23e88344ee5ff6c30b74f1fe67f2f3a3f3983aa7ebc39a8d1c040c4c6c0cbbfa",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "dc0a8654320a682bd325b1e8fd70a72a308beab68214c2c5a74897510caf27d7",
+          "reviewedAt": "2026-11-21"
         },
         "en": {
           "path": "site/translations/en/docs/platform/architecture.md",
-          "sourceHash": "23e88344ee5ff6c30b74f1fe67f2f3a3f3983aa7ebc39a8d1c040c4c6c0cbbfa",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "dc0a8654320a682bd325b1e8fd70a72a308beab68214c2c5a74897510caf27d7",
+          "reviewedAt": "2026-11-21"
         }
       }
     },
@@ -88,13 +88,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/docs/platform/database-and-data-model.md",
-          "sourceHash": "eb82ce6dac9a1467b53ec2023cff1db15398bb476afc503c2c9fbb6498039ed3",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "877d03321ef58199ab389e24460028cc7c11c779ea76cdc062f6769843184658",
+          "reviewedAt": "2026-11-21"
         },
         "en": {
           "path": "site/translations/en/docs/platform/database-and-data-model.md",
-          "sourceHash": "eb82ce6dac9a1467b53ec2023cff1db15398bb476afc503c2c9fbb6498039ed3",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "877d03321ef58199ab389e24460028cc7c11c779ea76cdc062f6769843184658",
+          "reviewedAt": "2026-11-21"
         }
       }
     },
@@ -223,13 +223,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/docs/platform/local-development.md",
-          "sourceHash": "6ae55d59c2551c95f651e392add04b27b775108c1f6d298946ffc9b0ebfed3f9",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "a393d232a58f04797a152b9278adba9d9d15879be8436deae5bf289e3e1e793f",
+          "reviewedAt": "2026-11-21"
         },
         "en": {
           "path": "site/translations/en/docs/platform/local-development.md",
-          "sourceHash": "6ae55d59c2551c95f651e392add04b27b775108c1f6d298946ffc9b0ebfed3f9",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "a393d232a58f04797a152b9278adba9d9d15879be8436deae5bf289e3e1e793f",
+          "reviewedAt": "2026-11-21"
         }
       }
     },
@@ -501,13 +501,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/docs/platform/troubleshooting.md",
-          "sourceHash": "9b906cdfe0067ccab78cdf94ffe3a40751df8ca9551396c8ed4b153a10cb9d04",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "d423ddbec2cf66647d8cf9cfb903cd323372cf1f7338d2d36d5b91b95b194ae3",
+          "reviewedAt": "2026-11-21"
         },
         "en": {
           "path": "site/translations/en/docs/platform/troubleshooting.md",
-          "sourceHash": "9b906cdfe0067ccab78cdf94ffe3a40751df8ca9551396c8ed4b153a10cb9d04",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "d423ddbec2cf66647d8cf9cfb903cd323372cf1f7338d2d36d5b91b95b194ae3",
+          "reviewedAt": "2026-11-21"
         }
       }
     },
@@ -576,13 +576,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/index.mdx",
-          "sourceHash": "465d58883b9bcb6da1758bff426bcf1041224fe257c280d5fb97251534b5b569",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "dd3f4a41c82b55ca7347f2d1a51882119b94f2af514dfc034debbf2269b3a92f",
+          "reviewedAt": "2026-11-21"
         },
         "en": {
           "path": "site/translations/en/index.mdx",
-          "sourceHash": "465d58883b9bcb6da1758bff426bcf1041224fe257c280d5fb97251534b5b569",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "dd3f4a41c82b55ca7347f2d1a51882119b94f2af514dfc034debbf2269b3a92f",
+          "reviewedAt": "2026-11-21"
         }
       }
     },
@@ -596,17 +596,17 @@
         "oriso-platform/architecture/backend.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/architecture/backend.mdx",
-          "sourceHash": "180f2bc2193075ec8c100069e5407b595b157261e443b51e0b88d6543c5388af",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "2f40460969fe11fe1ed9ce6da5cb7032c109717890e0334adb112297799d5f09",
+          "reviewedAt": "2026-11-21"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/architecture/backend.mdx",
-          "sourceHash": "180f2bc2193075ec8c100069e5407b595b157261e443b51e0b88d6543c5388af",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "2f40460969fe11fe1ed9ce6da5cb7032c109717890e0334adb112297799d5f09",
+          "reviewedAt": "2026-11-21"
         }
       }
     },
@@ -620,17 +620,17 @@
         "oriso-platform/architecture/data.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/architecture/data.mdx",
-          "sourceHash": "32bb2e3ea9adadfc2f37ce53636925ae107e733b6716ac559420c846acadb632",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "1dfc936f7413c17a5f3375b3333c19f28845866ce5996f46d27187ffb71626e5",
+          "reviewedAt": "2026-11-21"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/architecture/data.mdx",
-          "sourceHash": "32bb2e3ea9adadfc2f37ce53636925ae107e733b6716ac559420c846acadb632",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "1dfc936f7413c17a5f3375b3333c19f28845866ce5996f46d27187ffb71626e5",
+          "reviewedAt": "2026-11-21"
         }
       }
     },
@@ -644,7 +644,7 @@
         "oriso-platform/architecture/frontend.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/architecture/frontend.mdx",
@@ -668,17 +668,17 @@
         "oriso-platform/architecture/infra.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/architecture/infra.mdx",
-          "sourceHash": "24111581db62937427125d6b62fd9189ffb19c7a4d62695a9f59c354135eb664",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "cd93ed4e2acf65ad3f3f1e53d78c70d3d6e40031ef0d2d586561e6e555fd8863",
+          "reviewedAt": "2026-11-21"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/architecture/infra.mdx",
-          "sourceHash": "24111581db62937427125d6b62fd9189ffb19c7a4d62695a9f59c354135eb664",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "cd93ed4e2acf65ad3f3f1e53d78c70d3d6e40031ef0d2d586561e6e555fd8863",
+          "reviewedAt": "2026-11-21"
         }
       }
     },
@@ -692,17 +692,17 @@
         "oriso-platform/architecture/overview.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/architecture/overview.mdx",
-          "sourceHash": "63aea765f7310f12c9742bc0001b12f4bb467775bbe3e5ad9e5ef85eb6061680",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "deb64c9213432bd75361383e57f55d01581ca217d9815258355d7cb14e3081ad",
+          "reviewedAt": "2026-11-21"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/architecture/overview.mdx",
-          "sourceHash": "63aea765f7310f12c9742bc0001b12f4bb467775bbe3e5ad9e5ef85eb6061680",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "deb64c9213432bd75361383e57f55d01581ca217d9815258355d7cb14e3081ad",
+          "reviewedAt": "2026-11-21"
         }
       }
     },
@@ -720,13 +720,13 @@
       "translations": {
         "en": {
           "path": "site/translations/en/oriso-platform/backup-configuration.mdx",
-          "sourceHash": "3beefec7e1191570de8db450d77f5619821b1c0421055dc39b2810bf3427df4d",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "1c2bd66d7436bf7faf79ae2127d7034e8840fdba8dd07b6baaaaa98527d9259d",
+          "reviewedAt": "2026-11-21"
         },
         "de": {
           "path": "site/translations/de/oriso-platform/backup-configuration.mdx",
-          "sourceHash": "3beefec7e1191570de8db450d77f5619821b1c0421055dc39b2810bf3427df4d",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "1c2bd66d7436bf7faf79ae2127d7034e8840fdba8dd07b6baaaaa98527d9259d",
+          "reviewedAt": "2026-11-21"
         }
       }
     },
@@ -740,17 +740,17 @@
         "oriso-platform/clone-repositories.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/clone-repositories.mdx",
-          "sourceHash": "cae0d125e86ff0a3a6e801e606fdcf4afc464286ae9f87f5d1b6d78bce1a27f0",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "2685247b2468a4e314f2fea38cdb91a80f961950fd5e1b88d0d9f33cf389a011",
+          "reviewedAt": "2026-11-21"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/clone-repositories.mdx",
-          "sourceHash": "cae0d125e86ff0a3a6e801e606fdcf4afc464286ae9f87f5d1b6d78bce1a27f0",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "2685247b2468a4e314f2fea38cdb91a80f961950fd5e1b88d0d9f33cf389a011",
+          "reviewedAt": "2026-11-21"
         }
       }
     },
@@ -768,13 +768,13 @@
       "translations": {
         "en": {
           "path": "site/translations/en/oriso-platform/coding-standards.mdx",
-          "sourceHash": "65e3237d71491aaa5384c7b56df395801cbfd8e0a585e3180dded8890ee05b15",
-          "reviewedAt": "2026-10-28"
+          "sourceHash": "c26054702b2fabbf2c00795937e5a16cdde80526896f07f38a6084f06e68d96a",
+          "reviewedAt": "2026-11-21"
         },
         "de": {
           "path": "site/translations/de/oriso-platform/coding-standards.mdx",
-          "sourceHash": "65e3237d71491aaa5384c7b56df395801cbfd8e0a585e3180dded8890ee05b15",
-          "reviewedAt": "2026-10-28"
+          "sourceHash": "c26054702b2fabbf2c00795937e5a16cdde80526896f07f38a6084f06e68d96a",
+          "reviewedAt": "2026-11-21"
         }
       }
     },
@@ -792,13 +792,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/configure-keycloak.mdx",
-          "sourceHash": "e6bb310d8d9b28527cdd5934fd3b4cca2a2ad9e528ff92596935ea28379962d7",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "22ffb05a2253dc03393e1f5355aa556afe3224463bee4f68af89bcd8227543e6",
+          "reviewedAt": "2026-11-21"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/configure-keycloak.mdx",
-          "sourceHash": "e6bb310d8d9b28527cdd5934fd3b4cca2a2ad9e528ff92596935ea28379962d7",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "22ffb05a2253dc03393e1f5355aa556afe3224463bee4f68af89bcd8227543e6",
+          "reviewedAt": "2026-11-21"
         }
       }
     },
@@ -1437,13 +1437,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/deploy-backend-services.mdx",
-          "sourceHash": "3a67584b2d38d9f37794f532e31eb55e2d63ff73f71876fc538db1031e51dfbb",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "afa6a2e69700ac7d665d9aac0e038fbf642e14d55fc2b4b2290741760de42119",
+          "reviewedAt": "2026-11-21"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/deploy-backend-services.mdx",
-          "sourceHash": "3a67584b2d38d9f37794f532e31eb55e2d63ff73f71876fc538db1031e51dfbb",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "afa6a2e69700ac7d665d9aac0e038fbf642e14d55fc2b4b2290741760de42119",
+          "reviewedAt": "2026-11-21"
         }
       }
     },
@@ -1457,7 +1457,7 @@
         "oriso-platform/deploy-frontend.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "translations": {
         "en": {
           "path": "site/translations/en/oriso-platform/deploy-frontend.mdx",
@@ -1481,7 +1481,7 @@
         "oriso-platform/deploy-infrastructure.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/deploy-infrastructure.mdx",
@@ -1505,7 +1505,7 @@
         "oriso-platform/deploy-matrix.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "translations": {
         "en": {
           "path": "site/translations/en/oriso-platform/deploy-matrix.mdx",
@@ -1529,7 +1529,7 @@
         "oriso-platform/deploy-monitoring.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "translations": {
         "en": {
           "path": "site/translations/en/oriso-platform/deploy-monitoring.mdx",
@@ -1553,7 +1553,7 @@
         "oriso-platform/deploy-nginx.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "translations": {
         "en": {
           "path": "site/translations/en/oriso-platform/deploy-nginx.mdx",
@@ -1577,7 +1577,7 @@
         "oriso-platform/dns-ssl.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "translations": {
         "en": {
           "path": "site/translations/en/oriso-platform/dns-ssl.mdx",
@@ -1601,7 +1601,7 @@
         "oriso-platform/initial-setup.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/initial-setup.mdx",
@@ -1625,7 +1625,7 @@
         "oriso-platform/install-software.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/install-software.mdx",
@@ -1649,7 +1649,7 @@
         "oriso-platform/network-firewall.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/network-firewall.mdx",
@@ -1677,13 +1677,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/overview.mdx",
-          "sourceHash": "63222c23c8f096390a8f902c5adc7d15ca3db0f5cbf7119dad535ffc7bb01842",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "08c9a90e448051d1d20d4691265fc64443e3fbc376778ab6c4661a2bbcaf66e0",
+          "reviewedAt": "2026-11-21"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/overview.mdx",
-          "sourceHash": "63222c23c8f096390a8f902c5adc7d15ca3db0f5cbf7119dad535ffc7bb01842",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "08c9a90e448051d1d20d4691265fc64443e3fbc376778ab6c4661a2bbcaf66e0",
+          "reviewedAt": "2026-11-21"
         }
       }
     },
@@ -1701,13 +1701,13 @@
       "translations": {
         "en": {
           "path": "site/translations/en/oriso-platform/post-deployment.mdx",
-          "sourceHash": "b7675d4d91f12417c5d6b0d54f3f6bdb235863c388f02d52a946c30a888103ea",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "72dcba49007a3b27c3d46ed087b1a2cc1efe2db8bbc6c481f298b47a1c6ec4b3",
+          "reviewedAt": "2026-11-21"
         },
         "de": {
           "path": "site/translations/de/oriso-platform/post-deployment.mdx",
-          "sourceHash": "b7675d4d91f12417c5d6b0d54f3f6bdb235863c388f02d52a946c30a888103ea",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "72dcba49007a3b27c3d46ed087b1a2cc1efe2db8bbc6c481f298b47a1c6ec4b3",
+          "reviewedAt": "2026-11-21"
         }
       }
     },
@@ -1721,17 +1721,17 @@
         "oriso-platform/quick-reference.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "translations": {
         "en": {
           "path": "site/translations/en/oriso-platform/quick-reference.mdx",
-          "sourceHash": "9308f1c787eb52d66ea18c5c9ccb9de18b0746726a6150f320e58a1dccb6bdec",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "f936854c872368fde365ae4ffa420898e4e476d3c512f5ad7e56fdfc941976c6",
+          "reviewedAt": "2026-11-21"
         },
         "de": {
           "path": "site/translations/de/oriso-platform/quick-reference.mdx",
-          "sourceHash": "9308f1c787eb52d66ea18c5c9ccb9de18b0746726a6150f320e58a1dccb6bdec",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "f936854c872368fde365ae4ffa420898e4e476d3c512f5ad7e56fdfc941976c6",
+          "reviewedAt": "2026-11-21"
         }
       }
     },
@@ -1745,7 +1745,7 @@
         "oriso-platform/security-hardening.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "translations": {
         "en": {
           "path": "site/translations/en/oriso-platform/security-hardening.mdx",
@@ -1773,13 +1773,13 @@
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/setup-databases.mdx",
-          "sourceHash": "06024541142c49c38028c1d44fe991bc2f3d6a585012029dda7724e7a9dddd0a",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "54d0e75c82687de5c564483925a71223f29860443cadf9d3708d7d976e5831c0",
+          "reviewedAt": "2026-11-21"
         },
         "en": {
           "path": "site/translations/en/oriso-platform/setup-databases.mdx",
-          "sourceHash": "06024541142c49c38028c1d44fe991bc2f3d6a585012029dda7724e7a9dddd0a",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "54d0e75c82687de5c564483925a71223f29860443cadf9d3708d7d976e5831c0",
+          "reviewedAt": "2026-11-21"
         }
       }
     },
@@ -1793,7 +1793,7 @@
         "oriso-platform/setup-kubernetes.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "translations": {
         "de": {
           "path": "site/translations/de/oriso-platform/setup-kubernetes.mdx",
@@ -1817,17 +1817,17 @@
         "oriso-platform/troubleshooting.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "translations": {
         "en": {
           "path": "site/translations/en/oriso-platform/troubleshooting.mdx",
-          "sourceHash": "2fabddae073015bb5622100aff5f2d6d7018a76864ccefb5df2d6fec1d97e8b1",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "a3615627284e745c916402bcee9bc3809665de2a3c23880665df01ef7876e1b2",
+          "reviewedAt": "2026-11-21"
         },
         "de": {
           "path": "site/translations/de/oriso-platform/troubleshooting.mdx",
-          "sourceHash": "2fabddae073015bb5622100aff5f2d6d7018a76864ccefb5df2d6fec1d97e8b1",
-          "reviewedAt": "2026-09-30"
+          "sourceHash": "a3615627284e745c916402bcee9bc3809665de2a3c23880665df01ef7876e1b2",
+          "reviewedAt": "2026-11-21"
         }
       }
     },
@@ -1841,7 +1841,7 @@
         "oriso-platform/verification-testing.mdx"
       ],
       "owner": "ORISO-Docs",
-      "lifecycle": "current",
+      "lifecycle": "archived",
       "translations": {
         "en": {
           "path": "site/translations/en/oriso-platform/verification-testing.mdx",

@@ -1,0 +1,25 @@
+{
+  "title": "Archive",
+  "pages": [
+    "[Backend Microservices](/en/betrieb/architecture/backend)",
+    "[Data Layer](/en/betrieb/architecture/data)",
+    "[Frontend Layer](/en/betrieb/architecture/frontend)",
+    "[Infrastructure & Auth](/en/betrieb/architecture/infra)",
+    "[ORISO Architecture Overview](/en/betrieb/architecture/overview)",
+    "[Clone ORISO Repositories](/en/betrieb/getting-started/clone-repositories)",
+    "[Deploy Frontend](/en/betrieb/deployment/deploy-frontend)",
+    "[Deploy Infrastructure](/en/betrieb/deployment/deploy-infrastructure)",
+    "[Deploy Matrix Communication](/en/betrieb/deployment/deploy-matrix)",
+    "[Deploy Monitoring](/en/betrieb/deployment/deploy-monitoring)",
+    "[Deploy Kubernetes Ingress](/en/betrieb/deployment/deploy-nginx)",
+    "[DNS & SSL Configuration](/en/betrieb/configuration-und-testing/dns-ssl)",
+    "[Initial Server Setup](/en/betrieb/getting-started/initial-setup)",
+    "[Install Required Software](/en/betrieb/getting-started/install-software)",
+    "[Network & Firewall Configuration](/en/betrieb/getting-started/network-firewall)",
+    "[Quick Reference](/en/betrieb/operations/quick-reference)",
+    "[Security Hardening](/en/betrieb/operations/security-hardening)",
+    "[Setup Kubernetes (k3s)](/en/betrieb/getting-started/setup-kubernetes)",
+    "[Troubleshooting](/en/betrieb/operations/troubleshooting)",
+    "[Verification & Testing](/en/betrieb/configuration-und-testing/verification-testing)"
+  ]
+}

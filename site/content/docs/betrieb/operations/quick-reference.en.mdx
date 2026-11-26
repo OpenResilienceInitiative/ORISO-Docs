@@ -12,22 +12,20 @@ Quick reference guide for essential ORISO Platform management commands, ports, a
 
 ### Helm Operations
 
+Use the current ORISO-Helm umbrella chart for installation and upgrades. [Kubernetes deployment](/en/plattform/core-systems/kubernetes-deployment)
+
 ```bash
 # Check Helm release
 helm list -n caritas
 
 # Check release status
-helm status oriso-platform -n caritas
-
-# Upgrade deployment
-cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes/helm
-helm upgrade oriso-platform ./oriso-platform --namespace caritas -f values.yaml
+helm status <release> -n <namespace>
 
 # View release values
-helm get values oriso-platform -n caritas
+helm get values <release> -n <namespace>
 
 # Rollback deployment
-helm rollback oriso-platform -n caritas
+helm rollback <release> <revision> -n <namespace>
 ```
 
 ### Pod Management
@@ -98,11 +96,13 @@ curl http://127.0.0.1:<port>/actuator/health/redis | jq .
 ### External Access (via Ingress)
 | Service | URL | Description |
 |---------|-----|-------------|
-| Frontend | https://app.example.org | User portal |
-| Admin | https://admin.example.org | Admin panel |
-| API | https://api.example.org | Backend API |
-| Auth | https://auth.example.org | Keycloak |
-| Matrix | https://matrix.example.org | Matrix Synapse |
+| Frontend | `https://platform.example.org/` | User portal |
+| Admin | `https://platform.example.org/admin` | Admin panel |
+| API | `https://platform.example.org/service/…` | Backend API |
+| Auth | `https://platform.example.org/auth` | Keycloak |
+| Matrix | `https://matrix.example.org` | Matrix Synapse |
+
+Substitute the hostnames configured for the target environment. [Kubernetes deployment](/en/plattform/core-systems/kubernetes-deployment)
 
 ### Internal Service Names (Kubernetes DNS)
 | Service | Internal URL | Port |
@@ -137,15 +137,15 @@ kubectl logs deployment/oriso-platform-<service> -n caritas --tail=100
 kubectl logs deployment/oriso-platform-<service> -n caritas -f  # Follow
 ```
 
-### Upgrade Deployment
-```bash
-cd ~/online-beratung/caritas-workspace/ORISO-Kubernetes/helm
-helm upgrade oriso-platform ./oriso-platform --namespace caritas -f values.yaml
-```
+### Upgrade deployment
+
+Check the target environment’s values and migration state in the current guides. [Kubernetes deployment](/en/plattform/core-systems/kubernetes-deployment) · [Set up databases](/en/betrieb/deployment/setup-databases)
 
 ### Uninstall
+
+Check backup and volume retention before uninstalling a release. [Configure backups](/en/betrieb/operations/backup-configuration)
 ```bash
-helm uninstall oriso-platform --namespace caritas
+helm uninstall <release> --namespace <namespace>
 ```
 
 ## Service Names Reference
@@ -173,24 +173,13 @@ Common service names for use with kubectl commands:
 
 ## Important Files
 
-### Configuration Files
+### Configuration files
 
-```bash
-# Kubernetes configs
-~/online-beratung/caritas-workspace/ORISO-Kubernetes/
-
-# Database schemas
-~/online-beratung/caritas-workspace/ORISO-Database/
-
-# Keycloak realm
-~/online-beratung/caritas-workspace/ORISO-Keycloak/realm.json
-
-# Kubeconfig
-~/.kube/config
-
-# k3s config
-/etc/rancher/k3s/k3s.yaml
-```
+- The Helm chart and ingress resources live in ORISO-Helm. [Kubernetes deployment](/en/plattform/core-systems/kubernetes-deployment)
+- SQL initialisation and service migrations have separate sources. [Set up databases](/en/betrieb/deployment/setup-databases)
+- The Keycloak subchart manages the realm and clients. [Configure Keycloak](/en/betrieb/deployment/configure-keycloak)
+- Kubeconfig: `~/.kube/config`
+- k3s configuration: `/etc/rancher/k3s/k3s.yaml`
 
 ### Configuration Access
 
@@ -207,7 +196,7 @@ kubectl get svc <name> -n caritas -o yaml
 
 ## Quick Health Check Script
 
-Run this script to quickly check all services:
+Check the local services that use the ports shown below. For a deployed environment, use the public HTTPS issuer check. [Configure Keycloak](/en/betrieb/deployment/configure-keycloak)
 
 ```bash
 #!/bin/bash
@@ -226,10 +215,6 @@ curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:9001
 # Admin
 echo -n "Admin (9002): "
 curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:9002
-
-# Keycloak
-echo -n "Keycloak (8089): "
-curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8089/auth
 
 echo "Health check complete!"
 ```
@@ -254,20 +239,6 @@ kubectl get pvc -n caritas
 
 # Check events for errors
 kubectl get events -n caritas --field-selector type=Warning
-```
-
-## Quick Access URLs
-
-Get your server IP and access URLs:
-
-```bash
-SERVER_IP=$(hostname -I | awk '{print $1}')
-
-echo "Main Entry Point: http://$SERVER_IP:8089"
-echo "Frontend: http://$SERVER_IP:9001"
-echo "Admin: http://$SERVER_IP:9002"
-echo "Keycloak: http://$SERVER_IP:8089/auth/admin/"
-echo "Element.io: http://$SERVER_IP:8087"
 ```
 
 ## Related Documentation
