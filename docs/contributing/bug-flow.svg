@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 390" width="1100" height="390" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" role="img" aria-label="Small features and fixes">
+<title>Small features and fixes</title>
+<rect width="1100" height="390" fill="#ffffff"/>
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#555"/></marker></defs>
+<rect x="8" y="16" width="1084" height="114" rx="10" fill="#f7f2fd" stroke="#7e22ce" stroke-opacity="0.25"/>
+<text x="20" y="73" font-size="13" font-weight="600" fill="#7e22ce">Reporter</text>
+<text x="20" y="89" font-size="10.5" fill="#7e22ce">anyone</text>
+<rect x="8" y="138" width="1084" height="114" rx="10" fill="#eef6fb" stroke="#0369a1" stroke-opacity="0.25"/>
+<text x="20" y="199" font-size="13" font-weight="600" fill="#0369a1">Contributor</text>
+<rect x="8" y="260" width="1084" height="114" rx="10" fill="#fff5ee" stroke="#c2410c" stroke-opacity="0.25"/>
+<text x="20" y="317" font-size="13" font-weight="600" fill="#c2410c">Core team</text>
+<text x="20" y="333" font-size="10.5" fill="#c2410c">or assignee</text>
+<rect x="108.0" y="41.0" width="108" height="64" rx="8" fill="#ffffff" stroke="#7e22ce" stroke-width="1.5"/>
+<text x="162" y="70" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1f1f1f">Bug or small</text>
+<text x="162" y="84" text-anchor="middle" font-size="11.5" fill="#1f1f1f">feature request</text>
+<rect x="232.0" y="163.0" width="108" height="64" rx="8" fill="#ffffff" stroke="#0369a1" stroke-width="1.5"/>
+<text x="286" y="192" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1f1f1f">Find or create</text>
+<text x="286" y="206" text-anchor="middle" font-size="11.5" fill="#1f1f1f">the issue</text>
+<polygon points="356,195 410,163 464,195 410,227" fill="#ffffff" stroke="#0369a1" stroke-width="1.5"/>
+<text x="410" y="192" text-anchor="middle" font-size="11.5" fill="#1f1f1f">Someone</text>
+<text x="410" y="206" text-anchor="middle" font-size="11.5" fill="#1f1f1f">assigned?</text>
+<rect x="356.0" y="285.0" width="108" height="64" rx="8" fill="#ffffff" stroke="#c2410c" stroke-width="1.5"/>
+<text x="410" y="306" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1f1f1f">Assignee fixes</text>
+<text x="410" y="321" text-anchor="middle" font-size="11.5" fill="#1f1f1f">add what you</text>
+<text x="410" y="336" text-anchor="middle" font-size="11.5" fill="#1f1f1f">know</text>
+<polygon points="480,195 534,163 588,195 534,227" fill="#ffffff" stroke="#0369a1" stroke-width="1.5"/>
+<text x="534" y="199" text-anchor="middle" font-size="11.5" fill="#1f1f1f">Small?</text>
+<rect x="480.0" y="285.0" width="108" height="64" rx="8" fill="#ffffff" stroke="#c2410c" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="534" y="306" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1f1f1f">Triage first</text>
+<text x="534" y="321" text-anchor="middle" font-size="11.5" fill="#1f1f1f">as a feature</text>
+<text x="534" y="336" text-anchor="middle" font-size="11.5" fill="#1f1f1f">proposal</text>
+<rect x="604.0" y="163.0" width="108" height="64" rx="8" fill="#ffffff" stroke="#0369a1" stroke-width="1.5"/>
+<text x="658" y="184" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1f1f1f">Pull request</text>
+<text x="658" y="199" text-anchor="middle" font-size="11.5" fill="#1f1f1f">after own QA,</text>
+<text x="658" y="214" text-anchor="middle" font-size="11.5" fill="#1f1f1f">Closes #</text>
+<rect x="728.0" y="285.0" width="108" height="64" rx="8" fill="#ffffff" stroke="#c2410c" stroke-width="1.5"/>
+<text x="782" y="306" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1f1f1f">Triage and</text>
+<text x="782" y="321" text-anchor="middle" font-size="11.5" fill="#1f1f1f">review,</text>
+<text x="782" y="336" text-anchor="middle" font-size="11.5" fill="#1f1f1f">urgent: hotfix</text>
+<rect x="852.0" y="285.0" width="108" height="64" rx="8" fill="#ffffff" stroke="#c2410c" stroke-width="1.5"/>
+<text x="906" y="306" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1f1f1f">Merge,</text>
+<text x="906" y="321" text-anchor="middle" font-size="11.5" fill="#1f1f1f">QA internal,</text>
+<text x="906" y="336" text-anchor="middle" font-size="11.5" fill="#1f1f1f">QA external</text>
+<rect x="976.0" y="41.0" width="108" height="64" rx="8" fill="#ffffff" stroke="#7e22ce" stroke-width="1.5"/>
+<text x="1030" y="70" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1f1f1f">Reporter</text>
+<text x="1030" y="84" text-anchor="middle" font-size="11.5" fill="#1f1f1f">informed</text>
+<path d="M216 73H224V195H232" fill="none" stroke="#555" stroke-width="1.4" marker-end="url(#a)"/>
+<path d="M340 195H356" fill="none" stroke="#555" stroke-width="1.4" marker-end="url(#a)"/>
+<path d="M410 227V285" fill="none" stroke="#555" stroke-width="1.4" marker-end="url(#a)"/>
+<text x="416" y="262" text-anchor="start" font-size="11" fill="#555">yes</text>
+<path d="M464 195H480" fill="none" stroke="#555" stroke-width="1.4" marker-end="url(#a)"/>
+<text x="472" y="186" text-anchor="middle" font-size="11" fill="#555">no</text>
+<text x="520" y="152" text-anchor="end" font-size="11" fill="#555">no = claim it: assign yourself, comment</text>
+<path d="M534 227V285" fill="none" stroke="#555" stroke-width="1.4" marker-end="url(#a)"/>
+<text x="540" y="262" text-anchor="start" font-size="11" fill="#555">no</text>
+<path d="M588 195H604" fill="none" stroke="#555" stroke-width="1.4" marker-end="url(#a)"/>
+<text x="592" y="178" text-anchor="end" font-size="11" fill="#555">yes</text>
+<path d="M712 195H720V317H728" fill="none" stroke="#555" stroke-width="1.4" marker-end="url(#a)"/>
+<path d="M836 317H852" fill="none" stroke="#555" stroke-width="1.4" marker-end="url(#a)"/>
+<path d="M960 317H968V73H976" fill="none" stroke="#555" stroke-width="1.4" marker-end="url(#a)"/>
+</svg>
